@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[46,)"
+license="GPL3"
+
+[[mods]]
+modId="battleroyale"
+version="${file.jarVersion}}"
+displayName="Battle Royale"
+logoFile=""
+authors="XiaoColorful"
+description='''
+'''
+
+[[dependencies.battleroyale]]
+    modId="forge"
+    mandatory=true
+    versionRange="[46,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.battleroyale]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20,1.20.2)"
+    ordering="NONE"
+    side="BOTH"
