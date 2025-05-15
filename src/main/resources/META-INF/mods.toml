@@ -4,7 +4,7 @@ license="GPL3"
 
 [[mods]]
 modId="battleroyale"
-version="${file.jarVersion}}"
+version="${file.jarVersion}"
 displayName="Battle Royale"
 logoFile=""
 authors="XiaoColorful"
