@@ -19,7 +19,7 @@ import xiao.battleroyale.resource.ResourceLoader;
 public class BattleRoyale
 {
     public static final String MOD_ID = "battleroyale";
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public BattleRoyale(FMLJavaModLoadingContext context)
     {
