@@ -4,9 +4,11 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.slf4j.Logger;
@@ -29,6 +31,8 @@ public class BattleRoyale
         Dist side = FMLLoader.getDist();
         ResourceLoader.INSTANCE.packType = side.isClient() ? PackType.CLIENT_RESOURCES : PackType.SERVER_DATA;
 
+        ModBlocks.BLOCKS.getClass();
+
         IEventBus bus = context.getModEventBus();
         ModBlocks.BLOCKS.register(bus);
         ModBlocks.BLOCK_ENTITIES.register(bus);
@@ -38,5 +42,20 @@ public class BattleRoyale
         ModContainer.CONTAINER_TYPE.register(bus);
         ModSounds.SOUNDS.register(bus);
 
+        try {
+            Class.forName("xiao.battleroyale.block.entity.LootSpawnerBlockEntity");
+        } catch (ClassNotFoundException e) {
+            LOGGER.error("Failed to load LootSpawnerBlockEntity class!", e);
+        }
+    }
+
+    @SubscribeEvent
+    public static void commonSetup(FMLCommonSetupEvent event) {
+        LOGGER.info("Common Setup Event triggered.");
+        try {
+            LOGGER.info("Loot Spawner Block (Common Setup): {}", ModBlocks.LOOT_SPAWNER.get());
+        } catch (IllegalStateException e) {
+            LOGGER.error("ModBlocks.LOOT_SPAWNER is not yet bound! (Common Setup)", e);
+        }
     }
 }
