@@ -77,8 +77,6 @@ public abstract class AbstractLootMenu extends AbstractContainerMenu {
         return this.blockEntity != null && player.distanceToSqr(this.blockEntity.getBlockPos().getX() + 0.5D, this.blockEntity.getBlockPos().getY() + 0.5D, this.blockEntity.getBlockPos().getZ() + 0.5D) <= 64.0D;
     }
 
-    protected abstract void populateLoot(Player player);
-
     @Override
     public void removed(Player player) {
         super.removed(player);

@@ -1,29 +1,49 @@
 package xiao.battleroyale.common.loot;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.util.RandomSource;
 import xiao.battleroyale.api.loot.ILootEntry;
 import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import xiao.battleroyale.api.loot.ILootObject;
+import xiao.battleroyale.config.common.loot.LootConfigManager;
 
 public class LootGenerator {
 
-    public static void generateLoot(Level level, ILootEntry<?> entry, Container container, RandomSource random) {
-        //  将 RandomSource 转换为 Supplier<Float>
+    public static void generateLoot(Level level, ILootEntry<?> entry, Object target, RandomSource random) {
         Supplier<Float> randomFloatSupplier = () -> random.nextFloat();
-
         List<?> generatedLoot = entry.generateLoot(randomFloatSupplier);
 
-        if (generatedLoot != null) {
+        if (generatedLoot != null && target instanceof Container container) {
             for (int i = 0; i < generatedLoot.size() && i < container.getContainerSize(); i++) {
                 Object lootItem = generatedLoot.get(i);
-                if (lootItem instanceof ItemStack) {
-                    container.setItem(i, (ItemStack) lootItem);
+                if (lootItem instanceof ItemStack itemStack) {
+                    container.setItem(i, itemStack);
                 }
-                //  如果你的 ILootEntry 可以生成其他类型的战利品 (例如 Entity)，
-                //  你需要在这里添加相应的处理逻辑。
+                // 可以根据需要添加其他类型的容器物品处理逻辑
+            }
+        }
+    }
+
+    public static void refreshLootBlock(Level level, BlockPos pos, Player player) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof Container container && blockEntity instanceof ILootObject lootObject) {
+            container.clearContent();
+            ResourceLocation lootObjectId = lootObject.getLootObjectId();
+            int configId = lootObject.getConfigId();
+            LootConfigManager lootConfigManager = LootConfigManager.get();
+            LootConfigManager.LootConfig config = lootConfigManager.getLootSpawnerConfig(configId); // 假设所有 Loot 方块都使用 LootSpawnerConfig
+
+            if (lootObjectId != null && config != null) {
+                ILootEntry<?> entry = config.getEntry();
+                LootGenerator.generateLoot(level, entry, container, player.getRandom());
+                blockEntity.setChanged();
             }
         }
     }

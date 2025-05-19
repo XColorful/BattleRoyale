@@ -77,6 +77,7 @@ public class LootSpawner extends AbstractLootBlock {
                     return InteractionResult.SUCCESS;
                 } else {
                     NetworkHooks.openScreen((ServerPlayer) player, lootSpawnerBlockEntity, (buf) -> {
+                        buf.writeBlockPos(pos); // 传递方块的位置
                         buf.writeResourceLocation(lootSpawnerBlockEntity.getLootObjectId());
                     });
                     return InteractionResult.CONSUME;
