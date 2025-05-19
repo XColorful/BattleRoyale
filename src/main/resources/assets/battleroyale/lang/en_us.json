@@ -4,5 +4,6 @@
   "item.battleroyale.entity_spawner": "Entity Spawner",
   "block.battleroyale.loot_spawner": "Loot Spawner",
   "block.battleroyale.entity_spawner": "Entity Spawner",
-  "container.battleroyale.loot_block": "Loot Container"
+  "container.battleroyale.loot_spawner": "Loot Crate",
+  "battleroyale.message.loot_config_switched": "Switched to loot config %s"
 }

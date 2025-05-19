@@ -55,6 +55,13 @@ public abstract class AbstractLootBlockEntity extends BlockEntity implements ILo
     }
 
     @Override
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag);
+        return tag;
+    }
+
+    @Override
     public void load(CompoundTag tag) {
         super.load(tag);
         if (tag.contains(ID_TAG, Tag.TAG_STRING)) {
@@ -74,10 +81,5 @@ public abstract class AbstractLootBlockEntity extends BlockEntity implements ILo
             tag.putString(ID_TAG, lootObjectId.toString());
         }
         tag.putInt(CONFIG_ID_TAG, this.configId);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
     }
 }

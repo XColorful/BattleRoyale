@@ -23,6 +23,8 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.DefaultAssets;
@@ -32,10 +34,21 @@ import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 
 public class AbstractLootBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 1, 16);
 
     public AbstractLootBlock() {
-        super(Properties.of().sound(SoundType.WOOD).strength(2.5F, 2.5F).noOcclusion());
+        super(Properties.of()
+                .sound(SoundType.WOOD)
+                .strength(2.5F, 2.5F)
+                .noOcclusion()
+                .noCollission()
+        );
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
     }
 
     @Override

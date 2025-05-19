@@ -4,5 +4,6 @@
   "item.battleroyale.entity_spawner": "实体生成器",
   "block.battleroyale.loot_spawner": "物资刷新方块",
   "block.battleroyale.entity_spawner": "实体生成方块",
-  "container.battleroyale.loot_block": "物资盒"
+  "container.battleroyale.loot_spawner": "物资盒",
+  "battleroyale.message.loot_config_switched": "切换至物资刷新配置%s"
 }
