@@ -10,14 +10,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.block.LootSpawner;
 import xiao.battleroyale.block.EntitySpawner;
-import xiao.battleroyale.block.entity.LootBlockEntity;
+import xiao.battleroyale.block.LootSpawner;
+import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 
 import java.awt.*;
 
-public class LootBlockRenderer implements BlockEntityRenderer<LootBlockEntity> {
+public class LootBlockRenderer implements BlockEntityRenderer<LootSpawnerBlockEntity> {
     private static final Color DEFAULT_COLOR = new Color(255, 255, 255); // #FFFFFF
     private static final float BORDER_OFFSET = 0.45F;
     private static final float BORDER_HEIGHT = 0.1F;
@@ -28,8 +28,8 @@ public class LootBlockRenderer implements BlockEntityRenderer<LootBlockEntity> {
     }
 
     @Override
-    public void render(LootBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-        ResourceLocation blockId = blockEntity.getId();
+    public void render(LootSpawnerBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+        ResourceLocation blockId = blockEntity.getLootObjectId();
         if (blockId == null) {
             return;
         }
@@ -40,11 +40,11 @@ public class LootBlockRenderer implements BlockEntityRenderer<LootBlockEntity> {
         int configId = -1; // Default invalid ID
 
         if (block instanceof LootSpawner) {
-//            configId = blockEntity.getConfigId();
-//            config = lootConfigManager.getLootSpawnerConfig(configId);
+            configId = blockEntity.getConfigId();
+            config = lootConfigManager.getLootSpawnerConfig(configId);
         } else if (block instanceof EntitySpawner) {
-//            configId = blockEntity.getConfigId();
-//            config = lootConfigManager.getEntitySpawnerConfig(configId);
+            configId = blockEntity.getConfigId();
+            config = lootConfigManager.getEntitySpawnerConfig(configId);
         }
 
         if (config == null) {

@@ -1,0 +1,8 @@
+{
+  "itemGroup.tab.battleroyale.block": "Battle Royale Blocks",
+  "item.battleroyale.loot_spawner": "Loot Spawner",
+  "item.battleroyale.entity_spawner": "Entity Spawner",
+  "block.battleroyale.loot_spawner": "Loot Spawner",
+  "block.battleroyale.entity_spawner": "Entity Spawner",
+  "container.battleroyale.loot_block": "Loot Container"
+}

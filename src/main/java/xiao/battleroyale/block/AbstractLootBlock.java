@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.DefaultAssets;
 import xiao.battleroyale.api.item.builder.BlockItemBuilder;
 import xiao.battleroyale.api.item.nbt.BlockItemDataAccessor;
-import xiao.battleroyale.block.entity.LootBlockEntity;
+import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 
 public class AbstractLootBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -44,9 +44,9 @@ public class AbstractLootBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         } else {
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof LootBlockEntity lootBlockEntity && player instanceof ServerPlayer serverPlayer) {
-                NetworkHooks.openScreen(serverPlayer, lootBlockEntity, (buf) -> {
-                    ResourceLocation rl = lootBlockEntity.getId() == null ? DefaultAssets.DEFAULT_BLOCK_ID : lootBlockEntity.getId();
+            if (blockEntity instanceof LootSpawnerBlockEntity lootSpawnerBlockEntity && player instanceof ServerPlayer serverPlayer) {
+                NetworkHooks.openScreen(serverPlayer, lootSpawnerBlockEntity, (buf) -> {
+                    ResourceLocation rl = lootSpawnerBlockEntity.getLootObjectId() == null ? DefaultAssets.DEFAULT_BLOCK_ID : lootSpawnerBlockEntity.getLootObjectId();
                     buf.writeResourceLocation(rl);
                 });
             }
@@ -62,7 +62,7 @@ public class AbstractLootBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState blockState) {
-        return new LootBlockEntity(pos, blockState);
+        return null; // 由子类实现
     }
 
     @Override
@@ -79,11 +79,15 @@ public class AbstractLootBlock extends BaseEntityBlock {
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(world, pos, state, placer, stack);
         if (!world.isClientSide) {
-            if (stack.getItem() instanceof BlockItemDataAccessor accessor) {
-                ResourceLocation id = accessor.getBlockId(stack);
-                BlockEntity blockentity = world.getBlockEntity(pos);
-                if (blockentity instanceof LootBlockEntity e) {
-                    e.setId(id);
+            BlockEntity blockentity = world.getBlockEntity(pos);
+            if (blockentity instanceof LootSpawnerBlockEntity e) {
+                if (stack.getItem() instanceof BlockItemDataAccessor accessor) {
+                    ResourceLocation id = accessor.getBlockId(stack);
+                    e.setLootObjectId(id);
+                    e.setConfigId(0); // 默认 configId
+                } else {
+                    e.setLootObjectId(DefaultAssets.DEFAULT_BLOCK_ID);
+                    e.setConfigId(0); // 默认 configId
                 }
             }
         }
@@ -92,9 +96,9 @@ public class AbstractLootBlock extends BaseEntityBlock {
     @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         BlockEntity blockentity = level.getBlockEntity(pos);
-        if (blockentity instanceof LootBlockEntity e) {
-            if (e.getId() != null) {
-                return BlockItemBuilder.create(this).setId(e.getId()).build();
+        if (blockentity instanceof LootSpawnerBlockEntity e) {
+            if (e.getLootObjectId() != null) {
+                return BlockItemBuilder.create(this).setId(e.getLootObjectId()).build();
             }
             return new ItemStack(this);
         }
@@ -102,10 +106,6 @@ public class AbstractLootBlock extends BaseEntityBlock {
     }
 
     public float parseRotation(Direction direction) {
-        return 90.0F * (3-direction.get2DDataValue()) - 90;
-    }
-
-    public int getConfigId() {
-        return 0;
+        return 90.0F * (3 - direction.get2DDataValue()) - 90;
     }
 }

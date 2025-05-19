@@ -1,0 +1,8 @@
+{
+  "itemGroup.tab.battleroyale.block": "Battle Royale方块",
+  "item.battleroyale.loot_spawner": "物资刷新器",
+  "item.battleroyale.entity_spawner": "实体生成器",
+  "block.battleroyale.loot_spawner": "物资刷新方块",
+  "block.battleroyale.entity_spawner": "实体生成方块",
+  "container.battleroyale.loot_block": "物资盒"
+}
