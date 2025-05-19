@@ -22,13 +22,16 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
+import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
+
+import java.util.List;
 
 public class LootSpawner extends AbstractLootBlock {
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
 
     public LootSpawner() {
         super();
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH)); // 设置默认朝向
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Override
@@ -49,7 +52,7 @@ public class LootSpawner extends AbstractLootBlock {
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(net.minecraft.world.level.Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return null; // 不需要 tick
     }
 
@@ -59,13 +62,18 @@ public class LootSpawner extends AbstractLootBlock {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof LootSpawnerBlockEntity lootSpawnerBlockEntity) {
                 if (player.isCreative() && player.isCrouching()) {
-                    int nextConfigId = lootSpawnerBlockEntity.getConfigId() + 1;
-                    int maxConfigId = LootConfigManager.get().getAllLootSpawnerConfigs().size() - 1;
-                    if (nextConfigId > maxConfigId) {
+                    int currentConfigId = lootSpawnerBlockEntity.getConfigId();
+                    int nextConfigId = currentConfigId + 1;
+                    List<LootConfig> allConfigs = LootConfigManager.get().getAllLootSpawnerConfigs();
+                    if (allConfigs.isEmpty()) return InteractionResult.SUCCESS; // 防止空列表异常
+
+                    if (nextConfigId >= allConfigs.size()) {
                         nextConfigId = 0;
                     }
-                    lootSpawnerBlockEntity.setConfigId(nextConfigId);
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.loot_config_switched", nextConfigId));
+
+                    LootConfig nextConfig = allConfigs.get(nextConfigId);
+                    lootSpawnerBlockEntity.setConfigId(nextConfig.getId()); // 设置配置文件的实际 ID
+                    player.sendSystemMessage(Component.translatable("battleroyale.message.loot_config_switched", nextConfig.getId()));
                     return InteractionResult.SUCCESS;
                 } else {
                     NetworkHooks.openScreen((ServerPlayer) player, lootSpawnerBlockEntity, (buf) -> {
