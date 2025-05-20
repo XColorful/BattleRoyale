@@ -8,17 +8,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.server.level.ServerLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.entity.IEntityLootEntry;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
 public class EntityEntry implements IEntityLootEntry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EntityEntry.class);
     private final ResourceLocation entityTypeRL;
     private final CompoundTag nbt;
     private final int count;
@@ -36,7 +33,7 @@ public class EntityEntry implements IEntityLootEntry {
         List<Entity> entities = new ArrayList<>();
         EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(entityTypeRL);
         if (entityType != null) {
-            // 注意：这里只是创建实体实例，实际生成到世界需要 LootSpawner 处理，并传入 Level
+            // 这里只是创建实体实例，实际生成到世界需要 LootGenerator 处理
             for (int i = 0; i < count; i++) {
                 Entity entity = entityType.create((ServerLevel) null); // 在实际生成时需要 ServerLevel
                 if (entity != null && nbt != null) {
@@ -45,7 +42,7 @@ public class EntityEntry implements IEntityLootEntry {
                 entities.add(entity);
             }
         } else {
-            LOGGER.warn("Unknown entity type: {}", entityTypeRL);
+            BattleRoyale.LOGGER.warn("Unknown entity type: {}", entityTypeRL);
         }
         return entities;
     }
@@ -82,7 +79,7 @@ public class EntityEntry implements IEntityLootEntry {
             try {
                 nbt = TagParser.parseTag(nbtString);
             } catch (Exception e) {
-                LOGGER.warn("Failed to parse NBT for entity {}: {}", entityName, e.getMessage());
+                BattleRoyale.LOGGER.warn("Failed to parse NBT for entity {}: {}", entityName, e.getMessage());
             }
         }
         int range = jsonObject.has("range") ? jsonObject.getAsJsonPrimitive("range").getAsInt() : 0;

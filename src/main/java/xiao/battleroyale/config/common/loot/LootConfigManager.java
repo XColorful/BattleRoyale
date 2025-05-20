@@ -3,8 +3,11 @@ package xiao.battleroyale.config.common.loot;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
+import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.defaultconfigs.DefaultLootConfigGenerator;
 import xiao.battleroyale.util.JsonUtils;
 
@@ -84,6 +87,16 @@ public class LootConfigManager {
             LootConfigManager.init();
         }
         return instance;
+    }
+
+    public LootConfig getLootConfig(BlockEntity be, int id) {
+        if (be instanceof LootSpawnerBlockEntity) {
+            return getLootSpawnerConfig(id);
+        } else if (be instanceof EntitySpawnerBlockEntity) {
+            return getEntitySpawnerConfig(id);
+        }
+        BattleRoyale.LOGGER.warn("unsupported BlockEntity type");
+        return null;
     }
 
     public LootConfig getLootSpawnerConfig(int id) {

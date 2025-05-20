@@ -2,9 +2,9 @@ package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.api.loot.item.IItemLootEntry;
-import xiao.battleroyale.api.loot.entity.IEntityLootEntry;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
@@ -15,10 +15,14 @@ public class WeightEntry<T> implements ILootEntry<T> {
     private final List<WeightedEntry> weightedEntries;
 
     public static class WeightedEntry {
-        double weight;
-        ILootEntry<?> entry;
+        private final double weight;
+        private final ILootEntry<?> entry;
 
         public WeightedEntry(double weight, ILootEntry<?> entry) {
+            if (weight < 0) {
+                BattleRoyale.LOGGER.warn("WeightedEntry weight ({}) is lower than 0, defaulting to 0", weight);
+                weight = 0;
+            }
             this.weight = weight;
             this.entry = entry;
         }
@@ -45,16 +49,17 @@ public class WeightEntry<T> implements ILootEntry<T> {
 
         double randomNumber = random.get() * totalWeight;
         double currentWeight = 0;
-
-        for (WeightedEntry weightedEntry : weightedEntries) {
-            currentWeight += weightedEntry.weight;
-            if (randomNumber < currentWeight) {
-                if (weightedEntry.entry instanceof IItemLootEntry) {
-                    return (List<T>) ((IItemLootEntry) weightedEntry.entry).generateLoot(random);
-                } else if (weightedEntry.entry instanceof IEntityLootEntry) {
-                    return (List<T>) ((IEntityLootEntry) weightedEntry.entry).generateLoot(random);
+        if (weightedEntries != null) {
+            for (WeightedEntry weightedEntry : weightedEntries) {
+                currentWeight += weightedEntry.weight;
+                if (randomNumber < currentWeight) {
+                    try {
+                        return (List<T>) weightedEntry.entry.generateLoot(random);
+                    } catch (Exception e) {
+                        BattleRoyale.LOGGER.warn("Failed to parse weight entry");
+                    }
+                    break;
                 }
-                break;
             }
         }
         return new ArrayList<>();
@@ -69,14 +74,19 @@ public class WeightEntry<T> implements ILootEntry<T> {
         JsonArray itemsArray = jsonObject.getAsJsonArray("entries");
         List<WeightedEntry> weightedEntries = new ArrayList<>();
         if (itemsArray != null) {
-            for (com.google.gson.JsonElement element : itemsArray) {
+            for (JsonElement element : itemsArray) {
                 if (element.isJsonObject()) {
                     JsonObject itemObject = element.getAsJsonObject();
-                    double weight = itemObject.getAsJsonPrimitive("weight").getAsDouble();
-                    JsonObject entryObject = itemObject.getAsJsonObject("entry");
-                    ILootEntry<?> entry = JsonUtils.deserializeLootEntry(entryObject);
-                    if (entry != null) {
-                        weightedEntries.add(new WeightedEntry(weight, entry));
+                    double weight = itemObject.has("weight") ? itemObject.getAsJsonPrimitive("weight").getAsDouble() : 0;
+                    if (itemObject.has("entry")) {
+                        JsonObject entryObject = itemObject.getAsJsonObject("entry");
+                        ILootEntry<?> entry = JsonUtils.deserializeLootEntry(entryObject);
+                        if (entry != null) {
+                            weightedEntries.add(new WeightedEntry(weight, entry));
+                        }
+                    } else {
+                        BattleRoyale.LOGGER.warn("weight entry missing entry member, skipped");
+                        weightedEntries.add(new WeightedEntry(weight, null));
                     }
                 }
             }
@@ -88,11 +98,13 @@ public class WeightEntry<T> implements ILootEntry<T> {
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("type", getType());
-        com.google.gson.JsonArray itemsArray = new com.google.gson.JsonArray();
+        JsonArray itemsArray = new JsonArray();
         for (WeightedEntry weightedEntry : weightedEntries) {
             JsonObject itemObject = new JsonObject();
             itemObject.addProperty("weight", weightedEntry.weight);
-            itemObject.add("entry", weightedEntry.entry.toJson());
+            if (weightedEntry.entry != null) {
+                itemObject.add("entry", weightedEntry.entry.toJson());
+            }
             itemsArray.add(itemObject);
         }
         jsonObject.add("entries", itemsArray);

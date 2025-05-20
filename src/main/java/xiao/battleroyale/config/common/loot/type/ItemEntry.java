@@ -6,8 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.item.IItemLootEntry;
 
 import java.util.Collections;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class ItemEntry implements IItemLootEntry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemEntry.class);
     private final ItemStack itemStack;
 
     public ItemEntry(ItemStack itemStack) {
@@ -41,7 +39,7 @@ public class ItemEntry implements IItemLootEntry {
                 CompoundTag nbt = TagParser.parseTag(jsonObject.getAsJsonPrimitive("nbt").getAsString());
                 itemStack.setTag(nbt);
             } catch (Exception e) {
-                LOGGER.warn("Failed to parse NBT for item {}: {}", itemName, e.getMessage());
+                BattleRoyale.LOGGER.warn("Failed to parse NBT for item {}: {}", itemName, e.getMessage());
             }
         }
         return new ItemEntry(itemStack);

@@ -4,6 +4,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.util.RandomSource;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootEntry;
 import java.util.List;
 import java.util.function.Supplier;
@@ -20,31 +21,37 @@ public class LootGenerator {
         Supplier<Float> randomFloatSupplier = () -> random.nextFloat();
         List<?> generatedLoot = entry.generateLoot(randomFloatSupplier);
 
-        if (generatedLoot != null && target instanceof Container container) {
+        if (generatedLoot == null) {
+            return;
+        }
+        if (target instanceof Container container) {
+            container.clearContent();
             for (int i = 0; i < generatedLoot.size() && i < container.getContainerSize(); i++) {
                 Object lootItem = generatedLoot.get(i);
                 if (lootItem instanceof ItemStack itemStack) {
                     container.setItem(i, itemStack);
+                } else {
+                    BattleRoyale.LOGGER.warn("ignore non-item loot for container loot block");
                 }
-                // 可以根据需要添加其他类型的容器物品处理逻辑
             }
+        } else {
+            // 实体生成
         }
     }
 
     public static void refreshLootBlock(Level level, BlockPos pos, Player player) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof Container container && blockEntity instanceof ILootObject lootObject) {
-            container.clearContent();
-            UUID gameId = lootObject.getGameId();
-            int configId = lootObject.getConfigId();
-            LootConfigManager lootConfigManager = LootConfigManager.get();
-            LootConfigManager.LootConfig config = lootConfigManager.getLootSpawnerConfig(configId);
+        if (!(blockEntity instanceof ILootObject lootObject)) {
+            return;
+        }
+        UUID gameId = lootObject.getGameId();
+        int configId = lootObject.getConfigId();
+        LootConfigManager.LootConfig config = LootConfigManager.get().getLootConfig(blockEntity, configId);
 
-            if (gameId != null && config != null) {
-                ILootEntry<?> entry = config.getEntry();
-                LootGenerator.generateLoot(level, entry, container, player.getRandom());
-                blockEntity.setChanged();
-            }
+        if (gameId != null && config != null) {
+            ILootEntry<?> entry = config.getEntry();
+            LootGenerator.generateLoot(level, entry, blockEntity, player.getRandom());
+            blockEntity.setChanged();
         }
     }
 }

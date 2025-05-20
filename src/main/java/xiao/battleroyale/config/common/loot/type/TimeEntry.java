@@ -2,8 +2,6 @@ package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.api.loot.item.IItemLootEntry;
-import xiao.battleroyale.api.loot.entity.IEntityLootEntry;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,12 +37,8 @@ public class TimeEntry<T> implements ILootEntry<T> {
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("type", getType());
-        if (start > 0) {
-            jsonObject.addProperty("start", this.start);
-        }
-        if (end > 0) {
-            jsonObject.addProperty("end", this.end);
-        }
+        jsonObject.addProperty("start", this.start);
+        jsonObject.addProperty("end", this.end);
         return jsonObject;
     }
 }

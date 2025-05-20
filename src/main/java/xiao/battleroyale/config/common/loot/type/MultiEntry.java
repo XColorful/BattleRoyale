@@ -2,9 +2,9 @@ package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.api.loot.item.IItemLootEntry;
-import xiao.battleroyale.api.loot.entity.IEntityLootEntry;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
@@ -21,12 +21,12 @@ public class MultiEntry<T> implements ILootEntry<T> {
     @Override
     public List<T> generateLoot(Supplier<Float> random) {
         List<T> loot = new ArrayList<>();
-        for (ILootEntry<?> entry : entries) {
-            if (entry instanceof IItemLootEntry) {
-                loot.addAll((List<T>) ((IItemLootEntry) entry).generateLoot(random));
-            } else if (entry instanceof IEntityLootEntry) {
-                loot.addAll((List<T>) ((IEntityLootEntry) entry).generateLoot(random));
+        try {
+            for (ILootEntry<?> entry : entries) {
+                loot.addAll((List<T>) entry.generateLoot(random));
             }
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.warn("Failed to parse multi entry");
         }
         return loot;
     }
@@ -37,18 +37,22 @@ public class MultiEntry<T> implements ILootEntry<T> {
     }
     
     public static MultiEntry<?> fromJson(JsonObject jsonObject) {
-        JsonArray entriesArray = jsonObject.getAsJsonArray("entries");
         List<ILootEntry<?>> entries = new ArrayList<>();
-        if (entriesArray != null) {
-            for (com.google.gson.JsonElement element : entriesArray) {
-                if (element.isJsonObject()) {
-                    JsonObject entryObject = element.getAsJsonObject();
-                    ILootEntry<?> entry = JsonUtils.deserializeLootEntry(entryObject);
-                    if (entry != null) {
-                        entries.add(entry);
+        if (jsonObject.has("entries")) {
+            JsonArray entriesArray = jsonObject.getAsJsonArray("entries");
+            if (entriesArray != null) {
+                for (JsonElement element : entriesArray) {
+                    if (element.isJsonObject()) {
+                        JsonObject entryObject = element.getAsJsonObject();
+                        ILootEntry<?> entry = JsonUtils.deserializeLootEntry(entryObject);
+                        if (entry != null) {
+                            entries.add(entry);
+                        }
                     }
                 }
             }
+        } else {
+            BattleRoyale.LOGGER.warn("MultiEntry missing entries member, skipped");
         }
         return new MultiEntry<>(entries);
     }
@@ -57,7 +61,7 @@ public class MultiEntry<T> implements ILootEntry<T> {
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("type", getType());
-        com.google.gson.JsonArray entriesArray = new com.google.gson.JsonArray();
+        JsonArray entriesArray = new JsonArray();
         for (ILootEntry<?> entry : entries) {
             entriesArray.add(entry.toJson());
         }
