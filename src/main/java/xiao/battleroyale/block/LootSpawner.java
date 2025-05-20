@@ -24,7 +24,7 @@ import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import java.util.List;
-import java.util.UUID;
+import java.util.UUID; // 确保 UUID 导入正确
 
 public class LootSpawner extends AbstractLootBlock {
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
@@ -61,24 +61,28 @@ public class LootSpawner extends AbstractLootBlock {
         if (!level.isClientSide) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof LootSpawnerBlockEntity lootSpawnerBlockEntity) {
-                if (player.isCreative() && player.isCrouching()) {
+                if (player.isCreative() && player.isCrouching()) { // 切换物资刷新配置
                     int currentConfigId = lootSpawnerBlockEntity.getConfigId();
-                    int nextConfigId = currentConfigId + 1;
                     List<LootConfig> allConfigs = LootConfigManager.get().getAllLootSpawnerConfigs();
-                    if (allConfigs.isEmpty()) return InteractionResult.SUCCESS; // 防止空列表异常
 
-                    if (nextConfigId >= allConfigs.size()) {
-                        nextConfigId = 0;
+                    if (allConfigs.isEmpty()) { // 没有配置可切换，提示后直接返回
+                        player.sendSystemMessage(Component.translatable("battleroyale.message.no_loot_configs_available"));
+                        return InteractionResult.SUCCESS;
                     }
-
-                    LootConfig nextConfig = allConfigs.get(nextConfigId);
+                    LootConfig nextConfig = allConfigs.get(0);
+                    for (LootConfig config : allConfigs) { // 找第一个 ID 大于当前 ID 的配置
+                        if (config.getId() > currentConfigId) {
+                            nextConfig = config;
+                            break;
+                        }
+                    }
                     lootSpawnerBlockEntity.setConfigId(nextConfig.getId()); // 设置配置文件的实际 ID
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.loot_config_switched", nextConfig.getId()));
+                    player.sendSystemMessage(Component.translatable("battleroyale.message.loot_config_switched", nextConfig.getId(), nextConfig.getName()));
                     return InteractionResult.SUCCESS;
-                } else {
+                } else { // 打开界面
                     NetworkHooks.openScreen((ServerPlayer) player, lootSpawnerBlockEntity, (buf) -> {
                         buf.writeBlockPos(pos); // 传递方块的位置
-                        buf.writeUtf(lootSpawnerBlockEntity.getGameId() != null ? lootSpawnerBlockEntity.getGameId().toString() : ""); // 将 UUID 转换为 String 发送
+                        buf.writeUtf(lootSpawnerBlockEntity.getGameId() != null ? lootSpawnerBlockEntity.getGameId().toString() : "");
                     });
                     return InteractionResult.CONSUME;
                 }

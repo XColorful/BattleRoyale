@@ -6,5 +6,7 @@
   "block.battleroyale.entity_spawner": "Entity Spawner",
   "container.battleroyale.loot_spawner": "Loot Crate",
   "battleroyale.message.loot_config_switched": "Switched to loot config %s",
-  "battleroyale.message.entity_config_switched": "Switched to entity config %s"
+  "battleroyale.message.entity_config_switched": "Switched to entity loot config %s",
+  "battleroyale.message.loot_config_reloaded": "Reloaded all loot config",
+  "battleroyale.message.no_loot_configs_available": "No loot config available"
 }

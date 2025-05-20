@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.loot;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import xiao.battleroyale.BattleRoyale;
@@ -48,32 +49,27 @@ public class LootConfigManager {
     private static LootConfigManager instance;
 
     private LootConfigManager() {
-        loadLootSpawnerConfigs();
-        loadEntitySpawnerConfigs();
-        loadAirdropConfigs();
-        loadAirdropSpecialConfigs();
-        loadSecretRoomConfigs();
-        initializeDefaultConfigsIfEmpty();
+        reloadConfigs();
     }
 
     public void reloadConfigs() {
         lootSpawnerConfigs.clear();
         allLootSpawnerConfigs.clear();
+        loadLootSpawnerConfigs();
         entitySpawnerConfigs.clear();
         allEntitySpawnerConfigs.clear();
+        loadEntitySpawnerConfigs();
         airdropConfigs.clear();
         allAirdropConfigs.clear();
+        loadAirdropConfigs();
         airdropSpecialConfigs.clear();
         allAirdropSpecialConfigs.clear();
+        loadAirdropSpecialConfigs();
         secretRoomConfigs.clear();
         allSecretRoomConfigs.clear();
-        loadLootSpawnerConfigs();
-        loadEntitySpawnerConfigs();
-        loadAirdropConfigs();
-        loadAirdropSpecialConfigs();
         loadSecretRoomConfigs();
+
         initializeDefaultConfigsIfEmpty();
-        BattleRoyale.LOGGER.info("Loot configurations reloaded via command.");
     }
 
     public static void init() {
@@ -176,10 +172,11 @@ public class LootConfigManager {
     private void loadConfigFromFile(Path filePath, Map<Integer, LootConfig> configMap, List<LootConfig> configList) {
         try (InputStream inputStream = Files.newInputStream(filePath);
              InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+
             Gson gson = new Gson();
             JsonArray configArray = gson.fromJson(reader, JsonArray.class);
             if (configArray != null) {
-                for (com.google.gson.JsonElement element : configArray) {
+                for (JsonElement element : configArray) {
                     if (element.isJsonObject()) {
                         JsonObject configObject = element.getAsJsonObject();
                         if (configObject.has("id") && configObject.has("entry")) {

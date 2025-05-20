@@ -18,8 +18,8 @@ public abstract class AbstractLootBlockEntity extends BlockEntity implements ILo
     private static final String CONFIG_ID_TAG = "ConfigId";
 
     @Nullable
-    private UUID gameId = null;
-    private int configId = 0;
+    protected UUID gameId = null;
+    protected int configId = 0;
 
     protected AbstractLootBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -66,7 +66,7 @@ public abstract class AbstractLootBlockEntity extends BlockEntity implements ILo
         if (tag.hasUUID(GAME_ID_TAG)) {
             this.gameId = tag.getUUID(GAME_ID_TAG);
         } else {
-            this.gameId = null; // 如果 NBT 中没有，则保持为 null，后续逻辑可能需要处理
+            this.gameId = null;
         }
         if (tag.contains(CONFIG_ID_TAG, Tag.TAG_INT)) {
             this.configId = tag.getInt(CONFIG_ID_TAG);

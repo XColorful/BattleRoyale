@@ -3,6 +3,7 @@ package xiao.battleroyale.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer; // 需要导入 ServerPlayer 以便 NetworkHooks.openScreen
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -16,9 +17,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.network.NetworkHooks; // 需要导入 NetworkHooks 以便打开界面
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
+import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig; // 需要导入 LootConfig，因为它在 use 方法中被使用
 
 import java.util.List;
 
@@ -64,23 +67,25 @@ public class EntitySpawner extends AbstractLootBlock {
         if (!level.isClientSide) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof EntitySpawnerBlockEntity entitySpawnerBlockEntity) {
-                if (player.isCreative() && player.isCrouching()) {
+                if (player.isCreative() && player.isCrouching()) { // 切换实体刷新配置
                     int currentConfigId = entitySpawnerBlockEntity.getConfigId();
-                    int nextConfigId = currentConfigId + 1;
-                    List<LootConfigManager.LootConfig> allConfigs = LootConfigManager.get().getAllEntitySpawnerConfigs();
+                    List<LootConfig> allConfigs = LootConfigManager.get().getAllEntitySpawnerConfigs();
 
-                    if (allConfigs.isEmpty()) return InteractionResult.SUCCESS;
-
-                    if (nextConfigId >= allConfigs.size()) {
-                        nextConfigId = 0;
+                    if (allConfigs.isEmpty()) { // 没有配置可切换，提示后直接返回
+                        player.sendSystemMessage(Component.translatable("battleroyale.message.no_entity_configs_available"));
+                        return InteractionResult.SUCCESS;
                     }
-
-                    LootConfigManager.LootConfig nextConfig = allConfigs.get(nextConfigId);
-                    entitySpawnerBlockEntity.setConfigId(nextConfig.getId());
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_config_switched", nextConfig.getId()));
+                    LootConfig nextConfig = allConfigs.get(0);
+                    for (LootConfig config : allConfigs) { // 找第一个 ID 大于当前 ID 的配置
+                        if (config.getId() > currentConfigId) {
+                            nextConfig = config;
+                            break;
+                        }
+                    }
+                    entitySpawnerBlockEntity.setConfigId(nextConfig.getId()); // 设置配置文件的实际 ID
+                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_config_switched", nextConfig.getId(), nextConfig.getName()));
                     return InteractionResult.SUCCESS;
                 }
-                return InteractionResult.CONSUME;
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);

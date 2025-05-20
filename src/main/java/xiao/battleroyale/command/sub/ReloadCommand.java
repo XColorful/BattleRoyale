@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
+import xiao.battleroyale.BattleRoyale;
 
 public class ReloadCommand {
     private static final String RELOAD_NAME = "reload";
@@ -19,7 +20,8 @@ public class ReloadCommand {
 
     private static int reloadLootConfigs(CommandContext<CommandSourceStack> context) {
         LootConfigManager.get().reloadConfigs();
-        context.getSource().sendSuccess(() -> net.minecraft.network.chat.Component.literal("Battle Royale loot configurations reloaded."), true);
+        BattleRoyale.LOGGER.info("Reloaded loot configs");
+        context.getSource().sendSuccess(() -> net.minecraft.network.chat.Component.translatable("battleroyale.message.loot_config_reloaded"), true);
         return Command.SINGLE_SUCCESS;
     }
 }
