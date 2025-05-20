@@ -38,7 +38,7 @@ public class LootGenerator {
             UUID gameId = lootObject.getGameId();
             int configId = lootObject.getConfigId();
             LootConfigManager lootConfigManager = LootConfigManager.get();
-            LootConfigManager.LootConfig config = lootConfigManager.getLootSpawnerConfig(configId); // 假设所有 Loot 方块都使用 LootSpawnerConfig
+            LootConfigManager.LootConfig config = lootConfigManager.getLootSpawnerConfig(configId);
 
             if (gameId != null && config != null) {
                 ILootEntry<?> entry = config.getEntry();
