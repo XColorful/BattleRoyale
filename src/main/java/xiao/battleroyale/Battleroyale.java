@@ -16,8 +16,7 @@ import xiao.battleroyale.init.*;
 import xiao.battleroyale.resource.ResourceLoader;
 
 @Mod(BattleRoyale.MOD_ID)
-public class BattleRoyale
-{
+public class BattleRoyale {
     public static final String MOD_ID = "battleroyale";
     public static final Logger LOGGER = LogUtils.getLogger();
 

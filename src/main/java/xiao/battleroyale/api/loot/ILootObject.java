@@ -1,9 +1,8 @@
 package xiao.battleroyale.api.loot;
 
-import net.minecraft.resources.ResourceLocation;
+import java.util.UUID;
 
 public interface ILootObject {
-
     /**
      * 获取与此战利品对象关联的配置 ID。
      * 这个 ID 用于从 LootConfigManager 中查找具体的战利品配置。
@@ -20,19 +19,19 @@ public interface ILootObject {
     void setConfigId(int configId);
 
     /**
-     * 获取此战利品对象的唯一标识符。
-     * 这可能对应于 LootConfig 中的 id 或其他唯一标识。
+     * 获取此战利品方块所属的大逃杀游戏 UUID。
+     * 当区块加载时，会根据这个 UUID 与当前游戏 UUID 比较，不一致则刷新。
      *
-     * @return 唯一标识符。
+     * @return 大逃杀游戏 UUID。
      */
-    ResourceLocation getLootObjectId();
+    UUID getGameId();
 
     /**
-     * 设置此战利品对象的唯一标识符。
+     * 设置此战利品方块所属的大逃杀游戏 UUID。
      *
-     * @param lootObjectId 要设置的唯一标识符。
+     * @param gameId 要设置的大逃杀游戏 UUID。
      */
-    void setLootObjectId(ResourceLocation lootObjectId);
+    void setGameId(UUID gameId);
 
     // 可以添加其他通用的方法，例如获取颜色、名称等
 }

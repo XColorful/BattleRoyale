@@ -31,6 +31,7 @@ import xiao.battleroyale.api.DefaultAssets;
 import xiao.battleroyale.api.item.builder.BlockItemBuilder;
 import xiao.battleroyale.api.item.nbt.BlockItemDataAccessor;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
+import java.util.UUID;
 
 public class AbstractLootBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -59,8 +60,8 @@ public class AbstractLootBlock extends BaseEntityBlock {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof LootSpawnerBlockEntity lootSpawnerBlockEntity && player instanceof ServerPlayer serverPlayer) {
                 NetworkHooks.openScreen(serverPlayer, lootSpawnerBlockEntity, (buf) -> {
-                    ResourceLocation rl = lootSpawnerBlockEntity.getLootObjectId() == null ? DefaultAssets.DEFAULT_BLOCK_ID : lootSpawnerBlockEntity.getLootObjectId();
-                    buf.writeResourceLocation(rl);
+                    UUID gameId = lootSpawnerBlockEntity.getGameId();
+                    buf.writeUtf(gameId == null ? DefaultAssets.DEFAULT_BLOCK_ID.toString() : gameId.toString());
                 });
             }
             return InteractionResult.CONSUME;
@@ -95,11 +96,11 @@ public class AbstractLootBlock extends BaseEntityBlock {
             BlockEntity blockentity = world.getBlockEntity(pos);
             if (blockentity instanceof LootSpawnerBlockEntity e) {
                 if (stack.getItem() instanceof BlockItemDataAccessor accessor) {
-                    ResourceLocation id = accessor.getBlockId(stack);
-                    e.setLootObjectId(id);
+                    UUID gameId = accessor.getBlockGameId(stack);
+                    e.setGameId(gameId);
                     e.setConfigId(0); // 默认 configId
                 } else {
-                    e.setLootObjectId(DefaultAssets.DEFAULT_BLOCK_ID);
+                    e.setGameId(UUID.randomUUID()); // 或者其他合适的默认 UUID 生成逻辑
                     e.setConfigId(0); // 默认 configId
                 }
             }
@@ -110,8 +111,10 @@ public class AbstractLootBlock extends BaseEntityBlock {
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         BlockEntity blockentity = level.getBlockEntity(pos);
         if (blockentity instanceof LootSpawnerBlockEntity e) {
-            if (e.getLootObjectId() != null) {
-                return BlockItemBuilder.create(this).setId(e.getLootObjectId()).build();
+            if (e.getGameId() != null) {
+                return BlockItemBuilder.create(this)
+                        .withNBT(nbt -> nbt.putUUID("BlockGameId", e.getGameId())) // 存储 GameId 到物品 NBT
+                        .build();
             }
             return new ItemStack(this);
         }

@@ -1,6 +1,5 @@
 package xiao.battleroyale.common.loot;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -13,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import xiao.battleroyale.api.loot.ILootObject;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
+import java.util.UUID;
 
 public class LootGenerator {
 
@@ -35,12 +35,12 @@ public class LootGenerator {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof Container container && blockEntity instanceof ILootObject lootObject) {
             container.clearContent();
-            ResourceLocation lootObjectId = lootObject.getLootObjectId();
+            UUID gameId = lootObject.getGameId();
             int configId = lootObject.getConfigId();
             LootConfigManager lootConfigManager = LootConfigManager.get();
             LootConfigManager.LootConfig config = lootConfigManager.getLootSpawnerConfig(configId); // 假设所有 Loot 方块都使用 LootSpawnerConfig
 
-            if (lootObjectId != null && config != null) {
+            if (gameId != null && config != null) {
                 ILootEntry<?> entry = config.getEntry();
                 LootGenerator.generateLoot(level, entry, container, player.getRandom());
                 blockEntity.setChanged();

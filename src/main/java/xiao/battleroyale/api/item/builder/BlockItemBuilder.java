@@ -1,14 +1,12 @@
 package xiao.battleroyale.api.item.builder;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import xiao.battleroyale.api.DefaultAssets;
-import xiao.battleroyale.api.item.IBlock;
+import java.util.UUID;
 
 public class BlockItemBuilder {
     private int count = 1;
-    private ResourceLocation blockId = DefaultAssets.DEFAULT_BLOCK_ID;
+    private UUID gameId;
     private final ItemLike blockItem;
 
     private BlockItemBuilder(ItemLike blockItem) {
@@ -24,15 +22,21 @@ public class BlockItemBuilder {
         return this;
     }
 
-    public BlockItemBuilder setId(ResourceLocation id) {
-        this.blockId = id;
+    public BlockItemBuilder setGameId(UUID gameId) {
+        this.gameId = gameId;
+        return this;
+    }
+
+    public BlockItemBuilder withNBT(java.util.function.Consumer<net.minecraft.nbt.CompoundTag> consumer) {
+        ItemStack stack = new ItemStack(this.blockItem, this.count);
+        consumer.accept(stack.getOrCreateTag());
         return this;
     }
 
     public ItemStack build() {
         ItemStack block = new ItemStack(blockItem ,this.count);
-        if (block.getItem() instanceof IBlock iBlock) {
-            iBlock.setBlockId(block, this.blockId);
+        if (this.gameId != null) {
+            block.getOrCreateTag().putUUID("BlockGameId", this.gameId); // 保存 GameId 到物品 NBT
         }
         return block;
     }

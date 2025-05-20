@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
-
 import java.util.List;
+import java.util.UUID;
 
 public class LootSpawner extends AbstractLootBlock {
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
@@ -78,7 +78,7 @@ public class LootSpawner extends AbstractLootBlock {
                 } else {
                     NetworkHooks.openScreen((ServerPlayer) player, lootSpawnerBlockEntity, (buf) -> {
                         buf.writeBlockPos(pos); // 传递方块的位置
-                        buf.writeResourceLocation(lootSpawnerBlockEntity.getLootObjectId());
+                        buf.writeUtf(lootSpawnerBlockEntity.getGameId() != null ? lootSpawnerBlockEntity.getGameId().toString() : ""); // 将 UUID 转换为 String 发送
                     });
                     return InteractionResult.CONSUME;
                 }

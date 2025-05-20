@@ -1,37 +1,30 @@
 package xiao.battleroyale.api.item.nbt;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import xiao.battleroyale.api.DefaultAssets;
-import xiao.battleroyale.api.item.IBlock;
-
+import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 
-public interface BlockItemDataAccessor extends IBlock {
-    String BLOCK_ID = "BlockId";
+public interface BlockItemDataAccessor {
+    String BLOCK_GAME_ID = "BlockGameId"; // 修改 NBT 标签名称
 
-    @Override
     @Nonnull
-    default ResourceLocation getBlockId(ItemStack block) {
+    default UUID getBlockGameId(ItemStack block) {
         CompoundTag nbt = block.getOrCreateTag();
-        if (nbt.contains(BLOCK_ID, Tag.TAG_STRING)) {
-            ResourceLocation gunId = ResourceLocation.tryParse(nbt.getString(BLOCK_ID));
-            return Objects.requireNonNullElse(gunId, DefaultAssets.EMPTY_BLOCK_ID);
+        if (nbt.hasUUID(BLOCK_GAME_ID)) {
+            return nbt.getUUID(BLOCK_GAME_ID);
         }
-        return DefaultAssets.EMPTY_BLOCK_ID;
+        // 返回一个默认的 UUID，或者 null，取决于你的逻辑
+        return new UUID(0, 0); // 示例默认 UUID
     }
 
-    @Override
-    default void setBlockId(ItemStack block, @Nullable ResourceLocation blockId) {
+    default void setBlockGameId(ItemStack block, @Nullable UUID gameId) {
         CompoundTag nbt = block.getOrCreateTag();
-        if (blockId != null) {
-            nbt.putString(BLOCK_ID, blockId.toString());
+        if (gameId != null) {
+            nbt.putUUID(BLOCK_GAME_ID, gameId);
             return;
         }
-        nbt.putString(BLOCK_ID, DefaultAssets.EMPTY_BLOCK_ID.toString());
+        nbt.remove(BLOCK_GAME_ID); // 如果 gameId 为 null，则移除 NBT 标签
     }
 }
