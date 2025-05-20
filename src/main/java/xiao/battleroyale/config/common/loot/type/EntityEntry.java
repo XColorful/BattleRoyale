@@ -53,6 +53,11 @@ public class EntityEntry implements IEntityLootEntry {
     }
 
     @Override
+    public int getRange() {
+        return range;
+    }
+
+    @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("type", getType());
