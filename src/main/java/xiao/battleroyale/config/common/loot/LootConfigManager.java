@@ -28,6 +28,8 @@ import java.util.stream.Stream;
 
 public class LootConfigManager {
 
+    public static final int DEFAULT_CONFIG_ID = 0;
+
     private static final String COMMON_LOOT_CONFIG_PATH = "config/battleroyale/loot";
     private static final String LOOT_SPAWNER_CONFIG_SUB_PATH = "loot_spawner";
     private static final String ENTITY_SPAWNER_CONFIG_SUB_PATH = "entity_spawner";

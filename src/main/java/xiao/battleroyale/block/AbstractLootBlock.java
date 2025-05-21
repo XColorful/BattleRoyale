@@ -2,7 +2,8 @@ package xiao.battleroyale.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,6 +16,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -24,15 +27,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.DefaultAssets;
 import xiao.battleroyale.api.item.builder.BlockItemBuilder;
-import xiao.battleroyale.api.item.nbt.BlockItemDataAccessor;
+import xiao.battleroyale.api.loot.LootNBT;
+import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
+import xiao.battleroyale.config.common.loot.LootConfigManager;
+
 import java.util.UUID;
 
-public class AbstractLootBlock extends BaseEntityBlock {
+public abstract class AbstractLootBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 1, 16);
 
@@ -51,21 +55,14 @@ public class AbstractLootBlock extends BaseEntityBlock {
         return SHAPE;
     }
 
+    @Nullable
     @Override
-    public InteractionResult use(BlockState pState, Level level, BlockPos pos, Player player, InteractionHand pHand, BlockHitResult pHit) {
-        if (level.isClientSide) {
-            return InteractionResult.SUCCESS;
-        } else {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof LootSpawnerBlockEntity lootSpawnerBlockEntity && player instanceof ServerPlayer serverPlayer) {
-                NetworkHooks.openScreen(serverPlayer, lootSpawnerBlockEntity, (buf) -> {
-                    UUID gameId = lootSpawnerBlockEntity.getGameId();
-                    buf.writeUtf(gameId == null ? DefaultAssets.DEFAULT_BLOCK_ID.toString() : gameId.toString());
-                });
-            }
-            return InteractionResult.CONSUME;
-        }
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return null;
     }
+
+    @Override
+    public abstract InteractionResult use(BlockState pState, Level level, BlockPos pos, Player player, InteractionHand pHand, BlockHitResult pHit);
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -93,15 +90,22 @@ public class AbstractLootBlock extends BaseEntityBlock {
         super.setPlacedBy(world, pos, state, placer, stack);
         if (!world.isClientSide) {
             BlockEntity blockentity = world.getBlockEntity(pos);
-            if (blockentity instanceof LootSpawnerBlockEntity e) {
-                if (stack.getItem() instanceof BlockItemDataAccessor accessor) {
-                    UUID gameId = accessor.getBlockGameId(stack);
-                    e.setGameId(gameId);
-                    e.setConfigId(0); // 默认 configId
-                } else {
-                    e.setGameId(UUID.randomUUID()); // 或者其他合适的默认 UUID 生成逻辑
-                    e.setConfigId(0); // 默认 configId
+            if (blockentity instanceof AbstractLootBlockEntity e) {
+                CompoundTag nbt = stack.getTag();
+
+                // GameId
+                UUID gameId = null;
+                if (nbt != null && nbt.hasUUID(LootNBT.GAME_ID_TAG)) {
+                    gameId = nbt.getUUID(LootNBT.GAME_ID_TAG);
                 }
+                e.setGameId(gameId != null ? gameId : UUID.randomUUID());
+
+                // ConfigId
+                int configId = LootConfigManager.DEFAULT_CONFIG_ID;
+                if (nbt != null && nbt.contains(LootNBT.CONFIG_ID_TAG, Tag.TAG_INT)) {
+                    configId = nbt.getInt(LootNBT.CONFIG_ID_TAG);
+                }
+                e.setConfigId(configId);
             }
         }
     }
@@ -110,12 +114,19 @@ public class AbstractLootBlock extends BaseEntityBlock {
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         BlockEntity blockentity = level.getBlockEntity(pos);
         if (blockentity instanceof LootSpawnerBlockEntity e) {
-            if (e.getGameId() != null) {
-                return BlockItemBuilder.create(this)
-                        .withNBT(nbt -> nbt.putUUID("BlockGameId", e.getGameId())) // 存储 GameId 到物品 NBT
-                        .build();
-            }
-            return new ItemStack(this);
+            UUID gameId = e.getGameId();
+            int configId = e.getConfigId();
+
+            return BlockItemBuilder.create(this)
+                    .withNBT(nbt -> {
+                        if (gameId != null) {
+                            nbt.putUUID(LootNBT.GAME_ID_TAG, gameId);
+                        } else {
+                            nbt.remove(LootNBT.GAME_ID_TAG);
+                        }
+                        nbt.putInt(LootNBT.CONFIG_ID_TAG, configId);
+                    })
+                    .build();
         }
         return super.getCloneItemStack(state, target, level, pos, player);
     }
