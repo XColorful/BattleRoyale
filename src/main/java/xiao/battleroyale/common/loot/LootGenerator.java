@@ -14,6 +14,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.ILootObject;
 import xiao.battleroyale.api.loot.entity.IEntityLootEntry;
+import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 
@@ -41,16 +42,17 @@ public class LootGenerator {
             return;
         }
 
-        if (lootObject instanceof Container container) {
+        if (lootObject instanceof AbstractLootContainerBlockEntity container) {
             container.clearContent();
             for (int i = 0; i < generatedLoot.size() && i < container.getContainerSize(); i++) {
                 Object lootItem = generatedLoot.get(i);
                 if (lootItem instanceof ItemStack itemStack) {
-                    container.setItem(i, itemStack);
+                    container.setItemNoUpdate(i, itemStack); // 省流
                 } else {
                     BattleRoyale.LOGGER.warn("Ignore non-item loot for container at: {}", ((BlockEntity) target).getBlockPos());
                 }
             }
+            container.sendBlockUpdated(); // 省流
         } else if (entry instanceof IEntityLootEntry entityEntry && level instanceof ServerLevel serverLevel) {
             BlockPos spawnOrigin = ((BlockEntity) target).getBlockPos();
             int range = entityEntry.getRange();
