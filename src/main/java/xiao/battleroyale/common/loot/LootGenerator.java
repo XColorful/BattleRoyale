@@ -1,9 +1,7 @@
 package xiao.battleroyale.common.loot;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -19,14 +17,19 @@ import xiao.battleroyale.api.loot.entity.IEntityLootEntry;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 
 public class LootGenerator {
 
+    /**
+     * 根据战利品配置生成战利品到目标对象。
+     * @param level 当前世界
+     * @param entry 战利品入口配置
+     * @param target 战利品目标（如方块实体或实体）
+     * @param random 随机数生成器
+     */
     public static void generateLoot(Level level, ILootEntry<?> entry, Object target, Supplier<Float> random) {
         List<?> generatedLoot = entry.generateLoot(random);
 
@@ -61,6 +64,14 @@ public class LootGenerator {
         }
     }
 
+    /**
+     * 寻找一个有效的实体生成位置。
+     * @param level 服务器世界
+     * @param centerPos 中心位置
+     * @param range 刷新范围
+     * @param random 随机数生成器
+     * @return 有效的刷新位置
+     */
     private static BlockPos findValidSpawnPosition(ServerLevel level, BlockPos centerPos, int range, Supplier<Float> random) {
         for (int i = 0; i < 4; i++) {
             int dx = (int) ((random.get() - 0.5) * 2 * range);
@@ -69,14 +80,20 @@ public class LootGenerator {
             BlockPos ground = level.getHeightmapPos(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, candidate);
             BlockState below = level.getBlockState(ground.below());
 
-            // 替代 getMaterial().isSolid()
-            if (!below.isAir() && below.getCollisionShape(level, ground.below()).isEmpty() == false) {
+            if (!below.isAir() && !below.getCollisionShape(level, ground.below()).isEmpty()) {
                 return ground;
             }
         }
         return centerPos;
     }
 
+    /**
+     * 刷新单个战利品方块实体。
+     * @param level 当前世界
+     * @param pos 方块位置
+     * @param currentGameId 当前游戏的唯一ID
+     * @return true 如果成功刷新，false 否则
+     */
     public static boolean refreshLootObject(Level level, BlockPos pos, UUID currentGameId) {
         if (!(level instanceof ServerLevel serverLevel)) {
             return false;
@@ -91,72 +108,40 @@ public class LootGenerator {
         int configId = lootObject.getConfigId();
         LootConfig config = LootConfigManager.get().getLootConfig(blockEntity, configId);
 
+        // 仅在配置存在且方块的 gameId 与当前 gameId 不同时刷新
         if (config != null && (blockGameId == null || !blockGameId.equals(currentGameId))) {
             ILootEntry<?> entry = config.getEntry();
             generateLoot(serverLevel, entry, blockEntity, () -> serverLevel.getRandom().nextFloat());
             lootObject.setGameId(currentGameId);
             blockEntity.setChanged();
-            BattleRoyale.LOGGER.info("Refreshed loot for {} at {} with configId {} for game {}", blockEntity.getClass().getSimpleName(), pos, configId, currentGameId);
+            // 记录刷新信息，但这里不再记录总数，而是由 LootTickEvent 累加
+            BattleRoyale.LOGGER.debug("Refreshed loot for {} at {} with configId {} for game {}", blockEntity.getClass().getSimpleName(), pos, configId, currentGameId);
             return true;
         }
         return false;
     }
 
+    /**
+     * 刷新指定区块内的所有战利品方块。
+     * @param level 服务器世界
+     * @param chunkPos 区块位置
+     * @param currentGameId 当前游戏的唯一ID
+     * @return 该区块内刷新的战利品方块数量
+     */
     public static int refreshLootInChunk(ServerLevel level, ChunkPos chunkPos, UUID currentGameId) {
         int refreshedCount = 0;
-        if (!level.hasChunk(chunkPos.x, chunkPos.z)) {
+        LevelChunk chunk = level.getChunkSource().getChunkNow(chunkPos.x, chunkPos.z);
+
+        if (chunk == null) { // 区块未加载
+            BattleRoyale.LOGGER.warn("Skipping loot generation for unloaded chunk: {}", chunkPos);
             return refreshedCount;
         }
 
-        LevelChunk chunk = level.getChunk(chunkPos.x, chunkPos.z);
         for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
-            if (!(blockEntity instanceof ILootObject)) {
-                continue;
-            }
             if (refreshLootObject(level, blockEntity.getBlockPos(), currentGameId)) {
                 refreshedCount++;
             }
         }
         return refreshedCount;
     }
-
-    public static int refreshAllLoadedLoot(ServerLevel level, UUID currentGameId) {
-        int totalRefreshedCount = 0;
-        MinecraftServer server = level.getServer();
-        int simDist = server.getPlayerList().getSimulationDistance();
-
-        Set<ChunkPos> chunksToProcess = new HashSet<>();
-        Set<ChunkPos> processedCenterChunks = new HashSet<>();
-
-        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            if (player.level() != level) continue;
-
-            BlockPos playerPos = player.blockPosition();
-            ChunkPos centerChunk = new ChunkPos(playerPos);
-
-            // 如果该中心 chunk 已处理过，就跳过
-            if (!processedCenterChunks.add(centerChunk)) {
-                continue;
-            }
-
-            // 计算模拟范围内的 chunk 并加入待处理集合
-            for (int dx = -simDist; dx <= simDist; dx++) {
-                for (int dz = -simDist; dz <= simDist; dz++) {
-                    chunksToProcess.add(new ChunkPos(centerChunk.x + dx, centerChunk.z + dz));
-                }
-            }
-        }
-
-        // 去重后统一刷新
-        for (ChunkPos pos : chunksToProcess) {
-            LevelChunk chunk = level.getChunkSource().getChunkNow(pos.x, pos.z);
-            if (chunk != null) {
-                totalRefreshedCount += refreshLootInChunk(level, pos, currentGameId);
-            }
-        }
-
-        BattleRoyale.LOGGER.info("Refreshed {} loot objects in level: {}.", totalRefreshedCount, level.dimension().location());
-        return totalRefreshedCount;
-    }
-
 }

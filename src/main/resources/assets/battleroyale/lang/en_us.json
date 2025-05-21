@@ -9,5 +9,7 @@
   "battleroyale.message.entity_config_switched": "Switched to entity loot config %s",
   "battleroyale.message.loot_config_reloaded": "Reloaded all loot config",
   "battleroyale.message.no_loot_configs_available": "No loot config available",
-  "battleroyale.message.loot_generation_finished": "Generated loot: %s"
+  "battleroyale.message.loot_generation_finished": "Generated loot: %s",
+  "battleroyale.message.loot_generation_in_progress": "There's loot generation in progress",
+  "battleroyale.message.loot_generation_started": "Start generating loots (chunk total: %s)"
 }

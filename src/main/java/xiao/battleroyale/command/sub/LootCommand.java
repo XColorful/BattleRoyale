@@ -6,9 +6,8 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.loot.LootGenerator;
+import xiao.battleroyale.event.LootTickEvent;
 import java.util.UUID;
 
 public class LootCommand {
@@ -24,16 +23,20 @@ public class LootCommand {
     }
 
     private static int generateAllLoadedLoot(CommandContext<CommandSourceStack> context) {
-        ServerLevel level = context.getSource().getLevel();
+        CommandSourceStack source = context.getSource();
         UUID currentWorldGameId = null; // TODO: 大逃杀模式完成后修改，从游戏状态管理器获取
-
         if (currentWorldGameId == null) {
             currentWorldGameId = UUID.randomUUID();
             BattleRoyale.LOGGER.warn("No active game ID found, using a random UUID for loot generation.");
         }
 
-        int count = LootGenerator.refreshAllLoadedLoot(level, currentWorldGameId);
-        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.loot_generation_finished", count), true);
-        return Command.SINGLE_SUCCESS;
+        int totalChunks = LootTickEvent.startLootGeneration(source, currentWorldGameId);
+        if (totalChunks > 0) {
+            source.sendSuccess(() -> Component.translatable("battleroyale.message.loot_generation_started", totalChunks), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            source.sendFailure(Component.translatable("battleroyale.message.loot_generation_in_progress"));
+            return Command.SINGLE_SUCCESS;
+        }
     }
 }
