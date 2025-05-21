@@ -6,11 +6,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import xiao.battleroyale.init.ModBlocks;
 
 public class EntitySpawnerBlockEntity extends AbstractLootBlockEntity {
-    public static final BlockEntityType<EntitySpawnerBlockEntity> TYPE = BlockEntityType.Builder.of(EntitySpawnerBlockEntity::new,
-            ModBlocks.ENTITY_SPAWNER.get()
-    ).build(null);
 
     public EntitySpawnerBlockEntity(BlockPos pos, BlockState blockState) {
-        super(TYPE, pos, blockState);
+        super(ModBlocks.ENTITY_SPAWNER_BE.get(), pos, blockState);
     }
 }
