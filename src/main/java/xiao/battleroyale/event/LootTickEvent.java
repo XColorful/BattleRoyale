@@ -98,12 +98,12 @@ public class LootTickEvent {
             if (chunksToProcess.isEmpty()) {
                 if (initiatingCommandSource != null) { // 所有区块处理完毕
                     initiatingCommandSource.sendSuccess(() -> Component.translatable("battleroyale.message.loot_generation_finished", totalLootRefreshedInBatch), true);
+                    BattleRoyale.LOGGER.info("Loot generation batch finished. Total refreshed: {}", totalLootRefreshedInBatch);
                     initiatingCommandSource = null; // 清空，防止重复发送
                 }
                 currentGenerationGameId = null;
                 currentGenerationLevel = null;
                 totalLootRefreshedInBatch = 0;
-                BattleRoyale.LOGGER.info("Loot generation batch finished. Total refreshed: {}", totalLootRefreshedInBatch);
                 return;
             }
 
