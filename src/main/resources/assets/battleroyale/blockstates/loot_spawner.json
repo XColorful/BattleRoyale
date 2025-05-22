@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "battleroyale:block/loot_spawner"
+    }
+  }
+}
