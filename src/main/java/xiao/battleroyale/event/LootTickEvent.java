@@ -10,6 +10,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.loot.LootGenerator;
 
 import java.util.ArrayDeque;

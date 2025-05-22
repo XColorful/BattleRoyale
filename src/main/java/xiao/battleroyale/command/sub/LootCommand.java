@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.event.LootTickEvent;
 import java.util.UUID;
 
@@ -24,11 +24,7 @@ public class LootCommand {
 
     private static int generateAllLoadedLoot(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
-        UUID currentWorldGameId = null; // TODO: 大逃杀模式完成后修改，从游戏状态管理器获取
-        if (currentWorldGameId == null) {
-            currentWorldGameId = UUID.randomUUID();
-            BattleRoyale.LOGGER.warn("No active game ID found, using a random UUID for loot generation.");
-        }
+        UUID currentWorldGameId = GameManager.get().getGameId(); // TODO: 大逃杀模式完成后修改，从游戏状态管理器获取
 
         int totalChunks = LootTickEvent.startLootGeneration(source, currentWorldGameId);
         if (totalChunks > 0) {
