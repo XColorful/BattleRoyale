@@ -16,10 +16,9 @@ import xiao.battleroyale.init.*;
 import xiao.battleroyale.resource.ResourceLoader;
 
 @Mod(BattleRoyale.MOD_ID)
-public class BattleRoyale
-{
+public class BattleRoyale {
     public static final String MOD_ID = "battleroyale";
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public BattleRoyale(FMLJavaModLoadingContext context)
     {
@@ -29,6 +28,8 @@ public class BattleRoyale
         Dist side = FMLLoader.getDist();
         ResourceLoader.INSTANCE.packType = side.isClient() ? PackType.CLIENT_RESOURCES : PackType.SERVER_DATA;
 
+        ModBlocks.BLOCKS.getClass();
+
         IEventBus bus = context.getModEventBus();
         ModBlocks.BLOCKS.register(bus);
         ModBlocks.BLOCK_ENTITIES.register(bus);
@@ -37,6 +38,5 @@ public class BattleRoyale
         ModEntities.ENTITY_TYPES.register(bus);
         ModContainer.CONTAINER_TYPE.register(bus);
         ModSounds.SOUNDS.register(bus);
-
     }
 }

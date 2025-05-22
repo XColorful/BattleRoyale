@@ -1,0 +1,15 @@
+{
+  "itemGroup.tab.battleroyale.block": "Battle Royale方块",
+  "item.battleroyale.loot_spawner": "物资刷新器",
+  "item.battleroyale.entity_spawner": "实体生成器",
+  "block.battleroyale.loot_spawner": "物资刷新方块",
+  "block.battleroyale.entity_spawner": "实体生成方块",
+  "container.battleroyale.loot_spawner": "物资盒",
+  "battleroyale.message.loot_config_switched": "切换至物资刷新配置%s",
+  "battleroyale.message.entity_config_switched": "切换至实体刷新配置%s",
+  "battleroyale.message.loot_config_reloaded": "已重新加载物资及实体刷新配置",
+  "battleroyale.message.no_loot_configs_available": "当前没有已加载的刷新配置",
+  "battleroyale.message.loot_generation_finished": "刷新物资及实体方块共%s个",
+  "battleroyale.message.loot_generation_in_progress": "当前正在执行物资刷新",
+  "battleroyale.message.loot_generation_started": "开始执行物资刷新 (区块数: %s)"
+}
