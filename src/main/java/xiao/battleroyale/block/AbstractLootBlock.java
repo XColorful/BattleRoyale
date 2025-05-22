@@ -38,7 +38,7 @@ import java.util.UUID;
 
 public abstract class AbstractLootBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 1, 16);
+    protected static VoxelShape SHAPE = Block.box(0, 0, 0, 16, 1, 16);
 
     public AbstractLootBlock() {
         super(Properties.of()
