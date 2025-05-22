@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.ILootObject;
 import xiao.battleroyale.api.loot.LootNBT;
+import xiao.battleroyale.config.common.loot.LootConfigManager;
 
 import java.util.UUID;
 
@@ -19,7 +20,7 @@ public abstract class AbstractLootBlockEntity extends BlockEntity implements ILo
 
     @Nullable
     protected UUID gameId = null;
-    protected int configId = 0;
+    protected int configId = LootConfigManager.DEFAULT_CONFIG_ID;
 
     protected AbstractLootBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
