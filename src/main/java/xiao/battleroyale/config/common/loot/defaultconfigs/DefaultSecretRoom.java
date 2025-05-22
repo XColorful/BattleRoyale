@@ -2,16 +2,12 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.config.common.loot.type.EmptyEntry;
 import xiao.battleroyale.config.common.loot.type.ItemEntry;
 import xiao.battleroyale.config.common.loot.type.MultiEntry;
-import xiao.battleroyale.config.common.loot.type.NoneEntry;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class DefaultSecretRoom extends DefaultConfigHelper {
 
@@ -28,17 +24,19 @@ public class DefaultSecretRoom extends DefaultConfigHelper {
         config.addProperty("id", 401);
         config.addProperty("name", "Treasure trove");
         config.addProperty("color", "#00FFFF");
-        ILootEntry<?> multiEntry = new MultiEntry<>(Arrays.asList(
-                new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:iron_ingot")), 1)),
-                new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:gold_ingot")), 1)),
-                new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:copper_ingot")), 1)),
-                new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:lapis_lazuli")), 1)),
-                new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:redstone")), 1)),
-                new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:diamond")), 1)),
-                new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:emerald")), 1)),
-                new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:amethyst_shard")), 1)),
-                new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:netherite_ingot")), 1))
+
+        ILootEntry multiEntry = new MultiEntry(Arrays.asList(
+                new ItemEntry("minecraft:iron_ingot", null, 1),
+                new ItemEntry("minecraft:gold_ingot", null, 1),
+                new ItemEntry("minecraft:copper_ingot", null, 1),
+                new ItemEntry("minecraft:lapis_lazuli", null, 1),
+                new ItemEntry("minecraft:redstone", null, 1),
+                new ItemEntry("minecraft:diamond", null, 1),
+                new ItemEntry("minecraft:emerald", null, 1),
+                new ItemEntry("minecraft:amethyst_shard", null, 1),
+                new ItemEntry("minecraft:netherite_ingot", null, 1)
         ));
+        
         config.add("entry", multiEntry.toJson());
         return config;
     }

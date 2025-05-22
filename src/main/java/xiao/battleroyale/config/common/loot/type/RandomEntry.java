@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.util.JsonUtils;
 
@@ -9,11 +10,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class RandomEntry<T> implements ILootEntry<T> {
+public class RandomEntry implements ILootEntry {
     private final double chance;
-    private final ILootEntry<?> entry;
+    private final ILootEntry entry;
 
-    public RandomEntry(double chance, ILootEntry<?> entry) {
+    public RandomEntry(double chance, ILootEntry entry) {
         if (chance < 0) {
             BattleRoyale.LOGGER.warn("RandomEntry chance ({}) is lower than 0, defaulting to 0", chance);
             chance = 0;
@@ -23,12 +24,16 @@ public class RandomEntry<T> implements ILootEntry<T> {
     }
 
     @Override
-    public List<T> generateLoot(Supplier<Float> random) {
-        if (random.get() < chance && entry != null) {
-            try {
-                return (List<T>) entry.generateLoot(random);
-            } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse random entry");
+    public List<ILootData> generateLootData(Supplier<Float> random) {
+        if (random.get() < chance) {
+            if (entry != null) {
+                try {
+                    return entry.generateLootData(random);
+                } catch (Exception e) {
+                    BattleRoyale.LOGGER.warn("Failed to parse random entry");
+                }
+            } else {
+                BattleRoyale.LOGGER.warn("RandomEntry missing entry member, skipped");
             }
         }
         return Collections.emptyList();
@@ -39,16 +44,10 @@ public class RandomEntry<T> implements ILootEntry<T> {
         return "random";
     }
 
-    public static RandomEntry<?> fromJson(JsonObject jsonObject) {
+    public static RandomEntry fromJson(JsonObject jsonObject) {
         double chance = jsonObject.has("chance") ? jsonObject.getAsJsonPrimitive("chance").getAsDouble() : 0;
-        if (jsonObject.has("entry")) {
-            JsonObject entryObject = jsonObject.getAsJsonObject("entry");
-            ILootEntry<?> entry = JsonUtils.deserializeLootEntry(entryObject);
-            return new RandomEntry<>(chance, entry);
-        } else {
-            BattleRoyale.LOGGER.warn("RandomEntry missing entry member, skipped");
-            return new RandomEntry<>(chance, null);
-        }
+        ILootEntry entry = jsonObject.has("entry") ? JsonUtils.deserializeLootEntry(jsonObject.getAsJsonObject("entry")) : null;
+        return new RandomEntry(chance, entry);
     }
 
     @Override

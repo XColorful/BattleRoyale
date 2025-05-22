@@ -1,13 +1,14 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class TimeEntry<T> implements ILootEntry<T> {
+public class TimeEntry implements ILootEntry {
     private final int start;
     private final int end;
 
@@ -17,7 +18,7 @@ public class TimeEntry<T> implements ILootEntry<T> {
     }
 
     @Override
-    public List<T> generateLoot(Supplier<Float> random) {
+    public List<ILootData> generateLootData(Supplier<Float> random) {
         // TODO: 在实际刷新时根据游戏时间判断是否生成战利品
         return Collections.emptyList();
     }
@@ -27,10 +28,10 @@ public class TimeEntry<T> implements ILootEntry<T> {
         return "time";
     }
 
-    public static TimeEntry<?> fromJson(JsonObject jsonObject) {
+    public static TimeEntry fromJson(JsonObject jsonObject) {
         int start = jsonObject.has("start") ? jsonObject.getAsJsonPrimitive("start").getAsInt() : 0;
         int end = jsonObject.has("end") ? jsonObject.getAsJsonPrimitive("end").getAsInt() : 0;
-        return new TimeEntry<>(start, end);
+        return new TimeEntry(start, end);
     }
 
     @Override

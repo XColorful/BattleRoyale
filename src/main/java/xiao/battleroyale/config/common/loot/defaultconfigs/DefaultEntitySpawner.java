@@ -2,7 +2,6 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.resources.ResourceLocation;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.config.common.loot.type.EntityEntry;
 import xiao.battleroyale.config.common.loot.type.RandomEntry;
@@ -21,8 +20,9 @@ public class DefaultEntitySpawner extends DefaultConfigHelper {
         JsonObject config = new JsonObject();
         config.addProperty("id", 101);
         config.addProperty("name", "Horse Spawn with Probability");
-        config.addProperty("color", "#A0522D"); // Changed color to brown for horse
-        ILootEntry<?> randomEntry = new RandomEntry<>(0.2, new EntityEntry(new ResourceLocation("minecraft:horse"), null, 1, 1));
+        config.addProperty("color", "#A0522D");
+
+        ILootEntry randomEntry = new RandomEntry(0.2, new EntityEntry("minecraft:horse", null, 1, 1));
         config.add("entry", randomEntry.toJson());
         return config;
     }

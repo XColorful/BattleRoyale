@@ -24,7 +24,7 @@ public class JsonUtils {
         return GSON.toJson(object);
     }
 
-    public static ILootEntry<?> deserializeLootEntry(JsonObject jsonObject) {
+    public static ILootEntry deserializeLootEntry(JsonObject jsonObject) {
         try {
             String type = jsonObject.get("type").getAsString();
             LootEntryType lootEntryType = LootEntryType.fromName(type);

@@ -2,9 +2,6 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.config.common.loot.type.ItemEntry;
 import xiao.battleroyale.config.common.loot.type.MultiEntry;
@@ -12,6 +9,7 @@ import xiao.battleroyale.config.common.loot.type.RandomEntry;
 import xiao.battleroyale.config.common.loot.type.WeightEntry;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class DefaultAirdrop extends DefaultConfigHelper {
 
@@ -28,15 +26,18 @@ public class DefaultAirdrop extends DefaultConfigHelper {
         config.addProperty("id", 201);
         config.addProperty("name", "Netherite Airdrop");
         config.addProperty("color", "#FFFF00");
-        ILootEntry<?> multiEntry = new MultiEntry<>(Arrays.asList(
-                new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:netherite_helmet")), 1)),
-                new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:netherite_chestplate")), 1)),
-                new WeightEntry<>(Arrays.asList(
-                        WeightEntry.createWeightedEntry(20, new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:netherite_sword")), 1))),
-                        WeightEntry.createWeightedEntry(20, new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:netherite_axe")), 1)))
+
+        List<ILootEntry> entries = Arrays.asList(
+                new ItemEntry("minecraft:netherite_helmet", null, 1),
+                new ItemEntry("minecraft:netherite_chestplate", null, 1),
+                new WeightEntry(Arrays.asList(
+                        WeightEntry.createWeightedEntry(20, new ItemEntry("minecraft:netherite_sword", null, 1)),
+                        WeightEntry.createWeightedEntry(20, new ItemEntry("minecraft:netherite_axe", null, 1))
                 )),
-                new RandomEntry<>(0.05, new ItemEntry(new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft:enchanted_golden_apple")), 1)))
-        ));
+                new RandomEntry(0.05, new ItemEntry("minecraft:enchanted_golden_apple", null, 1))
+        );
+        ILootEntry multiEntry = new MultiEntry(entries);
+
         config.add("entry", multiEntry.toJson());
         return config;
     }

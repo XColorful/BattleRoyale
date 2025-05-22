@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.function.Supplier;
 import com.google.gson.JsonObject;
 
-public interface ILootEntry<T> {
+public interface ILootEntry {
     /**
      * 根据配置生成战利品列表.
      * @param random 提供随机数的 Supplier
      * @return 生成的战利品列表
      */
-    List<T> generateLoot(Supplier<Float> random);
+    List<ILootData> generateLootData(Supplier<Float> random);
 
     /**
      * 获取当前 LootEntry 的类型，用于 JSON 反序列化.

@@ -1,50 +1,31 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.TagParser;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.server.level.ServerLevel;
-import xiao.battleroyale.BattleRoyale;
+import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.entity.IEntityLootEntry;
+import xiao.battleroyale.config.common.loot.data.EntityData;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
 public class EntityEntry implements IEntityLootEntry {
-    private final ResourceLocation entityTypeRL;
-    private final CompoundTag nbt;
-    private final int count;
-    private final int range;
+    private String entityString;
+    private @Nullable String nbtString;
+    private int count;
+    private int range;
 
-    public EntityEntry(ResourceLocation entityTypeRL, CompoundTag nbt, int count, int range) {
-        this.entityTypeRL = entityTypeRL;
-        this.nbt = nbt;
+    public EntityEntry(String rl, @Nullable String nbtString, int count, int range) {
+        this.entityString = rl;
+        this.nbtString = nbtString;
         this.count = count;
         this.range = range;
     }
 
     @Override
-    public List<Entity> generateLoot(Supplier<Float> random) {
-        List<Entity> entities = new ArrayList<>();
-        EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(entityTypeRL);
-        if (entityType != null) {
-            // 这里只是创建实体实例，实际生成到世界需要 LootGenerator 处理
-            for (int i = 0; i < count; i++) {
-                Entity entity = entityType.create((ServerLevel) null); // 在实际生成时需要 ServerLevel
-                if (entity != null && nbt != null) {
-                    entity.load(nbt);
-                }
-                entities.add(entity);
-            }
-        } else {
-            BattleRoyale.LOGGER.warn("Unknown entity type: {}", entityTypeRL);
-        }
-        return entities;
+    public List<ILootData> generateLootData(Supplier<Float> random) {
+        return Collections.singletonList(new EntityData(this.entityString, this.nbtString, this.count, this.range));
     }
 
     @Override
@@ -53,41 +34,27 @@ public class EntityEntry implements IEntityLootEntry {
     }
 
     @Override
-    public int getRange() {
-        return range;
-    }
-
-    @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("type", getType());
-        jsonObject.addProperty("entity", entityTypeRL.toString());
-        if (count > 1) {
+        jsonObject.addProperty("entity", entityString);
+        if (this.count > 0) {
             jsonObject.addProperty("count", count);
         }
-        if (nbt != null && !nbt.isEmpty()) {
-            jsonObject.addProperty("nbt", nbt.toString());
+        if (this.nbtString != null) {
+            jsonObject.addProperty("nbt", this.nbtString);
         }
-        if (range > 0) {
-            jsonObject.addProperty("range", range);
+        if (this.range >= 0) {
+            jsonObject.addProperty("range", this.range);
         }
         return jsonObject;
     }
 
     public static EntityEntry fromJson(JsonObject jsonObject) {
         String entityName = jsonObject.getAsJsonPrimitive("entity").getAsString();
-        ResourceLocation entityTypeRL = new ResourceLocation(entityName);
         int count = jsonObject.has("count") ? jsonObject.getAsJsonPrimitive("count").getAsInt() : 1;
         String nbtString = jsonObject.has("nbt") ? jsonObject.getAsJsonPrimitive("nbt").getAsString() : null;
-        CompoundTag nbt = null;
-        if (nbtString != null) {
-            try {
-                nbt = TagParser.parseTag(nbtString);
-            } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse NBT for entity {}: {}", entityName, e.getMessage());
-            }
-        }
         int range = jsonObject.has("range") ? jsonObject.getAsJsonPrimitive("range").getAsInt() : 0;
-        return new EntityEntry(entityTypeRL, nbt, count, range);
+        return new EntityEntry(entityName, nbtString, count, range);
     }
 }

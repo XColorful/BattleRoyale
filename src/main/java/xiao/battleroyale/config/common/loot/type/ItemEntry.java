@@ -1,28 +1,29 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.TagParser;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import xiao.battleroyale.BattleRoyale;
+import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.item.IItemLootEntry;
+import xiao.battleroyale.config.common.loot.data.ItemData;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
 public class ItemEntry implements IItemLootEntry {
-    private final ItemStack itemStack;
+    private String itemString;
+    private @Nullable String nbtString;
+    private int count;
 
-    public ItemEntry(ItemStack itemStack) {
-        this.itemStack = itemStack;
+    public ItemEntry(String rl, @Nullable String nbtString, int count) {
+        this.itemString = rl;
+        this.nbtString = nbtString;
+        this.count = count;
     }
 
     @Override
-    public List<ItemStack> generateLoot(Supplier<Float> random) {
-        return Collections.singletonList(this.itemStack.copy());
+    public List<ILootData> generateLootData(Supplier<Float> random) {
+        return Collections.singletonList(new ItemData(this.itemString, this.nbtString, this.count));
     }
 
     @Override
@@ -33,28 +34,20 @@ public class ItemEntry implements IItemLootEntry {
     public static ItemEntry fromJson(JsonObject jsonObject) {
         String itemName = jsonObject.getAsJsonPrimitive("item").getAsString();
         int count = jsonObject.has("count") ? jsonObject.getAsJsonPrimitive("count").getAsInt() : 1;
-        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(itemName)), count);
-        if (jsonObject.has("nbt")) {
-            try {
-                CompoundTag nbt = TagParser.parseTag(jsonObject.getAsJsonPrimitive("nbt").getAsString());
-                itemStack.setTag(nbt);
-            } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse NBT for item {}: {}", itemName, e.getMessage());
-            }
-        }
-        return new ItemEntry(itemStack);
+        String nbtString = jsonObject.has("nbt") ? jsonObject.getAsJsonPrimitive("nbt").getAsString() : null;
+        return new ItemEntry(itemName, nbtString, count);
     }
 
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("type", getType());
-        jsonObject.addProperty("item", BuiltInRegistries.ITEM.getKey(this.itemStack.getItem()).toString());
-        if (this.itemStack.getCount() > 1) {
-            jsonObject.addProperty("count", this.itemStack.getCount());
+        jsonObject.addProperty("item", this.itemString);
+        if (this.count >= 0) {
+            jsonObject.addProperty("count", this.count);
         }
-        if (this.itemStack.hasTag()) {
-            jsonObject.addProperty("nbt", this.itemStack.getTag().toString());
+        if (this.nbtString != null) {
+            jsonObject.addProperty("nbt", this.nbtString);
         }
         return jsonObject;
     }

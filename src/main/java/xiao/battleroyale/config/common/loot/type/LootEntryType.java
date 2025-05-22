@@ -19,9 +19,9 @@ public enum LootEntryType {
     TIME("time", TimeEntry::fromJson);
 
     private final String name;
-    private final Function<JsonObject, ? extends ILootEntry<?>> deserializer;
+    private final Function<JsonObject, ? extends ILootEntry> deserializer;
 
-    LootEntryType(String name, Function<JsonObject, ? extends ILootEntry<?>> deserializer) {
+    LootEntryType(String name, Function<JsonObject, ? extends ILootEntry> deserializer) {
         this.name = name;
         this.deserializer = deserializer;
     }
@@ -30,7 +30,7 @@ public enum LootEntryType {
         return name;
     }
 
-    public Function<JsonObject, ? extends ILootEntry<?>> getDeserializer() {
+    public Function<JsonObject, ? extends ILootEntry> getDeserializer() {
         return deserializer;
     }
 

@@ -191,7 +191,7 @@ public class LootConfigManager {
                                 String name = configObject.has("name") ? configObject.getAsJsonPrimitive("name").getAsString() : "";
                                 String color = configObject.has("color") ? configObject.getAsJsonPrimitive("color").getAsString() : "#FFFFFF";
                                 JsonObject entryObject = configObject.getAsJsonObject("entry");
-                                ILootEntry<?> entry = JsonUtils.deserializeLootEntry(entryObject);
+                                ILootEntry entry = JsonUtils.deserializeLootEntry(entryObject);
                                 if (entry != null) {
                                     LootConfig lootConfig = new LootConfig(id, name, color, entry);
                                     configMap.put(id, lootConfig);
@@ -275,9 +275,9 @@ public class LootConfigManager {
         private final int id;
         private final String name;
         private final String color;
-        private final ILootEntry<?> entry;
+        private final ILootEntry entry;
 
-        public LootConfig(int id, String name, String color, ILootEntry<?> entry) {
+        public LootConfig(int id, String name, String color, ILootEntry entry) {
             this.id = id;
             this.name = name;
             this.color = color;
@@ -296,7 +296,7 @@ public class LootConfigManager {
             return color;
         }
 
-        public ILootEntry<?> getEntry() {
+        public ILootEntry getEntry() {
             return entry;
         }
     }
