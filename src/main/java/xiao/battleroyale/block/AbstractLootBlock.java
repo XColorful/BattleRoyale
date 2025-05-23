@@ -29,7 +29,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.item.builder.BlockItemBuilder;
-import xiao.battleroyale.api.loot.LootNBT;
+import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
@@ -95,15 +95,15 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
 
                 // GameId
                 UUID gameId = null;
-                if (nbt != null && nbt.hasUUID(LootNBT.GAME_ID_TAG)) {
-                    gameId = nbt.getUUID(LootNBT.GAME_ID_TAG);
+                if (nbt != null && nbt.hasUUID(LootNBTTag.GAME_ID_TAG)) {
+                    gameId = nbt.getUUID(LootNBTTag.GAME_ID_TAG);
                 }
                 e.setGameId(gameId != null ? gameId : UUID.randomUUID());
 
                 // ConfigId
                 int configId = LootConfigManager.DEFAULT_CONFIG_ID;
-                if (nbt != null && nbt.contains(LootNBT.CONFIG_ID_TAG, Tag.TAG_INT)) {
-                    configId = nbt.getInt(LootNBT.CONFIG_ID_TAG);
+                if (nbt != null && nbt.contains(LootNBTTag.CONFIG_ID_TAG, Tag.TAG_INT)) {
+                    configId = nbt.getInt(LootNBTTag.CONFIG_ID_TAG);
                 }
                 e.setConfigId(configId);
             }
@@ -120,11 +120,11 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
             return BlockItemBuilder.create(this)
                     .withNBT(nbt -> {
                         if (gameId != null) {
-                            nbt.putUUID(LootNBT.GAME_ID_TAG, gameId);
+                            nbt.putUUID(LootNBTTag.GAME_ID_TAG, gameId);
                         } else {
-                            nbt.remove(LootNBT.GAME_ID_TAG);
+                            nbt.remove(LootNBTTag.GAME_ID_TAG);
                         }
-                        nbt.putInt(LootNBT.CONFIG_ID_TAG, configId);
+                        nbt.putInt(LootNBTTag.CONFIG_ID_TAG, configId);
                     })
                     .build();
         }

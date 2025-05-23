@@ -14,14 +14,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.loot.ILootData;
-import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.api.loot.ILootObject;
-import xiao.battleroyale.api.loot.LootNBT;
+import xiao.battleroyale.api.loot.*;
 import xiao.battleroyale.api.loot.entity.IEntityLootData;
 import xiao.battleroyale.api.loot.item.IItemLootData;
 import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 
@@ -54,13 +50,14 @@ public class LootGenerator {
             container.clearContent();
             for (int i = 0; i < lootData.size() && i < container.getContainerSize(); i++) {
                 ILootData data = lootData.get(i);
-                if (data instanceof IItemLootData itemData) {
+                if (data.getDataType() == LootDataType.ITEM) {
+                    IItemLootData itemData = (IItemLootData) data;
                     ItemStack itemStack = itemData.getItemStack();
                     if (itemStack == null) {
                         BattleRoyale.LOGGER.warn("忽略添加到物资容器的空物品");
                         continue;
                     }
-                    itemStack.getOrCreateTag().putUUID(LootNBT.GAME_ID_TAG, gameId);
+                    itemStack.getOrCreateTag().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
                     container.setItemNoUpdate(i, itemStack); // 省流
                 } else {
                     BattleRoyale.LOGGER.warn("忽略添加到物资容器的非物品类型: {}", target.getBlockPos());
@@ -71,7 +68,8 @@ public class LootGenerator {
             BlockPos spawnOrigin = target.getBlockPos();
             for (int i = 0; i < lootData.size(); i++) {
                 ILootData data = lootData.get(i);
-                if (data instanceof IEntityLootData entityData) {
+                if (data.getDataType() == LootDataType.ENTITY) {
+                    IEntityLootData entityData = (IEntityLootData) data;
                     if (!(level instanceof ServerLevel serverLevel)) {
                         return;
                     }
@@ -80,7 +78,7 @@ public class LootGenerator {
                         BattleRoyale.LOGGER.warn("忽略待刷新的空实体类型");
                         continue;
                     }
-                    entity.getPersistentData().putUUID(LootNBT.GAME_ID_TAG, gameId);
+                    entity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
                     int count = entityData.getCount();
                     int range = entityData.getRange();
                     for (int j = 0; j < count; j++) {
@@ -192,13 +190,13 @@ public class LootGenerator {
             if (entity instanceof ItemEntity itemEntity) { // 物品掉落物，位于{Item:{tag:{GameId:UUID}}}
                 ItemStack itemStack = itemEntity.getItem();
                 CompoundTag itemTag = itemStack.getOrCreateTag();
-                if (itemTag.hasUUID(LootNBT.GAME_ID_TAG)) {
-                    entityGameId = itemTag.getUUID(LootNBT.GAME_ID_TAG);
+                if (itemTag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
+                    entityGameId = itemTag.getUUID(LootNBTTag.GAME_ID_TAG);
                 }
             } else { // 一般实体，位于{ForgeData:{GameId:UUID}}
                 CompoundTag persistentData = entity.getPersistentData();
-                if (persistentData.hasUUID(LootNBT.GAME_ID_TAG)) {
-                    entityGameId = persistentData.getUUID(LootNBT.GAME_ID_TAG);
+                if (persistentData.hasUUID(LootNBTTag.GAME_ID_TAG)) {
+                    entityGameId = persistentData.getUUID(LootNBTTag.GAME_ID_TAG);
                 }
             }
 
@@ -215,12 +213,12 @@ public class LootGenerator {
         for (Entity entity : oldEntities) {
             UUID debugGameId = null;
             if (entity instanceof ItemEntity itemEntity) {
-                if (itemEntity.getItem().getOrCreateTag().hasUUID(LootNBT.GAME_ID_TAG)) {
-                    debugGameId = itemEntity.getItem().getOrCreateTag().getUUID(LootNBT.GAME_ID_TAG);
+                if (itemEntity.getItem().getOrCreateTag().hasUUID(LootNBTTag.GAME_ID_TAG)) {
+                    debugGameId = itemEntity.getItem().getOrCreateTag().getUUID(LootNBTTag.GAME_ID_TAG);
                 }
             } else {
-                if (entity.getPersistentData().hasUUID(LootNBT.GAME_ID_TAG)) {
-                    debugGameId = entity.getPersistentData().getUUID(LootNBT.GAME_ID_TAG);
+                if (entity.getPersistentData().hasUUID(LootNBTTag.GAME_ID_TAG)) {
+                    debugGameId = entity.getPersistentData().getUUID(LootNBTTag.GAME_ID_TAG);
                 }
             }
 

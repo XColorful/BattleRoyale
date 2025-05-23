@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.Collections;
@@ -53,7 +54,7 @@ public class RandomEntry implements ILootEntry {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("type", getType());
+        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
         jsonObject.addProperty("chance", this.chance);
         if (this.entry != null) {
             jsonObject.add("entry", this.entry.toJson());

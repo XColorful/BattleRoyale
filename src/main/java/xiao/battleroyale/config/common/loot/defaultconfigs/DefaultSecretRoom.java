@@ -3,27 +3,31 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.loot.LootConfigTag;
+import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.type.ItemEntry;
 import xiao.battleroyale.config.common.loot.type.MultiEntry;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
 
-public class DefaultSecretRoom extends DefaultConfigHelper {
+import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
-    private static final String SECRET_ROOM_CONFIG_PATH = "config/battleroyale/loot/secret_room/default.json";
+public class DefaultSecretRoom{
+
+    private static final String DEFAULT_FILE_NAME = "default.json";
 
     public static void generateDefaultConfigs() {
         JsonArray secretRoomConfigsJson = new JsonArray();
         secretRoomConfigsJson.add(generateDefaultSecretRoom());
-        writeJsonToFile(SECRET_ROOM_CONFIG_PATH, secretRoomConfigsJson);
+        writeJsonToFile(Paths.get(LootConfigManager.COMMON_LOOT_CONFIG_PATH, LootConfigManager.SECRET_ROOM_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), secretRoomConfigsJson);
     }
 
     private static JsonObject generateDefaultSecretRoom() {
         JsonObject config = new JsonObject();
-        config.addProperty("id", 401);
-        config.addProperty("name", "Treasure trove");
-        config.addProperty("color", "#00FFFF");
+        config.addProperty(LootConfigTag.LOOT_ID, 401);
+        config.addProperty(LootConfigTag.LOOT_NAME, "Treasure trove");
+        config.addProperty(LootConfigTag.LOOT_COLOR, "#00FFFF");
 
         ILootEntry multiEntry = new MultiEntry(Arrays.asList(
                 new ItemEntry("minecraft:iron_ingot", null, 1),
@@ -37,7 +41,7 @@ public class DefaultSecretRoom extends DefaultConfigHelper {
                 new ItemEntry("minecraft:netherite_ingot", null, 1)
         ));
         
-        config.add("entry", multiEntry.toJson());
+        config.add(LootConfigTag.LOOT_ENTRY, multiEntry.toJson());
         return config;
     }
 }

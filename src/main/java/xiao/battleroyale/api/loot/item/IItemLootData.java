@@ -6,7 +6,7 @@ import xiao.battleroyale.api.loot.LootDataType;
 
 public interface IItemLootData extends ILootData {
     @Override
-    default LootDataType getType() {
+    default LootDataType getDataType() {
         return LootDataType.ITEM;
     }
 

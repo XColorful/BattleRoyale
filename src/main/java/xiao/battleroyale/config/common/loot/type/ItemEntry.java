@@ -3,8 +3,9 @@ package xiao.battleroyale.config.common.loot.type;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.ILootData;
+import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.api.loot.item.IItemLootEntry;
-import xiao.battleroyale.config.common.loot.data.ItemData;
+import xiao.battleroyale.common.loot.data.ItemData;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +33,7 @@ public class ItemEntry implements IItemLootEntry {
     }
 
     public static ItemEntry fromJson(JsonObject jsonObject) {
-        String itemName = jsonObject.getAsJsonPrimitive("item").getAsString();
+        String itemName = jsonObject.has("item") ? jsonObject.getAsJsonPrimitive("item").getAsString() : "";
         int count = jsonObject.has("count") ? jsonObject.getAsJsonPrimitive("count").getAsInt() : 1;
         String nbtString = jsonObject.has("nbt") ? jsonObject.getAsJsonPrimitive("nbt").getAsString() : null;
         return new ItemEntry(itemName, nbtString, count);
@@ -41,7 +42,7 @@ public class ItemEntry implements IItemLootEntry {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("type", getType());
+        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
         jsonObject.addProperty("item", this.itemString);
         if (this.count >= 0) {
             jsonObject.addProperty("count", this.count);

@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.loot.type;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.loot.LootEntryTag;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +24,7 @@ public class NoneEntry implements ILootEntry {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("type", getType());
+        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
         return jsonObject;
     }
 

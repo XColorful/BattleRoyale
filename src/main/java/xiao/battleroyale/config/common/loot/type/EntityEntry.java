@@ -3,8 +3,9 @@ package xiao.battleroyale.config.common.loot.type;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.ILootData;
+import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.api.loot.entity.IEntityLootEntry;
-import xiao.battleroyale.config.common.loot.data.EntityData;
+import xiao.battleroyale.common.loot.data.EntityData;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,7 @@ public class EntityEntry implements IEntityLootEntry {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("type", getType());
+        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
         jsonObject.addProperty("entity", entityString);
         if (this.count > 0) {
             jsonObject.addProperty("count", count);
@@ -51,7 +52,7 @@ public class EntityEntry implements IEntityLootEntry {
     }
 
     public static EntityEntry fromJson(JsonObject jsonObject) {
-        String entityName = jsonObject.getAsJsonPrimitive("entity").getAsString();
+        String entityName = jsonObject.has("entity") ? jsonObject.getAsJsonPrimitive("entity").getAsString() : "";
         int count = jsonObject.has("count") ? jsonObject.getAsJsonPrimitive("count").getAsInt() : 1;
         String nbtString = jsonObject.has("nbt") ? jsonObject.getAsJsonPrimitive("nbt").getAsString() : null;
         int range = jsonObject.has("range") ? jsonObject.getAsJsonPrimitive("range").getAsInt() : 0;

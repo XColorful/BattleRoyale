@@ -3,31 +3,35 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.loot.LootConfigTag;
+import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.type.ItemEntry;
 import xiao.battleroyale.config.common.loot.type.MultiEntry;
 import xiao.battleroyale.config.common.loot.type.RandomEntry;
 import xiao.battleroyale.config.common.loot.type.WeightEntry;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
 
-public class DefaultAirdrop extends DefaultConfigHelper {
+import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
-    private static final String AIRDROP_CONFIG_PATH = "config/battleroyale/loot/airdrop/default.json";
+public class DefaultAirdrop{
+
+    private static final String DEFAULT_FILE_NAME = "default.json";
 
     public static void generateDefaultConfigs() {
         JsonArray airdropConfigsJson = new JsonArray();
         airdropConfigsJson.add(generateDefaultAirdrop());
-        writeJsonToFile(AIRDROP_CONFIG_PATH, airdropConfigsJson);
+        writeJsonToFile(Paths.get(LootConfigManager.COMMON_LOOT_CONFIG_PATH, LootConfigManager.AIRDROP_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), airdropConfigsJson);
     }
 
     private static JsonObject generateDefaultAirdrop() {
         JsonObject config = new JsonObject();
-        config.addProperty("id", 201);
-        config.addProperty("name", "Netherite Airdrop");
-        config.addProperty("color", "#FFFF00");
+        config.addProperty(LootConfigTag.LOOT_ID, 201);
+        config.addProperty(LootConfigTag.LOOT_NAME, "Netherite Airdrop");
+        config.addProperty(LootConfigTag.LOOT_COLOR, "#FFFF00");
 
-        List<ILootEntry> entries = Arrays.asList(
+        ILootEntry multiEntry = new MultiEntry(Arrays.asList(
                 new ItemEntry("minecraft:netherite_helmet", null, 1),
                 new ItemEntry("minecraft:netherite_chestplate", null, 1),
                 new WeightEntry(Arrays.asList(
@@ -35,10 +39,9 @@ public class DefaultAirdrop extends DefaultConfigHelper {
                         WeightEntry.createWeightedEntry(20, new ItemEntry("minecraft:netherite_axe", null, 1))
                 )),
                 new RandomEntry(0.05, new ItemEntry("minecraft:enchanted_golden_apple", null, 1))
-        );
-        ILootEntry multiEntry = new MultiEntry(entries);
+        ));
 
-        config.add("entry", multiEntry.toJson());
+        config.add(LootConfigTag.LOOT_ENTRY, multiEntry.toJson());
         return config;
     }
 }

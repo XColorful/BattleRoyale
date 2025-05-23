@@ -69,13 +69,13 @@ public class EntitySpawner extends AbstractLootBlock {
                     }
                     LootConfig nextConfig = allConfigs.get(0);
                     for (LootConfig config : allConfigs) { // 找第一个 ID 大于当前 ID 的配置
-                        if (config.getId() > currentConfigId) {
+                        if (config.getLootId() > currentConfigId) {
                             nextConfig = config;
                             break;
                         }
                     }
-                    entitySpawnerBlockEntity.setConfigId(nextConfig.getId()); // 设置配置文件的实际 ID
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_config_switched", nextConfig.getId(), nextConfig.getName()));
+                    entitySpawnerBlockEntity.setConfigId(nextConfig.getLootId()); // 设置配置文件的实际 ID
+                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_config_switched", nextConfig.getLootId(), nextConfig.getName()));
                     return InteractionResult.SUCCESS;
                 }
             }

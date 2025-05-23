@@ -6,13 +6,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -24,7 +21,6 @@ import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import java.util.List;
-import java.util.UUID; // 确保 UUID 导入正确
 
 public class LootSpawner extends AbstractLootBlock {
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
@@ -65,13 +61,13 @@ public class LootSpawner extends AbstractLootBlock {
                     }
                     LootConfig nextConfig = allConfigs.get(0);
                     for (LootConfig config : allConfigs) { // 找第一个 ID 大于当前 ID 的配置
-                        if (config.getId() > currentConfigId) {
+                        if (config.getLootId() > currentConfigId) {
                             nextConfig = config;
                             break;
                         }
                     }
-                    lootSpawnerBlockEntity.setConfigId(nextConfig.getId()); // 设置配置文件的实际 ID
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.loot_config_switched", nextConfig.getId(), nextConfig.getName()));
+                    lootSpawnerBlockEntity.setConfigId(nextConfig.getLootId()); // 设置配置文件的实际 ID
+                    player.sendSystemMessage(Component.translatable("battleroyale.message.loot_config_switched", nextConfig.getLootId(), nextConfig.getName()));
                     return InteractionResult.SUCCESS;
                 } else { // 打开界面
                     NetworkHooks.openScreen((ServerPlayer) player, lootSpawnerBlockEntity, (buf) -> {

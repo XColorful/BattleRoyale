@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.loot.LootConfigTag;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.defaultconfigs.DefaultLootConfigGenerator;
@@ -30,12 +31,12 @@ public class LootConfigManager {
 
     public static final int DEFAULT_CONFIG_ID = 0;
 
-    private static final String COMMON_LOOT_CONFIG_PATH = "config/battleroyale/loot";
-    private static final String LOOT_SPAWNER_CONFIG_SUB_PATH = "loot_spawner";
-    private static final String ENTITY_SPAWNER_CONFIG_SUB_PATH = "entity_spawner";
-    private static final String AIRDROP_CONFIG_SUB_PATH = "airdrop";
-    private static final String AIRDROP_SPECIAL_CONFIG_SUB_PATH = "airdrop_special";
-    private static final String SECRET_ROOM_CONFIG_SUB_PATH = "secret_room";
+    public static final String COMMON_LOOT_CONFIG_PATH = "config/battleroyale/loot";
+    public static final String LOOT_SPAWNER_CONFIG_SUB_PATH = "loot_spawner";
+    public static final String ENTITY_SPAWNER_CONFIG_SUB_PATH = "entity_spawner";
+    public static final String AIRDROP_CONFIG_SUB_PATH = "airdrop";
+    public static final String AIRDROP_SPECIAL_CONFIG_SUB_PATH = "airdrop_special";
+    public static final String SECRET_ROOM_CONFIG_SUB_PATH = "secret_room";
 
     private final Map<Integer, LootConfig> lootSpawnerConfigs = new HashMap<>();
     private final List<LootConfig> allLootSpawnerConfigs = new ArrayList<>();
@@ -54,7 +55,7 @@ public class LootConfigManager {
         reloadConfigs();
     }
 
-    public void reloadConfigs() {
+    public void reloadConfigs() { // TODO 读取时额外记录来源，供后续写回文件
         lootSpawnerConfigs.clear();
         allLootSpawnerConfigs.clear();
         loadLootSpawnerConfigs();
@@ -139,27 +140,27 @@ public class LootConfigManager {
 
     private void loadLootSpawnerConfigs() {
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, LOOT_SPAWNER_CONFIG_SUB_PATH), lootSpawnerConfigs, allLootSpawnerConfigs);
-        allLootSpawnerConfigs.sort(Comparator.comparingInt(LootConfig::getId));
+        allLootSpawnerConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
 
     private void loadEntitySpawnerConfigs() {
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, ENTITY_SPAWNER_CONFIG_SUB_PATH), entitySpawnerConfigs, allEntitySpawnerConfigs);
-        allEntitySpawnerConfigs.sort(Comparator.comparingInt(LootConfig::getId));
+        allEntitySpawnerConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
 
     private void loadAirdropConfigs() {
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, AIRDROP_CONFIG_SUB_PATH), airdropConfigs, allAirdropConfigs);
-        allAirdropConfigs.sort(Comparator.comparingInt(LootConfig::getId));
+        allAirdropConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
 
     private void loadAirdropSpecialConfigs() {
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, AIRDROP_SPECIAL_CONFIG_SUB_PATH), airdropSpecialConfigs, allAirdropSpecialConfigs);
-        allAirdropSpecialConfigs.sort(Comparator.comparingInt(LootConfig::getId));
+        allAirdropSpecialConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
 
     private void loadSecretRoomConfigs() {
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, SECRET_ROOM_CONFIG_SUB_PATH), secretRoomConfigs, allSecretRoomConfigs);
-        allSecretRoomConfigs.sort(Comparator.comparingInt(LootConfig::getId));
+        allSecretRoomConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
 
     private void loadConfigsFromDirectory(Path directoryPath, Map<Integer, LootConfig> configMap, List<LootConfig> configList) {
@@ -177,38 +178,36 @@ public class LootConfigManager {
 
             Gson gson = new Gson();
             JsonArray configArray = gson.fromJson(reader, JsonArray.class);
-            if (configArray != null) {
-                for (JsonElement element : configArray) {
-                    if (element.isJsonObject()) {
-                        JsonObject configObject = element.getAsJsonObject();
-                        if (configObject.has("id") && configObject.has("entry")) {
-                            try {
-                                int id = configObject.getAsJsonPrimitive("id").getAsInt();
-                                if (id < 0) {
-                                    BattleRoyale.LOGGER.warn("Skipping invalid loot config with negative id: {} in {}", id, filePath);
-                                    continue;
-                                }
-                                String name = configObject.has("name") ? configObject.getAsJsonPrimitive("name").getAsString() : "";
-                                String color = configObject.has("color") ? configObject.getAsJsonPrimitive("color").getAsString() : "#FFFFFF";
-                                JsonObject entryObject = configObject.getAsJsonObject("entry");
-                                ILootEntry entry = JsonUtils.deserializeLootEntry(entryObject);
-                                if (entry != null) {
-                                    LootConfig lootConfig = new LootConfig(id, name, color, entry);
-                                    configMap.put(id, lootConfig);
-                                    configList.add(lootConfig);
-                                } else {
-                                    BattleRoyale.LOGGER.error("Failed to deserialize entry for id: {} in {}", id, filePath);
-                                }
-                            } catch (Exception e) {
-                                BattleRoyale.LOGGER.error("Error parsing config entry in {}: {}", filePath, e.getMessage());
-                            }
-                        } else {
-                            BattleRoyale.LOGGER.error("Invalid configuration entry: missing 'id' or 'entry' in {}", filePath);
-                        }
+            if (configArray == null) {
+                BattleRoyale.LOGGER.info("Skipped empty configuration from {}", filePath);
+                return;
+            }
+            for (JsonElement element : configArray) {
+                if (!element.isJsonObject()) {
+                    continue;
+                }
+                JsonObject configObject = element.getAsJsonObject();
+                try {
+                    int lootId = configObject.has(LootConfigTag.LOOT_ID) ? configObject.getAsJsonPrimitive(LootConfigTag.LOOT_ID).getAsInt() : -1;
+                    JsonObject lootEntryObject = configObject.has(LootConfigTag.LOOT_ENTRY) ? configObject.getAsJsonObject(LootConfigTag.LOOT_ENTRY) : null;
+                    if (lootId < 0 || lootEntryObject == null) {
+                        BattleRoyale.LOGGER.warn("Skipping invalid loot config in {}", filePath);
+                        continue;
                     }
+                    String name = configObject.has(LootConfigTag.LOOT_NAME) ? configObject.getAsJsonPrimitive(LootConfigTag.LOOT_NAME).getAsString() : "";
+                    String color = configObject.has(LootConfigTag.LOOT_COLOR) ? configObject.getAsJsonPrimitive(LootConfigTag.LOOT_COLOR).getAsString() : "#FFFFFF";
+                    ILootEntry lootEntry = JsonUtils.deserializeLootEntry(lootEntryObject);
+                    if (lootEntry == null) {
+                        BattleRoyale.LOGGER.error("Failed to deserialize loot entry for id: {} in {}", lootId, filePath);
+                    }
+                    LootConfig lootConfig = new LootConfig(lootId, name, color, lootEntry);
+                    configMap.put(lootId, lootConfig);
+                    configList.add(lootConfig);
+                } catch (Exception e) {
+                    BattleRoyale.LOGGER.error("Error parsing loot config entry in {}: {}", filePath, e.getMessage());
                 }
             }
-            BattleRoyale.LOGGER.info("Loaded {} configurations from {}.", configList.size() - configMap.size() + configMap.size(), filePath);
+            BattleRoyale.LOGGER.info("{} loot configurations already loaded from {}.", configList.size(), filePath);
         } catch (IOException e) {
             BattleRoyale.LOGGER.error("Failed to load configuration from {}: {}", filePath, e.getMessage());
         }
@@ -218,7 +217,7 @@ public class LootConfigManager {
         Path lootSpawnerPath = Paths.get(COMMON_LOOT_CONFIG_PATH, LOOT_SPAWNER_CONFIG_SUB_PATH);
         try {
             if (!Files.exists(lootSpawnerPath) || Files.list(lootSpawnerPath).findAny().isEmpty()) {
-                BattleRoyale.LOGGER.info("No loot spawner configurations found in {}, generating default.", lootSpawnerPath);
+                BattleRoyale.LOGGER.info("No loot spawner configurations found in {}, generating default", lootSpawnerPath);
                 DefaultLootConfigGenerator.generateDefaultLootSpawnerConfig();
                 loadLootSpawnerConfigs();
             }
@@ -272,20 +271,20 @@ public class LootConfigManager {
     }
 
     public static class LootConfig {
-        private final int id;
+        private final int lootId;
         private final String name;
         private final String color;
         private final ILootEntry entry;
 
-        public LootConfig(int id, String name, String color, ILootEntry entry) {
-            this.id = id;
+        public LootConfig(int lootId, String name, String color, ILootEntry entry) {
+            this.lootId = lootId;
             this.name = name;
             this.color = color;
             this.entry = entry;
         }
 
-        public int getId() {
-            return id;
+        public int getLootId() {
+            return lootId;
         }
 
         public String getName() {

@@ -4,6 +4,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.ItemConfig;
 import xiao.battleroyale.config.common.VehicleConfig;
+import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 
 public class CommonConfig {
@@ -12,7 +13,10 @@ public class CommonConfig {
         VehicleConfig.init(builder);
         ItemConfig.init(builder);
         LootConfigManager.init();
+
+        GameConfigManager.init();
         GameManager.init();
+
         return builder.build();
     }
 }
