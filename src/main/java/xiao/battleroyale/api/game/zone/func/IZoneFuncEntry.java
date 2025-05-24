@@ -1,18 +1,12 @@
 package xiao.battleroyale.api.game.zone.func;
 
-import xiao.battleroyale.api.game.zone.IZoneData;
 import xiao.battleroyale.api.game.zone.IZoneEntry;
-
-import java.util.function.Supplier;
+import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
+import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
 public interface IZoneFuncEntry extends IZoneEntry {
 
-    @Override
-    IZoneData generateZoneData(Supplier<Float> random);
+    ZoneFuncType getZoneFuncType();
 
-    double getDamage();
-
-    int getMoveDelay();
-
-    int getMoveTime();
+    ITickableZone createTickableZone();
 }

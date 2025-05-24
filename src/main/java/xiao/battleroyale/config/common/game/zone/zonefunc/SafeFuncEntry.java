@@ -1,19 +1,19 @@
 package xiao.battleroyale.config.common.game.zone.zonefunc;
 
 import com.google.gson.JsonObject;
-import xiao.battleroyale.api.game.zone.IZoneData;
 import xiao.battleroyale.api.game.zone.func.IZoneFuncEntry;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
-
-import java.util.function.Supplier;
+import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
+import xiao.battleroyale.common.game.zone.tickable.SafeFunc;
 
 public class SafeFuncEntry implements IZoneFuncEntry {
 
-    private final double damage = 0;
+    private double damage;
     private int moveDelay;
     private int moveTime;
 
-    public SafeFuncEntry(int moveDelay, int moveTime) {
+    public SafeFuncEntry(double damage, int moveDelay, int moveTime) {
+        this.damage = damage;
         this.moveDelay = moveDelay;
         this.moveTime = moveTime;
     }
@@ -21,6 +21,16 @@ public class SafeFuncEntry implements IZoneFuncEntry {
     @Override
     public String getType() {
         return ZoneFuncTag.SAFE;
+    }
+
+    @Override
+    public ZoneFuncType getZoneFuncType() {
+        return ZoneFuncType.SAFE;
+    }
+
+    @Override
+    public ITickableZone createTickableZone() {
+        return new SafeFunc(damage, moveDelay, moveTime);
     }
 
     @Override
@@ -33,28 +43,9 @@ public class SafeFuncEntry implements IZoneFuncEntry {
     }
 
     public static SafeFuncEntry fromJson(JsonObject jsonObject) {
+        double damage = jsonObject.has(ZoneFuncTag.DAMAGE) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.DAMAGE).getAsDouble() : 0;
         int moveDelay = jsonObject.has(ZoneFuncTag.MOVE_DELAY) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.MOVE_DELAY).getAsInt() : 0;
         int moveTime = jsonObject.has(ZoneFuncTag.MOVE_TIME) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.MOVE_TIME).getAsInt() : 0;
-        return new SafeFuncEntry(moveDelay, moveTime);
-    }
-
-    @Override
-    public IZoneData generateZoneData(Supplier<Float> random) {
-        return null;
-    }
-
-    @Override
-    public double getDamage() {
-        return damage;
-    }
-
-    @Override
-    public int getMoveDelay() {
-        return moveDelay;
-    }
-
-    @Override
-    public int getMoveTime() {
-        return moveTime;
+        return new SafeFuncEntry(damage, moveDelay, moveTime);
     }
 }

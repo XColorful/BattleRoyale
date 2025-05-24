@@ -7,9 +7,10 @@ import com.google.gson.JsonObject;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.*;
 import xiao.battleroyale.api.game.zone.func.IZoneFuncEntry;
-import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
+import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
-import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
+import xiao.battleroyale.common.game.zone.GameZone;
+import xiao.battleroyale.common.game.zone.GameZoneBuilder;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.defaultconfigs.DefaultZoneConfigGenerator;
 import xiao.battleroyale.util.JsonUtils;
@@ -139,7 +140,7 @@ public class ZoneConfigManager {
         }
     }
 
-    public static class ZoneConfig {
+    public static class ZoneConfig implements IZoneEntry{
         private final int zoneId;
         private final String zoneName;
         private final String zoneColor;
@@ -178,12 +179,28 @@ public class ZoneConfigManager {
             return zoneTime;
         }
 
-        public IZoneFuncEntry getZoneFunc() {
+        public IZoneFuncEntry getZoneFuncEntry() {
             return zoneFuncEntry;
         }
 
         public IZoneShapeEntry getZoneShapeEntry() {
             return zoneShapeEntry;
+        }
+
+        public IGameZone generateZone() {
+            return new GameZoneBuilder()
+                    .withZoneConfig(this)
+                    .build();
+        }
+
+        @Override
+        public String getType() {
+            return "";
+        }
+
+        @Override
+        public JsonObject toJson() {
+            return null;
         }
     }
 }

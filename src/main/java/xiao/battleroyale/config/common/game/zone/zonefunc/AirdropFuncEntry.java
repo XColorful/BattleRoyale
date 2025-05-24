@@ -1,11 +1,10 @@
 package xiao.battleroyale.config.common.game.zone.zonefunc;
 
 import com.google.gson.JsonObject;
-import xiao.battleroyale.api.game.zone.IZoneData;
 import xiao.battleroyale.api.game.zone.func.IZoneFuncEntry;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
-
-import java.util.function.Supplier;
+import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
+import xiao.battleroyale.common.game.zone.tickable.AirdropFunc;
 
 public class AirdropFuncEntry implements IZoneFuncEntry {
 
@@ -24,6 +23,16 @@ public class AirdropFuncEntry implements IZoneFuncEntry {
     }
 
     @Override
+    public ZoneFuncType getZoneFuncType() {
+        return ZoneFuncType.AIRDROP;
+    }
+
+    @Override
+    public ITickableZone createTickableZone() {
+        return new AirdropFunc(moveDelay, moveTime);
+    }
+
+    @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(ZoneFuncTag.TYPE_NAME, getType());
@@ -37,25 +46,5 @@ public class AirdropFuncEntry implements IZoneFuncEntry {
         int moveDelay = jsonObject.has(ZoneFuncTag.MOVE_DELAY) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.MOVE_DELAY).getAsInt() : 0;
         int moveTime = jsonObject.has(ZoneFuncTag.MOVE_TIME) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.TYPE_NAME).getAsInt() : 0;
         return new AirdropFuncEntry(moveDelay, moveTime);
-    }
-
-    @Override
-    public IZoneData generateZoneData(Supplier<Float> random) {
-        return null;
-    }
-
-    @Override
-    public double getDamage() {
-        return damage;
-    }
-
-    @Override
-    public int getMoveDelay() {
-        return moveDelay;
-    }
-
-    @Override
-    public int getMoveTime() {
-        return moveTime;
     }
 }

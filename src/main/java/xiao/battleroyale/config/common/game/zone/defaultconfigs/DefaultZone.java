@@ -39,7 +39,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
 
-        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(0, 12000); // 持续10分钟
+        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 0, 12000); // 持续10分钟
 
         config.add(ZoneConfigTag.ZONE_FUNC, safeFuncEntry.toJson());
 
@@ -63,7 +63,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 200);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 1200);
 
-        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(600, 1200); // 30秒后刷圈，缩圈1分钟
+        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 600, 1200); // 30秒后刷圈，缩圈1分钟
 
         config.add(ZoneConfigTag.ZONE_FUNC, safeFuncEntry.toJson());
 

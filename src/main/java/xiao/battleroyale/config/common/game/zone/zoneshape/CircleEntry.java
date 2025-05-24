@@ -1,12 +1,10 @@
 package xiao.battleroyale.config.common.game.zone.zoneshape;
 
 import com.google.gson.JsonObject;
-import xiao.battleroyale.api.game.zone.IZoneData;
+import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
-import xiao.battleroyale.common.game.zone.data.CircleData;
-
-import java.util.function.Supplier;
+import xiao.battleroyale.common.game.zone.spatial.CircleShape;
 
 public class CircleEntry implements IZoneShapeEntry {
 
@@ -21,6 +19,16 @@ public class CircleEntry implements IZoneShapeEntry {
     @Override
     public String getType() {
         return ZoneShapeTag.CIRCLE;
+    }
+
+    @Override
+    public ZoneShapeType getZoneShapeType() {
+        return ZoneShapeType.CIRCLE;
+    }
+
+    @Override
+    public ISpatialZone createSpatialZone() {
+        return new CircleShape(startEntry, endEntry);
     }
 
     @Override
@@ -44,20 +52,5 @@ public class CircleEntry implements IZoneShapeEntry {
             return null;
         }
         return new CircleEntry(startEntry, endEntry);
-    }
-
-    @Override
-    public IZoneData generateZoneData(Supplier<Float> random) {
-        return new CircleData();
-    }
-
-    @Override
-    public StartEntry getStartEntry() {
-        return startEntry;
-    }
-
-    @Override
-    public EndEntry getEndEntry() {
-        return endEntry;
     }
 }
