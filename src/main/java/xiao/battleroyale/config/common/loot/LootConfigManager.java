@@ -52,24 +52,13 @@ public class LootConfigManager {
     private static LootConfigManager instance;
 
     private LootConfigManager() {
-        reloadConfigs();
     }
 
     public void reloadConfigs() { // TODO 读取时额外记录来源，供后续写回文件
-        lootSpawnerConfigs.clear();
-        allLootSpawnerConfigs.clear();
         loadLootSpawnerConfigs();
-        entitySpawnerConfigs.clear();
-        allEntitySpawnerConfigs.clear();
         loadEntitySpawnerConfigs();
-        airdropConfigs.clear();
-        allAirdropConfigs.clear();
         loadAirdropConfigs();
-        airdropSpecialConfigs.clear();
-        allAirdropSpecialConfigs.clear();
         loadAirdropSpecialConfigs();
-        secretRoomConfigs.clear();
-        allSecretRoomConfigs.clear();
         loadSecretRoomConfigs();
 
         initializeDefaultConfigsIfEmpty();
@@ -78,6 +67,7 @@ public class LootConfigManager {
     public static void init() {
         if (instance == null) {
             instance = new LootConfigManager();
+            instance.reloadConfigs();
         }
     }
 
@@ -139,26 +129,36 @@ public class LootConfigManager {
     }
 
     private void loadLootSpawnerConfigs() {
+        lootSpawnerConfigs.clear();
+        allLootSpawnerConfigs.clear();
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, LOOT_SPAWNER_CONFIG_SUB_PATH), lootSpawnerConfigs, allLootSpawnerConfigs);
         allLootSpawnerConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
 
     private void loadEntitySpawnerConfigs() {
+        entitySpawnerConfigs.clear();
+        allEntitySpawnerConfigs.clear();
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, ENTITY_SPAWNER_CONFIG_SUB_PATH), entitySpawnerConfigs, allEntitySpawnerConfigs);
         allEntitySpawnerConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
 
     private void loadAirdropConfigs() {
+        airdropConfigs.clear();
+        allAirdropConfigs.clear();
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, AIRDROP_CONFIG_SUB_PATH), airdropConfigs, allAirdropConfigs);
         allAirdropConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
 
     private void loadAirdropSpecialConfigs() {
+        airdropSpecialConfigs.clear();
+        allAirdropSpecialConfigs.clear();
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, AIRDROP_SPECIAL_CONFIG_SUB_PATH), airdropSpecialConfigs, allAirdropSpecialConfigs);
         allAirdropSpecialConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
 
     private void loadSecretRoomConfigs() {
+        secretRoomConfigs.clear();
+        allSecretRoomConfigs.clear();
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, SECRET_ROOM_CONFIG_SUB_PATH), secretRoomConfigs, allSecretRoomConfigs);
         allSecretRoomConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
@@ -191,11 +191,13 @@ public class LootConfigManager {
                     int lootId = configObject.has(LootConfigTag.LOOT_ID) ? configObject.getAsJsonPrimitive(LootConfigTag.LOOT_ID).getAsInt() : -1;
                     JsonObject lootEntryObject = configObject.has(LootConfigTag.LOOT_ENTRY) ? configObject.getAsJsonObject(LootConfigTag.LOOT_ENTRY) : null;
                     if (lootId < 0 || lootEntryObject == null) {
-                        BattleRoyale.LOGGER.warn("Skipping invalid loot config in {}", filePath);
+                        BattleRoyale.LOGGER.warn("Skipped invalid loot config in {}", filePath);
                         continue;
                     }
                     String name = configObject.has(LootConfigTag.LOOT_NAME) ? configObject.getAsJsonPrimitive(LootConfigTag.LOOT_NAME).getAsString() : "";
                     String color = configObject.has(LootConfigTag.LOOT_COLOR) ? configObject.getAsJsonPrimitive(LootConfigTag.LOOT_COLOR).getAsString() : "#FFFFFF";
+                    if (name == null) name = "";
+                    if (color == null) color = "#FFFFFF";
                     ILootEntry lootEntry = JsonUtils.deserializeLootEntry(lootEntryObject);
                     if (lootEntry == null) {
                         BattleRoyale.LOGGER.error("Failed to deserialize loot entry for id: {} in {}", lootId, filePath);
@@ -214,57 +216,93 @@ public class LootConfigManager {
     }
 
     private void initializeDefaultConfigsIfEmpty() {
+        initLootSpawnerConfigs();
+        initEntitySpawnerConfigs();
+        initAirdropConfigs();
+        initAirdropSpecialConfigs();
+        initSecretRoomConfigs();
+    }
+
+    private void initLootSpawnerConfigs() {
+        if (!allLootSpawnerConfigs.isEmpty()) {
+            return;
+        }
+        BattleRoyale.LOGGER.info("No loot spawner configurations loaded");
         Path lootSpawnerPath = Paths.get(COMMON_LOOT_CONFIG_PATH, LOOT_SPAWNER_CONFIG_SUB_PATH);
         try {
             if (!Files.exists(lootSpawnerPath) || Files.list(lootSpawnerPath).findAny().isEmpty()) {
                 BattleRoyale.LOGGER.info("No loot spawner configurations found in {}, generating default", lootSpawnerPath);
-                DefaultLootConfigGenerator.generateDefaultLootSpawnerConfig();
-                loadLootSpawnerConfigs();
             }
+            DefaultLootConfigGenerator.generateDefaultLootSpawnerConfig();
+            loadLootSpawnerConfigs();
         } catch (IOException e) {
             BattleRoyale.LOGGER.error("Could not check for loot spawner configurations: {}", e.getMessage());
         }
+    }
 
+    private void initEntitySpawnerConfigs() {
+        if (!allEntitySpawnerConfigs.isEmpty()) {
+            return;
+        }
+        BattleRoyale.LOGGER.info("No entity spawner configurations loaded");
         Path entitySpawnerPath = Paths.get(COMMON_LOOT_CONFIG_PATH, ENTITY_SPAWNER_CONFIG_SUB_PATH);
         try {
             if (!Files.exists(entitySpawnerPath) || Files.list(entitySpawnerPath).findAny().isEmpty()) {
                 BattleRoyale.LOGGER.info("No entity spawner configurations found in {}, generating default.", entitySpawnerPath);
-                DefaultLootConfigGenerator.generateDefaultEntitySpawnerConfig();
-                loadEntitySpawnerConfigs();
             }
+            DefaultLootConfigGenerator.generateDefaultEntitySpawnerConfig();
+            loadEntitySpawnerConfigs();
         } catch (IOException e) {
             BattleRoyale.LOGGER.error("Could not check for entity spawner configurations: {}", e.getMessage());
         }
+    }
 
+    private void initAirdropConfigs() {
+        if (!allAirdropConfigs.isEmpty()) {
+            return;
+        }
+        BattleRoyale.LOGGER.info("No airdrop configurations loaded");
         Path airdropPath = Paths.get(COMMON_LOOT_CONFIG_PATH, AIRDROP_CONFIG_SUB_PATH);
         try {
             if (!Files.exists(airdropPath) || Files.list(airdropPath).findAny().isEmpty()) {
                 BattleRoyale.LOGGER.info("No airdrop configurations found in {}, generating default.", airdropPath);
-                DefaultLootConfigGenerator.generateDefaultAirdropConfig();
-                loadAirdropConfigs();
             }
+            DefaultLootConfigGenerator.generateDefaultAirdropConfig();
+            loadAirdropConfigs();
         } catch (IOException e) {
             BattleRoyale.LOGGER.error("Could not check for airdrop configurations: {}", e.getMessage());
         }
+    }
 
+    private void initAirdropSpecialConfigs() {
+        if (!allAirdropSpecialConfigs.isEmpty()) {
+            return;
+        }
+        BattleRoyale.LOGGER.info("No airdrop special configurations loaded");
         Path airdropSpecialPath = Paths.get(COMMON_LOOT_CONFIG_PATH, AIRDROP_SPECIAL_CONFIG_SUB_PATH);
         try {
             if (!Files.exists(airdropSpecialPath) || Files.list(airdropSpecialPath).findAny().isEmpty()) {
                 BattleRoyale.LOGGER.info("No special airdrop configurations found in {}, generating default.", airdropSpecialPath);
-                DefaultLootConfigGenerator.generateDefaultAirdropSpecialConfig();
-                loadAirdropSpecialConfigs();
             }
+            DefaultLootConfigGenerator.generateDefaultAirdropSpecialConfig();
+            loadAirdropSpecialConfigs();
         } catch (IOException e) {
             BattleRoyale.LOGGER.error("Could not check for special airdrop configurations: {}", e.getMessage());
         }
+    }
 
+    private void initSecretRoomConfigs() {
+        if (!allSecretRoomConfigs.isEmpty()) {
+            return;
+        }
+        BattleRoyale.LOGGER.info("No secret room configurations loaded");
         Path secretRoomPath = Paths.get(COMMON_LOOT_CONFIG_PATH, SECRET_ROOM_CONFIG_SUB_PATH);
         try {
             if (!Files.exists(secretRoomPath) || Files.list(secretRoomPath).findAny().isEmpty()) {
                 BattleRoyale.LOGGER.info("No secret room configurations found in {}, generating default.", secretRoomPath);
-                DefaultLootConfigGenerator.generateDefaultSecretRoomConfig();
-                loadSecretRoomConfigs();
             }
+            DefaultLootConfigGenerator.generateDefaultSecretRoomConfig();
+            loadSecretRoomConfigs();
         } catch (IOException e) {
             BattleRoyale.LOGGER.error("Could not check for secret room configurations: {}", e.getMessage());
         }

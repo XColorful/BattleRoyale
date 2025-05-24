@@ -9,7 +9,6 @@ import xiao.battleroyale.api.game.zone.*;
 import xiao.battleroyale.api.game.zone.func.IZoneFuncEntry;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
-import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.common.game.zone.GameZoneBuilder;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.defaultconfigs.DefaultZoneConfigGenerator;
@@ -36,12 +35,9 @@ public class ZoneConfigManager {
     private static ZoneConfigManager instance;
 
     private ZoneConfigManager() {
-        reloadConfigs();
     }
 
     public void reloadConfigs() {
-        zoneConfigs.clear();
-        allZoneConfigs.clear();
         loadZoneConfigs();
 
         initializeDefaultConfigsIfEmpty();
@@ -50,6 +46,7 @@ public class ZoneConfigManager {
     public static void init() {
         if (instance == null) {
             instance = new ZoneConfigManager();
+            instance.reloadConfigs();
         }
     }
 
@@ -69,6 +66,8 @@ public class ZoneConfigManager {
     }
 
     public void loadZoneConfigs() {
+        zoneConfigs.clear();
+        allZoneConfigs.clear();
         loadConfigsFromDirectory(Paths.get(GameConfigManager.GAME_CONFIG_PATH, ZONE_CONFIG_SUB_PATH), zoneConfigs, allZoneConfigs);
         allZoneConfigs.sort(Comparator.comparingInt(ZoneConfig::getZoneId));
     }
@@ -102,11 +101,13 @@ public class ZoneConfigManager {
                     JsonObject zoneFuncObject = configObject.has(ZoneConfigTag.ZONE_FUNC) ? configObject.getAsJsonObject(ZoneConfigTag.ZONE_FUNC) : null;
                     JsonObject zoneShapeObject = configObject.has(ZoneConfigTag.ZONE_SHAPE) ? configObject.getAsJsonObject(ZoneConfigTag.ZONE_SHAPE) : null;
                     if (zoneId < 0 || zoneFuncObject == null || zoneShapeObject == null) {
-                        BattleRoyale.LOGGER.warn("Skipping invalid zone config in {}", filePath);
+                        BattleRoyale.LOGGER.warn("Skipped invalid zone config in {}", filePath);
                         continue;
                     }
                     String zoneName = configObject.has(ZoneConfigTag.ZONE_NAME) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_NAME).getAsString() : "";
                     String zoneColor = configObject.has(ZoneConfigTag.ZONE_COLOR) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_COLOR).getAsString() : "#0000FF";
+                    if (zoneName == null) zoneName = "";
+                    if (zoneColor == null) zoneColor = "#0000FF";
                     int zoneDelay = configObject.has(ZoneConfigTag.ZONE_DELAY) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_DELAY).getAsInt() : 0;
                     int zoneTime = configObject.has(ZoneConfigTag.ZONE_TIME) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_TIME).getAsInt() : 0;
                     IZoneFuncEntry zoneFuncEntry = JsonUtils.deserializeZoneFuncEntry(zoneFuncObject);
@@ -121,20 +122,24 @@ public class ZoneConfigManager {
                     BattleRoyale.LOGGER.error("Error parsing zone config entry in {}: {}", filePath, e.getMessage());
                 }
             }
-            BattleRoyale.LOGGER.info("{} zones already loaded from {}.", configList.size(), filePath);
+            BattleRoyale.LOGGER.info("{} zone configurations already loaded from {}.", configList.size(), filePath);
         } catch (IOException e) {
             BattleRoyale.LOGGER.error("Failed to load configuration from {}: {}", filePath, e.getMessage());
         }
     }
 
-    private void initializeDefaultConfigsIfEmpty() {
+    public void initializeDefaultConfigsIfEmpty() {
+        if (!allZoneConfigs.isEmpty()) {
+            return;
+        }
+        BattleRoyale.LOGGER.info("No zone configurations loaded");
         Path zoneConfigPath = Paths.get(GameConfigManager.GAME_CONFIG_PATH, ZONE_CONFIG_SUB_PATH);
         try {
             if (!Files.exists(zoneConfigPath) || Files.list(zoneConfigPath).findAny().isEmpty()) {
                 BattleRoyale.LOGGER.info("No zone configurations found in {}, generating default", zoneConfigPath);
-                DefaultZoneConfigGenerator.generateDefaultZoneConfig();
-                loadZoneConfigs();
             }
+            DefaultZoneConfigGenerator.generateDefaultZoneConfig();
+            loadZoneConfigs();
         } catch (IOException e) {
             BattleRoyale.LOGGER.error("Could not check for zone configurations: {}", e.getMessage());
         }

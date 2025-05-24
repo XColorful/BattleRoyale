@@ -1,5 +1,7 @@
 package xiao.battleroyale.config.common.game;
 
+import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
+import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 
@@ -11,16 +13,20 @@ public class GameConfigManager {
     private static GameConfigManager instance;
 
     private GameConfigManager() {
-        ZoneConfigManager.init();
     }
 
     public void reloadConfigs() {
-        ZoneConfigManager.get().reloadConfigs();
+        loadZoneConfigs();
+        loadSpawnConfigs();
+
+        initializeDefaultConfigsIfEmpty();
     }
 
     public static void init() {
         if (instance == null) {
             instance = new GameConfigManager();
+            ZoneConfigManager.init();
+            SpawnConfigManager.init();
         }
     }
 
@@ -35,11 +41,28 @@ public class GameConfigManager {
         return ZoneConfigManager.get().getZoneConfig(zoneId);
     }
 
-    public List<ZoneConfig> getAllZoneConfig() {
+    public List<ZoneConfig> getAllZoneConfigs() {
         return ZoneConfigManager.get().getAllZoneConfigs();
+    }
+
+    public SpawnConfig getSpawnConfig(int id) {
+        return SpawnConfigManager.get().getSpawnConfig(id);
+    }
+
+    public List<SpawnConfig> getAllSpawnConfigs() {
+        return SpawnConfigManager.get().getAllSpawnConfigs();
     }
 
     public void loadZoneConfigs() {
         ZoneConfigManager.get().loadZoneConfigs();
+    }
+
+    public void loadSpawnConfigs() {
+        SpawnConfigManager.get().loadSpawnConfigs();
+    }
+
+    private void initializeDefaultConfigsIfEmpty() {
+        ZoneConfigManager.get().initializeDefaultConfigsIfEmpty();
+        SpawnConfigManager.get().initializeDefaultConfigsIfEmpty();
     }
 }

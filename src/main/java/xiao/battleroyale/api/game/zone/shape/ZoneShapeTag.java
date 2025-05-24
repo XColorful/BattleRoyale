@@ -1,6 +1,7 @@
 package xiao.battleroyale.api.game.zone.shape;
 
 public final class ZoneShapeTag {
+
     public static final String TYPE_NAME = "zoneShapeType";
 
     public static final String CIRCLE = "circle";

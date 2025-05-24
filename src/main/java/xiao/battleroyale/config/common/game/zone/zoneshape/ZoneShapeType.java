@@ -2,15 +2,16 @@ package xiao.battleroyale.config.common.game.zone.zoneshape;
 
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
+import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 public enum ZoneShapeType {
-    CIRCLE("circle", CircleEntry::fromJson),
-    SQUARE("square", SquareEntry::fromJson),
-    RECTANGLE("rectangle", RectangleEntry::fromJson);
+    CIRCLE(ZoneShapeTag.CIRCLE, CircleEntry::fromJson),
+    SQUARE(ZoneShapeTag.SQUARE, SquareEntry::fromJson),
+    RECTANGLE(ZoneShapeTag.RECTANGLE, RectangleEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends IZoneShapeEntry> deseralizer;

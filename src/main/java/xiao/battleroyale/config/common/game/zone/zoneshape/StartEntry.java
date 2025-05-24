@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.game.zone.zoneshape;
 
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.api.game.zone.shape.start.StartCenterType;
@@ -113,27 +114,39 @@ public class StartEntry {
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
 
-        JsonObject centerObject = new JsonObject();
-        centerObject.addProperty(ZoneShapeTag.CENTER_TYPE, startCenterType.getValue());
-        switch (startCenterType) {
-            case FIXED -> centerObject.addProperty(StartEntry.FIXED, StringUtils.vectorToString(startCenterPos));
-            case PREVIOUS -> centerObject.addProperty(StartEntry.PREVIOUS_ID, startCenterZoneId);
-        }
-        centerObject.addProperty(StartEntry.RANDOM_RANGE, startCenterRange);
+        JsonObject centerObject = getCenterJsonObject();
         jsonObject.add(ZoneShapeTag.CENTER, centerObject);
 
-        JsonObject dimensionObject = new JsonObject();
-        dimensionObject.addProperty(ZoneShapeTag.DIMENSION_TYPE, startDimensionType.getValue());
-        switch (startDimensionType) {
-            case FIXED -> dimensionObject.addProperty(StartEntry.FIXED, StringUtils.vectorToString(startDimension));
-            case PREVIOUS -> {
-                dimensionObject.addProperty(StartEntry.PREVIOUS_ID, startDimensionZoneId);
-                dimensionObject.addProperty(StartEntry.PREVIOUS_SCALE, startDimensionScale);
-            }
-        }
-        dimensionObject.addProperty(StartEntry.RANDOM_RANGE, startDimensionRange);
+        JsonObject dimensionObject = getDimensionJsonObject();
         jsonObject.add(ZoneShapeTag.DIMENSION, dimensionObject);
 
         return jsonObject;
+    }
+
+    @NotNull
+    private JsonObject getCenterJsonObject() {
+        JsonObject centerObject = new JsonObject();
+        centerObject.addProperty(ZoneShapeTag.CENTER_TYPE, startCenterType.getValue());
+        switch (startCenterType) {
+            case FIXED -> centerObject.addProperty(EndEntry.FIXED, StringUtils.vectorToString(startCenterPos));
+            case PREVIOUS -> centerObject.addProperty(EndEntry.PREVIOUS_ID, startCenterZoneId);
+        }
+        centerObject.addProperty(EndEntry.RANDOM_RANGE, startCenterRange);
+        return centerObject;
+    }
+
+    @NotNull
+    private JsonObject getDimensionJsonObject() {
+        JsonObject dimensionObject = new JsonObject();
+        dimensionObject.addProperty(ZoneShapeTag.DIMENSION_TYPE, startDimensionType.getValue());
+        switch (startDimensionType) {
+            case FIXED -> dimensionObject.addProperty(EndEntry.FIXED, StringUtils.vectorToString(startDimension));
+            case PREVIOUS -> {
+                dimensionObject.addProperty(EndEntry.PREVIOUS_ID, startCenterZoneId);
+                dimensionObject.addProperty(EndEntry.PREVIOUS_SCALE, startDimensionScale);
+            }
+        }
+        dimensionObject.addProperty(EndEntry.RANDOM_RANGE, startDimensionRange);
+        return dimensionObject;
     }
 }

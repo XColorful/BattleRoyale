@@ -11,4 +11,6 @@ public final class GameTag {
     public static final String SHAPE = "shape";
     public static final String CENTER = "center";
     public static final String DIMENSION = "dim";
+
+    private GameTag() {};
 }

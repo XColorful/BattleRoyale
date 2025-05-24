@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.game.zone.zoneshape;
 
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.api.game.zone.shape.end.EndCenterType;
@@ -113,6 +114,17 @@ public class EndEntry {
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
 
+        JsonObject centerObject = getCenterJsonObject();
+        jsonObject.add(ZoneShapeTag.CENTER, centerObject);
+
+        JsonObject dimensionObject = getDimensionJsonObject();
+        jsonObject.add(ZoneShapeTag.DIMENSION, dimensionObject);
+
+        return jsonObject;
+    }
+
+    @NotNull
+    private JsonObject getCenterJsonObject() {
         JsonObject centerObject = new JsonObject();
         centerObject.addProperty(ZoneShapeTag.CENTER_TYPE, endCenterType.getValue());
         switch (endCenterType) {
@@ -120,8 +132,11 @@ public class EndEntry {
             case PREVIOUS -> centerObject.addProperty(EndEntry.PREVIOUS_ID, endCenterZoneId);
         }
         centerObject.addProperty(EndEntry.RANDOM_RANGE, endCenterRange);
-        jsonObject.add(ZoneShapeTag.CENTER, centerObject);
+        return centerObject;
+    }
 
+    @NotNull
+    private JsonObject getDimensionJsonObject() {
         JsonObject dimensionObject = new JsonObject();
         dimensionObject.addProperty(ZoneShapeTag.DIMENSION_TYPE, endDimensionType.getValue());
         switch (endDimensionType) {
@@ -132,8 +147,6 @@ public class EndEntry {
             }
         }
         dimensionObject.addProperty(EndEntry.RANDOM_RANGE, endDimensionRange);
-        jsonObject.add(ZoneShapeTag.DIMENSION, dimensionObject);
-
-        return jsonObject;
+        return dimensionObject;
     }
 }

@@ -2,14 +2,15 @@ package xiao.battleroyale.config.common.game.spawn.type;
 
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.game.spawn.ISpawnEntry;
+import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 public enum SpawnEntryType {
-    GROUND("ground", GroundEntry::fromJson),
-    PLANE("plane", PlaneEntry::fromJson);
+    GROUND(SpawnTypeTag.SPAWN_TYPE_GROUND, GroundEntry::fromJson),
+    PLANE(SpawnTypeTag.SPAWN_TYPE_PLANE, PlaneEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends ISpawnEntry> deserializer;
