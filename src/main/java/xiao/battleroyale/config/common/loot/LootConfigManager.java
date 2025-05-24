@@ -201,6 +201,7 @@ public class LootConfigManager {
                     ILootEntry lootEntry = JsonUtils.deserializeLootEntry(lootEntryObject);
                     if (lootEntry == null) {
                         BattleRoyale.LOGGER.error("Failed to deserialize loot entry for id: {} in {}", lootId, filePath);
+                        continue;
                     }
                     LootConfig lootConfig = new LootConfig(lootId, name, color, lootEntry);
                     configMap.put(lootId, lootConfig);
@@ -209,7 +210,7 @@ public class LootConfigManager {
                     BattleRoyale.LOGGER.error("Error parsing loot config entry in {}: {}", filePath, e.getMessage());
                 }
             }
-            BattleRoyale.LOGGER.info("{} loot configurations already loaded from {}.", configList.size(), filePath);
+            BattleRoyale.LOGGER.info("{} loot configurations already loaded from {}", configList.size(), filePath);
         } catch (IOException e) {
             BattleRoyale.LOGGER.error("Failed to load configuration from {}: {}", filePath, e.getMessage());
         }

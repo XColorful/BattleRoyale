@@ -1,0 +1,20 @@
+package xiao.battleroyale.api.game.gamerule;
+
+public class MinecraftEntryTag {
+
+    public static final String ADVENTURE = "adventureMode";
+    public static final String MOB_GRIEFING = "mobGriefing";
+    public static final String AUTO_SATURATION = "autoSaturation";
+    public static final String NATURAL_REGENERATION = "naturalRegeneration";
+    public static final String MOB_SPAWNING = "mobSpawning";
+    public static final String DO_FIRE_TICK = "doFireTick";
+    public static final String DO_DAYLIGHT_CYCLE = "doDaylightCycle";
+    public static final String DO_WEATHER_CYCLE = "doWeatherCycle";
+    public static final String FALL_DAMAGE = "fallDamage";
+    public static final String PVP = "pvp";
+    public static final String TNT_EXPLODES = "tntExplodes";
+    public static final String SPECTATOR_GENERATE_CHUNKS = "spectatorGenerateChunks";
+    public static final String TIME_SET = "timeSet";
+
+    private MinecraftEntryTag() {};
+}

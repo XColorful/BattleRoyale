@@ -13,6 +13,8 @@ import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
+import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
+import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
 import xiao.battleroyale.config.common.game.spawn.type.SpawnEntryType;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
@@ -100,11 +102,41 @@ public class JsonUtils {
             if (spawnEntryType != null) {
                 return spawnEntryType.getDeserializer().apply(jsonObject);
             } else {
-                BattleRoyale.LOGGER.warn("Skipped unknown spawn entry type in {}", type);
+                BattleRoyale.LOGGER.warn("Skipped unknown spawn entry type: {}", type);
                 return null;
             }
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Failed to deserialize SpawnEntry: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public static BattleroyaleEntry deserializeBattleroyaleEntry(JsonObject jsonObject) {
+        try {
+            BattleroyaleEntry brEntry = BattleroyaleEntry.fromJson(jsonObject);
+            if (brEntry != null) {
+                return brEntry;
+            } else {
+                BattleRoyale.LOGGER.warn("Skipped invalid BattleroyaleEntry");
+                return null;
+            }
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.error("Failed to deserialize BattleroyaleEntry: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public static MinecraftEntry deserializeMinecraftEntry(JsonObject jsonObject) {
+        try {
+            MinecraftEntry mcEntry = MinecraftEntry.fromJson(jsonObject);
+            if (mcEntry != null) {
+                return mcEntry;
+            } else {
+                BattleRoyale.LOGGER.warn("Skipped invalid MinecraftEntry");
+                return null;
+            }
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.error("Failed to deserialize MinecraftEntry: {}", e.getMessage());
             return null;
         }
     }

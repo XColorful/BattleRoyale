@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.zone.zoneshape;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
@@ -41,6 +42,7 @@ public class SquareEntry implements IZoneShapeEntry {
         return jsonObject;
     }
 
+    @Nullable
     public static SquareEntry fromJson(JsonObject jsonObject) {
         JsonObject startEntryObject = jsonObject.has(ZoneShapeTag.START) ? jsonObject.getAsJsonObject(ZoneShapeTag.START) : null;
         JsonObject endEntryObject = jsonObject.has(ZoneShapeTag.END) ? jsonObject.getAsJsonObject(ZoneShapeTag.END) : null;

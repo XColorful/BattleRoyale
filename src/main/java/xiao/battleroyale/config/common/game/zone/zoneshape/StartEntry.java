@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.game.zone.zoneshape;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.api.game.zone.shape.start.StartCenterType;
@@ -41,6 +42,7 @@ public class StartEntry {
         this.startDimensionRange = startDimensionRange;
     }
 
+    @Nullable
     public static StartEntry fromJson(JsonObject jsonObject) {
         JsonObject centerObject = jsonObject.has(ZoneShapeTag.CENTER) ? jsonObject.getAsJsonObject(ZoneShapeTag.CENTER) : null;
         JsonObject dimensionObject = jsonObject.has(ZoneShapeTag.DIMENSION) ? jsonObject.getAsJsonObject(ZoneShapeTag.DIMENSION) : null;

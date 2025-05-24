@@ -1,0 +1,17 @@
+package xiao.battleroyale.api.game.gamerule;
+
+public class BattleroyaleEntryTag {
+
+    public static final String PLAYER_TOTAL = "playerTotal";
+    public static final String TEAM_SIZE = "teamSize";
+    public static final String AI_TEAMMATE = "aiTeammate";
+    public static final String AI_ENEMY = "aiEnemy";
+    public static final String MAX_GAME_TIME = "maxGameTime";
+    public static final String LOBBY_CENTER = "lobbyCenter";
+    public static final String LOBBY_DIMENSION = "lobbyDimension";
+    public static final String LOBBY_MUTEKI = "lobbyMuteki";
+    public static final String RECORD_STATS = "recordGameStats";
+    public static final String AUTO_JOIN = "autoJoinGame";
+
+    private BattleroyaleEntryTag() {};
+}

@@ -1,5 +1,7 @@
 package xiao.battleroyale.config.common.game;
 
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
@@ -18,6 +20,7 @@ public class GameConfigManager {
     public void reloadConfigs() {
         loadZoneConfigs();
         loadSpawnConfigs();
+        loadGameruleConfigs();
 
         initializeDefaultConfigsIfEmpty();
     }
@@ -27,6 +30,7 @@ public class GameConfigManager {
             instance = new GameConfigManager();
             ZoneConfigManager.init();
             SpawnConfigManager.init();
+            GameruleConfigManager.init();
         }
     }
 
@@ -53,6 +57,14 @@ public class GameConfigManager {
         return SpawnConfigManager.get().getAllSpawnConfigs();
     }
 
+    public GameruleConfig getGameruleConfig(int gameId) {
+        return GameruleConfigManager.get().getGameruleConfig(gameId);
+    }
+
+    public List<GameruleConfig> getAllGameruleConfigs() {
+        return GameruleConfigManager.get().getAllGameruleConfigs();
+    }
+
     public void loadZoneConfigs() {
         ZoneConfigManager.get().loadZoneConfigs();
     }
@@ -61,8 +73,13 @@ public class GameConfigManager {
         SpawnConfigManager.get().loadSpawnConfigs();
     }
 
+    public void loadGameruleConfigs() {
+        GameruleConfigManager.get().loadGameruleConfigs();
+    }
+
     private void initializeDefaultConfigsIfEmpty() {
         ZoneConfigManager.get().initializeDefaultConfigsIfEmpty();
         SpawnConfigManager.get().initializeDefaultConfigsIfEmpty();
+        GameruleConfigManager.get().initializeDefaultConfigsIfEmpty();
     }
 }

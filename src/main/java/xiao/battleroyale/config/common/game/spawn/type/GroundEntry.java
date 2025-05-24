@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.game.spawn.type;
 
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.spawn.ISpawnEntry;
 import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
@@ -59,6 +60,7 @@ public class GroundEntry implements ISpawnEntry {
         return jsonObject;
     }
 
+    @Nullable
     public static GroundEntry fromJson(JsonObject jsonObject) {
         // common
         String shapeTypeString = jsonObject.has(SpawnShapeTag.TYPE_NAME) ? jsonObject.getAsJsonPrimitive(SpawnShapeTag.TYPE_NAME).getAsString() : "";

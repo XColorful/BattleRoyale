@@ -106,14 +106,13 @@ public class ZoneConfigManager {
                     }
                     String zoneName = configObject.has(ZoneConfigTag.ZONE_NAME) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_NAME).getAsString() : "";
                     String zoneColor = configObject.has(ZoneConfigTag.ZONE_COLOR) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_COLOR).getAsString() : "#0000FF";
-                    if (zoneName == null) zoneName = "";
-                    if (zoneColor == null) zoneColor = "#0000FF";
                     int zoneDelay = configObject.has(ZoneConfigTag.ZONE_DELAY) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_DELAY).getAsInt() : 0;
                     int zoneTime = configObject.has(ZoneConfigTag.ZONE_TIME) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_TIME).getAsInt() : 0;
                     IZoneFuncEntry zoneFuncEntry = JsonUtils.deserializeZoneFuncEntry(zoneFuncObject);
                     IZoneShapeEntry zoneShapeEntry = JsonUtils.deserializeZoneShapeEntry(zoneShapeObject);
                     if (zoneFuncEntry == null || zoneShapeEntry == null) {
                         BattleRoyale.LOGGER.error("Failed to deserialize zone entry for id: {} in {}", zoneId, filePath);
+                        continue;
                     }
                     ZoneConfig zoneConfig = new ZoneConfig(zoneId, zoneName, zoneColor, zoneDelay, zoneTime, zoneFuncEntry, zoneShapeEntry);
                     configMap.put(zoneId, zoneConfig);
@@ -122,7 +121,7 @@ public class ZoneConfigManager {
                     BattleRoyale.LOGGER.error("Error parsing zone config entry in {}: {}", filePath, e.getMessage());
                 }
             }
-            BattleRoyale.LOGGER.info("{} zone configurations already loaded from {}.", configList.size(), filePath);
+            BattleRoyale.LOGGER.info("{} zone configurations already loaded from {}", configList.size(), filePath);
         } catch (IOException e) {
             BattleRoyale.LOGGER.error("Failed to load configuration from {}: {}", filePath, e.getMessage());
         }

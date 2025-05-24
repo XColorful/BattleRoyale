@@ -102,11 +102,10 @@ public class SpawnConfigManager {
                     }
                     String name = configObject.has(SpawnConfigTag.SPAWN_NAME) ? configObject.getAsJsonPrimitive(SpawnConfigTag.SPAWN_NAME).getAsString() : "";
                     String color = configObject.has(SpawnConfigTag.SPAWN_COLOR) ? configObject.getAsJsonPrimitive(SpawnConfigTag.SPAWN_COLOR).getAsString() : "#FFFFFF";
-                    if (name == null) name = "";
-                    if (color == null) color = "#FFFFFF";
                     ISpawnEntry spawnEntry = JsonUtils.deserializeSpawnEntry(spawnEntryObject);
                     if (spawnEntry == null) {
                         BattleRoyale.LOGGER.warn("Failed to deserialize spawn entry for id: {} in {}", id, filePath);
+                        continue;
                     }
                     SpawnConfig spawnConfig = new SpawnConfig(id, name, color, spawnEntry);
                     configMap.put(id, spawnConfig);

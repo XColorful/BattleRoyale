@@ -41,7 +41,6 @@ public class AirdropFuncEntry implements IZoneFuncEntry {
         return jsonObject;
     }
 
-
     public static AirdropFuncEntry fromJson(JsonObject jsonObject) {
         int moveDelay = jsonObject.has(ZoneFuncTag.MOVE_DELAY) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.MOVE_DELAY).getAsInt() : 0;
         int moveTime = jsonObject.has(ZoneFuncTag.MOVE_TIME) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.TYPE_NAME).getAsInt() : 0;
