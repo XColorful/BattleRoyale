@@ -1,7 +1,6 @@
 package xiao.battleroyale.common.game.zone.spatial;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -12,6 +11,7 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static xiao.battleroyale.common.game.zone.spatial.ShapeHelper.*;
@@ -58,7 +58,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     }
 
     @Override
-    public void calculateShape(ServerLevel serverLevel, List<LivingEntity> gamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
+    public void calculateShape(ServerLevel serverLevel, List<UUID> playerIdList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
         if (!determined) {
             // start center
             switch (startEntry.startCenterType) {

@@ -1,13 +1,13 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class DangerFunc implements ITickableZone {
@@ -21,7 +21,7 @@ public class DangerFunc implements ITickableZone {
     }
 
     @Override
-    public void initFunc(ServerLevel serverLevel, List<LivingEntity> gamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
+    public void initFunc(ServerLevel serverLevel, List<UUID> playerIdList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
 
     }
 
@@ -31,7 +31,7 @@ public class DangerFunc implements ITickableZone {
     }
 
     @Override
-    public void tick(ServerLevel serverLevel, List<LivingEntity> gamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
+    public void tick(ServerLevel serverLevel, List<UUID> playerIdList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
 
     }
 

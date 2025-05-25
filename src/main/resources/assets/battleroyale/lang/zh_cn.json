@@ -38,5 +38,17 @@
   "battleroyale.message.unknown_game_sub_type": "未知大逃杀配置子类型: %s",
 
   "battleroyale.message.game_cancel_loot": "当前正在进行游戏，拒绝物资刷新",
-  "battleroyale.message.game_stop_loot": "当前正在进行游戏，停止待处理的物资刷新"
+  "battleroyale.message.game_stop_loot": "当前正在进行游戏，停止待处理的物资刷新",
+
+  "battleroyale.message.spawn_config_id_set": "将玩家生成配置设置为配置%s",
+  "battleroyale.message.invalid_spawn_config_id": "无法将玩家生成配置设置为%s",
+  "battleroyale.message.gamerule_config_id_set": "将大逃杀规则配置设置为%s",
+  "battleroyale.message.invalid_gamerule_config_id": "无法将大逃杀规则配置设置为%s",
+  "battleroyale.message.bot_config_id_set": "将人机配置设置为%s",
+  "battleroyale.message.invalid_bot_config_id": "无法将人机配置设置为%s",
+
+  "battleroyale.message.missing_gamerule_config": "缺少有效的大逃杀规则配置",
+  "battleroyale.message.missing_spawn_config": "缺少有效的玩家生成配置",
+  "battleroyale.message.missing_zone_config": "缺少有效的区域配置",
+  "battleroyale.message.missing_bot_config": "缺少有效的人机配置"
 }

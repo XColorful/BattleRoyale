@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 
 public class ReloadCommand {
     private static final String RELOAD_NAME = "reload";
+
     private static final String LOOT_NAME = "loot";
     private static final String GAME_NAME = "game";
 

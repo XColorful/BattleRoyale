@@ -37,8 +37,7 @@ public class DefaultGamerule {
         MinecraftEntry mcEntry = new MinecraftEntry(true, false, true,
                 false, false, false,
                 false, false, false,
-                true, false, false,
-                5000);
+                false, false, 5000);
 
         config.add(GameruleConfigTag.BATTLEROYALE_ENTRY, brEntry.toJson());
         config.add(GameruleConfigTag.MINECRAFT_ENTRY, mcEntry.toJson());
@@ -59,8 +58,7 @@ public class DefaultGamerule {
         MinecraftEntry mcEntry = new MinecraftEntry(false, false, false,
                 true, true, true,
                 false, true, true,
-                true, true, false,
-                5000);
+                true, false, 5000);
 
         config.add(GameruleConfigTag.BATTLEROYALE_ENTRY, brEntry.toJson());
         config.add(GameruleConfigTag.MINECRAFT_ENTRY, mcEntry.toJson());

@@ -39,5 +39,17 @@
   "battleroyale.message.unknown_game_sub_type": "Unknown game sub-type: %s",
 
   "battleroyale.message.game_cancel_loot": "Currently in game, cancel loot generation",
-  "battleroyale.message.game_stop_loot": "Currenetly in game, stopped queued loot generation"
+  "battleroyale.message.game_stop_loot": "Currenetly in game, stopped queued loot generation",
+
+  "battleroyale.message.spawn_config_id_set": "Set spawn config id to %s",
+  "battleroyale.message.invalid_spawn_config_id": "Impossible spawn config id",
+  "battleroyale.message.gamerule_config_id_set": "Set gamerule config id to %s",
+  "battleroyale.message.invalid_gamerule_config_id": "Impossible gamerule config id",
+  "battleroyale.message.bot_config_id_set": "Set bot config id to %s",
+  "battleroyale.message.invalid_bot_config_id": "Impossible bot config id",
+
+  "battleroyale.message.missing_gamerule_config": "Missing valid gamerule config for battleroyale game",
+  "battleroyale.message.missing_spawn_config": "Missing valid spawn config for battleroyale game",
+  "battleroyale.message.missing_zone_config": "Missing valid zone config for battleroyale game",
+  "battleroyale.message.missing_bot_config": "Missing valid bot config for battleroyale game"
 }
