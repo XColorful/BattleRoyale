@@ -3,25 +3,30 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.loot.LootConfigTag;
+import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.type.*;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
 
-public class DefaultAirdropSpecial extends DefaultConfigHelper {
+import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
-    private static final String AIRDROP_SPECIAL_CONFIG_PATH = "config/battleroyale/loot/airdrop_special/default.json";
+public class DefaultAirdropSpecial{
+
+    private static final String DEFAULT_FILE_NAME = "default.json";
 
     public static void generateDefaultConfigs() {
         JsonArray specialAirdropConfigsJson = new JsonArray();
         specialAirdropConfigsJson.add(generateDefaultSpecialAirdrop());
-        writeJsonToFile(AIRDROP_SPECIAL_CONFIG_PATH, specialAirdropConfigsJson);
+        writeJsonToFile(Paths.get(LootConfigManager.COMMON_LOOT_CONFIG_PATH, LootConfigManager.AIRDROP_SPECIAL_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), specialAirdropConfigsJson);
     }
 
     private static JsonObject generateDefaultSpecialAirdrop() {
         JsonObject config = new JsonObject();
-        config.addProperty("id", 201);
-        config.addProperty("name", "Netherite Airdrop Special");
-        config.addProperty("color", "#FFFF00");
+        config.addProperty(LootConfigTag.LOOT_ID, 201);
+        config.addProperty(LootConfigTag.LOOT_NAME, "Netherite Airdrop Special");
+        config.addProperty(LootConfigTag.LOOT_COLOR, "#FFFF00");
 
         ILootEntry repeatEntry = new RepeatEntry(2, 2,
                 new MultiEntry(Arrays.asList(
@@ -36,7 +41,7 @@ public class DefaultAirdropSpecial extends DefaultConfigHelper {
                 )
         );
 
-        config.add("entry", repeatEntry.toJson());
+        config.add(LootConfigTag.LOOT_ENTRY, repeatEntry.toJson());
         return config;
     }
 }

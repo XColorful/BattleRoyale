@@ -3,29 +3,34 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.loot.LootConfigTag;
+import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.type.ItemEntry;
 import xiao.battleroyale.config.common.loot.type.MultiEntry;
 import xiao.battleroyale.config.common.loot.type.RandomEntry;
 import xiao.battleroyale.config.common.loot.type.WeightEntry;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
 
-public class DefaultLootSpawner extends DefaultConfigHelper {
+import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
-    private static final String LOOT_SPAWNER_CONFIG_PATH = "config/battleroyale/loot/loot_spawner/default.json";
+public class DefaultLootSpawner{
+
+    private static final String DEFAULT_FILE_NAME = "default.json";
 
     public static void generateDefaultConfigs() {
         JsonArray lootSpawnerConfigsJson = new JsonArray();
         lootSpawnerConfigsJson.add(generateDefaultLootSpawner1());
         lootSpawnerConfigsJson.add(generateDefaultLootSpawner2());
-        writeJsonToFile(LOOT_SPAWNER_CONFIG_PATH, lootSpawnerConfigsJson);
+        writeJsonToFile(Paths.get(LootConfigManager.COMMON_LOOT_CONFIG_PATH, LootConfigManager.LOOT_SPAWNER_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), lootSpawnerConfigsJson);
     }
 
     private static JsonObject generateDefaultLootSpawner1() {
         JsonObject config = new JsonObject();
-        config.addProperty("id", 1);
-        config.addProperty("name", "Starter Gear");
-        config.addProperty("color", "#A0522D");
+        config.addProperty(LootConfigTag.LOOT_ID, 1);
+        config.addProperty(LootConfigTag.LOOT_NAME, "Starter Gear");
+        config.addProperty(LootConfigTag.LOOT_COLOR, "#A0522D");
 
         ILootEntry multiEntry = new MultiEntry(Arrays.asList(
                 new ItemEntry("minecraft:leather_helmet", null, 1),
@@ -43,9 +48,9 @@ public class DefaultLootSpawner extends DefaultConfigHelper {
 
     private static JsonObject generateDefaultLootSpawner2() {
         JsonObject config = new JsonObject();
-        config.addProperty("id", 2);
-        config.addProperty("name", "Basic Combat Gear");
-        config.addProperty("color", "#778899");
+        config.addProperty(LootConfigTag.LOOT_ID, 2);
+        config.addProperty(LootConfigTag.LOOT_NAME, "Basic Combat Gear");
+        config.addProperty(LootConfigTag.LOOT_COLOR, "#778899");
 
         ILootEntry multiEntry = new MultiEntry(Arrays.asList(
                 new ItemEntry("minecraft:iron_helmet", null, 1),
@@ -57,7 +62,7 @@ public class DefaultLootSpawner extends DefaultConfigHelper {
                 new RandomEntry(0.2, new ItemEntry("minecraft:cooked_beef", null, 1))
         ));
 
-        config.add("entry", multiEntry.toJson());
+        config.add(LootConfigTag.LOOT_ENTRY, multiEntry.toJson());
         return config;
     }
 }

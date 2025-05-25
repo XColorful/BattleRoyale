@@ -1,15 +1,42 @@
 {
   "itemGroup.tab.battleroyale.block": "Battle Royale方块",
+
   "item.battleroyale.loot_spawner": "物资刷新器",
   "item.battleroyale.entity_spawner": "实体生成器",
   "block.battleroyale.loot_spawner": "物资刷新方块",
   "block.battleroyale.entity_spawner": "实体生成方块",
+
   "container.battleroyale.loot_spawner": "物资盒",
-  "battleroyale.message.loot_config_switched": "切换至物资刷新配置%s",
-  "battleroyale.message.entity_config_switched": "切换至实体刷新配置%s",
-  "battleroyale.message.loot_config_reloaded": "已重新加载物资及实体刷新配置",
-  "battleroyale.message.no_loot_configs_available": "当前没有已加载的刷新配置",
-  "battleroyale.message.loot_generation_finished": "刷新物资及实体方块共%s个",
+
+  "battleroyale.message.loot_spawner_config_switched": "切换至物资刷新配置%s: %s",
+  "battleroyale.message.entity_spawner_config_switched": "切换至实体刷新配置%s: %s",
+
+  "battleroyale.message.loot_generation_started": "开始执行物资刷新 (区块数: %s)",
   "battleroyale.message.loot_generation_in_progress": "当前正在执行物资刷新",
-  "battleroyale.message.loot_generation_started": "开始执行物资刷新 (区块数: %s)"
+  "battleroyale.message.loot_generation_finished": "刷新物资及实体刷新方块共%s个",
+
+  "battleroyale.message.no_loot_spawner_configs_available": "当前没有已加载的物资刷新方块配置",
+  "battleroyale.message.no_entity_spawner_configs_available": "当前没有已加载的实体刷新方块配置",
+  "battleroyale.message.no_gamerule_config_available": "当前没有已加载的大逃杀规则配置",
+  "battleroyale.message.no_zone_configs_available": "当前没有已加载的区域配置",
+  "battleroyale.message.no_spawn_config_available": "当前没有已加载的玩家生成配置",
+
+  "battleroyale.message.all_configs_reloaded": "已重新加载所有大逃杀配置",
+  "battleroyale.message.loot_config_reloaded": "已重新加载所有物资刷新配置",
+  "battleroyale.message.loot_spawner_config_reloaded": "已重新加载物资刷新方块配置",
+  "battleroyale.message.entity_spawner_config_reloaded": "已重新加载实体刷新方块配置",
+  "battleroyale.message.airdrop_config_reloaded": "已重新加载补给箱配置",
+  "battleroyale.message.airdrop_special_config_reloaded": "已重新加载特殊补给箱配置",
+  "battleroyale.message.secret_room_config_reloaded": "已重新加载神秘点位配置",
+  "battleroyale.message.game_config_reloaded": "已重新加载所有大逃杀游戏配置",
+  "battleroyale.message.zone_config_reloaded": "已重新加载区域配置",
+  "battleroyale.message.spawn_config_reloaded": "已重新加载玩家生成配置",
+  "battleroyale.message.gamerule_config_reloaded": "已重新加载大逃杀规则配置",
+  "battleroyale.message.bot_config_reloaded": "已重新加载人机配置",
+
+  "battleroyale.message.unknown_loot_sub_type": "未知物资刷新配置子类型: %s",
+  "battleroyale.message.unknown_game_sub_type": "未知大逃杀配置子类型: %s",
+
+  "battleroyale.message.game_cancel_loot": "当前正在进行游戏，拒绝物资刷新",
+  "battleroyale.message.game_stop_loot": "当前正在进行游戏，停止待处理的物资刷新"
 }

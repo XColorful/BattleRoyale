@@ -1,15 +1,43 @@
 {
   "itemGroup.tab.battleroyale.block": "Battle Royale Blocks",
+
   "item.battleroyale.loot_spawner": "Loot Spawner",
   "item.battleroyale.entity_spawner": "Entity Spawner",
+
   "block.battleroyale.loot_spawner": "Loot Spawner",
   "block.battleroyale.entity_spawner": "Entity Spawner",
+
   "container.battleroyale.loot_spawner": "Loot Crate",
-  "battleroyale.message.loot_config_switched": "Switched to loot config %s",
-  "battleroyale.message.entity_config_switched": "Switched to entity loot config %s",
-  "battleroyale.message.loot_config_reloaded": "Reloaded all loot config",
-  "battleroyale.message.no_loot_configs_available": "No loot config available",
-  "battleroyale.message.loot_generation_finished": "Generated loot: %s",
+
+  "battleroyale.message.loot_spawner_config_switched": "Switched to loot config %s: %s",
+  "battleroyale.message.entity_spawner_config_switched": "Switched to entity loot config %s: %s",
+
+  "battleroyale.message.loot_generation_started": "Start generating loots (chunk total: %s)",
   "battleroyale.message.loot_generation_in_progress": "There's loot generation in progress",
-  "battleroyale.message.loot_generation_started": "Start generating loots (chunk total: %s)"
+  "battleroyale.message.loot_generation_finished": "Generated loot: %s",
+
+  "battleroyale.message.no_loot_spawner_configs_available": "No loot spawner config available",
+  "battleroyale.message.no_entity_spawner_configs_available": "No entity spawner config available",
+  "battleroyale.message.no_gamerule_config_available": "No gamerule config available",
+  "battleroyale.message.no_zone_configs_available": "No zone config avaliable",
+  "battleroyale.message.no_spawn_config_available": "No spawn config available",
+
+  "battleroyale.message.all_configs_reloaded": "Reloaded all battleroyale configs.",
+  "battleroyale.message.loot_config_reloaded": "Reloaded all loot configs",
+  "battleroyale.message.loot_spawner_config_reloaded": "Reloaded loot spawner configs",
+  "battleroyale.message.entity_spawner_config_reloaded": "Reloaded entity spawner configs",
+  "battleroyale.message.airdrop_config_reloaded": "Reloaded airdrop configs",
+  "battleroyale.message.airdrop_special_config_reloaded": "Reloaded special airdrop configs",
+  "battleroyale.message.secret_room_config_reloaded": "Reloaded secret room configs",
+  "battleroyale.message.game_config_reloaded": "Reloaded all game configs",
+  "battleroyale.message.zone_config_reloaded": "Reloaded zone configs",
+  "battleroyale.message.spawn_config_reloaded": "Reloaded spawn configs",
+  "battleroyale.message.gamerule_config_reloaded": "Reloaded gamerule configs",
+  "battleroyale.message.bot_config_reloaded": "Reloaded bot configs",
+
+  "battleroyale.message.unknown_loot_sub_type": "Unknown loot sub-type: %s",
+  "battleroyale.message.unknown_game_sub_type": "Unknown game sub-type: %s",
+
+  "battleroyale.message.game_cancel_loot": "Currently in game, cancel loot generation",
+  "battleroyale.message.game_stop_loot": "Currenetly in game, stopped queued loot generation"
 }

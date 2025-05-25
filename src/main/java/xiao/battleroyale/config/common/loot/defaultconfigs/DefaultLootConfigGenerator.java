@@ -2,12 +2,12 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 
 public class DefaultLootConfigGenerator {
 
-    public static void generateDefaultConfigs() {
-        DefaultLootSpawner.generateDefaultConfigs();
-        DefaultAirdrop.generateDefaultConfigs();
-        DefaultAirdropSpecial.generateDefaultConfigs();
-        DefaultEntitySpawner.generateDefaultConfigs();
-        DefaultSecretRoom.generateDefaultConfigs();
+    public static void generateAllDefaultConfigs() {
+        generateDefaultLootSpawnerConfig();
+        generateDefaultAirdropConfig();
+        generateDefaultAirdropSpecialConfig();
+        generateDefaultEntitySpawnerConfig();
+        generateDefaultSecretRoomConfig();
     }
 
     public static void generateDefaultLootSpawnerConfig() {

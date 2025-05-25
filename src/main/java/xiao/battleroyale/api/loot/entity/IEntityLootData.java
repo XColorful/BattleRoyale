@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 
 public interface IEntityLootData extends ILootData {
     @Override
-    default LootDataType getType() {
+    default LootDataType getDataType() {
         return LootDataType.ENTITY;
     }
 

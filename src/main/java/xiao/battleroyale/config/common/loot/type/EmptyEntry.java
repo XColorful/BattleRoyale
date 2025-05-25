@@ -2,12 +2,12 @@ package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootData;
+import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.api.loot.item.IItemLootEntry;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
-import net.minecraft.world.item.ItemStack;
 
 public class EmptyEntry implements IItemLootEntry {
 
@@ -24,7 +24,7 @@ public class EmptyEntry implements IItemLootEntry {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("type", getType());
+        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
         return jsonObject;
     }
 

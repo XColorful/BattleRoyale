@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class RepeatEntry implements ILootEntry {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("type", getType());
+        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
         if (min >= 0) {
             jsonObject.addProperty("min", this.min);
         }

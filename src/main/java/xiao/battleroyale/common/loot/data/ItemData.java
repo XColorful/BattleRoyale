@@ -1,4 +1,4 @@
-package xiao.battleroyale.config.common.loot.data;
+package xiao.battleroyale.common.loot.data;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;

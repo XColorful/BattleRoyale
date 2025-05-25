@@ -22,10 +22,10 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = BattleRoyale.MOD_ID)
 public class LootTickEvent {
 
-    private static final int MAX_CHUNKS_PER_TICK = 5; // 可配置：每tick最大处理的区块数
+    private static int MAX_CHUNKS_PER_TICK = 5; // 可配置：每tick最大处理的区块数
 
-    private static Queue<ChunkPos> chunksToProcess = new ArrayDeque<>();
-    private static Set<ChunkPos> processedChunkTracker = new HashSet<>(); // 用于去重和检查是否已在队列中
+    private static final Queue<ChunkPos> chunksToProcess = new ArrayDeque<>();
+    private static final Set<ChunkPos> processedChunkTracker = new HashSet<>(); // 用于去重和检查是否已在队列中
     private static UUID currentGenerationGameId = null;
     private static ServerLevel currentGenerationLevel = null;
     private static int totalLootRefreshedInBatch = 0;
@@ -38,16 +38,17 @@ public class LootTickEvent {
      * @return 队列中的总区块数；如果已有任务正在进行，则返回 0
      */
     public static int startLootGeneration(CommandSourceStack source, UUID gameId) {
-        if (!chunksToProcess.isEmpty()) {
+        if (GameManager.get().isInGame()) {
+            source.sendFailure(Component.translatable("battleroyale.message.game_cancel_loot"));
+            return -1;
+        } else if (!chunksToProcess.isEmpty()) {
             return 0;
         }
 
-        initiatingCommandSource = source; // 存储命令源
+        resetLootInfo();
+        initiatingCommandSource = source;
         currentGenerationGameId = gameId;
         currentGenerationLevel = source.getLevel();
-        totalLootRefreshedInBatch = 0;
-        chunksToProcess.clear();
-        processedChunkTracker.clear();
 
         MinecraftServer server = currentGenerationLevel.getServer();
         int simulationDistance = server.getPlayerList().getSimulationDistance();
@@ -98,22 +99,39 @@ public class LootTickEvent {
         if (event.phase == TickEvent.Phase.END && currentGenerationLevel != null && currentGenerationGameId != null) {
             if (chunksToProcess.isEmpty()) {
                 if (initiatingCommandSource != null) { // 所有区块处理完毕
-                    initiatingCommandSource.sendSuccess(() -> Component.translatable("battleroyale.message.loot_generation_finished", totalLootRefreshedInBatch), true);
-                    BattleRoyale.LOGGER.info("Loot generation batch finished. Total refreshed: {}", totalLootRefreshedInBatch);
-                    initiatingCommandSource = null; // 清空，防止重复发送
+                    sendLootRefreshResult();
+                    resetLootInfo();
                 }
-                currentGenerationGameId = null;
-                currentGenerationLevel = null;
-                totalLootRefreshedInBatch = 0;
                 return;
             }
 
-            int processedThisTick = 0;
-            while (!chunksToProcess.isEmpty() && processedThisTick < MAX_CHUNKS_PER_TICK) {
+            // 正在进行游戏则取消刷新
+            if (GameManager.get().isInGame() && currentGenerationGameId != GameManager.get().getGameId()) {
+                initiatingCommandSource.sendFailure(Component.translatable("battleroyale.message.game_stop_loot"));
+                sendLootRefreshResult();
+                resetLootInfo();
+            }
+
+            int processedChunkThisTick = 0;
+            while (!chunksToProcess.isEmpty() && processedChunkThisTick < MAX_CHUNKS_PER_TICK) {
                 ChunkPos chunkPos = chunksToProcess.poll();
                 totalLootRefreshedInBatch += LootGenerator.refreshLootInChunk(currentGenerationLevel, chunkPos, currentGenerationGameId);
-                processedThisTick++;
+                processedChunkThisTick++;
             }
         }
+    }
+
+    private static void resetLootInfo() {
+        initiatingCommandSource = null;
+        currentGenerationGameId = null;
+        currentGenerationLevel = null;
+        totalLootRefreshedInBatch = 0;
+        chunksToProcess.clear();
+        processedChunkTracker.clear();
+    }
+
+    private static void sendLootRefreshResult() {
+        initiatingCommandSource.sendSuccess(() -> Component.translatable("battleroyale.message.loot_generation_finished", totalLootRefreshedInBatch), true);
+        BattleRoyale.LOGGER.info("Loot generation batch finished. Total refreshed: {}", totalLootRefreshedInBatch);
     }
 }
