@@ -128,35 +128,35 @@ public class LootConfigManager {
         return allEntitySpawnerConfigs;
     }
 
-    private void loadLootSpawnerConfigs() {
+    public void loadLootSpawnerConfigs() {
         lootSpawnerConfigs.clear();
         allLootSpawnerConfigs.clear();
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, LOOT_SPAWNER_CONFIG_SUB_PATH), lootSpawnerConfigs, allLootSpawnerConfigs);
         allLootSpawnerConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
 
-    private void loadEntitySpawnerConfigs() {
+    public void loadEntitySpawnerConfigs() {
         entitySpawnerConfigs.clear();
         allEntitySpawnerConfigs.clear();
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, ENTITY_SPAWNER_CONFIG_SUB_PATH), entitySpawnerConfigs, allEntitySpawnerConfigs);
         allEntitySpawnerConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
 
-    private void loadAirdropConfigs() {
+    public void loadAirdropConfigs() {
         airdropConfigs.clear();
         allAirdropConfigs.clear();
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, AIRDROP_CONFIG_SUB_PATH), airdropConfigs, allAirdropConfigs);
         allAirdropConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
 
-    private void loadAirdropSpecialConfigs() {
+    public void loadAirdropSpecialConfigs() {
         airdropSpecialConfigs.clear();
         allAirdropSpecialConfigs.clear();
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, AIRDROP_SPECIAL_CONFIG_SUB_PATH), airdropSpecialConfigs, allAirdropSpecialConfigs);
         allAirdropSpecialConfigs.sort(Comparator.comparingInt(LootConfig::getLootId));
     }
 
-    private void loadSecretRoomConfigs() {
+    public void loadSecretRoomConfigs() {
         secretRoomConfigs.clear();
         allSecretRoomConfigs.clear();
         loadConfigsFromDirectory(Paths.get(COMMON_LOOT_CONFIG_PATH, SECRET_ROOM_CONFIG_SUB_PATH), secretRoomConfigs, allSecretRoomConfigs);

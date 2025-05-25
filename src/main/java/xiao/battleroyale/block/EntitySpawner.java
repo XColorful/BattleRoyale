@@ -64,7 +64,7 @@ public class EntitySpawner extends AbstractLootBlock {
                     List<LootConfig> allConfigs = LootConfigManager.get().getAllEntitySpawnerConfigs();
 
                     if (allConfigs.isEmpty()) { // 没有配置可切换，提示后直接返回
-                        player.sendSystemMessage(Component.translatable("battleroyale.message.no_entity_configs_available"));
+                        player.sendSystemMessage(Component.translatable("battleroyale.message.no_entity_spawner_configs_available"));
                         return InteractionResult.SUCCESS;
                     }
                     LootConfig nextConfig = allConfigs.get(0);
@@ -75,7 +75,7 @@ public class EntitySpawner extends AbstractLootBlock {
                         }
                     }
                     entitySpawnerBlockEntity.setConfigId(nextConfig.getLootId()); // 设置配置文件的实际 ID
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_config_switched", nextConfig.getLootId(), nextConfig.getName()));
+                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_spawner_config_switched", nextConfig.getLootId(), nextConfig.getName()));
                     return InteractionResult.SUCCESS;
                 }
             }
