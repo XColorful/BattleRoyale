@@ -38,9 +38,9 @@ public class LootCommand {
             return Command.SINGLE_SUCCESS;
         } else if (totalChunks == 0){
             source.sendFailure(Component.translatable("battleroyale.message.loot_generation_in_progress"));
-            return Command.SINGLE_SUCCESS;
+            return 0;
         } else {
-            return Command.SINGLE_SUCCESS;
+            return 0;
         }
     }
 }
