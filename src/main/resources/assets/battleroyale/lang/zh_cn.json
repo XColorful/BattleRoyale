@@ -35,5 +35,8 @@
   "battleroyale.message.bot_config_reloaded": "已重新加载人机配置",
 
   "battleroyale.message.unknown_loot_sub_type": "未知物资刷新配置子类型: %s",
-  "battleroyale.message.unknown_game_sub_type": "未知大逃杀配置子类型: %s"
+  "battleroyale.message.unknown_game_sub_type": "未知大逃杀配置子类型: %s",
+
+  "battleroyale.message.game_cancel_loot": "当前正在进行游戏，拒绝物资刷新",
+  "battleroyale.message.game_stop_loot": "当前正在进行游戏，停止待处理的物资刷新"
 }

@@ -29,11 +29,10 @@ public class GameManager {
 
     @NotNull
     public UUID getGameId() {
-        if (inGame) {
-            return this.gameId;
-        } else {
-            return UUID.randomUUID();
+        if (this.gameId == null) {
+            generateGameId();
         }
+        return this.gameId;
     }
 
     private void generateGameId() {
@@ -42,6 +41,10 @@ public class GameManager {
 
     public void setGameId(UUID gameId) {
         this.gameId = gameId;
+    }
+
+    public boolean isInGame() {
+        return this.inGame;
     }
 
     public void startGame() {

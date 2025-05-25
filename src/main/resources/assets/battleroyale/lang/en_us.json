@@ -36,5 +36,8 @@
   "battleroyale.message.bot_config_reloaded": "Reloaded bot configs",
 
   "battleroyale.message.unknown_loot_sub_type": "Unknown loot sub-type: %s",
-  "battleroyale.message.unknown_game_sub_type": "Unknown game sub-type: %s"
+  "battleroyale.message.unknown_game_sub_type": "Unknown game sub-type: %s",
+
+  "battleroyale.message.game_cancel_loot": "Currently in game, cancel loot generation",
+  "battleroyale.message.game_stop_loot": "Currenetly in game, stopped queued loot generation"
 }
