@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 public class GameruleConfigManager {
     public static final int DEFAULT_CONFIG_ID = 0;
 
-    private static final String GAMERULE_CONFIG_SUB_PATH = "gamerule";
+    public static final String GAMERULE_CONFIG_SUB_PATH = "gamerule";
 
     private final Map<Integer, GameruleConfig> gameruleConfigs = new HashMap<>();
     private final List<GameruleConfig> allGameruleConfigs = new ArrayList<>();
@@ -67,7 +67,7 @@ public class GameruleConfigManager {
     public void loadGameruleConfigs() {
         gameruleConfigs.clear();
         allGameruleConfigs.clear();
-        loadConfigsFromDirectory(Paths.get(GameruleConfigManager.GAMERULE_CONFIG_SUB_PATH, GAMERULE_CONFIG_SUB_PATH), gameruleConfigs, allGameruleConfigs);
+        loadConfigsFromDirectory(Paths.get(GameConfigManager.GAME_CONFIG_PATH, GAMERULE_CONFIG_SUB_PATH), gameruleConfigs, allGameruleConfigs);
         allGameruleConfigs.sort(Comparator.comparingInt(GameruleConfig::getGameId));
     }
 
