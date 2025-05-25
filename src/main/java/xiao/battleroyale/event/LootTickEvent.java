@@ -22,10 +22,10 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = BattleRoyale.MOD_ID)
 public class LootTickEvent {
 
-    private static final int MAX_CHUNKS_PER_TICK = 5; // 可配置：每tick最大处理的区块数
+    private static int MAX_CHUNKS_PER_TICK = 5; // 可配置：每tick最大处理的区块数
 
-    private static Queue<ChunkPos> chunksToProcess = new ArrayDeque<>();
-    private static Set<ChunkPos> processedChunkTracker = new HashSet<>(); // 用于去重和检查是否已在队列中
+    private static final Queue<ChunkPos> chunksToProcess = new ArrayDeque<>();
+    private static final Set<ChunkPos> processedChunkTracker = new HashSet<>(); // 用于去重和检查是否已在队列中
     private static UUID currentGenerationGameId = null;
     private static ServerLevel currentGenerationLevel = null;
     private static int totalLootRefreshedInBatch = 0;
@@ -112,11 +112,11 @@ public class LootTickEvent {
                 resetLootInfo();
             }
 
-            int processedThisTick = 0;
-            while (!chunksToProcess.isEmpty() && processedThisTick < MAX_CHUNKS_PER_TICK) {
+            int processedChunkThisTick = 0;
+            while (!chunksToProcess.isEmpty() && processedChunkThisTick < MAX_CHUNKS_PER_TICK) {
                 ChunkPos chunkPos = chunksToProcess.poll();
                 totalLootRefreshedInBatch += LootGenerator.refreshLootInChunk(currentGenerationLevel, chunkPos, currentGenerationGameId);
-                processedThisTick++;
+                processedChunkThisTick++;
             }
         }
     }

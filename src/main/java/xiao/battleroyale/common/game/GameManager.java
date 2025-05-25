@@ -13,6 +13,7 @@ public class GameManager {
         generateGameId();
     }
 
+    // GameManager初始化，并非游戏初始化
     public static void init() {
         if (instance == null) {
             instance = new GameManager();

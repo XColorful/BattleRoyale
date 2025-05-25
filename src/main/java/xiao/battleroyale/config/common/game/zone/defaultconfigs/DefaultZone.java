@@ -45,9 +45,9 @@ public class DefaultZone {
 
         // 中心点(0, 0)，边长256block的正方形，不缩圈
         StartEntry startEntry = new StartEntry(StartCenterType.FIXED, new Vec3(0, 0, 0), -1, 0,
-                StartDimensionType.FIXED, new Vec3(128, 0, 128), -1, 1, 0);
+                StartDimensionType.FIXED, new Vec3(128, 255, 128), -1, 1, 0);
         EndEntry endEntry = new EndEntry(EndCenterType.FIXED, new Vec3(0, 0, 0), -1, 0,
-                EndDimensionType.FIXED, new Vec3(128, 0, 128), -1, 1, 0);
+                EndDimensionType.FIXED, new Vec3(128, 255, 128), -1, 1, 0);
 
         SquareEntry squareEntry = new SquareEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, squareEntry.toJson());
@@ -69,9 +69,9 @@ public class DefaultZone {
 
         // 中心点(0, 0)，初始圆包含 Simple Border 的边界正方形，缩圈后半径为原先 0.5 倍
         StartEntry startEntry = new StartEntry(StartCenterType.PREVIOUS, new Vec3(0, 0, 0), 1, 0,
-                StartDimensionType.FIXED, new Vec3(128 * Math.sqrt(2), 0, 128 * Math.sqrt(2)), -1, 1, 0);
+                StartDimensionType.FIXED, new Vec3(128 * Math.sqrt(2), 255, 128 * Math.sqrt(2)), -1, 1, 0);
         EndEntry endEntry = new EndEntry(EndCenterType.PREVIOUS, new Vec3(0, 0, 0), 2, 64, // id指向自身，在 moveDelay 结束时计算，指向自身初始状态
-                EndDimensionType.PREVIOUS, new Vec3(114, 0, 514), 2, 0.5, 0);
+                EndDimensionType.PREVIOUS, new Vec3(114, 255, 514), 2, 0.5, 0);
 
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, circleEntry.toJson());
