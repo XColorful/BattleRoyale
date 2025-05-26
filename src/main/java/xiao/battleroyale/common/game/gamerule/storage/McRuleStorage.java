@@ -5,6 +5,7 @@ import net.minecraft.world.level.GameRules;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.storage.IRuleStorage;
+import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class McRuleStorage implements IRuleStorage {
     }
 
     @Override
-    public void store(IGameruleEntry entry, ServerLevel serverLevel, List<UUID> playerIdList) {
+    public void store(IGameruleEntry entry, ServerLevel serverLevel, List<GamePlayer> gamePlayerList) {
         if (!(entry instanceof MinecraftEntry mcEntry)) {
             BattleRoyale.LOGGER.error("Expected minecraftEntry for McRuleStorage");
             return;
@@ -66,7 +67,7 @@ public class McRuleStorage implements IRuleStorage {
     }
 
     @Override
-    public void apply(ServerLevel serverLevel, List<UUID> playerIdList) {
+    public void apply(ServerLevel serverLevel, List<GamePlayer> gamePlayerList) {
         if (this.currentRule == null) {
             BattleRoyale.LOGGER.warn("Skipped invalid currentRule to apply in McRuleStorage");
             return;

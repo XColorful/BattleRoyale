@@ -42,7 +42,7 @@ public class ZoneManager extends AbstractGameManager {
     public void initGameConfig(ServerLevel serverLevel) {
         List<ZoneConfig> allZoneConfigs = ZoneConfigManager.get().getAllZoneConfigs();
         if (allZoneConfigs.isEmpty()) {
-            ChatUtils.sendMessageToAllPlayers(serverLevel, "battleroyale.message.missing_zone_config");
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_zone_config");
             BattleRoyale.LOGGER.warn("No zone config available for init game config");
             return;
         }
@@ -57,8 +57,9 @@ public class ZoneManager extends AbstractGameManager {
                 comparingInt(QueuedZoneInfo::zoneDelay)
                 .thenComparingInt(QueuedZoneInfo::zoneId));
         if (gameZones.isEmpty()) {
-            ChatUtils.sendMessageToAllPlayers(serverLevel, "battleroyale.message.missing_zone_config");
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_zone_config");
             BattleRoyale.LOGGER.error("Failed to generate any GameZone from ZoneConfig");
+            return;
         }
 
         this.prepared = true;

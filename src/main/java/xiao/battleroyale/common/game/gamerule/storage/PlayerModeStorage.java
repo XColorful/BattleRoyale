@@ -2,11 +2,11 @@ package xiao.battleroyale.common.game.gamerule.storage;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.GameType;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.storage.IRuleStorage;
+import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
 
 import java.util.HashMap;
@@ -32,17 +32,18 @@ public class PlayerModeStorage implements IRuleStorage {
      *
      * @param entry       游戏规则条目，预期为 MinecraftEntry，用于获取是否设置为冒险模式。
      * @param serverLevel 当前服务器世界。
-     * @param playerIdList 参与游戏的玩家列表。
+     * @param gamePlayerList 参与游戏的玩家列表。
      */
     @Override
-    public void store(IGameruleEntry entry, ServerLevel serverLevel, List<UUID> playerIdList) {
+    public void store(IGameruleEntry entry, ServerLevel serverLevel, List<GamePlayer> gamePlayerList) {
         if (!(entry instanceof MinecraftEntry mcEntry)) {
             BattleRoyale.LOGGER.error("Expected minecraftEntry for PlayerModeStorage");
             return;
         }
         gameMode = mcEntry.adventureMode ? GameType.ADVENTURE : GameType.SURVIVAL;
 
-        for (UUID id : playerIdList) {
+        for (GamePlayer gamePlayer : gamePlayerList) {
+            UUID id = gamePlayer.getPlayerUUID();
             try {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
                 if (player == null) {
@@ -58,12 +59,13 @@ public class PlayerModeStorage implements IRuleStorage {
     }
 
     @Override
-    public void apply(ServerLevel serverLevel, List<UUID> playerIdList) {
+    public void apply(ServerLevel serverLevel, List<GamePlayer> gamePlayerList) {
         if (gameMode == null) {
             BattleRoyale.LOGGER.warn("PlayerModeStorage has no backuped gameMode");
             return;
         }
-        for (UUID id : playerIdList) {
+        for (GamePlayer gamePlayer : gamePlayerList) {
+            UUID id = gamePlayer.getPlayerUUID();
             try {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
                 if (player == null) {

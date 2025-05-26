@@ -2,10 +2,10 @@ package xiao.battleroyale.api.game.zone.gamezone;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import xiao.battleroyale.common.game.team.GamePlayer;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 /**
@@ -29,11 +29,11 @@ public interface IGameZone extends ITickableZone, ISpatialZone{
     /**
      * 为初始化 ITickableZone 和 ISpatialZone 传递参数
      * @param serverLevel 当前世界
-     * @param playerIdList 当前游戏玩家 UUID 列表
+     * @param gamePlayerList 当前游戏玩家列表
      * @param gameZones 当前游戏所有圈实例
      * @param random 随机数生产者
      */
-    void createZone(ServerLevel serverLevel, List<UUID> playerIdList, Map<Integer, IGameZone> gameZones, Supplier<Float> random);
+    void createZone(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random);
 
     /**
      * 是否初始化成功，判断是否创建以及是否可以执行

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
+import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
@@ -91,11 +92,13 @@ public class GameManager extends AbstractGameManager implements IGameManager {
 
         if (GameruleManager.get().isPreparedForGame() && SpawnManager.get().isPreparedForGame() && TeamManager.get().isPreparedForGame() && ZoneManager.get().isPreparedForGame()) {
             prepared = true;
+        } else {
+            prepared = false;
         }
     }
 
-    public List<UUID> getPlayerList() {
-        return TeamManager.get().getPlayerIdList();
+    public List<GamePlayer> getGamePlayerList() {
+        return TeamManager.get().getGamePlayerList();
     }
 
     /**

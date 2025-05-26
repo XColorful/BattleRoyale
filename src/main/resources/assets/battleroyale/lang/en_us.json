@@ -51,5 +51,13 @@
   "battleroyale.message.missing_gamerule_config": "Missing valid gamerule config for battleroyale game",
   "battleroyale.message.missing_spawn_config": "Missing valid spawn config for battleroyale game",
   "battleroyale.message.missing_zone_config": "Missing valid zone config for battleroyale game",
-  "battleroyale.message.missing_bot_config": "Missing valid bot config for battleroyale game"
+  "battleroyale.message.missing_bot_config": "Missing valid bot config for battleroyale game",
+
+  "battleroyale.message.require_manually_join": "Auto-join game is disabled, use '/battleroyale team join' to join game",
+  "battleroyale.message.reached_player_limit": "Exceeded maximum player limit: %s",
+  "battleroyale.message.failed_to_join_team": "Failed join team %s",
+  "battleroyale.message.joined_to_team": "Joined to team %s",
+  "battleroyale.message.not_enough_team_to_start": "Not enough team to start game",
+  "battleroyale.message.team_removed": "Removed team %s",
+  "battleroyale.message.removed_from_team": "Removed from team"
 }

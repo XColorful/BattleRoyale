@@ -7,13 +7,12 @@ import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.gamerule.storage.McRuleStorage;
 import xiao.battleroyale.common.game.gamerule.storage.PlayerModeStorage;
+import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
-import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.List;
-import java.util.UUID;
 
 public class GameruleManager extends AbstractGameManager {
 
@@ -51,7 +50,7 @@ public class GameruleManager extends AbstractGameManager {
             BattleRoyale.LOGGER.warn("Failed to get MinecraftEntry from GameruleConfig by id: {}", gameId);
             return;
         }
-        this.gamemodeBackup.store(mcEntry, serverLevel, GameManager.get().getPlayerList());
+        this.gamemodeBackup.store(mcEntry, serverLevel, GameManager.get().getGamePlayerList());
         this.gameruleBackup.store(mcEntry, serverLevel, null);
         this.autoSaturation = mcEntry.autoSaturation;
 
@@ -64,8 +63,8 @@ public class GameruleManager extends AbstractGameManager {
      */
     @Override
     public void initGame(ServerLevel serverLevel) {
-        List<UUID> playerIdList = GameManager.get().getPlayerList();
-        this.gamemodeBackup.apply(serverLevel, playerIdList);
+        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayerList();
+        this.gamemodeBackup.apply(serverLevel, gamePlayerList);
 
         this.ready = true;
     }

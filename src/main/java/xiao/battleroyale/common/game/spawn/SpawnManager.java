@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
@@ -48,14 +49,14 @@ public class SpawnManager extends AbstractGameManager {
         int spawnConfigId = GameManager.get().getSpawnConfigId();
         SpawnConfig spawnConfig = SpawnConfigManager.get().getSpawnConfig(spawnConfigId);
         if (spawnConfig == null) {
-            ChatUtils.sendMessageToAllPlayers(serverLevel, "battleroyale.message.missing_spawn_config");
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_spawn_config");
             BattleRoyale.LOGGER.warn("Failed to get SpawnConfig by id: {}", spawnConfigId);
             return;
         }
         int gameId = GameManager.get().getGameruleConfigId();
         GameruleConfig gameruleConfig = GameruleConfigManager.get().getGameruleConfig(gameId);
         if (gameruleConfig == null) {
-            ChatUtils.sendMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             BattleRoyale.LOGGER.warn("Failed to get GameruleConfig by id: {}", gameId);
             return;
         }
@@ -66,7 +67,7 @@ public class SpawnManager extends AbstractGameManager {
         this.lobbyMuteki = brEntry.lobbyMuteki;
 
         if (lobbyPos == null || lobbyDimension == null) {
-            ChatUtils.sendMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             BattleRoyale.LOGGER.info("Failed to get lobbyPos or lobbyDimension in SpawnManager initGameConfig, skipped");
             return;
         }
@@ -75,8 +76,9 @@ public class SpawnManager extends AbstractGameManager {
 
     @Override
     public void initGame(ServerLevel serverLevel) {
-        List<UUID> playerIdList = GameManager.get().getPlayerList();
-        for (UUID id : playerIdList) {
+        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayerList();
+        for (GamePlayer gamePlayer : gamePlayerList) {
+            UUID id = gamePlayer.getPlayerUUID();
             ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
             if (player == null) {
                 BattleRoyale.LOGGER.info("Failed to get ServerPlayer by UUID in SpawnManager initGame, skipped");
@@ -89,8 +91,9 @@ public class SpawnManager extends AbstractGameManager {
     }
 
     public void stopGame(ServerLevel serverLevel) {
-        List<UUID> playerIdList = GameManager.get().getPlayerList();
-        for (UUID id : playerIdList) {
+        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayerList();
+        for (GamePlayer gamePlayer : gamePlayerList) {
+            UUID id = gamePlayer.getPlayerUUID();
             ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
             if (player == null) {
                 BattleRoyale.LOGGER.info("Failed to get ServerPlayer by UUID in SpawnManager initGame, skipped");

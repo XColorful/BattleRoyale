@@ -10,6 +10,7 @@ import xiao.battleroyale.api.game.zone.gamezone.GameTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
+import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 
@@ -49,10 +50,10 @@ public class GameZone implements IGameZone {
     }
 
     @Override
-    public void createZone(ServerLevel serverLevel, List<UUID> playerIdList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
+    public void createZone(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
         if (!created) {
-            tickableZone.initFunc(serverLevel, playerIdList, gameZones, random);
-            spatialZone.calculateShape(serverLevel, playerIdList, gameZones, random);
+            tickableZone.initFunc(serverLevel, gamePlayerList, gameZones, random);
+            spatialZone.calculateShape(serverLevel, gamePlayerList, gameZones, random);
         }
         if (tickableZone.isReady() && spatialZone.isDetermined()) {
             created = true;
@@ -82,7 +83,7 @@ public class GameZone implements IGameZone {
     }
 
     @Override
-    public void tick(ServerLevel serverLevel, List<UUID> playerIdList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
+    public void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
         if (!shouldTick()) {
             return;
         }
@@ -91,7 +92,7 @@ public class GameZone implements IGameZone {
             prevShapeProgress = progress;
             CompoundTag nbt = toNBT(progress);
         }
-        tickableZone.tick(serverLevel, playerIdList, gameZones, random, gameTime);
+        tickableZone.tick(serverLevel, gamePlayerList, gameZones, random, gameTime);
         if (gameTime >= zoneDelay + zoneTime) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置
             present = false;
             finished = true;
@@ -135,8 +136,8 @@ public class GameZone implements IGameZone {
     @Override
     public ZoneShapeType getShapeType() { return spatialZone.getShapeType(); }
     @Override
-    public void calculateShape(ServerLevel serverLevel, List<UUID> playerIdList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
-        spatialZone.calculateShape(serverLevel, playerIdList, gameZones, random);
+    public void calculateShape(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
+        spatialZone.calculateShape(serverLevel, gamePlayerList, gameZones, random);
     }
     @Override
     public boolean isDetermined() { return spatialZone.isDetermined(); }
@@ -155,8 +156,8 @@ public class GameZone implements IGameZone {
 
     // ITickableZone
     @Override
-    public void initFunc(ServerLevel serverLevel, List<UUID> playerIdList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
-        tickableZone.initFunc(serverLevel, playerIdList, gameZones, random);
+    public void initFunc(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
+        tickableZone.initFunc(serverLevel, gamePlayerList, gameZones, random);
     }
     @Override
     public boolean isReady() { return tickableZone.isReady(); }
