@@ -97,9 +97,8 @@ public class GameManager extends AbstractGameManager implements IGameManager {
         }
     }
 
-    public List<GamePlayer> getGamePlayerList() {
-        return TeamManager.get().getGamePlayerList();
-    }
+    public List<GamePlayer> getGamePlayers() { return TeamManager.get().getGamePlayersList(); }
+    public List<GamePlayer> getStandingGamePlayers() { return TeamManager.get().getStandingGamePlayersList(); }
 
     /**
      * 准备游戏，将玩家传送至大厅等
@@ -135,17 +134,24 @@ public class GameManager extends AbstractGameManager implements IGameManager {
     /**
      * 开始游戏
      */
-    public void startGame(ServerLevel serverLevel) {
+    @Override
+    public boolean startGame(ServerLevel serverLevel) {
         if (isInGame() || !ready) { // 禁止游戏运行中的意外修改
             initGame(serverLevel);
             if (!ready) {
-                return;
+                return false;
             }
         }
-        this.gameDimensionKey = serverLevel.dimension();
-        this.serverLevel = serverLevel;
-        this.inGame = true;
-        this.ready = false;
+        if (GameruleManager.get().startGame(serverLevel)
+        && TeamManager.get().startGame(serverLevel)
+        && SpawnManager.get().startGame(serverLevel)
+        && ZoneManager.get().startGame(serverLevel)) {
+            this.gameDimensionKey = serverLevel.dimension();
+            this.serverLevel = serverLevel;
+            this.inGame = true;
+            this.ready = false;
+        }
+        return false;
     }
 
     @Nullable
@@ -159,6 +165,7 @@ public class GameManager extends AbstractGameManager implements IGameManager {
     /**
      * 强制终止游戏
      */
+    @Override
     public void stopGame(ServerLevel serverLevel) {
         GameruleManager.get().stopGame(serverLevel);
         ZoneManager.get().stopGame(serverLevel);

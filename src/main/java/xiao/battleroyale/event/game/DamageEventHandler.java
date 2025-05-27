@@ -44,6 +44,7 @@ public class DamageEventHandler {
     @SubscribeEvent
     public void onLivingDamage(LivingDamageEvent event) {
         if (!GameManager.get().isInGame()) {
+            unregister();
             return; // 只在游戏进行中处理
         }
 

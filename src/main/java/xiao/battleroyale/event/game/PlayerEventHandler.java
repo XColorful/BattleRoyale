@@ -42,9 +42,7 @@ public class PlayerEventHandler {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            if (GameManager.get().isInGame()) {
-                TeamManager.get().onPlayerLoggedIn(serverPlayer);
-            }
+            TeamManager.get().onPlayerLoggedIn(serverPlayer);
         }
     }
 
@@ -56,9 +54,7 @@ public class PlayerEventHandler {
     @SubscribeEvent
     public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            if (GameManager.get().isInGame()) {
-                TeamManager.get().onPlayerQuitGame(serverPlayer);
-            }
+            TeamManager.get().onPlayerQuitGame(serverPlayer);
         }
     }
 
@@ -71,14 +67,16 @@ public class PlayerEventHandler {
     public void onLivingDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             // 确保只有在游戏进行中才处理死亡事件
-            if (GameManager.get().isInGame()) {
-                TeamManager.get().onPlayerDeath(serverPlayer);
-
-                // TODO: 击倒机制的实现需要更复杂的逻辑，例如判断伤害来源、玩家状态等
-                // 如果有击倒机制，这里可能需要判断是真正的死亡还是击倒
-                // event.isCanceled() 可以用于取消死亡事件，实现击倒效果
-                // 获取击杀者：event.getSource().getEntity()
+            if (!GameManager.get().isInGame()) {
+                unregister();
+                return;
             }
+            TeamManager.get().onPlayerDeath(serverPlayer);
+
+            // TODO: 击倒机制的实现需要更复杂的逻辑，例如判断伤害来源、玩家状态等
+            // 如果有击倒机制，这里可能需要判断是真正的死亡还是击倒
+            // event.isCanceled() 可以用于取消死亡事件，实现击倒效果
+            // 获取击杀者：event.getSource().getEntity()
         }
     }
 }

@@ -70,6 +70,11 @@ public class ZoneManager extends AbstractGameManager {
         this.ready = true;
     }
 
+    @Override
+    public boolean startGame(ServerLevel serverLevel) {
+        return true;
+    }
+
     public void stopGame(ServerLevel serverLevel) {
         gameZones.clear();
         queuedGameZoneId.clear();

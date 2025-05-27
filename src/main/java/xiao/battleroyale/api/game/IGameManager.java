@@ -12,5 +12,7 @@ public interface IGameManager {
 
     boolean isReady();
 
+    boolean startGame(ServerLevel serverLevel);
+
     void stopGame(ServerLevel serverLevel);
 }

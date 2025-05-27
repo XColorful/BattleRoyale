@@ -50,7 +50,7 @@ public class GameruleManager extends AbstractGameManager {
             BattleRoyale.LOGGER.warn("Failed to get MinecraftEntry from GameruleConfig by id: {}", gameId);
             return;
         }
-        this.gamemodeBackup.store(mcEntry, serverLevel, GameManager.get().getGamePlayerList());
+        this.gamemodeBackup.store(mcEntry, serverLevel, GameManager.get().getGamePlayers());
         this.gameruleBackup.store(mcEntry, serverLevel, null);
         this.autoSaturation = mcEntry.autoSaturation;
 
@@ -63,12 +63,18 @@ public class GameruleManager extends AbstractGameManager {
      */
     @Override
     public void initGame(ServerLevel serverLevel) {
-        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayerList();
+        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
         this.gamemodeBackup.apply(serverLevel, gamePlayerList);
 
         this.ready = true;
     }
 
+    @Override
+    public boolean startGame(ServerLevel serverLevel) {
+        return true;
+    }
+
+    @Override
     public void stopGame(ServerLevel serverLevel) {
         gamemodeBackup.revert(serverLevel);
         gameruleBackup.revert(serverLevel);

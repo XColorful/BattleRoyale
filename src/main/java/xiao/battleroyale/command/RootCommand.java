@@ -7,16 +7,21 @@ import net.minecraft.commands.Commands;
 import xiao.battleroyale.command.sub.ConfigCommand;
 import xiao.battleroyale.command.sub.LootCommand;
 import xiao.battleroyale.command.sub.ReloadCommand;
+import xiao.battleroyale.command.sub.TeamCommand;
 
 public class RootCommand {
     private static final String ROOT_NAME = "battleroyale";
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(ROOT_NAME)
-                .requires((source -> source.hasPermission(2)));
-        root.then(LootCommand.get());
-        root.then(ReloadCommand.get());
-        root.then(ConfigCommand.get());
+        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(ROOT_NAME);
+        root.then(LootCommand.get()
+                .requires(source -> source.hasPermission(2)));
+        root.then(ReloadCommand.get()
+                .requires(source -> source.hasPermission(2)));
+        root.then(ConfigCommand.get()
+                .requires(source -> source.hasPermission(2)));
+        root.then(TeamCommand.get());
+
         dispatcher.register(root);
     }
 }

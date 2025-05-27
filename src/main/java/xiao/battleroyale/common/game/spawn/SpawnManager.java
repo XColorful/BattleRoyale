@@ -76,7 +76,7 @@ public class SpawnManager extends AbstractGameManager {
 
     @Override
     public void initGame(ServerLevel serverLevel) {
-        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayerList();
+        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
         for (GamePlayer gamePlayer : gamePlayerList) {
             UUID id = gamePlayer.getPlayerUUID();
             ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
@@ -90,8 +90,14 @@ public class SpawnManager extends AbstractGameManager {
         this.ready = true;
     }
 
+    @Override
+    public boolean startGame(ServerLevel serverLevel) {
+        return true;
+    }
+
+    @Override
     public void stopGame(ServerLevel serverLevel) {
-        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayerList();
+        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
         for (GamePlayer gamePlayer : gamePlayerList) {
             UUID id = gamePlayer.getPlayerUUID();
             ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
