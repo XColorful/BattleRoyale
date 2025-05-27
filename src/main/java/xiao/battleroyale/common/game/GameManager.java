@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
@@ -25,9 +26,9 @@ public class GameManager extends AbstractGameManager implements IGameManager {
 
     private UUID gameId;
     private boolean inGame;
-    private int gameruleConfigId = 0;
-    private int spawnConfigId = 0;
-    private int botConfigId = 0;
+    private int gameruleConfigId = 1;
+    private int spawnConfigId = 1;
+    private int botConfigId = 1;
     private ResourceKey<Level> gameDimensionKey;
     private ServerLevel serverLevel;
 
@@ -85,12 +86,20 @@ public class GameManager extends AbstractGameManager implements IGameManager {
         maxGameTime = brEntry.maxGameTime;
         recordStats = brEntry.recordGameStats;
 
+        BattleRoyale.LOGGER.debug("initGameConfig debug point0");
         GameruleManager.get().initGameConfig(serverLevel);
+        BattleRoyale.LOGGER.debug("initGameConfig debug point1");
         SpawnManager.get().initGameConfig(serverLevel);
+        BattleRoyale.LOGGER.debug("initGameConfig debug point2");
         TeamManager.get().initGameConfig(serverLevel);
+        BattleRoyale.LOGGER.debug("initGameConfig debug point3");
         ZoneManager.get().initGameConfig(serverLevel);
-
-        if (GameruleManager.get().isPreparedForGame() && SpawnManager.get().isPreparedForGame() && TeamManager.get().isPreparedForGame() && ZoneManager.get().isPreparedForGame()) {
+        BattleRoyale.LOGGER.debug("initGameConfig debug point4");
+        if (GameruleManager.get().isPreparedForGame()
+                && SpawnManager.get().isPreparedForGame()
+                && TeamManager.get().isPreparedForGame()
+                && ZoneManager.get().isPreparedForGame()) {
+            BattleRoyale.LOGGER.debug("initGameConfig debug point5");
             prepared = true;
         } else {
             prepared = false;

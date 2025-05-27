@@ -80,10 +80,21 @@
   "battleroyale.message.team_does_not_exist": "Team %s does not exist",
   "battleroyale.message.team_eliminated": "Team %s has been eliminated",
   "battleroyale.message.you_are_eliminated": "You are eliminated",
-  "battleroyale.message.you_ar_in_team": "You are in team %s",
+  "battleroyale.message.you_are_in_team": "You are in team %s",
   "battleroyale.message.leaved_current_team": "Leaved from current team",
   "battleroyale.message.already_in_team": "You are already in a team",
   "battleroyale.message.forced_elimination": "%s have been force eliminated from game",
   "battleroyale.message.expired_invite": "Expired invitation",
-  "battleroyale.message.no_valid_invite": "Invitation does not exist"
+  "battleroyale.message.no_valid_invite": "Invitation does not exist",
+
+  "battleroyale.message.load_game_configs": "Loaded game configs",
+  "battleroyale.message.load_game_configs_failed": "Failed to load game configs",
+  "battleroyale.message.game_not_prepared": "Game is not prepared for initialization",
+  "battleroyale.message.game_init": "Initialized game",
+  "battleroyale.message.game_init_fail": "Failed to initialize game",
+  "battleroyale.message.game_already_started": "Game is already started",
+  "battleroyale.message.game_start": "Start BattleRoyale",
+  "battleroyale.message.game_start_failed": "Failed to start BattleRoyale",
+  "battleroyale.message.no_game_in_progress": "There's no game in progress",
+  "battleroyale.message.game_stopped": "Game stopped"
 }

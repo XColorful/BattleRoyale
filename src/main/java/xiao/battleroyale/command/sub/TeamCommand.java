@@ -18,6 +18,7 @@ import net.minecraft.ChatFormatting;
 public class TeamCommand {
     // 指令字符串常量
     private static final String TEAM_NAME = "team";
+
     private static final String JOIN_NAME = "join";
     private static final String LEAVE_NAME = "leave";
     private static final String KICK_NAME = "kick";
@@ -36,39 +37,24 @@ public class TeamCommand {
         return Commands.literal(TEAM_NAME)
                 // join 和 leave 命令对所有玩家开放，但必须由玩家执行
                 .then(Commands.literal(JOIN_NAME)
-                        .requires(CommandSourceStack::isPlayer) // 必须是玩家才能执行加入操作
+                        .requires(CommandSourceStack::isPlayer)
                         .executes(TeamCommand::joinTeam) // /battleroyale team join
                         .then(Commands.argument(TEAM_ID_ARG_NAME, IntegerArgumentType.integer(1))
                                 .executes(TeamCommand::joinTeamSpecific) // /battleroyale team join <teamId>
                         )
                 )
                 .then(Commands.literal(LEAVE_NAME)
-                        .requires(CommandSourceStack::isPlayer) // 必须是玩家才能执行离开操作
+                        .requires(CommandSourceStack::isPlayer)
                         .executes(TeamCommand::leaveTeam) // /battleroyale team leave
                 )
-                // kick 和 invite 命令只允许队伍队长执行，且必须由玩家执行
                 .then(Commands.literal(KICK_NAME)
-                        .requires(source -> {
-                            // 必须是玩家才能执行踢人操作
-                            if (!(source.getEntity() instanceof ServerPlayer player)) {
-                                return false;
-                            }
-                            // 检查玩家是否是当前队伍的队长
-                            return TeamManager.get().isPlayerLeader(player.getUUID());
-                        })
+                        .requires(CommandSourceStack::isPlayer)
                         .then(Commands.argument(PLAYER_ARG_NAME, EntityArgument.player())
                                 .executes(TeamCommand::kickPlayer) // /battleroyale team kick <player>
                         )
                 )
                 .then(Commands.literal(INVITE_NAME)
-                        .requires(source -> {
-                            // 必须是玩家才能执行邀请操作
-                            if (!(source.getEntity() instanceof ServerPlayer player)) {
-                                return false;
-                            }
-                            // 检查玩家是否是当前队伍的队长
-                            return TeamManager.get().isPlayerLeader(player.getUUID());
-                        })
+                        .requires(CommandSourceStack::isPlayer)
                         .then(Commands.argument(PLAYER_ARG_NAME, EntityArgument.player())
                                 .executes(TeamCommand::invitePlayer) // /battleroyale team invite <player>
                         )
@@ -88,12 +74,6 @@ public class TeamCommand {
                 );
     }
 
-    /**
-     * 处理 `/battleroyale team join` 命令，玩家加入一个自动分配的队伍。
-     * @param context 命令上下文。
-     * @return 命令执行结果（1表示成功，0表示失败）。
-     * @throws CommandSyntaxException 如果命令语法错误。
-     */
     private static int joinTeam(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         // 在游戏进行中不允许通过此命令加入队伍
@@ -105,12 +85,6 @@ public class TeamCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    /**
-     * 处理 `/battleroyale team join <teamId>` 命令，玩家加入指定的队伍。
-     * @param context 命令上下文。
-     * @return 命令执行结果（1表示成功，0表示失败）。
-     * @throws CommandSyntaxException 如果命令语法错误。
-     */
     private static int joinTeamSpecific(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         int teamId = IntegerArgumentType.getInteger(context, TEAM_ID_ARG_NAME);
@@ -123,13 +97,6 @@ public class TeamCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    /**
-     * 处理 `/battleroyale team leave` 命令，玩家离开当前队伍。
-     * 注意：在游戏进行中离开会被视为淘汰。
-     * @param context 命令上下文。
-     * @return 命令执行结果（1表示成功，0表示失败）。
-     * @throws CommandSyntaxException 如果命令语法错误。
-     */
     private static int leaveTeam(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         // leaveTeam 方法已处理游戏进行中的特殊逻辑，这里不需要额外的 inGame 检查
@@ -137,19 +104,16 @@ public class TeamCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    /**
-     * 处理 `/battleroyale team kick <player>` 命令，队长踢出队伍成员。
-     * @param context 命令上下文。
-     * @return 命令执行结果（1表示成功，0表示失败）。
-     * @throws CommandSyntaxException 如果命令语法错误。
-     */
     private static int kickPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer sender = context.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = EntityArgument.getPlayer(context, PLAYER_ARG_NAME);
 
-        // 在游戏进行中不允许通过此命令踢人
         if (GameManager.get().isInGame()) {
             ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            return 0;
+        }
+        if (!TeamManager.get().isPlayerLeader(sender.getUUID())) {
+            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.not_team_leader").withStyle(ChatFormatting.RED));
             return 0;
         }
 
@@ -157,19 +121,16 @@ public class TeamCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    /**
-     * 处理 `/battleroyale team invite <player>` 命令，队长邀请玩家加入队伍。
-     * @param context 命令上下文。
-     * @return 命令执行结果（1表示成功，0表示失败）。
-     * @throws CommandSyntaxException 如果命令语法错误。
-     */
     private static int invitePlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer sender = context.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = EntityArgument.getPlayer(context, PLAYER_ARG_NAME);
 
-        // 在游戏进行中不允许通过此命令邀请
         if (GameManager.get().isInGame()) {
             ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            return 0;
+        }
+        if (!TeamManager.get().isPlayerLeader(sender.getUUID())) {
+            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.not_team_leader").withStyle(ChatFormatting.RED));
             return 0;
         }
 
@@ -177,17 +138,10 @@ public class TeamCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    /**
-     * 处理 `/battleroyale team accept <teamId>` 命令，玩家接受队伍邀请。
-     * @param context 命令上下文。
-     * @return 命令执行结果（1表示成功，0表示失败）。
-     * @throws CommandSyntaxException 如果命令语法错误。
-     */
     private static int acceptInvite(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         int teamId = IntegerArgumentType.getInteger(context, TEAM_ID_ARG_NAME);
 
-        // 在游戏进行中不允许通过此命令接受邀请
         if (GameManager.get().isInGame()) {
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return 0;
@@ -197,17 +151,10 @@ public class TeamCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    /**
-     * 处理 `/battleroyale team decline <teamId>` 命令，玩家拒绝队伍邀请。
-     * @param context 命令上下文。
-     * @return 命令执行结果（1表示成功，0表示失败）。
-     * @throws CommandSyntaxException 如果命令语法错误。
-     */
     private static int declineInvite(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         int teamId = IntegerArgumentType.getInteger(context, TEAM_ID_ARG_NAME);
 
-        // 在游戏进行中不允许通过此命令拒绝邀请
         if (GameManager.get().isInGame()) {
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return 0;

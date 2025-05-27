@@ -42,11 +42,11 @@
   "battleroyale.message.game_in_progress": "游戏正在进行中, 无法执行此操作",
 
   "battleroyale.message.spawn_config_id_set": "已将玩家生成配置设置为配置%s",
-  "battleroyale.message.invalid_spawn_config_id": "无法将玩家生成配置设置为%s",
-  "battleroyale.message.gamerule_config_id_set": "已将大逃杀规则配置设置为%s",
-  "battleroyale.message.invalid_gamerule_config_id": "无法将大逃杀规则配置设置为%s",
-  "battleroyale.message.bot_config_id_set": "已将人机配置设置为%s",
-  "battleroyale.message.invalid_bot_config_id": "无法将人机配置设置为%s",
+  "battleroyale.message.invalid_spawn_config_id": "无法将玩家生成配置设置为配置%s",
+  "battleroyale.message.gamerule_config_id_set": "已将大逃杀规则配置设置为配置%s",
+  "battleroyale.message.invalid_gamerule_config_id": "无法将大逃杀规则配置设置为配置%s",
+  "battleroyale.message.bot_config_id_set": "已将人机配置设置为配置%s",
+  "battleroyale.message.invalid_bot_config_id": "无法将人机配置设置为配置%s",
 
   "battleroyale.message.missing_gamerule_config": "缺少有效的大逃杀规则配置",
   "battleroyale.message.missing_spawn_config": "缺少有效的玩家生成配置",
@@ -80,10 +80,21 @@
   "battleroyale.message.team_does_not_exist": "队伍 %s 不存在",
   "battleroyale.message.team_eliminated": "队伍 %s 已被淘汰",
   "battleroyale.message.you_are_eliminated": "您已被淘汰",
-  "battleroyale.message.you_ar_in_team": "您已在队伍 %s 中",
+  "battleroyale.message.you_are_in_team": "您已在队伍 %s 中",
   "battleroyale.message.leaved_current_team": "已离开当前队伍",
   "battleroyale.message.already_in_team": "您当前已在队伍中",
   "battleroyale.message.forced_elimination": "您已被强制移出游戏",
   "battleroyale.message.expired_invite": "邀请已过期",
-  "battleroyale.message.no_valid_invite": "无效的邀请"
+  "battleroyale.message.no_valid_invite": "无效的邀请",
+
+  "battleroyale.message.load_game_configs": "已加载大逃杀配置",
+  "battleroyale.message.load_game_configs_failed": "无法读取有效的大逃杀配置",
+  "battleroyale.message.game_not_prepared": "游戏还未准备初始化",
+  "battleroyale.message.game_init": "已初始化游戏",
+  "battleroyale.message.game_init_fail": "无法初始化游戏",
+  "battleroyale.message.game_already_started": "游戏已开始",
+  "battleroyale.message.game_start": "开始大逃杀游戏",
+  "battleroyale.message.game_start_failed": "无法开始大逃杀游戏",
+  "battleroyale.message.no_game_in_progress": "当前没有游戏正在进行",
+  "battleroyale.message.game_stopped": "大逃杀游戏结束"
 }
