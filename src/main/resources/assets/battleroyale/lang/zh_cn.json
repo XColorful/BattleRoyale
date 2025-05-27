@@ -69,12 +69,13 @@
   "battleroyale.message.player_not_found": "未找到玩家 %s",
 
   "battleroyale.message.invite_sent": "已邀请 %s 加入您的队伍",
-  "battleroyale.message.invite_received": "您已收到队伍 %s 的邀请。点击[接受]或[拒绝]",
+  "battleroyale.message.invite_received": "您已收到队伍 %s 的邀请: ",
   "battleroyale.message.invite_accepted": "您已接受队伍 %s 的邀请",
   "battleroyale.message.invite_declined": "您已拒绝队伍 %s 的邀请",
   "battleroyale.message.no_pending_invite": "您没有队伍 %s 的待处理邀请",
   "battleroyale.message.invite_already_sent": "您已向 %s 发送过队伍邀请",
   "battleroyale.message.player_already_in_team": "玩家 %s 已经在一个队伍中",
+  "battleroyale.message.player_declined_invite": "玩家 %s 拒绝了你的邀请",
   "battleroyale.message.team_full": "队伍 %s 已满",
   "battleroyale.message.invite_timeout": "来自队伍 %s 的邀请已超时",
   "battleroyale.message.team_does_not_exist": "队伍 %s 不存在",
@@ -96,5 +97,8 @@
   "battleroyale.message.game_start": "开始大逃杀游戏",
   "battleroyale.message.game_start_failed": "无法开始大逃杀游戏",
   "battleroyale.message.no_game_in_progress": "当前没有游戏正在进行",
-  "battleroyale.message.game_stopped": "大逃杀游戏结束"
+  "battleroyale.message.game_stopped": "大逃杀游戏结束",
+  "battleroyale.message.accept": "[同意]",
+  "battleroyale.message.decline": "[拒绝]",
+  "battleroyale.message.team": "队伍%s"
 }

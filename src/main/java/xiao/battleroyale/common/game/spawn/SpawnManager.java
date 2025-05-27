@@ -46,6 +46,10 @@ public class SpawnManager extends AbstractGameManager {
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
+        if (GameManager.get().isInGame()) {
+            return;
+        }
+
         int spawnConfigId = GameManager.get().getSpawnConfigId();
         SpawnConfig spawnConfig = SpawnConfigManager.get().getSpawnConfig(spawnConfigId);
         if (spawnConfig == null) {
@@ -76,6 +80,13 @@ public class SpawnManager extends AbstractGameManager {
 
     @Override
     public void initGame(ServerLevel serverLevel) {
+        if (GameManager.get().isInGame()) {
+            return;
+        }
+        if (!this.prepared) {
+            return;
+        }
+
         List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
         for (GamePlayer gamePlayer : gamePlayerList) {
             UUID id = gamePlayer.getPlayerUUID();
@@ -92,6 +103,13 @@ public class SpawnManager extends AbstractGameManager {
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
+        if (GameManager.get().isInGame()) {
+            return false;
+        }
+        if (!this.ready) {
+            return false;
+        }
+
         return true;
     }
 
@@ -109,5 +127,6 @@ public class SpawnManager extends AbstractGameManager {
         }
 
         this.prepared = false;
+        this.ready = false;
     }
 }

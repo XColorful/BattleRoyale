@@ -86,24 +86,15 @@ public class GameManager extends AbstractGameManager implements IGameManager {
         maxGameTime = brEntry.maxGameTime;
         recordStats = brEntry.recordGameStats;
 
-        BattleRoyale.LOGGER.debug("initGameConfig debug point0");
         GameruleManager.get().initGameConfig(serverLevel);
-        BattleRoyale.LOGGER.debug("initGameConfig debug point1");
         SpawnManager.get().initGameConfig(serverLevel);
-        BattleRoyale.LOGGER.debug("initGameConfig debug point2");
         TeamManager.get().initGameConfig(serverLevel);
-        BattleRoyale.LOGGER.debug("initGameConfig debug point3");
         ZoneManager.get().initGameConfig(serverLevel);
-        BattleRoyale.LOGGER.debug("initGameConfig debug point4");
-        if (GameruleManager.get().isPreparedForGame()
+
+        prepared = GameruleManager.get().isPreparedForGame()
                 && SpawnManager.get().isPreparedForGame()
                 && TeamManager.get().isPreparedForGame()
-                && ZoneManager.get().isPreparedForGame()) {
-            BattleRoyale.LOGGER.debug("initGameConfig debug point5");
-            prepared = true;
-        } else {
-            prepared = false;
-        }
+                && ZoneManager.get().isPreparedForGame();
     }
 
     public List<GamePlayer> getGamePlayers() { return TeamManager.get().getGamePlayersList(); }
@@ -115,15 +106,18 @@ public class GameManager extends AbstractGameManager implements IGameManager {
      */
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (isInGame() || !prepared) { // 禁止游戏运行中的意外修改
+        if (isInGame()) {
+            return;
+        }
+        if (!prepared) {
             initGameConfig(serverLevel);
             if (!prepared) {
                 return;
             }
         }
-        GameruleManager.get().initGame(serverLevel);
-        SpawnManager.get().initGame(serverLevel);
         TeamManager.get().initGame(serverLevel);
+        GameruleManager.get().initGame(serverLevel); // Gamerule会进行一次默认游戏模式切换
+        SpawnManager.get().initGame(serverLevel); // SpawnManager会进行一次传送，放在TeamManager之后
         ZoneManager.get().initGame(serverLevel);
 
         if (GameruleManager.get().isReady() && SpawnManager.get().isReady() && TeamManager.get().isReady() && ZoneManager.get().isReady()) {
@@ -145,20 +139,24 @@ public class GameManager extends AbstractGameManager implements IGameManager {
      */
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (isInGame() || !ready) { // 禁止游戏运行中的意外修改
+        if (isInGame()) {
+            return false;
+        }
+        if (!ready) {
             initGame(serverLevel);
             if (!ready) {
                 return false;
             }
         }
-        if (GameruleManager.get().startGame(serverLevel)
-        && TeamManager.get().startGame(serverLevel)
-        && SpawnManager.get().startGame(serverLevel)
-        && ZoneManager.get().startGame(serverLevel)) {
+        if ( TeamManager.get().startGame(serverLevel)
+                && GameruleManager.get().startGame(serverLevel)
+                && SpawnManager.get().startGame(serverLevel)
+                && ZoneManager.get().startGame(serverLevel)) {
             this.gameDimensionKey = serverLevel.dimension();
             this.serverLevel = serverLevel;
             this.inGame = true;
             this.ready = false;
+            return true;
         }
         return false;
     }
@@ -171,15 +169,19 @@ public class GameManager extends AbstractGameManager implements IGameManager {
         return this.serverLevel;
     }
 
+    public void checkIfGameShouldEnd() {
+        ;
+    }
+
     /**
      * 强制终止游戏
      */
     @Override
     public void stopGame(ServerLevel serverLevel) {
-        GameruleManager.get().stopGame(serverLevel);
         ZoneManager.get().stopGame(serverLevel);
         SpawnManager.get().stopGame(serverLevel);
-        TeamManager.get().stopGame(serverLevel);
+        GameruleManager.get().stopGame(serverLevel);
+        TeamManager.get().stopGame(serverLevel); // TeamManager最后处理
         this.prepared = false;
         this.inGame = false;
         this.ready = false;

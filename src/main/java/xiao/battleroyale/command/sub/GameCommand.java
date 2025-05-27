@@ -64,18 +64,17 @@ public class GameCommand {
             return 0;
         }
 
+        gameManager.initGame(serverLevel);
         if (!gameManager.isPreparedForGame()) {
             source.sendFailure(Component.translatable("battleroyale.message.game_not_prepared").withStyle(ChatFormatting.YELLOW));
             return 0;
         }
-
-        gameManager.initGame(serverLevel);
         if (gameManager.isReady()) {
             source.sendSuccess(() -> Component.translatable("battleroyale.message.game_init").withStyle(ChatFormatting.GREEN), false);
             BattleRoyale.LOGGER.info("Game initialized via command.");
             return Command.SINGLE_SUCCESS;
         } else {
-            source.sendFailure(Component.translatable("battleroyale.message.game_init_failed").withStyle(ChatFormatting.RED));
+            source.sendFailure(Component.translatable("battleroyale.message.game_init_fail").withStyle(ChatFormatting.RED));
             BattleRoyale.LOGGER.warn("Failed to initialize game via command.");
             return 0;
         }

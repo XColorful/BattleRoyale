@@ -87,13 +87,13 @@ public class TeamCommand {
 
     private static int joinTeamSpecific(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
-        int teamId = IntegerArgumentType.getInteger(context, TEAM_ID_ARG_NAME);
-        // 在游戏进行中不允许通过此命令加入队伍
         if (GameManager.get().isInGame()) {
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return 0;
         }
-        TeamManager.get().addPlayerToTeam(player, teamId); // TeamManager 中的此方法已处理了所有检查
+
+        int teamId = IntegerArgumentType.getInteger(context, TEAM_ID_ARG_NAME);
+        TeamManager.get().joinTeamSpecific(player, teamId);
         return Command.SINGLE_SUCCESS;
     }
 

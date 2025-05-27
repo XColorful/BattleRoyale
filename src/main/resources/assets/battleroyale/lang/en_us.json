@@ -69,12 +69,13 @@
   "battleroyale.message.player_not_found": "Could not find player %s",
 
   "battleroyale.message.invite_sent": "Invited %s to join your team",
-  "battleroyale.message.invite_received": "You have been invited to join team %s, click [Accept] or [Decline]",
+  "battleroyale.message.invite_received": "You have been invited to join team %s: ",
   "battleroyale.message.invite_accepted": "You accepted the invitation to team %s",
   "battleroyale.message.invite_declined": "You declined the invitation to team %s",
   "battleroyale.message.no_pending_invite": "You do not have a pending invitation for team %s",
   "battleroyale.message.invite_already_sent": "You have already invited %s to your team",
   "battleroyale.message.player_already_in_team": "%s is already in a team",
+  "battleroyale.message.player_declined_invite": "Player %s declined your invitation",
   "battleroyale.message.team_full": "Team %s is full",
   "battleroyale.message.invite_timeout": "Team invitation from team %s timed out",
   "battleroyale.message.team_does_not_exist": "Team %s does not exist",
@@ -96,5 +97,8 @@
   "battleroyale.message.game_start": "Start BattleRoyale",
   "battleroyale.message.game_start_failed": "Failed to start BattleRoyale",
   "battleroyale.message.no_game_in_progress": "There's no game in progress",
-  "battleroyale.message.game_stopped": "Game stopped"
+  "battleroyale.message.game_stopped": "Game stopped",
+  "battleroyale.message.accept": "[Accept]",
+  "battleroyale.message.decline": "[Decline]",
+  "battleroyale.message.team": "Team %s"
 }

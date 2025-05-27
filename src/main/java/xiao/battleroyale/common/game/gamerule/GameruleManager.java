@@ -43,6 +43,10 @@ public class GameruleManager extends AbstractGameManager {
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
+        if (GameManager.get().isInGame()) {
+            return;
+        }
+
         int gameId = GameManager.get().getGameruleConfigId();
         MinecraftEntry mcEntry = GameruleConfigManager.get().getGameruleConfig(gameId).getMinecraftEntry();;
         if (mcEntry == null) {
@@ -63,6 +67,13 @@ public class GameruleManager extends AbstractGameManager {
      */
     @Override
     public void initGame(ServerLevel serverLevel) {
+        if (GameManager.get().isInGame()) {
+            return;
+        }
+        if (!this.prepared) {
+            return;
+        }
+
         List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
         this.gamemodeBackup.apply(serverLevel, gamePlayerList);
 
@@ -71,6 +82,10 @@ public class GameruleManager extends AbstractGameManager {
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
+        if (GameManager.get().isInGame()) {
+            return false;
+        }
+
         return true;
     }
 

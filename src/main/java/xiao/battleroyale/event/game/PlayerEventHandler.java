@@ -54,7 +54,7 @@ public class PlayerEventHandler {
     @SubscribeEvent
     public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            TeamManager.get().onPlayerQuitGame(serverPlayer);
+            TeamManager.get().onPlayerLoggedOut(serverPlayer);
         }
     }
 

@@ -57,50 +57,22 @@ public class GameTeam {
         }
     }
 
-    /**
-     * 检查某个玩家是否是当前队伍的队长。
-     * @param playerUUID 待检查玩家的 UUID。
-     * @return 如果是队长，则为 true；否则为 false。
-     */
     public boolean isLeader(UUID playerUUID) {
         return leaderUUID != null && leaderUUID.equals(playerUUID);
     }
 
-    /**
-     * 判断队伍是否**存活**（即是否有至少一名玩家未倒地）。
-     * 此方法主要用于判断队伍是否还有战斗力。
-     * @return 如果有至少一个玩家 isAlive() 为 true，则队伍存活；否则为 false。
-     */
     public boolean isTeamAlive() {
-        for (GamePlayer gamePlayer : teamMembers) {
-            if (gamePlayer.isAlive()) { // 只要有一个玩家未倒地（isAlive），队伍就视为存活
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 判断队伍是否**被淘汰**（即所有成员都已被淘汰）。
-     * 这是 PUBG 淘汰逻辑的核心。
-     * @return 如果所有玩家 isEliminated() 都为 true，则队伍被淘汰；否则为 false。
-     */
-    public boolean isTeamEliminated() {
         if (teamMembers.isEmpty()) {
             return true;
         }
         for (GamePlayer gamePlayer : teamMembers) {
-            if (!gamePlayer.isEliminated()) {
+            if (gamePlayer.isAlive() && !gamePlayer.isEliminated()) {
                 return false;
             }
         }
         return true; // 所有玩家都已淘汰
     }
 
-    /**
-     * 获取队伍中**未倒地**的玩家列表（即 isAlive() 为 true 的玩家）。
-     * @return 未倒地玩家的列表。
-     */
     public List<GamePlayer> getAlivePlayers() {
         return teamMembers.stream()
                 .filter(GamePlayer::isAlive) // 筛选出 isAlive 的玩家

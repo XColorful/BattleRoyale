@@ -66,7 +66,7 @@ public class GamePlayer {
     public GameTeam getTeam() { return team; }
     public boolean isLeader() { return isLeader; }
 
-    // Setters (只针对可变字段)
+    // Setters
     public void setKills(int kills) { this.kills = kills; }
     public void addKill() { this.kills++; }
     public void setDowns(int downs) { this.downs = downs; }
@@ -76,18 +76,16 @@ public class GamePlayer {
     public void setDamageTaken(float damageTaken) { this.damageTaken = damageTaken; }
     public void addDamageTaken(float amount) { this.damageTaken += amount; }
 
-    /**
-     * 设置玩家是否存活（倒地/站立）。
-     * 当玩家被淘汰时，此值会自动变为 false。
-     * @param alive 是否存活。
-     */
-    public void setAlive(boolean alive) { this.isAlive = alive; }
+    public void setAlive(boolean alive) {
+        this.isAlive = alive;
+        if (!team.isTeamAlive()) {
+            this.isEliminated = true;
+        }
+        if (this.isEliminated) {
+            this.isAlive = false;
+        }
+    }
 
-    /**
-     * 设置玩家是否已被淘汰。
-     * 当玩家被淘汰时，其 alive 状态也会强制变为 false。
-     * @param eliminated 是否被淘汰。
-     */
     public void setEliminated(boolean eliminated) {
         this.isEliminated = eliminated;
         if (eliminated) {

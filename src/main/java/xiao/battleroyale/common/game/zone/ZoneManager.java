@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.AbstractGameManager;
+import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.util.ChatUtils;
@@ -40,6 +41,10 @@ public class ZoneManager extends AbstractGameManager {
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
+        if (GameManager.get().isInGame()) {
+            return;
+        }
+
         List<ZoneConfig> allZoneConfigs = ZoneConfigManager.get().getAllZoneConfigs();
         if (allZoneConfigs.isEmpty()) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_zone_config");
@@ -67,11 +72,19 @@ public class ZoneManager extends AbstractGameManager {
 
     @Override
     public void initGame(ServerLevel serverLevel) {
+        if (GameManager.get().isInGame()) {
+            return;
+        }
+
         this.ready = true;
     }
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
+        if (GameManager.get().isInGame()) {
+            return false;
+        }
+
         return true;
     }
 
