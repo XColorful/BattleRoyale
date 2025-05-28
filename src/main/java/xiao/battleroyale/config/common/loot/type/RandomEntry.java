@@ -17,7 +17,6 @@ public class RandomEntry implements ILootEntry {
 
     public RandomEntry(double chance, ILootEntry entry) {
         if (chance < 0) {
-            BattleRoyale.LOGGER.warn("RandomEntry chance ({}) is lower than 0, defaulting to 0", chance);
             chance = 0;
         }
         this.chance = chance;

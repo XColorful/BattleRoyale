@@ -18,12 +18,10 @@ public class RepeatEntry implements ILootEntry {
 
     public RepeatEntry(int min, int max, ILootEntry entry) {
         if (min < 0) {
-            BattleRoyale.LOGGER.warn("RepeatEntry min ({}) is lower than 0, defaulting to 0", min);
             min = 0;
         }
         this.min = min;
         if (max < min) {
-            BattleRoyale.LOGGER.warn("RepeatEntry min ({}) is greater than max ({}), defaulting to min.", this.min, max);
             max = min;
         }
         this.max = max;
@@ -33,7 +31,7 @@ public class RepeatEntry implements ILootEntry {
     @Override
     public List<ILootData> generateLootData(Supplier<Float> random) {
         int repeats = min + (int) (random.get() * (max - min + 1));
-        List<ILootData> lootData = new ArrayList();
+        List<ILootData> lootData = new ArrayList<>();
         if (entry != null) {
             try {
                 for (int i = 0; i < repeats; i++) {

@@ -15,10 +15,10 @@ import xiao.battleroyale.util.StringUtils;
 public class GroundEntry implements ISpawnEntry {
 
     // common
-    private SpawnShapeType shapeType;
-    private Vec3 centerPos;
-    private Vec3 dimension;
-    private CommonDetailType detailType;
+    private final SpawnShapeType shapeType;
+    private final Vec3 centerPos;
+    private final Vec3 dimension;
+    private final CommonDetailType detailType;
     // detail
     boolean teamTogether;
     boolean findGround;

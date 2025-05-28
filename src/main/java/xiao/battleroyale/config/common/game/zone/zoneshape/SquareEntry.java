@@ -10,8 +10,8 @@ import xiao.battleroyale.common.game.zone.spatial.SquareShape;
 
 public class SquareEntry implements IZoneShapeEntry {
 
-    private StartEntry startEntry;
-    private EndEntry endEntry;
+    private final StartEntry startEntry;
+    private final EndEntry endEntry;
 
     public SquareEntry(StartEntry startEntry, EndEntry endEntry) {
         this.startEntry = startEntry;

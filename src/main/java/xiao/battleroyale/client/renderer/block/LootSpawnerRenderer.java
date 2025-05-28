@@ -2,11 +2,8 @@ package xiao.battleroyale.client.renderer.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3f;
-import xiao.battleroyale.block.LootSpawner;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 
 public class LootSpawnerRenderer extends LootContainerRenderer<LootSpawnerBlockEntity> {
@@ -17,7 +14,7 @@ public class LootSpawnerRenderer extends LootContainerRenderer<LootSpawnerBlockE
 
     @Override
     protected ItemStack[] getItems(LootSpawnerBlockEntity blockEntity) {
-        ItemStack[] items = new ItemStack[blockEntity.getContainerSize()]; // 获取容器实际大小
+        ItemStack[] items = new ItemStack[blockEntity.getContainerSize()];
         for (int i = 0; i < blockEntity.getContainerSize(); i++) {
             items[i] = blockEntity.getItem(i);
         }

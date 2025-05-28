@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 
 public class ReloadCommand {
     private static final String RELOAD_NAME = "reload";
+
     private static final String LOOT_NAME = "loot";
     private static final String GAME_NAME = "game";
 
@@ -56,25 +57,15 @@ public class ReloadCommand {
                                 .executes(context -> reloadGameConfigs(context, GAMERULE_NAME))));
     }
 
-    /**
-     * 处理 /battleroyale reload 命令，加载所有 loot 和 game 配置。
-     */
     private static int reloadAllConfigs(CommandContext<CommandSourceStack> context) {
         LootConfigManager.get().reloadConfigs();
         GameConfigManager.get().reloadConfigs();
 
-        BattleRoyale.LOGGER.info("Reloaded all battleroyale configs");
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.all_configs_reloaded"), true);
+        BattleRoyale.LOGGER.info("Reloaded all battleroyale configs");
         return Command.SINGLE_SUCCESS;
     }
 
-    /**
-     * 处理 /battleroyale reload loot <sub_type> 命令，加载特定或所有 loot 配置。
-     *
-     * @param context   命令上下文
-     * @param subType   要加载的 loot 子类型 (例如 "loot_spawner", "airdrop")。如果为 null，则加载所有 loot 配置。
-     * @return 命令执行结果
-     */
     private static int reloadLootConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
         String messageKey;
         if (subType == null) {
@@ -103,23 +94,16 @@ public class ReloadCommand {
                     messageKey = "battleroyale.message.secret_room_config_reloaded";
                     break;
                 default:
-                    BattleRoyale.LOGGER.warn("Unknown loot sub-type for reload command: {}", subType);
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_loot_sub_type", subType));
-                    return 0; // 命令失败
+                    BattleRoyale.LOGGER.warn("Unknown loot sub-type for reload command: {}", subType);
+                    return 0;
             }
         }
-        BattleRoyale.LOGGER.info("Reloaded {} configs via command", subType != null ? subType : "all loot");
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        BattleRoyale.LOGGER.info("Reloaded {} loot configs via command", subType != null ? subType : "all loot");
         return Command.SINGLE_SUCCESS;
     }
 
-    /**
-     * 处理 /battleroyale reload game <sub_type> 命令，加载特定或所有 game 配置。
-     *
-     * @param context   命令上下文
-     * @param subType   要加载的 game 子类型 (例如 "zone", "spawn", "gamerule")。如果为 null，则加载所有 game 配置。
-     * @return 命令执行结果
-     */
     private static int reloadGameConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
         String messageKey;
         if (subType == null) {
@@ -140,13 +124,13 @@ public class ReloadCommand {
                     messageKey = "battleroyale.message.gamerule_config_reloaded";
                     break;
                 default:
-                    BattleRoyale.LOGGER.warn("Unknown game sub-type for reload command: {}", subType);
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_game_sub_type", subType));
-                    return 0; // 命令失败
+                    BattleRoyale.LOGGER.warn("Unknown game sub-type for reload command: {}", subType);
+                    return 0;
             }
         }
-        BattleRoyale.LOGGER.info("Reloaded {} configs via command", subType != null ? subType : "all game");
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        BattleRoyale.LOGGER.info("Reloaded {} game configs via command", subType != null ? subType : "all game");
         return Command.SINGLE_SUCCESS;
     }
 }

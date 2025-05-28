@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class EntityEntry implements IEntityLootEntry {
-    private String entityString;
-    private @Nullable String nbtString;
-    private int count;
-    private int range;
+    private final String entityString;
+    private final @Nullable String nbtString;
+    private final int count;
+    private final int range;
 
     public EntityEntry(String rl, @Nullable String nbtString, int count, int range) {
         this.entityString = rl;

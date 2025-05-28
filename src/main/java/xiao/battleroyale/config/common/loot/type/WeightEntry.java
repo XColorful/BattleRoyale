@@ -22,7 +22,6 @@ public class WeightEntry implements ILootEntry {
 
         public WeightedEntry(double weight, ILootEntry entry) {
             if (weight < 0) {
-                BattleRoyale.LOGGER.warn("WeightedEntry weight ({}) is lower than 0, defaulting to 0", weight);
                 weight = 0;
             }
             this.weight = weight;

@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.IConfigManager;
 import xiao.battleroyale.api.game.spawn.ISpawnEntry;
 import xiao.battleroyale.api.game.spawn.SpawnConfigTag;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -21,7 +22,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class SpawnConfigManager {
+public class SpawnConfigManager implements IConfigManager {
     public static final int DEFAULT_CONFIG_ID = 0;
 
     public static final String SPAWN_CONFIG_SUB_PATH = "spawn";

@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.*;
@@ -54,20 +55,18 @@ public class LootGenerator {
                     IItemLootData itemData = (IItemLootData) data;
                     ItemStack itemStack = itemData.getItemStack();
                     if (itemStack == null) {
-                        BattleRoyale.LOGGER.warn("忽略添加到物资容器的空物品");
                         continue;
                     }
                     itemStack.getOrCreateTag().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
                     container.setItemNoUpdate(i, itemStack); // 省流
                 } else {
-                    BattleRoyale.LOGGER.warn("忽略添加到物资容器的非物品类型: {}", target.getBlockPos());
+                    BattleRoyale.LOGGER.warn("Ignore adding non-item to loot container at {}", target.getBlockPos());
                 }
             }
             container.sendBlockUpdated(); // 省流
         } else { // 实体刷新方块
             BlockPos spawnOrigin = target.getBlockPos();
-            for (int i = 0; i < lootData.size(); i++) {
-                ILootData data = lootData.get(i);
+            for (ILootData data : lootData) {
                 if (data.getDataType() == LootDataType.ENTITY) {
                     IEntityLootData entityData = (IEntityLootData) data;
                     if (!(level instanceof ServerLevel serverLevel)) {
@@ -75,7 +74,6 @@ public class LootGenerator {
                     }
                     Entity entity = entityData.getEntity(serverLevel);
                     if (entity == null) {
-                        BattleRoyale.LOGGER.warn("忽略待刷新的空实体类型");
                         continue;
                     }
                     entity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
@@ -87,7 +85,7 @@ public class LootGenerator {
                         serverLevel.addFreshEntity(entity);
                     }
                 } else {
-                    BattleRoyale.LOGGER.warn("忽略待刷新的非实体类型: {}", spawnOrigin);
+                    BattleRoyale.LOGGER.warn("Ignore spawn non-entity at {}", spawnOrigin);
                 }
             }
         }
@@ -106,7 +104,7 @@ public class LootGenerator {
             int dx = (int) ((random.get() - 0.5) * 2 * range);
             int dz = (int) ((random.get() - 0.5) * 2 * range);
             BlockPos candidate = centerPos.offset(dx, 0, dz);
-            BlockPos ground = level.getHeightmapPos(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, candidate);
+            BlockPos ground = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, candidate);
             BlockState below = level.getBlockState(ground.below());
 
             if (!below.isAir() && !below.getCollisionShape(level, ground.below()).isEmpty()) {
@@ -137,13 +135,11 @@ public class LootGenerator {
         int configId = lootObject.getConfigId();
         LootConfig config = LootConfigManager.get().getLootConfig(blockEntity, configId);
 
-        // 仅在配置存在且方块的 gameId 与当前 gameId 不同时刷新
         if (config != null && (blockGameId == null || !blockGameId.equals(gameId))) {
             ILootEntry entry = config.getEntry();
             generateLoot(serverLevel, entry, blockEntity, () -> serverLevel.getRandom().nextFloat(), gameId);
             lootObject.setGameId(gameId);
             blockEntity.setChanged();
-            // 记录刷新信息，但这里不再记录总数，而是由 LootTickEvent 累加
             BattleRoyale.LOGGER.debug("Refreshed loot for {} at {} with configId {} for game {}", blockEntity.getClass().getSimpleName(), pos, configId, gameId);
             return true;
         }
@@ -161,14 +157,12 @@ public class LootGenerator {
         int refreshedCount = 0;
         LevelChunk chunk = level.getChunkSource().getChunkNow(chunkPos.x, chunkPos.z);
 
-        if (chunk == null) { // 区块未加载
-            BattleRoyale.LOGGER.warn("Skipping loot generation for unloaded chunk: {}", chunkPos);
+        if (chunk == null) {
             return refreshedCount;
         }
 
         clearOldLoot(level, chunkPos, gameId);
 
-        // 刷新区块内所有loot方块
         for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
             if (refreshLootObject(level, blockEntity.getBlockPos(), gameId)) {
                 refreshedCount++;
@@ -222,7 +216,7 @@ public class LootGenerator {
                 }
             }
 
-            BattleRoyale.LOGGER.debug("清除旧游戏实体: {} (UUID: {}) (GameId: {}) at {}",
+            BattleRoyale.LOGGER.info("Clear old game object: {} (UUID: {}) (GameId: {}) at {}",
                     entity.getName().getString(),
                     entity.getUUID(),
                     debugGameId != null ? debugGameId.toString() : "N/A", // 打印转换后的 UUID
@@ -233,7 +227,7 @@ public class LootGenerator {
         // 清除无GameId的实体
          if (false) { // TODO 添加配置
              for (Entity entity : innocentEntities) {
-                 BattleRoyale.LOGGER.debug("清除无标签实体: {} (UUID: {}) at {}", entity.getName().getString(), entity.getUUID(), entity.position());
+                 BattleRoyale.LOGGER.debug("Clear entity with no gameId tag: {} (UUID: {}) at {}", entity.getName().getString(), entity.getUUID(), entity.position());
                  entity.remove(Entity.RemovalReason.DISCARDED);
              }
          }

@@ -10,16 +10,16 @@ import xiao.battleroyale.util.StringUtils;
 
 public class BattleroyaleEntry implements IGameruleEntry {
 
-    private int playerTotal;
-    private int teamSize;
-    private boolean aiTeammate;
-    private boolean aiEnemy;
-    private int maxGameTime;
-    private Vec3 lobbyCenterPos;
-    private Vec3 lobbyDimension;
-    private boolean lobbyMuteki;
-    private boolean recordGameStats;
-    private boolean autoJoinGame;
+    public final int playerTotal;
+    public final int teamSize;
+    public final boolean aiTeammate;
+    public final boolean aiEnemy;
+    public final int maxGameTime;
+    public final Vec3 lobbyCenterPos;
+    public final Vec3 lobbyDimension;
+    public final boolean lobbyMuteki;
+    public final boolean recordGameStats;
+    public final boolean autoJoinGame;
 
     public BattleroyaleEntry(int playerTotal, int teamSize, boolean aiTeammate, boolean aiEnemy, int maxGameTime,
                              Vec3 lobbyCenterPos, Vec3 lobbyDimension, boolean lobbyMuteki,

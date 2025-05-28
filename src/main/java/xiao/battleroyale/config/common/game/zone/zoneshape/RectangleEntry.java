@@ -10,8 +10,8 @@ import xiao.battleroyale.common.game.zone.spatial.RectangleShape;
 
 public class RectangleEntry implements IZoneShapeEntry {
 
-    private StartEntry startEntry;
-    private EndEntry endEntry;
+    private final StartEntry startEntry;
+    private final EndEntry endEntry;
 
     public RectangleEntry(StartEntry startEntry, EndEntry endEntry) {
         this.startEntry = startEntry;

@@ -14,11 +14,6 @@ public enum EndDimensionType {
         return value;
     }
 
-    /**
-     * 根据字符串值获取对应的枚举实例
-     * @param text 字符串值
-     * @return 对应的EndDimensionType枚举实例，如果未找到则返回null
-     */
     public static EndDimensionType fromValue(String text) {
         for (EndDimensionType b : EndDimensionType.values()) {
             if (b.value.equalsIgnoreCase(text)) {

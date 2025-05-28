@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.IConfigManager;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootConfigTag;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class LootConfigManager {
+public class LootConfigManager implements IConfigManager {
 
     public static final int DEFAULT_CONFIG_ID = 0;
 

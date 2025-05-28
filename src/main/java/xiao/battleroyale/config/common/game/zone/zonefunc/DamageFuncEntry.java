@@ -9,9 +9,9 @@ import xiao.battleroyale.common.game.zone.tickable.DamageFunc;
 
 public class DamageFuncEntry implements IZoneFuncEntry {
 
-    private double damage;
-    private int moveDelay;
-    private int moveTime;
+    private final double damage;
+    private final int moveDelay;
+    private final int moveTime;
 
     public DamageFuncEntry(double damage, int moveDelay, int moveTime) {
         this.damage = damage;

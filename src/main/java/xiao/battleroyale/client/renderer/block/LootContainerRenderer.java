@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 public abstract class LootContainerRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
@@ -19,7 +20,7 @@ public abstract class LootContainerRenderer<T extends BlockEntity> implements Bl
     }
 
     @Override
-    public void render(T blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         // TODO 暂时超过 16 米不渲染，以后再加配置
         if (Minecraft.getInstance().player != null && blockEntity.getBlockPos().distSqr(Minecraft.getInstance().player.blockPosition()) > 16 * 16) {
             return;
@@ -33,7 +34,7 @@ public abstract class LootContainerRenderer<T extends BlockEntity> implements Bl
         Vector3f renderOffset = getRenderOffset(blockEntity);
         poseStack.pushPose();
         poseStack.translate(0.5F + renderOffset.x(), renderOffset.y(), 0.5F + renderOffset.z()); // 初始平移到方块中心，并考虑整体偏移
-        applyRotation(blockEntity, poseStack); // 应用旋转，具体由子类实现
+        applyRotation(blockEntity, poseStack);
 
         float itemScale = 1 / 2F;
 
@@ -86,7 +87,7 @@ public abstract class LootContainerRenderer<T extends BlockEntity> implements Bl
     protected abstract void applyRotation(T blockEntity, PoseStack poseStack);
 
     @Override
-    public boolean shouldRenderOffScreen(T blockEntity) {
+    public boolean shouldRenderOffScreen(@NotNull T blockEntity) {
         return true;
     }
 }

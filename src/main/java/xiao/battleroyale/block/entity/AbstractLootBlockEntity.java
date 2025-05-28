@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.ILootObject;
 import xiao.battleroyale.api.loot.LootNBTTag;
@@ -38,7 +39,7 @@ public abstract class AbstractLootBlockEntity extends BlockEntity implements ILo
     }
 
     @Override
-    public UUID getGameId() {
+    public @Nullable UUID getGameId() {
         return this.gameId;
     }
 
@@ -55,14 +56,14 @@ public abstract class AbstractLootBlockEntity extends BlockEntity implements ILo
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();
         saveAdditional(tag);
         return tag;
     }
 
     @Override
-    public void load(CompoundTag tag) {
+    public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         if (tag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
             this.gameId = tag.getUUID(LootNBTTag.GAME_ID_TAG);
@@ -75,7 +76,7 @@ public abstract class AbstractLootBlockEntity extends BlockEntity implements ILo
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         if (gameId != null) {
             tag.putUUID(LootNBTTag.GAME_ID_TAG, gameId);

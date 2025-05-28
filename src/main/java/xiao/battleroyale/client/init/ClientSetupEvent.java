@@ -14,10 +14,9 @@ public class ClientSetupEvent {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        // 注册 Loot Spawner 的 GUI 屏幕
         MenuScreens.register(ModMenuTypes.LOOT_SPAWNER_MENU.get(), LootSpawnerScreen::new);
 
-        // 在这里注册其他客户端相关的事件监听器或初始化
-        // 例如渲染器注册、键盘绑定注册等
+        // 注册其他客户端相关的事件监听器或初始化
+        // 如渲染器注册、键盘绑定注册等
     }
 }

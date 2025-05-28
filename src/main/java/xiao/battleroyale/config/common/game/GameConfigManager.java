@@ -1,5 +1,6 @@
 package xiao.battleroyale.config.common.game;
 
+import xiao.battleroyale.api.IConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
@@ -9,7 +10,7 @@ import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 
 import java.util.*;
 
-public class GameConfigManager {
+public class GameConfigManager implements IConfigManager {
     public static final String GAME_CONFIG_PATH = "config/battleroyale/game";
 
     private static GameConfigManager instance;

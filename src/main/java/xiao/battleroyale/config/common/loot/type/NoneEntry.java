@@ -13,7 +13,7 @@ public class NoneEntry implements ILootEntry {
 
     @Override
     public List<ILootData> generateLootData(Supplier<Float> random) {
-        return Collections.emptyList(); // 返回一个空的列表，表示不生成任何东西
+        return Collections.emptyList();
     }
 
     @Override

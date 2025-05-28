@@ -10,8 +10,8 @@ import xiao.battleroyale.common.game.zone.spatial.CircleShape;
 
 public class CircleEntry implements IZoneShapeEntry {
 
-    private StartEntry startEntry;
-    private EndEntry endEntry;
+    private final StartEntry startEntry;
+    private final EndEntry endEntry;
 
     public CircleEntry(StartEntry startEntry, EndEntry endEntry) {
         this.startEntry = startEntry;

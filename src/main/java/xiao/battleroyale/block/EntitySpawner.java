@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
@@ -34,7 +35,7 @@ public class EntitySpawner extends AbstractLootBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return SHAPE;
     }
 
@@ -50,31 +51,31 @@ public class EntitySpawner extends AbstractLootBlock {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new EntitySpawnerBlockEntity(pos, state);
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         if (!level.isClientSide) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof EntitySpawnerBlockEntity entitySpawnerBlockEntity) {
                 if (player.isCreative() && player.isCrouching()) { // 切换实体刷新配置
                     int currentConfigId = entitySpawnerBlockEntity.getConfigId();
                     List<LootConfig> allConfigs = LootConfigManager.get().getAllEntitySpawnerConfigs();
-
-                    if (allConfigs.isEmpty()) { // 没有配置可切换，提示后直接返回
+                    if (allConfigs.isEmpty()) {
                         player.sendSystemMessage(Component.translatable("battleroyale.message.no_entity_spawner_configs_available"));
                         return InteractionResult.SUCCESS;
                     }
+
                     LootConfig nextConfig = allConfigs.get(0);
-                    for (LootConfig config : allConfigs) { // 找第一个 ID 大于当前 ID 的配置
+                    for (LootConfig config : allConfigs) {
                         if (config.getLootId() > currentConfigId) {
                             nextConfig = config;
                             break;
                         }
                     }
-                    entitySpawnerBlockEntity.setConfigId(nextConfig.getLootId()); // 设置配置文件的实际 ID
+                    entitySpawnerBlockEntity.setConfigId(nextConfig.getLootId());
                     player.sendSystemMessage(Component.translatable("battleroyale.message.entity_spawner_config_switched", nextConfig.getLootId(), nextConfig.getName()));
                     return InteractionResult.SUCCESS;
                 }

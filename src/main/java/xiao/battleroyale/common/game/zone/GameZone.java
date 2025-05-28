@@ -2,7 +2,6 @@ package xiao.battleroyale.common.game.zone;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -10,6 +9,7 @@ import xiao.battleroyale.api.game.zone.gamezone.GameTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
+import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 
@@ -27,8 +27,8 @@ public class GameZone implements IGameZone {
     private final int zoneDelay;
     private final int zoneTime;
 
-    private ITickableZone tickableZone;
-    private ISpatialZone spatialZone;
+    private final ITickableZone tickableZone;
+    private final ISpatialZone spatialZone;
 
     private boolean created = false;
     private boolean present = false;
@@ -48,15 +48,15 @@ public class GameZone implements IGameZone {
     }
 
     @Override
-    public void createZone(ServerLevel serverLevel, List<LivingEntity> gamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
+    public void createZone(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
         if (!created) {
-            tickableZone.initFunc(serverLevel, gamePlayers, gameZones, random);
-            spatialZone.calculateShape(serverLevel, gamePlayers, gameZones, random);
+            tickableZone.initFunc(serverLevel, gamePlayerList, gameZones, random);
+            spatialZone.calculateShape(serverLevel, gamePlayerList, gameZones, random);
         }
         if (tickableZone.isReady() && spatialZone.isDetermined()) {
             created = true;
         } else {
-            BattleRoyale.LOGGER.warn("Failed to create zone, finished");
+            BattleRoyale.LOGGER.warn("Failed to create zone (id: {}, name: {}), finished", zoneId, zoneName);
             finished = true;
         }
     }
@@ -81,7 +81,7 @@ public class GameZone implements IGameZone {
     }
 
     @Override
-    public void tick(ServerLevel serverLevel, List<LivingEntity> gamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
+    public void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
         if (!shouldTick()) {
             return;
         }
@@ -89,12 +89,18 @@ public class GameZone implements IGameZone {
         if (progress != prevShapeProgress || gameTime % 20 == 0) { // 同步客户端
             prevShapeProgress = progress;
             CompoundTag nbt = toNBT(progress);
+            // TODO 同步当前圈至客户端渲染
         }
-        tickableZone.tick(serverLevel, gamePlayers, gameZones, random, gameTime);
+        tickableZone.tick(serverLevel, gamePlayerList, gameZones, random, gameTime);
         if (gameTime >= zoneDelay + zoneTime) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置
             present = false;
             finished = true;
         }
+    }
+
+    @Override
+    public int getZoneId() {
+        return zoneId;
     }
 
     @Override
@@ -129,8 +135,8 @@ public class GameZone implements IGameZone {
     @Override
     public ZoneShapeType getShapeType() { return spatialZone.getShapeType(); }
     @Override
-    public void calculateShape(ServerLevel serverLevel, List<LivingEntity> gamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
-        spatialZone.calculateShape(serverLevel, gamePlayers, gameZones, random);
+    public void calculateShape(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
+        spatialZone.calculateShape(serverLevel, gamePlayerList, gameZones, random);
     }
     @Override
     public boolean isDetermined() { return spatialZone.isDetermined(); }
@@ -149,8 +155,8 @@ public class GameZone implements IGameZone {
 
     // ITickableZone
     @Override
-    public void initFunc(ServerLevel serverLevel, List<LivingEntity> gamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
-        tickableZone.initFunc(serverLevel, gamePlayers, gameZones, random);
+    public void initFunc(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
+        tickableZone.initFunc(serverLevel, gamePlayerList, gameZones, random);
     }
     @Override
     public boolean isReady() { return tickableZone.isReady(); }

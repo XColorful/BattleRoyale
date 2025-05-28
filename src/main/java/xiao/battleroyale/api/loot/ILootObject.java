@@ -32,6 +32,4 @@ public interface ILootObject {
      * @param gameId 要设置的大逃杀游戏 UUID。
      */
     void setGameId(UUID gameId);
-
-    // 可以添加其他通用的方法，例如获取颜色、名称等
 }

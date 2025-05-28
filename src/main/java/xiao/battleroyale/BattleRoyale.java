@@ -28,8 +28,6 @@ public class BattleRoyale {
         Dist side = FMLLoader.getDist();
         ResourceLoader.INSTANCE.packType = side.isClient() ? PackType.CLIENT_RESOURCES : PackType.SERVER_DATA;
 
-        ModBlocks.BLOCKS.getClass();
-
         IEventBus bus = context.getModEventBus();
         ModBlocks.BLOCKS.register(bus);
         ModBlocks.BLOCK_ENTITIES.register(bus);

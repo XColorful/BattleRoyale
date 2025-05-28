@@ -8,7 +8,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.event.LootTickEvent;
+import xiao.battleroyale.common.loot.LootGenerationManager;
 import java.util.UUID;
 
 public class LootCommand {
@@ -25,22 +25,22 @@ public class LootCommand {
 
     private static int generateAllLoadedLoot(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
-        // 每次执行 loot 指令时手动刷新 UUID
         if (!GameManager.get().isInGame()) {
             GameManager.get().setGameId(UUID.randomUUID());
             BattleRoyale.LOGGER.info("Generated random UUID for GameManager via command");
         }
         UUID currentWorldGameId = GameManager.get().getGameId();
 
-        int totalChunks = LootTickEvent.startLootGeneration(source, currentWorldGameId);
+        int totalChunks = LootGenerationManager.get().startGenerationTask(source, currentWorldGameId);
+
         if (totalChunks > 0) {
             source.sendSuccess(() -> Component.translatable("battleroyale.message.loot_generation_started", totalChunks), true);
             return Command.SINGLE_SUCCESS;
         } else if (totalChunks == 0){
             source.sendFailure(Component.translatable("battleroyale.message.loot_generation_in_progress"));
-            return Command.SINGLE_SUCCESS;
+            return 0;
         } else {
-            return Command.SINGLE_SUCCESS;
+            return 0;
         }
     }
 }

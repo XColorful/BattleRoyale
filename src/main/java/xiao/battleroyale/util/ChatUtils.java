@@ -1,0 +1,106 @@
+package xiao.battleroyale.util;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+
+public class ChatUtils {
+
+    /**
+     * 向所有在线玩家发送普通文本消息。
+     * @param serverLevel 当前的 ServerLevel。
+     * @param message 要发送的字符串消息。
+     */
+    public static void sendMessageToAllPlayers(ServerLevel serverLevel, String message) {
+        MinecraftServer server = serverLevel.getServer();
+        Component textComponent = Component.literal(message);
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            player.sendSystemMessage(textComponent);
+        }
+    }
+
+    /**
+     * 向所有在线玩家发送 Minecraft 组件消息。
+     * @param serverLevel 当前的 ServerLevel。
+     * @param textComponent 要发送的 Minecraft Component 对象。
+     */
+    public static void sendMessageToAllPlayers(ServerLevel serverLevel, Component textComponent) {
+        MinecraftServer server = serverLevel.getServer();
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            player.sendSystemMessage(textComponent);
+        }
+    }
+
+    /**
+     * 向所有在线玩家发送可翻译的文本消息。
+     * @param serverLevel 当前的 ServerLevel。
+     * @param translationKey 翻译键。
+     * @param args 翻译参数。
+     */
+    public static void sendTranslatableMessageToAllPlayers(ServerLevel serverLevel, String translationKey, Object... args) {
+        Component translatableComponent = Component.translatable(translationKey, args);
+        for (ServerPlayer player : serverLevel.getServer().getPlayerList().getPlayers()) {
+            player.sendSystemMessage(translatableComponent);
+        }
+    }
+
+    /**
+     * 向所有在线玩家发送可翻译的 Minecraft 组件消息。
+     * @param serverLevel 当前的 ServerLevel。
+     * @param translatableComponent 要发送的可翻译的 Minecraft Component 对象。
+     */
+    public static void sendTranslatableMessageToAllPlayers(ServerLevel serverLevel, Component translatableComponent) {
+        for (ServerPlayer player : serverLevel.getServer().getPlayerList().getPlayers()) {
+            player.sendSystemMessage(translatableComponent);
+        }
+    }
+
+    /**
+     * 向特定玩家发送普通文本消息。
+     * @param player 接收消息的 ServerPlayer 对象。
+     * @param message 要发送的字符串消息。
+     */
+    public static void sendMessageToPlayer(ServerPlayer player, String message) {
+        Component textComponent = Component.literal(message);
+        player.sendSystemMessage(textComponent);
+    }
+
+    /**
+     * 向特定玩家发送 Minecraft 组件消息。
+     * @param player 接收消息的 ServerPlayer 对象。
+     * @param textComponent 要发送的 Minecraft Component 对象。
+     */
+    public static void sendMessageToPlayer(ServerPlayer player, Component textComponent) {
+        player.sendSystemMessage(textComponent);
+    }
+
+    /**
+     * 向特定玩家发送可翻译的文本消息。
+     * @param player 接收消息的 ServerPlayer 对象。
+     * @param translationKey 翻译键。
+     * @param args 翻译参数。
+     */
+    public static void sendTranslatableMessageToPlayer(ServerPlayer player, String translationKey, Object... args) {
+        Component translatableComponent = Component.translatable(translationKey, args);
+        player.sendSystemMessage(translatableComponent);
+    }
+
+    /**
+     * 向特定玩家发送可翻译的 Minecraft 组件消息。
+     * @param player 接收消息的 ServerPlayer 对象。
+     * @param translatableComponent 要发送的可翻译的 Minecraft Component 对象。
+     */
+    public static void sendTranslatableMessageToPlayer(ServerPlayer player, Component translatableComponent) {
+        player.sendSystemMessage(translatableComponent);
+    }
+
+    /**
+     * 向特定玩家发送可点击的 Minecraft 组件消息。
+     * @param player 接收消息的 ServerPlayer 对象。
+     * @param clickableComponent 要发送的可点击的 Minecraft Component 对象。
+     */
+    public static void sendClickableMessageToPlayer(ServerPlayer player, Component clickableComponent) {
+        player.sendSystemMessage(clickableComponent);
+    }
+}

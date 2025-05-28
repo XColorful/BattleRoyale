@@ -13,7 +13,7 @@ public class EmptyEntry implements IItemLootEntry {
 
     @Override
     public List<ILootData> generateLootData(Supplier<Float> random) {
-        return Collections.emptyList(); // 返回一个空的物品堆叠列表，表示不生成任何物品
+        return Collections.emptyList();
     }
 
     @Override
