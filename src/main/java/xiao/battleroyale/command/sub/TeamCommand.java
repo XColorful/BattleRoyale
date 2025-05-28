@@ -2,19 +2,15 @@ package xiao.battleroyale.command.sub;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.command.RootCommand;
 import xiao.battleroyale.common.game.team.TeamManager;
-import xiao.battleroyale.util.ChatUtils;
-import net.minecraft.ChatFormatting;
 
 public class TeamCommand {
 
@@ -33,67 +29,60 @@ public class TeamCommand {
     private static final String TEAM_ID_ARG_NAME = "teamId";
     private static final String TEAM_ID_QUERY_NAME = "id";
 
-
-    /**
-     * 获取队伍相关命令的字面量参数构建器。
-     * 包含加入、离开、踢人、邀请、接受和拒绝邀请等子命令。
-     * @return 字面量参数构建器。
-     */
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         return Commands.literal(TEAM_NAME)
                 .requires(CommandSourceStack::isPlayer)
                 .then(Commands.literal(JOIN_NAME)
-                        .executes(TeamCommand::joinTeam) // /battleroyale team join
+                        .executes(TeamCommand::joinTeam)
                         .then(Commands.argument(TEAM_ID_ARG_NAME, IntegerArgumentType.integer(1))
-                                .executes(TeamCommand::joinTeamSpecific) // /battleroyale team join <teamId>
+                                .executes(TeamCommand::joinTeamSpecific)
                         )
                 )
                 .then(Commands.literal(LEAVE_NAME)
-                        .executes(TeamCommand::leaveTeam) // /battleroyale team leave
+                        .executes(TeamCommand::leaveTeam)
                 )
                 .then(Commands.literal(KICK_NAME)
-                        .then(Commands.argument(PLAYER_ARG_NAME, EntityArgument.player()) // 玩家对象
-                                .executes(TeamCommand::kickPlayer) // /battleroyale team kick <player>
+                        .then(Commands.argument(PLAYER_ARG_NAME, EntityArgument.player())
+                                .executes(TeamCommand::kickPlayer)
                         )
                 )
                 .then(Commands.literal(INVITE_NAME)
-                        .then(Commands.argument(PLAYER_ARG_NAME, EntityArgument.player()) // 玩家对象
-                                .executes(TeamCommand::invitePlayer) // /battleroyale team invite <player>
+                        .then(Commands.argument(PLAYER_ARG_NAME, EntityArgument.player())
+                                .executes(TeamCommand::invitePlayer)
                         )
                 )
                 .then(Commands.literal(ACCEPT_NAME)
-                        .then(Commands.literal(INVITE_NAME) // /battleroyale team accept invite <senderName>
-                                .then(Commands.argument(SENDER_NAME_ARG_NAME, EntityArgument.player()) // 邀请者名称
+                        .then(Commands.literal(INVITE_NAME)
+                                .then(Commands.argument(SENDER_NAME_ARG_NAME, EntityArgument.player())
                                         .executes(TeamCommand::acceptInvite)
                                 )
                         )
-                        .then(Commands.literal(REQUEST_NAME) // /battleroyale team accept request <requesterName>
-                                .then(Commands.argument(REQUESTER_NAME_ARG_NAME, EntityArgument.player()) // 申请者名称
+                        .then(Commands.literal(REQUEST_NAME)
+                                .then(Commands.argument(REQUESTER_NAME_ARG_NAME, EntityArgument.player())
                                         .executes(TeamCommand::acceptRequest)
                                 )
                         )
                 )
                 .then(Commands.literal(DECLINE_NAME)
-                        .then(Commands.literal(INVITE_NAME) // /battleroyale team decline invite <senderName>
-                                .then(Commands.argument(SENDER_NAME_ARG_NAME, EntityArgument.player()) // 邀请者名称
+                        .then(Commands.literal(INVITE_NAME)
+                                .then(Commands.argument(SENDER_NAME_ARG_NAME, EntityArgument.player())
                                         .executes(TeamCommand::declineInvite)
                                 )
                         )
-                        .then(Commands.literal(REQUEST_NAME) // /battleroyale team decline request <requesterName>
-                                .then(Commands.argument(REQUESTER_NAME_ARG_NAME, EntityArgument.player()) // 申请者名称
+                        .then(Commands.literal(REQUEST_NAME)
+                                .then(Commands.argument(REQUESTER_NAME_ARG_NAME, EntityArgument.player())
                                         .executes(TeamCommand::declineRequest)
                                 )
                         )
                 )
-                // 仅用于发送请求的命令 (request <targetPlayer>)
                 .then(Commands.literal(REQUEST_NAME)
-                        .then(Commands.argument(PLAYER_ARG_NAME, EntityArgument.player()) // 目标玩家的 ServerPlayer 对象 (请求目标队长)
-                                .executes(TeamCommand::requestPlayer) // /battleroyale team request <player>
+                        .then(Commands.argument(PLAYER_ARG_NAME, EntityArgument.player())
+                                .executes(TeamCommand::requestPlayer)
                         )
                 )
                 .then(Commands.literal(TEAM_ID_QUERY_NAME)
                         .requires(CommandSourceStack::isPlayer)
-                        .executes(TeamCommand::queryPlayerTeamId) // /battleroyale team id
+                        .executes(TeamCommand::queryPlayerTeamId)
                 );
     }
 
@@ -169,5 +158,53 @@ public class TeamCommand {
         ServerPlayer player = context.getSource().getPlayerOrException();
         TeamManager.get().sendPlayerTeamId(player);
         return Command.SINGLE_SUCCESS;
+    }
+
+    public static String acceptInviteCommandString(String senderName) {
+        return buildCommandString(
+                RootCommand.ROOT_NAME,
+                TEAM_NAME,
+                ACCEPT_NAME,
+                INVITE_NAME,
+                senderName
+        );
+    }
+
+    public static String declineInviteCommandString(String senderName) {
+        return buildCommandString(
+                RootCommand.ROOT_NAME,
+                TEAM_NAME,
+                DECLINE_NAME,
+                INVITE_NAME,
+                senderName
+        );
+    }
+
+    public static String acceptRequestCommandString(String name) {
+        return buildCommandString(
+                RootCommand.ROOT_NAME,
+                TEAM_NAME,
+                ACCEPT_NAME,
+                REQUEST_NAME,
+                name
+        );
+    }
+
+    public static String declineRequestCommandString(String name) {
+        return buildCommandString(
+                RootCommand.ROOT_NAME,
+                TEAM_NAME,
+                DECLINE_NAME,
+                REQUEST_NAME,
+                name
+        );
+    }
+
+    private static String buildCommandString(String... parts) {
+        StringBuilder commandBuilder = new StringBuilder("/");
+        for (String part : parts) {
+            commandBuilder.append(part).append(" ");
+        }
+        return commandBuilder.toString().trim();
     }
 }

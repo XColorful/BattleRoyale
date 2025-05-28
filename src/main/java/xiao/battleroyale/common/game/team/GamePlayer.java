@@ -26,15 +26,7 @@ public class GamePlayer {
     private int invalidTime; // 额外检查，防止重新加载区块的时候圈已经没了（模组支持自定义圈），超过invalidTime则清除，同时应用于玩家离线重连
     private final boolean bot; // 是否是机器人
 
-    /**
-     * 构造函数。
-     * @param playerId 玩家的 UUID。
-     * @param playerName 玩家的名称。
-     * @param gameSingleId 游戏内单个玩家的唯一 ID。
-     * @param isBot 是否是机器人。
-     * @param team 玩家所属的队伍。
-     */
-    public GamePlayer(@NotNull UUID playerId, @NotNull String playerName, int gameSingleId, boolean isBot, GameTeam team) {
+    public GamePlayer(@NotNull UUID playerId, @NotNull String playerName, int gameSingleId, boolean isBot, @NotNull GameTeam team) {
         this.playerId = playerId;
         this.playerName = playerName;
         this.gameSingleId = gameSingleId;
@@ -88,7 +80,7 @@ public class GamePlayer {
     public void setEliminated(boolean eliminated) {
         this.isEliminated = eliminated;
         if (eliminated) {
-            this.isAlive = false; // 如果被淘汰，则肯定不活跃
+            this.isAlive = false; // 如果被淘汰，默认也是倒地
         }
     }
 
@@ -104,10 +96,5 @@ public class GamePlayer {
     public void setInvalidTime(int invalidTime) { this.invalidTime = invalidTime; }
     public void addInvalidTime() {this.invalidTime++; }
     public void setLeader(boolean leader) { this.isLeader = leader; }
-
-    /**
-     * 设置玩家所属的队伍。
-     * @param team 新的队伍对象。
-     */
     public void setTeam(GameTeam team) { this.team = team; } // 转移队伍
 }

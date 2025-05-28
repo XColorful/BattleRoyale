@@ -54,14 +54,12 @@ public class SpawnManager extends AbstractGameManager {
         SpawnConfig spawnConfig = SpawnConfigManager.get().getSpawnConfig(spawnConfigId);
         if (spawnConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_spawn_config");
-            BattleRoyale.LOGGER.warn("Failed to get SpawnConfig by id: {}", spawnConfigId);
             return;
         }
         int gameId = GameManager.get().getGameruleConfigId();
         GameruleConfig gameruleConfig = GameruleConfigManager.get().getGameruleConfig(gameId);
         if (gameruleConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
-            BattleRoyale.LOGGER.warn("Failed to get GameruleConfig by id: {}", gameId);
             return;
         }
 
@@ -72,7 +70,6 @@ public class SpawnManager extends AbstractGameManager {
 
         if (lobbyPos == null || lobbyDimension == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
-            BattleRoyale.LOGGER.info("Failed to get lobbyPos or lobbyDimension in SpawnManager initGameConfig, skipped");
             return;
         }
         this.prepared = true;
@@ -92,7 +89,6 @@ public class SpawnManager extends AbstractGameManager {
             UUID id = gamePlayer.getPlayerUUID();
             ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
             if (player == null) {
-                BattleRoyale.LOGGER.info("Failed to get ServerPlayer by UUID in SpawnManager initGame, skipped");
                 continue;
             }
             player.teleportTo(lobbyPos.x, lobbyPos.y, lobbyPos.z);
@@ -120,7 +116,6 @@ public class SpawnManager extends AbstractGameManager {
             UUID id = gamePlayer.getPlayerUUID();
             ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
             if (player == null) {
-                BattleRoyale.LOGGER.info("Failed to get ServerPlayer by UUID in SpawnManager initGame, skipped");
                 continue;
             }
             player.teleportTo(lobbyPos.x, lobbyPos.y, lobbyPos.z);

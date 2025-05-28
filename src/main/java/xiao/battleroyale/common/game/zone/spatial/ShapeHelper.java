@@ -28,7 +28,7 @@ public class ShapeHelper {
     public static Vec3 getPreviousEndCenterById(int id, @NotNull Map<Integer, IGameZone> gameZones) {
         IGameZone gameZone = gameZones.get(id);
         if (gameZone == null || !gameZone.isCreated()) {
-            BattleRoyale.LOGGER.warn("Failed to get previous gameZone center by id: {}", id);
+            BattleRoyale.LOGGER.warn("Failed to get previous gameZone end center by id: {}", id);
             return null;
         }
         return gameZone.getEndCenterPos();
@@ -38,7 +38,7 @@ public class ShapeHelper {
     public static Vec3 getPreviousEndDimensionById(int id, @NotNull Map<Integer, IGameZone> gameZones) {
         IGameZone gameZone = gameZones.get(id);
         if (gameZone == null || !gameZone.isCreated()) {
-            BattleRoyale.LOGGER.warn("Failed to get previous gameZone dimension by id: {}", id);
+            BattleRoyale.LOGGER.warn("Failed to get previous gameZone end dimension by id: {}", id);
             return null;
         }
         return gameZone.getEndDimension();
@@ -48,7 +48,7 @@ public class ShapeHelper {
     public static Vec3 getPreviousStartCenterById(int id, @NotNull Map<Integer, IGameZone> gameZones) {
         IGameZone gameZone = gameZones.get(id);
         if (gameZone == null || !gameZone.isCreated()) {
-            BattleRoyale.LOGGER.warn("Failed to get previous gameZone center by id: {}", id);
+            BattleRoyale.LOGGER.warn("Failed to get previous gameZone start center by id: {}", id);
             return null;
         }
         return gameZone.getStartCenterPos();
@@ -58,7 +58,7 @@ public class ShapeHelper {
     public static Vec3 getPreviousStartDimensionById(int id, @NotNull Map<Integer, IGameZone> gameZones) {
         IGameZone gameZone = gameZones.get(id);
         if (gameZone == null || !gameZone.isCreated()) {
-            BattleRoyale.LOGGER.warn("Failed to get previous gameZone dimension by id: {}", id);
+            BattleRoyale.LOGGER.warn("Failed to get previous gameZone start dimension by id: {}", id);
             return null;
         }
         return gameZone.getStartDimension();

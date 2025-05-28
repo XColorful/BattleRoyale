@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class ItemEntry implements IItemLootEntry {
-    private String itemString;
-    private @Nullable String nbtString;
-    private int count;
+    private final String itemString;
+    private final @Nullable String nbtString;
+    private final int count;
 
     public ItemEntry(String rl, @Nullable String nbtString, int count) {
         this.itemString = rl;

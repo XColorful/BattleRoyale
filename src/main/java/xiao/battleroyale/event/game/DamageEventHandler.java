@@ -45,7 +45,7 @@ public class DamageEventHandler {
     public void onLivingDamage(LivingDamageEvent event) {
         if (!GameManager.get().isInGame()) {
             unregister();
-            return; // 只在游戏进行中处理
+            return;
         }
 
         LivingEntity damagedEntity = event.getEntity();
@@ -70,7 +70,7 @@ public class DamageEventHandler {
             }
         }
 
-        // TODO: 伤害数值调整逻辑可以在这里实现
+        // TODO: 伤害数值调整逻辑等
         // 例如：event.setAmount(newAmount);
     }
 }

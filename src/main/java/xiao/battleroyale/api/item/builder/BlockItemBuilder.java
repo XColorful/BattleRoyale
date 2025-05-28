@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 public class BlockItemBuilder {
     private int count = 1;
-    private CompoundTag nbt = new CompoundTag(); // 内部维护一个 CompoundTag
+    private final CompoundTag nbt = new CompoundTag(); // 内部维护一个 CompoundTag
 
     private final ItemLike blockItem;
 

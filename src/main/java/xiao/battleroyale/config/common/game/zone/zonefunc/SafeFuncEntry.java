@@ -8,9 +8,9 @@ import xiao.battleroyale.common.game.zone.tickable.SafeFunc;
 
 public class SafeFuncEntry implements IZoneFuncEntry {
 
-    private double damage;
-    private int moveDelay;
-    private int moveTime;
+    private final double damage;
+    private final int moveDelay;
+    private final int moveTime;
 
     public SafeFuncEntry(double damage, int moveDelay, int moveTime) {
         this.damage = damage;

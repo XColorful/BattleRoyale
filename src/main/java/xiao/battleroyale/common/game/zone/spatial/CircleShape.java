@@ -6,6 +6,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
+
 /**
  * 二维 Circle
  */
@@ -20,7 +21,7 @@ public class CircleShape extends AbstractSimpleShape {
         if (checkPos == null || progress < 0) {
             return false;
         }
-        if (!isDetermined()) { // 未确定起止状态
+        if (!isDetermined()) {
             return false;
         }
         double allowProgress = Math.min(progress, 1);

@@ -13,11 +13,13 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
 public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlockEntity implements Container, Clearable {
     private static final String ITEMS_TAG = "Items";
+    private static final String SLOT_TAG = "Slot";
     protected NonNullList<ItemStack> items;
 
     protected AbstractLootContainerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState, int size) {
@@ -41,7 +43,7 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
     }
 
     @Override
-    public ItemStack getItem(int index) {
+    public @NotNull ItemStack getItem(int index) {
         if (index >= 0 && index < this.items.size()) {
             return this.items.get(index);
         }
@@ -55,7 +57,7 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
     }
 
     @Override
-    public ItemStack removeItem(int index, int count) {
+    public @NotNull ItemStack removeItem(int index, int count) {
         ItemStack itemStack = this.items.get(index);
         if (itemStack.isEmpty()) {
             return ItemStack.EMPTY;
@@ -70,14 +72,14 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
     }
 
     @Override
-    public ItemStack removeItemNoUpdate(int index) {
+    public @NotNull ItemStack removeItemNoUpdate(int index) {
         ItemStack itemStack = this.items.get(index);
         this.items.set(index, ItemStack.EMPTY);
         return itemStack;
     }
 
     @Override
-    public void setItem(int index, ItemStack stack) {
+    public void setItem(int index, @NotNull ItemStack stack) {
         this.items.set(index, stack);
         this.setChanged();
         sendBlockUpdated();
@@ -95,14 +97,14 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
     }
 
     @Override
-    public void load(CompoundTag tag) {
+    public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         if (tag.contains(ITEMS_TAG, Tag.TAG_LIST)) {
             ListTag listTag = tag.getList(ITEMS_TAG, Tag.TAG_COMPOUND);
             this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
             for (int i = 0; i < listTag.size(); ++i) {
                 CompoundTag itemTag = listTag.getCompound(i);
-                int slot = itemTag.getInt("Slot");
+                int slot = itemTag.getInt(SLOT_TAG);
                 if (slot >= 0 && slot < this.items.size()) {
                     this.items.set(slot, ItemStack.of(itemTag));
                 }
@@ -112,13 +114,13 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
 
 
     @Override
-    protected void saveAdditional(CompoundTag pTag) {
+    protected void saveAdditional(@NotNull CompoundTag pTag) {
         super.saveAdditional(pTag);
         ListTag listTag = new ListTag();
         for (int i = 0; i < this.items.size(); ++i) {
             if (!this.items.get(i).isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt("Slot", i);
+                itemTag.putInt(SLOT_TAG, i);
                 this.items.get(i).save(itemTag);
                 listTag.add(itemTag);
             }
@@ -127,13 +129,13 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
         ListTag listTag = new ListTag();
         for (int i = 0; i < this.items.size(); ++i) {
             if (!this.items.get(i).isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt("Slot", i);
+                itemTag.putInt(SLOT_TAG, i);
                 this.items.get(i).save(itemTag);
                 listTag.add(itemTag);
             }
@@ -151,7 +153,9 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
     @Override
     public void onDataPacket(net.minecraft.network.Connection net, ClientboundBlockEntityDataPacket pkt) {
         CompoundTag tag = pkt.getTag();
-        this.load(tag);
+        if (tag != null) {
+            this.load(tag);
+        }
         // 不需要额外触发重绘，Minecraft 会自动处理 BlockEntity 数据更新后的渲染刷新
     }
 }

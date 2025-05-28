@@ -68,6 +68,9 @@ public class GameManager extends AbstractGameManager implements IGameManager {
     }
 
     public void setGameId(UUID gameId) {
+        if (this.inGame) {
+            return;
+        }
         this.gameId = gameId;
     }
 
@@ -76,10 +79,10 @@ public class GameManager extends AbstractGameManager implements IGameManager {
     }
 
     /**
-     * 检测并初始化游戏配置
+     * 检测并加载游戏配置，不应该执行任何实际内容
      */
     public void initGameConfig(ServerLevel serverLevel) {
-        if (isInGame()) { // 禁止游戏运行中的意外修改
+        if (isInGame()) {
             return;
         }
         this.serverLevel = serverLevel;
@@ -129,7 +132,7 @@ public class GameManager extends AbstractGameManager implements IGameManager {
     }
 
     /**
-     * 是否可以立即开始游戏
+     * 是否之前准备好开始游戏，不代表后续能秒开
      * @return 判定结果
      */
     @Override
@@ -138,7 +141,7 @@ public class GameManager extends AbstractGameManager implements IGameManager {
     }
 
     /**
-     * 开始游戏
+     * 开始游戏，需要在开始瞬间进行额外判定
      */
     @Override
     public boolean startGame(ServerLevel serverLevel) {
@@ -190,7 +193,7 @@ public class GameManager extends AbstractGameManager implements IGameManager {
     public int getSpawnConfigId() { return spawnConfigId; }
     public int getBotConfigId() { return botConfigId; }
 
-    // set config id via command
+    // 用指令设置默认配置
     public boolean setGameruleConfigId(int gameId) {
         if (gameId < 0 || GameruleConfigManager.get().getGameruleConfig(gameId) == null) {
             return false;

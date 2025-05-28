@@ -2,7 +2,6 @@ package xiao.battleroyale.common.game.zone;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -16,7 +15,6 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 /**
@@ -29,8 +27,8 @@ public class GameZone implements IGameZone {
     private final int zoneDelay;
     private final int zoneTime;
 
-    private ITickableZone tickableZone;
-    private ISpatialZone spatialZone;
+    private final ITickableZone tickableZone;
+    private final ISpatialZone spatialZone;
 
     private boolean created = false;
     private boolean present = false;
@@ -58,7 +56,7 @@ public class GameZone implements IGameZone {
         if (tickableZone.isReady() && spatialZone.isDetermined()) {
             created = true;
         } else {
-            BattleRoyale.LOGGER.warn("Failed to create zone, finished");
+            BattleRoyale.LOGGER.warn("Failed to create zone (id: {}, name: {}), finished", zoneId, zoneName);
             finished = true;
         }
     }
@@ -91,6 +89,7 @@ public class GameZone implements IGameZone {
         if (progress != prevShapeProgress || gameTime % 20 == 0) { // 同步客户端
             prevShapeProgress = progress;
             CompoundTag nbt = toNBT(progress);
+            // TODO 同步当前圈至客户端渲染
         }
         tickableZone.tick(serverLevel, gamePlayerList, gameZones, random, gameTime);
         if (gameTime >= zoneDelay + zoneTime) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置

@@ -21,7 +21,6 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 import xiao.battleroyale.config.common.loot.type.LootEntryType;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,7 +50,6 @@ public class JsonUtils {
             if (lootEntryType != null) {
                 return lootEntryType.getDeserializer().apply(jsonObject);
             } else {
-                BattleRoyale.LOGGER.error("Unknown LootEntry type: {}", type);
                 return null;
             }
         } catch (Exception e) {
@@ -72,7 +70,7 @@ public class JsonUtils {
                 return null;
             }
         } catch (Exception e) {
-            BattleRoyale.LOGGER.error("Failed to deserialize ZoneEntry: {}", e.getMessage());
+            BattleRoyale.LOGGER.error("Failed to deserialize ZoneFuncEntry: {}", e.getMessage());
             return null;
         }
     }
@@ -89,7 +87,7 @@ public class JsonUtils {
                 return null;
             }
         } catch (Exception e) {
-            BattleRoyale.LOGGER.error("Failed to deserialize ZoneEntry: {}", e.getMessage());
+            BattleRoyale.LOGGER.error("Failed to deserialize ZoneShapeEntry: {}", e.getMessage());
             return null;
         }
     }
@@ -153,7 +151,7 @@ public class JsonUtils {
         }
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try {
-            Files.write(path, gson.toJson(jsonArray).getBytes(StandardCharsets.UTF_8));
+            Files.writeString(path, gson.toJson(jsonArray));
             BattleRoyale.LOGGER.info("Generated default config at: {}", path);
         } catch (IOException e) {
             BattleRoyale.LOGGER.warn("Failed to write default config: {}", e.getMessage());

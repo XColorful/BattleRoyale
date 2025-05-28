@@ -12,9 +12,9 @@ import java.util.function.Supplier;
 
 public class SafeFunc implements ITickableZone {
 
-    private double damage;
-    private int moveDelay;
-    private int moveTime;
+    private final double damage;
+    private final int moveDelay;
+    private final int moveTime;
 
     public SafeFunc(double damage, int moveDelay, int moveTime) {
         this.damage = damage;

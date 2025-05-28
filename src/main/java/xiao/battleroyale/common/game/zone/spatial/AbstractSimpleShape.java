@@ -12,7 +12,6 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 import static xiao.battleroyale.common.game.zone.spatial.ShapeHelper.*;
@@ -48,7 +47,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
         if (checkPos == null || progress < 0) { // 进度小于0则为未创建
             return false;
         }
-        if (!isDetermined()) { // 未确定起止状态
+        if (!isDetermined()) {
             return false;
         }
         double allowedProgress = Math.min(progress, 1);

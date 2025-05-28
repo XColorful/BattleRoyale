@@ -9,8 +9,8 @@ import xiao.battleroyale.common.game.zone.tickable.DangerFunc;
 public class DangerFuncEntry implements IZoneFuncEntry {
 
     private final double damage = 0;
-    private int moveDelay;
-    private int moveTime;
+    private final int moveDelay;
+    private final int moveTime;
 
     public DangerFuncEntry(int moveDelay, int moveTime) {
         this.moveDelay = moveDelay;

@@ -3,6 +3,7 @@ package xiao.battleroyale.common.game.zone.spatial;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
+
 /**
  * 二维 Rectangle
  */

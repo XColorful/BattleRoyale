@@ -14,11 +14,6 @@ public enum StartCenterType {
         return value;
     }
 
-    /**
-     * 根据字符串值获取对应的枚举实例
-     * @param text 字符串值
-     * @return 对应的StartCenterType枚举实例，如果未找到则返回null
-     */
     public static StartCenterType fromValue(String text) {
         for (StartCenterType b : StartCenterType.values()) {
             if (b.value.equalsIgnoreCase(text)) {

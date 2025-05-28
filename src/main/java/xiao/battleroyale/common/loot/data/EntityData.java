@@ -1,6 +1,6 @@
 package xiao.battleroyale.common.loot.data;
 
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
@@ -13,21 +13,21 @@ import xiao.battleroyale.api.loot.entity.IEntityLootData;
 import javax.annotation.Nullable;
 
 public class EntityData implements IEntityLootData {
-    private @Nullable EntityType<?> entityType;
+    private final @Nullable EntityType<?> entityType;
     private @Nullable CompoundTag nbt;
-    private int count;
-    private int range;
+    private final int count;
+    private final int range;
 
     public EntityData(String rl, @Nullable String nbt, int count, int range) {
-        this.entityType = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(rl));
+        this.entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(rl));
         if (this.entityType == null) {
-            BattleRoyale.LOGGER.warn("无法找到 ResourceLocation {} 实体类型", rl);
+            BattleRoyale.LOGGER.warn("Faild to get entity type from ResourceLocation {}", rl);
         }
         if (nbt != null) {
             try {
                 this.nbt = TagParser.parseTag(nbt);
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("解析实体NBT失败 {}: {}", rl, e.getMessage());
+                BattleRoyale.LOGGER.warn("Failed to parse NBT {}: {}", rl, e.getMessage());
             }
         }
         this.count = count;

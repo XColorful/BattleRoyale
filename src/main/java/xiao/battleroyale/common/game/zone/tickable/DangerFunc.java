@@ -12,8 +12,8 @@ import java.util.function.Supplier;
 
 public class DangerFunc implements ITickableZone {
 
-    private int moveDelay;
-    private int moveTime;
+    private final int moveDelay;
+    private final int moveTime;
 
     public DangerFunc(int moveDelay, int moveTime) {
         this.moveDelay = moveDelay;

@@ -61,10 +61,6 @@ public class GameruleManager extends AbstractGameManager {
         prepared = true;
     }
 
-    /**
-     * 应用配置的游戏规则
-     * @param serverLevel 当前 level
-     */
     @Override
     public void initGame(ServerLevel serverLevel) {
         if (GameManager.get().isInGame()) {

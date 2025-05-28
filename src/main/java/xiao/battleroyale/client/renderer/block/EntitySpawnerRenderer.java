@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 
 public class EntitySpawnerRenderer implements BlockEntityRenderer<EntitySpawnerBlockEntity> {
@@ -12,12 +13,12 @@ public class EntitySpawnerRenderer implements BlockEntityRenderer<EntitySpawnerB
     }
 
     @Override
-    public void render(EntitySpawnerBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        // 目前什么都不渲染
+    public void render(@NotNull EntitySpawnerBlockEntity blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+
     }
 
     @Override
-    public boolean shouldRenderOffScreen(EntitySpawnerBlockEntity blockEntity) {
+    public boolean shouldRenderOffScreen(@NotNull EntitySpawnerBlockEntity blockEntity) {
         return true;
     }
 }

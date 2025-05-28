@@ -11,7 +11,7 @@ import xiao.battleroyale.command.sub.ReloadCommand;
 import xiao.battleroyale.command.sub.TeamCommand;
 
 public class RootCommand {
-    private static final String ROOT_NAME = "battleroyale";
+    public static final String ROOT_NAME = "battleroyale";
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(ROOT_NAME);
