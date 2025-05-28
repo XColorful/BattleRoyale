@@ -31,15 +31,14 @@ public class GamePlayer {
      * @param playerId 玩家的 UUID。
      * @param playerName 玩家的名称。
      * @param gameSingleId 游戏内单个玩家的唯一 ID。
-     * @param gameTeamColor 队伍颜色。
      * @param isBot 是否是机器人。
      * @param team 玩家所属的队伍。
      */
-    public GamePlayer(@NotNull UUID playerId, @NotNull String playerName, int gameSingleId, String gameTeamColor, boolean isBot, GameTeam team) {
+    public GamePlayer(@NotNull UUID playerId, @NotNull String playerName, int gameSingleId, boolean isBot, GameTeam team) {
         this.playerId = playerId;
         this.playerName = playerName;
         this.gameSingleId = gameSingleId;
-        this.gameTeamColor = gameTeamColor;
+        this.gameTeamColor = team.getGameTeamColor();
         this.bot = isBot;
         this.team = team;
         this.zoneDamageTaken = 0;

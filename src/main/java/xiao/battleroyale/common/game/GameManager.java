@@ -82,6 +82,8 @@ public class GameManager extends AbstractGameManager implements IGameManager {
         if (isInGame()) { // 禁止游戏运行中的意外修改
             return;
         }
+        this.serverLevel = serverLevel;
+
         BattleroyaleEntry brEntry = GameruleConfigManager.get().getGameruleConfig(gameruleConfigId).getBattleRoyaleEntry();
         maxGameTime = brEntry.maxGameTime;
         recordStats = brEntry.recordGameStats;
@@ -109,7 +111,8 @@ public class GameManager extends AbstractGameManager implements IGameManager {
         if (isInGame()) {
             return;
         }
-        if (!prepared) {
+
+        if (!prepared || this.serverLevel != serverLevel) {
             initGameConfig(serverLevel);
             if (!prepared) {
                 return;
@@ -142,7 +145,7 @@ public class GameManager extends AbstractGameManager implements IGameManager {
         if (isInGame()) {
             return false;
         }
-        if (!ready) {
+        if (!ready || this.serverLevel != serverLevel) {
             initGame(serverLevel);
             if (!ready) {
                 return false;
@@ -153,7 +156,6 @@ public class GameManager extends AbstractGameManager implements IGameManager {
                 && SpawnManager.get().startGame(serverLevel)
                 && ZoneManager.get().startGame(serverLevel)) {
             this.gameDimensionKey = serverLevel.dimension();
-            this.serverLevel = serverLevel;
             this.inGame = true;
             this.ready = false;
             return true;
@@ -163,9 +165,6 @@ public class GameManager extends AbstractGameManager implements IGameManager {
 
     @Nullable
     public ServerLevel getServerLevel() {
-        if (!this.inGame) {
-            return null;
-        }
         return this.serverLevel;
     }
 

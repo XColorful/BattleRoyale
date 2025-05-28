@@ -1,6 +1,8 @@
 package xiao.battleroyale.common.game.team;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +35,15 @@ public class GameTeam {
     public int getGameTeamId() { return gameTeamId; }
     public String getGameTeamColor() { return gameTeamColor; }
     public UUID getLeaderUUID() { return leaderUUID; }
+    @Nullable
+    public GamePlayer getLeader() {
+        for (GamePlayer member : teamMembers) {
+            if (member.getPlayerUUID().equals(this.leaderUUID)) {
+                return member;
+            }
+        }
+        return null;
+    }
 
     /**
      * 设置队长。
@@ -110,8 +121,10 @@ public class GameTeam {
     public void addPlayer(@NotNull GamePlayer gamePlayer) {
         if (!teamMembers.contains(gamePlayer)) {
             teamMembers.add(gamePlayer);
-            gamePlayer.setTeam(this); // 设置玩家所属队伍
-
+            if (gamePlayer.getTeam() != this) {
+                gamePlayer.setTeam(this); // 更正玩家所属队伍
+                BattleRoyale.LOGGER.warn("GameTeam add a GamePlayer with different GameTeam, switched");
+            }
             if (leaderUUID == null) { // 如果队伍没有队长，则新加入的玩家成为队长
                 setLeader(gamePlayer.getPlayerUUID());
             }

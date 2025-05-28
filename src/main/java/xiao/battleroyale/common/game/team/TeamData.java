@@ -3,7 +3,6 @@ package xiao.battleroyale.common.game.team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.GameManager;
 
 import java.util.*;
 
@@ -62,6 +61,11 @@ public class TeamData {
         BattleRoyale.LOGGER.info("TeamData 已清空并根据最大玩家数量 {} 预填充ID。", maxPlayers);
     }
 
+    /**
+     * 生成下一个可用的 playerId
+     * 未达到人数上限则一定有返回值
+     * @return 未被占用的 playerId
+     */
     public int generateNextPlayerId() {
         if (availablePlayerIds.isEmpty()) {
             BattleRoyale.LOGGER.warn("Failed to generate next playerId: No available player IDs left. Max players: {}", maxPlayersLimit);
@@ -70,6 +74,11 @@ public class TeamData {
         return availablePlayerIds.iterator().next();
     }
 
+    /**
+     * 生成下一个可用的 teamId
+     * 未达到队伍上限则一定有返回值
+     * @return 未被占用的 teamId
+     */
     public int generateNextTeamId() {
         if (availableTeamIds.isEmpty()) {
             BattleRoyale.LOGGER.warn("Failed to generate next teamId: No available team IDs left. Max players: {}", maxPlayersLimit);
@@ -88,26 +97,24 @@ public class TeamData {
         }
     }
 
-    public void addPlayerToTeam(@NotNull GamePlayer gamePlayer, @NotNull GameTeam gameTeam) {
+    public boolean addPlayerToTeam(@NotNull GamePlayer gamePlayer, @NotNull GameTeam gameTeam) {
         if (locked) {
             BattleRoyale.LOGGER.warn("TeamData 在锁定状态下尝试添加玩家 {} 到队伍 {}。操作已跳过。", gamePlayer.getPlayerName(), gameTeam.getGameTeamId());
-            return;
+            return false;
         }
 
         if (gamePlayers.containsKey(gamePlayer.getPlayerUUID())) {
             BattleRoyale.LOGGER.warn("尝试添加玩家 {} (UUID: {}) 到队伍 {}，但该玩家已存在于数据中。操作已跳过。", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID(), gameTeam.getGameTeamId());
-            return;
+            return false;
         }
 
         int playerId = gamePlayer.getGameSingleId();
         if (gamePlayersById.containsKey(playerId)) {
             BattleRoyale.LOGGER.warn("尝试添加玩家 {} (ID: {}) 到队伍 {}，但该 GameSingleId 已被占用。操作已跳过。", gamePlayer.getPlayerName(), playerId, gameTeam.getGameTeamId());
-            return;
-        }
-
-        if (playerId <= 0 || playerId > maxPlayersLimit || !availablePlayerIds.remove(playerId)) {
+            return false;
+        } else if (playerId <= 0 || playerId > maxPlayersLimit || !availablePlayerIds.remove(playerId)) {
             BattleRoyale.LOGGER.warn("尝试添加玩家 {} (ID: {})，但其 ID 无效或不在可用列表中。操作已跳过。", gamePlayer.getPlayerName(), playerId);
-            return;
+            return false;
         }
 
         gamePlayer.setTeam(gameTeam);
@@ -121,27 +128,29 @@ public class TeamData {
             addGameTeam(gameTeam);
         }
         BattleRoyale.LOGGER.debug("将玩家 {} 添加到队伍 {}", gamePlayer.getPlayerName(), gameTeam.getGameTeamId());
+        return true;
     }
 
-    public void addGameTeam(@NotNull GameTeam gameTeam) {
+    public boolean addGameTeam(@NotNull GameTeam gameTeam) {
         if (locked) {
             BattleRoyale.LOGGER.warn("TeamData 在锁定状态下尝试添加 GameTeam {} 。操作已跳过。", gameTeam.getGameTeamId());
-            return;
+            return false;
         }
         if (gameTeams.containsKey(gameTeam.getGameTeamId())) {
             BattleRoyale.LOGGER.warn("尝试添加已存在的队伍 ID 的 GameTeam：{}。操作已跳过。", gameTeam.getGameTeamId());
-            return;
+            return false;
         }
 
         int teamId = gameTeam.getGameTeamId();
         if (teamId <= 0 || teamId > maxPlayersLimit || !availableTeamIds.remove(teamId)) {
             BattleRoyale.LOGGER.warn("尝试添加队伍 {}，但其 ID 无效或不在可用列表中。操作已跳过。", teamId);
-            return;
+            return false;
         }
 
         gameTeamsList.add(gameTeam);
         gameTeams.put(teamId, gameTeam);
         BattleRoyale.LOGGER.debug("添加了新队伍，ID 为 {}", teamId);
+        return true;
     }
 
     public @Nullable GamePlayer removePlayer(@NotNull UUID playerId) {
@@ -173,10 +182,10 @@ public class TeamData {
         return removedPlayer;
     }
 
-    public void eliminatePlayer(@NotNull UUID playerId) {
+    public boolean eliminatePlayer(@NotNull UUID playerId) {
         if (!locked) {
             BattleRoyale.LOGGER.warn("拒绝在未锁定状态下淘汰玩家");
-            return;
+            return false;
         }
         GamePlayer player = gamePlayers.get(playerId);
         if (player != null) {
@@ -184,12 +193,14 @@ public class TeamData {
                 player.setEliminated(true);
                 standingGamePlayers.remove(player);
                 BattleRoyale.LOGGER.debug("玩家 {} 已被淘汰。", player.getPlayerName());
+                return true;
             } else {
                 BattleRoyale.LOGGER.debug("玩家 {} 已经处于淘汰状态，无需重复淘汰。", player.getPlayerName());
             }
         } else {
             BattleRoyale.LOGGER.warn("尝试淘汰一个不存在的玩家: {}", playerId);
         }
+        return false;
     }
 
     public @Nullable GameTeam removeTeam(int teamId) {
