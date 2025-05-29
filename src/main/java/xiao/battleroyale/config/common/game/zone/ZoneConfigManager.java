@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.IConfigManager;
 import xiao.battleroyale.api.game.zone.*;
@@ -192,6 +193,7 @@ public class ZoneConfigManager implements IConfigManager {
             return zoneShapeEntry;
         }
 
+        @Nullable
         public IGameZone generateZone() {
             return new GameZoneBuilder()
                     .withZoneConfig(this)

@@ -27,6 +27,11 @@ public interface IGameZone extends ITickableZone, ISpatialZone{
     int getZoneDelay();
 
     /**
+     * @return 当前圈的配置名称
+     */
+    String getZoneName();
+
+    /**
      * 为初始化 ITickableZone 和 ISpatialZone 传递参数
      * @param serverLevel 当前世界
      * @param gamePlayerList 当前游戏玩家列表
@@ -42,7 +47,7 @@ public interface IGameZone extends ITickableZone, ISpatialZone{
     boolean isCreated();
 
     /**
-     * 是否正在执行阶段
+     * 是否正在执行阶段，实际没什么用，但仍然保留
      * @return 判定结果
      */
     boolean isPresent();

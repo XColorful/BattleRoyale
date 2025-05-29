@@ -28,9 +28,9 @@ public class CircleShape extends AbstractSimpleShape {
         Vec3 center = getCenterPos(allowProgress);
         Vec3 dimension = getDimension(allowProgress);
         // 忽略y方向
-        double xDist = Math.abs(center.x - checkPos.x);
-        double zDist = Math.abs(center.z - checkPos.z);
-        return (xDist * xDist + zDist * zDist) <= dimension.x * dimension.z;
+        double xDist = center.x - checkPos.x;
+        double zDist = center.z - checkPos.z;
+        return (xDist * xDist + zDist * zDist) <= (dimension.x * dimension.z);
     }
 
     @Override

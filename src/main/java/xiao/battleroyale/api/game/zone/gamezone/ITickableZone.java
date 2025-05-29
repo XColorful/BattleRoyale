@@ -26,6 +26,22 @@ public interface ITickableZone {
     boolean isReady();
 
     /**
+     * 用于节约不必要的开销
+     * @return tick 功能的频率
+     */
+    int getFuncFrequency();
+
+    void setFuncFrequency(int funcFreq);
+
+    /**
+     * 支持错峰 tick 实现分摊
+     * @return tick 的时间偏移
+     */
+    int getFuncOffset();
+
+    void setFuncOffset(int funcOff);
+
+    /**
      * tick当前圈的功能
      * @param serverLevel 当前世界
      * @param gamePlayerList 当前游戏玩家列表

@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.game;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -29,25 +30,29 @@ import xiao.battleroyale.util.ChatUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
-public class GameManager extends AbstractGameManager implements IGameManager {
+public class GameManager extends AbstractGameManager {
 
     private static GameManager instance;
 
+    private int gameTime = 0; // 游戏运行时维护当前游戏时间
     private UUID gameId;
     private boolean inGame;
-    private int gameruleConfigId = 1;
-    private int spawnConfigId = 1;
-    private int botConfigId = 1;
+    private SyncData syncData = new SyncData();
     private ResourceKey<Level> gameDimensionKey;
     private ServerLevel serverLevel;
 
-    private int gameTime; // 游戏运行时维护当前游戏时间
+    // config
+    private int gameruleConfigId = 1;
+    private int spawnConfigId = 1;
+    private int botConfigId = 1;
     private int maxGameTime; // 最大游戏持续时间，配置项
     private boolean recordStats; // 是否在游戏结束后记录日志，配置项
     private int maxInvalidTime = 60; // 最大离线/未加载时间，过期强制淘汰，配置项
     private int getMaxInvalidTick() { return maxInvalidTime * 20; }
     private boolean removeInvalidTeam = false; // TODO 增加配置，使默认false
+
 
     private GameManager() {
         generateGameId();
@@ -186,22 +191,47 @@ public class GameManager extends AbstractGameManager implements IGameManager {
             DamageEventHandler.getInstance().register();
             LoopEventHandler.getInstance().register();
             PlayerEventHandler.getInstance().register();
+            // 开始同步信息
+            this.syncData.startGame();
             return true;
         } else {
+            stopGame(this.serverLevel);
             return false;
         }
     }
 
     /**
-     * 游戏主逻辑，调度各 Manager
+     * 外部调用接口
      */
     public void onGameTick() {
-        if (this.serverLevel == null) {
+        if (this.serverLevel == null) { // 当前level未加载或者超过最大时长
+            BattleRoyale.LOGGER.warn("GameManager cached serverLevel is null, stopped game");
             stopGame(null);
         }
 
-        checkAndUpdateInvalidPlayer();
+        this.gameTime++;
+        if (this.gameTime > this.maxGameTime) { // 超过最大游戏时长
+            stopGame(this.serverLevel);
+            ChatUtils.sendTranslatableMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.reach_max_game_time").withStyle(ChatFormatting.GRAY));
+            BattleRoyale.LOGGER.info("Reached max game time ({}) and force stopped", this.maxGameTime);
+        }
+        onGameTick(this.gameTime);
     }
+
+    /**
+     * 游戏主逻辑，调度各 Manager，向客户端通信
+     */
+    public void onGameTick(int gameTime) {
+        checkAndUpdateInvalidPlayer();
+
+        TeamManager.get().onGameTick(gameTime);
+        GameruleManager.get().onGameTick(gameTime);
+        SpawnManager.get().onGameTick(gameTime);
+        ZoneManager.get().onGameTick(gameTime);
+
+        this.syncData.syncInfo(gameTime);
+    }
+
 
     /**
      * 检查所有未淘汰玩家是否在线，更新不在线时长或更新最后有效位置
@@ -294,7 +324,18 @@ public class GameManager extends AbstractGameManager implements IGameManager {
         LoopEventHandler.getInstance().unregister();
         PlayerEventHandler.getInstance().unregister();
         LogEventHandler.getInstance().unregister();
+        // 清空同步信息
+        this.syncData.endGame();
+        this.syncData.clear();
     }
+
+    public int getGameTime() { return this.gameTime; }
+
+    public Supplier<Float> getRandom() {
+        return () -> this.serverLevel.getRandom().nextFloat();
+    }
+
+    public void addZoneInfo(int id, @Nullable CompoundTag zoneInfo) { this.syncData.addZoneInfo(id, zoneInfo); }
 
     public int getGameruleConfigId() { return gameruleConfigId; }
     public int getSpawnConfigId() { return spawnConfigId; }

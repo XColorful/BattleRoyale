@@ -127,4 +127,9 @@ public class SpawnManager extends AbstractGameManager {
         this.prepared = false;
         this.ready = false;
     }
+
+    @Override
+    public void onGameTick(int gameTime) {
+        ;
+    }
 }

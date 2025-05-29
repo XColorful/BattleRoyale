@@ -15,18 +15,29 @@ public abstract class AbstractSimpleFunc implements ITickableZone {
     protected int moveDelay;
     protected int moveTime;
 
+    protected int funcFreq;
+    protected int tickOff;
+
     protected boolean ready;
 
     public AbstractSimpleFunc(int moveDelay, int moveTime) {
-        this.damage = 0;
-        this.moveDelay = moveDelay;
-        this.moveTime = moveTime;
+        this(0, moveDelay, moveTime, 20, 0);
+    }
+
+    public AbstractSimpleFunc(int moveDelay, int moveTime, int tickFreq, int tickOff) {
+        this(0, moveDelay, moveTime, tickFreq, tickOff);
     }
 
     public AbstractSimpleFunc(double damage, int moveDelay, int moveTime) {
+        this(damage, moveDelay, moveTime, 20, 0);
+    }
+
+    public AbstractSimpleFunc(double damage, int moveDelay, int moveTime, int funcFreq, int tickOff) {
         this.damage = damage;
         this.moveDelay = moveDelay;
         this.moveTime = moveTime;
+        this.funcFreq = funcFreq;
+        this.tickOff = tickOff;
     }
 
     @Override
@@ -52,4 +63,16 @@ public abstract class AbstractSimpleFunc implements ITickableZone {
         }
         return Math.min((double)currentGameTime / moveTime, 1.0D);
     }
+
+    @Override
+    public int getFuncFrequency() { return this.funcFreq; }
+
+    @Override
+    public int getFuncOffset() { return this.tickOff; }
+
+    @Override
+    public void setFuncFrequency(int funcFreq) { this.funcFreq = funcFreq; }
+
+    @Override
+    public void setFuncOffset(int funcOff) { this.tickOff = funcOff; }
 }

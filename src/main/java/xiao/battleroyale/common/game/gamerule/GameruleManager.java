@@ -95,4 +95,9 @@ public class GameruleManager extends AbstractGameManager {
         this.prepared = false;
         this.ready = false;
     }
+
+    @Override
+    public void onGameTick(int gameTime) {
+        ;
+    }
 }

@@ -137,6 +137,11 @@ public class TeamManager extends AbstractGameManager {
         return true;
     }
 
+    @Override
+    public void onGameTick(int gameTime) {
+        ;
+    }
+
     private void removeNoTeamPlayer() {
         List<GamePlayer> noTeamPlayers = new ArrayList<>();
         for (GamePlayer gamePlayer : teamData.getGamePlayersList()) {

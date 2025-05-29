@@ -3,10 +3,13 @@ package xiao.battleroyale.common.game.team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.common.game.AbstractGameManagerData;
 
 import java.util.*;
 
-public class TeamData {
+public class TeamData extends AbstractGameManagerData {
+
+    private static final String DATA_NAME = "TeamData";
 
     private final List<GamePlayer> gamePlayersList = new ArrayList<>();
     private final List<GamePlayer> standingGamePlayers = new ArrayList<>();
@@ -18,20 +21,17 @@ public class TeamData {
     private final Set<Integer> availablePlayerIds = new TreeSet<>();
     private final Set<Integer> availableTeamIds = new TreeSet<>();
 
-    private boolean locked = false;
     private int maxPlayersLimit = Integer.MAX_VALUE;
     public int getMaxPlayersLimit() { return maxPlayersLimit; }
 
-    private void lockData() {
-        this.locked = true;
-        BattleRoyale.LOGGER.debug("TeamData locked");
+    public TeamData() {
+        super(DATA_NAME);
     }
 
-    private void unlockData() {
-        this.locked = false;
-        BattleRoyale.LOGGER.debug("TeamData unlocked");
+    @Override
+    public void clear() {
+        clear(Integer.MAX_VALUE);
     }
-
     public void clear(int maxPlayers) {
         if (locked) {
             BattleRoyale.LOGGER.warn("TeamData is locked, skipped clear()");
@@ -83,6 +83,7 @@ public class TeamData {
         return availableTeamIds.iterator().next();
     }
 
+    @Override
     public void startGame() {
         if (locked) {
             return;
@@ -92,6 +93,7 @@ public class TeamData {
         lockData();
     }
 
+    @Override
     public void endGame() {
         if (locked) {
             unlockData();

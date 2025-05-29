@@ -53,8 +53,8 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
         double allowedProgress = Math.min(progress, 1);
         Vec3 center = getCenterPos(allowedProgress);
         Vec3 dimension = getDimension(allowedProgress);
-        return Math.abs(checkPos.x - center.x) <= Math.abs(center.x - dimension.x)
-                && Math.abs(checkPos.z - center.z) <= Math.abs(center.z - dimension.z);
+        return Math.abs(checkPos.x - center.x) <= dimension.x
+                && Math.abs(checkPos.z - center.z) <= dimension.z;
     }
 
     // TODO 根据玩家多的方向偏移，或增加机制防止圈刷特殊区域（暂定为防止刷海里）

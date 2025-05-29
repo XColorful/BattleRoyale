@@ -4,14 +4,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.game.zone.gamezone.GameTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
+import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
+import xiao.battleroyale.util.ZoneNBTSerializer;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public class GameZone implements IGameZone {
     private final int zoneId;
     private final String zoneName;
-    private final String zoneColor;
+    private final String zoneColor; // 格式如 #0000FF
     private final int zoneDelay;
     private final int zoneTime;
 
@@ -55,8 +55,9 @@ public class GameZone implements IGameZone {
         }
         if (tickableZone.isReady() && spatialZone.isDetermined()) {
             created = true;
+            present = true;
         } else {
-            BattleRoyale.LOGGER.warn("Failed to create zone (id: {}, name: {}), finished", zoneId, zoneName);
+            present = false;
             finished = true;
         }
     }
@@ -76,25 +77,37 @@ public class GameZone implements IGameZone {
         return finished;
     }
 
-    private boolean shouldTick() {
+    private boolean shouldTick(int gameTime) {
         return isCreated() && isPresent() && !isFinished(); // GameZone
     }
 
+    /**
+     * 只关注
+     * @param serverLevel 当前世界
+     * @param gamePlayerList 当前游戏玩家列表
+     * @param gameZones 当前游戏所有圈实例，但通常圈自身逻辑与其他圈无关
+     * @param random 随机数生产者
+     * @param gameTime 游戏进行时间
+     */
     @Override
     public void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
-        if (!shouldTick()) {
+
+
+        if (!shouldTick(gameTime)) {
             return;
         }
+
         double progress = tickableZone.getShapeProgress(gameTime, zoneDelay);
-        if (progress != prevShapeProgress || gameTime % 20 == 0) { // 同步客户端
+        if (Math.abs(progress - prevShapeProgress) > 0.001F || gameTime % 20 == 0) { // 同步客户端，最多1秒间隔
             prevShapeProgress = progress;
-            CompoundTag nbt = toNBT(progress);
-            // TODO 同步当前圈至客户端渲染
+            CompoundTag zoneInfo = toNBT(progress);
+            GameManager.get().addZoneInfo(this.zoneId, zoneInfo);
         }
         tickableZone.tick(serverLevel, gamePlayerList, gameZones, random, gameTime);
-        if (gameTime >= zoneDelay + zoneTime) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置
+        if (gameTime > zoneDelay + zoneTime) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置
             present = false;
             finished = true;
+            GameManager.get().addZoneInfo(this.zoneId, null); // 传入null视为提醒置空NBT
         }
     }
 
@@ -109,23 +122,28 @@ public class GameZone implements IGameZone {
     }
 
     @Override
+    public String getZoneName() { return zoneName; }
+
+    @Override
     public CompoundTag toNBT(double progress) {
-        CompoundTag tag = new CompoundTag();
-        tag.putInt(GameTag.ZONE_ID, zoneId);
-        tag.putString(GameTag.ZONE_NAME, zoneName);
-        tag.putString(GameTag.ZONE_COLOR, zoneColor);
-        tag.putString(GameTag.FUNC, tickableZone.getFuncType().getName());
-        tag.putString(GameTag.SHAPE, spatialZone.getShapeType().getName());
-        Vec3 center = spatialZone.getCenterPos(progress);
-        Vec3 dim = spatialZone.getDimension(progress);
-        if (center != null && dim != null) {
-            tag.putString(GameTag.CENTER, center.toString());
-            tag.putString(GameTag.DIMENSION, dim.toString());
-        } else {
-            BattleRoyale.LOGGER.warn("Failed to parse zone center or dim, skipped");
-        }
-        return tag;
+        return ZoneNBTSerializer.serializeZoneToNBT(
+                this.zoneId,
+                this.zoneName,
+                this.zoneColor,
+                this.tickableZone,
+                this.spatialZone,
+                progress
+        );
     }
+
+    @Override
+    public int getFuncFrequency() { return tickableZone.getFuncFrequency(); }
+    @Override
+    public void setFuncFrequency(int funcFreq) { tickableZone.setFuncFrequency(funcFreq);}
+    @Override
+    public int getFuncOffset() { return tickableZone.getFuncOffset(); }
+    @Override
+    public void setFuncOffset(int funcOff) { tickableZone.setFuncOffset(funcOff); }
 
     // ISpatialZone
     @Override

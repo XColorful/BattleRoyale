@@ -2,7 +2,6 @@ package xiao.battleroyale.common.game.zone.tickable;
 
 import net.minecraft.server.level.ServerLevel;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
-import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
@@ -10,14 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class DangerFunc implements ITickableZone {
-
-    private final int moveDelay;
-    private final int moveTime;
+public class DangerFunc extends AbstractSimpleFunc {
 
     public DangerFunc(int moveDelay, int moveTime) {
-        this.moveDelay = moveDelay;
-        this.moveTime = moveTime;
+        super(moveDelay, moveTime);
     }
 
     @Override
