@@ -2,6 +2,7 @@ package xiao.battleroyale.common.game.gamerule;
 
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
@@ -86,9 +87,11 @@ public class GameruleManager extends AbstractGameManager {
     }
 
     @Override
-    public void stopGame(ServerLevel serverLevel) {
-        gamemodeBackup.revert(serverLevel);
-        gameruleBackup.revert(serverLevel);
+    public void stopGame(@Nullable ServerLevel serverLevel) {
+        if (serverLevel != null) {
+            gamemodeBackup.revert(serverLevel);
+            gameruleBackup.revert(serverLevel);
+        }
         this.prepared = false;
         this.ready = false;
     }

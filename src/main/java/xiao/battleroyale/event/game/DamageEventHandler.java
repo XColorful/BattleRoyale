@@ -27,11 +27,11 @@ public class DamageEventHandler {
         return instance;
     }
 
-    public static void register() {
+    public void register() {
         MinecraftForge.EVENT_BUS.register(getInstance());
     }
 
-    public static void unregister() {
+    public void unregister() {
         MinecraftForge.EVENT_BUS.unregister(getInstance());
         instance = null;
     }

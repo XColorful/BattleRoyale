@@ -2,6 +2,7 @@ package xiao.battleroyale.common.game.zone;
 
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.AbstractGameManager;
@@ -88,7 +89,7 @@ public class ZoneManager extends AbstractGameManager {
         return true;
     }
 
-    public void stopGame(ServerLevel serverLevel) {
+    public void stopGame(@Nullable ServerLevel serverLevel) {
         gameZones.clear();
         queuedGameZoneId.clear();
         this.prepared = false;

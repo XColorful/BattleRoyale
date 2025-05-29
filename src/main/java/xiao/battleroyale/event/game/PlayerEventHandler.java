@@ -1,16 +1,14 @@
 package xiao.battleroyale.event.game;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.event.entity.living.LivingDeathEvent; // 玩家死亡事件
-import net.minecraftforge.event.entity.player.PlayerEvent; // 玩家登录/登出事件
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.TeamManager;
 
 /**
- * 监听玩家登出/登入
- * 监听击杀(死亡)事件，击倒机制，获取击杀着，通知计算游戏是否达到结束条件
+ * 监听击杀(死亡)事件，击倒机制，获取击杀者，通知计算游戏是否达到结束条件
  */
 public class PlayerEventHandler {
 
@@ -25,37 +23,13 @@ public class PlayerEventHandler {
         return instance;
     }
 
-    public static void register() {
+    public void register() {
         MinecraftForge.EVENT_BUS.register(getInstance());
     }
 
-    public static void unregister() {
+    public void unregister() {
         MinecraftForge.EVENT_BUS.unregister(getInstance());
         instance = null;
-    }
-
-    /**
-     * 监听玩家登录事件。
-     * 当玩家登录时，通知TeamManager。
-     * @param event 玩家登录事件
-     */
-    @SubscribeEvent
-    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            TeamManager.get().onPlayerLoggedIn(serverPlayer);
-        }
-    }
-
-    /**
-     * 监听玩家登出事件。
-     * 当玩家登出时，通知TeamManager。
-     * @param event 玩家登出事件
-     */
-    @SubscribeEvent
-    public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            TeamManager.get().onPlayerLoggedOut(serverPlayer);
-        }
     }
 
     /**
@@ -66,7 +40,6 @@ public class PlayerEventHandler {
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            // 确保只有在游戏进行中才处理死亡事件
             if (!GameManager.get().isInGame()) {
                 unregister();
                 return;

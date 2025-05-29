@@ -29,6 +29,7 @@ public class TeamManager extends AbstractGameManager {
     private boolean aiTeammate;
     private boolean aiEnemy;
     private boolean autoJoinGame;
+    private boolean keepTeamAfterGame = true;
 
     private final TeamData teamData = new TeamData();
 
@@ -126,6 +127,8 @@ public class TeamManager extends AbstractGameManager {
         if (GameManager.get().isInGame() || !this.ready) {
             return false;
         }
+
+        removeNoTeamPlayer(); // 确保玩家均有队伍
         if (!hasEnoughPlayerTeamToStart()) { // init之后可能都退出了队伍
             return false;
         }
@@ -134,9 +137,24 @@ public class TeamManager extends AbstractGameManager {
         return true;
     }
 
+    private void removeNoTeamPlayer() {
+        List<GamePlayer> noTeamPlayers = new ArrayList<>();
+        for (GamePlayer gamePlayer : teamData.getGamePlayersList()) {
+            if (gamePlayer.getTeam() == null) {
+                noTeamPlayers.add(gamePlayer);
+            }
+        }
+        if (!noTeamPlayers.isEmpty()) {
+            for (GamePlayer noTeamPlayer : noTeamPlayers) {
+                teamData.removePlayer(noTeamPlayer);
+            }
+        }
+    }
+
     @Override
-    public void stopGame(ServerLevel serverLevel) {
-        clearTeamInfo();
+    public void stopGame(@Nullable ServerLevel serverLevel) {
+        this.teamData.endGame(); // 解锁
+        // clearTeamInfo(); // 不立即清除组队
         this.prepared = false;
         this.ready = false;
         BattleRoyale.LOGGER.info("TeamManager stopped, clear all team info");
@@ -145,7 +163,6 @@ public class TeamManager extends AbstractGameManager {
     public void onPlayerDeath(ServerPlayer player) {
         GamePlayer gamePlayer = teamData.getGamePlayerByUUID(player.getUUID());
         if (gamePlayer == null) {
-            BattleRoyale.LOGGER.info("TeamMamanger::onPlayerDeath: GamePlayer not found for UUID: {}, skipped", player.getUUID());
             return;
         }
         gamePlayer.setAlive(false); // GamePlayer会自动更新eliminated
@@ -195,6 +212,11 @@ public class TeamManager extends AbstractGameManager {
     public void onPlayerLoggedOut(ServerPlayer player) {
         if (!GameManager.get().isInGame()) {
             removePlayerFromTeam(player.getUUID()); // 没开始游戏就直接踢了
+        }
+        GamePlayer gamePlayer = teamData.getGamePlayerByUUID(player.getUUID());
+        if (gamePlayer != null) {
+            gamePlayer.setActiveEntity(false); // GameManager只在tick开始时检查是否在线
+            onTeamChangedInGame();// 此处立即通知GameManager再次检查
         }
     }
 
@@ -314,6 +336,10 @@ public class TeamManager extends AbstractGameManager {
         }
     }
 
+    /**
+     * 通知队伍原玩家新成员入队
+     * @param newPlayer 新入队的成员
+     */
     public void notifyPlayerJoinTeam(GamePlayer newPlayer) {
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         GameTeam gameTeam = newPlayer.getTeam();
@@ -338,16 +364,33 @@ public class TeamManager extends AbstractGameManager {
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
             return;
         }
-        if (GameManager.get().isInGame()) {
-            forceRemovePlayerFromTeam(player); // 游戏进行时退出即被淘汰
-            return;
-        }
+
+        forceEliminatePlayerFromTeam(player); // 游戏进行时退出即被淘汰，不在游戏运行时则自动跳过
+
         if (removePlayerFromTeam(player.getUUID())) { // 手动离开当前队伍
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.GREEN));
         }
     }
 
-    public void forceRemovePlayerFromTeam(ServerPlayer player) {
+    /**
+     * 在游戏中强制淘汰玩家，不包含发送系统消息
+     */
+    public boolean forceEliminatePlayerSilence(GamePlayer gamePlayer) {
+        if (!GameManager.get().isInGame()) {
+            return false;
+        }
+
+        return teamData.eliminatePlayer(gamePlayer);
+    }
+
+    /**
+     * 在游戏中强制淘汰玩家并向队友发送消息
+     */
+    public void forceEliminatePlayerFromTeam(ServerPlayer player) {
+        if (!GameManager.get().isInGame()) {
+            return;
+        }
+
         GamePlayer gamePlayer = teamData.getGamePlayerByUUID(player.getUUID());
         if (gamePlayer == null) {
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
@@ -366,12 +409,10 @@ public class TeamManager extends AbstractGameManager {
         BattleRoyale.LOGGER.info("Force removed player {} (UUID: {})", player.getName().getString(), player.getUUID());
 
         GameTeam gameTeam = gamePlayer.getTeam();
-        if (gameTeam != null) {
-            if (!gameTeam.isTeamAlive()) {
-                BattleRoyale.LOGGER.info("Team {} has been eliminated for no standing player", gameTeam.getGameTeamId());
-                if (serverLevel != null) {
-                    ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
-                }
+        if (!gameTeam.isTeamAlive()) {
+            BattleRoyale.LOGGER.info("Team {} has been eliminated for no standing player", gameTeam.getGameTeamId());
+            if (serverLevel != null) {
+                ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
             }
         }
         onTeamChangedInGame();
@@ -686,6 +727,10 @@ public class TeamManager extends AbstractGameManager {
         ChatUtils.sendTranslatableMessageToPlayer(requesterPlayer, Component.translatable("battleroyale.message.player_declined_request", teamLeader.getName().getString()).withStyle(ChatFormatting.RED));
     }
 
+    /**
+     * 游戏未开始时将玩家移出队伍
+     * @return 是否移出队伍
+     */
     public boolean removePlayerFromTeam(@NotNull UUID playerId) {
         if (GameManager.get().isInGame()) {
             return false;
@@ -776,9 +821,11 @@ public class TeamManager extends AbstractGameManager {
     }
 
     private void clearTeamInfo() {
-        teamData.clear(playerLimit);
-        pendingInvites.clear();
-        pendingRequests.clear();
+        if (!keepTeamAfterGame || teamData.getMaxPlayersLimit() > this.playerLimit) {
+            teamData.clear(playerLimit);
+            pendingInvites.clear();
+            pendingRequests.clear();
+        }
     }
 
     private boolean hasEnoughPlayerTeamToStart() {

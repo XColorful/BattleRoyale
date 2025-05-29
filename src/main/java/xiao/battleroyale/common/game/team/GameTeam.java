@@ -68,7 +68,7 @@ public class GameTeam {
             return true;
         }
         for (GamePlayer gamePlayer : teamMembers) {
-            if (gamePlayer.isAlive() && !gamePlayer.isEliminated()) {
+            if (gamePlayer.isAlive() && !gamePlayer.isEliminated()) { // 不负责全体不在线的情况，这属于GameManager的范围
                 return false;
             }
         }

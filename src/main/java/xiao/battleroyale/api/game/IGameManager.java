@@ -2,6 +2,8 @@ package xiao.battleroyale.api.game;
 
 import net.minecraft.server.level.ServerLevel;
 
+import javax.annotation.Nullable;
+
 public interface IGameManager {
 
     void initGameConfig(ServerLevel serverLevel);
@@ -14,5 +16,5 @@ public interface IGameManager {
 
     boolean startGame(ServerLevel serverLevel);
 
-    void stopGame(ServerLevel serverLevel);
+    void stopGame(@Nullable ServerLevel serverLevel);
 }

@@ -19,7 +19,8 @@ public class TeamData {
     private final Set<Integer> availableTeamIds = new TreeSet<>();
 
     private boolean locked = false;
-    private int maxPlayersLimit = 0;
+    private int maxPlayersLimit = Integer.MAX_VALUE;
+    public int getMaxPlayersLimit() { return maxPlayersLimit; }
 
     private void lockData() {
         this.locked = true;
@@ -91,6 +92,12 @@ public class TeamData {
         lockData();
     }
 
+    public void endGame() {
+        if (locked) {
+            unlockData();
+        }
+    }
+
     private boolean isTeamIdValid(int teamId) {
         return teamId > 0 && teamId <= maxPlayersLimit;
     }
@@ -149,6 +156,14 @@ public class TeamData {
         return true;
     }
 
+    public boolean removePlayer(GamePlayer player) {
+        if (locked) {
+            return false;
+        }
+
+        return removePlayer(player.getPlayerUUID());
+    }
+
     public boolean removePlayer(UUID playerId) {
         if (locked) {
             return false;
@@ -172,12 +187,26 @@ public class TeamData {
         return true;
     }
 
+    /**
+     * 只允许在游戏中调用淘汰接口
+     */
     public boolean eliminatePlayer(UUID playerId) {
         if (!locked) {
             return false;
         }
 
         GamePlayer player = gamePlayers.get(playerId);
+        return eliminatePlayer(player);
+    }
+
+    /**
+     * 只允许在游戏中调用淘汰接口
+     */
+    public boolean eliminatePlayer(GamePlayer player) {
+        if (!locked) {
+            return false;
+        }
+
         if (player != null) {
             if (!player.isEliminated()) {
                 player.setEliminated(true);

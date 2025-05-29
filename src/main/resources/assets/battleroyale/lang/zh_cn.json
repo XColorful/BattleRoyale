@@ -116,5 +116,7 @@
   "battleroyale.message.game_stopped": "大逃杀游戏结束",
   "battleroyale.message.accept": "[同意]",
   "battleroyale.message.decline": "[拒绝]",
-  "battleroyale.message.team": "队伍%s"
+  "battleroyale.message.team": "队伍%s",
+
+  "battleroyale.message.eliminated_invalid_player": "[系统]: 已淘汰无效玩家 %s"
 }

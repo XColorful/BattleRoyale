@@ -18,11 +18,11 @@ public class LoopEventHandler {
         return instance;
     }
 
-    public static void register() {
+    public void register() {
         MinecraftForge.EVENT_BUS.register(getInstance());
     }
 
-    public static void unregister() {
+    public void unregister() {
         MinecraftForge.EVENT_BUS.unregister(getInstance());
         instance = null;
     }
@@ -37,5 +37,6 @@ public class LoopEventHandler {
             return;
         }
 
+        GameManager.get().onGameTick();
     }
 }

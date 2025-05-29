@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
@@ -110,15 +111,17 @@ public class SpawnManager extends AbstractGameManager {
     }
 
     @Override
-    public void stopGame(ServerLevel serverLevel) {
-        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
-        for (GamePlayer gamePlayer : gamePlayerList) {
-            UUID id = gamePlayer.getPlayerUUID();
-            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
-            if (player == null) {
-                continue;
+    public void stopGame(@Nullable ServerLevel serverLevel) {
+        if (serverLevel != null) {
+            List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
+            for (GamePlayer gamePlayer : gamePlayerList) {
+                UUID id = gamePlayer.getPlayerUUID();
+                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
+                if (player == null) {
+                    continue;
+                }
+                player.teleportTo(lobbyPos.x, lobbyPos.y, lobbyPos.z);
             }
-            player.teleportTo(lobbyPos.x, lobbyPos.y, lobbyPos.z);
         }
 
         this.prepared = false;

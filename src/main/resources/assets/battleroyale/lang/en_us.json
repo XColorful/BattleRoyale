@@ -116,5 +116,7 @@
   "battleroyale.message.game_stopped": "Game stopped",
   "battleroyale.message.accept": "[Accept]",
   "battleroyale.message.decline": "[Decline]",
-  "battleroyale.message.team": "Team %s"
+  "battleroyale.message.team": "Team %s",
+
+  "battleroyale.message.eliminated_invalid_player": "[System]: Eliminated invalid player %s"
 }
