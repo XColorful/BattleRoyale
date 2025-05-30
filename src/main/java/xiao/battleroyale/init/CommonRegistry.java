@@ -1,14 +1,16 @@
 package xiao.battleroyale.init;
 
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import xiao.battleroyale.command.RootCommand;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import xiao.battleroyale.network.GameInfoHandler;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CommonRegistry {
+
     @SubscribeEvent
-    public static void onServerStarting(RegisterCommandsEvent event) {
-        RootCommand.register(event.getDispatcher());
+    public static void onSetupEvent(FMLCommonSetupEvent event) {
+        event.enqueueWork(GameInfoHandler::init);
     }
+
 }

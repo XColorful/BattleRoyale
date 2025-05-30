@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 public enum ZoneFuncType {
     SAFE(ZoneFuncTag.SAFE, SafeFuncEntry::fromJson),
-    UNSAFE(ZoneFuncTag.UNSAFE, DamageFuncEntry::fromJson),
+    UNSAFE(ZoneFuncTag.UNSAFE, UnsafeFuncEntry::fromJson),
     DANGER(ZoneFuncTag.DANGER, DangerFuncEntry::fromJson),
     AIRDROP(ZoneFuncTag.AIRDROP, AirdropFuncEntry::fromJson);
 

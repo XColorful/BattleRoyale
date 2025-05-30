@@ -118,5 +118,6 @@
   "battleroyale.message.decline": "[Decline]",
   "battleroyale.message.team": "Team %s",
 
-  "battleroyale.message.eliminated_invalid_player": "[System]: Eliminated invalid player %s"
+  "battleroyale.message.eliminated_invalid_player": "Eliminated invalid player %s",
+  "battleroyale.message.reach_max_game_time": "Reached max game time"
 }

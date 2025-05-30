@@ -28,9 +28,9 @@ public class CircleShape extends AbstractSimpleShape {
         Vec3 center = getCenterPos(allowProgress);
         Vec3 dimension = getDimension(allowProgress);
         // 忽略y方向
-        double xDist = Math.abs(center.x - checkPos.x);
-        double zDist = Math.abs(center.z - checkPos.z);
-        return (xDist * xDist + zDist * zDist) <= dimension.x * dimension.z;
+        double xDist = center.x - checkPos.x;
+        double zDist = center.z - checkPos.z;
+        return (xDist * xDist + zDist * zDist) <= (dimension.x * dimension.z);
     }
 
     @Override
@@ -40,10 +40,27 @@ public class CircleShape extends AbstractSimpleShape {
 
     @Override
     protected boolean additionalCalculationCheck() {
-        if (startCenter.x != startCenter.z || startDimension.x != startDimension.z || endCenter.x != endCenter.z || endDimension.x != endDimension.z) {
-            BattleRoyale.LOGGER.warn("Unequal circle shape center or dimension");
+        if (startCenter == null || startDimension == null || endCenter == null || endDimension == null) {
             return false;
         }
+
+        if (startCenter.x != startCenter.z) {
+            BattleRoyale.LOGGER.warn("Unequal circle shape start center (x: {}, z:{}), defaulting to x", startCenter.x, startCenter.z);
+            startCenter = new Vec3(startCenter.x, startCenter.y, startCenter.x);
+        }
+        if (startDimension.x != startDimension.z) {
+            BattleRoyale.LOGGER.warn("Unequal circle shape start dimension (x: {}, z:{}), defaulting to x", startDimension.x, startDimension.z);
+            startDimension = new Vec3(startDimension.x, startDimension.y, startDimension.x);
+        }
+        if (endCenter.x != endCenter.z) {
+            BattleRoyale.LOGGER.warn("Unequal circle shape end center (x: {}, z:{}), defaulting to x", endCenter.x, endCenter.z);
+            endCenter = new Vec3(endCenter.x, endCenter.y, endCenter.x);
+        }
+        if (endDimension.x != endDimension.z) {
+            BattleRoyale.LOGGER.warn("Unequal circle shape end dimension (x: {}, z:{}), defaulting to x", endDimension.x, endDimension.z);
+            endDimension = new Vec3(endDimension.x, endDimension.y, endDimension.x);
+        }
+
         return true;
     }
 }

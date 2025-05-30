@@ -16,5 +16,7 @@ public interface IGameManager {
 
     boolean startGame(ServerLevel serverLevel);
 
+    void onGameTick(int gameTime);
+
     void stopGame(@Nullable ServerLevel serverLevel);
 }

@@ -37,6 +37,7 @@ public class SafeFuncEntry implements IZoneFuncEntry {
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(ZoneFuncTag.TYPE_NAME, getType());
+        jsonObject.addProperty(ZoneFuncTag.DAMAGE, damage);
         jsonObject.addProperty(ZoneFuncTag.MOVE_DELAY, moveDelay);
         jsonObject.addProperty(ZoneFuncTag.MOVE_TIME, moveTime);
         return jsonObject;

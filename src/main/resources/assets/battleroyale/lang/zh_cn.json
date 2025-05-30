@@ -118,5 +118,6 @@
   "battleroyale.message.decline": "[拒绝]",
   "battleroyale.message.team": "队伍%s",
 
-  "battleroyale.message.eliminated_invalid_player": "[系统]: 已淘汰无效玩家 %s"
+  "battleroyale.message.eliminated_invalid_player": "已淘汰无效玩家 %s",
+  "battleroyale.message.reach_max_game_time": "达到最大游戏时长"
 }

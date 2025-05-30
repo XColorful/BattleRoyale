@@ -2,13 +2,15 @@ package xiao.battleroyale.event.game;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.event.entity.living.LivingDamageEvent; // 实体受到伤害事件
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.TeamManager;
+import xiao.battleroyale.init.ModDamageTypes;
 
 /**
  * 统计造成的伤害值
@@ -41,7 +43,7 @@ public class DamageEventHandler {
      * 用于统计玩家造成的伤害和受到的伤害。
      * @param event 实体受到伤害事件
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onLivingDamage(LivingDamageEvent event) {
         if (!GameManager.get().isInGame()) {
             unregister();
@@ -49,28 +51,27 @@ public class DamageEventHandler {
         }
 
         LivingEntity damagedEntity = event.getEntity();
+        GamePlayer damagedGamePlayer = TeamManager.get().getGamePlayerByUUID(damagedEntity.getUUID());
+        if (damagedGamePlayer == null) {
+            return;
+        }
+
+
         DamageSource damageSource = event.getSource();
         float damageAmount = event.getAmount();
-
-        // 统计受到的伤害
-        if (damagedEntity instanceof ServerPlayer damagedPlayer) {
-            GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(damagedPlayer.getUUID());
-            if (gamePlayer != null) {
-                gamePlayer.addDamageTaken(damageAmount);
-                // BattleRoyale.LOGGER.debug("Player {} took {} damage. Total: {}", damagedPlayer.getName().getString(), damageAmount, gamePlayer.getDamageTaken());
-            }
+        damagedGamePlayer.addDamageTaken(damageAmount);
+        BattleRoyale.LOGGER.info("GamePlayer {} took {} damage", damagedGamePlayer.getPlayerName(), damageAmount);
+        if (damageSource.is(ModDamageTypes.ZONE_DAMAGE)) {
+            damagedGamePlayer.addZoneDamageTaken(damageAmount);
+            BattleRoyale.LOGGER.info("GamePlayer {} took {} zone damage", damagedGamePlayer.getPlayerName(), damageAmount);
         }
 
-        // 统计造成的伤害
-        if (damageSource.getEntity() instanceof ServerPlayer attackingPlayer) {
-            GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(attackingPlayer.getUUID());
-            if (gamePlayer != null) {
-                gamePlayer.addDamageDealt(damageAmount);
-                // BattleRoyale.LOGGER.debug("Player {} dealt {} damage. Total: {}", attackingPlayer.getName().getString(), damageAmount, gamePlayer.getDamageDealt());
+        if (damageSource.getEntity() instanceof LivingEntity attackingEntity) {
+            GamePlayer attackingGamePlayer = TeamManager.get().getGamePlayerByUUID(attackingEntity.getUUID());
+            if (attackingGamePlayer != null) {
+                attackingGamePlayer.addDamageDealt(damageAmount);
+                BattleRoyale.LOGGER.info("GamePlayer {} attacks {} and gain {} damage dealt", attackingGamePlayer.getPlayerName(), damagedGamePlayer.getPlayerName(), damageAmount);
             }
         }
-
-        // TODO: 伤害数值调整逻辑等
-        // 例如：event.setAmount(newAmount);
     }
 }

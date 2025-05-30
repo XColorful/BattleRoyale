@@ -1,0 +1,40 @@
+package xiao.battleroyale.network;
+
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.network.message.ClientMessageZoneInfo;
+
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class GameInfoHandler {
+    private static final String PROTOCOL_VERSION = "1.0";
+
+    public static final SimpleChannel GAME_CHANNEL = NetworkRegistry.newSimpleChannel(
+            new ResourceLocation(BattleRoyale.MOD_ID, "game_channel"),
+            () -> PROTOCOL_VERSION,
+            PROTOCOL_VERSION::equals,
+            PROTOCOL_VERSION::equals
+    );
+
+    private static final AtomicInteger ID_COUNT = new AtomicInteger(0);
+
+    public static void init() {
+        GAME_CHANNEL.registerMessage(
+                ID_COUNT.getAndIncrement(),
+                ClientMessageZoneInfo.class,
+                (message, buffer) -> message.encode(message, buffer),
+                ClientMessageZoneInfo::decode,
+                (message, contextSupplier) -> message.handle(message, contextSupplier),
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        );
+    }
+
+    public static void sendToAllPlayers(Object message) {
+        GAME_CHANNEL.send(PacketDistributor.ALL.noArg(), message);
+    }
+}

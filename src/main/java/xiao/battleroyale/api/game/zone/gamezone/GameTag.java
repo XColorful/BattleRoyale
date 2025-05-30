@@ -12,5 +12,7 @@ public final class GameTag {
     public static final String CENTER = "center";
     public static final String DIMENSION = "dim";
 
+    public static final String PROGRESS = "prog";
+
     private GameTag() {};
 }
