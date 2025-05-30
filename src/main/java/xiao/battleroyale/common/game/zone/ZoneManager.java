@@ -118,6 +118,11 @@ public class ZoneManager extends AbstractGameManager {
         }
     }
 
+    @Nullable
+    public IGameZone getZoneById(int zoneId) {
+        return this.zoneData.getGameZoneById(zoneId);
+    }
+
     /**
      * ZoneManager 暂时不做空间分区优化
      */

@@ -11,7 +11,6 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import static xiao.battleroyale.common.game.zone.spatial.ShapeHelper.*;
@@ -72,12 +71,12 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
     // TODO 根据玩家多的方向偏移，或增加机制防止圈刷特殊区域（暂定为防止刷海里）
     @Override
-    public void calculateShape(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
+    public void calculateShape(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Supplier<Float> random) {
         if (!determined) {
             // start center
             switch (startEntry.startCenterType) {
                 case FIXED -> startCenter = startEntry.startCenterPos;
-                case PREVIOUS -> startCenter = getPreviousEndCenterById(startEntry.startCenterZoneId, gameZones);
+                case PREVIOUS -> startCenter = getPreviousEndCenterById(startEntry.startCenterZoneId);
             }
             if (startCenter == null) {
                 BattleRoyale.LOGGER.warn("Failed to calculate start center, type: {}", startEntry.startCenterType.getValue());
@@ -89,7 +88,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             // start dimension
             switch (startEntry.startDimensionType) {
                 case FIXED -> startDimension = startEntry.startDimension;
-                case PREVIOUS -> startDimension = getPreviousEndDimensionById(startEntry.startDimensionZoneId, gameZones);
+                case PREVIOUS -> startDimension = getPreviousEndDimensionById(startEntry.startDimensionZoneId);
             }
             if (startDimension == null) {
                 BattleRoyale.LOGGER.warn("Failed to calculate start dimension, type: {}", startEntry.startDimensionType.getValue());
@@ -98,10 +97,13 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             if (startEntry.startDimensionRange > 0) {
                 startDimension = randomAdjustXZ(startDimension, startEntry.startDimensionRange, random);
             }
+            if (startEntry.startDimensionScale >= 0) {
+                startDimension = scaleXZ(startDimension, startEntry.startDimensionScale);
+            }
             // end center
             switch (endEntry.endCenterType) {
                 case FIXED -> endCenter = endEntry.endCenterPos;
-                case PREVIOUS -> endCenter = getPreviousStartCenterById(endEntry.endCenterZoneId, gameZones);
+                case PREVIOUS -> endCenter = getPreviousStartCenterById(endEntry.endCenterZoneId);
             }
             if (endCenter == null) {
                 BattleRoyale.LOGGER.warn("Failed to calculate end center, type: {}", endEntry.endCenterType.getValue());
@@ -113,13 +115,16 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             // end dimension
             switch (endEntry.endDimensionType) {
                 case FIXED -> endDimension = endEntry.endDimension;
-                case PREVIOUS -> endDimension = getPreviousStartDimensionById(endEntry.endDimensionZoneId, gameZones);
+                case PREVIOUS -> endDimension = getPreviousStartDimensionById(endEntry.endDimensionZoneId);
             }
             if (endDimension == null) {
                 BattleRoyale.LOGGER.warn("Failed to calculate end dimension, type: {}", endEntry.endDimensionType.getValue());
             }
             if (endEntry.endDimensionRange > 0) {
                 endDimension = randomAdjustXZ(endDimension, endEntry.endDimensionRange, random);
+            }
+            if (endEntry.endDimensionScale >= 0) {
+                endDimension = scaleXZ(endDimension, endEntry.endDimensionScale);
             }
         }
         if (additionalCalculationCheck() && startCenter != null && startDimension != null && endCenter != null && endDimension != null) {
