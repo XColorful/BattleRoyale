@@ -2,12 +2,15 @@ package xiao.battleroyale.client.renderer.game;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -22,7 +25,31 @@ import xiao.battleroyale.client.game.data.ClientZoneData;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT, modid = BattleRoyale.MOD_ID)
 public class ZoneRenderer {
 
-    private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation("minecraft", "textures/white.png");
+    private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(BattleRoyale.MOD_ID, "textures/white.png");
+
+    private static final RenderType CUSTOM_ZONE_RENDER_TYPE = createRenderType();
+
+    private static RenderType createRenderType() {
+        RenderType.CompositeState compositeState = RenderType.CompositeState.builder()
+                .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionColorTexShader)) // 手动 new
+                .setTextureState(new RenderStateShard.TextureStateShard(WHITE_TEXTURE, false, false))
+                .setTransparencyState(new RenderStateShard.TransparencyStateShard("translucent_transparency", () -> {
+                    RenderSystem.enableBlend();
+                    RenderSystem.defaultBlendFunc(); // 对应TRANSLUCENT_TRANSPARENCY的默认混合函数
+                }, () -> {
+                    RenderSystem.disableBlend();
+                })) // 手动 new
+                .setDepthTestState(new RenderStateShard.DepthTestStateShard("always", 519)) // 手动 new，对应 NO_DEPTH_TEST
+                .setCullState(new RenderStateShard.CullStateShard(false)) // 手动 new，对应 NO_CULL
+                .setLightmapState(new RenderStateShard.LightmapStateShard(false)) // 手动 new，对应 NO_LIGHTMAP
+                .setOverlayState(new RenderStateShard.OverlayStateShard(false)) // 手动 new，对应 NO_OVERLAY
+                .createCompositeState(true);
+
+        return RenderType.create("zone_render_type",
+                DefaultVertexFormat.NEW_ENTITY,
+                VertexFormat.Mode.QUADS, 256, true, false,
+                compositeState);
+    }
 
     public static void register() {
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new ZoneRenderer());
@@ -35,19 +62,9 @@ public class ZoneRenderer {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) return;
 
-        // 绑定纯白纹理，确保渲染时不采样到块图集中的其他材质
-        RenderSystem.setShaderTexture(0, WHITE_TEXTURE);
-
         PoseStack poseStack = event.getPoseStack();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         Vec3 cameraPos = event.getCamera().getPosition();
-
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.enableDepthTest();
-        RenderSystem.disableCull();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         for (ClientZoneData zoneData : ClientGameDataManager.get().getActiveZones().values()) {
             if (zoneData == null || zoneData.center == null || zoneData.dimension == null) continue;
@@ -58,7 +75,7 @@ public class ZoneRenderer {
                         zoneData.center.y - cameraPos.y,
                         zoneData.center.z - cameraPos.z);
 
-                VertexConsumer consumer = bufferSource.getBuffer(RenderType.translucent());
+                VertexConsumer consumer = bufferSource.getBuffer(CUSTOM_ZONE_RENDER_TYPE);
 
                 float r = zoneData.color.getRed() / 255.0f;
                 float g = zoneData.color.getGreen() / 255.0f;
@@ -79,13 +96,7 @@ public class ZoneRenderer {
                 poseStack.popPose();
             }
         }
-
         bufferSource.endBatch();
-
-        RenderSystem.enableCull();
-        RenderSystem.disableBlend();
-        RenderSystem.disableDepthTest();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     private void drawFilledCircleCylinder(PoseStack poseStack, VertexConsumer consumer,
@@ -108,35 +119,10 @@ public class ZoneRenderer {
             float normalX2 = Mth.cos(angle2);
             float normalZ2 = Mth.sin(angle2);
 
-            // 侧面四边形，补全所有顶点属性（uv, overlay, uv2, normal）
-            consumer.vertex(poseStack.last().pose(), x1, 0, z1)
-                    .color(r, g, b, a)
-                    .uv(0, 0)
-                    .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                    .uv2(7864440)
-                    .normal(normalX1, 0, normalZ1)
-                    .endVertex();
-            consumer.vertex(poseStack.last().pose(), x1, height, z1)
-                    .color(r, g, b, a)
-                    .uv(0, 1)
-                    .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                    .uv2(7864440)
-                    .normal(normalX1, 0, normalZ1)
-                    .endVertex();
-            consumer.vertex(poseStack.last().pose(), x2, height, z2)
-                    .color(r, g, b, a)
-                    .uv(1, 1)
-                    .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                    .uv2(7864440)
-                    .normal(normalX2, 0, normalZ2)
-                    .endVertex();
-            consumer.vertex(poseStack.last().pose(), x2, 0, z2)
-                    .color(r, g, b, a)
-                    .uv(1, 0)
-                    .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                    .uv2(7864440)
-                    .normal(normalX2, 0, normalZ2)
-                    .endVertex();
+            consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX1, 0, normalZ1).endVertex();
+            consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX1, 0, normalZ1).endVertex();
+            consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX2, 0, normalZ2).endVertex();
+            consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX2, 0, normalZ2).endVertex();
         }
     }
 
@@ -148,124 +134,24 @@ public class ZoneRenderer {
         float x2 = halfWidth;
         float z2 = halfDepth;
 
-        // 绘制前面（法向量：0, 0, -1）
-        consumer.vertex(poseStack.last().pose(), x1, 0, z1)
-                .color(r, g, b, a)
-                .uv(0, 0)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(0, 0, -1)
-                .endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, 0, z1)
-                .color(r, g, b, a)
-                .uv(1, 0)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(0, 0, -1)
-                .endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, height, z1)
-                .color(r, g, b, a)
-                .uv(1, 1)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(0, 0, -1)
-                .endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, height, z1)
-                .color(r, g, b, a)
-                .uv(0, 1)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(0, 0, -1)
-                .endVertex();
+        consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, 0, z1).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, height, z1).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
+        consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
 
-        // 绘制后面（法向量：0, 0, 1）
-        consumer.vertex(poseStack.last().pose(), x1, 0, z2)
-                .color(r, g, b, a)
-                .uv(0, 0)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(0, 0, 1)
-                .endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, height, z2)
-                .color(r, g, b, a)
-                .uv(0, 1)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(0, 0, 1)
-                .endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, height, z2)
-                .color(r, g, b, a)
-                .uv(1, 1)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(0, 0, 1)
-                .endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, 0, z2)
-                .color(r, g, b, a)
-                .uv(1, 0)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(0, 0, 1)
-                .endVertex();
+        consumer.vertex(poseStack.last().pose(), x1, 0, z2).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
+        consumer.vertex(poseStack.last().pose(), x1, height, z2).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
 
-        // 绘制左面（法向量：-1, 0, 0）
-        consumer.vertex(poseStack.last().pose(), x1, 0, z1)
-                .color(r, g, b, a)
-                .uv(0, 0)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(-1, 0, 0)
-                .endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, height, z1)
-                .color(r, g, b, a)
-                .uv(0, 1)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(-1, 0, 0)
-                .endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, height, z2)
-                .color(r, g, b, a)
-                .uv(1, 1)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(-1, 0, 0)
-                .endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, 0, z2)
-                .color(r, g, b, a)
-                .uv(1, 0)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(-1, 0, 0)
-                .endVertex();
+        consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
+        consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
+        consumer.vertex(poseStack.last().pose(), x1, height, z2).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
+        consumer.vertex(poseStack.last().pose(), x1, 0, z2).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
 
-        // 绘制右面（法向量：1, 0, 0）
-        consumer.vertex(poseStack.last().pose(), x2, 0, z1)
-                .color(r, g, b, a)
-                .uv(0, 0)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(1, 0, 0)
-                .endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, 0, z2)
-                .color(r, g, b, a)
-                .uv(1, 0)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(1, 0, 0)
-                .endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, height, z2)
-                .color(r, g, b, a)
-                .uv(1, 1)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(1, 0, 0)
-                .endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, height, z1)
-                .color(r, g, b, a)
-                .uv(0, 1)
-                .overlayCoords(OverlayTexture.WHITE_OVERLAY_V)
-                .uv2(7864440)
-                .normal(1, 0, 0)
-                .endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, 0, z1).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, height, z1).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
     }
 }
