@@ -61,7 +61,7 @@ public abstract class AbstractSimpleFunc implements ITickableZone {
         if (currentGameTime < 0) {
             return 0;
         }
-        return Math.min((double)currentGameTime / moveTime, 1.0D);
+        return moveTime == 0 ? 1 : Math.min((double)currentGameTime / moveTime, 1.0D);
     }
 
     @Override
