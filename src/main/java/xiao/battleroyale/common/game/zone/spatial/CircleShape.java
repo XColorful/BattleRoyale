@@ -44,17 +44,9 @@ public class CircleShape extends AbstractSimpleShape {
             return false;
         }
 
-        if (startCenter.x != startCenter.z) {
-            BattleRoyale.LOGGER.warn("Unequal circle shape start center (x: {}, z:{}), defaulting to x", startCenter.x, startCenter.z);
-            startCenter = new Vec3(startCenter.x, startCenter.y, startCenter.x);
-        }
         if (startDimension.x != startDimension.z) {
             BattleRoyale.LOGGER.warn("Unequal circle shape start dimension (x: {}, z:{}), defaulting to x", startDimension.x, startDimension.z);
             startDimension = new Vec3(startDimension.x, startDimension.y, startDimension.x);
-        }
-        if (endCenter.x != endCenter.z) {
-            BattleRoyale.LOGGER.warn("Unequal circle shape end center (x: {}, z:{}), defaulting to x", endCenter.x, endCenter.z);
-            endCenter = new Vec3(endCenter.x, endCenter.y, endCenter.x);
         }
         if (endDimension.x != endDimension.z) {
             BattleRoyale.LOGGER.warn("Unequal circle shape end dimension (x: {}, z:{}), defaulting to x", endDimension.x, endDimension.z);
