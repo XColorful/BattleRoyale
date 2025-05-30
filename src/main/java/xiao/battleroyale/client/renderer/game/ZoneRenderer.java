@@ -27,54 +27,59 @@ public class ZoneRenderer {
 
     @SubscribeEvent
     public void onRenderLevelStage(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) return; // 仅在半透明方块渲染后执行
+        if (true) return;
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) return;
 
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || mc.player == null) return; // 确保游戏和玩家存在
+        if (mc.level == null || mc.player == null) return;
 
-        PoseStack poseStack = event.getPoseStack(); // 获取当前渲染的姿态栈
-        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource(); // 获取渲染缓冲源
-        Vec3 cameraPos = event.getCamera().getPosition(); // 获取摄像机位置
+        PoseStack poseStack = event.getPoseStack();
+        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
+        Vec3 cameraPos = event.getCamera().getPosition();
 
-        RenderSystem.enableDepthTest(); // 启用深度测试，使圈被地形正确遮挡
-        RenderSystem.disableCull(); // 禁用背面剔除，确保线框始终完整可见
-        RenderSystem.setShader(GameRenderer::getPositionColorShader); // 设置为基本颜色着色器
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.enableDepthTest();
+        RenderSystem.disableCull();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
         for (ClientZoneData zoneData : ClientGameDataManager.get().getActiveZones().values()) {
-            poseStack.pushPose(); // 保存当前姿态栈状态
-            poseStack.translate(zoneData.center.x - cameraPos.x, // 将渲染原点平移到圈的中心点，相对摄像机
+            poseStack.pushPose();
+            poseStack.translate(zoneData.center.x - cameraPos.x,
                     zoneData.center.y - cameraPos.y,
                     zoneData.center.z - cameraPos.z);
 
-            VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines()); // 获取线框渲染的顶点消费者
+            VertexConsumer consumer = bufferSource.getBuffer(RenderType.translucent());
 
-            float r = zoneData.color.getRed() / 255.0f; // 获取红色分量
-            float g = zoneData.color.getGreen() / 255.0f; // 获取绿色分量
-            float b = zoneData.color.getBlue() / 255.0f; // 获取蓝色分量
-            float a = zoneData.color.getAlpha() / 255.0f; // 获取透明度分量
+            float r = zoneData.color.getRed() / 255.0f;
+            float g = zoneData.color.getGreen() / 255.0f;
+            float b = zoneData.color.getBlue() / 255.0f;
+            float a = zoneData.color.getAlpha() / 255.0f;
 
             switch (zoneData.shapeType) {
-                case CIRCLE -> drawCircle(poseStack, consumer, r, g, b, a, (float) zoneData.dimension.x, (float) zoneData.dimension.y); // 绘制圆形线框柱体
-                case SQUARE, RECTANGLE -> drawRectangle(poseStack, consumer, r, g, b, a, (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y); // 绘制矩形线框柱体
+                case CIRCLE -> drawFilledCircleCylinder(poseStack, consumer, r, g, b, a, (float) zoneData.dimension.x, (float) zoneData.dimension.y);
+                case SQUARE, RECTANGLE -> drawFilledRectangleBox(poseStack, consumer, r, g, b, a, (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y);
             }
 
-            poseStack.popPose(); // 恢复之前保存的姿态栈状态
+            poseStack.popPose();
         }
 
-        bufferSource.endBatch(); // 提交所有绘制指令
+        bufferSource.endBatch();
 
-        RenderSystem.enableCull(); // 恢复背面剔除
-        RenderSystem.disableDepthTest(); // 恢复深度测试（Minecraft在透明物体渲染后常禁用，此处保持一致）
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F); // 恢复默认着色器颜色
+        RenderSystem.enableCull();
+        RenderSystem.disableBlend();
+        RenderSystem.disableDepthTest();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    private void drawCircle(PoseStack poseStack, VertexConsumer consumer, float r, float g, float b, float a, float radius, float height) {
-        poseStack.mulPose(Axis.XP.rotationDegrees(90.0F)); // 旋转绘制平面，使圆柱体沿Y轴向上
+    private void drawFilledCircleCylinder(PoseStack poseStack, VertexConsumer consumer, float r, float g, float b, float a, float radius, float height) {
+        poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
 
-        int segments = 64; // 圆的分段数
+        int segments = 64;
         float startAngle = 0;
-        float endAngle = (float) (2 * Math.PI); // 绘制整个圆
+        float endAngle = (float) (2 * Math.PI);
 
+        // 绘制侧面
         for (int i = 0; i < segments; i++) {
             float angle1 = (startAngle + (endAngle - startAngle) * i / segments);
             float angle2 = (startAngle + (endAngle - startAngle) * (i + 1) / segments);
@@ -84,67 +89,45 @@ public class ZoneRenderer {
             float x2 = radius * Mth.cos(angle2);
             float z2 = radius * Mth.sin(angle2);
 
-            consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).endVertex(); // 底部圆线段
-            consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).endVertex();
+            float normalX = Mth.cos(angle1 + (angle2 - angle1) / 2.0F);
+            float normalZ = Mth.sin(angle1 + (angle2 - angle1) / 2.0F);
+            float normalY = 0.0F;
 
-            consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).endVertex(); // 顶部圆线段
-            consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).endVertex();
-        }
-
-        for (int i = 0; i < segments; i += (segments / 4)) { // 绘制4条垂直连接线
-            float angle = (startAngle + (endAngle - startAngle) * i / segments);
-
-            float x = radius * Mth.cos(angle);
-            float z = radius * Mth.sin(angle);
-
-            consumer.vertex(poseStack.last().pose(), x, 0, z).color(r, g, b, a).endVertex(); // 底部点
-            consumer.vertex(poseStack.last().pose(), x, height, z).color(r, g, b, a).endVertex(); // 顶部点
+            consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).uv(0.0f, 0.0f).normal(normalX, normalY, normalZ).endVertex();
+            consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).uv(0.0f, 1.0f).normal(normalX, normalY, normalZ).endVertex();
+            consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).uv(1.0f, 1.0f).normal(normalX, normalY, normalZ).endVertex();
+            consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).uv(1.0f, 0.0f).normal(normalX, normalY, normalZ).endVertex();
         }
     }
 
-    private void drawRectangle(PoseStack poseStack, VertexConsumer consumer, float r, float g, float b, float a, float halfWidth, float halfDepth, float height) {
+    private void drawFilledRectangleBox(PoseStack poseStack, VertexConsumer consumer, float r, float g, float b, float a, float halfWidth, float halfDepth, float height) {
         float x1 = -halfWidth;
         float z1 = -halfDepth;
         float x2 = halfWidth;
         float z2 = halfDepth;
 
-        // 绘制底部矩形
-        consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, 0, z1).color(r, g, b, a).endVertex();
+        // 绘制前面
+        consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).uv(0.0f, 0.0f).normal(0, 0, -1).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, 0, z1).color(r, g, b, a).uv(1.0f, 0.0f).normal(0, 0, -1).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, height, z1).color(r, g, b, a).uv(1.0f, 1.0f).normal(0, 0, -1).endVertex();
+        consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).uv(0.0f, 1.0f).normal(0, 0, -1).endVertex();
 
-        consumer.vertex(poseStack.last().pose(), x2, 0, z1).color(r, g, b, a).endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).endVertex();
+        // 绘制后面
+        consumer.vertex(poseStack.last().pose(), x1, 0, z2).color(r, g, b, a).uv(0.0f, 0.0f).normal(0, 0, 1).endVertex();
+        consumer.vertex(poseStack.last().pose(), x1, height, z2).color(r, g, b, a).uv(0.0f, 1.0f).normal(0, 0, 1).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).uv(1.0f, 1.0f).normal(0, 0, 1).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).uv(1.0f, 0.0f).normal(0, 0, 1).endVertex();
 
-        consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, 0, z2).color(r, g, b, a).endVertex();
+        // 绘制左面
+        consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).uv(0.0f, 0.0f).normal(-1, 0, 0).endVertex();
+        consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).uv(0.0f, 1.0f).normal(-1, 0, 0).endVertex();
+        consumer.vertex(poseStack.last().pose(), x1, height, z2).color(r, g, b, a).uv(1.0f, 1.0f).normal(-1, 0, 0).endVertex();
+        consumer.vertex(poseStack.last().pose(), x1, 0, z2).color(r, g, b, a).uv(1.0f, 0.0f).normal(-1, 0, 0).endVertex();
 
-        consumer.vertex(poseStack.last().pose(), x1, 0, z2).color(r, g, b, a).endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).endVertex();
-
-        // 绘制顶部矩形
-        consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, height, z1).color(r, g, b, a).endVertex();
-
-        consumer.vertex(poseStack.last().pose(), x2, height, z1).color(r, g, b, a).endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).endVertex();
-
-        consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, height, z2).color(r, g, b, a).endVertex();
-
-        consumer.vertex(poseStack.last().pose(), x1, height, z2).color(r, g, b, a).endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).endVertex();
-
-        // 绘制连接底部和顶部的垂直线
-        consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).endVertex(); // 左前角垂直线
-        consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).endVertex();
-
-        consumer.vertex(poseStack.last().pose(), x2, 0, z1).color(r, g, b, a).endVertex(); // 右前角垂直线
-        consumer.vertex(poseStack.last().pose(), x2, height, z1).color(r, g, b, a).endVertex();
-
-        consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).endVertex(); // 右后角垂直线
-        consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).endVertex();
-
-        consumer.vertex(poseStack.last().pose(), x1, 0, z2).color(r, g, b, a).endVertex(); // 左后角垂直线
-        consumer.vertex(poseStack.last().pose(), x1, height, z2).color(r, g, b, a).endVertex();
+        // 绘制右面
+        consumer.vertex(poseStack.last().pose(), x2, 0, z1).color(r, g, b, a).uv(0.0f, 0.0f).normal(1, 0, 0).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).uv(1.0f, 0.0f).normal(1, 0, 0).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).uv(1.0f, 1.0f).normal(1, 0, 0).endVertex();
+        consumer.vertex(poseStack.last().pose(), x2, height, z1).color(r, g, b, a).uv(0.0f, 1.0f).normal(1, 0, 0).endVertex();
     }
 }

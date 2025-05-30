@@ -12,7 +12,7 @@ public class GamePlayer {
     private int kills; // 击杀数
     private int downs; // 被击倒数
     private float damageDealt; // 造成伤害数
-    private float damageTaken; // 被造成伤害数
+    private float damageTaken; // 被造成伤害数，包含毒圈伤害
     private boolean isAlive = true; // 是否存活，判断倒地
     private boolean isEliminated = false; // 是否被淘汰，即彻底退出游戏循环
     private final int gameSingleId; // 例如100人的对局则是1到100
@@ -21,8 +21,8 @@ public class GamePlayer {
     private boolean isLeader = false; // 是否是队伍队长
 
     private boolean isActiveEntity = false; // 是否已加载 (即玩家是否在线并加载在世界中)
-    private Vec3 lastPos; // 最后出现的位置
-    private int zoneDamageTaken; // 已承受的毒圈伤害，优先用此来处理区块外的人机是否应该算减员，如果在圈外然后又重新加载，再造成伤害的时候通常就能直接判断清除
+    private Vec3 lastPos = Vec3.ZERO; // 最后出现的位置
+    private float zoneDamageTaken; // 记录的毒圈伤害
     private int invalidTime; // 额外检查，防止重新加载区块的时候圈已经没了（模组支持自定义圈），超过invalidTime则清除，同时应用于玩家离线重连
     private final boolean bot; // 是否是机器人
 
@@ -51,7 +51,7 @@ public class GamePlayer {
     public String getGameTeamColor() { return gameTeamColor; }
     public boolean isActiveEntity() { return isActiveEntity; }
     public Vec3 getLastPos() { return lastPos; }
-    public int getZoneDamageTaken() { return zoneDamageTaken; }
+    public float getZoneDamageTaken() { return zoneDamageTaken; }
     public int getInvalidTime() { return invalidTime; }
     public boolean isBot() { return bot; }
     public GameTeam getTeam() { return team; }
@@ -92,7 +92,7 @@ public class GamePlayer {
     public void setActiveEntity(boolean activeEntity) { this.isActiveEntity = activeEntity; }
     public void setLastPos(Vec3 lastPos) { this.lastPos = lastPos; }
     public void setZoneDamageTaken(int zoneDamageTaken) { this.zoneDamageTaken = zoneDamageTaken; }
-    public void addZoneDamageTaken(int amount) { this.zoneDamageTaken += amount; }
+    public void addZoneDamageTaken(float amount) { this.zoneDamageTaken += amount; }
     public void setInvalidTime(int invalidTime) { this.invalidTime = invalidTime; }
     public void addInvalidTime() {this.invalidTime++; }
     public void setLeader(boolean leader) { this.isLeader = leader; }

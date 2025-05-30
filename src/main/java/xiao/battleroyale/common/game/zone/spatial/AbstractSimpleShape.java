@@ -27,6 +27,10 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     protected Vec3 endCenter;
     protected Vec3 endDimension;
 
+    protected Vec3 cachedCenter = Vec3.ZERO;
+    protected Vec3 cachedDimension = Vec3.ZERO;
+    protected double cachedProgress = -1;
+
     protected boolean determined = false;
     protected Vec3 centerDist;
     protected Vec3 dimensionDist;
@@ -51,8 +55,17 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             return false;
         }
         double allowedProgress = Math.min(progress, 1);
-        Vec3 center = getCenterPos(allowedProgress);
-        Vec3 dimension = getDimension(allowedProgress);
+        Vec3 center, dimension;
+        if (Math.abs(allowedProgress - cachedProgress) < 0.001) {
+            center = cachedCenter;
+            dimension = cachedDimension;
+        } else {
+            center = getCenterPos(allowedProgress);
+            dimension = getDimension(allowedProgress);
+            cachedCenter = center;
+            cachedDimension = dimension;
+            cachedProgress = allowedProgress;
+        }
         return Math.abs(checkPos.x - center.x) <= dimension.x
                 && Math.abs(checkPos.z - center.z) <= dimension.z;
     }
@@ -112,6 +125,10 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
         if (additionalCalculationCheck() && startCenter != null && startDimension != null && endCenter != null && endDimension != null) {
             centerDist = new Vec3(endCenter.x - startCenter.x, endCenter.y - startCenter.y, endCenter.z - startCenter.z);
             dimensionDist = new Vec3(endDimension.x - startDimension.x, endDimension.y - startDimension.y, endDimension.z - startDimension.z);
+            // 缓存，用于判断isWithinZone
+            cachedCenter = startCenter;
+            cachedDimension = startDimension;
+            cachedProgress = 0;
             determined = true;
         }
     }

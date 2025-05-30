@@ -5,7 +5,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.func.IZoneFuncEntry;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
-import xiao.battleroyale.common.game.zone.tickable.DamageFunc;
+import xiao.battleroyale.common.game.zone.tickable.UnsafeFunc;
 
 public class DamageFuncEntry implements IZoneFuncEntry {
 
@@ -31,7 +31,7 @@ public class DamageFuncEntry implements IZoneFuncEntry {
 
     @Override
     public ITickableZone createTickableZone() {
-        return new DamageFunc(damage, moveDelay, moveTime);
+        return new UnsafeFunc(damage, moveDelay, moveTime);
     }
 
     @Override

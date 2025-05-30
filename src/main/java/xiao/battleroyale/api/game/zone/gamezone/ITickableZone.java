@@ -48,8 +48,11 @@ public interface ITickableZone {
      * @param gameZones 当前游戏所有圈实例，但通常圈自身逻辑与其他圈无关
      * @param random 随机数生产者
      * @param gameTime 游戏进行时间
+     * @param progress 圈进度
+     * @param spatialZone 提供圈的状态，计算与玩家相关的逻辑
      */
-    void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime);
+    void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
+              int gameTime, double progress, ISpatialZone spatialZone);
 
     /**
      * @return 当前圈功能类型

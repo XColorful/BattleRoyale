@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
@@ -91,9 +92,14 @@ public class GameZone implements IGameZone {
      */
     @Override
     public void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
-
-
         if (!shouldTick(gameTime)) {
+            return;
+        }
+
+        if (gameTime > zoneDelay + zoneTime) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置
+            present = false;
+            finished = true;
+            GameManager.get().addZoneInfo(this.zoneId, null); // 传入null视为提醒置空NBT
             return;
         }
 
@@ -103,11 +109,8 @@ public class GameZone implements IGameZone {
             CompoundTag zoneInfo = toNBT(progress);
             GameManager.get().addZoneInfo(this.zoneId, zoneInfo);
         }
-        tickableZone.tick(serverLevel, gamePlayerList, gameZones, random, gameTime);
-        if (gameTime > zoneDelay + zoneTime) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置
-            present = false;
-            finished = true;
-            GameManager.get().addZoneInfo(this.zoneId, null); // 传入null视为提醒置空NBT
+        if ((gameTime + getFuncOffset()) % getFuncFrequency() == 0) {
+            tick(serverLevel, gamePlayerList, gameZones, random, gameTime, progress, spatialZone);
         }
     }
 
@@ -134,6 +137,12 @@ public class GameZone implements IGameZone {
                 this.spatialZone,
                 progress
         );
+    }
+
+    @Override
+    public void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
+                     int gameTime, double progress, ISpatialZone spatialZone) {
+        tickableZone.tick(serverLevel, gamePlayerList, gameZones, random, gameTime, progress, spatialZone);
     }
 
     @Override

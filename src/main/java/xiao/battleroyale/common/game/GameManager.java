@@ -10,7 +10,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -51,6 +50,7 @@ public class GameManager extends AbstractGameManager {
     private boolean recordStats; // 是否在游戏结束后记录日志，配置项
     private int maxInvalidTime = 60; // 最大离线/未加载时间，过期强制淘汰，配置项
     private int getMaxInvalidTick() { return maxInvalidTime * 20; }
+    private int maxBotInvalidTime = 10 * 20;
     private boolean removeInvalidTeam = false; // TODO 增加配置，使默认false
 
 
@@ -248,8 +248,14 @@ public class GameManager extends AbstractGameManager {
                     continue;
                 }
                 gamePlayer.addInvalidTime();
-                if (gamePlayer.getInvalidTime() >= getMaxInvalidTick()) { // 达到允许的最大离线时间
-                    invalidPlayers.add(gamePlayer);
+                if (!gamePlayer.isBot()) { // 玩家离线时间检查
+                    if (gamePlayer.getInvalidTime() >= getMaxInvalidTick()) { // 达到允许的最大离线时间
+                        invalidPlayers.add(gamePlayer);
+                    }
+                } else { // 人机离线时间检查
+                    if (gamePlayer.getInvalidTime() >= maxBotInvalidTime) {
+                        invalidPlayers.add(gamePlayer);
+                    }
                 }
             } else { // 更新最后有效位置
                 gamePlayer.setActiveEntity(true);
