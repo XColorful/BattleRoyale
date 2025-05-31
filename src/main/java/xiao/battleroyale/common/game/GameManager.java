@@ -339,6 +339,15 @@ public class GameManager extends AbstractGameManager {
         this.syncData.clear();
     }
 
+    public boolean teleportToLobby(@NotNull ServerPlayer player) {
+        if (SpawnManager.get().isLobbyCreated()) {
+            SpawnManager.get().teleportToLobby(player);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public void onPlayerLoggedIn(ServerPlayer player) {
         GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(player.getUUID());
         if (gamePlayer != null) {
@@ -350,7 +359,7 @@ public class GameManager extends AbstractGameManager {
 
         if (TeamManager.get().shouldAutoJoin() && !this.inGame) { // 没开游戏就加入
             TeamManager.get().joinTeam(player);
-            SpawnManager.get().teleportToLobby(player); // 自动传到大厅
+            teleportToLobby(player); // 自动传到大厅
         }
     }
 
@@ -373,6 +382,9 @@ public class GameManager extends AbstractGameManager {
         }
 
         gamePlayer.setAlive(false); // GamePlayer内部会自动更新eliminated
+        if (!player.isAlive()) {
+            gamePlayer.setEliminated(true);
+        }
         if (gamePlayer.isEliminated()) {
             TeamManager.get().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer信息
         }

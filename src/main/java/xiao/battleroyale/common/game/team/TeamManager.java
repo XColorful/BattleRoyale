@@ -13,6 +13,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
@@ -329,26 +330,39 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
 
-        forceEliminatePlayerFromTeam(player); // 游戏进行时退出即被淘汰，不在游戏运行时则自动跳过
+        forceEliminatePlayerFromTeam(player); // 游戏进行时生效，退出即被淘汰，不在游戏运行时则自动跳过
 
-        if (removePlayerFromTeam(player.getUUID())) { // 手动离开当前队伍
+        if (removePlayerFromTeam(player.getUUID())) { // 不在游戏时生效，手动离开当前队伍
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.GREEN));
         }
     }
 
     /**
      * 在游戏中强制淘汰玩家，不包含发送系统消息
+     * 成功淘汰后传送回大厅
      */
     public boolean forceEliminatePlayerSilence(GamePlayer gamePlayer) {
         if (!GameManager.get().isInGame()) {
             return false;
         }
 
-        return teamData.eliminatePlayer(gamePlayer);
+        if (teamData.eliminatePlayer(gamePlayer)) {
+            ServerLevel serverLevel = GameManager.get().getServerLevel();
+            if (serverLevel != null) {
+                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                if (player != null) {
+                    GameManager.get().teleportToLobby(player); // 强制淘汰后传送回大厅
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
      * 在游戏中强制淘汰玩家并向队友发送消息
+     * 传送被淘汰的玩家至大厅
      */
     public void forceEliminatePlayerFromTeam(ServerPlayer player) {
         if (!GameManager.get().isInGame()) {
@@ -374,11 +388,12 @@ public class TeamManager extends AbstractGameManager {
 
         GameTeam gameTeam = gamePlayer.getTeam();
         if (!gameTeam.isTeamAlive()) {
-            BattleRoyale.LOGGER.info("Team {} has been eliminated for no standing player", gameTeam.getGameTeamId());
             if (serverLevel != null) {
                 ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
             }
+            BattleRoyale.LOGGER.info("Team {} has been eliminated for no standing player", gameTeam.getGameTeamId());
         }
+        GameManager.get().teleportToLobby(player); // 强制淘汰后传送回大厅
         onTeamChangedInGame();
     }
 
@@ -762,6 +777,24 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
         ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.your_team_id", gamePlayer.getGameTeamId()).withStyle(ChatFormatting.AQUA));
+    }
+
+    /**
+     * 传送玩家至大厅，如果正在游戏中则淘汰
+     * @param player 需传送的玩家
+     */
+    public void teleportToLobby(ServerPlayer player) {
+        if (player == null || !player.isAlive()) {
+            return;
+        }
+
+        if (teamData.hasStandingGamePlayer(player.getUUID())) { // 游戏进行中，且未被淘汰
+            forceEliminatePlayerFromTeam(player); // 强制淘汰包含传送
+        } else if (GameManager.get().teleportToLobby(player)) { // 传送，且传送成功
+            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.teleported_to_lobby").withStyle(ChatFormatting.GREEN));
+        } else {
+            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
+        }
     }
 
     public List<GameTeam> getGameTeamsList() {

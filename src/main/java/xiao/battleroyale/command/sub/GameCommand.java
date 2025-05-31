@@ -3,13 +3,17 @@ package xiao.battleroyale.command.sub;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.ChatFormatting;
+import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.spawn.SpawnManager;
+import xiao.battleroyale.common.game.team.TeamManager;
 
 public class GameCommand {
 
@@ -20,6 +24,9 @@ public class GameCommand {
     private static final String START_NAME = "start";
     private static final String STOP_NAME = "stop";
 
+    private static final String LOBBY = "lobby";
+    private static final String TO_LOBBY = "toLobby";
+
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         return Commands.literal(GAME_NAME)
                 .then(Commands.literal(LOAD_NAME)
@@ -29,7 +36,11 @@ public class GameCommand {
                 .then(Commands.literal(START_NAME)
                         .executes(GameCommand::startGame))
                 .then(Commands.literal(STOP_NAME)
-                        .executes(GameCommand::stopGame));
+                        .executes(GameCommand::stopGame))
+                .then(Commands.literal(LOBBY)
+                        .executes(GameCommand::lobby))
+                .then(Commands.literal(TO_LOBBY)
+                        .executes(GameCommand::toLobby));
     }
 
     private static int loadGameConfig(CommandContext<CommandSourceStack> context) {
@@ -115,5 +126,28 @@ public class GameCommand {
         source.sendSuccess(() -> Component.translatable("battleroyale.message.game_stopped").withStyle(ChatFormatting.YELLOW), false);
         BattleRoyale.LOGGER.info("Game stopped via command.");
         return Command.SINGLE_SUCCESS;
+    }
+
+    private static int lobby(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (source.isPlayer()) { // 向调用的玩家发送消息
+            ServerPlayer player = context.getSource().getPlayerOrException();
+            SpawnManager.get().sendLobbyInfo(player);
+        } else { // 向全体玩家发送消息
+            SpawnManager.get().sendLobbyInfo();
+        }
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int toLobby(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (source.isPlayer()) {
+            ServerPlayer player = context.getSource().getPlayerOrException();
+            TeamManager.get().teleportToLobby(player); // TeamManager 先处理游戏相关逻辑，再调用传送
+            return Command.SINGLE_SUCCESS;
+        } else {
+            return 0;
+        }
     }
 }
