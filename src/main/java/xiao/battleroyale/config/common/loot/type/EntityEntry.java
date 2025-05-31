@@ -31,31 +31,31 @@ public class EntityEntry implements IEntityLootEntry {
 
     @Override
     public String getType() {
-        return "entity";
+        return LootEntryTag.TYPE_ENTITY;
     }
 
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
-        jsonObject.addProperty("entity", entityString);
+        jsonObject.addProperty(LootEntryTag.ENTITY, entityString);
         if (this.count > 0) {
-            jsonObject.addProperty("count", count);
+            jsonObject.addProperty(LootEntryTag.COUNT, count);
         }
         if (this.nbtString != null) {
-            jsonObject.addProperty("nbt", this.nbtString);
+            jsonObject.addProperty(LootEntryTag.NBT, this.nbtString);
         }
         if (this.range >= 0) {
-            jsonObject.addProperty("range", this.range);
+            jsonObject.addProperty(LootEntryTag.RANGE, this.range);
         }
         return jsonObject;
     }
 
     public static EntityEntry fromJson(JsonObject jsonObject) {
-        String entityName = jsonObject.has("entity") ? jsonObject.getAsJsonPrimitive("entity").getAsString() : "";
-        int count = jsonObject.has("count") ? jsonObject.getAsJsonPrimitive("count").getAsInt() : 1;
-        String nbtString = jsonObject.has("nbt") ? jsonObject.getAsJsonPrimitive("nbt").getAsString() : null;
-        int range = jsonObject.has("range") ? jsonObject.getAsJsonPrimitive("range").getAsInt() : 0;
+        String entityName = jsonObject.has(LootEntryTag.ENTITY) ? jsonObject.getAsJsonPrimitive(LootEntryTag.ENTITY).getAsString() : "";
+        int count = jsonObject.has(LootEntryTag.COUNT) ? jsonObject.getAsJsonPrimitive(LootEntryTag.COUNT).getAsInt() : 1;
+        String nbtString = jsonObject.has(LootEntryTag.NBT) ? jsonObject.getAsJsonPrimitive(LootEntryTag.NBT).getAsString() : null;
+        int range = jsonObject.has(LootEntryTag.RANGE) ? jsonObject.getAsJsonPrimitive(LootEntryTag.RANGE).getAsInt() : 0;
         return new EntityEntry(entityName, nbtString, count, range);
     }
 }

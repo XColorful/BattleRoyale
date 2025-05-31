@@ -2,21 +2,22 @@ package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.loot.LootEntryTag;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 public enum LootEntryType {
-    MULTI("multi", MultiEntry::fromJson),
-    RANDOM("random", RandomEntry::fromJson),
-    WEIGHT("weight", WeightEntry::fromJson),
-    ITEM("item", ItemEntry::fromJson),
-    ENTITY("entity", EntityEntry::fromJson),
-    EMPTY("empty", EmptyEntry::fromJson),
-    NONE("none", NoneEntry::fromJson),
-    REPEAT("repeat", RepeatEntry::fromJson),
-    TIME("time", TimeEntry::fromJson);
+    MULTI(LootEntryTag.TYPE_MULTI, MultiEntry::fromJson),
+    RANDOM(LootEntryTag.TYPE_RANDOM, RandomEntry::fromJson),
+    WEIGHT(LootEntryTag.TYPE_WEIGHT, WeightEntry::fromJson),
+    ITEM(LootEntryTag.TYPE_ITEM, ItemEntry::fromJson),
+    ENTITY(LootEntryTag.TYPE_ENTITY, EntityEntry::fromJson),
+    EMPTY(LootEntryTag.TYPE_EMPTY, EmptyEntry::fromJson),
+    NONE(LootEntryTag.TYPE_NONE, NoneEntry::fromJson),
+    REPEAT(LootEntryTag.TYPE_REPEAT, RepeatEntry::fromJson),
+    TIME(LootEntryTag.TYPE_TIME, TimeEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends ILootEntry> deserializer;

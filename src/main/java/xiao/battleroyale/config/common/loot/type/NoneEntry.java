@@ -18,7 +18,7 @@ public class NoneEntry implements ILootEntry {
 
     @Override
     public String getType() {
-        return "none";
+        return LootEntryTag.TYPE_NONE;
     }
 
     @Override

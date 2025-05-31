@@ -29,13 +29,13 @@ public class ItemEntry implements IItemLootEntry {
 
     @Override
     public String getType() {
-        return "item";
+        return LootEntryTag.TYPE_ITEM;
     }
 
     public static ItemEntry fromJson(JsonObject jsonObject) {
-        String itemName = jsonObject.has("item") ? jsonObject.getAsJsonPrimitive("item").getAsString() : "";
-        int count = jsonObject.has("count") ? jsonObject.getAsJsonPrimitive("count").getAsInt() : 1;
-        String nbtString = jsonObject.has("nbt") ? jsonObject.getAsJsonPrimitive("nbt").getAsString() : null;
+        String itemName = jsonObject.has(LootEntryTag.ITEM) ? jsonObject.getAsJsonPrimitive(LootEntryTag.ITEM).getAsString() : "";
+        int count = jsonObject.has(LootEntryTag.COUNT) ? jsonObject.getAsJsonPrimitive(LootEntryTag.COUNT).getAsInt() : 1;
+        String nbtString = jsonObject.has(LootEntryTag.NBT) ? jsonObject.getAsJsonPrimitive(LootEntryTag.NBT).getAsString() : null;
         return new ItemEntry(itemName, nbtString, count);
     }
 
@@ -43,12 +43,12 @@ public class ItemEntry implements IItemLootEntry {
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
-        jsonObject.addProperty("item", this.itemString);
+        jsonObject.addProperty(LootEntryTag.ITEM, this.itemString);
         if (this.count >= 0) {
-            jsonObject.addProperty("count", this.count);
+            jsonObject.addProperty(LootEntryTag.COUNT, this.count);
         }
         if (this.nbtString != null) {
-            jsonObject.addProperty("nbt", this.nbtString);
+            jsonObject.addProperty(LootEntryTag.NBT, this.nbtString);
         }
         return jsonObject;
     }

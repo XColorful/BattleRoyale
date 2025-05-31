@@ -48,13 +48,13 @@ public class RepeatEntry implements ILootEntry {
 
     @Override
     public String getType() {
-        return "repeat";
+        return LootEntryTag.TYPE_REPEAT;
     }
 
     public static RepeatEntry fromJson(JsonObject jsonObject) {
-        int min = jsonObject.has("min") ? jsonObject.getAsJsonPrimitive("min").getAsInt() : 0;
-        int max = jsonObject.has("max") ? jsonObject.getAsJsonPrimitive("max").getAsInt() : 0;
-        ILootEntry entry = jsonObject.has("entry") ? JsonUtils.deserializeLootEntry(jsonObject.getAsJsonObject("entry")) : null;
+        int min = jsonObject.has(LootEntryTag.MIN) ? jsonObject.getAsJsonPrimitive(LootEntryTag.MIN).getAsInt() : 0;
+        int max = jsonObject.has(LootEntryTag.MAX) ? jsonObject.getAsJsonPrimitive(LootEntryTag.MAX).getAsInt() : 0;
+        ILootEntry entry = jsonObject.has(LootEntryTag.ENTRY) ? JsonUtils.deserializeLootEntry(jsonObject.getAsJsonObject(LootEntryTag.ENTRY)) : null;
         return new RepeatEntry(min, max, entry);
     }
 
@@ -63,13 +63,13 @@ public class RepeatEntry implements ILootEntry {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
         if (min >= 0) {
-            jsonObject.addProperty("min", this.min);
+            jsonObject.addProperty(LootEntryTag.MIN, this.min);
         }
         if (max >= 0) {
-            jsonObject.addProperty("max", this.max);
+            jsonObject.addProperty(LootEntryTag.MAX, this.max);
         }
         if (entry != null) {
-            jsonObject.add("entry", this.entry.toJson());
+            jsonObject.add(LootEntryTag.ENTRY, this.entry.toJson());
         }
         return jsonObject;
     }

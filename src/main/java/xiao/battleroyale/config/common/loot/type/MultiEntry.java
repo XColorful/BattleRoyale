@@ -39,13 +39,13 @@ public class MultiEntry implements ILootEntry {
 
     @Override
     public String getType() {
-        return "multi";
+        return LootEntryTag.TYPE_MULTI;
     }
     
     public static MultiEntry fromJson(JsonObject jsonObject) {
         List<ILootEntry> entries = new ArrayList<>();
-        if (jsonObject.has("entries")) {
-            JsonArray entriesArray = jsonObject.getAsJsonArray("entries");
+        if (jsonObject.has(LootEntryTag.ENTRIES)) {
+            JsonArray entriesArray = jsonObject.getAsJsonArray(LootEntryTag.ENTRIES);
             if (entriesArray != null) {
                 for (JsonElement element : entriesArray) {
                     if (!element.isJsonObject()) {
@@ -70,7 +70,7 @@ public class MultiEntry implements ILootEntry {
         for (ILootEntry entry : entries) {
             entriesArray.add(entry.toJson());
         }
-        jsonObject.add("entries", entriesArray);
+        jsonObject.add(LootEntryTag.ENTRIES, entriesArray);
         return jsonObject;
     }
 }
