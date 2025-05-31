@@ -8,12 +8,14 @@ import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
+import static xiao.battleroyale.common.game.zone.spatial.ShapeHelper.*;
+import static xiao.battleroyale.util.Vec3Utils.randomAdjustXZ;
+
+import xiao.battleroyale.util.Vec3Utils;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-import static xiao.battleroyale.common.game.zone.spatial.ShapeHelper.*;
-import static xiao.battleroyale.common.game.zone.spatial.ShapeHelper.randomAdjustXZ;
 
 public abstract class AbstractSimpleShape implements ISpatialZone {
 
@@ -97,7 +99,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 startDimension = randomAdjustXZ(startDimension, startEntry.startDimensionRange, random);
             }
             if (startEntry.startDimensionScale >= 0) {
-                startDimension = scaleXZ(startDimension, startEntry.startDimensionScale);
+                startDimension = Vec3Utils.scaleXZ(startDimension, startEntry.startDimensionScale);
             }
             // end center
             switch (endEntry.endCenterType) {
@@ -123,7 +125,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 endDimension = randomAdjustXZ(endDimension, endEntry.endDimensionRange, random);
             }
             if (endEntry.endDimensionScale >= 0) {
-                endDimension = scaleXZ(endDimension, endEntry.endDimensionScale);
+                endDimension = Vec3Utils.scaleXZ(endDimension, endEntry.endDimensionScale);
             }
         }
         if (additionalCalculationCheck() && startCenter != null && startDimension != null && endCenter != null && endDimension != null) {

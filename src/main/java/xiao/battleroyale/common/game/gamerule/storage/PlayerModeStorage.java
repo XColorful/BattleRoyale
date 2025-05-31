@@ -43,17 +43,17 @@ public class PlayerModeStorage implements IRuleStorage {
         gameMode = mcEntry.adventureMode ? GameType.ADVENTURE : GameType.SURVIVAL;
 
         for (GamePlayer gamePlayer : gamePlayerList) {
-            UUID id = gamePlayer.getPlayerUUID();
+            UUID playerUUID = gamePlayer.getPlayerUUID();
             try {
-                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
+                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);
                 if (player == null) {
                     continue;
                 }
                 GameType gameMode = player.gameMode.getGameModeForPlayer();
                 playerModeBackup.put(player.getUUID(), gameMode);
-                BattleRoyale.LOGGER.info("Backup up gamemode for player {}: {}", player.getName().getString(), gameMode.getName());
+                BattleRoyale.LOGGER.info("Backup up gamemode {} for player {}: {}", gameMode.getName(), gamePlayer.getPlayerName(), gameMode.getName());
             } catch (Exception e) {
-                BattleRoyale.LOGGER.error("Failed to backup player's gamemode, skipped");
+                BattleRoyale.LOGGER.error("Failed to backup gamemode {} for player {} (UUID: {}) , skipped", gameMode.getName(), gamePlayer.getPlayerName(), playerUUID);
             }
         }
     }
@@ -65,18 +65,18 @@ public class PlayerModeStorage implements IRuleStorage {
             return;
         }
         for (GamePlayer gamePlayer : gamePlayerList) {
-            UUID id = gamePlayer.getPlayerUUID();
+            UUID playerUUID = gamePlayer.getPlayerUUID();
             try {
-                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
+                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);
                 if (player == null) {
                     continue;
                 }
                 if (player.gameMode.getGameModeForPlayer() != gameMode) {
                     player.setGameMode(gameMode);
-                    BattleRoyale.LOGGER.info("Applied gamemode {} for {}", gameMode.getName(), player.getName().getString());
+                    BattleRoyale.LOGGER.info("Applied gamemode {} for {}", gameMode.getName(), gamePlayer.getPlayerName());
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.error("Failed to apply gamemode for ServerPlayer, skipped");
+                BattleRoyale.LOGGER.error("Failed to apply gamemode {} for ServerPlayer {} (UUID: {}), skipped", gameMode.getName(), gamePlayer.getPlayerName(), playerUUID);
             }
         }
     }
@@ -93,7 +93,7 @@ public class PlayerModeStorage implements IRuleStorage {
             if (player != null) {
                 player.setGameMode(prevGameMode);
             } else {
-                BattleRoyale.LOGGER.info("Failed to get ServerPlayer by UUID, skipped");
+                BattleRoyale.LOGGER.info("Failed to revert ServerPlayer (UUID: {}) gamemode to {}, skipped", playerUUID, gameMode.getName());
             }
         }
     }

@@ -13,9 +13,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
-import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.util.ChatUtils;
 
@@ -27,6 +25,7 @@ public class TeamManager extends AbstractGameManager {
     private static TeamManager instance;
 
     private int playerLimit = 0; // 实际已经在 teamData.clear(playerLimit) 前初始化
+    public int getPlayerLimit() { return playerLimit; }
     private int teamSize;
     private boolean aiTeammate;
     private boolean aiEnemy;
@@ -387,7 +386,7 @@ public class TeamManager extends AbstractGameManager {
         BattleRoyale.LOGGER.info("Force removed player {} (UUID: {})", player.getName().getString(), player.getUUID());
 
         GameTeam gameTeam = gamePlayer.getTeam();
-        if (!gameTeam.isTeamAlive()) {
+        if (gameTeam.isTeamEliminated()) {
             if (serverLevel != null) {
                 ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
             }

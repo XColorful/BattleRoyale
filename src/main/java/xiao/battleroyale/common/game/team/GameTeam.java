@@ -63,7 +63,7 @@ public class GameTeam {
         return leaderUUID != null && leaderUUID.equals(playerUUID);
     }
 
-    public boolean isTeamAlive() {
+    public boolean isTeamEliminated() {
         if (teamMembers.isEmpty()) {
             return true;
         }

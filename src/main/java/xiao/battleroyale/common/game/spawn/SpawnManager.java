@@ -104,12 +104,19 @@ public class SpawnManager extends AbstractGameManager {
             return;
         }
 
+        // 传送至大厅
         List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
         for (GamePlayer gamePlayer : gamePlayerList) {
             teleportGamePlayerToLobby(gamePlayer, serverLevel);
         }
 
-        this.ready = true;
+        this.gameSpawner.clear();
+        this.gameSpawner.init(GameManager.get().getRandom(), GameManager.get().getPlayerLimit()); // 用玩家上限作为点位数量
+        if (this.gameSpawner.isReady()) {
+            this.ready = true;
+        } else {
+            this.ready = false;
+        }
     }
 
     @Override
@@ -120,6 +127,7 @@ public class SpawnManager extends AbstractGameManager {
         if (!this.ready) {
             return false;
         }
+
 
         return true;
     }
@@ -140,7 +148,11 @@ public class SpawnManager extends AbstractGameManager {
 
     @Override
     public void onGameTick(int gameTime) {
-        ;
+        if (!gameSpawner.shouldTick()) {
+            return;
+        }
+
+        gameSpawner.tick(gameTime, GameManager.get().getGameTeams());
     }
 
     /**
@@ -150,7 +162,7 @@ public class SpawnManager extends AbstractGameManager {
         if (!isLobbyCreated()) {
             return;
         }
-        player.teleportTo(lobbyPos.x, lobbyPos.y, lobbyPos.z);
+        GameManager.get().safeTeleport(player, lobbyPos);
         BattleRoyale.LOGGER.info("Teleport player {} (UUID: {}) to lobby ({}, {}, {})", player.getName(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
     }
 
@@ -169,10 +181,6 @@ public class SpawnManager extends AbstractGameManager {
     public boolean canMuteki(ServerPlayer serverPlayer) {
         UUID id = serverPlayer.getUUID();
         if (TeamManager.get().hasStandingGamePlayer(id)) { // 游戏中的玩家不能无敌
-            BattleRoyale.LOGGER.info("Detected in game player at pos: {}", serverPlayer.position());
-            for (GamePlayer gamePlayer : TeamManager.get().getStandingGamePlayersList()) {
-                BattleRoyale.LOGGER.info("StandingGamePlayerList: {}",gamePlayer.getPlayerName());
-            }
             return false;
         }
         return isInLobby(serverPlayer.position());

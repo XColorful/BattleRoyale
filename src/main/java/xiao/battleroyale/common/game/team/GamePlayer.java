@@ -71,7 +71,7 @@ public class GamePlayer {
         this.isAlive = alive;
         this.isEliminated = true; // TODO 倒地机制完成前默认淘汰
 
-        if (!team.isTeamAlive()) { // 队伍无人则倒地
+        if (team.isTeamEliminated()) { // 队伍无人则倒地
             this.isEliminated = true;
         }
 
