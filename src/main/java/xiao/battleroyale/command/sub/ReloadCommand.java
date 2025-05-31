@@ -112,15 +112,15 @@ public class ReloadCommand {
         } else {
             switch (subType) {
                 case ZONE_NAME:
-                    GameConfigManager.get().loadZoneConfigs();
+                    GameConfigManager.get().reloadZoneConfigs();
                     messageKey = "battleroyale.message.zone_config_reloaded";
                     break;
                 case SPAWN_NAME:
-                    GameConfigManager.get().loadSpawnConfigs();
+                    GameConfigManager.get().reloadSpawnConfigs();
                     messageKey = "battleroyale.message.spawn_config_reloaded";
                     break;
                 case GAMERULE_NAME:
-                    GameConfigManager.get().loadGameruleConfigs();
+                    GameConfigManager.get().reloadGameruleConfigs();
                     messageKey = "battleroyale.message.gamerule_config_reloaded";
                     break;
                 default:

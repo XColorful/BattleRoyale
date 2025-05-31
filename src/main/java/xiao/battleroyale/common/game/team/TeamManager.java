@@ -13,6 +13,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.util.ChatUtils;
@@ -29,6 +30,7 @@ public class TeamManager extends AbstractGameManager {
     private boolean aiTeammate;
     private boolean aiEnemy;
     private boolean autoJoinGame;
+    public boolean shouldAutoJoin() { return this.autoJoinGame; }
     private boolean keepTeamAfterGame = true;
 
     private final TeamData teamData = new TeamData();
@@ -70,7 +72,7 @@ public class TeamManager extends AbstractGameManager {
         }
 
         int gameId = GameManager.get().getGameruleConfigId();
-        BattleroyaleEntry brEntry = GameruleConfigManager.get().getGameruleConfig(gameId).getBattleRoyaleEntry();
+        BattleroyaleEntry brEntry = GameConfigManager.get().getGameruleConfig(gameId).getBattleRoyaleEntry();
         if (brEntry == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             BattleRoyale.LOGGER.warn("Failed to get BattleroyaleEntry from GameruleConfig by id: {}", gameId);
@@ -165,24 +167,6 @@ public class TeamManager extends AbstractGameManager {
         BattleRoyale.LOGGER.info("TeamManager stopped, clear all team info");
     }
 
-    public void onPlayerDeath(ServerPlayer player) {
-        GamePlayer gamePlayer = teamData.getGamePlayerByUUID(player.getUUID());
-        if (gamePlayer == null) {
-            return;
-        }
-        gamePlayer.setAlive(false); // GamePlayer会自动更新eliminated
-
-        GameTeam gameTeam = gamePlayer.getTeam();
-        if (!gameTeam.isTeamAlive()) {
-            BattleRoyale.LOGGER.info("Team {} has been eliminated", gameTeam.getGameTeamId());
-            ServerLevel serverLevel = GameManager.get().getServerLevel();
-            if (serverLevel != null) {
-                ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
-            }
-            onTeamChangedInGame();
-        }
-    }
-
     /**
      * 通常在人数变更的时候可能提前结束游戏，手动提醒以降低 GameManager 检查频率
      */
@@ -196,33 +180,8 @@ public class TeamManager extends AbstractGameManager {
         }
     }
 
-    private int getStandingTeamCount() {
+    public int getStandingTeamCount() {
         return teamData.getTotalStandingPlayerCount();
-    }
-
-    public void onPlayerLoggedIn(ServerPlayer player) {
-        GamePlayer gamePlayer = teamData.getGamePlayerByUUID(player.getUUID());
-        if (gamePlayer != null) {
-            if (GameManager.get().isInGame() && gamePlayer.isEliminated()) {
-                ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
-            }
-            return;
-        }
-
-        if (autoJoinGame && !GameManager.get().isInGame()) {
-            joinTeam(player);
-        }
-    }
-
-    public void onPlayerLoggedOut(ServerPlayer player) {
-        if (!GameManager.get().isInGame()) {
-            removePlayerFromTeam(player.getUUID()); // 没开始游戏就直接踢了
-        }
-        GamePlayer gamePlayer = teamData.getGamePlayerByUUID(player.getUUID());
-        if (gamePlayer != null) {
-            gamePlayer.setActiveEntity(false); // GameManager只在tick开始时检查是否在线
-            onTeamChangedInGame();// 此处立即通知GameManager再次检查
-        }
     }
 
     public boolean isPlayerLeader(UUID playerUUID) {
@@ -820,6 +779,8 @@ public class TeamManager extends AbstractGameManager {
     public List<GamePlayer> getStandingGamePlayersList() {
         return teamData.getStandingGamePlayersList();
     }
+
+    public boolean hasStandingGamePlayer(UUID id) { return teamData.hasStandingGamePlayer(id); }
 
     public int getTotalMembers() {
         return teamData.getTotalPlayerCount();

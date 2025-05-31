@@ -12,7 +12,8 @@ public class TeamData extends AbstractGameManagerData {
     private static final String DATA_NAME = "TeamData";
 
     private final List<GamePlayer> gamePlayersList = new ArrayList<>();
-    private final List<GamePlayer> standingGamePlayers = new ArrayList<>();
+    private final List<GamePlayer> standingGamePlayersList = new ArrayList<>();
+    private final Map<UUID, GamePlayer> standingGamePlayers = new HashMap<>();
     private final List<GameTeam> gameTeamsList = new ArrayList<>();
     private final Map<UUID, GamePlayer> gamePlayers = new HashMap<>();
     private final Map<Integer, GameTeam> gameTeams = new HashMap<>();
@@ -40,6 +41,7 @@ public class TeamData extends AbstractGameManagerData {
         unlockData();
 
         gamePlayersList.clear();
+        standingGamePlayersList.clear();
         standingGamePlayers.clear();
         gameTeamsList.clear();
         gamePlayers.clear();
@@ -89,7 +91,10 @@ public class TeamData extends AbstractGameManagerData {
             return;
         }
 
-        standingGamePlayers.addAll(gamePlayersList);
+        standingGamePlayersList.addAll(gamePlayersList);
+        for (GamePlayer gamePlayer : standingGamePlayersList) {
+            standingGamePlayers.put(gamePlayer.getPlayerUUID(), gamePlayer);
+        }
         lockData();
     }
 
@@ -193,10 +198,6 @@ public class TeamData extends AbstractGameManagerData {
      * 只允许在游戏中调用淘汰接口
      */
     public boolean eliminatePlayer(UUID playerId) {
-        if (!locked) {
-            return false;
-        }
-
         GamePlayer player = gamePlayers.get(playerId);
         return eliminatePlayer(player);
     }
@@ -210,11 +211,10 @@ public class TeamData extends AbstractGameManagerData {
         }
 
         if (player != null) {
-            if (!player.isEliminated()) {
-                player.setEliminated(true);
-                standingGamePlayers.remove(player);
-                return true;
-            }
+            player.setEliminated(true); // GamePlayer内部自动更新alive
+            standingGamePlayersList.remove(player);
+            standingGamePlayers.remove(player.getPlayerUUID());
+            return true;
         }
 
         return false;
@@ -263,11 +263,15 @@ public class TeamData extends AbstractGameManagerData {
     }
 
     public List<GamePlayer> getStandingGamePlayersList() {
-        return Collections.unmodifiableList(standingGamePlayers);
+        return Collections.unmodifiableList(standingGamePlayersList);
+    }
+
+    public boolean hasStandingGamePlayer(UUID id) {
+        return standingGamePlayers.containsKey(id);
     }
 
     public int getTotalPlayerCount() { return gamePlayersList.size(); }
-    public int getTotalStandingPlayerCount() { return standingGamePlayers.size(); }
+    public int getTotalStandingPlayerCount() { return standingGamePlayersList.size(); }
     public int getTotalTeamCount() { return gameTeamsList.size(); }
 
     public void switchPlayerTeam(@NotNull GamePlayer player, @NotNull GameTeam newTeam) {

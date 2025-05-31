@@ -6,14 +6,18 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.team.TeamManager;
+import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
+import xiao.battleroyale.event.game.LobbyEventHandler;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.List;
@@ -26,6 +30,7 @@ public class SpawnManager extends AbstractGameManager {
     private Vec3 lobbyPos;
     private Vec3 lobbyDimension;
     private boolean lobbyMuteki = true;
+    private IGameSpawner gameSpawner;
 
     private SpawnManager() {
         ;
@@ -52,13 +57,19 @@ public class SpawnManager extends AbstractGameManager {
         }
 
         int spawnConfigId = GameManager.get().getSpawnConfigId();
-        SpawnConfig spawnConfig = SpawnConfigManager.get().getSpawnConfig(spawnConfigId);
+        SpawnConfig spawnConfig = GameConfigManager.get().getSpawnConfig(spawnConfigId);
         if (spawnConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_spawn_config");
             return;
         }
+        this.gameSpawner = spawnConfig.createGameSpawner();
+        if (this.gameSpawner == null) {
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_spawn_config");
+            return;
+        }
+
         int gameId = GameManager.get().getGameruleConfigId();
-        GameruleConfig gameruleConfig = GameruleConfigManager.get().getGameruleConfig(gameId);
+        GameruleConfig gameruleConfig = GameConfigManager.get().getGameruleConfig(gameId);
         if (gameruleConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;
@@ -68,10 +79,16 @@ public class SpawnManager extends AbstractGameManager {
         this.lobbyPos = brEntry.lobbyCenterPos;
         this.lobbyDimension = brEntry.lobbyDimension;
         this.lobbyMuteki = brEntry.lobbyMuteki;
-
         if (lobbyPos == null || lobbyDimension == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;
+        }
+
+        // Hyper Muteki的大厅
+        if (this.lobbyMuteki) {
+            LobbyEventHandler.get().register();
+        } else {
+            LobbyEventHandler.get().unregister();
         }
         this.prepared = true;
     }
@@ -87,12 +104,7 @@ public class SpawnManager extends AbstractGameManager {
 
         List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
         for (GamePlayer gamePlayer : gamePlayerList) {
-            UUID id = gamePlayer.getPlayerUUID();
-            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
-            if (player == null) {
-                continue;
-            }
-            player.teleportTo(lobbyPos.x, lobbyPos.y, lobbyPos.z);
+            teleportGamePlayerToLobby(gamePlayer, serverLevel);
         }
 
         this.ready = true;
@@ -115,15 +127,11 @@ public class SpawnManager extends AbstractGameManager {
         if (serverLevel != null) {
             List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
             for (GamePlayer gamePlayer : gamePlayerList) {
-                UUID id = gamePlayer.getPlayerUUID();
-                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
-                if (player == null) {
-                    continue;
-                }
-                player.teleportTo(lobbyPos.x, lobbyPos.y, lobbyPos.z);
+                teleportGamePlayerToLobby(gamePlayer, serverLevel);
             }
         }
 
+        LobbyEventHandler.get().unregister();
         this.prepared = false;
         this.ready = false;
     }
@@ -131,5 +139,57 @@ public class SpawnManager extends AbstractGameManager {
     @Override
     public void onGameTick(int gameTime) {
         ;
+    }
+
+    /**
+     * 只负责帮 GameManager 传送至大厅，不负责检查
+     */
+    public void teleportToLobby(@NotNull ServerPlayer player) {
+        if (!prepared) {
+            return;
+        }
+        player.teleportTo(lobbyPos.x, lobbyPos.y, lobbyPos.z);
+    }
+
+    /**
+     * 类内部负责的传送，类内调用前进行检查
+     */
+    private void teleportGamePlayerToLobby(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel) {
+        UUID id = gamePlayer.getPlayerUUID();
+        ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
+        if (player == null) {
+            return;
+        }
+        teleportToLobby(player);
+    }
+
+    public boolean canMuteki(ServerPlayer serverPlayer) {
+        UUID id = serverPlayer.getUUID();
+        if (TeamManager.get().hasStandingGamePlayer(id)) { // 游戏中的玩家不能无敌
+            BattleRoyale.LOGGER.info("Detected in game player at pos: {}", serverPlayer.position());
+            for (GamePlayer gamePlayer : TeamManager.get().getStandingGamePlayersList()) {
+                BattleRoyale.LOGGER.info("StandingGamePlayerList: {}",gamePlayer.getPlayerName());
+            }
+            return false;
+        }
+        return isInLobby(serverPlayer.position());
+    }
+
+    /**
+     * 调用时保证 lobbyPos 和 lobbyDimension 非空
+     * @param pos 需要判断的位置
+     * @return 判定结果
+     */
+    private boolean isInLobby(Vec3 pos) {
+        double minX = lobbyPos.x - lobbyDimension.x;
+        double maxX = lobbyPos.x + lobbyDimension.x;
+        double minY = lobbyPos.y - lobbyDimension.y;
+        double maxY = lobbyPos.y + lobbyDimension.y;
+        double minZ = lobbyPos.z - lobbyDimension.z;
+        double maxZ = lobbyPos.z + lobbyDimension.z;
+
+        return pos.x >= minX && pos.x <= maxX &&
+                pos.y >= minY && pos.y <= maxY &&
+                pos.z >= minZ && pos.z <= maxZ;
     }
 }

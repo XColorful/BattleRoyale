@@ -16,6 +16,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
+import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
@@ -105,7 +106,7 @@ public class GameManager extends AbstractGameManager {
         }
         this.serverLevel = serverLevel;
 
-        BattleroyaleEntry brEntry = GameruleConfigManager.get().getGameruleConfig(gameruleConfigId).getBattleRoyaleEntry();
+        BattleroyaleEntry brEntry = GameConfigManager.get().getGameruleConfig(gameruleConfigId).getBattleRoyaleEntry();
         maxGameTime = brEntry.maxGameTime;
         recordStats = brEntry.recordGameStats;
 
@@ -266,7 +267,7 @@ public class GameManager extends AbstractGameManager {
         if (!invalidPlayers.isEmpty()) {
             for (GamePlayer invalidPlayer : invalidPlayers) {
                 if (TeamManager.get().forceEliminatePlayerSilence(invalidPlayer)) { // 强制淘汰了玩家，不一定都在此处淘汰
-                    ChatUtils.sendTranslatableMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player").withStyle(ChatFormatting.GRAY));
+                    ChatUtils.sendTranslatableMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", invalidPlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
                     BattleRoyale.LOGGER.info("Force eliminated GamePlayer {} (UUID: {})", invalidPlayer.getPlayerName(), invalidPlayer.getPlayerUUID());
                 }
             }
@@ -283,13 +284,13 @@ public class GameManager extends AbstractGameManager {
         }
         GameTeam gameTeam = invalidPlayer.getTeam();
         for (GamePlayer teamMember : gameTeam.getTeamMembers()) {
-            if (teamMember.isActiveEntity() || teamMember.isAlive()) { // 有一个在线的未倒地的玩家
+            if (teamMember.isActiveEntity() || teamMember.isAlive()) { // 有在线的未倒地玩家
                 return false;
             }
         }
         for (GamePlayer teamMember : gameTeam.getTeamMembers()) {
             if (TeamManager.get().forceEliminatePlayerSilence(teamMember)) {
-                ChatUtils.sendTranslatableMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player").withStyle(ChatFormatting.GRAY));
+                ChatUtils.sendTranslatableMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", teamMember.getPlayerName()).withStyle(ChatFormatting.GRAY));
                 BattleRoyale.LOGGER.info("Force eliminated GamePlayer {} (UUID: {}) for inactive team", invalidPlayer.getPlayerName(), invalidPlayer.getPlayerUUID());
             }
         }
@@ -310,6 +311,9 @@ public class GameManager extends AbstractGameManager {
         }
 
         checkAndUpdateInvalidPlayer();
+        if (TeamManager.get().getStandingTeamCount() <= 1) {
+            stopGame(this.serverLevel);
+        }
         // TODO 剩余检查
     }
 
@@ -335,6 +339,54 @@ public class GameManager extends AbstractGameManager {
         this.syncData.clear();
     }
 
+    public void onPlayerLoggedIn(ServerPlayer player) {
+        GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(player.getUUID());
+        if (gamePlayer != null) {
+            if (GameManager.get().isInGame() && gamePlayer.isEliminated()) {
+                ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
+            }
+            return;
+        }
+
+        if (TeamManager.get().shouldAutoJoin() && !this.inGame) { // 没开游戏就加入
+            TeamManager.get().joinTeam(player);
+            SpawnManager.get().teleportToLobby(player); // 自动传到大厅
+        }
+    }
+
+    public void onPlayerLoggedOut(ServerPlayer player) {
+        if (!this.inGame) {
+            TeamManager.get().removePlayerFromTeam(player.getUUID()); // 没开始游戏就直接踢了
+        }
+
+        GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(player.getUUID());
+        if (gamePlayer != null) {
+            gamePlayer.setActiveEntity(false);
+            checkIfGameShouldEnd();
+        }
+    }
+
+    public void onPlayerDeath(ServerPlayer player) {
+        GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(player.getUUID());
+        if (gamePlayer == null) {
+            return;
+        }
+
+        gamePlayer.setAlive(false); // GamePlayer内部会自动更新eliminated
+        if (gamePlayer.isEliminated()) {
+            TeamManager.get().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer信息
+        }
+
+        GameTeam gameTeam = gamePlayer.getTeam();
+        if (!gameTeam.isTeamAlive()) {
+            BattleRoyale.LOGGER.info("Team {} has been eliminated", gameTeam.getGameTeamId());
+            if (this.serverLevel != null) {
+                ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
+            }
+            checkIfGameShouldEnd();
+        }
+    }
+
     public int getGameTime() { return this.gameTime; }
 
     public Supplier<Float> getRandom() {
@@ -349,14 +401,14 @@ public class GameManager extends AbstractGameManager {
 
     // 用指令设置默认配置
     public boolean setGameruleConfigId(int gameId) {
-        if (gameId < 0 || GameruleConfigManager.get().getGameruleConfig(gameId) == null) {
+        if (gameId < 0 || GameConfigManager.get().getGameruleConfig(gameId) == null) {
             return false;
         }
         this.gameruleConfigId = gameId;
         return true;
     }
     public boolean setSpawnConfigId(int id) {
-        if (id < 0 || SpawnConfigManager.get().getSpawnConfig(id) == null) {
+        if (id < 0 || GameConfigManager.get().getSpawnConfig(id) == null) {
             return false;
         }
         this.spawnConfigId = id;

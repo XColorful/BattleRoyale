@@ -4,13 +4,19 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.api.game.spawn.ISpawnEntry;
 import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
 import xiao.battleroyale.api.game.spawn.type.shape.SpawnShapeTag;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
+import xiao.battleroyale.common.game.spawn.ground.GroundSpawner;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
+import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GroundEntry implements ISpawnEntry {
 
@@ -18,27 +24,34 @@ public class GroundEntry implements ISpawnEntry {
     private final SpawnShapeType shapeType;
     private final Vec3 centerPos;
     private final Vec3 dimension;
-    private final CommonDetailType detailType;
     // detail
-    boolean teamTogether;
-    boolean findGround;
-    double randomRange;
+    private final CommonDetailType detailType;
+    private final DetailInfo detailInfo;
 
-    public GroundEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension, CommonDetailType detailType,
-                       boolean teamTogether, boolean findGround, double randomRange) {
+    public record DetailInfo(List<Vec3> fixedPos,
+                              boolean teamTogether,
+                              boolean findGround,
+                              double randomRange) {}
+
+    public GroundEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
+                       CommonDetailType detailType,
+                       DetailInfo detailInfo) {
         this.shapeType = shapeType;
         this.centerPos = center;
         this.dimension = dimension;
-        this.detailType = detailType;
 
-        this.teamTogether = teamTogether;
-        this.findGround = findGround;
-        this.randomRange = randomRange;
+        this.detailType = detailType;
+        this.detailInfo = detailInfo;
     }
 
     @Override
     public String getType() {
         return SpawnTypeTag.SPAWN_TYPE_GROUND;
+    }
+
+    @Override
+    public IGameSpawner createGameSpawner() {
+        return new GroundSpawner(shapeType, centerPos, dimension, detailType, detailInfo);
     }
 
     @Override
@@ -50,12 +63,15 @@ public class GroundEntry implements ISpawnEntry {
         jsonObject.addProperty(SpawnShapeTag.CENTER, StringUtils.vectorToString(centerPos));
         jsonObject.addProperty(SpawnShapeTag.DIMENSION, StringUtils.vectorToString(dimension));
 
-        jsonObject.addProperty(SpawnDetailTag.TYPE_NAME, detailType.getName());
-
         // detail
-        jsonObject.addProperty(SpawnDetailTag.GROUND_TEAM_TOGETHER, teamTogether);
-        jsonObject.addProperty(SpawnDetailTag.GROUND_FIND_GROUND, findGround);
-        jsonObject.addProperty(SpawnDetailTag.GROUND_RANDOM_RANGE, randomRange);
+        jsonObject.addProperty(SpawnDetailTag.TYPE_NAME, detailType.getName());
+        switch (this.detailType) {
+            case FIXED -> { jsonObject.add(SpawnDetailTag.GROUND_FIXED_POS, JsonUtils.writeVec3ListToJson(this.detailInfo.fixedPos));}
+            case RANDOM -> {}
+        }
+        jsonObject.addProperty(SpawnDetailTag.GROUND_TEAM_TOGETHER, this.detailInfo.teamTogether);
+        jsonObject.addProperty(SpawnDetailTag.GROUND_FIND_GROUND, this.detailInfo.findGround);
+        jsonObject.addProperty(SpawnDetailTag.GROUND_RANDOM_RANGE, this.detailInfo.randomRange);
 
         return jsonObject;
     }
@@ -78,18 +94,27 @@ public class GroundEntry implements ISpawnEntry {
             return null;
         }
 
+        // detail
         String detailTypeString = jsonObject.has(SpawnDetailTag.TYPE_NAME) ? jsonObject.getAsJsonPrimitive(SpawnDetailTag.TYPE_NAME).getAsString() : "";
         CommonDetailType detailType = CommonDetailType.fromName(detailTypeString);
         if (detailType == null) {
             BattleRoyale.LOGGER.info("Unknown detailType for GroundEntry, skipped");
             return null;
         }
-
-        // detail
+        List<Vec3> fixedPos = new ArrayList<>();
+        switch (detailType) {
+            case FIXED -> { fixedPos = jsonObject.has(SpawnDetailTag.GROUND_FIXED_POS) ?
+                    JsonUtils.readVec3ListFromJson(jsonObject.getAsJsonArray(SpawnDetailTag.GROUND_FIXED_POS))
+                    : new ArrayList<>(); }
+            case RANDOM -> {}
+        }
         boolean teamTogether = jsonObject.has(SpawnDetailTag.GROUND_TEAM_TOGETHER) && jsonObject.getAsJsonPrimitive(SpawnDetailTag.GROUND_TEAM_TOGETHER).getAsBoolean();
         boolean findGround = jsonObject.has(SpawnDetailTag.GROUND_FIND_GROUND) && jsonObject.getAsJsonPrimitive(SpawnDetailTag.GROUND_FIND_GROUND).getAsBoolean();
         double range = jsonObject.has(SpawnDetailTag.GROUND_RANDOM_RANGE) ? jsonObject.getAsJsonPrimitive(SpawnDetailTag.GROUND_RANDOM_RANGE).getAsDouble() : 0;
 
-        return new GroundEntry(shapeType, center, dimension, detailType, teamTogether, findGround, range);
+        return new GroundEntry(shapeType, center, dimension,
+                detailType,
+                new DetailInfo(fixedPos, teamTogether, findGround, range)
+        );
     }
 }

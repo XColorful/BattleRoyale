@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.IConfigManager;
+import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.api.game.spawn.ISpawnEntry;
 import xiao.battleroyale.api.game.spawn.SpawnConfigTag;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -166,5 +167,7 @@ public class SpawnConfigManager implements IConfigManager {
         public ISpawnEntry getEntry() {
             return entry;
         }
+
+        public IGameSpawner createGameSpawner() { return entry.createGameSpawner(); }
     }
 }

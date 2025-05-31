@@ -69,10 +69,13 @@ public class GamePlayer {
 
     public void setAlive(boolean alive) {
         this.isAlive = alive;
-        if (!team.isTeamAlive()) {
+        this.isEliminated = true; // TODO 倒地机制完成前默认淘汰
+
+        if (!team.isTeamAlive()) { // 队伍无人则倒地
             this.isEliminated = true;
         }
-        if (this.isEliminated) {
+
+        if (this.isEliminated) { // 自动更新
             this.isAlive = false;
         }
     }
