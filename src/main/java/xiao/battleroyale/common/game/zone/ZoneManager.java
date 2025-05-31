@@ -8,6 +8,7 @@ import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.util.ChatUtils;
@@ -47,13 +48,12 @@ public class ZoneManager extends AbstractGameManager {
             return;
         }
 
-        List<ZoneConfig> allZoneConfigs = ZoneConfigManager.get().getAllZoneConfigs();
+        List<ZoneConfig> allZoneConfigs = GameConfigManager.get().getAllZoneConfigs();
         if (allZoneConfigs.isEmpty()) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_zone_config");
             BattleRoyale.LOGGER.warn("No zone config available for init game config");
             return;
         }
-
         if (!stackZoneConfig) {
             this.zoneData.clear();
         }

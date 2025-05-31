@@ -103,6 +103,11 @@
   "battleroyale.message.no_valid_invite": "Invalid invitation",
   "battleroyale.message.no_valid_request": "Invalid request",
   "battleroyale.message.your_team_id": "Your team id is %s",
+  "battleroyale.message.no_lobby": "Lobby is not initialized",
+  "battleroyale.message.lobby_pos": "Lobby Position: %s, %s, %s",
+  "battleroyale.message.lobby_dimension": "Center dimension: %s, %s, %s",
+  "battleroyale.message.lobby_muteki": "Hyper Muteki Lobby",
+  "battleroyale.message.teleported_to_lobby": "Teleport to lobby",
 
   "battleroyale.message.load_game_configs": "Loaded game configs",
   "battleroyale.message.load_game_configs_failed": "Failed to load game configs",

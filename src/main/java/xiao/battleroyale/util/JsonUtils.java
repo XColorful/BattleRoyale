@@ -1,9 +1,7 @@
 package xiao.battleroyale.util;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.spawn.ISpawnEntry;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
@@ -24,6 +22,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JsonUtils {
 
@@ -156,5 +156,33 @@ public class JsonUtils {
         } catch (IOException e) {
             BattleRoyale.LOGGER.warn("Failed to write default config: {}", e.getMessage());
         }
+    }
+
+    public static List<Vec3> readVec3ListFromJson(JsonArray jsonArray) {
+        List<Vec3> vec3List = new ArrayList<>();
+
+        try {
+            for (JsonElement element : jsonArray) {
+                String vec3String = element.getAsJsonPrimitive().getAsString();
+                Vec3 v = StringUtils.parseVectorString(vec3String);
+                if (v != null) {
+                    vec3List.add(v);
+                }
+            }
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.warn("Failed to read Vec3 list from json");
+        }
+
+        return vec3List;
+    }
+
+    public static JsonArray writeVec3ListToJson(List<Vec3> vec3List) {
+        JsonArray jsonArray = new JsonArray();
+
+        for (Vec3 v : vec3List) {
+            jsonArray.add(StringUtils.vectorToString(v));
+        }
+
+        return jsonArray;
     }
 }

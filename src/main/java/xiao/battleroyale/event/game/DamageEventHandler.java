@@ -60,17 +60,14 @@ public class DamageEventHandler {
         DamageSource damageSource = event.getSource();
         float damageAmount = event.getAmount();
         damagedGamePlayer.addDamageTaken(damageAmount);
-        BattleRoyale.LOGGER.info("GamePlayer {} took {} damage", damagedGamePlayer.getPlayerName(), damageAmount);
         if (damageSource.is(ModDamageTypes.ZONE_DAMAGE)) {
             damagedGamePlayer.addZoneDamageTaken(damageAmount);
-            BattleRoyale.LOGGER.info("GamePlayer {} took {} zone damage", damagedGamePlayer.getPlayerName(), damageAmount);
         }
 
         if (damageSource.getEntity() instanceof LivingEntity attackingEntity) {
             GamePlayer attackingGamePlayer = TeamManager.get().getGamePlayerByUUID(attackingEntity.getUUID());
             if (attackingGamePlayer != null) {
                 attackingGamePlayer.addDamageDealt(damageAmount);
-                BattleRoyale.LOGGER.info("GamePlayer {} attacks {} and gain {} damage dealt", attackingGamePlayer.getPlayerName(), damagedGamePlayer.getPlayerName(), damageAmount);
             }
         }
     }

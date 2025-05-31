@@ -18,7 +18,7 @@ public class EmptyEntry implements IItemLootEntry {
 
     @Override
     public String getType() {
-        return "empty";
+        return LootEntryTag.TYPE_EMPTY;
     }
 
     @Override

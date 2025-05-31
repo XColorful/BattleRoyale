@@ -8,6 +8,7 @@ public class SpawnDetailTag {
     public static final String RANDOM = "random";
 
     // ground
+    public static final String GROUND_FIXED_POS = "fixedPos";
     public static final String GROUND_TEAM_TOGETHER = "teamTogether";
     public static final String GROUND_FIND_GROUND = "findGround";
     public static final String GROUND_RANDOM_RANGE = "randomRange";

@@ -4,10 +4,12 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.api.game.spawn.ISpawnEntry;
 import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
 import xiao.battleroyale.api.game.spawn.type.shape.SpawnShapeTag;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
+import xiao.battleroyale.common.game.spawn.plane.PlaneSpawner;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.util.StringUtils;
@@ -18,27 +20,33 @@ public class PlaneEntry implements ISpawnEntry {
     private final SpawnShapeType shapeType;
     private final Vec3 centerPos;
     private final Vec3 dimension;
-    private final CommonDetailType detailType;
     // detail
-    double planeHeight;
-    double planeSpeed;
-    boolean fixedReachTime;
+    private final CommonDetailType detailType;
+    private final DetailInfo detailInfo;
 
-    public PlaneEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension, CommonDetailType detailType,
-                      double planeHeight, double planeSpeed, boolean fixedReachTime) {
+    public record DetailInfo(double planeHeight,
+                             double planeSpeed,
+                             boolean fixedReachTime) {}
+
+    public PlaneEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
+                      CommonDetailType detailType,
+                      DetailInfo detailInfo) {
         this.shapeType = shapeType;
         this.centerPos = center;
         this.dimension = dimension;
-        this.detailType = detailType;
 
-        this.planeHeight = planeHeight;
-        this.planeSpeed = planeSpeed;
-        this.fixedReachTime = fixedReachTime;
+        this.detailType = detailType;
+        this.detailInfo = detailInfo;
     }
 
     @Override
     public String getType() {
         return SpawnTypeTag.SPAWN_TYPE_PLANE;
+    }
+
+    @Override
+    public IGameSpawner createGameSpawner() {
+        return new PlaneSpawner(shapeType, centerPos, dimension, detailType, detailInfo);
     }
 
     @Override
@@ -53,9 +61,9 @@ public class PlaneEntry implements ISpawnEntry {
         jsonObject.addProperty(SpawnDetailTag.TYPE_NAME, detailType.getName());
 
         // detail
-        jsonObject.addProperty(SpawnDetailTag.PLANE_HEIGHT, planeHeight);
-        jsonObject.addProperty(SpawnDetailTag.PLANE_SPEED, planeSpeed);
-        jsonObject.addProperty(SpawnDetailTag.PLANE_FIXED_TIME, fixedReachTime);
+        jsonObject.addProperty(SpawnDetailTag.PLANE_HEIGHT, this.detailInfo.planeHeight);
+        jsonObject.addProperty(SpawnDetailTag.PLANE_SPEED, this.detailInfo.planeSpeed);
+        jsonObject.addProperty(SpawnDetailTag.PLANE_FIXED_TIME, this.detailInfo.fixedReachTime);
 
         return jsonObject;
     }
@@ -90,6 +98,9 @@ public class PlaneEntry implements ISpawnEntry {
         double speed = jsonObject.has(SpawnDetailTag.PLANE_SPEED) ? jsonObject.getAsJsonPrimitive(SpawnDetailTag.PLANE_SPEED).getAsDouble() : 0;
         boolean fixedTime = jsonObject.has(SpawnDetailTag.PLANE_FIXED_TIME) && jsonObject.getAsJsonPrimitive(SpawnDetailTag.PLANE_FIXED_TIME).getAsBoolean();
 
-        return new PlaneEntry(shapeType, center, dimension, detailType, height, speed, fixedTime);
+        return new PlaneEntry(shapeType, center, dimension,
+                detailType,
+                new DetailInfo(height, speed, fixedTime)
+        );
     }
 }

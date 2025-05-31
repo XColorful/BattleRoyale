@@ -19,11 +19,9 @@ public class GameConfigManager implements IConfigManager {
     }
 
     public void reloadConfigs() {
-        loadZoneConfigs();
-        loadSpawnConfigs();
-        loadGameruleConfigs();
-
-        initializeDefaultConfigsIfEmpty();
+        reloadZoneConfigs();
+        reloadSpawnConfigs();
+        reloadGameruleConfigs();
     }
 
     public static void init() {
@@ -66,21 +64,18 @@ public class GameConfigManager implements IConfigManager {
         return GameruleConfigManager.get().getAllGameruleConfigs();
     }
 
-    public void loadZoneConfigs() {
+    public void reloadZoneConfigs() {
         ZoneConfigManager.get().loadZoneConfigs();
-    }
-
-    public void loadSpawnConfigs() {
-        SpawnConfigManager.get().loadSpawnConfigs();
-    }
-
-    public void loadGameruleConfigs() {
-        GameruleConfigManager.get().loadGameruleConfigs();
-    }
-
-    private void initializeDefaultConfigsIfEmpty() {
         ZoneConfigManager.get().initializeDefaultConfigsIfEmpty();
+    }
+
+    public void reloadSpawnConfigs() {
+        SpawnConfigManager.get().loadSpawnConfigs();
         SpawnConfigManager.get().initializeDefaultConfigsIfEmpty();
+    }
+
+    public void reloadGameruleConfigs() {
+        GameruleConfigManager.get().loadGameruleConfigs();
         GameruleConfigManager.get().initializeDefaultConfigsIfEmpty();
     }
 }

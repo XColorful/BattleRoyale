@@ -4,6 +4,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
+import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.TeamManager;
 
 /**
@@ -32,26 +34,26 @@ public class LogEventHandler {
     }
 
     /**
-     * 监听玩家登录事件。
-     * 当玩家登录时，通知TeamManager。
+     * 监听玩家登录事件
+     * 当玩家登录时，通知TeamManager
      * @param event 玩家登录事件
      */
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            TeamManager.get().onPlayerLoggedIn(serverPlayer);
+            GameManager.get().onPlayerLoggedIn(serverPlayer);
         }
     }
 
     /**
-     * 监听玩家登出事件。
-     * 当玩家登出时，通知TeamManager。
+     * 监听玩家登出事件
+     * 当玩家登出时，通知TeamManager
      * @param event 玩家登出事件
      */
     @SubscribeEvent
     public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            TeamManager.get().onPlayerLoggedOut(serverPlayer);
+            GameManager.get().onPlayerLoggedOut(serverPlayer);
         }
     }
 }

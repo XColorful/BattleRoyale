@@ -44,7 +44,7 @@ public class PlayerEventHandler {
                 unregister();
                 return;
             }
-            TeamManager.get().onPlayerDeath(serverPlayer);
+            GameManager.get().onPlayerDeath(serverPlayer);
 
             // TODO: 击倒机制的实现需要更复杂的逻辑，例如判断伤害来源、玩家状态等
             // 如果有击倒机制，这里可能需要判断是真正的死亡还是击倒

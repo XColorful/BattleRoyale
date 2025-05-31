@@ -12,6 +12,7 @@ import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
@@ -29,11 +30,13 @@ public class DefaultSpawn {
     private static JsonObject generateDefaultSpawnConfig1() {
         JsonObject config = new JsonObject();
         config.addProperty(SpawnConfigTag.SPAWN_ID, 1);
-        config.addProperty(SpawnConfigTag.SPAWN_NAME, "Plane");
+        config.addProperty(SpawnConfigTag.SPAWN_NAME, "Ground");
         config.addProperty(SpawnConfigTag.SPAWN_COLOR, "#FFFFFF");
 
-        GroundEntry grondEntry = new GroundEntry(SpawnShapeType.SQUARE, new Vec3(0, 65, 0), new Vec3(128, 0, 128), CommonDetailType.RANDOM,
-                true, true, 0);
+        GroundEntry grondEntry = new GroundEntry(SpawnShapeType.SQUARE, new Vec3(0, 65, 0), new Vec3(128, 0, 128),
+                CommonDetailType.RANDOM,
+                new GroundEntry.DetailInfo(new ArrayList<>(), true, true, 0)
+        );
 
         config.add(SpawnConfigTag.SPAWN_ENTRY, grondEntry.toJson());
         return config;
@@ -42,11 +45,12 @@ public class DefaultSpawn {
     private static JsonObject generateDefaultSpawnConfig2() {
         JsonObject config = new JsonObject();
         config.addProperty(SpawnConfigTag.SPAWN_ID, 2);
-        config.addProperty(SpawnConfigTag.SPAWN_NAME, "Ground");
+        config.addProperty(SpawnConfigTag.SPAWN_NAME, "Plane");
         config.addProperty(SpawnConfigTag.SPAWN_COLOR, "#FFFFFF");
 
-        PlaneEntry planeEntry = new PlaneEntry(SpawnShapeType.SQUARE, new Vec3(0, 65, 0), new Vec3(128, 0, 128), CommonDetailType.RANDOM,
-                255, 2.5, true);
+        PlaneEntry planeEntry = new PlaneEntry(SpawnShapeType.SQUARE, new Vec3(0, 65, 0), new Vec3(128, 0, 128),
+                CommonDetailType.RANDOM,
+                new PlaneEntry.DetailInfo(255, 2.5, true));
 
         config.add(SpawnConfigTag.SPAWN_ENTRY, planeEntry.toJson());
         return config;

@@ -11,27 +11,6 @@ import java.util.function.Supplier;
 
 public class ShapeHelper {
 
-    public static Vec3 randomAdjustXZ(@NotNull Vec3 v, double range, Supplier<Float> random) {
-        double xOff = range * (random.get() - 0.5F) * 2;
-        double zOff = range * (random.get() - 0.5F) * 2;
-        return v.add(xOff, 0, zOff);
-    }
-
-    public static Vec3 randomAdjustXYZ(@NotNull Vec3 v, double range, Supplier<Float> random) {
-        double xOff = range * (random.get() - 0.5F) * 2;
-        double yOff = range * (random.get() - 0.5F) * 2;
-        double zOff = range * (random.get() - 0.5F) * 2;
-        return v.add(xOff, yOff, zOff);
-    }
-
-    public static Vec3 scaleXZ(@NotNull Vec3 v, double scale) {
-        return new Vec3(v.x * scale, v.y, v.z * scale);
-    }
-
-    public static Vec3 scaleXYZ(@NotNull Vec3 v, double scale) {
-        return v.scale(scale);
-    }
-
     @Nullable
     public static Vec3 getPreviousEndCenterById(int id) {
         IGameZone gameZone = ZoneManager.get().getZoneById(id);

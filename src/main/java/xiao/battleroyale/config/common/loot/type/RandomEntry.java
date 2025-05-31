@@ -41,12 +41,12 @@ public class RandomEntry implements ILootEntry {
 
     @Override
     public String getType() {
-        return "random";
+        return LootEntryTag.TYPE_RANDOM;
     }
 
     public static RandomEntry fromJson(JsonObject jsonObject) {
-        double chance = jsonObject.has("chance") ? jsonObject.getAsJsonPrimitive("chance").getAsDouble() : 0;
-        ILootEntry entry = jsonObject.has("entry") ? JsonUtils.deserializeLootEntry(jsonObject.getAsJsonObject("entry")) : null;
+        double chance = jsonObject.has(LootEntryTag.CHANCE) ? jsonObject.getAsJsonPrimitive(LootEntryTag.CHANCE).getAsDouble() : 0;
+        ILootEntry entry = jsonObject.has(LootEntryTag.ENTRY) ? JsonUtils.deserializeLootEntry(jsonObject.getAsJsonObject(LootEntryTag.ENTRY)) : null;
         return new RandomEntry(chance, entry);
     }
 
@@ -54,9 +54,9 @@ public class RandomEntry implements ILootEntry {
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
-        jsonObject.addProperty("chance", this.chance);
+        jsonObject.addProperty(LootEntryTag.CHANCE, this.chance);
         if (this.entry != null) {
-            jsonObject.add("entry", this.entry.toJson());
+            jsonObject.add(LootEntryTag.ENTRY, this.entry.toJson());
         }
         return jsonObject;
     }

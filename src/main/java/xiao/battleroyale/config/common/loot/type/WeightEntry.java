@@ -69,22 +69,22 @@ public class WeightEntry implements ILootEntry {
 
     @Override
     public String getType() {
-        return "weight";
+        return LootEntryTag.TYPE_WEIGHT;
     }
 
     public static WeightEntry fromJson(JsonObject jsonObject) {
         List<WeightedEntry> weightedEntries = new ArrayList<>();
-        if (jsonObject.has("entries")) {
-            JsonArray itemsArray = jsonObject.getAsJsonArray("entries");
+        if (jsonObject.has(LootEntryTag.ENTRIES)) {
+            JsonArray itemsArray = jsonObject.getAsJsonArray(LootEntryTag.ENTRIES);
             if (itemsArray != null) {
                 for (JsonElement element : itemsArray) {
                     if (!element.isJsonObject()) {
                         continue;
                     }
                     JsonObject itemObject = element.getAsJsonObject();
-                    double weight = itemObject.has("weight") ? itemObject.getAsJsonPrimitive("weight").getAsDouble() : 0;
-                    if (itemObject.has("entry")) {
-                        JsonObject entryObject = itemObject.getAsJsonObject("entry");
+                    double weight = itemObject.has(LootEntryTag.WEIGHT) ? itemObject.getAsJsonPrimitive(LootEntryTag.WEIGHT).getAsDouble() : 0;
+                    if (itemObject.has(LootEntryTag.ENTRY)) {
+                        JsonObject entryObject = itemObject.getAsJsonObject(LootEntryTag.ENTRY);
                         ILootEntry entry = JsonUtils.deserializeLootEntry(entryObject);
                         if (entry != null) {
                             weightedEntries.add(new WeightedEntry(weight, entry));
@@ -103,13 +103,13 @@ public class WeightEntry implements ILootEntry {
         JsonArray itemsArray = new JsonArray();
         for (WeightedEntry weightedEntry : weightedEntries) {
             JsonObject itemObject = new JsonObject();
-            itemObject.addProperty("weight", weightedEntry.weight);
+            itemObject.addProperty(LootEntryTag.WEIGHT, weightedEntry.weight);
             if (weightedEntry.entry != null) {
-                itemObject.add("entry", weightedEntry.entry.toJson());
+                itemObject.add(LootEntryTag.ENTRY, weightedEntry.entry.toJson());
             }
             itemsArray.add(itemObject);
         }
-        jsonObject.add("entries", itemsArray);
+        jsonObject.add(LootEntryTag.ENTRIES, itemsArray);
         return jsonObject;
     }
 }
