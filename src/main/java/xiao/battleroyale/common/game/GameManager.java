@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
+import xiao.battleroyale.common.game.loot.GameLootManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
@@ -109,12 +110,14 @@ public class GameManager extends AbstractGameManager {
         maxGameTime = brEntry.maxGameTime;
         recordStats = brEntry.recordGameStats;
 
+        GameLootManager.get().initGameConfig(serverLevel);
         GameruleManager.get().initGameConfig(serverLevel);
         SpawnManager.get().initGameConfig(serverLevel);
         TeamManager.get().initGameConfig(serverLevel);
         ZoneManager.get().initGameConfig(serverLevel);
 
-        if (GameruleManager.get().isPreparedForGame()
+        if (GameLootManager.get().isPreparedForGame() // 判定的优先级最低
+                && GameruleManager.get().isPreparedForGame()
                 && SpawnManager.get().isPreparedForGame()
                 && TeamManager.get().isPreparedForGame()
                 && ZoneManager.get().isPreparedForGame()) {
@@ -147,23 +150,24 @@ public class GameManager extends AbstractGameManager {
                 return;
             }
         }
+        GameLootManager.get().initGame(serverLevel);
         TeamManager.get().initGame(serverLevel);
         GameruleManager.get().initGame(serverLevel); // Gamerule会进行一次默认游戏模式切换
         SpawnManager.get().initGame(serverLevel); // SpawnManager会进行一次传送，放在TeamManager之后
         ZoneManager.get().initGame(serverLevel);
 
-        if (GameruleManager.get().isReady() && SpawnManager.get().isReady() && TeamManager.get().isReady() && ZoneManager.get().isReady()) {
+        if (isReadyForGame()) {
+            generateGameId(); // 手动刷新 gameId
             ready = true;
         }
     }
 
-    /**
-     * 是否之前准备好开始游戏，不代表后续能秒开
-     * @return 判定结果
-     */
-    @Override
-    public boolean isReady() {
-        return ready;
+    private boolean isReadyForGame() {
+        return GameLootManager.get().isReady()
+                && GameruleManager.get().isReady()
+                && SpawnManager.get().isReady()
+                && TeamManager.get().isReady()
+                && ZoneManager.get().isReady();
     }
 
     /**
@@ -181,7 +185,8 @@ public class GameManager extends AbstractGameManager {
             }
         }
         checkAndUpdateInvalidPlayer();
-        if (TeamManager.get().startGame(serverLevel) // 先执行 TeamManager 得到 StandingGamePlayers，并确保无队伍玩家均被清理
+        if (GameLootManager.get().startGame(serverLevel) // 判定的优先级最低
+                && TeamManager.get().startGame(serverLevel) // 先执行 TeamManager 得到 StandingGamePlayers，并确保无队伍玩家均被清理
                 && GameruleManager.get().startGame(serverLevel)
                 && ZoneManager.get().startGame(serverLevel)
                 && SpawnManager.get().startGame(serverLevel)) { // 最后执行 SpawnManager 先tick一次（传送玩家）
@@ -225,6 +230,8 @@ public class GameManager extends AbstractGameManager {
      */
     public void onGameTick(int gameTime) {
         checkAndUpdateInvalidPlayer();
+
+        GameLootManager.get().onGameTick(gameTime);
 
         TeamManager.get().onGameTick(gameTime);
         GameruleManager.get().onGameTick(gameTime);
@@ -323,6 +330,7 @@ public class GameManager extends AbstractGameManager {
      */
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
+        GameLootManager.get().stopGame(serverLevel);
         ZoneManager.get().stopGame(serverLevel);
         SpawnManager.get().stopGame(serverLevel);
         GameruleManager.get().stopGame(serverLevel);
