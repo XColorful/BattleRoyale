@@ -8,6 +8,9 @@
 
   "container.battleroyale.loot_spawner": "Loot Crate",
 
+  "death.attack.safezone": "%s died outside safe zone",
+  "death.attack.unsafezone": "%s died inside unsafe zone",
+
   "battleroyale.message.loot_spawner_config_switched": "Switched to loot config %s: %s",
   "battleroyale.message.entity_spawner_config_switched": "Switched to entity loot config %s: %s",
 

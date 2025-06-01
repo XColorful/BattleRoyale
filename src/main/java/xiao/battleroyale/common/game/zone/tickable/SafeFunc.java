@@ -8,6 +8,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.init.ModDamageTypes;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -26,12 +27,13 @@ public class SafeFunc extends AbstractSimpleFunc {
     @Override
     public void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
                      int gameTime, double progress, ISpatialZone spatialZone) {
-        for (GamePlayer gamePlayer : gamePlayerList) {
+        List<GamePlayer> playersToProcess = new ArrayList<>(gamePlayerList); // 遍历副本，不然玩家挂了就 ConcurrentModificationException
+        for (GamePlayer gamePlayer : playersToProcess) {
             if (!spatialZone.isWithinZone(gamePlayer.getLastPos(), progress)) {
                 if (gamePlayer.isActiveEntity()) { // 造成一次毒圈伤害
                     LivingEntity entity = (LivingEntity) serverLevel.getEntity(gamePlayer.getPlayerUUID());
                     if (entity != null && entity.isAlive()) {
-                        entity.hurt(ModDamageTypes.zone(serverLevel), (float) this.damage);
+                        entity.hurt(ModDamageTypes.safeZone(serverLevel), (float) this.damage);
                     }
                 } else {
                     gamePlayer.addZoneDamageTaken((float) this.damage);

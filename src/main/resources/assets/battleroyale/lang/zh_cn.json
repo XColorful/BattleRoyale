@@ -8,6 +8,9 @@
 
   "container.battleroyale.loot_spawner": "物资盒",
 
+  "death.attack.safezone": "%s 在安全区外被淘汰",
+  "death.attack.unsafezone": "%s 在不安全区内被淘汰",
+
   "battleroyale.message.loot_spawner_config_switched": "切换至物资刷新配置%s: %s",
   "battleroyale.message.entity_spawner_config_switched": "切换至实体刷新配置%s: %s",
 

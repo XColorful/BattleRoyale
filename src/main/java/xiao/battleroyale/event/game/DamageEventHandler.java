@@ -60,7 +60,7 @@ public class DamageEventHandler {
         DamageSource damageSource = event.getSource();
         float damageAmount = event.getAmount();
         damagedGamePlayer.addDamageTaken(damageAmount);
-        if (damageSource.is(ModDamageTypes.ZONE_DAMAGE)) {
+        if (damageSource.is(ModDamageTypes.SAFE_ZONE_DAMAGE) || damageSource.is(ModDamageTypes.UNSAFE_ZONE_DAMAGE)) {
             damagedGamePlayer.addZoneDamageTaken(damageAmount);
         }
 
