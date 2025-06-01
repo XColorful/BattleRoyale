@@ -15,26 +15,26 @@ import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultGamerule {
 
-    private static final String DEFAULT_FILE_NAME = "default.json";
+    private static final String DEFAULT_FILE_NAME = "example.json";
 
     public static void generateDefaultConfigs() {
         JsonArray gameruleConfigJson = new JsonArray();
+        gameruleConfigJson.add(generateDefaultGameruleConfig0());
         gameruleConfigJson.add(generateDefaultGameruleConfig1());
-        gameruleConfigJson.add(generateDefaultGameruleConfig2());
         writeJsonToFile(Paths.get(GameConfigManager.GAME_CONFIG_PATH, GameruleConfigManager.GAMERULE_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), gameruleConfigJson);
     }
 
-    private static JsonObject generateDefaultGameruleConfig1() {
+    private static JsonObject generateDefaultGameruleConfig0() {
         JsonObject config = new JsonObject();
-        config.addProperty(GameruleConfigTag.GAME_ID, 1);
-        config.addProperty(GameruleConfigTag.GAME_NAME, "Vanilla Battleroyale");
-        config.addProperty(GameruleConfigTag.GAME_COLOR, "#FFFFFF");
+        config.addProperty(GameruleConfigTag.GAME_ID, 0);
+        config.addProperty(GameruleConfigTag.GAME_NAME, "Adventure battleroyale");
+        config.addProperty(GameruleConfigTag.GAME_COLOR, "#FFFFFFAA");
 
         BattleroyaleEntry brEntry = new BattleroyaleEntry(100, 4, true, true, 12000,
-                new Vec3(128, 5, 128), new Vec3(10, 10, 10),
+                new Vec3(128, -60, 128), new Vec3(10, 10, 10),
                 true, false, true);
 
-        MinecraftEntry mcEntry = new MinecraftEntry(true, false, true,
+        MinecraftEntry mcEntry = new MinecraftEntry(true, false, false,
                 false, false, false,
                 false, false, false,
                 false, false, 5000);
@@ -45,19 +45,19 @@ public class DefaultGamerule {
         return config;
     }
 
-    private static JsonObject generateDefaultGameruleConfig2() {
+    private static JsonObject generateDefaultGameruleConfig1() {
         JsonObject config = new JsonObject();
-        config.addProperty(GameruleConfigTag.GAME_ID, 2);
-        config.addProperty(GameruleConfigTag.GAME_NAME, "Minecraft Battleroyale");
-        config.addProperty(GameruleConfigTag.GAME_COLOR, "#FFFFFF");
+        config.addProperty(GameruleConfigTag.GAME_ID, 1);
+        config.addProperty(GameruleConfigTag.GAME_NAME, "Survival battleroyale");
+        config.addProperty(GameruleConfigTag.GAME_COLOR, "#FFFFFFAA");
 
-        BattleroyaleEntry brEntry = new BattleroyaleEntry(100, 4, true, true, 12000,
-                new Vec3(128, 5, 128), new Vec3(10, 10, 10),
+        BattleroyaleEntry brEntry = new BattleroyaleEntry(100, 4, false, false, 12000,
+                new Vec3(128, -60, 128), new Vec3(10, 10, 10),
                 true, false, true);
 
-        MinecraftEntry mcEntry = new MinecraftEntry(false, false, false,
+        MinecraftEntry mcEntry = new MinecraftEntry(false, true, false,
                 true, true, true,
-                false, true, true,
+                true, true, true,
                 true, false, 5000);
 
         config.add(GameruleConfigTag.BATTLEROYALE_ENTRY, brEntry.toJson());

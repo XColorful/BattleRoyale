@@ -26,11 +26,6 @@ public class UnsafeFunc extends AbstractSimpleFunc {
     }
 
     @Override
-    public boolean isReady() {
-        return false;
-    }
-
-    @Override
     public void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
                      int gameTime, double progress, ISpatialZone spatialZone) {
         for (GamePlayer gamePlayer : gamePlayerList) {
@@ -52,13 +47,4 @@ public class UnsafeFunc extends AbstractSimpleFunc {
         return ZoneFuncType.UNSAFE;
     }
 
-    @Override
-    public double getDamage() {
-        return 0;
-    }
-
-    @Override
-    public double getShapeProgress(int currentGameTime, int zoneDelay) {
-        return 0;
-    }
 }

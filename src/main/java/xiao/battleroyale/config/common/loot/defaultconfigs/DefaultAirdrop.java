@@ -17,7 +17,7 @@ import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultAirdrop{
 
-    private static final String DEFAULT_FILE_NAME = "default.json";
+    private static final String DEFAULT_FILE_NAME = "example.json";
 
     public static void generateDefaultConfigs() {
         JsonArray airdropConfigsJson = new JsonArray();

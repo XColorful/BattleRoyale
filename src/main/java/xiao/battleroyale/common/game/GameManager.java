@@ -44,9 +44,9 @@ public class GameManager extends AbstractGameManager {
     private ServerLevel serverLevel;
 
     // config
-    private int gameruleConfigId = 1;
-    private int spawnConfigId = 1;
-    private int botConfigId = 1;
+    private int gameruleConfigId = 0;
+    private int spawnConfigId = 0;
+    private int botConfigId = 0;
     private int maxGameTime; // 最大游戏持续时间，配置项
     private boolean recordStats; // 是否在游戏结束后记录日志，配置项
     private int maxInvalidTime = 60; // 最大离线/未加载时间，过期强制淘汰，配置项

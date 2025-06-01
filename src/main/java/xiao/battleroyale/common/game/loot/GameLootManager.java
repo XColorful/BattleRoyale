@@ -70,12 +70,12 @@ public class GameLootManager extends AbstractGameManager {
     public void initGame(ServerLevel serverLevel) {
         clear(); // 确保每次游戏开始时清空所有状态
         this.ready = true;
-        this.lastEvictionCheckTick = serverLevel.getGameTime(); // 初始化清理时间
-        this.lastFullBFSTick = serverLevel.getGameTime(); // 初始化全量BFS时间
+        int gameTime = GameManager.get().getGameTime();
+        this.lastEvictionCheckTick = gameTime; // 初始化清理时间
+        this.lastFullBFSTick = gameTime; // 初始化全量BFS时间
 
         // 游戏启动时，强制进行一次全量BFS初始化，确保玩家初始区域战利品刷新
         initializeLootForPlayers(serverLevel);
-        BattleRoyale.LOGGER.info("GameLootManager initialized. Game time: {}", serverLevel.getGameTime());
     }
 
     @Override
@@ -99,7 +99,6 @@ public class GameLootManager extends AbstractGameManager {
 
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel == null) {
-            BattleRoyale.LOGGER.warn("ServerLevel is null in GameLootManager.onGameTick, skipping loot management.");
             return;
         }
 
@@ -111,7 +110,6 @@ public class GameLootManager extends AbstractGameManager {
         int nextFullBFSIntervalTicks = estimatedTicksForFullBFS * 2;
 
         if (gameTime - lastFullBFSTick >= nextFullBFSIntervalTicks) {
-            BattleRoyale.LOGGER.info("Executing full BFS loot refresh for all player zones. Estimated chunks: {}, estimated ticks: {}", chunksForFullBFS, estimatedTicksForFullBFS);
             initializeLootForPlayers(serverLevel); // 重新触发全量BFS逻辑
             lastFullBFSTick = gameTime;
         }
@@ -124,7 +122,7 @@ public class GameLootManager extends AbstractGameManager {
 
         // 4. 定时清理过期或超出容量限制的已处理区块记录
         if (gameTime - lastEvictionCheckTick >= evictionIntervalTicks) {
-            cleanUpProcessedChunks(serverLevel.getGameTime());
+            cleanUpProcessedChunks(gameTime);
             lastEvictionCheckTick = gameTime;
         }
     }
@@ -134,7 +132,6 @@ public class GameLootManager extends AbstractGameManager {
         clear(); // 清理所有内部状态
         this.prepared = false;
         this.ready = false;
-        BattleRoyale.LOGGER.info("GameLootManager stopped.");
     }
 
     /**
@@ -149,7 +146,6 @@ public class GameLootManager extends AbstractGameManager {
         this.lastEvictionCheckTick = 0;
         this.lastFullBFSTick = 0;
         this.lootAreaCalculator.clearCache(null); // 清理所有缓存
-        BattleRoyale.LOGGER.info("GameLootManager internal state cleared.");
     }
 
     /**
@@ -161,7 +157,6 @@ public class GameLootManager extends AbstractGameManager {
         // 获取正在游戏中且未被淘汰的玩家列表
         List<GamePlayer> standingGamePlayers = GameManager.get().getStandingGamePlayers();
         if (standingGamePlayers.isEmpty()) {
-            BattleRoyale.LOGGER.info("No standing game players found for loot initialization.");
             return;
         }
 
@@ -177,7 +172,7 @@ public class GameLootManager extends AbstractGameManager {
                 playerLastKnownSimulationDistance.put(player.getUUID(), simulationDistance);
 
                 // 对每个玩家的当前位置进行全量BFS扩散，并将相关区块加入待处理队列
-                performFullBFSForPlayerArea(playerChunk, simulationDistance, serverLevel.getGameTime());
+                performFullBFSForPlayerArea(playerChunk, simulationDistance, GameManager.get().getGameTime());
             } else {
                 BattleRoyale.LOGGER.debug("Skipping loot initialization for game player {} (offline or not in current level).", gamePlayer.getPlayerName());
             }
@@ -185,7 +180,6 @@ public class GameLootManager extends AbstractGameManager {
         // 清理已下线或已淘汰玩家的旧记录
         playerLastKnownChunk.keySet().retainAll(currentActivePlayerUUIDs);
         playerLastKnownSimulationDistance.keySet().retainAll(currentActivePlayerUUIDs);
-        BattleRoyale.LOGGER.info("Completed loot initialization for {} active players. Chunks in queue: {}", currentActivePlayerUUIDs.size(), chunksToProcessQueue.size());
     }
 
     /**
@@ -233,7 +227,6 @@ public class GameLootManager extends AbstractGameManager {
                 }
             }
         }
-        BattleRoyale.LOGGER.info("Performed full BFS for player region {}. Chunks added to queue: {}", centerChunk, chunksToProcessQueue.size());
     }
 
     /**
@@ -281,11 +274,9 @@ public class GameLootManager extends AbstractGameManager {
                                 addChunkToProcessingQueue(targetChunk, currentSimulationDistance, gameTime);
                             }
                         }
-                        BattleRoyale.LOGGER.info("Player moved incrementally to {}. Added {} new chunks to queue. Total queue size: {}", currentChunk, incrementalOffsets.size(), chunksToProcessQueue.size());
 
                     } else {
                         // 玩家移动超出了8区块范围，视为一次“大范围移动”，触发一次全量BFS
-                        BattleRoyale.LOGGER.info("Player moved beyond incremental range to {}, triggering full BFS.", currentChunk);
                         performFullBFSForPlayerArea(currentChunk, currentSimulationDistance, gameTime);
                     }
                     playerLastKnownChunk.put(player.getUUID(), currentChunk); // 更新玩家最后已知位置
@@ -309,7 +300,6 @@ public class GameLootManager extends AbstractGameManager {
         if (processedChunksTracker.add(chunkPos)) {
             chunksToProcessQueue.offer(chunkPos);
             processedChunkInfoMap.put(chunkPos, new ProcessedChunkInfo(chunkPos, gameTime, simulationDistance));
-            BattleRoyale.LOGGER.debug("Added new chunk {} to processing queue. Queue size: {}", chunkPos, chunksToProcessQueue.size());
         } else {
             // 如果已存在，检查是否需要更新信息并重新入队（例如模拟距离增加）
             ProcessedChunkInfo existingInfo = processedChunkInfoMap.get(chunkPos);
@@ -317,11 +307,9 @@ public class GameLootManager extends AbstractGameManager {
                 // 模拟距离增加了，即使已经处理过，也可能需要重新刷新战利品
                 processedChunkInfoMap.put(chunkPos, new ProcessedChunkInfo(chunkPos, gameTime, simulationDistance)); // 更新信息
                 chunksToProcessQueue.offer(chunkPos); // 再次入队，让 LootGenerator 重新检查
-                BattleRoyale.LOGGER.debug("Re-added chunk {} to queue due to increased simulation distance. Queue size: {}", chunkPos, chunksToProcessQueue.size());
             } else if (existingInfo != null) {
                 // 只是更新访问时间，以便 LRU 淘汰机制更好地工作
                 existingInfo.setProcessingTime(gameTime);
-                BattleRoyale.LOGGER.trace("Updated processing time for chunk {}.", chunkPos);
             }
         }
     }
@@ -338,7 +326,6 @@ public class GameLootManager extends AbstractGameManager {
                 // 调用 LootGenerator 刷新区块内的战利品
                 int refreshedCount = LootGenerator.refreshLootInChunk(serverLevel, chunkPos, GameManager.get().getGameId());
                 processedThisTick++;
-                BattleRoyale.LOGGER.info("Processed chunk {}. Refreshed {} loot items. Queue remaining: {}", chunkPos, refreshedCount, chunksToProcessQueue.size());
             }
         }
     }
@@ -362,7 +349,6 @@ public class GameLootManager extends AbstractGameManager {
             if (ticksToSeconds > processedChunkRetentionTimeSeconds) {
                 timeIterator.remove();
                 processedChunksTracker.remove(chunkPos);
-                BattleRoyale.LOGGER.debug("Removed old chunk {} from processed set (time expired).", chunkPos);
             }
         }
 
@@ -382,10 +368,8 @@ public class GameLootManager extends AbstractGameManager {
             if(oldestChunk != null) {
                 processedChunksTracker.remove(oldestChunk);
                 processedChunkInfoMap.remove(oldestChunk);
-                BattleRoyale.LOGGER.debug("Removed old chunk {} from processed set (exceeded capacity limit).", oldestChunk);
             } else {
                 // 理论上不应发生：processedChunksTracker.size() > targetCapacity 但 processedChunkInfoMap 为空
-                BattleRoyale.LOGGER.warn("Attempted to clean up processed chunks, but no oldest chunk found despite exceeding capacity.");
                 break;
             }
         }

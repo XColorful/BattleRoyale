@@ -40,10 +40,6 @@ public class CircleShape extends AbstractSimpleShape {
 
     @Override
     protected boolean additionalCalculationCheck() {
-        if (startCenter == null || startDimension == null || endCenter == null || endDimension == null) {
-            return false;
-        }
-
         if (startDimension.x != startDimension.z) {
             BattleRoyale.LOGGER.warn("Unequal circle shape start dimension (x: {}, z:{}), defaulting to x", startDimension.x, startDimension.z);
             startDimension = new Vec3(startDimension.x, startDimension.y, startDimension.x);

@@ -15,7 +15,7 @@ import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultSecretRoom{
 
-    private static final String DEFAULT_FILE_NAME = "default.json";
+    private static final String DEFAULT_FILE_NAME = "example.json";
 
     public static void generateDefaultConfigs() {
         JsonArray secretRoomConfigsJson = new JsonArray();
@@ -25,8 +25,8 @@ public class DefaultSecretRoom{
 
     private static JsonObject generateDefaultSecretRoom() {
         JsonObject config = new JsonObject();
-        config.addProperty(LootConfigTag.LOOT_ID, 401);
-        config.addProperty(LootConfigTag.LOOT_NAME, "Treasure trove");
+        config.addProperty(LootConfigTag.LOOT_ID, 0);
+        config.addProperty(LootConfigTag.LOOT_NAME, "Treasure trove (Not implemented yet)"); // TODO Secret room配置
         config.addProperty(LootConfigTag.LOOT_COLOR, "#00FFFF");
 
         ILootEntry multiEntry = new MultiEntry(Arrays.asList(

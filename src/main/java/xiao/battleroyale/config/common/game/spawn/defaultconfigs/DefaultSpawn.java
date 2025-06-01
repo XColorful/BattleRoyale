@@ -13,29 +13,52 @@ import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultSpawn {
 
-    private static final String DEFAULT_FILE_NAME = "default.json";
+    private static final String DEFAULT_FILE_NAME = "example.json";
 
     public static void generateDefaultConfigs() {
         JsonArray spawnConfigJson = new JsonArray();
+        spawnConfigJson.add(generateDefaultSpawnConfig0());
         spawnConfigJson.add(generateDefaultSpawnConfig1());
         spawnConfigJson.add(generateDefaultSpawnConfig2());
         writeJsonToFile(Paths.get(GameConfigManager.GAME_CONFIG_PATH, SpawnConfigManager.SPAWN_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), spawnConfigJson);
     }
 
+    private static JsonObject generateDefaultSpawnConfig0() {
+        JsonObject config = new JsonObject();
+        config.addProperty(SpawnConfigTag.SPAWN_ID, 0);
+        config.addProperty(SpawnConfigTag.SPAWN_NAME, "Random ground spawn");
+        config.addProperty(SpawnConfigTag.SPAWN_COLOR, "#FFFFFFAA");
+
+        GroundEntry grondEntry = new GroundEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
+                CommonDetailType.RANDOM,
+                new GroundEntry.DetailInfo(new ArrayList<>(), false, true, 0)
+        );
+
+        config.add(SpawnConfigTag.SPAWN_ENTRY, grondEntry.toJson());
+        return config;
+    }
+
     private static JsonObject generateDefaultSpawnConfig1() {
         JsonObject config = new JsonObject();
         config.addProperty(SpawnConfigTag.SPAWN_ID, 1);
-        config.addProperty(SpawnConfigTag.SPAWN_NAME, "Ground");
-        config.addProperty(SpawnConfigTag.SPAWN_COLOR, "#FFFFFF");
+        config.addProperty(SpawnConfigTag.SPAWN_NAME, "Fixed ground spawn");
+        config.addProperty(SpawnConfigTag.SPAWN_COLOR, "#FFFFFFAA");
 
-        GroundEntry grondEntry = new GroundEntry(SpawnShapeType.SQUARE, new Vec3(0, 65, 0), new Vec3(128, 0, 128),
-                CommonDetailType.RANDOM,
-                new GroundEntry.DetailInfo(new ArrayList<>(), true, true, 0)
+        GroundEntry grondEntry = new GroundEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
+                CommonDetailType.FIXED,
+                new GroundEntry.DetailInfo(Arrays.asList(
+                        new Vec3(0,-60,0),
+                        new Vec3(-50,-60, -50),
+                        new Vec3(50, -60, -50),
+                        new Vec3(50, -60, -50),
+                        new Vec3(-50, -60, 50)),
+                        true, true, 0)
         );
 
         config.add(SpawnConfigTag.SPAWN_ENTRY, grondEntry.toJson());
@@ -45,7 +68,7 @@ public class DefaultSpawn {
     private static JsonObject generateDefaultSpawnConfig2() {
         JsonObject config = new JsonObject();
         config.addProperty(SpawnConfigTag.SPAWN_ID, 2);
-        config.addProperty(SpawnConfigTag.SPAWN_NAME, "Plane");
+        config.addProperty(SpawnConfigTag.SPAWN_NAME, "Plane spawn (Not implemented)"); // TODO Plane spawn 配置
         config.addProperty(SpawnConfigTag.SPAWN_COLOR, "#FFFFFF");
 
         PlaneEntry planeEntry = new PlaneEntry(SpawnShapeType.SQUARE, new Vec3(0, 65, 0), new Vec3(128, 0, 128),
