@@ -1,4 +1,5 @@
 # BattleRoyale
+[![1:1艾伦格](pic/Erangle%20Pochinki.png)](https://space.bilibili.com/300364311)
 
 本模组旨在打造拥有**高度自定义的圈型和玩法机制**，支持与任意其他玩法混合的大逃杀体验。其玩法**灵感来源于PUBG**，同时也是我的世界1.12.2模组 PUBGMC mod 的**高版本增强版**。
 
