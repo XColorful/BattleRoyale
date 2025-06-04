@@ -20,7 +20,7 @@ public class GamePlayer {
     private GameTeam team; // 所属队伍
     private boolean isLeader = false; // 是否是队伍队长
 
-    private boolean isActiveEntity = false; // 是否已加载 (即玩家是否在线并加载在世界中)
+    private boolean isActiveEntity = true; // 是否已加载 (即玩家是否在线并加载在世界中)，该项在GameManager::initGame之后不持续更新
     private Vec3 lastPos = Vec3.ZERO; // 最后出现的位置
     private float zoneDamageTaken; // 记录的毒圈伤害
     private int invalidTime; // 额外检查，防止重新加载区块的时候圈已经没了（模组支持自定义圈），超过invalidTime则清除，同时应用于玩家离线重连

@@ -1,11 +1,14 @@
 package xiao.battleroyale.network;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.network.message.ClientMessageTeamInfo;
 import xiao.battleroyale.network.message.ClientMessageZoneInfo;
 
 import java.util.Optional;
@@ -32,9 +35,24 @@ public class GameInfoHandler {
                 (message, contextSupplier) -> message.handle(message, contextSupplier),
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT)
         );
+        GAME_CHANNEL.registerMessage(
+                ID_COUNT.getAndIncrement(),
+                ClientMessageTeamInfo.class,
+                (message, buffer) -> message.encode(message, buffer),
+                ClientMessageTeamInfo::decode,
+                (message, contextSupplier) -> message.handle(message, contextSupplier),
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        );
     }
 
     public static void sendToAllPlayers(Object message) {
         GAME_CHANNEL.send(PacketDistributor.ALL.noArg(), message);
+    }
+
+    public static void sendToPlayer(@NotNull ServerPlayer player, Object message) {
+        GAME_CHANNEL.send(
+                PacketDistributor.PLAYER.with(() -> player),
+                message
+        );
     }
 }

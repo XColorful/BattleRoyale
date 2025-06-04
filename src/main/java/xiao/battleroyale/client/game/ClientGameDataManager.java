@@ -1,6 +1,7 @@
 package xiao.battleroyale.client.game;
 
 import net.minecraft.nbt.CompoundTag;
+import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.ClientZoneData;
 
 import java.util.Map;
@@ -11,6 +12,7 @@ public class ClientGameDataManager {
     private static ClientGameDataManager instance;
 
     private final Map<Integer, ClientZoneData> activeZones = new ConcurrentHashMap<>();
+    private final ClientTeamData teamData = new ClientTeamData();
 
     private ClientGameDataManager() {}
 
@@ -37,6 +39,14 @@ public class ClientGameDataManager {
                 existingData.updateFromNbt(zoneNbt);
                 return existingData;
             });
+        }
+    }
+
+    public void updateTeamInfo(CompoundTag syncPacketNbt) {
+        if (syncPacketNbt.isEmpty()) { // 空NBT表示置空
+            teamData.clear();
+        } else {
+            teamData.updateFromNbt(syncPacketNbt);
         }
     }
 

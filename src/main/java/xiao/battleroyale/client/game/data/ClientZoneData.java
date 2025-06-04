@@ -3,9 +3,10 @@ package xiao.battleroyale.client.game.data;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.game.zone.gamezone.GameTag;
+import xiao.battleroyale.api.game.zone.gamezone.GameZoneTag;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
+import xiao.battleroyale.util.NBTUtils;
 
 import java.awt.*;
 
@@ -28,44 +29,27 @@ public class ClientZoneData {
     }
 
     public void updateFromNbt(CompoundTag nbt) {
-        this.name = nbt.getString(GameTag.ZONE_NAME);
-        String colorHex = nbt.getString(GameTag.ZONE_COLOR);
-        try {
-            // 尝试解析带透明度的颜色字符串
-            if (colorHex.length() == 9 && colorHex.startsWith("#")) { // #RRGGBBAA
-                int rgba = (int) Long.parseLong(colorHex.substring(1), 16); // 解析整个8位hex
-                int r = (rgba >> 24) & 0xFF;
-                int g = (rgba >> 16) & 0xFF;
-                int b = (rgba >> 8) & 0xFF;
-                int a = rgba & 0xFF;
-                this.color = new Color(r, g, b, a);
+        this.name = nbt.getString(GameZoneTag.ZONE_NAME);
+        this.color = NBTUtils.parseColorFromString(nbt.getString(GameZoneTag.ZONE_COLOR));
 
-            } else { // 假设是 #RRGGBB
-                this.color = Color.decode(colorHex); // 默认 Alpha 为 255
-            }
-        } catch (NumberFormatException e) {
-            BattleRoyale.LOGGER.warn("Failed to decode zone color hex: {}, reason: {}", colorHex, e.getMessage());
-            this.color = Color.WHITE;
-        }
-
-        String funcTypeName = nbt.getString(GameTag.FUNC);
+        String funcTypeName = nbt.getString(GameZoneTag.FUNC);
         this.funcType = ZoneFuncType.fromName(funcTypeName);
         if (this.funcType == null) {
             BattleRoyale.LOGGER.warn("Unknown ZoneFuncType: {}", funcTypeName);
         }
 
-        String shapeTypeName = nbt.getString(GameTag.SHAPE);
+        String shapeTypeName = nbt.getString(GameZoneTag.SHAPE);
         this.shapeType = ZoneShapeType.fromName(shapeTypeName);
         if (this.shapeType == null) {
             BattleRoyale.LOGGER.warn("Unknown ZoneShapeType: {}", shapeTypeName);
         }
 
-        CompoundTag centerTag = nbt.getCompound(GameTag.CENTER);
+        CompoundTag centerTag = nbt.getCompound(GameZoneTag.CENTER);
         this.center = new Vec3(centerTag.getDouble("x"), centerTag.getDouble("y"), centerTag.getDouble("z"));
 
-        CompoundTag dimTag = nbt.getCompound(GameTag.DIMENSION);
+        CompoundTag dimTag = nbt.getCompound(GameZoneTag.DIMENSION);
         this.dimension = new Vec3(dimTag.getDouble("x"), dimTag.getDouble("y"), dimTag.getDouble("z"));
 
-        this.progress = nbt.getDouble(GameTag.PROGRESS);
+        this.progress = nbt.getDouble(GameZoneTag.PROGRESS);
     }
 }

@@ -22,7 +22,7 @@ public class DamageEventHandler {
 
     private DamageEventHandler() {}
 
-    public static DamageEventHandler getInstance() {
+    public static DamageEventHandler get() {
         if (instance == null) {
             instance = new DamageEventHandler();
         }
@@ -30,11 +30,11 @@ public class DamageEventHandler {
     }
 
     public void register() {
-        MinecraftForge.EVENT_BUS.register(getInstance());
+        MinecraftForge.EVENT_BUS.register(get());
     }
 
     public void unregister() {
-        MinecraftForge.EVENT_BUS.unregister(getInstance());
+        MinecraftForge.EVENT_BUS.unregister(get());
         instance = null;
     }
 

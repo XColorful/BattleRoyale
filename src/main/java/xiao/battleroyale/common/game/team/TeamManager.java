@@ -144,6 +144,9 @@ public class TeamManager extends AbstractGameManager {
         ;
     }
 
+    /**
+     * 防止游戏开始时有意外的无队伍GamePlayer
+     */
     private void removeNoTeamPlayer() {
         List<GamePlayer> noTeamPlayers = new ArrayList<>();
         for (GamePlayer gamePlayer : teamData.getGamePlayersList()) {
@@ -153,7 +156,9 @@ public class TeamManager extends AbstractGameManager {
         }
         if (!noTeamPlayers.isEmpty()) {
             for (GamePlayer noTeamPlayer : noTeamPlayers) {
-                teamData.removePlayer(noTeamPlayer);
+                if (teamData.removePlayer(noTeamPlayer)) {
+                    GameManager.get().addLeavedMember(noTeamPlayer.getPlayerUUID()); // 防止游戏开始时无队伍的GamePlayer
+                }
             }
         }
     }
@@ -292,6 +297,7 @@ public class TeamManager extends AbstractGameManager {
             if (teamData.addPlayerToTeam(gamePlayer, targetTeam)) {
                 ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.joined_to_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.GREEN));
                 notifyPlayerJoinTeam(gamePlayer); // 通知队伍成员有新玩家加入
+                GameManager.get().addChangedTeamInfo(targetTeam.getGameTeamId()); // 玩家加入队伍，通知更新队伍HUD
                 return;
             }
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.failed_to_join_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
@@ -323,7 +329,8 @@ public class TeamManager extends AbstractGameManager {
     }
 
     public void leaveTeam(ServerPlayer player) {
-        GamePlayer gamePlayer = teamData.getGamePlayerByUUID(player.getUUID());
+        UUID playerUUID = player.getUUID();
+        GamePlayer gamePlayer = teamData.getGamePlayerByUUID(playerUUID);
         if (gamePlayer == null) {
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
             return;
@@ -331,7 +338,7 @@ public class TeamManager extends AbstractGameManager {
 
         forceEliminatePlayerFromTeam(player); // 游戏进行时生效，退出即被淘汰，不在游戏运行时则自动跳过
 
-        if (removePlayerFromTeam(player.getUUID())) { // 不在游戏时生效，手动离开当前队伍
+        if (removePlayerFromTeam(playerUUID)) { // 不在游戏时生效，手动离开当前队伍
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.GREEN));
         }
     }
@@ -714,7 +721,19 @@ public class TeamManager extends AbstractGameManager {
             return false;
         }
 
-        return teamData.removePlayer(playerId);
+        GamePlayer gamePlayer = teamData.getGamePlayerByUUID(playerId);
+        if (gamePlayer == null) {
+            return false;
+        }
+        int teamId = gamePlayer.getGameTeamId();
+
+        if (teamData.removePlayer(playerId)) {
+            GameManager.get().addLeavedMember(playerId); // 离队后通知不渲染队伍HUD
+            GameManager.get().addChangedTeamInfo(teamId); // 离队后通知队伍成员更新队伍HUD
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -739,6 +758,7 @@ public class TeamManager extends AbstractGameManager {
         }
         GamePlayer gamePlayer = new GamePlayer(player.getUUID(), player.getName().getString(), newPlayerId, false, newTeam);
         if (teamData.addPlayerToTeam(gamePlayer, newTeam)) {
+            GameManager.get().addChangedTeamInfo(newTeam.getGameTeamId()); // 新建队伍并加入，通知更新队伍HUD
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.joined_to_team", teamId).withStyle(ChatFormatting.GREEN));
             return true;
         }
@@ -799,6 +819,9 @@ public class TeamManager extends AbstractGameManager {
     public List<GameTeam> getGameTeamsList() {
         return teamData.getGameTeamsList();
     }
+
+    @Nullable
+    public GameTeam getGameTeamById(int teamId) { return teamData.getGameTeamById(teamId); }
 
     public @Nullable GamePlayer getGamePlayerByUUID(UUID playerId) {
         return teamData.getGamePlayerByUUID(playerId);

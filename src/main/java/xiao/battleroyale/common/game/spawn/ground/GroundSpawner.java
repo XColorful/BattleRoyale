@@ -98,8 +98,9 @@ public class GroundSpawner extends AbstractSimpleSpawner {
      */
     @Override
     public void tick(int gameTime, List<GameTeam> gameTeams) {
+        int cnt = 1;
         for (Vec3 v : spawnPos) {
-            BattleRoyale.LOGGER.info("SpawnPos: {}", v);
+            BattleRoyale.LOGGER.info("SpawnPos {}: {}", cnt++, v);
         }
 
         ServerLevel serverLevel = GameManager.get().getServerLevel();

@@ -21,10 +21,7 @@ import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
-import xiao.battleroyale.event.game.DamageEventHandler;
-import xiao.battleroyale.event.game.LogEventHandler;
-import xiao.battleroyale.event.game.LoopEventHandler;
-import xiao.battleroyale.event.game.PlayerEventHandler;
+import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.ArrayList;
@@ -122,8 +119,8 @@ public class GameManager extends AbstractGameManager {
                 && TeamManager.get().isPreparedForGame()
                 && ZoneManager.get().isPreparedForGame()) {
             this.prepared = true;
-            // 注册登录事件
-            LogEventHandler.getInstance().register(); // 后续玩家登录可根据配置直接加入队伍
+            // 注册事件
+            LogEventHandler.get().register(); // 后续玩家登录可根据配置直接加入队伍
         } else {
             this.prepared = false;
         }
@@ -131,6 +128,7 @@ public class GameManager extends AbstractGameManager {
 
     public int getPlayerLimit() { return TeamManager.get().getPlayerLimit(); }
     public List<GameTeam> getGameTeams() { return TeamManager.get().getGameTeamsList(); }
+    public @Nullable GameTeam getGameTeamById(int teamId) { return TeamManager.get().getGameTeamById(teamId); }
     public List<GamePlayer> getGamePlayers() { return TeamManager.get().getGamePlayersList(); }
     public List<GamePlayer> getStandingGamePlayers() { return TeamManager.get().getStandingGamePlayersList(); }
 
@@ -150,6 +148,10 @@ public class GameManager extends AbstractGameManager {
                 return;
             }
         }
+        // 同步信息
+        this.syncData.initGame();
+        SyncEventHandler.get().register();
+
         GameLootManager.get().initGame(serverLevel);
         TeamManager.get().initGame(serverLevel);
         GameruleManager.get().initGame(serverLevel); // Gamerule会进行一次默认游戏模式切换
@@ -195,10 +197,10 @@ public class GameManager extends AbstractGameManager {
             this.ready = false;
             this.gameTime = 0; // 游戏结束后不手动重置
             // 注册事件监听
-            DamageEventHandler.getInstance().register();
-            LoopEventHandler.getInstance().register();
-            PlayerEventHandler.getInstance().register();
-            // 开始同步信息
+            DamageEventHandler.get().register();
+            LoopEventHandler.get().register();
+            PlayerEventHandler.get().register();
+            // 重置同步信息
             this.syncData.startGame();
             return true;
         } else {
@@ -237,7 +239,9 @@ public class GameManager extends AbstractGameManager {
         GameruleManager.get().onGameTick(gameTime);
         SpawnManager.get().onGameTick(gameTime);
         ZoneManager.get().onGameTick(gameTime);
+    }
 
+    public void syncInfo() {
         this.syncData.syncInfo(gameTime);
     }
 
@@ -339,10 +343,11 @@ public class GameManager extends AbstractGameManager {
         this.inGame = false;
         this.ready = false;
         // 取消事件监听
-        DamageEventHandler.getInstance().unregister();
-        LoopEventHandler.getInstance().unregister();
-        PlayerEventHandler.getInstance().unregister();
-        LogEventHandler.getInstance().unregister();
+        DamageEventHandler.get().unregister();
+        LoopEventHandler.get().unregister();
+        PlayerEventHandler.get().unregister();
+        LogEventHandler.get().unregister();
+        SyncEventHandler.get().unregister();
         // 清空同步信息
         this.syncData.endGame();
         this.syncData.clear();
@@ -432,6 +437,16 @@ public class GameManager extends AbstractGameManager {
     }
 
     public void addZoneInfo(int id, @Nullable CompoundTag zoneInfo) { this.syncData.addZoneInfo(id, zoneInfo); }
+    public void addChangedTeamInfo(int teamId) {
+        GameTeam gameTeam = TeamManager.get().getGameTeamById(teamId);
+        if (gameTeam != null) {
+            for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) {
+                this.syncData.deleteLeavedMember(gamePlayer.getPlayerUUID());
+            }
+        }
+        this.syncData.addChangedTeam(teamId);
+    }
+    public void addLeavedMember(UUID playerUUID) { this.syncData.addLeavedMember(playerUUID); }
 
     public int getGameruleConfigId() { return gameruleConfigId; }
     public int getSpawnConfigId() { return spawnConfigId; }

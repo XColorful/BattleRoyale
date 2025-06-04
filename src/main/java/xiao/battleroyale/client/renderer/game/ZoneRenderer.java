@@ -36,9 +36,7 @@ public class ZoneRenderer {
                 .setTransparencyState(new RenderStateShard.TransparencyStateShard("translucent_transparency", () -> {
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc(); // 对应TRANSLUCENT_TRANSPARENCY的默认混合函数
-                }, () -> {
-                    RenderSystem.disableBlend();
-                })) // 手动 new
+                }, RenderSystem::disableBlend))
                 .setDepthTestState(new RenderStateShard.DepthTestStateShard("always", 519)) // 手动 new，对应 NO_DEPTH_TEST
                 .setCullState(new RenderStateShard.CullStateShard(false)) // 手动 new，对应 NO_CULL
                 .setLightmapState(new RenderStateShard.LightmapStateShard(false)) // 手动 new，对应 NO_LIGHTMAP
