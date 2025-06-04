@@ -103,6 +103,8 @@ public class TeamData extends AbstractGameManagerData {
         if (locked) {
             unlockData();
         }
+        standingGamePlayersList.clear();
+        standingGamePlayers.clear();
     }
 
     private boolean isTeamIdValid(int teamId) {
