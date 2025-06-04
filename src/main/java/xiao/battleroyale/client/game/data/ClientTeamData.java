@@ -12,6 +12,7 @@ import xiao.battleroyale.util.NBTUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ClientTeamData {
@@ -21,7 +22,7 @@ public class ClientTeamData {
     public final List<TeamMemberInfo> teamMemberInfoList = new ArrayList<>();
     public boolean inTeam;
 
-    private static final String DEFAULT_COLOR = "#000000";
+    private static final String DEFAULT_COLOR = "#000000FF";
     public static final int NO_TEAM = 0;
     public static final double OFFLINE = -1;
     public static final double ELIMINATED = -2;
@@ -43,6 +44,7 @@ public class ClientTeamData {
                     memberTag.getDouble(TeamTag.MEMBER_HEALTH)
             ));
         }
+        teamMemberInfoList.sort(Comparator.comparingInt(TeamMemberInfo::playerId));
 
         this.inTeam = isInTeam();
     }

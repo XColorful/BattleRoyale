@@ -51,7 +51,11 @@ public class ClientGameDataManager {
     }
 
     public Map<Integer, ClientZoneData> getActiveZones() {
-        return activeZones;
+        return this.activeZones;
+    }
+
+    public ClientTeamData getTeamData() {
+        return this.teamData;
     }
 
     public void clear() {

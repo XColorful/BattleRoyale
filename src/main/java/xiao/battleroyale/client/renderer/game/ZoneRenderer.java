@@ -16,8 +16,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientZoneData;
@@ -26,8 +26,18 @@ import xiao.battleroyale.client.game.data.ClientZoneData;
 public class ZoneRenderer {
 
     private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(BattleRoyale.MOD_ID, "textures/white.png");
-
     private static final RenderType CUSTOM_ZONE_RENDER_TYPE = createRenderType();
+
+    private static ZoneRenderer instance;
+
+    private ZoneRenderer() {}
+
+    public static ZoneRenderer get() {
+        if (instance == null) {
+            instance = new ZoneRenderer();
+        }
+        return instance;
+    }
 
     private static RenderType createRenderType() {
         RenderType.CompositeState compositeState = RenderType.CompositeState.builder()
@@ -50,15 +60,17 @@ public class ZoneRenderer {
     }
 
     public static void register() {
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new ZoneRenderer());
+        MinecraftForge.EVENT_BUS.register(ZoneRenderer.get());
     }
 
-    @SubscribeEvent
     public void onRenderLevelStage(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) return;
 
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || mc.player == null) return;
+        if (mc.level == null || mc.player == null) {
+            BattleRoyale.LOGGER.warn("In ZoneRender, mc.level == null || mc.player == null");
+            return;
+        }
 
         PoseStack poseStack = event.getPoseStack();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
