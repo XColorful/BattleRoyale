@@ -35,7 +35,7 @@ public class DefaultGamerule {
                 true, false, true);
 
         MinecraftEntry mcEntry = new MinecraftEntry(true, false, false,
-                false, false, false,
+                true, false, false,
                 false, false, false,
                 false, false, 5000);
 

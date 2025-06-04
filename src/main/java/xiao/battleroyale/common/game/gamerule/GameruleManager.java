@@ -1,6 +1,10 @@
 package xiao.battleroyale.common.game.gamerule;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -99,6 +103,21 @@ public class GameruleManager extends AbstractGameManager {
 
     @Override
     public void onGameTick(int gameTime) {
-        ;
+        if (autoSaturation && gameTime % 200 == 0) {
+            ServerLevel serverLevel = GameManager.get().getServerLevel();
+            if (serverLevel == null) {
+                return;
+            }
+            for (GamePlayer gamePlayer : GameManager.get().getStandingGamePlayers()) {
+                if (!gamePlayer.isActiveEntity()) {
+                    continue;
+                }
+                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                if (player == null) {
+                    continue;
+                }
+                player.addEffect(new MobEffectInstance(MobEffects.SATURATION, 200, 0, false, false));
+            }
+        }
     }
 }
