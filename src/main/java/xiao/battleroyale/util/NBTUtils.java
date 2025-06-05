@@ -73,6 +73,7 @@ public class NBTUtils {
             CompoundTag memberTag = new CompoundTag();
             memberTag.putString(TeamTag.MEMBER_NAME, memberInfo.name());
             memberTag.putDouble(TeamTag.MEMBER_HEALTH, memberInfo.health());
+            memberTag.putInt(TeamTag.MEMBER_BOOST, memberInfo.boost());
             teamMemberTag.put(String.valueOf(memberInfo.playerId()), memberTag);
         }
 

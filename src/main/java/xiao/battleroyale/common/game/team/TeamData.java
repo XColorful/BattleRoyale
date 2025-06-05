@@ -59,6 +59,21 @@ public class TeamData extends AbstractGameManagerData {
         }
     }
 
+    public void extendLimit(int maxPlayers) {
+        if (locked) {
+            return;
+        }
+
+        if (maxPlayers <= this.maxPlayersLimit) {
+            return;
+        }
+        for (int i = this.maxPlayersLimit + 1; i <= maxPlayers; i++) {
+            availablePlayerIds.add(i);
+            availableTeamIds.add(i);
+            this.maxPlayersLimit = maxPlayers;
+        }
+    }
+
     /**
      * 生成下一个可用的 playerId
      * 未达到人数上限则一定有返回值
@@ -248,8 +263,8 @@ public class TeamData extends AbstractGameManagerData {
         return gameTeams.get(teamId);
     }
 
-    public @Nullable GamePlayer getGamePlayerByUUID(UUID playerId) {
-        return gamePlayers.get(playerId);
+    public @Nullable GamePlayer getGamePlayerByUUID(UUID playerUUI) {
+        return gamePlayers.get(playerUUI);
     }
 
     public @Nullable GamePlayer getGamePlayerByGameSingleId(int playerId) {

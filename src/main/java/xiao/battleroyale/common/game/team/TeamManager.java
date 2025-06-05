@@ -31,7 +31,6 @@ public class TeamManager extends AbstractGameManager {
     private boolean aiEnemy;
     private boolean autoJoinGame;
     public boolean shouldAutoJoin() { return this.autoJoinGame; }
-    private boolean keepTeamAfterGame = true;
 
     private final TeamData teamData = new TeamData();
 
@@ -90,7 +89,7 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
 
-        clearTeamInfo();
+        clearOrUpdateTeamIfLimitChanged();
         this.prepared = true;
     }
 
@@ -100,7 +99,7 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
 
-        clearTeamInfo();
+        clearOrUpdateTeamIfLimitChanged();
         if (!this.autoJoinGame) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.require_manually_join");
         } else { // 自动加入队伍
@@ -166,7 +165,6 @@ public class TeamManager extends AbstractGameManager {
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
         this.teamData.endGame(); // 解锁
-        // clearTeamInfo(); // 不立即清除组队
         this.prepared = false;
         this.ready = false;
         BattleRoyale.LOGGER.info("TeamManager stopped, clear all team info");
@@ -823,9 +821,9 @@ public class TeamManager extends AbstractGameManager {
     @Nullable
     public GameTeam getGameTeamById(int teamId) { return teamData.getGameTeamById(teamId); }
 
-    public @Nullable GamePlayer getGamePlayerByUUID(UUID playerId) {
-        return teamData.getGamePlayerByUUID(playerId);
-    }
+    public @Nullable GamePlayer getGamePlayerByUUID(UUID playerUUID) { return teamData.getGamePlayerByUUID(playerUUID); }
+
+    public @Nullable GamePlayer getGamePlayerBySingleId(int playerId) { return teamData.getGamePlayerByGameSingleId(playerId); }
 
     public List<GamePlayer> getGamePlayersList() {
         return teamData.getGamePlayersList();
@@ -841,12 +839,28 @@ public class TeamManager extends AbstractGameManager {
         return teamData.getTotalPlayerCount();
     }
 
-    private void clearTeamInfo() {
-        if (!keepTeamAfterGame || teamData.getMaxPlayersLimit() > this.playerLimit) {
-            teamData.clear(playerLimit);
-            pendingInvites.clear();
-            pendingRequests.clear();
+    /**
+     * 尝试清除队伍信息，如果新的玩家数量限制缩小则清除，扩大限制则扩大可用id池
+     */
+    private void clearOrUpdateTeamIfLimitChanged() {
+        if (this.playerLimit < teamData.getMaxPlayersLimit()) {
+            clear();
+        } else if (this.playerLimit > teamData.getMaxPlayersLimit()) {
+            teamData.extendLimit(this.playerLimit);
         }
+    }
+
+    /**
+     * 强制清除队伍信息
+     */
+    public void clear() {
+        if (GameManager.get().isInGame()) {
+            return;
+        }
+
+        teamData.clear(playerLimit);
+        pendingInvites.clear();
+        pendingRequests.clear();
     }
 
     private boolean hasEnoughPlayerTeamToStart() {

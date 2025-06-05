@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.team.TeamTag;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
@@ -22,7 +23,7 @@ public class ClientTeamData {
     public final List<TeamMemberInfo> teamMemberInfoList = new ArrayList<>();
     public boolean inTeam;
 
-    private static final String DEFAULT_COLOR = "#000000FF";
+    private static final String DEFAULT_COLOR = "#000000FF"; // 读取格式用#RRGGBBAA，实际int转为AARRGGBB
     public static final int NO_TEAM = 0;
     public static final double OFFLINE = -1;
     public static final double ELIMINATED = -2;
@@ -41,7 +42,8 @@ public class ClientTeamData {
             teamMemberInfoList.add(new TeamMemberInfo(
                     Integer.parseInt(key),
                     memberTag.getString(TeamTag.MEMBER_NAME),
-                    memberTag.getDouble(TeamTag.MEMBER_HEALTH)
+                    memberTag.getDouble(TeamTag.MEMBER_HEALTH),
+                    memberTag.getInt(TeamTag.MEMBER_BOOST)
             ));
         }
         teamMemberInfoList.sort(Comparator.comparingInt(TeamMemberInfo::playerId));
@@ -85,7 +87,8 @@ public class ClientTeamData {
                 memberInfos.add(new TeamMemberInfo(
                         gamePlayer.getGameSingleId(),
                         gamePlayer.getPlayerName(),
-                        playerHealth));
+                        playerHealth,
+                        gamePlayer.getBoost()));
             }
         }
 
@@ -96,5 +99,5 @@ public class ClientTeamData {
         );
     }
 
-    public record TeamMemberInfo(int playerId, String name, double health) {}
+    public record TeamMemberInfo(int playerId, String name, double health, int boost) {}
 }

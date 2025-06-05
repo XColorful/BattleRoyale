@@ -26,7 +26,7 @@ public class SyncData extends AbstractGameManagerData {
     private static final String DATA_NAME = "SyncData";
 
     // zone
-    private final Map<Integer, Pair<CompoundTag, Integer>> zoneInfo = new ConcurrentHashMap<>();
+    private final Map<Integer, Pair<CompoundTag, Integer>> zoneInfo = new ConcurrentHashMap<>(); // zoneId -> <ZoneInfoNBT,
     private final Set<Integer> changedZoneId = ConcurrentHashMap.newKeySet();
 
     private int lastExpireTime = 0; // zone过期信息
@@ -37,6 +37,7 @@ public class SyncData extends AbstractGameManagerData {
     private final Set<Integer> changedTeamId = ConcurrentHashMap.newKeySet();
     private final Set<UUID> clearedPlayerUUID = ConcurrentHashMap.newKeySet(); // 通知玩家不需要渲染队伍信息
     private final CompoundTag LEAVE_TEAM_NBT = new CompoundTag();
+
 
     private int syncTime = 0;
     private final int ALL_TEAM_FREQUENCY = 5 * 20; // 5秒更新所有队伍信息
@@ -52,6 +53,7 @@ public class SyncData extends AbstractGameManagerData {
         changedTeamId.clear();
         clearedPlayerUUID.clear();
         syncTime = 0;
+        lastExpireTime = -EXPIRE_FREQUENCY;
     }
 
     public void initGame() {
@@ -67,13 +69,13 @@ public class SyncData extends AbstractGameManagerData {
 
     @Override
     public void endGame() {
-        changedZoneId.addAll(zoneInfo.keySet());
+        changedTeamId.clear();
         syncInfo(Integer.MAX_VALUE);
-        clear();
     }
 
     /**
      * 由 GameManager 调用并传入 gameTime
+     * 传入极大值则表示强制清理所有时效性信息
      * @param gameTime 当前游戏时间
      */
     public void syncInfo(int gameTime) {
@@ -102,9 +104,9 @@ public class SyncData extends AbstractGameManagerData {
         for (int id : changedZoneId) {
             Pair<CompoundTag, Integer> data = zoneInfo.get(id);
             if (data != null) {
-                syncPacketNbt.put(String.valueOf(id), data.first);
+                syncPacketNbt.put(Integer.toString(id), data.first);
             } else {
-                syncPacketNbt.put(String.valueOf(id), new CompoundTag());
+                syncPacketNbt.put(Integer.toString(id), new CompoundTag()); // 置空表示清除
             }
         }
 
