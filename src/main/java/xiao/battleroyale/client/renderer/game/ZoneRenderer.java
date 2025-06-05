@@ -98,12 +98,13 @@ public class ZoneRenderer {
                                     (float) zoneData.dimension.x, (float) zoneData.dimension.y, 64, 0);
                     case SQUARE, RECTANGLE ->
                             drawFilledRectangleBox(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.x,
-                                    (float) zoneData.dimension.z,
-                                    (float) zoneData.dimension.y);
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y);
                     case HEXAGON -> // 起始角度为PI/6以实现平顶
                             drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
                                     (float) zoneData.dimension.x, (float) zoneData.dimension.y, 6, (float) (Math.PI / 6.0));
+                    case POLYGON ->
+                            drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, zoneData.segments, zoneData.angle);
                 }
             } finally {
                 poseStack.popPose();

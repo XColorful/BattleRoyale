@@ -29,6 +29,7 @@ public class DefaultZone {
         zoneConfigJson.add(generateDefaultZoneConfig2());
         zoneConfigJson.add(generateDefaultZoneConfig3());
         zoneConfigJson.add(generateDefaultZoneConfig4());
+        zoneConfigJson.add(generateDefaultZoneConfig5());
         writeJsonToFile(Paths.get(GameConfigManager.GAME_CONFIG_PATH, ZoneConfigManager.ZONE_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
@@ -144,6 +145,29 @@ public class DefaultZone {
 
         HexagonEntry hexagonEntry = new HexagonEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, hexagonEntry.toJson());
+
+        return config;
+    }
+
+    private static JsonObject generateDefaultZoneConfig5() {
+        JsonObject config = new JsonObject();
+        config.addProperty(ZoneConfigTag.ZONE_ID, 5);
+        config.addProperty(ZoneConfigTag.ZONE_NAME, "Black Polygon");
+        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#00000022");
+        config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
+        config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
+
+        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(0.001, 600, 600);
+
+        config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
+
+        StartEntry startEntry = new StartEntry(StartCenterType.FIXED, new Vec3(0, -60, 0), -1, 0,
+                StartDimensionType.FIXED, new Vec3(80, 2, 80), -1, 1, 0);
+        EndEntry endEntry = new EndEntry(EndCenterType.FIXED, new Vec3(0, -60, 0), -1, 0,
+                EndDimensionType.FIXED, new Vec3(15, 4, 15), -1, 1, 0);
+
+        PolygonEntry polygonEntry = new PolygonEntry(startEntry, endEntry, 5);
+        config.add(ZoneConfigTag.ZONE_SHAPE, polygonEntry.toJson());
 
         return config;
     }

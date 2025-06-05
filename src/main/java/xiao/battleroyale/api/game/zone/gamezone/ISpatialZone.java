@@ -67,4 +67,12 @@ public interface ISpatialZone {
 
     @Nullable
     Vec3 getEndDimension();
+
+    /**
+     * 供多边形使用
+     */
+    default
+    int getSegments() {
+        return 3;
+    }
 }

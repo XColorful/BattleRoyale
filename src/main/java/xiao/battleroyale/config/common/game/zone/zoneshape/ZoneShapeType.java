@@ -12,7 +12,8 @@ public enum ZoneShapeType {
     CIRCLE(ZoneShapeTag.CIRCLE, CircleEntry::fromJson),
     SQUARE(ZoneShapeTag.SQUARE, SquareEntry::fromJson),
     RECTANGLE(ZoneShapeTag.RECTANGLE, RectangleEntry::fromJson),
-    HEXAGON(ZoneShapeTag.HEXAGON, HexagonEntry::fromJson);
+    HEXAGON(ZoneShapeTag.HEXAGON, HexagonEntry::fromJson),
+    POLYGON(ZoneShapeTag.POLYGON, PolygonEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends IZoneShapeEntry> deseralizer;

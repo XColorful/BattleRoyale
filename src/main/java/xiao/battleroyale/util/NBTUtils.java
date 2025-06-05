@@ -8,6 +8,7 @@ import xiao.battleroyale.api.game.zone.gamezone.GameZoneTag;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.client.game.data.ClientTeamData;
+import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 
 import java.awt.*;
 import java.util.List;
@@ -43,7 +44,11 @@ public class NBTUtils {
 
         tag.putString(GameZoneTag.FUNC, tickableZone.getFuncType().getName());
 
-        tag.putString(GameZoneTag.SHAPE, spatialZone.getShapeType().getName());
+        ZoneShapeType shapeType = spatialZone.getShapeType();
+        tag.putString(GameZoneTag.SHAPE, shapeType.getName());
+        if (shapeType == ZoneShapeType.POLYGON) {
+            tag.putInt(GameZoneTag.SEGMENTS, spatialZone.getSegments());
+        }
 
         CompoundTag centerTag = new CompoundTag();
         Vec3 center = spatialZone.getCenterPos(progress);

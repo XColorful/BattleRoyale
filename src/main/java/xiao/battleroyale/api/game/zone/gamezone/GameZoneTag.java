@@ -11,6 +11,7 @@ public final class GameZoneTag {
     public static final String SHAPE = "shape";
     public static final String CENTER = "center";
     public static final String DIMENSION = "dim";
+    public static final String SEGMENTS = "seg";
 
     public static final String PROGRESS = "prog";
 
