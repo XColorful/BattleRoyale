@@ -2,10 +2,19 @@ package xiao.battleroyale.util;
 
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
 public class Vec3Utils {
+
+    @Nullable
+    public static Vec3 addVec(@Nullable Vec3 baseVec, @Nullable Vec3 addedVec) {
+        if (addedVec == null || baseVec == null) {
+            return baseVec;
+        }
+        return baseVec.add(addedVec);
+    }
 
     /**
      * 以输入向量为基准，往XZ正反方向

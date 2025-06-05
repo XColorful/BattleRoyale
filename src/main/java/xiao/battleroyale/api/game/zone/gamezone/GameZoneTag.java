@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.game.zone.gamezone;
 
-public final class GameTag {
+public final class GameZoneTag {
 
     public static final String ZONE_ID = "id";
     public static final String ZONE_NAME = "name";
@@ -11,8 +11,9 @@ public final class GameTag {
     public static final String SHAPE = "shape";
     public static final String CENTER = "center";
     public static final String DIMENSION = "dim";
+    public static final String SEGMENTS = "seg";
 
     public static final String PROGRESS = "prog";
 
-    private GameTag() {};
+    private GameZoneTag() {};
 }

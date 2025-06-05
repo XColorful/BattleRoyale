@@ -1,5 +1,6 @@
 package xiao.battleroyale.event.game;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -22,7 +23,7 @@ public class DamageEventHandler {
 
     private DamageEventHandler() {}
 
-    public static DamageEventHandler getInstance() {
+    public static DamageEventHandler get() {
         if (instance == null) {
             instance = new DamageEventHandler();
         }
@@ -30,28 +31,57 @@ public class DamageEventHandler {
     }
 
     public void register() {
-        MinecraftForge.EVENT_BUS.register(getInstance());
+        MinecraftForge.EVENT_BUS.register(get());
     }
 
     public void unregister() {
-        MinecraftForge.EVENT_BUS.unregister(getInstance());
+        MinecraftForge.EVENT_BUS.unregister(get());
         instance = null;
     }
 
     /**
-     * 监听实体受到伤害事件。
-     * 用于统计玩家造成的伤害和受到的伤害。
+     * 取消游戏玩家与非游戏玩家之间的伤害
+     */
+    @SubscribeEvent(priority = EventPriority.NORMAL)
+    public void onLivingDamage(LivingDamageEvent event) {
+        LivingEntity damagedEntity = event.getEntity();
+        if (!(damagedEntity instanceof ServerPlayer targetPlayer)) {
+            return;
+        }
+        DamageSource damageSource = event.getSource();
+        if (!(damageSource.getEntity() instanceof ServerPlayer attackerPlayer)) {
+            return;
+        }
+
+        GamePlayer targetGamePlayer = GameManager.get().getGamePlayerByUUID(targetPlayer.getUUID());
+        boolean isTargetGamePlayer = targetGamePlayer != null;
+        GamePlayer attackerGamePlayer = GameManager.get().getGamePlayerByUUID(attackerPlayer.getUUID());
+        boolean isAttackerGamePlayer = attackerGamePlayer != null;
+
+        if ((isAttackerGamePlayer && !isTargetGamePlayer) || (!isAttackerGamePlayer && isTargetGamePlayer)) {
+            event.setCanceled(true);
+            return;
+        }
+
+        int teamId = isTargetGamePlayer ? targetGamePlayer.getGameTeamId() : attackerGamePlayer.getGameTeamId();
+        GameManager.get().addChangedTeamInfo(teamId);
+    }
+
+    /**
+     * 监听实体受到伤害事件
+     * 通知队伍更新成员信息
+     * 统计玩家造成的伤害和受到的伤害
      * @param event 实体受到伤害事件
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onLivingDamage(LivingDamageEvent event) {
+    public void onRecordDamage(LivingDamageEvent event) {
         if (!GameManager.get().isInGame()) {
             unregister();
             return;
         }
 
         LivingEntity damagedEntity = event.getEntity();
-        GamePlayer damagedGamePlayer = TeamManager.get().getGamePlayerByUUID(damagedEntity.getUUID());
+        GamePlayer damagedGamePlayer = GameManager.get().getGamePlayerByUUID(damagedEntity.getUUID());
         if (damagedGamePlayer == null) {
             return;
         }
@@ -67,7 +97,9 @@ public class DamageEventHandler {
         if (damageSource.getEntity() instanceof LivingEntity attackingEntity) {
             GamePlayer attackingGamePlayer = TeamManager.get().getGamePlayerByUUID(attackingEntity.getUUID());
             if (attackingGamePlayer != null) {
-                attackingGamePlayer.addDamageDealt(damageAmount);
+                if (damagedGamePlayer.getGameTeamId() != attackingGamePlayer.getGameTeamId()) { // 同队伍不计入伤害量，受伤照常记录
+                    attackingGamePlayer.addDamageDealt(damageAmount);
+                }
             }
         }
     }

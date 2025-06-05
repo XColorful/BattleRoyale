@@ -1,8 +1,11 @@
 package xiao.battleroyale.api.game.zone.shape.start;
 
+import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
+
 public enum StartDimensionType {
-    FIXED("fixed"),
-    PREVIOUS("previous");
+    FIXED(ZoneShapeTag.FIXED),
+    PREVIOUS(ZoneShapeTag.PREVIOUS),
+    RELATIVE(ZoneShapeTag.RELATIVE);
 
     private final String value;
 

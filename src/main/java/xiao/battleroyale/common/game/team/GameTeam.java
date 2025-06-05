@@ -17,9 +17,9 @@ public class GameTeam {
 
     private final int gameTeamId; // 队伍的唯一 ID
     private final String gameTeamColor; // 队伍的颜色
+
     private final List<GamePlayer> teamMembers = new ArrayList<>(); // 队伍成员列表
     private UUID leaderUUID; // 队伍队长的 UUID
-
 
     public GameTeam(int gameTeamId, String gameTeamColor) {
         this.gameTeamId = gameTeamId;
@@ -40,28 +40,8 @@ public class GameTeam {
         return null;
     }
 
-    public void setLeader(UUID playerUUID) {
-        boolean found = false;
-        for (GamePlayer member : teamMembers) {
-            if (member.getPlayerUUID().equals(playerUUID)) {
-                member.setLeader(true);
-                this.leaderUUID = playerUUID;
-                found = true;
-                break;
-            }
-        }
-        if (found) {
-            for (GamePlayer member : teamMembers) {
-                if (!member.getPlayerUUID().equals(playerUUID)) {
-                    member.setLeader(false);
-                }
-            }
-        }
-    }
-
-    public boolean isLeader(UUID playerUUID) {
-        return leaderUUID != null && leaderUUID.equals(playerUUID);
-    }
+    public List<GamePlayer> getTeamMembers() { return Collections.unmodifiableList(teamMembers); }
+    public int getTeamMemberCount() { return teamMembers.size(); }
 
     public boolean isTeamEliminated() {
         if (teamMembers.isEmpty()) {
@@ -75,23 +55,9 @@ public class GameTeam {
         return true;
     }
 
-    // 未倒地的玩家
-    public List<GamePlayer> getAlivePlayers() {
-        return teamMembers.stream()
-                .filter(GamePlayer::isAlive)
-                .collect(Collectors.toList());
+    public boolean isLeader(UUID playerUUID) {
+        return leaderUUID != null && leaderUUID.equals(playerUUID);
     }
-
-    // 未被淘汰的玩家
-    public List<GamePlayer> getStandingPlayers() {
-        return teamMembers.stream()
-                .filter(gamePlayer -> !gamePlayer.isEliminated())
-                .collect(Collectors.toList());
-    }
-
-    public List<GamePlayer> getTeamMembers() { return Collections.unmodifiableList(teamMembers); }
-
-    public int getTeamMemberCount() { return teamMembers.size(); }
 
     public void addPlayer(@NotNull GamePlayer gamePlayer) {
         if (teamMembers.contains(gamePlayer)) {
@@ -124,5 +90,36 @@ public class GameTeam {
                 leaderUUID = null;
             }
         }
+    }
+
+    public void setLeader(UUID playerUUID) {
+        boolean found = false;
+        for (GamePlayer member : teamMembers) {
+            if (member.getPlayerUUID().equals(playerUUID)) {
+                member.setLeader(true);
+                this.leaderUUID = playerUUID;
+                found = true;
+                break;
+            }
+        }
+        if (found) {
+            for (GamePlayer member : teamMembers) {
+                if (!member.getPlayerUUID().equals(playerUUID)) {
+                    member.setLeader(false);
+                }
+            }
+        }
+    }
+
+    public List<GamePlayer> getAlivePlayers() {
+        return teamMembers.stream()
+                .filter(GamePlayer::isAlive)
+                .collect(Collectors.toList());
+    }
+
+    public List<GamePlayer> getStandingPlayers() {
+        return teamMembers.stream()
+                .filter(gamePlayer -> !gamePlayer.isEliminated())
+                .collect(Collectors.toList());
     }
 }

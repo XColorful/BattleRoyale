@@ -1,24 +1,46 @@
 package xiao.battleroyale.common.game;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.client.game.data.ClientTeamData;
+import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.network.GameInfoHandler;
+import xiao.battleroyale.network.message.ClientMessageTeamInfo;
 import xiao.battleroyale.network.message.ClientMessageZoneInfo;
+import xiao.battleroyale.util.SendUtils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SyncData extends AbstractGameManagerData{
+public class SyncData extends AbstractGameManagerData {
 
     private static final String DATA_NAME = "SyncData";
 
-    private final Map<Integer, Pair<CompoundTag, Integer>> zoneInfo = new ConcurrentHashMap<>();
+    // zone
+    private final Map<Integer, Pair<CompoundTag, Integer>> zoneInfo = new ConcurrentHashMap<>(); // zoneId -> <ZoneInfoNBT,
     private final Set<Integer> changedZoneId = ConcurrentHashMap.newKeySet();
 
-    private int lastExpireTime = 0;
+    private int lastExpireTime = 0; // zone过期信息
     private final int KEEP_TIME = 3 * 20; // 保存3秒
     private final int EXPIRE_FREQUENCY = 5 * 20; // 5秒进行一次清理
+
+    // team
+    private final Set<Integer> changedTeamId = ConcurrentHashMap.newKeySet();
+    private final Set<UUID> clearedPlayerUUID = ConcurrentHashMap.newKeySet(); // 通知玩家不需要渲染队伍信息
+    private final CompoundTag LEAVE_TEAM_NBT = new CompoundTag();
+
+
+    private int syncTime = 0;
+    private final int ALL_TEAM_FREQUENCY = 5 * 20; // 5秒更新所有队伍信息
 
     public SyncData() {
         super(DATA_NAME);
@@ -28,6 +50,15 @@ public class SyncData extends AbstractGameManagerData{
     public void clear() {
         zoneInfo.clear();
         changedZoneId.clear();
+        changedTeamId.clear();
+        clearedPlayerUUID.clear();
+        syncTime = 0;
+        lastExpireTime = -EXPIRE_FREQUENCY;
+    }
+
+    public void initGame() {
+        clear();
+        lastExpireTime = -EXPIRE_FREQUENCY + 1; // 防止游戏开始前一直发送zone
     }
 
     @Override
@@ -38,13 +69,13 @@ public class SyncData extends AbstractGameManagerData{
 
     @Override
     public void endGame() {
-        changedZoneId.addAll(zoneInfo.keySet());
+        changedTeamId.clear();
         syncInfo(Integer.MAX_VALUE);
-        clear();
     }
 
     /**
      * 由 GameManager 调用并传入 gameTime
+     * 传入极大值则表示强制清理所有时效性信息
      * @param gameTime 当前游戏时间
      */
     public void syncInfo(int gameTime) {
@@ -56,6 +87,7 @@ public class SyncData extends AbstractGameManagerData{
 
         // 同步信息
         this.syncZoneInfo(gameTime);
+        this.syncTeamInfo(gameTime);
     }
 
     private void syncZoneInfo(int gameTime) {
@@ -63,19 +95,23 @@ public class SyncData extends AbstractGameManagerData{
             return;
         }
 
+        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        if (serverLevel == null) {
+            return;
+        }
+
         CompoundTag syncPacketNbt = new CompoundTag();
         for (int id : changedZoneId) {
             Pair<CompoundTag, Integer> data = zoneInfo.get(id);
             if (data != null) {
-                syncPacketNbt.put(String.valueOf(id), data.first);
+                syncPacketNbt.put(Integer.toString(id), data.first);
             } else {
-                syncPacketNbt.put(String.valueOf(id), new CompoundTag());
+                syncPacketNbt.put(Integer.toString(id), new CompoundTag()); // 置空表示清除
             }
         }
 
-        // 发送消息给所有客户端
-        GameInfoHandler.sendToAllPlayers(new ClientMessageZoneInfo(syncPacketNbt));
-
+        // 发送消息给所有游戏玩家
+        sendZoneInfoToGamePlayers(GameManager.get().getGamePlayers(), syncPacketNbt, serverLevel);
         changedZoneId.clear();
     }
 
@@ -110,10 +146,84 @@ public class SyncData extends AbstractGameManagerData{
         });
     }
 
+    private void syncTeamInfo(int gameTime) {
+        syncTime++;
+        // 5秒强制同步一次
+        if (changedTeamId.isEmpty() && clearedPlayerUUID.isEmpty() && !(syncTime % ALL_TEAM_FREQUENCY == 1)) { // 游戏第一tick的gameTime为1
+            return;
+        }
+
+        if (syncTime % ALL_TEAM_FREQUENCY == 1) {
+            for (GameTeam gameTeam : GameManager.get().getGameTeams()) {
+                changedTeamId.add(gameTeam.getGameTeamId());
+            }
+        }
+
+        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        if (serverLevel == null) {
+            return;
+        }
+
+        // 提醒客户端不显示队伍信息，优先于队伍
+        for (UUID uuid : clearedPlayerUUID) {
+            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(uuid);
+            if (player == null) {
+                continue;
+            }
+            sendTeamInfoToPlayer(player, LEAVE_TEAM_NBT, serverLevel);
+        }
+
+        // 同步游戏玩家队伍信息
+        for (int teamId : changedTeamId) {
+            GameTeam gameTeam = GameManager.get().getGameTeamById(teamId); // 不是standingTeam
+            if (gameTeam == null || gameTeam.isTeamEliminated()) { // 队伍挂了仍然能获取，挂了就不发送了
+                continue;
+            }
+            CompoundTag teamInfo = ClientTeamData.toNBT(gameTeam, serverLevel);
+            sendTeamInfoToTeam(gameTeam, teamInfo, serverLevel);
+        }
+
+        this.changedTeamId.clear();
+        this.clearedPlayerUUID.clear();
+    }
+
+    public void addChangedTeam(int teamId) {
+        this.changedTeamId.add(teamId);
+    }
+
+    public void addLeavedMember(UUID playerUUID) {
+        this.clearedPlayerUUID.add(playerUUID);
+    }
+
+    public void deleteLeavedMember(UUID playerUUID) {
+        this.clearedPlayerUUID.remove(playerUUID);
+    }
+
+    /**
+     * 向指定GamePlayer发送圈型信息
+     */
+    private void sendZoneInfoToGamePlayers(List<GamePlayer> gamePlayers, CompoundTag zoneInfo, @NotNull ServerLevel serverLevel) {
+        ClientMessageZoneInfo message = new ClientMessageZoneInfo(zoneInfo);
+        SendUtils.sendMessageToGamePlayers(gamePlayers, message, serverLevel);
+    }
+
+    private void sendTeamInfoToPlayer(@NotNull ServerPlayer player, CompoundTag teamInfo, @NotNull ServerLevel serverLevel) {
+        ClientMessageTeamInfo message = new ClientMessageTeamInfo(teamInfo);
+        SendUtils.sendMessageToPlayer(player, message);
+    }
+
+    /**
+     * 向指定队伍的所有成员发送TeamInfo
+     */
+    private void sendTeamInfoToTeam(GameTeam gameTeam, CompoundTag teamInfo, @NotNull ServerLevel serverLevel) {
+        ClientMessageTeamInfo message = new ClientMessageTeamInfo(teamInfo);
+        SendUtils.sendMessageToTeam(gameTeam, message, serverLevel);
+    }
+
     public record Pair<A, B>(A first, B second) {
 
         public static <A, B> Pair<A, B> of(A first, B second) {
-                return new Pair<>(first, second);
-            }
+            return new Pair<>(first, second);
         }
+    }
 }

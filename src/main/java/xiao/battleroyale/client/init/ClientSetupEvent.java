@@ -7,6 +7,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.client.gui.LootSpawnerScreen;
+import xiao.battleroyale.client.renderer.game.TeamInfoRenderer;
 import xiao.battleroyale.client.renderer.game.ZoneRenderer;
 import xiao.battleroyale.init.ModMenuTypes;
 
@@ -18,5 +19,6 @@ public class ClientSetupEvent {
         MenuScreens.register(ModMenuTypes.LOOT_SPAWNER_MENU.get(), LootSpawnerScreen::new);
 
         event.enqueueWork(ZoneRenderer::register);
+        event.enqueueWork(TeamInfoRenderer::register);
     }
 }

@@ -4,18 +4,13 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
-import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.common.game.zone.spatial.CircleShape;
 
-public class CircleEntry implements IZoneShapeEntry {
-
-    private final StartEntry startEntry;
-    private final EndEntry endEntry;
+public class CircleEntry extends AbstractSimpleEntry {
 
     public CircleEntry(StartEntry startEntry, EndEntry endEntry) {
-        this.startEntry = startEntry;
-        this.endEntry = endEntry;
+        super(startEntry, endEntry);
     }
 
     @Override
@@ -31,15 +26,6 @@ public class CircleEntry implements IZoneShapeEntry {
     @Override
     public ISpatialZone createSpatialZone() {
         return new CircleShape(startEntry, endEntry);
-    }
-
-    @Override
-    public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(ZoneShapeTag.TYPE_NAME, getType());
-        jsonObject.add(ZoneShapeTag.START, startEntry.toJson());
-        jsonObject.add(ZoneShapeTag.END, endEntry.toJson());
-        return jsonObject;
     }
 
     @Nullable

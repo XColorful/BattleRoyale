@@ -3,40 +3,39 @@ package xiao.battleroyale.event.game;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 
-public class LoopEventHandler {
+public class SyncEventHandler {
 
-    private static LoopEventHandler instance;
+    private static SyncEventHandler instance;
 
-    private LoopEventHandler() {}
+    private SyncEventHandler() {}
 
-    public static LoopEventHandler get() {
+    public static SyncEventHandler get() {
         if (instance == null) {
-            instance = new LoopEventHandler();
+            instance = new SyncEventHandler();
         }
         return instance;
     }
 
     public void register() {
         MinecraftForge.EVENT_BUS.register(get());
+        BattleRoyale.LOGGER.info("SyncEventHandler registered");
     }
 
     public void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
         instance = null;
+        BattleRoyale.LOGGER.info("SyncEventHandler unregistered");
     }
 
     @SubscribeEvent
-    public void onServerTick(TickEvent.ServerTickEvent event) {
+    public void onGameTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) {
             return;
         }
-        if (!GameManager.get().isInGame()) {
-            unregister();
-            return;
-        }
 
-        GameManager.get().onGameTick();
+        GameManager.get().syncInfo();
     }
 }

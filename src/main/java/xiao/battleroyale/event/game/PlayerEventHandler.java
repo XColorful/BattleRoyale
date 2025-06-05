@@ -5,6 +5,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.TeamManager;
 
 /**
@@ -16,7 +17,7 @@ public class PlayerEventHandler {
 
     private PlayerEventHandler() {}
 
-    public static PlayerEventHandler getInstance() {
+    public static PlayerEventHandler get() {
         if (instance == null) {
             instance = new PlayerEventHandler();
         }
@@ -24,11 +25,11 @@ public class PlayerEventHandler {
     }
 
     public void register() {
-        MinecraftForge.EVENT_BUS.register(getInstance());
+        MinecraftForge.EVENT_BUS.register(get());
     }
 
     public void unregister() {
-        MinecraftForge.EVENT_BUS.unregister(getInstance());
+        MinecraftForge.EVENT_BUS.unregister(get());
         instance = null;
     }
 
@@ -44,7 +45,12 @@ public class PlayerEventHandler {
                 unregister();
                 return;
             }
-            GameManager.get().onPlayerDeath(serverPlayer);
+            GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(serverPlayer.getUUID());
+            if (gamePlayer == null) {
+                return;
+            }
+            GameManager.get().onPlayerDeath(gamePlayer);
+            GameManager.get().addChangedTeamInfo(gamePlayer.getGameTeamId());
 
             // TODO: 击倒机制的实现需要更复杂的逻辑，例如判断伤害来源、玩家状态等
             // 如果有击倒机制，这里可能需要判断是真正的死亡还是击倒

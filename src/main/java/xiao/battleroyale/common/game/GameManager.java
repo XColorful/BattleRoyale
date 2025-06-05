@@ -21,10 +21,7 @@ import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
-import xiao.battleroyale.event.game.DamageEventHandler;
-import xiao.battleroyale.event.game.LogEventHandler;
-import xiao.battleroyale.event.game.LoopEventHandler;
-import xiao.battleroyale.event.game.PlayerEventHandler;
+import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.ArrayList;
@@ -39,7 +36,8 @@ public class GameManager extends AbstractGameManager {
     private int gameTime = 0; // 游戏运行时维护当前游戏时间
     private UUID gameId;
     private boolean inGame;
-    private SyncData syncData = new SyncData();
+    private final SyncData syncData = new SyncData();
+    private final BoostData boostData = new BoostData();
     private ResourceKey<Level> gameDimensionKey;
     private ServerLevel serverLevel;
 
@@ -49,10 +47,13 @@ public class GameManager extends AbstractGameManager {
     private int botConfigId = 0;
     private int maxGameTime; // 最大游戏持续时间，配置项
     private boolean recordStats; // 是否在游戏结束后记录日志，配置项
+    public boolean shouldRecordStats() { return recordStats; }
     private int maxInvalidTime = 60; // 最大离线/未加载时间，过期强制淘汰，配置项
     private int getMaxInvalidTick() { return maxInvalidTime * 20; }
     private int maxBotInvalidTime = 10 * 20;
     private boolean removeInvalidTeam = false; // TODO 增加配置，使默认false
+    private boolean keepTeamAfterGame = true; // TODO 增加配置，使默认true
+    public boolean shouldKeepTeamAfterGame() { return keepTeamAfterGame; }
 
 
     private GameManager() {
@@ -122,15 +123,18 @@ public class GameManager extends AbstractGameManager {
                 && TeamManager.get().isPreparedForGame()
                 && ZoneManager.get().isPreparedForGame()) {
             this.prepared = true;
-            // 注册登录事件
-            LogEventHandler.getInstance().register(); // 后续玩家登录可根据配置直接加入队伍
+            // 注册事件
+            LogEventHandler.get().register(); // 后续玩家登录可根据配置直接加入队伍
         } else {
             this.prepared = false;
         }
     }
 
     public int getPlayerLimit() { return TeamManager.get().getPlayerLimit(); }
+    public @Nullable GamePlayer getGamePlayerByUUID(UUID uuid) { return TeamManager.get().getGamePlayerByUUID(uuid); }
+    public @Nullable GamePlayer getGamePlayerBySingleId(int playerId) { return TeamManager.get().getGamePlayerBySingleId(playerId); }
     public List<GameTeam> getGameTeams() { return TeamManager.get().getGameTeamsList(); }
+    public @Nullable GameTeam getGameTeamById(int teamId) { return TeamManager.get().getGameTeamById(teamId); }
     public List<GamePlayer> getGamePlayers() { return TeamManager.get().getGamePlayersList(); }
     public List<GamePlayer> getStandingGamePlayers() { return TeamManager.get().getStandingGamePlayersList(); }
 
@@ -150,6 +154,10 @@ public class GameManager extends AbstractGameManager {
                 return;
             }
         }
+        // 同步信息
+        this.syncData.initGame();
+        SyncEventHandler.get().register();
+
         GameLootManager.get().initGame(serverLevel);
         TeamManager.get().initGame(serverLevel);
         GameruleManager.get().initGame(serverLevel); // Gamerule会进行一次默认游戏模式切换
@@ -195,11 +203,17 @@ public class GameManager extends AbstractGameManager {
             this.ready = false;
             this.gameTime = 0; // 游戏结束后不手动重置
             // 注册事件监听
-            DamageEventHandler.getInstance().register();
-            LoopEventHandler.getInstance().register();
-            PlayerEventHandler.getInstance().register();
-            // 开始同步信息
+            DamageEventHandler.get().register();
+            LoopEventHandler.get().register();
+            PlayerEventHandler.get().register();
+            // 重置同步信息
             this.syncData.startGame();
+            this.boostData.startGame();
+            // TODO delete test
+            // 游戏开始时全部满能量条
+            for (GamePlayer gamePlayer : getStandingGamePlayers()) {
+                addBoost(6000, gamePlayer.getPlayerUUID());
+            }
             return true;
         } else {
             stopGame(this.serverLevel);
@@ -238,15 +252,18 @@ public class GameManager extends AbstractGameManager {
         SpawnManager.get().onGameTick(gameTime);
         ZoneManager.get().onGameTick(gameTime);
 
-        this.syncData.syncInfo(gameTime);
+        this.boostData.onGameTick(gameTime);
     }
 
+    public void syncInfo() {
+        this.syncData.syncInfo(gameTime);
+    }
 
     /**
      * 检查所有未淘汰玩家是否在线，更新不在线时长或更新最后有效位置
      * 检查队伍成员是否均为倒地或者不在线，淘汰队伍（所有成员）
      */
-    public void checkAndUpdateInvalidPlayer() {
+    private void checkAndUpdateInvalidPlayer() {
         List<GamePlayer> invalidPlayers = new ArrayList<>();
         // 筛选并增加无效时间计数
         for (GamePlayer gamePlayer : getStandingGamePlayers()) {
@@ -334,18 +351,31 @@ public class GameManager extends AbstractGameManager {
         ZoneManager.get().stopGame(serverLevel);
         SpawnManager.get().stopGame(serverLevel);
         GameruleManager.get().stopGame(serverLevel);
-        TeamManager.get().stopGame(serverLevel); // TeamManager最后处理
+        TeamManager.get().stopGame(serverLevel); // 最后处理TeamManager
         this.prepared = false;
         this.inGame = false;
         this.ready = false;
         // 取消事件监听
-        DamageEventHandler.getInstance().unregister();
-        LoopEventHandler.getInstance().unregister();
-        PlayerEventHandler.getInstance().unregister();
-        LogEventHandler.getInstance().unregister();
+        DamageEventHandler.get().unregister();
+        LoopEventHandler.get().unregister();
+        PlayerEventHandler.get().unregister();
+        LogEventHandler.get().unregister();
+
+        this.boostData.endGame(); // 更新到syncData
+        if (!keepTeamAfterGame) {
+            SyncEventHandler.get().unregister();
+            for (GamePlayer gamePlayer : getGamePlayers()) { // 先保留通知列表
+                this.syncData.addLeavedMember(gamePlayer.getPlayerUUID());
+            }
+        }
+        this.syncData.endGame(); // 通知更新zone，队伍信息
+        if (!keepTeamAfterGame) {
+            TeamManager.get().clear();
+        }
+
         // 清空同步信息
-        this.syncData.endGame();
         this.syncData.clear();
+        this.boostData.clear();
     }
 
     public boolean teleportToLobby(@NotNull ServerPlayer player) {
@@ -384,16 +414,9 @@ public class GameManager extends AbstractGameManager {
         }
     }
 
-    public void onPlayerDeath(ServerPlayer player) {
-        GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(player.getUUID());
-        if (gamePlayer == null) {
-            return;
-        }
-
+    public void onPlayerDeath(@NotNull GamePlayer gamePlayer) {
         gamePlayer.setAlive(false); // GamePlayer内部会自动更新eliminated
-        if (!player.isAlive()) {
-            gamePlayer.setEliminated(true);
-        }
+
         if (gamePlayer.isEliminated()) {
             TeamManager.get().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer信息
         }
@@ -432,6 +455,24 @@ public class GameManager extends AbstractGameManager {
     }
 
     public void addZoneInfo(int id, @Nullable CompoundTag zoneInfo) { this.syncData.addZoneInfo(id, zoneInfo); }
+    public void addChangedTeamInfo(int teamId) {
+        GameTeam gameTeam = TeamManager.get().getGameTeamById(teamId);
+        if (gameTeam != null) {
+            for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) {
+                this.syncData.deleteLeavedMember(gamePlayer.getPlayerUUID());
+            }
+        }
+        this.syncData.addChangedTeam(teamId);
+    }
+    public void addLeavedMember(UUID playerUUID) { this.syncData.addLeavedMember(playerUUID); }
+
+    public void addBoost(int amount, UUID playerUUID) {
+        GamePlayer gamePlayer = getGamePlayerByUUID(playerUUID);
+        if (gamePlayer == null) {
+            return;
+        }
+        this.boostData.addBoost(amount, gamePlayer);
+    }
 
     public int getGameruleConfigId() { return gameruleConfigId; }
     public int getSpawnConfigId() { return spawnConfigId; }

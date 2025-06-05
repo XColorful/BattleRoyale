@@ -4,7 +4,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
@@ -12,7 +11,7 @@ import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
-import xiao.battleroyale.util.ZoneNBTSerializer;
+import xiao.battleroyale.util.NBTUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -129,7 +128,7 @@ public class GameZone implements IGameZone {
 
     @Override
     public CompoundTag toNBT(double progress) {
-        return ZoneNBTSerializer.serializeZoneToNBT(
+        return NBTUtils.serializeZoneToNBT(
                 this.zoneId,
                 this.zoneName,
                 this.zoneColor,
