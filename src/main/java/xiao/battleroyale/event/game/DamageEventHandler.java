@@ -97,7 +97,9 @@ public class DamageEventHandler {
         if (damageSource.getEntity() instanceof LivingEntity attackingEntity) {
             GamePlayer attackingGamePlayer = TeamManager.get().getGamePlayerByUUID(attackingEntity.getUUID());
             if (attackingGamePlayer != null) {
-                attackingGamePlayer.addDamageDealt(damageAmount);
+                if (damagedGamePlayer.getGameTeamId() != attackingGamePlayer.getGameTeamId()) { // 同队伍不计入伤害量，受伤照常记录
+                    attackingGamePlayer.addDamageDealt(damageAmount);
+                }
             }
         }
     }
