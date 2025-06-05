@@ -8,14 +8,10 @@ import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.common.game.zone.spatial.SquareShape;
 
-public class SquareEntry implements IZoneShapeEntry {
-
-    private final StartEntry startEntry;
-    private final EndEntry endEntry;
+public class SquareEntry extends AbstractSimpleEntry {
 
     public SquareEntry(StartEntry startEntry, EndEntry endEntry) {
-        this.startEntry = startEntry;
-        this.endEntry = endEntry;
+        super(startEntry, endEntry);
     }
 
     @Override
@@ -31,15 +27,6 @@ public class SquareEntry implements IZoneShapeEntry {
     @Override
     public ISpatialZone createSpatialZone() {
         return new SquareShape(startEntry, endEntry);
-    }
-
-    @Override
-    public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(ZoneShapeTag.TYPE_NAME, getType());
-        jsonObject.add(ZoneShapeTag.START, startEntry.toJson());
-        jsonObject.add(ZoneShapeTag.END, endEntry.toJson());
-        return jsonObject;
     }
 
     @Nullable

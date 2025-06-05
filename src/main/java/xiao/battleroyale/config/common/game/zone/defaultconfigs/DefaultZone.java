@@ -28,6 +28,7 @@ public class DefaultZone {
         zoneConfigJson.add(generateDefaultZoneConfig1());
         zoneConfigJson.add(generateDefaultZoneConfig2());
         zoneConfigJson.add(generateDefaultZoneConfig3());
+        zoneConfigJson.add(generateDefaultZoneConfig4());
         writeJsonToFile(Paths.get(GameConfigManager.GAME_CONFIG_PATH, ZoneConfigManager.ZONE_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
@@ -120,6 +121,29 @@ public class DefaultZone {
 
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, circleEntry.toJson());
+
+        return config;
+    }
+
+    private static JsonObject generateDefaultZoneConfig4() {
+        JsonObject config = new JsonObject();
+        config.addProperty(ZoneConfigTag.ZONE_ID, 4);
+        config.addProperty(ZoneConfigTag.ZONE_NAME, "Relative White Hexagon");
+        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#FFFFFFAA");
+        config.addProperty(ZoneConfigTag.ZONE_DELAY, 600);
+        config.addProperty(ZoneConfigTag.ZONE_TIME, 11400);
+
+        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(10, 600, 600);
+
+        config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
+
+        StartEntry startEntry = new StartEntry(StartCenterType.RELATIVE, new Vec3(0, 0, 0), 0, 0,
+                StartDimensionType.RELATIVE, new Vec3(-100, -240, -100), 0, 1, 10);
+        EndEntry endEntry = new EndEntry(EndCenterType.RELATIVE, new Vec3(0, -10, 0), 4, 100,
+                EndDimensionType.RELATIVE, new Vec3(0, 10, 0), 4, 1, 0);
+
+        HexagonEntry hexagonEntry = new HexagonEntry(startEntry, endEntry);
+        config.add(ZoneConfigTag.ZONE_SHAPE, hexagonEntry.toJson());
 
         return config;
     }

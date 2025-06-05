@@ -41,16 +41,16 @@ public class ZoneRenderer {
 
     private static RenderType createRenderType() {
         RenderType.CompositeState compositeState = RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionColorTexShader)) // 手动 new
+                .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionColorTexShader))
                 .setTextureState(new RenderStateShard.TextureStateShard(WHITE_TEXTURE, false, false))
                 .setTransparencyState(new RenderStateShard.TransparencyStateShard("translucent_transparency", () -> {
                     RenderSystem.enableBlend();
-                    RenderSystem.defaultBlendFunc(); // 对应TRANSLUCENT_TRANSPARENCY的默认混合函数
+                    RenderSystem.defaultBlendFunc();
                 }, RenderSystem::disableBlend))
-                .setDepthTestState(new RenderStateShard.DepthTestStateShard("always", 519)) // 手动 new，对应 NO_DEPTH_TEST
-                .setCullState(new RenderStateShard.CullStateShard(false)) // 手动 new，对应 NO_CULL
-                .setLightmapState(new RenderStateShard.LightmapStateShard(false)) // 手动 new，对应 NO_LIGHTMAP
-                .setOverlayState(new RenderStateShard.OverlayStateShard(false)) // 手动 new，对应 NO_OVERLAY
+                .setDepthTestState(new RenderStateShard.DepthTestStateShard("always", 519))
+                .setCullState(new RenderStateShard.CullStateShard(false))
+                .setLightmapState(new RenderStateShard.LightmapStateShard(false))
+                .setOverlayState(new RenderStateShard.OverlayStateShard(false))
                 .createCompositeState(true);
 
         return RenderType.create("zone_render_type",
@@ -94,46 +94,22 @@ public class ZoneRenderer {
 
                 switch (zoneData.shapeType) {
                     case CIRCLE ->
-                            drawFilledCircleCylinder(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y);
+                            drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, 64, 0);
                     case SQUARE, RECTANGLE ->
                             drawFilledRectangleBox(poseStack, consumer, r, g, b, a,
                                     (float) zoneData.dimension.x,
                                     (float) zoneData.dimension.z,
                                     (float) zoneData.dimension.y);
+                    case HEXAGON -> // 起始角度为PI/6以实现平顶
+                            drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, 6, (float) (Math.PI / 6.0));
                 }
             } finally {
                 poseStack.popPose();
             }
         }
         bufferSource.endBatch();
-    }
-
-    private void drawFilledCircleCylinder(PoseStack poseStack, VertexConsumer consumer,
-                                          float r, float g, float b, float a, float radius, float height) {
-        int segments = 64;
-        float startAngle = 0;
-        float endAngle = (float) (2 * Math.PI);
-
-        for (int i = 0; i < segments; i++) {
-            float angle1 = startAngle + (endAngle - startAngle) * i / segments;
-            float angle2 = startAngle + (endAngle - startAngle) * (i + 1) / segments;
-
-            float x1 = radius * Mth.cos(angle1);
-            float z1 = radius * Mth.sin(angle1);
-            float x2 = radius * Mth.cos(angle2);
-            float z2 = radius * Mth.sin(angle2);
-
-            float normalX1 = Mth.cos(angle1);
-            float normalZ1 = Mth.sin(angle1);
-            float normalX2 = Mth.cos(angle2);
-            float normalZ2 = Mth.sin(angle2);
-
-            consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX1, 0, normalZ1).endVertex();
-            consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX1, 0, normalZ1).endVertex();
-            consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX2, 0, normalZ2).endVertex();
-            consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX2, 0, normalZ2).endVertex();
-        }
     }
 
     private void drawFilledRectangleBox(PoseStack poseStack, VertexConsumer consumer,
@@ -163,5 +139,30 @@ public class ZoneRenderer {
         consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
         consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
         consumer.vertex(poseStack.last().pose(), x2, height, z1).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
+    }
+
+    private void drawFilledPolygonCylinder(PoseStack poseStack, VertexConsumer consumer,
+                                           float r, float g, float b, float a,
+                                           float radius, float height, int segments, float initialAngle) {
+        for (int i = 0; i < segments; i++) {
+            float angle1 = initialAngle + (float) (2 * Math.PI * i / segments);
+            float angle2 = initialAngle + (float) (2 * Math.PI * (i + 1) / segments);
+
+            float x1 = radius * Mth.cos(angle1);
+            float z1 = radius * Mth.sin(angle1);
+            float x2 = radius * Mth.cos(angle2);
+            float z2 = radius * Mth.sin(angle2);
+
+            // 计算侧面法线
+            // 法线应垂直于该侧面，指向外部
+            float midAngle = (angle1 + angle2) / 2.0f;
+            float normalX = Mth.cos(midAngle);
+            float normalZ = Mth.sin(midAngle);
+
+            consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX, 0, normalZ).endVertex();
+        }
     }
 }
