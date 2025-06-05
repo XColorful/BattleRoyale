@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.IConfigManager;
 import xiao.battleroyale.api.loot.ILootEntry;
@@ -79,6 +80,12 @@ public class LootConfigManager implements IConfigManager {
         return instance;
     }
 
+    @Nullable
+    public LootConfig getDefaultConfig() {
+        return lootSpawnerConfigs.getOrDefault(DEFAULT_CONFIG_ID, null);
+    }
+
+    @Nullable
     public LootConfig getLootConfig(BlockEntity be, int id) {
         if (be instanceof LootSpawnerBlockEntity) {
             return getLootSpawnerConfig(id);
