@@ -27,6 +27,7 @@ public class DefaultZone {
         zoneConfigJson.add(generateDefaultZoneConfig0());
         zoneConfigJson.add(generateDefaultZoneConfig1());
         zoneConfigJson.add(generateDefaultZoneConfig2());
+        zoneConfigJson.add(generateDefaultZoneConfig3());
         writeJsonToFile(Paths.get(GameConfigManager.GAME_CONFIG_PATH, ZoneConfigManager.ZONE_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
@@ -38,7 +39,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
 
-        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 0, 12000); // 持续10分钟
+        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 0, 0); // 直接结束缩圈
 
         config.add(ZoneConfigTag.ZONE_FUNC, safeFuncEntry.toJson());
 
@@ -59,7 +60,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_NAME, "Self shrink aqua circle");
         config.addProperty(ZoneConfigTag.ZONE_COLOR, "#00FFFFAA");
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
-        config.addProperty(ZoneConfigTag.ZONE_TIME, 1200);
+        config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
 
         SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 600, 1200); // 30秒后刷圈，缩圈1分钟
 
@@ -96,6 +97,29 @@ public class DefaultZone {
 
         RectangleEntry rectangleEntry = new RectangleEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, rectangleEntry.toJson());
+
+        return config;
+    }
+
+    private static JsonObject generateDefaultZoneConfig3() {
+        JsonObject config = new JsonObject();
+        config.addProperty(ZoneConfigTag.ZONE_ID, 3);
+        config.addProperty(ZoneConfigTag.ZONE_NAME, "Relative Green Circle");
+        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#00FF00AA");
+        config.addProperty(ZoneConfigTag.ZONE_DELAY, 400);
+        config.addProperty(ZoneConfigTag.ZONE_TIME, 11600);
+
+        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(2, 600, 1200); // 30秒后刷圈，缩圈1分钟
+
+        config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
+
+        StartEntry startEntry = new StartEntry(StartCenterType.RELATIVE, new Vec3(0, 10, 0), 1, 0,
+                StartDimensionType.RELATIVE, new Vec3(-50, -230, -50), 1, 1, 0);
+        EndEntry endEntry = new EndEntry(EndCenterType.RELATIVE, new Vec3(0, 20, 0), 3, 0,
+                EndDimensionType.RELATIVE, new Vec3(50, -5, 50), 3, 1, 0);
+
+        CircleEntry circleEntry = new CircleEntry(startEntry, endEntry);
+        config.add(ZoneConfigTag.ZONE_SHAPE, circleEntry.toJson());
 
         return config;
     }

@@ -5,6 +5,10 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
+import xiao.battleroyale.api.game.zone.shape.end.EndCenterType;
+import xiao.battleroyale.api.game.zone.shape.end.EndDimensionType;
+import xiao.battleroyale.api.game.zone.shape.start.StartCenterType;
+import xiao.battleroyale.api.game.zone.shape.start.StartDimensionType;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
@@ -77,7 +81,12 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             // start center
             switch (startEntry.startCenterType) {
                 case FIXED -> startCenter = startEntry.startCenterPos;
-                case PREVIOUS -> startCenter = getPreviousEndCenterById(startEntry.startCenterZoneId);
+                case PREVIOUS, RELATIVE -> {
+                    startCenter = getPreviousEndCenterById(startEntry.startCenterZoneId);
+                    if (startEntry.startCenterType == StartCenterType.RELATIVE) {
+                        startCenter = Vec3Utils.addVec(startCenter, startEntry.startCenterPos);
+                    }
+                }
             }
             if (startCenter == null) {
                 BattleRoyale.LOGGER.warn("Failed to calculate start center, type: {}", startEntry.startCenterType.getValue());
@@ -89,7 +98,12 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             // start dimension
             switch (startEntry.startDimensionType) {
                 case FIXED -> startDimension = startEntry.startDimension;
-                case PREVIOUS -> startDimension = getPreviousEndDimensionById(startEntry.startDimensionZoneId);
+                case PREVIOUS, RELATIVE -> {
+                    startDimension = getPreviousEndDimensionById(startEntry.startDimensionZoneId);
+                    if (startEntry.startDimensionType == StartDimensionType.RELATIVE) {
+                        startDimension = Vec3Utils.addVec(startDimension, startEntry.startDimension);
+                    }
+                }
             }
             if (startDimension == null) {
                 BattleRoyale.LOGGER.warn("Failed to calculate start dimension, type: {}", startEntry.startDimensionType.getValue());
@@ -104,7 +118,12 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             // end center
             switch (endEntry.endCenterType) {
                 case FIXED -> endCenter = endEntry.endCenterPos;
-                case PREVIOUS -> endCenter = getPreviousStartCenterById(endEntry.endCenterZoneId);
+                case PREVIOUS, RELATIVE -> {
+                    endCenter = getPreviousStartCenterById(endEntry.endCenterZoneId);
+                    if (endEntry.endCenterType == EndCenterType.RELATIVE) {
+                        endCenter = Vec3Utils.addVec(endCenter, endEntry.endCenterPos);
+                    }
+                }
             }
             if (endCenter == null) {
                 BattleRoyale.LOGGER.warn("Failed to calculate end center, type: {}", endEntry.endCenterType.getValue());
@@ -116,7 +135,12 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             // end dimension
             switch (endEntry.endDimensionType) {
                 case FIXED -> endDimension = endEntry.endDimension;
-                case PREVIOUS -> endDimension = getPreviousStartDimensionById(endEntry.endDimensionZoneId);
+                case PREVIOUS, RELATIVE -> {
+                    endDimension = getPreviousStartDimensionById(endEntry.endDimensionZoneId);
+                    if (endEntry.endDimensionType == EndDimensionType.RELATIVE) {
+                        endDimension = Vec3Utils.addVec(endDimension, endEntry.endDimension);
+                    }
+                }
             }
             if (endDimension == null) {
                 BattleRoyale.LOGGER.warn("Failed to calculate end dimension, type: {}", endEntry.endDimensionType.getValue());

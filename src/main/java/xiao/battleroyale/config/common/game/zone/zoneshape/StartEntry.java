@@ -12,11 +12,6 @@ import xiao.battleroyale.util.StringUtils;
 
 public class StartEntry {
 
-    public static final String FIXED = "fixed";
-    public static final String PREVIOUS_ID = "previousZoneId";
-    public static final String RANDOM_RANGE = "randomRange";
-    public static final String PREVIOUS_SCALE = "scale";
-
     public StartCenterType startCenterType;
     public Vec3 startCenterPos; // fixed x, z
     public int startCenterZoneId; // previous zone id
@@ -65,22 +60,30 @@ public class StartEntry {
         double centerRange = 0;
         switch (centerType) {
             case FIXED -> {
-                String centerPosString = centerObject.has(StartEntry.FIXED) ? centerObject.getAsJsonPrimitive(StartEntry.FIXED).getAsString() : "";
+                String centerPosString = centerObject.has(ZoneShapeTag.FIXED) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.FIXED).getAsString() : "";
                 centerPos = StringUtils.parseVectorString(centerPosString);
                 if (centerPos == null) {
-                    BattleRoyale.LOGGER.info("Skipped invalid start centerPos string: {}", centerPosString);
+                    BattleRoyale.LOGGER.info("Skipped invalid start fixed centerPos string: {}", centerPosString);
                     return null;
                 }
             }
-            case PREVIOUS -> {
-                centerZoneId = centerObject.has(StartEntry.PREVIOUS_ID) ? centerObject.getAsJsonPrimitive(StartEntry.PREVIOUS_ID).getAsInt() : -1;
+            case PREVIOUS, RELATIVE -> {
+                centerZoneId = centerObject.has(ZoneShapeTag.PREVIOUS_ID) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_ID).getAsInt() : -1;
                 if (centerZoneId < 0) {
-                    BattleRoyale.LOGGER.info("Skipped invalid start center previous zone id: {}", centerZoneId);
+                    BattleRoyale.LOGGER.info("Skipped invalid start previous center zone id: {}", centerZoneId);
                     return null;
+                }
+                if (centerType == StartCenterType.RELATIVE) {
+                    String centerPosString = centerObject.has(ZoneShapeTag.RELATIVE) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.RELATIVE).getAsString() : "";
+                    centerPos = StringUtils.parseVectorString(centerPosString);
+                    if (centerPos == null) {
+                        BattleRoyale.LOGGER.info("Skipped invalid start relative centerPos string: {}", centerPosString);
+                        return null;
+                    }
                 }
             }
         }
-        centerRange = centerObject.has(StartEntry.RANDOM_RANGE) ? centerObject.getAsJsonPrimitive(StartEntry.RANDOM_RANGE).getAsDouble() : 0;
+        centerRange = centerObject.has(ZoneShapeTag.RANDOM_RANGE) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.RANDOM_RANGE).getAsDouble() : 0;
 
         Vec3 dimension = Vec3.ZERO;
         int dimensionZoneId = -1;
@@ -88,26 +91,34 @@ public class StartEntry {
         double dimensionRange = 0;
         switch (dimensionType) {
             case FIXED -> {
-                String dimensionString = dimensionObject.has(StartEntry.FIXED) ? dimensionObject.getAsJsonPrimitive(StartEntry.FIXED).getAsString() : "";
+                String dimensionString = dimensionObject.has(ZoneShapeTag.FIXED) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.FIXED).getAsString() : "";
                 dimension = StringUtils.parseVectorString(dimensionString);
                 if (dimension == null) {
-                    BattleRoyale.LOGGER.info("Skipped invalid start dimension string: {}", dimensionString);
+                    BattleRoyale.LOGGER.info("Skipped invalid start fixed dimension string: {}", dimensionString);
                     return null;
                 }
             }
-            case PREVIOUS -> {
-                dimensionZoneId = dimensionObject.has(StartEntry.PREVIOUS_ID) ? dimensionObject.getAsJsonPrimitive(StartEntry.PREVIOUS_ID).getAsInt() : -1;
-                dimensionScale = dimensionObject.has(StartEntry.PREVIOUS_SCALE) ? dimensionObject.getAsJsonPrimitive(StartEntry.PREVIOUS_SCALE).getAsDouble() : 0;
+            case PREVIOUS, RELATIVE -> {
+                dimensionZoneId = dimensionObject.has(ZoneShapeTag.PREVIOUS_ID) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_ID).getAsInt() : -1;
+                dimensionScale = dimensionObject.has(ZoneShapeTag.PREVIOUS_SCALE) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_SCALE).getAsDouble() : 0;
                 if (dimensionZoneId < 0) {
-                    BattleRoyale.LOGGER.info("Skipped invalid start dimension previous zone id: {}", dimensionZoneId);
+                    BattleRoyale.LOGGER.info("Skipped invalid start previous dimension zone id: {}", dimensionZoneId);
                     return null;
                 } else if (dimensionScale < 0) {
-                    BattleRoyale.LOGGER.info("Skipped invalid start dimension previous scale: {}", dimensionScale);
+                    BattleRoyale.LOGGER.info("Skipped invalid start previous dimension scale: {}", dimensionScale);
                     return null;
+                }
+                if (dimensionType == StartDimensionType.RELATIVE) {
+                    String dimensionString = dimensionObject.has(ZoneShapeTag.RELATIVE) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.RELATIVE).getAsString() : "";
+                    dimension = StringUtils.parseVectorString(dimensionString);
+                    if (dimension == null) {
+                        BattleRoyale.LOGGER.info("Skipped invalid start relative dimension string: {}", dimensionString);
+                        return null;
+                    }
                 }
             }
         }
-        dimensionRange = dimensionObject.has(StartEntry.RANDOM_RANGE) ? dimensionObject.getAsJsonPrimitive(StartEntry.RANDOM_RANGE).getAsDouble() : 0;
+        dimensionRange = dimensionObject.has(ZoneShapeTag.RANDOM_RANGE) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.RANDOM_RANGE).getAsDouble() : 0;
 
         return new StartEntry(centerType, centerPos, centerZoneId, centerRange,
                 dimensionType, dimension, dimensionZoneId, dimensionScale, dimensionRange);
@@ -130,10 +141,15 @@ public class StartEntry {
         JsonObject centerObject = new JsonObject();
         centerObject.addProperty(ZoneShapeTag.CENTER_TYPE, startCenterType.getValue());
         switch (startCenterType) {
-            case FIXED -> centerObject.addProperty(EndEntry.FIXED, StringUtils.vectorToString(startCenterPos));
-            case PREVIOUS -> centerObject.addProperty(EndEntry.PREVIOUS_ID, startCenterZoneId);
+            case FIXED -> centerObject.addProperty(ZoneShapeTag.FIXED, StringUtils.vectorToString(startCenterPos));
+            case PREVIOUS, RELATIVE -> {
+                centerObject.addProperty(ZoneShapeTag.PREVIOUS_ID, startCenterZoneId);
+                if (startCenterType == StartCenterType.RELATIVE) {
+                    centerObject.addProperty(ZoneShapeTag.RELATIVE, StringUtils.vectorToString(startCenterPos));
+                }
+            }
         }
-        centerObject.addProperty(EndEntry.RANDOM_RANGE, startCenterRange);
+        centerObject.addProperty(ZoneShapeTag.RANDOM_RANGE, startCenterRange);
         return centerObject;
     }
 
@@ -142,13 +158,16 @@ public class StartEntry {
         JsonObject dimensionObject = new JsonObject();
         dimensionObject.addProperty(ZoneShapeTag.DIMENSION_TYPE, startDimensionType.getValue());
         switch (startDimensionType) {
-            case FIXED -> dimensionObject.addProperty(EndEntry.FIXED, StringUtils.vectorToString(startDimension));
-            case PREVIOUS -> {
-                dimensionObject.addProperty(EndEntry.PREVIOUS_ID, startCenterZoneId);
-                dimensionObject.addProperty(EndEntry.PREVIOUS_SCALE, startDimensionScale);
+            case FIXED -> dimensionObject.addProperty(ZoneShapeTag.FIXED, StringUtils.vectorToString(startDimension));
+            case PREVIOUS, RELATIVE -> {
+                dimensionObject.addProperty(ZoneShapeTag.PREVIOUS_ID, startCenterZoneId);
+                dimensionObject.addProperty(ZoneShapeTag.PREVIOUS_SCALE, startDimensionScale);
+                if (startDimensionType == StartDimensionType.RELATIVE) {
+                    dimensionObject.addProperty(ZoneShapeTag.RELATIVE, StringUtils.vectorToString(startDimension));
+                }
             }
         }
-        dimensionObject.addProperty(EndEntry.RANDOM_RANGE, startDimensionRange);
+        dimensionObject.addProperty(ZoneShapeTag.RANDOM_RANGE, startDimensionRange);
         return dimensionObject;
     }
 }
