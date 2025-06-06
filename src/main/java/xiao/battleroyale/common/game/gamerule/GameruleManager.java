@@ -24,6 +24,7 @@ public class GameruleManager extends AbstractGameManager {
 
     private static GameruleManager instance;
 
+    MinecraftEntry mcEntry;
     private final PlayerModeStorage gamemodeBackup = new PlayerModeStorage();
     private final McRuleStorage gameruleBackup = new McRuleStorage();
 
@@ -60,7 +61,7 @@ public class GameruleManager extends AbstractGameManager {
             BattleRoyale.LOGGER.warn("Failed to get MinecraftEntry from GameruleConfig by id: {}", gameId);
             return;
         }
-        this.gamemodeBackup.store(mcEntry, serverLevel, GameManager.get().getGamePlayers());
+        this.mcEntry = mcEntry;
         this.gameruleBackup.store(mcEntry, serverLevel, null);
         this.autoSaturation = mcEntry.autoSaturation;
 
@@ -77,6 +78,7 @@ public class GameruleManager extends AbstractGameManager {
         }
 
         List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
+        this.gameruleBackup.apply(serverLevel, gamePlayerList);
         this.gamemodeBackup.apply(serverLevel, gamePlayerList);
 
         this.ready = true;
@@ -87,6 +89,10 @@ public class GameruleManager extends AbstractGameManager {
         if (GameManager.get().isInGame()) {
             return false;
         }
+
+        this.gamemodeBackup.store(mcEntry, serverLevel, GameManager.get().getGamePlayers());
+        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
+        this.gamemodeBackup.apply(serverLevel, gamePlayerList);
 
         return true;
     }
