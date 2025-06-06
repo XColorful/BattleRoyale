@@ -6,7 +6,7 @@ import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.api.game.spawn.SpawnConfigTag;
-import xiao.battleroyale.config.common.game.spawn.type.GroundEntry;
+import xiao.battleroyale.config.common.game.spawn.type.TeleportEntry;
 import xiao.battleroyale.config.common.game.spawn.type.PlaneEntry;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
@@ -35,9 +35,9 @@ public class DefaultSpawn {
         config.addProperty(SpawnConfigTag.SPAWN_NAME, "Random ground spawn");
         config.addProperty(SpawnConfigTag.SPAWN_COLOR, "#FFFFFFAA");
 
-        GroundEntry grondEntry = new GroundEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
+        TeleportEntry grondEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.RANDOM,
-                new GroundEntry.DetailInfo(new ArrayList<>(), false, true, 0)
+                new TeleportEntry.DetailInfo(new ArrayList<>(), false, true, 0)
         );
 
         config.add(SpawnConfigTag.SPAWN_ENTRY, grondEntry.toJson());
@@ -50,9 +50,9 @@ public class DefaultSpawn {
         config.addProperty(SpawnConfigTag.SPAWN_NAME, "Fixed ground spawn");
         config.addProperty(SpawnConfigTag.SPAWN_COLOR, "#FFFFFFAA");
 
-        GroundEntry grondEntry = new GroundEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
+        TeleportEntry grondEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.FIXED,
-                new GroundEntry.DetailInfo(Arrays.asList(
+                new TeleportEntry.DetailInfo(Arrays.asList(
                         new Vec3(0,-60,0),
                         new Vec3(-50,-60, -50),
                         new Vec3(50, -60, -50),

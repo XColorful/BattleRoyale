@@ -1,4 +1,4 @@
-package xiao.battleroyale.common.game.spawn.ground;
+package xiao.battleroyale.common.game.spawn.vanilla;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -11,7 +11,7 @@ import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.spawn.AbstractSimpleSpawner;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
-import xiao.battleroyale.config.common.game.spawn.type.GroundEntry;
+import xiao.battleroyale.config.common.game.spawn.type.TeleportEntry;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import static xiao.battleroyale.util.Vec3Utils.randomAdjustXZExpandY;
@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 /**
  * 传送所有玩家后就没什么事情了
  */
-public class GroundSpawner extends AbstractSimpleSpawner {
+public class TeleportSpawner extends AbstractSimpleSpawner {
 
     // common 在父类
 
@@ -41,9 +41,9 @@ public class GroundSpawner extends AbstractSimpleSpawner {
     private final int maxSpawnTime = 10 * 20; // 10秒传不完就不传了
     private final double queuedHeight = 1145.14; // findGround失败的时候临时反复传送到这个高度，直到区块能成功加载或达到最大时长
 
-    public GroundSpawner(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
-                         CommonDetailType detailType,
-                         GroundEntry.DetailInfo detailInfo) {
+    public TeleportSpawner(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
+                           CommonDetailType detailType,
+                           TeleportEntry.DetailInfo detailInfo) {
         super(shapeType, center, dimension);
 
         this.detailType = detailType;

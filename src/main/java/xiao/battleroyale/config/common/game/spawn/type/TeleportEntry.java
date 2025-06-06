@@ -9,7 +9,7 @@ import xiao.battleroyale.api.game.spawn.ISpawnEntry;
 import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
 import xiao.battleroyale.api.game.spawn.type.shape.SpawnShapeTag;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
-import xiao.battleroyale.common.game.spawn.ground.GroundSpawner;
+import xiao.battleroyale.common.game.spawn.vanilla.TeleportSpawner;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.util.JsonUtils;
@@ -18,7 +18,7 @@ import xiao.battleroyale.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroundEntry implements ISpawnEntry {
+public class TeleportEntry implements ISpawnEntry {
 
     // common
     private final SpawnShapeType shapeType;
@@ -33,9 +33,9 @@ public class GroundEntry implements ISpawnEntry {
                               boolean findGround,
                               double randomRange) {}
 
-    public GroundEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
-                       CommonDetailType detailType,
-                       DetailInfo detailInfo) {
+    public TeleportEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
+                         CommonDetailType detailType,
+                         DetailInfo detailInfo) {
         this.shapeType = shapeType;
         this.centerPos = center;
         this.dimension = dimension;
@@ -46,12 +46,12 @@ public class GroundEntry implements ISpawnEntry {
 
     @Override
     public String getType() {
-        return SpawnTypeTag.SPAWN_TYPE_GROUND;
+        return SpawnTypeTag.SPAWN_TYPE_TELEPORT;
     }
 
     @Override
     public IGameSpawner createGameSpawner() {
-        return new GroundSpawner(shapeType, centerPos, dimension, detailType, detailInfo);
+        return new TeleportSpawner(shapeType, centerPos, dimension, detailType, detailInfo);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class GroundEntry implements ISpawnEntry {
     }
 
     @Nullable
-    public static GroundEntry fromJson(JsonObject jsonObject) {
+    public static TeleportEntry fromJson(JsonObject jsonObject) {
         // common
         String shapeTypeString = jsonObject.has(SpawnShapeTag.TYPE_NAME) ? jsonObject.getAsJsonPrimitive(SpawnShapeTag.TYPE_NAME).getAsString() : "";
         SpawnShapeType shapeType = SpawnShapeType.fromName(shapeTypeString);
@@ -112,7 +112,7 @@ public class GroundEntry implements ISpawnEntry {
         boolean findGround = jsonObject.has(SpawnDetailTag.GROUND_FIND_GROUND) && jsonObject.getAsJsonPrimitive(SpawnDetailTag.GROUND_FIND_GROUND).getAsBoolean();
         double range = jsonObject.has(SpawnDetailTag.GROUND_RANDOM_RANGE) ? jsonObject.getAsJsonPrimitive(SpawnDetailTag.GROUND_RANDOM_RANGE).getAsDouble() : 0;
 
-        return new GroundEntry(shapeType, center, dimension,
+        return new TeleportEntry(shapeType, center, dimension,
                 detailType,
                 new DetailInfo(fixedPos, teamTogether, findGround, range)
         );
