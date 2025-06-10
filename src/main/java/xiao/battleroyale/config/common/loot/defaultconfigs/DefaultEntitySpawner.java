@@ -12,6 +12,7 @@ import xiao.battleroyale.config.common.loot.type.WeightEntry;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.ENTITY_SPAWNER;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultEntitySpawner {
@@ -21,7 +22,7 @@ public class DefaultEntitySpawner {
         JsonArray entitySpawnerConfigsJson = new JsonArray();
         entitySpawnerConfigsJson.add(generateDefaultEntitySpawner0());
         entitySpawnerConfigsJson.add(generateDefaultEntitySpawner1());
-        writeJsonToFile(Paths.get(LootConfigManager.COMMON_LOOT_CONFIG_PATH, LootConfigManager.ENTITY_SPAWNER_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), entitySpawnerConfigsJson);
+        writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(ENTITY_SPAWNER), LootConfigManager.ENTITY_SPAWNER_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), entitySpawnerConfigsJson);
     }
 
     private static JsonObject generateDefaultEntitySpawner0() {

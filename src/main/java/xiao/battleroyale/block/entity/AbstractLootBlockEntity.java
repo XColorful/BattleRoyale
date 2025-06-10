@@ -21,7 +21,7 @@ public abstract class AbstractLootBlockEntity extends BlockEntity implements ILo
 
     @Nullable
     protected UUID gameId = null;
-    protected int configId = LootConfigManager.DEFAULT_CONFIG_ID;
+    protected int configId = LootConfigManager.get().getDefaultConfigId();
 
     protected AbstractLootBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);

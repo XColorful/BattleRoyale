@@ -11,6 +11,7 @@ import xiao.battleroyale.config.common.loot.type.MultiEntry;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.SECRET_ROOM;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultSecretRoom{
@@ -20,7 +21,7 @@ public class DefaultSecretRoom{
     public static void generateDefaultConfigs() {
         JsonArray secretRoomConfigsJson = new JsonArray();
         secretRoomConfigsJson.add(generateDefaultSecretRoom());
-        writeJsonToFile(Paths.get(LootConfigManager.COMMON_LOOT_CONFIG_PATH, LootConfigManager.SECRET_ROOM_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), secretRoomConfigsJson);
+        writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(SECRET_ROOM), LootConfigManager.SECRET_ROOM_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), secretRoomConfigsJson);
     }
 
     private static JsonObject generateDefaultSecretRoom() {

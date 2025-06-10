@@ -102,7 +102,7 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
                 e.setGameId(gameId != null ? gameId : UUID.randomUUID());
 
                 // ConfigId
-                int configId = LootConfigManager.DEFAULT_CONFIG_ID;
+                int configId = LootConfigManager.get().getDefaultConfigId(); // 默认获取loot_spawner的默认id
                 if (nbt != null && nbt.contains(LootNBTTag.CONFIG_ID_TAG, Tag.TAG_INT)) {
                     configId = nbt.getInt(LootNBTTag.CONFIG_ID_TAG);
                 }

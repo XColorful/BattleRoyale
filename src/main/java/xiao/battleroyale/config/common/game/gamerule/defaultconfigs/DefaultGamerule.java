@@ -21,7 +21,7 @@ public class DefaultGamerule {
         JsonArray gameruleConfigJson = new JsonArray();
         gameruleConfigJson.add(generateDefaultGameruleConfig0());
         gameruleConfigJson.add(generateDefaultGameruleConfig1());
-        writeJsonToFile(Paths.get(GameConfigManager.GAME_CONFIG_PATH, GameruleConfigManager.GAMERULE_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), gameruleConfigJson);
+        writeJsonToFile(Paths.get(GameConfigManager.get().getGameruleConfigPath(), DEFAULT_FILE_NAME).toString(), gameruleConfigJson);
     }
 
     private static JsonObject generateDefaultGameruleConfig0() {

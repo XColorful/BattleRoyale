@@ -26,7 +26,7 @@ public class DefaultSpawn {
         spawnConfigJson.add(generateDefaultSpawnConfig0());
         spawnConfigJson.add(generateDefaultSpawnConfig1());
         spawnConfigJson.add(generateDefaultSpawnConfig2());
-        writeJsonToFile(Paths.get(GameConfigManager.GAME_CONFIG_PATH, SpawnConfigManager.SPAWN_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), spawnConfigJson);
+        writeJsonToFile(Paths.get(GameConfigManager.get().getSpawnConfigPath(), DEFAULT_FILE_NAME).toString(), spawnConfigJson);
     }
 
     private static JsonObject generateDefaultSpawnConfig0() {
