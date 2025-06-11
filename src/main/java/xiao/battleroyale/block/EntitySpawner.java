@@ -64,7 +64,7 @@ public class EntitySpawner extends AbstractLootBlock {
                     int currentConfigId = entitySpawnerBlockEntity.getConfigId();
                     List<LootConfig> allConfigs = LootConfigManager.get().getAllEntitySpawnerConfigs();
                     if (allConfigs.isEmpty()) {
-                        player.sendSystemMessage(Component.translatable("battleroyale.message.no_entity_spawner_configs_available"));
+                        player.sendSystemMessage(Component.translatable("battleroyale.message.no_entity_spawner_config_available"));
                         return InteractionResult.SUCCESS;
                     }
 
@@ -76,7 +76,7 @@ public class EntitySpawner extends AbstractLootBlock {
                         }
                     }
                     entitySpawnerBlockEntity.setConfigId(nextConfig.getLootId());
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_spawner_config_switched", nextConfig.getLootId(), nextConfig.getName()));
+                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_spawner_lootid_switched", nextConfig.getLootId(), nextConfig.getName()));
                     return InteractionResult.SUCCESS;
                 }
             }

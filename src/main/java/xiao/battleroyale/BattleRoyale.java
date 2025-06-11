@@ -34,7 +34,7 @@ public class BattleRoyale {
         ModCreativeTabs.TABS.register(bus);
         ModItems.ITEMS.register(bus);
         ModEntities.ENTITY_TYPES.register(bus);
-        ModContainer.CONTAINER_TYPE.register(bus);
+        ModMenuTypes.MENU_TYPES.register(bus);
         ModSounds.SOUNDS.register(bus);
     }
 }

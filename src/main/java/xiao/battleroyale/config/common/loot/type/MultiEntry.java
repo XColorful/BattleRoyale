@@ -7,7 +7,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
-import xiao.battleroyale.util.JsonUtils;
+import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class MultiEntry implements ILootEntry {
                         continue;
                     }
                     JsonObject entryObject = element.getAsJsonObject();
-                    ILootEntry entry = JsonUtils.deserializeLootEntry(entryObject);
+                    ILootEntry entry = LootConfig.deserializeLootEntry(entryObject);
                     if (entry != null) {
                         entries.add(entry);
                     }

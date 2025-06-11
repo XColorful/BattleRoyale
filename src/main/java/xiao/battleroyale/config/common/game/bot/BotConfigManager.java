@@ -1,37 +1,34 @@
 package xiao.battleroyale.config.common.game.bot;
 
-import xiao.battleroyale.api.IConfigManager;
+import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.api.IConfigSingleEntry;
 import xiao.battleroyale.api.game.bot.IBotEntry;
+import xiao.battleroyale.config.common.AbstractConfigManager;
+import xiao.battleroyale.config.common.game.GameConfigManager;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
-public class BotConfigManager implements IConfigManager {
-    public static final int DEFAULT_CONFIG_ID = 0;
 
-    private static final String BOT_CONFIG_SUB_PATH = "bot";
+public class BotConfigManager extends AbstractConfigManager<BotConfigManager.BotConfig> {
 
-    private final Map<Integer, BotConfig> botConfigs = new HashMap<>();
-    private final List<BotConfig> allBotConfigs = new ArrayList<>();
+    public static final String BOT_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
+    public static final String BOT_CONFIG_SUB_PATH = "bot";
+
+    protected final int DEFAULT_BOT_CONFIG_DATA_ID = 0;
 
     private static BotConfigManager instance;
 
     private BotConfigManager() {
-        ;
-    }
-
-    public void reloadConfigs() {
-        loadBotConfigs();
-
-        initializeDefaultConfigsIfEmpty();
+        allConfigData.put(DEFAULT_BOT_CONFIG_DATA_ID, new ConfigData<>());
     }
 
     public static void init() {
         if (instance == null) {
             instance = new BotConfigManager();
+            instance.reloadBotConfigs();
         }
     }
 
@@ -42,31 +39,9 @@ public class BotConfigManager implements IConfigManager {
         return instance;
     }
 
-    public BotConfig getBotConfig(int id) {
-        return botConfigs.get(id);
-    }
+    public static class BotConfig implements IConfigSingleEntry {
+        public static final String CONFIG_TYPE = "BotConfig";
 
-    public List<BotConfig> getAllBotConfigs() {
-        return allBotConfigs;
-    }
-
-    public void loadBotConfigs() {
-        ;
-    }
-
-    private void loadConfigsFromDirectory(Path directoryPath, Map<Integer, BotConfig> configMap, List<BotConfig> configList) {
-        ;
-    }
-
-    private void loadConfigFromFile(Path filePath, Map<Integer, BotConfig> configMap, List<BotConfig> configList) {
-        ;
-    }
-
-    public void initializeDefaultConfigsIfEmpty() {
-
-    }
-
-    public static class BotConfig {
         private final int id;
         private final String name;
         private final int color;
@@ -82,17 +57,89 @@ public class BotConfigManager implements IConfigManager {
         public int getId() {
             return id;
         }
-
         public String getName() {
             return name;
         }
-
         public int getColor() {
             return color;
         }
-
         public IBotEntry getEntry() {
             return entry;
         }
+        @Override
+        public String getType() {
+            return CONFIG_TYPE;
+        }
+
+        @Override
+        public JsonObject toJson() {
+            return null;
+        }
+
+        @Override
+        public int getConfigId() {
+            return getId();
+        }
+    }
+
+
+    @Override protected Comparator<BotConfig> getConfigIdComparator(int configType) {
+        return Comparator.comparingInt(BotConfig::getConfigId);
+    }
+
+    /**
+     * IConfigManager
+     */
+    @Override public String getConfigType(int configType) {
+        return BotConfig.CONFIG_TYPE;
+    }
+
+    /**
+     * IConfigDefaultable
+     */
+    @Override public void generateDefaultConfigs() {
+        generateDefaultConfigs(DEFAULT_BOT_CONFIG_DATA_ID);
+    }
+
+    @Override public void generateDefaultConfigs(int configType) {
+    }
+    @Override public int getDefaultConfigId() {
+        return getDefaultConfigId(DEFAULT_BOT_CONFIG_DATA_ID);
+    }
+
+    /**
+     * IConfigLoadable
+     */
+    @Nullable
+    @Override
+    public BotConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
+        return null;
+    }
+    @Override public String getConfigPath(int configType) {
+        return BOT_CONFIG_PATH;
+    }
+    @Override public String getConfigSubPath(int configType) {
+        return BOT_CONFIG_SUB_PATH;
+    }
+
+    /**
+     * 特定类别的获取接口
+     */
+    public BotConfig getBotConfig(int id) {
+        return getConfigEntry(id, DEFAULT_BOT_CONFIG_DATA_ID);
+    }
+    public List<BotConfig> getAllBotConfigs() {
+        return getAllConfigEntries(DEFAULT_BOT_CONFIG_DATA_ID);
+    }
+
+    /**
+     * 特定类别的重新读取接口
+     */
+    public void reloadBotConfigs() {
+        reloadConfigs(DEFAULT_BOT_CONFIG_DATA_ID);
+    }
+
+    @Override public void initializeDefaultConfigsIfEmpty() {
+        super.initializeDefaultConfigsIfEmpty(DEFAULT_BOT_CONFIG_DATA_ID);
     }
 }

@@ -13,10 +13,11 @@ public class ModCreativeTabs {
 
     public static RegistryObject<CreativeModeTab> BLOCK_TAB = TABS.register("block", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.tab.battleroyale.block"))
-            .icon(() -> new ItemStack(ModBlocks.LOOT_SPAWNER.get()))
+            .icon(() -> new ItemStack(ModBlocks.ZONE_CONTROLLER.get()))
             .displayItems(((itemDisplayParameters, output) -> {
                 output.accept(ModItems.LOOT_SPAWNER_ITEM.get());
                 output.accept(ModItems.ENTITY_SPAWNER_ITEM.get());
+                output.accept(ModItems.ZONE_CONTROLLER_ITEM.get());
             }))
             .build());
 }

@@ -1,4 +1,4 @@
-package xiao.battleroyale.common.game.spawn.plane;
+package xiao.battleroyale.common.game.spawn.special;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;

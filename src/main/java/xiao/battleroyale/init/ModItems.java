@@ -14,4 +14,6 @@ public class ModItems {
             new BlockItem(ModBlocks.LOOT_SPAWNER.get(), new Item.Properties()));
     public static final RegistryObject<Item> ENTITY_SPAWNER_ITEM = ITEMS.register("entity_spawner", () ->
             new BlockItem(ModBlocks.ENTITY_SPAWNER.get(), new Item.Properties()));
+    public static final RegistryObject<Item> ZONE_CONTROLLER_ITEM = ITEMS.register("zone_controller", () ->
+            new BlockItem(ModBlocks.ZONE_CONTROLLER.get(), new Item.Properties()));
 }

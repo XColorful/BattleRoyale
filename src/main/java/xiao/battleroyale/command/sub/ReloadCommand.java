@@ -26,10 +26,10 @@ public class ReloadCommand {
     private static final String SECRET_ROOM_NAME = "secret_room";
 
     // Game 子类配置
-    private static final String ZONE_NAME = "zone";
-    private static final String SPAWN_NAME = "spawn";
+    private static final String BOT_NAME = "bot";
     private static final String GAMERULE_NAME = "gamerule";
-    private static final String BOT = "bot";
+    private static final String SPAWN_NAME = "spawn";
+    private static final String ZONE_NAME = "zone";
 
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
@@ -58,8 +58,8 @@ public class ReloadCommand {
     }
 
     private static int reloadAllConfigs(CommandContext<CommandSourceStack> context) {
-        LootConfigManager.get().reloadConfigs();
-        GameConfigManager.get().reloadConfigs();
+        LootConfigManager.get().reloadAllLootConfigs();
+        GameConfigManager.get().reloadAllConfigs();
 
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.all_configs_reloaded"), true);
         BattleRoyale.LOGGER.info("Reloaded all battleroyale configs");
@@ -69,28 +69,28 @@ public class ReloadCommand {
     private static int reloadLootConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
         String messageKey;
         if (subType == null) {
-            LootConfigManager.get().reloadConfigs();
+            LootConfigManager.get().reloadAllLootConfigs();
             messageKey = "battleroyale.message.loot_config_reloaded";
         } else {
             switch (subType) {
                 case LOOT_SPAWNER_NAME:
-                    LootConfigManager.get().loadLootSpawnerConfigs();
+                    LootConfigManager.get().reloadLootSpawnerConfigs();
                     messageKey = "battleroyale.message.loot_spawner_config_reloaded";
                     break;
                 case ENTITY_SPAWNER_NAME:
-                    LootConfigManager.get().loadEntitySpawnerConfigs();
+                    LootConfigManager.get().reloadEntitySpawnerConfigs();
                     messageKey = "battleroyale.message.entity_spawner_config_reloaded";
                     break;
                 case AIRDROP_NAME:
-                    LootConfigManager.get().loadAirdropConfigs();
+                    LootConfigManager.get().reloadAirdropConfigs();
                     messageKey = "battleroyale.message.airdrop_config_reloaded";
                     break;
                 case AIRDROP_SPECIAL_NAME:
-                    LootConfigManager.get().loadAirdropSpecialConfigs();
+                    LootConfigManager.get().reloadAirdropSpecialConfigs();
                     messageKey = "battleroyale.message.airdrop_special_config_reloaded";
                     break;
                 case SECRET_ROOM_NAME:
-                    LootConfigManager.get().loadSecretRoomConfigs();
+                    LootConfigManager.get().reloadSecretRoomConfigs();
                     messageKey = "battleroyale.message.secret_room_config_reloaded";
                     break;
                 default:
@@ -107,7 +107,7 @@ public class ReloadCommand {
     private static int reloadGameConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
         String messageKey;
         if (subType == null) {
-            GameConfigManager.get().reloadConfigs();
+            GameConfigManager.get().reloadAllConfigs();
             messageKey = "battleroyale.message.game_config_reloaded";
         } else {
             switch (subType) {

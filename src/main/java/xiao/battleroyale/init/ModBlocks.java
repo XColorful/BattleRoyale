@@ -8,8 +8,10 @@ import net.minecraftforge.registries.RegistryObject;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.block.EntitySpawner;
 import xiao.battleroyale.block.LootSpawner;
+import xiao.battleroyale.block.ZoneController;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
+import xiao.battleroyale.block.entity.ZoneControllerBlockEntity;
 
 public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, BattleRoyale.MOD_ID);
@@ -17,6 +19,7 @@ public class ModBlocks {
 
     public static RegistryObject<Block> LOOT_SPAWNER = BLOCKS.register("loot_spawner", LootSpawner::new);
     public static RegistryObject<Block> ENTITY_SPAWNER = BLOCKS.register("entity_spawner", EntitySpawner::new);
+    public static RegistryObject<Block> ZONE_CONTROLLER = BLOCKS.register("zone_controller", ZoneController::new);
 
     public static RegistryObject<BlockEntityType<LootSpawnerBlockEntity>> LOOT_SPAWNER_BE =
             BLOCK_ENTITIES.register("loot_spawner", () ->
@@ -24,4 +27,7 @@ public class ModBlocks {
     public static RegistryObject<BlockEntityType<EntitySpawnerBlockEntity>> ENTITY_SPAWNER_BE =
             BLOCK_ENTITIES.register("entity_spawner", () ->
                     BlockEntityType.Builder.of(EntitySpawnerBlockEntity::new, ENTITY_SPAWNER.get()).build(null));
+    public static RegistryObject<BlockEntityType<ZoneControllerBlockEntity>> ZONE_CONTROLLER_BE =
+            BLOCK_ENTITIES.register("zone_controller", () ->
+                    BlockEntityType.Builder.of(ZoneControllerBlockEntity::new, ZONE_CONTROLLER.get()).build(null));
 }

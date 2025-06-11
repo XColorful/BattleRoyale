@@ -9,7 +9,7 @@ import xiao.battleroyale.api.game.spawn.ISpawnEntry;
 import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
 import xiao.battleroyale.api.game.spawn.type.shape.SpawnShapeTag;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
-import xiao.battleroyale.common.game.spawn.plane.PlaneSpawner;
+import xiao.battleroyale.common.game.spawn.special.PlaneSpawner;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.util.StringUtils;

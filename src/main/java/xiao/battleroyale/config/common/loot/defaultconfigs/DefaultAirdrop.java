@@ -13,6 +13,7 @@ import xiao.battleroyale.config.common.loot.type.WeightEntry;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.AIRDROP;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultAirdrop{
@@ -22,7 +23,7 @@ public class DefaultAirdrop{
     public static void generateDefaultConfigs() {
         JsonArray airdropConfigsJson = new JsonArray();
         airdropConfigsJson.add(generateDefaultAirdrop());
-        writeJsonToFile(Paths.get(LootConfigManager.COMMON_LOOT_CONFIG_PATH, LootConfigManager.AIRDROP_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), airdropConfigsJson);
+        writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(AIRDROP), LootConfigManager.AIRDROP_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), airdropConfigsJson);
     }
 
     private static JsonObject generateDefaultAirdrop() {

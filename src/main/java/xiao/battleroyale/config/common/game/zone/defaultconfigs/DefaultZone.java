@@ -30,7 +30,7 @@ public class DefaultZone {
         zoneConfigJson.add(generateDefaultZoneConfig3());
         zoneConfigJson.add(generateDefaultZoneConfig4());
         zoneConfigJson.add(generateDefaultZoneConfig5());
-        writeJsonToFile(Paths.get(GameConfigManager.GAME_CONFIG_PATH, ZoneConfigManager.ZONE_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
+        writeJsonToFile(Paths.get(GameConfigManager.get().getZoneConfigPath(), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
     private static JsonObject generateDefaultZoneConfig0() {

@@ -16,9 +16,10 @@ public class ClientSetupEvent {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        MenuScreens.register(ModMenuTypes.LOOT_SPAWNER_MENU.get(), LootSpawnerScreen::new);
-
         event.enqueueWork(ZoneRenderer::register);
         event.enqueueWork(TeamInfoRenderer::register);
+        event.enqueueWork(() -> {
+            MenuScreens.register(ModMenuTypes.LOOT_SPAWNER_MENU.get(), LootSpawnerScreen::new);
+        });
     }
 }

@@ -7,7 +7,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
-import xiao.battleroyale.util.JsonUtils;
+import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +85,7 @@ public class WeightEntry implements ILootEntry {
                     double weight = itemObject.has(LootEntryTag.WEIGHT) ? itemObject.getAsJsonPrimitive(LootEntryTag.WEIGHT).getAsDouble() : 0;
                     if (itemObject.has(LootEntryTag.ENTRY)) {
                         JsonObject entryObject = itemObject.getAsJsonObject(LootEntryTag.ENTRY);
-                        ILootEntry entry = JsonUtils.deserializeLootEntry(entryObject);
+                        ILootEntry entry = LootConfig.deserializeLootEntry(entryObject);
                         if (entry != null) {
                             weightedEntries.add(new WeightedEntry(weight, entry));
                         }

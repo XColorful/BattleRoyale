@@ -1,7 +1,8 @@
 {
   "variants": {
-    "": {
-      "model": "battleroyale:block/entity_spawner"
-    }
+    "facing=north": { "model": "battleroyale:block/entity_spawner", "y": 0 },
+    "facing=south": { "model": "battleroyale:block/entity_spawner", "y": 180 },
+    "facing=east":  { "model": "battleroyale:block/entity_spawner", "y": 90 },
+    "facing=west":  { "model": "battleroyale:block/entity_spawner", "y": 270 }
   }
 }

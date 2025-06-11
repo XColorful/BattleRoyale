@@ -10,6 +10,7 @@ import xiao.battleroyale.config.common.loot.type.*;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.LOOT_SPAWNER;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultLootSpawner{
@@ -20,7 +21,7 @@ public class DefaultLootSpawner{
         JsonArray lootSpawnerConfigsJson = new JsonArray();
         lootSpawnerConfigsJson.add(generateDefaultLootSpawner0());
         lootSpawnerConfigsJson.add(generateDefaultLootSpawner1());
-        writeJsonToFile(Paths.get(LootConfigManager.COMMON_LOOT_CONFIG_PATH, LootConfigManager.LOOT_SPAWNER_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), lootSpawnerConfigsJson);
+        writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(LOOT_SPAWNER), LootConfigManager.LOOT_SPAWNER_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), lootSpawnerConfigsJson);
     }
 
     private static JsonObject generateDefaultLootSpawner0() {

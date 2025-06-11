@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 public enum SpawnEntryType {
-    GROUND(SpawnTypeTag.SPAWN_TYPE_GROUND, GroundEntry::fromJson),
+    GROUND(SpawnTypeTag.SPAWN_TYPE_TELEPORT, TeleportEntry::fromJson),
     PLANE(SpawnTypeTag.SPAWN_TYPE_PLANE, PlaneEntry::fromJson);
 
     private final String name;
