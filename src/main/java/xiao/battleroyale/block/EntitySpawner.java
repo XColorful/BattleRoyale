@@ -76,7 +76,7 @@ public class EntitySpawner extends AbstractLootBlock {
                         }
                     }
                     entitySpawnerBlockEntity.setConfigId(nextConfig.getLootId());
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_spawner_config_switched", nextConfig.getLootId(), nextConfig.getName()));
+                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_spawner_lootid_switched", nextConfig.getLootId(), nextConfig.getName()));
                     return InteractionResult.SUCCESS;
                 }
             }

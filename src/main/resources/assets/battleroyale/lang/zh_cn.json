@@ -11,11 +11,11 @@
   "death.attack.safezone": "%s 在安全区外被淘汰",
   "death.attack.unsafezone": "%s 在不安全区内被淘汰",
 
-  "battleroyale.message.loot_spawner_config_switched": "切换至物资刷新配置%s: %s",
-  "battleroyale.message.entity_spawner_config_switched": "切换至实体刷新配置%s: %s",
-  "battleroyale.message.airdrop_config_switched": "切换至补给箱配置%s: %s",
-  "battleroyale.message.airdrop_special_config_switched": "切换至特殊补给箱配置%s: %s",
-  "battleroyale.message.secret_room_config_switched": "切换至神秘点位配置%s: %s",
+  "battleroyale.message.loot_spawner_lootid_switched": "切换至物资刷新配置%s: %s",
+  "battleroyale.message.entity_spawner_lootid_switched": "切换至实体刷新配置%s: %s",
+  "battleroyale.message.airdrop_lootid_switched": "切换至补给箱配置%s: %s",
+  "battleroyale.message.airdrop_special_lootid_switched": "切换至特殊补给箱配置%s: %s",
+  "battleroyale.message.secret_room_lootid_switched": "切换至神秘点位配置%s: %s",
 
   "battleroyale.message.loot_generation_started": "开始执行物资刷新 (区块数: %s)",
   "battleroyale.message.loot_generation_in_progress": "当前正在执行物资刷新",

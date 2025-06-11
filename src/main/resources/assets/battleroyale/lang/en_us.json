@@ -11,11 +11,11 @@
   "death.attack.safezone": "%s died outside safe zone",
   "death.attack.unsafezone": "%s died inside unsafe zone",
 
-  "battleroyale.message.loot_spawner_config_switched": "Switched to loot spawner config %s: %s",
-  "battleroyale.message.entity_spawner_config_switched": "Switched to entity spawner config %s: %s",
-  "battleroyale.message.airdrop_config_switched": "Switched to airdrop config %s: %s",
-  "battleroyale.message.airdrop_special_config_switched": "Switched to special airdrop config %s: %s",
-  "battleroyale.message.secret_room_config_switched": "Switched to secret room config %s: %s",
+  "battleroyale.message.loot_spawner_lootid_switched": "Switched to loot spawner config %s: %s",
+  "battleroyale.message.entity_spawner_lootid_switched": "Switched to entity spawner config %s: %s",
+  "battleroyale.message.airdrop_lootid_switched": "Switched to airdrop config %s: %s",
+  "battleroyale.message.airdrop_special_lootid_switched": "Switched to special airdrop config %s: %s",
+  "battleroyale.message.secret_room_lootid_switched": "Switched to secret room config %s: %s",
 
   "battleroyale.message.loot_generation_started": "Start generating loots (chunk total: %s)",
   "battleroyale.message.loot_generation_in_progress": "There's loot generation in progress",

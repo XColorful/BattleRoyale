@@ -3,63 +3,101 @@ package xiao.battleroyale.client.renderer.block;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
 
-public abstract class LootContainerRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
+public abstract class LootContainerRenderer<T extends AbstractLootContainerBlockEntity> implements BlockEntityRenderer<T> {
+
+    protected final int MAX_RENDER_DISTANCE_SQ = 16 * 16;
+
     protected final ItemRenderer itemRenderer;
+    protected final BlockRenderDispatcher blockRenderDispatcher;
 
     public LootContainerRenderer(BlockEntityRendererProvider.Context context) {
         this.itemRenderer = Minecraft.getInstance().getItemRenderer();
+        this.blockRenderDispatcher = context.getBlockRenderDispatcher();
     }
 
     @Override
     public void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-        // TODO 暂时超过 16 米不渲染，以后再加配置
-        if (Minecraft.getInstance().player != null && blockEntity.getBlockPos().distSqr(Minecraft.getInstance().player.blockPosition()) > 16 * 16) {
-            return;
-        }
-
-        ItemStack[] items = getItems(blockEntity);
-        if (items == null || items.length == 0) {
-            return;
-        }
-
-        Vector3f renderOffset = getRenderOffset(blockEntity);
         poseStack.pushPose();
-        poseStack.translate(0.5F + renderOffset.x(), renderOffset.y(), 0.5F + renderOffset.z()); // 初始平移到方块中心，并考虑整体偏移
-        applyRotation(blockEntity, poseStack);
 
-        float itemScale = 1 / 2F;
-
-        poseStack.scale(itemScale, itemScale, itemScale);
-
-        for (int i = 0; i < items.length; i++) {
-            ItemStack itemStack = items[i];
-            if (itemStack.isEmpty()) {
-                continue;
+        // TODO 暂时超过 16 米改渲染方块，以后再加配置
+        boolean renderItem = (Minecraft.getInstance().player != null && blockEntity.getBlockPos().distSqr(Minecraft.getInstance().player.blockPosition()) <= MAX_RENDER_DISTANCE_SQ)
+                && !blockEntity.isEmpty(); // 玩家在范围内 且 容器不为空
+        if (!renderItem) { // 渲染方块模型
+            renderBlockModel(blockEntity, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+        } else { // 渲染容器内物品
+            ItemStack[] items = getItems(blockEntity);
+            if (items == null || items.length == 0) { // 照理不应该发生，除非hasItem有问题
+                renderBlockModel(blockEntity, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+                return;
             }
-            poseStack.pushPose();
 
-            int row = (i % 16) / 4;
-            int col = i % 4;
-            int layer = i / 16;
-            float xOffset = -0.75F + col * 0.5F;
-            float zOffset = -0.75F + row * 0.5F;
-            float yOffset = layer * itemScale;
-            poseStack.translate(xOffset, yOffset, zOffset);
+            Vector3f renderOffset = getRenderOffset(blockEntity);
 
-            this.itemRenderer.renderStatic(itemStack, ItemDisplayContext.GROUND, combinedLightIn, combinedOverlayIn, poseStack, bufferIn, blockEntity.getLevel(), 0);
-            poseStack.popPose();
+            poseStack.translate(0.5F + renderOffset.x(), renderOffset.y(), 0.5F + renderOffset.z()); // 初始平移到方块中心，并考虑整体偏移
+            applyRotation(blockEntity, poseStack);
+
+            float itemScale = 1 / 2F;
+
+            poseStack.scale(itemScale, itemScale, itemScale);
+
+            for (int i = 0; i < items.length; i++) {
+                ItemStack itemStack = items[i];
+                if (itemStack.isEmpty()) {
+                    continue;
+                }
+                poseStack.pushPose();
+
+                int row = (i % 16) / 4;
+                int col = i % 4;
+                int layer = i / 16;
+                float xOffset = -0.75F + col * 0.5F;
+                float zOffset = -0.75F + row * 0.5F;
+                float yOffset = layer * itemScale;
+                poseStack.translate(xOffset, yOffset, zOffset);
+
+                this.itemRenderer.renderStatic(itemStack, ItemDisplayContext.GROUND, combinedLightIn, combinedOverlayIn, poseStack, bufferIn, blockEntity.getLevel(), 0);
+                poseStack.popPose();
+            }
         }
 
         poseStack.popPose();
+    }
+
+    private void renderBlockModel(@NotNull T blockEntity, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+        BlockState blockState = blockEntity.getBlockState();
+        BakedModel bakedModel = this.blockRenderDispatcher.getBlockModel(blockState);
+        ModelBlockRenderer modelBlockRenderer = this.blockRenderDispatcher.getModelRenderer();
+
+        for (RenderType renderType : bakedModel.getRenderTypes(blockState, RandomSource.create(), ModelData.EMPTY)) {
+            modelBlockRenderer.renderModel(
+                    poseStack.last(),
+                    bufferIn.getBuffer(renderType),
+                    blockState,
+                    bakedModel,
+                    1.0F, 1.0F, 1.0F, // 表示不着色
+                    combinedLightIn,
+                    combinedOverlayIn,
+                    ModelData.EMPTY,
+                    renderType
+            );
+        }
     }
 
     /**
