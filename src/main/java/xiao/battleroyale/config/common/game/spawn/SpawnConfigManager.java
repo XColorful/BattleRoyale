@@ -7,10 +7,11 @@ import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.api.game.spawn.ISpawnEntry;
 import xiao.battleroyale.api.game.spawn.ISpawnSingleEntry;
 import xiao.battleroyale.api.game.spawn.SpawnConfigTag;
+import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.config.common.AbstractConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.spawn.defaultconfigs.DefaultSpawnConfigGenerator;
-import xiao.battleroyale.util.JsonUtils;
+import xiao.battleroyale.config.common.game.spawn.type.SpawnEntryType;
 
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -99,6 +100,23 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
         public int getConfigId() {
             return getId();
         }
+
+        public static ISpawnEntry deserializeSpawnEntry(JsonObject jsonObject) {
+            try {
+                String type = jsonObject.has(SpawnTypeTag.TYPE_NAME) ? jsonObject.getAsJsonPrimitive(SpawnTypeTag.TYPE_NAME).getAsString() : "";
+                if (type == null) type = "";
+                SpawnEntryType spawnEntryType = SpawnEntryType.fromNames(type);
+                if (spawnEntryType != null) {
+                    return spawnEntryType.getDeserializer().apply(jsonObject);
+                } else {
+                    BattleRoyale.LOGGER.warn("Skipped unknown spawn entry type: {}", type);
+                    return null;
+                }
+            } catch (Exception e) {
+                BattleRoyale.LOGGER.error("Failed to deserialize SpawnEntry: {}", e.getMessage());
+                return null;
+            }
+        }
     }
 
     @Override protected Comparator<SpawnConfig> getConfigIdComparator(int configType) {
@@ -142,7 +160,7 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
 
             String name = configObject.has(SpawnConfigTag.SPAWN_NAME) ? configObject.getAsJsonPrimitive(SpawnConfigTag.SPAWN_NAME).getAsString() : "";
             String color = configObject.has(SpawnConfigTag.SPAWN_COLOR) ? configObject.getAsJsonPrimitive(SpawnConfigTag.SPAWN_COLOR).getAsString() : "#FFFFFF";
-            ISpawnEntry spawnEntry = JsonUtils.deserializeSpawnEntry(spawnEntryObject);
+            ISpawnEntry spawnEntry = SpawnConfig.deserializeSpawnEntry(spawnEntryObject);
             if (spawnEntry == null) {
                 BattleRoyale.LOGGER.warn("Failed to deserialize spawn entry for id: {} in {}", id, filePath);
                 return null;

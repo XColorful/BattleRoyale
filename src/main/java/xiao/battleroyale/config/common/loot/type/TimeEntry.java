@@ -6,7 +6,7 @@ import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.util.JsonUtils;
+import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +44,7 @@ public class TimeEntry implements ILootEntry {
     public static TimeEntry fromJson(JsonObject jsonObject) {
         int start = jsonObject.has(LootEntryTag.START) ? jsonObject.getAsJsonPrimitive(LootEntryTag.START).getAsInt() : 0;
         int end = jsonObject.has(LootEntryTag.END) ? jsonObject.getAsJsonPrimitive(LootEntryTag.END).getAsInt() : 0;
-        ILootEntry entry = jsonObject.has(LootEntryTag.ENTRY) ? JsonUtils.deserializeLootEntry(jsonObject.getAsJsonObject(LootEntryTag.ENTRY)) : null;
+        ILootEntry entry = jsonObject.has(LootEntryTag.ENTRY) ? LootConfig.deserializeLootEntry(jsonObject.getAsJsonObject(LootEntryTag.ENTRY)) : null;
         return new TimeEntry(start, end, entry);
     }
 

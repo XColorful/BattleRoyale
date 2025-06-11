@@ -64,7 +64,7 @@ public class EntitySpawner extends AbstractLootBlock {
                     int currentConfigId = entitySpawnerBlockEntity.getConfigId();
                     List<LootConfig> allConfigs = LootConfigManager.get().getAllEntitySpawnerConfigs();
                     if (allConfigs.isEmpty()) {
-                        player.sendSystemMessage(Component.translatable("battleroyale.message.no_entity_spawner_configs_available"));
+                        player.sendSystemMessage(Component.translatable("battleroyale.message.no_entity_spawner_config_available"));
                         return InteractionResult.SUCCESS;
                     }
 

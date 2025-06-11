@@ -10,7 +10,6 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.defaultconfigs.DefaultGameruleConfigGenerator;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
-import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -104,6 +103,36 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
         public int getConfigId() {
             return getGameId();
         }
+
+        public static BattleroyaleEntry deserializeBattleroyaleEntry(JsonObject jsonObject) {
+            try {
+                BattleroyaleEntry brEntry = BattleroyaleEntry.fromJson(jsonObject);
+                if (brEntry != null) {
+                    return brEntry;
+                } else {
+                    BattleRoyale.LOGGER.warn("Skipped invalid BattleroyaleEntry");
+                    return null;
+                }
+            } catch (Exception e) {
+                BattleRoyale.LOGGER.error("Failed to deserialize BattleroyaleEntry: {}", e.getMessage());
+                return null;
+            }
+        }
+
+        public static MinecraftEntry deserializeMinecraftEntry(JsonObject jsonObject) {
+            try {
+                MinecraftEntry mcEntry = MinecraftEntry.fromJson(jsonObject);
+                if (mcEntry != null) {
+                    return mcEntry;
+                } else {
+                    BattleRoyale.LOGGER.warn("Skipped invalid MinecraftEntry");
+                    return null;
+                }
+            } catch (Exception e) {
+                BattleRoyale.LOGGER.error("Failed to deserialize MinecraftEntry: {}", e.getMessage());
+                return null;
+            }
+        }
     }
 
     @Override protected Comparator<GameruleConfig> getConfigIdComparator(int configType) {
@@ -148,8 +177,8 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
 
             String gameName = configObject.has(GameruleConfigTag.GAME_NAME) ? configObject.getAsJsonPrimitive(GameruleConfigTag.GAME_NAME).getAsString() : "";
             String color = configObject.has(GameruleConfigTag.GAME_COLOR) ? configObject.getAsJsonPrimitive(GameruleConfigTag.GAME_COLOR).getAsString() : "";
-            BattleroyaleEntry brEntry = JsonUtils.deserializeBattleroyaleEntry(brEntryObject);
-            MinecraftEntry mcEntry = JsonUtils.deserializeMinecraftEntry(mcEntryObject);
+            BattleroyaleEntry brEntry = GameruleConfig.deserializeBattleroyaleEntry(brEntryObject);
+            MinecraftEntry mcEntry = GameruleConfig.deserializeMinecraftEntry(mcEntryObject);
             if (brEntry == null || mcEntry == null) {
                 BattleRoyale.LOGGER.error("Failed to deserialize gamerule entry for id: {} in {}", gameId, filePath);
                 return null;

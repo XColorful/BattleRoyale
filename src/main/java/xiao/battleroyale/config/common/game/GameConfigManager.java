@@ -41,6 +41,22 @@ public class GameConfigManager {
     }
 
     /**
+     * IConfigManager
+     */
+    public String getBotConfigEntryFileName() {
+        return BotConfigManager.get().getConfigEntryFileName();
+    }
+    public String getGameruleConfigEntryFileName() {
+        return GameruleConfigManager.get().getConfigEntryFileName();
+    }
+    public String getSpawnConfigEntryFileName() {
+        return SpawnConfigManager.get().getConfigEntryFileName();
+    }
+    public String getZoneConfigEntryFileName() {
+        return ZoneConfigManager.get().getConfigEntryFileName();
+    }
+
+    /**
      * IConfigDefaultable
      */
     public void generateDefaultBotConfigs() {
@@ -147,6 +163,28 @@ public class GameConfigManager {
         ZoneConfigManager.get().reloadZoneConfigs();
     }
 
-
-
+    public boolean switchNextBotConfig() {
+        return BotConfigManager.get().switchConfigFile();
+    }
+    public boolean switchBotConfig(String fileName) {
+        return BotConfigManager.get().switchConfigFile(fileName);
+    }
+    public boolean switchNextGameruleConfig() {
+        return GameruleConfigManager.get().switchConfigFile();
+    }
+    public boolean switchGameruleConfig(String fileName) {
+        return GameruleConfigManager.get().switchConfigFile(fileName);
+    }
+    public boolean switchNextSpawnConfig() {
+        return SpawnConfigManager.get().switchConfigFile();
+    }
+    public boolean switchSpawnConfig(String fileName) {
+        return SpawnConfigManager.get().switchConfigFile(fileName);
+    }
+    public boolean switchNextZoneConfig() {
+        return ZoneConfigManager.get().switchConfigFile();
+    }
+    public boolean switchZoneConfig(String fileName) {
+        return ZoneConfigManager.get().switchConfigFile(fileName);
+    }
 }

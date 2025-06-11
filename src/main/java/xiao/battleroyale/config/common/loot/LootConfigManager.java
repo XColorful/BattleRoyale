@@ -7,11 +7,12 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.IConfigSingleEntry;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootConfigTag;
+import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.AbstractConfigManager;
 import xiao.battleroyale.config.common.loot.defaultconfigs.DefaultLootConfigGenerator;
-import xiao.battleroyale.util.JsonUtils;
+import xiao.battleroyale.config.common.loot.type.LootEntryType;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -108,6 +109,22 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
         public int getConfigId() {
             return getLootId();
         }
+
+        public static ILootEntry deserializeLootEntry(JsonObject jsonObject) {
+            try {
+                String type = jsonObject.getAsJsonPrimitive(LootEntryTag.TYPE_NAME).getAsString();
+                if (type == null) type = "";
+                LootEntryType lootEntryType = LootEntryType.fromName(type);
+                if (lootEntryType != null) {
+                    return lootEntryType.getDeserializer().apply(jsonObject);
+                } else {
+                    return null;
+                }
+            } catch (Exception e) {
+                BattleRoyale.LOGGER.error("Failed to deserialize LootEntry: {}", e.getMessage());
+                return null;
+            }
+        }
     }
 
     @Override protected Comparator<LootConfig> getConfigIdComparator(int configType) {
@@ -158,7 +175,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
             String color = configObject.has(LootConfigTag.LOOT_COLOR) ? configObject.getAsJsonPrimitive(LootConfigTag.LOOT_COLOR).getAsString() : "#FFFFFF";
             if (name == null) name = "";
             if (color == null) color = "#FFFFFF";
-            ILootEntry lootEntry = JsonUtils.deserializeLootEntry(lootEntryObject);
+            ILootEntry lootEntry = LootConfig.deserializeLootEntry(lootEntryObject);
             if (lootEntry == null) {
                 BattleRoyale.LOGGER.error("Failed to deserialize loot entry for id: {} in {}", lootId, filePath);
                 return null;

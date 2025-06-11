@@ -18,11 +18,12 @@
   "battleroyale.message.loot_generation_in_progress": "There's loot generation in progress",
   "battleroyale.message.loot_generation_finished": "Generated loot: %s",
 
-  "battleroyale.message.no_loot_spawner_configs_available": "No loot spawner config available",
-  "battleroyale.message.no_entity_spawner_configs_available": "No entity spawner config available",
+  "battleroyale.message.no_loot_spawner_config_available": "No loot spawner config available",
+  "battleroyale.message.no_entity_spawner_config_available": "No entity spawner config available",
+  "battleroyale.message.no_bot_config_available": "No bot config available",
   "battleroyale.message.no_gamerule_config_available": "No gamerule config available",
-  "battleroyale.message.no_zone_configs_available": "No zone config avaliable",
   "battleroyale.message.no_spawn_config_available": "No spawn config available",
+  "battleroyale.message.no_zone_config_available": "No zone config avaliable",
 
   "battleroyale.message.all_configs_reloaded": "Reloaded all battleroyale configs",
   "battleroyale.message.loot_config_reloaded": "Reloaded all loot configs",
@@ -127,5 +128,14 @@
   "battleroyale.message.team": "Team %s",
 
   "battleroyale.message.eliminated_invalid_player": "Eliminated invalid player %s",
-  "battleroyale.message.reach_max_game_time": "Reached max game time"
+  "battleroyale.message.reach_max_game_time": "Reached max game time",
+
+  "battleroyale.message.switch_bot_config_file": "Switch bot config file to '%s'",
+  "battleroyale.message.bot_config_file_not_found": "No bot config file '%s",
+  "battleroyale.message.switch_gamerule_config_file": "Switch gamerule config file to '%s'",
+  "battleroyale.message.gamerule_config_file_not_found": "No gamerule config file '%s'",
+  "battleroyale.message.switch_spawn_config_file": "Switch spawn config file to '%s'",
+  "battleroyale.message.spawn_config_file_not_found": "No spawn config file '%s'",
+  "battleroyale.message.switch_zone_config_file": "Switch zone config file to '%s'",
+  "battleroyale.message.zone_config_file_not_found": "No zone config file '%s'"
 }

@@ -5,7 +5,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
-import xiao.battleroyale.util.JsonUtils;
+import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ public class RepeatEntry implements ILootEntry {
     public static RepeatEntry fromJson(JsonObject jsonObject) {
         int min = jsonObject.has(LootEntryTag.MIN) ? jsonObject.getAsJsonPrimitive(LootEntryTag.MIN).getAsInt() : 0;
         int max = jsonObject.has(LootEntryTag.MAX) ? jsonObject.getAsJsonPrimitive(LootEntryTag.MAX).getAsInt() : 0;
-        ILootEntry entry = jsonObject.has(LootEntryTag.ENTRY) ? JsonUtils.deserializeLootEntry(jsonObject.getAsJsonObject(LootEntryTag.ENTRY)) : null;
+        ILootEntry entry = jsonObject.has(LootEntryTag.ENTRY) ? LootConfig.deserializeLootEntry(jsonObject.getAsJsonObject(LootEntryTag.ENTRY)) : null;
         return new RepeatEntry(min, max, entry);
     }
 
