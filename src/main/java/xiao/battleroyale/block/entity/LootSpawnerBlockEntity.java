@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.init.ModBlocks;
+import xiao.battleroyale.init.ModMenuTypes;
 import xiao.battleroyale.inventory.LootSpawnerMenu;
 import net.minecraft.core.NonNullList;
 import javax.annotation.Nullable;
@@ -25,10 +26,6 @@ public class LootSpawnerBlockEntity extends AbstractLootContainerBlockEntity imp
         return this.items;
     }
 
-    private void openContainer(ServerPlayer player) {
-        player.openMenu(this);
-    }
-
     @Override
     public @NotNull Component getDisplayName() {
         return Component.translatable("container.battleroyale.loot_spawner");
@@ -37,7 +34,7 @@ public class LootSpawnerBlockEntity extends AbstractLootContainerBlockEntity imp
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int id, @NotNull Inventory playerInventory, @NotNull Player player) {
-        return new LootSpawnerMenu(id, playerInventory, this);
+        return new LootSpawnerMenu(ModMenuTypes.LOOT_SPAWNER_MENU.get(), id, playerInventory, this);
     }
 
     @Override
