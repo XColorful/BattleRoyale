@@ -26,10 +26,10 @@ public class ReloadCommand {
     private static final String SECRET_ROOM_NAME = "secret_room";
 
     // Game 子类配置
-    private static final String ZONE_NAME = "zone";
-    private static final String SPAWN_NAME = "spawn";
+    private static final String BOT_NAME = "bot";
     private static final String GAMERULE_NAME = "gamerule";
-    private static final String BOT = "bot";
+    private static final String SPAWN_NAME = "spawn";
+    private static final String ZONE_NAME = "zone";
 
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {

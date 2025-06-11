@@ -137,6 +137,21 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     @Override public String getConfigType(int configType) {
         return LootConfig.CONFIG_TYPE;
     }
+    public String getLootSpawnerConfigEntryFileName() {
+        return getConfigEntryFileName(LOOT_SPAWNER);
+    }
+    public String getEntitySpawnerConfigEntryFileName() {
+        return getConfigEntryFileName(ENTITY_SPAWNER);
+    }
+    public String getAirdropConfigEntryFileName() {
+        return getConfigEntryFileName(AIRDROP);
+    }
+    public String getAirdropSpecialConfigEntryFileName() {
+        return getConfigEntryFileName(AIRDROP_SPECIAL);
+    }
+    public String getSecretRoomConfigEntryFileName() {
+        return getConfigEntryFileName(SECRET_ROOM);
+    }
 
     /**
      * IConfigDefaultable
@@ -272,6 +287,37 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     }
     public void reloadSecretRoomConfigs() {
         reloadConfigs(SECRET_ROOM);
+    }
+
+    public boolean switchNextLootSpawnerConfig() {
+        return switchConfigFile(LOOT_SPAWNER);
+    }
+    public boolean switchLootSpawnerConfig(String fileName) {
+        return switchConfigFile(fileName, LOOT_SPAWNER);
+    }
+    public boolean switchNextEntitySpawnerConfig() {
+        return switchConfigFile(ENTITY_SPAWNER);
+    }
+    public boolean switchEntitySpawnerConfig(String fileName) {
+        return switchConfigFile(fileName, ENTITY_SPAWNER);
+    }
+    public boolean switchNextAirdropConfig() {
+        return switchConfigFile(AIRDROP);
+    }
+    public boolean switchAirdropConfig(String fileName) {
+        return switchConfigFile(fileName, AIRDROP);
+    }
+    public boolean switchNextAirdropSpecialConfig() {
+        return switchConfigFile(AIRDROP_SPECIAL);
+    }
+    public boolean switchAirdropSpecialConfig(String fileName) {
+        return switchConfigFile(fileName, AIRDROP_SPECIAL);
+    }
+    public boolean switchNextSecretRoomConfig() {
+        return switchConfigFile(SECRET_ROOM);
+    }
+    public boolean switchSecretRoomConfig(String fileName) {
+        return switchConfigFile(fileName, SECRET_ROOM);
     }
 
 
