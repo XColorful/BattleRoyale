@@ -3,8 +3,10 @@
 
   "item.battleroyale.loot_spawner": "物资刷新器",
   "item.battleroyale.entity_spawner": "实体生成器",
+  "item.battleroyale.zone_controller": "区域控制器",
   "block.battleroyale.loot_spawner": "物资刷新方块",
   "block.battleroyale.entity_spawner": "实体生成方块",
+  "block.battleroyale.zone_controller": "区域控制器",
 
   "container.battleroyale.loot_spawner": "物资盒",
 

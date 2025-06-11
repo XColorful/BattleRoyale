@@ -3,8 +3,10 @@
 
   "item.battleroyale.loot_spawner": "Loot Spawner",
   "item.battleroyale.entity_spawner": "Entity Spawner",
+  "item.battleroyale.zone_controller": "Zone controller",
   "block.battleroyale.loot_spawner": "Loot Spawner",
   "block.battleroyale.entity_spawner": "Entity Spawner",
+  "block.battleroyale.zone_controller": "Zone controller",
 
   "container.battleroyale.loot_spawner": "Loot Crate",
 
