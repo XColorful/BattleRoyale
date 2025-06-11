@@ -213,7 +213,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
         reloadConfigs(getDefaultConfigId());
     }
     @Override public void reloadConfigs(int configType) {
-        ConfigFileName configFileName = getConfigFileName(configType); // 在清除前获取名称
+        String fileNameString = getConfigFileName(configType).string; // 在清除前获取名称
         this.clear(configType);
 
         Path configDirPath = getConfigDirPath(configType);
@@ -223,9 +223,8 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
                 fileConfigs, allFileConfigs, configType);
 
         // 如果之前设置的文件名仍然有效则保持选中
-        if (!configFileName.isEmpty() && fileConfigs.containsKey(configFileName.string)) {
-            switchConfigFile(configFileName.string, configType);
-            BattleRoyale.LOGGER.info("case 1"); // TODO not trigger
+        if (!fileNameString.isEmpty() && fileConfigs.containsKey(fileNameString)) {
+            switchConfigFile(fileNameString, configType);
         } else if (!fileConfigs.isEmpty()) { // hasConfigLoaded(configType)检查的是已经选中的
             String firstFileName = fileConfigs.keySet().iterator().next();
             switchConfigFile(firstFileName, configType);
