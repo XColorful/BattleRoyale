@@ -53,12 +53,12 @@
   "battleroyale.message.game_stop_loot": "Currently in game, stopped queued loot generation",
   "battleroyale.message.game_in_progress": "Game is currently in progress, unable to perform this action",
 
-  "battleroyale.message.spawn_config_id_set": "Set spawn config id to %s",
-  "battleroyale.message.invalid_spawn_config_id": "Impossible spawn config id",
-  "battleroyale.message.gamerule_config_id_set": "Set gamerule config id to %s",
-  "battleroyale.message.invalid_gamerule_config_id": "Impossible gamerule config id",
-  "battleroyale.message.bot_config_id_set": "Set bot config id to %s",
-  "battleroyale.message.invalid_bot_config_id": "Impossible bot config id",
+  "battleroyale.message.spawn_config_id_set": "Set spawn config id to %s: %s",
+  "battleroyale.message.invalid_spawn_config_id": "Impossible spawn config id: %s",
+  "battleroyale.message.gamerule_config_id_set": "Set gamerule config id to %s: %s",
+  "battleroyale.message.invalid_gamerule_config_id": "Impossible gamerule config id: %s",
+  "battleroyale.message.bot_config_id_set": "Set bot config id to %s: %s",
+  "battleroyale.message.invalid_bot_config_id": "Impossible bot config id: %s",
 
   "battleroyale.message.missing_gamerule_config": "Missing valid gamerule config for battleroyale game",
   "battleroyale.message.missing_spawn_config": "Missing valid spawn config for battleroyale game",
@@ -155,5 +155,14 @@
   "battleroyale.message.switch_spawn_config_file": "Switch spawn config file to '%s'",
   "battleroyale.message.no_spawn_config_file": "No spawn config file '%s'",
   "battleroyale.message.switch_zone_config_file": "Switch zone config file to '%s'",
-  "battleroyale.message.no_zone_config_file": "No zone config file '%s'"
+  "battleroyale.message.no_zone_config_file": "No zone config file '%s'",
+
+  "battleroyale.message.winner_message": "Winner Winner Chicken Dinner!",
+  "battleroyale.message.back_to_lobby": "Back to lobby",
+  "battleroyale.message.teleport": "[Teleport]",
+  "battleroyale.message.has_won_the_game": "has won the game",
+
+  "battleroyale.message.add_player_firework": "Add firework tracker to player %s",
+  "battleroyale.message.add_fixed_firework": "Add firework tracker at %s, %s, %s",
+  "battleroyale.message.clear_firework_tracker": "Cleared all firework tracker"
 }

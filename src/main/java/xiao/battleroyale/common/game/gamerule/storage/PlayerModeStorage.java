@@ -43,6 +43,9 @@ public class PlayerModeStorage implements IRuleStorage {
         gameMode = mcEntry.adventureMode ? GameType.ADVENTURE : GameType.SURVIVAL;
 
         for (GamePlayer gamePlayer : gamePlayerList) {
+            if (gamePlayer.isBot()) {
+                continue;
+            }
             UUID playerUUID = gamePlayer.getPlayerUUID();
             try {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);
@@ -65,6 +68,9 @@ public class PlayerModeStorage implements IRuleStorage {
             return;
         }
         for (GamePlayer gamePlayer : gamePlayerList) {
+            if (gamePlayer.isBot()) {
+                continue;
+            }
             UUID playerUUID = gamePlayer.getPlayerUUID();
             try {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);

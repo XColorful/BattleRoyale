@@ -104,8 +104,20 @@ public class Vec3Utils {
     public static Vec3 randomCircleXZ(@NotNull Vec3 baseVec, Vec3 dimension, Supplier<Float> random) {
         double angle = 2 * Math.PI * random.get();
         double radius = dimension.x * Math.sqrt(random.get());
-        double xOffset = radius * Math.cos(angle);
-        double zOffset = radius * Math.sin(angle);
-        return baseVec.add(xOffset, 0, zOffset);
+        double xOff = radius * Math.cos(angle);
+        double zOff = radius * Math.sin(angle);
+        return baseVec.add(xOff, 0, zOff);
+    }
+
+    /**
+     * 以输入向量为基准，取dimension.x为半径，在XZ平面的圆内随机取点，Y正方向随机偏移
+     */
+    public static Vec3 randomCircleXZExpandY(@NotNull Vec3 baseVec, Vec3 dimension, Supplier<Float> random) {
+        double angle = 2 * Math.PI * random.get();
+        double radius = dimension.x * Math.sqrt(random.get());
+        double xOff = radius * Math.cos(angle);
+        double yOff = dimension.y * random.get();
+        double zOff = radius * Math.sin(angle);
+        return baseVec.add(xOff, yOff, zOff);
     }
 }

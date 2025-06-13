@@ -88,9 +88,9 @@ public class SpawnManager extends AbstractGameManager {
 
         // Hyper Muteki的大厅
         if (this.lobbyMuteki) {
-            LobbyEventHandler.get().register();
+            LobbyEventHandler.register();
         } else {
-            LobbyEventHandler.get().unregister();
+            LobbyEventHandler.unregister();
         }
         this.prepared = true;
     }
@@ -112,11 +112,11 @@ public class SpawnManager extends AbstractGameManager {
 
         this.gameSpawner.clear();
         this.gameSpawner.init(GameManager.get().getRandom(), GameManager.get().getPlayerLimit()); // 用玩家上限作为点位数量
-        if (this.gameSpawner.isReady()) {
-            this.ready = true;
-        } else {
-            this.ready = false;
-        }
+    }
+
+    @Override
+    public boolean isReady() {
+        return this.gameSpawner.isReady();
     }
 
     @Override
@@ -124,26 +124,15 @@ public class SpawnManager extends AbstractGameManager {
         if (GameManager.get().isInGame()) {
             return false;
         }
-        if (!this.ready) {
-            return false;
-        }
 
-
-        return true;
+        return isReady();
     }
 
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        if (serverLevel != null) {
-            List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
-            for (GamePlayer gamePlayer : gamePlayerList) {
-                teleportGamePlayerToLobby(gamePlayer, serverLevel);
-            }
-        }
-
-        LobbyEventHandler.get().unregister();
+        LobbyEventHandler.unregister();
         this.prepared = false;
-        this.ready = false;
+        // this.ready = false; // isReady被重载
     }
 
     @Override

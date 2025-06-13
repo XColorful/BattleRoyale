@@ -69,13 +69,13 @@ public class GameLootManager extends AbstractGameManager {
     @Override
     public void initGame(ServerLevel serverLevel) {
         clear(); // 确保每次游戏开始时清空所有状态
-        this.ready = true;
         int gameTime = GameManager.get().getGameTime();
         this.lastEvictionCheckTick = gameTime; // 初始化清理时间
         this.lastFullBFSTick = gameTime; // 初始化全量BFS时间
 
         // 游戏启动时，强制进行一次全量BFS初始化，确保玩家初始区域战利品刷新
         initializeLootForPlayers(serverLevel);
+        this.ready = true;
     }
 
     @Override

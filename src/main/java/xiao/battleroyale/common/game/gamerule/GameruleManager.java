@@ -90,8 +90,9 @@ public class GameruleManager extends AbstractGameManager {
             return false;
         }
 
-        this.gamemodeBackup.store(mcEntry, serverLevel, GameManager.get().getGamePlayers());
-        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
+        List<GamePlayer> gamePlayerList = GameManager.get().getStandingGamePlayers();
+        this.gamemodeBackup.store(mcEntry, serverLevel, gamePlayerList);
+
         this.gamemodeBackup.apply(serverLevel, gamePlayerList);
 
         return true;

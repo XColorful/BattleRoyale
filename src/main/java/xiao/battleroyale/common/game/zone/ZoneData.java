@@ -26,7 +26,6 @@ public class ZoneData extends AbstractGameManagerData {
         if (locked) {
             return;
         }
-        unlockData();
 
         gameZones.clear();
         gameZonesList.clear();

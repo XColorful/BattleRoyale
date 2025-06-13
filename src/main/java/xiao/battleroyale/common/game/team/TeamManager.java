@@ -110,21 +110,21 @@ public class TeamManager extends AbstractGameManager {
         BattleRoyale.LOGGER.info("TeamManager complete initGame, total players: {}, total teams: {}", teamData.getTotalPlayerCount(), teamData.getGameTeamsList().size());
 
         if (hasEnoughPlayerTeamToStart()) {
-            this.ready = true;
             return;
         }
         ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
-        this.ready = false;
     }
 
     @Override
     public boolean isReady() {
+        // return this.ready // 不用ready标记，因为Team会变动
         return hasEnoughPlayerTeamToStart();
     }
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame() || !this.ready) {
+        BattleRoyale.LOGGER.info("Attempt to start Game");
+        if (GameManager.get().isInGame() || !isReady()) {
             return false;
         }
 
@@ -165,7 +165,7 @@ public class TeamManager extends AbstractGameManager {
     public void stopGame(@Nullable ServerLevel serverLevel) {
         this.teamData.endGame(); // 解锁
         this.prepared = false;
-        this.ready = false;
+        // this.ready = false; // 不使用ready标记，因为Team会变动
         BattleRoyale.LOGGER.info("TeamManager stopped, clear all team info");
     }
 
@@ -868,11 +868,13 @@ public class TeamManager extends AbstractGameManager {
 
     private boolean hasEnoughPlayerToStart() {
         int totalPlayerAndBots = getTotalMembers();
+        BattleRoyale.LOGGER.info("TeamManager::totalPlayer: {}, aiEnemy: {}", totalPlayerAndBots, aiEnemy ? "true" : "false");
         return totalPlayerAndBots > 1 || (totalPlayerAndBots == 1 && aiEnemy);
     }
 
     private boolean hasEnoughTeamToStart() {
         int totalTeamCount = teamData.getTotalTeamCount();
+        BattleRoyale.LOGGER.info("TeamManager::totalTeamCount: {}, aiEnemy: {}", totalTeamCount, aiEnemy ? "true" : "false");
         return totalTeamCount > 1 || (totalTeamCount == 1 && aiEnemy);
     }
 }

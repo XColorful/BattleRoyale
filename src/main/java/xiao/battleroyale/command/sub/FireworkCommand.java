@@ -1,0 +1,167 @@
+package xiao.battleroyale.command.sub;
+
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.FloatArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.coordinates.Coordinates;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
+import net.minecraft.commands.arguments.selector.EntitySelector;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.common.game.effect.firework.FireworkManager;
+
+import static xiao.battleroyale.command.CommandArg.*;
+
+public class FireworkCommand {
+
+    private static final int DEFAULT_AMOUNT = 5;
+    private static final int DEFAULT_INTERVAL = 4;
+    private static final float DEFAULT_V_RANGE = 1.0F;
+    private static final float DEFAULT_H_RANGE = 1.0F;
+
+    public static LiteralArgumentBuilder<CommandSourceStack> get() {
+        RequiredArgumentBuilder<CommandSourceStack, Integer> amountArg = Commands.argument(AMOUNT, IntegerArgumentType.integer(1));
+        RequiredArgumentBuilder<CommandSourceStack, Integer> intervalArg = Commands.argument(INTERVAL, IntegerArgumentType.integer(1));
+        RequiredArgumentBuilder<CommandSourceStack, Float> vRangeArg = Commands.argument(VERTICAL_RANGE, FloatArgumentType.floatArg(0.0F));
+        RequiredArgumentBuilder<CommandSourceStack, Float> hRangeArg = Commands.argument(HORIZONTAL_RANGE, FloatArgumentType.floatArg(0.0F));
+
+        LiteralArgumentBuilder<CommandSourceStack> fireworkCommand = Commands.literal(FIREWORK);
+
+        RequiredArgumentBuilder<CommandSourceStack, Coordinates> coordBase = Commands.argument(XYZ, Vec3Argument.vec3());
+        RequiredArgumentBuilder<CommandSourceStack, EntitySelector> playerBase = Commands.argument(PLAYER, EntityArgument.player());
+
+        // /firework <x> <y> <z>
+        coordBase.executes(FireworkCommand::executeFixedFirework_XYZ);
+
+        // /firework <x> <y> <z> <amount>
+        coordBase.then(amountArg.executes(FireworkCommand::executeFixedFirework_XYZ_Amount)
+                // /firework <x> <y> <z> <amount> <interval>
+                .then(intervalArg.executes(FireworkCommand::executeFixedFirework_XYZ_Amount_Interval)
+                        // /firework <x> <y> <z> <amount> <interval> <vRange>
+                        .then(vRangeArg.executes(FireworkCommand::executeFixedFirework_XYZ_Amount_Interval_VRange)
+                                // /firework <x> <y> <z> <amount> <interval> <vRange> <hRange>
+                                .then(hRangeArg.executes(FireworkCommand::executeFixedFirework_XYZ_Amount_Interval_VRange_HRange))
+                        )
+                )
+        );
+
+        // /firework <player>
+        playerBase.executes(FireworkCommand::executePlayerTrackingFirework_Player);
+
+        // /firework <player> <amount>
+        playerBase.then(amountArg.executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount)
+                // /firework <player> <amount> <interval>
+                .then(intervalArg.executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount_Interval)
+                        // /firework <player> <amount> <interval> <vRange>
+                        .then(vRangeArg.executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount_Interval_VRange)
+                                // /firework <player> <amount> <interval> <vRange> <hRange>
+                                .then(hRangeArg.executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount_Interval_VRange_HRange))
+                        )
+                )
+        );
+
+        fireworkCommand.then(coordBase);
+        fireworkCommand.then(playerBase);
+
+        fireworkCommand.then(Commands.literal(CLEAR)
+                .executes(FireworkCommand::executeClearFireworks));
+
+        return fireworkCommand;
+    }
+
+    private static int executeFixedFirework_XYZ(CommandContext<CommandSourceStack> context) {
+        Vec3 pos = Vec3Argument.getVec3(context, XYZ);
+        FireworkManager.get().addFixedPositionFireworkTask(context.getSource().getLevel(), pos, DEFAULT_AMOUNT, DEFAULT_INTERVAL, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
+        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_fixed_firework", String.format("%.2f", pos.x), String.format("%.2f", pos.y), String.format("%.2f", pos.z)), true);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int executeFixedFirework_XYZ_Amount(CommandContext<CommandSourceStack> context) {
+        Vec3 pos = Vec3Argument.getVec3(context, XYZ);
+        int amount = IntegerArgumentType.getInteger(context, AMOUNT);
+        FireworkManager.get().addFixedPositionFireworkTask(context.getSource().getLevel(), pos, amount, DEFAULT_INTERVAL, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
+        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_fixed_firework", String.format("%.2f", pos.x), String.format("%.2f", pos.y), String.format("%.2f", pos.z)), true);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int executeFixedFirework_XYZ_Amount_Interval(CommandContext<CommandSourceStack> context) {
+        Vec3 pos = Vec3Argument.getVec3(context, XYZ);
+        int amount = IntegerArgumentType.getInteger(context, AMOUNT);
+        int interval = IntegerArgumentType.getInteger(context, INTERVAL);
+        FireworkManager.get().addFixedPositionFireworkTask(context.getSource().getLevel(), pos, amount, interval, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
+        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_fixed_firework", String.format("%.2f", pos.x), String.format("%.2f", pos.y), String.format("%.2f", pos.z)), true);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int executeFixedFirework_XYZ_Amount_Interval_VRange(CommandContext<CommandSourceStack> context) {
+        Vec3 pos = Vec3Argument.getVec3(context, XYZ);
+        int amount = IntegerArgumentType.getInteger(context, AMOUNT);
+        int interval = IntegerArgumentType.getInteger(context, INTERVAL);
+        float vRange = FloatArgumentType.getFloat(context, VERTICAL_RANGE);
+        FireworkManager.get().addFixedPositionFireworkTask(context.getSource().getLevel(), pos, amount, interval, vRange, DEFAULT_H_RANGE);
+        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_fixed_firework", String.format("%.2f", pos.x), String.format("%.2f", pos.y), String.format("%.2f", pos.z)), true);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int executeFixedFirework_XYZ_Amount_Interval_VRange_HRange(CommandContext<CommandSourceStack> context) {
+        Vec3 pos = Vec3Argument.getVec3(context, XYZ);
+        int amount = IntegerArgumentType.getInteger(context, AMOUNT);
+        int interval = IntegerArgumentType.getInteger(context, INTERVAL);
+        float vRange = FloatArgumentType.getFloat(context, VERTICAL_RANGE);
+        float hRange = FloatArgumentType.getFloat(context, HORIZONTAL_RANGE);
+        FireworkManager.get().addFixedPositionFireworkTask(context.getSource().getLevel(), pos, amount, interval, vRange, hRange);
+        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_fixed_firework", String.format("%.2f", pos.x), String.format("%.2f", pos.y), String.format("%.2f", pos.z)), true);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int executePlayerTrackingFirework_Player(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = EntityArgument.getPlayer(context, PLAYER);
+        FireworkManager.get().addPlayerTrackingFireworkTask(context.getSource().getLevel(), player.getUUID(), DEFAULT_AMOUNT, DEFAULT_INTERVAL, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
+        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_firework", player.getName()), true);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int executePlayerTrackingFirework_Player_Amount(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = EntityArgument.getPlayer(context, PLAYER);
+        int amount = IntegerArgumentType.getInteger(context, AMOUNT);
+        FireworkManager.get().addPlayerTrackingFireworkTask(context.getSource().getLevel(), player.getUUID(), amount, DEFAULT_INTERVAL, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
+        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_firework", player.getName()), true);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int executePlayerTrackingFirework_Player_Amount_Interval(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = EntityArgument.getPlayer(context, PLAYER);
+        int amount = IntegerArgumentType.getInteger(context, AMOUNT);
+        int interval = IntegerArgumentType.getInteger(context, INTERVAL);
+        FireworkManager.get().addPlayerTrackingFireworkTask(context.getSource().getLevel(), player.getUUID(), amount, interval, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
+        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_firework", player.getName()), true);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int executePlayerTrackingFirework_Player_Amount_Interval_VRange(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = EntityArgument.getPlayer(context, PLAYER);
+        int amount = IntegerArgumentType.getInteger(context, AMOUNT);
+        int interval = IntegerArgumentType.getInteger(context, INTERVAL);
+        float vRange = FloatArgumentType.getFloat(context, VERTICAL_RANGE);
+        FireworkManager.get().addPlayerTrackingFireworkTask(context.getSource().getLevel(), player.getUUID(), amount, interval, vRange, DEFAULT_H_RANGE);
+        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_firework", player.getName()), true);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int executePlayerTrackingFirework_Player_Amount_Interval_VRange_HRange(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = EntityArgument.getPlayer(context, PLAYER);
+        int amount = IntegerArgumentType.getInteger(context, AMOUNT);
+        int interval = IntegerArgumentType.getInteger(context, INTERVAL);
+        float vRange = FloatArgumentType.getFloat(context, VERTICAL_RANGE);
+        float hRange = FloatArgumentType.getFloat(context, HORIZONTAL_RANGE);
+        FireworkManager.get().addPlayerTrackingFireworkTask(context.getSource().getLevel(), player.getUUID(), amount, interval, vRange, hRange);
+        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_firework", player.getName()), true);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int executeClearFireworks(CommandContext<CommandSourceStack> context) {
+        FireworkManager.get().clear();
+        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.clear_firework_tracker"), true);
+        return Command.SINGLE_SUCCESS;
+    }
+}

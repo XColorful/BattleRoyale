@@ -5,11 +5,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.team.TeamTag;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
+import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.NBTUtils;
+import xiao.battleroyale.util.StringUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class ClientTeamData {
 
     public void updateFromNbt(CompoundTag nbt) {
         this.teamId = nbt.getInt(TeamTag.TEAM_ID);
-        this.teamColor = NBTUtils.parseColorFromString(nbt.getString(TeamTag.TEAM_COLOR));
+        this.teamColor = ColorUtils.parseColorFromString(nbt.getString(TeamTag.TEAM_COLOR));
         this.teamMemberInfoList.clear();
         CompoundTag memberTags = nbt.getCompound(TeamTag.TEAM_MEMBER);
         for (String key : memberTags.getAllKeys()) {
