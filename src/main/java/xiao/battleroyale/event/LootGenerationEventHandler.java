@@ -8,28 +8,25 @@ import xiao.battleroyale.common.loot.LootGenerationManager;
 
 public class LootGenerationEventHandler {
 
-    private static LootGenerationEventHandler instance;
+    private LootGenerationEventHandler() {}
 
-    private LootGenerationEventHandler() {
+    private static class LootGenerationEventHandlerHolder {
+        private static final LootGenerationEventHandler INSTANCE = new LootGenerationEventHandler();
     }
 
-    public static LootGenerationEventHandler getInstance() {
-        if (instance == null) {
-            instance = new LootGenerationEventHandler();
-        }
-        return instance;
+    public static LootGenerationEventHandler get() {
+        return LootGenerationEventHandlerHolder.INSTANCE;
     }
 
     public static void register() {
-        LootGenerationEventHandler handler = getInstance();
+        LootGenerationEventHandler handler = get();
         MinecraftForge.EVENT_BUS.register(handler);
         BattleRoyale.LOGGER.info("LootGenerationEventHandler registered for tick events.");
     }
 
     public static void unregister() {
-        LootGenerationEventHandler handler = getInstance();
+        LootGenerationEventHandler handler = get();
         MinecraftForge.EVENT_BUS.unregister(handler);
-        instance = null;
         BattleRoyale.LOGGER.info("LootGenerationEventHandler unregistered from tick events.");
     }
 

@@ -19,24 +19,22 @@ import xiao.battleroyale.init.ModDamageTypes;
  */
 public class DamageEventHandler {
 
-    private static DamageEventHandler instance;
-
     private DamageEventHandler() {}
 
-    public static DamageEventHandler get() {
-        if (instance == null) {
-            instance = new DamageEventHandler();
-        }
-        return instance;
+    private static class DamageEventHandlerHolder {
+        private static final DamageEventHandler INSTANCE = new DamageEventHandler();
     }
 
-    public void register() {
+    public static DamageEventHandler get() {
+        return DamageEventHandlerHolder.INSTANCE;
+    }
+
+    public static void register() {
         MinecraftForge.EVENT_BUS.register(get());
     }
 
-    public void unregister() {
+    public static void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
-        instance = null;
     }
 
     /**
@@ -85,7 +83,6 @@ public class DamageEventHandler {
         if (damagedGamePlayer == null) {
             return;
         }
-
 
         DamageSource damageSource = event.getSource();
         float damageAmount = event.getAmount();

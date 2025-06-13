@@ -17,27 +17,22 @@ public class GameConfigManager {
     public static final String GAME_CONFIG_SUB_PATH = "game";
     public static final String GAME_CONFIG_PATH = Paths.get(AbstractConfigManager.MOD_CONFIG_PATH).resolve(GAME_CONFIG_SUB_PATH).toString();
 
-    private static GameConfigManager instance;
-
-    private GameConfigManager() {
-        ;
-    }
-
-    public static void init() {
-        if (instance == null) {
-            instance = new GameConfigManager();
-            // BotConfigManager.init(); // TODO 人机配置
-            GameruleConfigManager.init();
-            SpawnConfigManager.init();
-            ZoneConfigManager.init();
-        }
+    private static class GameConfigManagerHolder {
+        private static final GameConfigManager INSTANCE = new GameConfigManager();
     }
 
     public static GameConfigManager get() {
-        if (instance == null) {
-            GameConfigManager.init();
-        }
-        return instance;
+        return GameConfigManagerHolder.INSTANCE;
+    }
+
+    private GameConfigManager() {}
+
+    public static void init() {
+        get();
+        BotConfigManager.init();
+        GameruleConfigManager.init();
+        SpawnConfigManager.init();
+        ZoneConfigManager.init();
     }
 
     /**

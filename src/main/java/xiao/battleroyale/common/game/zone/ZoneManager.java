@@ -18,29 +18,22 @@ import java.util.function.Supplier;
 
 public class ZoneManager extends AbstractGameManager {
 
-    private static ZoneManager instance;
+    private static class ZoneManagerHolder {
+        private static final ZoneManager INSTANCE = new ZoneManager();
+    }
+
+    public static ZoneManager get() {
+        return ZoneManagerHolder.INSTANCE;
+    }
+
+    private ZoneManager() {}
+
+    public static void init() {
+    }
 
     private final ZoneData zoneData = new ZoneData();
 
     private boolean stackZoneConfig = true;
-
-    private ZoneManager() {
-        ;
-    }
-
-    public static void init() {
-        if (instance == null) {
-            instance = new ZoneManager();
-        }
-    }
-
-    @NotNull
-    public static ZoneManager get() {
-        if (instance == null) {
-            ZoneManager.init();
-        }
-        return instance;
-    }
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {

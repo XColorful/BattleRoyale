@@ -8,25 +8,23 @@ import xiao.battleroyale.common.game.GameManager;
 
 public class SyncEventHandler {
 
-    private static SyncEventHandler instance;
-
     private SyncEventHandler() {}
 
-    public static SyncEventHandler get() {
-        if (instance == null) {
-            instance = new SyncEventHandler();
-        }
-        return instance;
+    private static class SyncEventHandlerHolder {
+        private static final SyncEventHandler INSTANCE = new SyncEventHandler();
     }
 
-    public void register() {
+    public static SyncEventHandler get() {
+        return SyncEventHandlerHolder.INSTANCE;
+    }
+
+    public static void register() {
         MinecraftForge.EVENT_BUS.register(get());
         BattleRoyale.LOGGER.info("SyncEventHandler registered");
     }
 
-    public void unregister() {
+    public static void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
-        instance = null;
         BattleRoyale.LOGGER.info("SyncEventHandler unregistered");
     }
 

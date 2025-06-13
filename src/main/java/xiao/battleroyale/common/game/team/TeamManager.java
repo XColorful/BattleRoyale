@@ -22,7 +22,18 @@ import java.util.List;
 
 public class TeamManager extends AbstractGameManager {
 
-    private static TeamManager instance;
+    private static class TeamManagerHolder {
+        private static final TeamManager INSTANCE = new TeamManager();
+    }
+
+    public static TeamManager get() {
+        return TeamManagerHolder.INSTANCE;
+    }
+
+    private TeamManager() {}
+
+    public static void init() {
+    }
 
     private int playerLimit = 0; // 实际已经在 teamData.clear(playerLimit) 前初始化
     public int getPlayerLimit() { return playerLimit; }
@@ -46,23 +57,6 @@ public class TeamManager extends AbstractGameManager {
             "#E9ECEC", "#F07613", "#BD44B3", "#3AAFD9", "#F8C627", "#70B919", "#ED8DAC", "#8E8E86",
             "#A0A0A0", "#158991", "#792AAC", "#35399D", "#724728", "#546D1B", "#A02722", "#141519"
     };
-
-    private TeamManager() {
-    }
-
-    public static void init() {
-        if (instance == null) {
-            instance = new TeamManager();
-        }
-    }
-
-    @NotNull
-    public static TeamManager get() {
-        if (instance == null) {
-            TeamManager.init();
-        }
-        return instance;
-    }
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
@@ -121,6 +115,11 @@ public class TeamManager extends AbstractGameManager {
         }
         ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
         this.ready = false;
+    }
+
+    @Override
+    public boolean isReady() {
+        return hasEnoughPlayerTeamToStart();
     }
 
     @Override

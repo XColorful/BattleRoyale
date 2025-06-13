@@ -33,7 +33,14 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     public static final String AIRDROP_SPECIAL_CONFIG_SUB_PATH = "airdrop_special";
     public static final String SECRET_ROOM_CONFIG_SUB_PATH = "secret_room";
 
-    private static LootConfigManager instance;
+    private static class LootConfigManagerHolder {
+        private static final LootConfigManager INSTANCE = new LootConfigManager();
+    }
+
+    public static LootConfigManager get() {
+        return LootConfigManagerHolder.INSTANCE;
+    }
+
 
     private LootConfigManager() {
         allConfigData.put(LOOT_SPAWNER, new ConfigData<>());
@@ -44,17 +51,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     }
 
     public static void init() {
-        if (instance == null) {
-            instance = new LootConfigManager();
-            instance.reloadAllLootConfigs();
-        }
-    }
-
-    public static LootConfigManager get() {
-        if (instance == null) {
-            LootConfigManager.init();
-        }
-        return instance;
+        get().reloadAllLootConfigs();
     }
 
     /**

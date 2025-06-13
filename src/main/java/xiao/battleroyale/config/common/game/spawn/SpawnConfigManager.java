@@ -20,30 +20,26 @@ import java.util.List;
 
 public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager.SpawnConfig> {
 
-    public static final String SPAWN_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
-    public static final String SPAWN_CONFIG_SUB_PATH = "spawn";
+    private static class SpawnConfigMangerHolder {
+        private static final SpawnConfigManager INSTANCE = new SpawnConfigManager();
+    }
 
-    protected final int DEFAULT_SPAWN_CONFIG_DATA_ID = 0;
-
-    private static SpawnConfigManager instance;
+    public static SpawnConfigManager get() {
+        return SpawnConfigMangerHolder.INSTANCE;
+    }
 
     private SpawnConfigManager() {
         allConfigData.put(DEFAULT_SPAWN_CONFIG_DATA_ID, new ConfigData<>());
     }
 
     public static void init() {
-        if (instance == null) {
-            instance = new SpawnConfigManager();
-            instance.reloadSpawnConfigs();
-        }
+        get().reloadSpawnConfigs();
     }
 
-    public static SpawnConfigManager get() {
-        if (instance == null) {
-            SpawnConfigManager.init();
-        }
-        return instance;
-    }
+    public static final String SPAWN_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
+    public static final String SPAWN_CONFIG_SUB_PATH = "spawn";
+
+    protected final int DEFAULT_SPAWN_CONFIG_DATA_ID = 0;
 
     public static class SpawnConfig implements ISpawnSingleEntry {
         public static final String CONFIG_TYPE = "SpawnConfig";

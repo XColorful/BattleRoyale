@@ -14,30 +14,26 @@ import java.util.List;
 
 public class BotConfigManager extends AbstractConfigManager<BotConfigManager.BotConfig> {
 
-    public static final String BOT_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
-    public static final String BOT_CONFIG_SUB_PATH = "bot";
+    private static class BotConfigManagerHolder {
+        private static final BotConfigManager INSTANCE = new BotConfigManager();
+    }
 
-    protected final int DEFAULT_BOT_CONFIG_DATA_ID = 0;
-
-    private static BotConfigManager instance;
+    public static BotConfigManager get() {
+        return BotConfigManagerHolder.INSTANCE;
+    }
 
     private BotConfigManager() {
         allConfigData.put(DEFAULT_BOT_CONFIG_DATA_ID, new ConfigData<>());
     }
 
     public static void init() {
-        if (instance == null) {
-            instance = new BotConfigManager();
-            instance.reloadBotConfigs();
-        }
+        get().reloadBotConfigs();
     }
 
-    public static BotConfigManager get() {
-        if (instance == null) {
-            BotConfigManager.init();
-        }
-        return instance;
-    }
+    public static final String BOT_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
+    public static final String BOT_CONFIG_SUB_PATH = "bot";
+
+    protected final int DEFAULT_BOT_CONFIG_DATA_ID = 0;
 
     public static class BotConfig implements IConfigSingleEntry {
         public static final String CONFIG_TYPE = "BotConfig";

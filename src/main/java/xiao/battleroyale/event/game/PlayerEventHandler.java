@@ -13,24 +13,22 @@ import xiao.battleroyale.common.game.team.TeamManager;
  */
 public class PlayerEventHandler {
 
-    private static PlayerEventHandler instance;
-
     private PlayerEventHandler() {}
 
-    public static PlayerEventHandler get() {
-        if (instance == null) {
-            instance = new PlayerEventHandler();
-        }
-        return instance;
+    private static class PlayerEventHandlerHolder {
+        private static final PlayerEventHandler INSTANCE = new PlayerEventHandler();
     }
 
-    public void register() {
+    public static PlayerEventHandler get() {
+        return PlayerEventHandlerHolder.INSTANCE;
+    }
+
+    public static void register() {
         MinecraftForge.EVENT_BUS.register(get());
     }
 
-    public void unregister() {
+    public static void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
-        instance = null;
     }
 
     /**

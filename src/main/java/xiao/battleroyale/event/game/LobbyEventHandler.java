@@ -14,24 +14,22 @@ import xiao.battleroyale.common.game.spawn.SpawnManager;
  */
 public class LobbyEventHandler {
 
-    private static LobbyEventHandler instance;
-
     private LobbyEventHandler() {}
 
-    public static LobbyEventHandler get() {
-        if (instance == null) {
-            instance = new LobbyEventHandler();
-        }
-        return instance;
+    private static class LobbyEventHandlerHolder {
+        private static final LobbyEventHandler INSTANCE = new LobbyEventHandler();
     }
 
-    public void register() {
+    public static LobbyEventHandler get() {
+        return LobbyEventHandlerHolder.INSTANCE;
+    }
+
+    public static void register() {
         MinecraftForge.EVENT_BUS.register(get());
     }
 
-    public void unregister() {
+    public static void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
-        instance = null;
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
