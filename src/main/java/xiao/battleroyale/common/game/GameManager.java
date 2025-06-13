@@ -318,9 +318,11 @@ public class GameManager extends AbstractGameManager {
         Component winnerTitle = Component.translatable("battleroyale.message.winner_message")
                 .withStyle(ChatFormatting.GOLD);
 
-        Component teamWinMessage = Component.translatable("battleroyale.message.has_won_the_game",
-                        Component.literal(String.valueOf(teamId)).withStyle(Style.EMPTY.withColor(textColor))
-                ).withStyle(ChatFormatting.WHITE);
+        Component teamWinMessage = Component.translatable("battleroyale.message.team", teamId)
+                .withStyle(Style.EMPTY.withColor(textColor))
+                .append(Component.literal(" "))
+                .append(Component.translatable("battleroyale.message.has_won_the_game")
+                        .withStyle(ChatFormatting.WHITE));
 
         ChatUtils.sendTitleToPlayer(player, winnerTitle, teamWinMessage, 10, 80, 20);
 

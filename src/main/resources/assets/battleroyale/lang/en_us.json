@@ -157,7 +157,7 @@
   "battleroyale.message.switch_zone_config_file": "Switch zone config file to '%s'",
   "battleroyale.message.no_zone_config_file": "No zone config file '%s'",
 
-  "battleroyale.message.winner_message": "Winner Winner Chicken Dinner!",
+  "battleroyale.message.winner_message": "Chicken Dinner!",
   "battleroyale.message.back_to_lobby": "Back to lobby",
   "battleroyale.message.teleport": "[Teleport]",
   "battleroyale.message.has_won_the_game": "has won the game",
