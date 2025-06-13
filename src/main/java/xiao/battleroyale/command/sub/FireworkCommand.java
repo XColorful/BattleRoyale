@@ -28,49 +28,46 @@ public class FireworkCommand {
     private static final float DEFAULT_H_RANGE = 1.0F;
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
-        RequiredArgumentBuilder<CommandSourceStack, Integer> amountArg = Commands.argument(AMOUNT, IntegerArgumentType.integer(1));
-        RequiredArgumentBuilder<CommandSourceStack, Integer> intervalArg = Commands.argument(INTERVAL, IntegerArgumentType.integer(1));
-        RequiredArgumentBuilder<CommandSourceStack, Float> vRangeArg = Commands.argument(VERTICAL_RANGE, FloatArgumentType.floatArg(0.0F));
-        RequiredArgumentBuilder<CommandSourceStack, Float> hRangeArg = Commands.argument(HORIZONTAL_RANGE, FloatArgumentType.floatArg(0.0F));
+        // 倒序，不然无法执行
 
         LiteralArgumentBuilder<CommandSourceStack> fireworkCommand = Commands.literal(FIREWORK);
-
         RequiredArgumentBuilder<CommandSourceStack, Coordinates> coordBase = Commands.argument(XYZ, Vec3Argument.vec3());
         RequiredArgumentBuilder<CommandSourceStack, EntitySelector> playerBase = Commands.argument(PLAYER, EntityArgument.player());
 
         // /firework <x> <y> <z>
         coordBase.executes(FireworkCommand::executeFixedFirework_XYZ);
-
+        RequiredArgumentBuilder<CommandSourceStack, Integer> amountArg_fixed = Commands.argument(AMOUNT, IntegerArgumentType.integer(1));
+        RequiredArgumentBuilder<CommandSourceStack, Integer> intervalArg_fixed = Commands.argument(INTERVAL, IntegerArgumentType.integer(1));
+        RequiredArgumentBuilder<CommandSourceStack, Float> vRangeArg_fixed = Commands.argument(VERTICAL_RANGE, FloatArgumentType.floatArg(0.0F));
+        RequiredArgumentBuilder<CommandSourceStack, Float> hRangeArg_fixed = Commands.argument(HORIZONTAL_RANGE, FloatArgumentType.floatArg(0.0F));
+        // /firework <x> <y> <z> <amount> <interval> <vRange> <hRange>
+        hRangeArg_fixed.executes(FireworkCommand::executeFixedFirework_XYZ_Amount_Interval_VRange_HRange);
+        // /firework <x> <y> <z> <amount> <interval> <vRange>
+        vRangeArg_fixed.then(hRangeArg_fixed).executes(FireworkCommand::executeFixedFirework_XYZ_Amount_Interval_VRange);
+        // /firework <x> <y> <z> <amount> <interval>
+        intervalArg_fixed.then(vRangeArg_fixed).executes(FireworkCommand::executeFixedFirework_XYZ_Amount_Interval);
         // /firework <x> <y> <z> <amount>
-        coordBase.then(amountArg.executes(FireworkCommand::executeFixedFirework_XYZ_Amount)
-                // /firework <x> <y> <z> <amount> <interval>
-                .then(intervalArg.executes(FireworkCommand::executeFixedFirework_XYZ_Amount_Interval)
-                        // /firework <x> <y> <z> <amount> <interval> <vRange>
-                        .then(vRangeArg.executes(FireworkCommand::executeFixedFirework_XYZ_Amount_Interval_VRange)
-                                // /firework <x> <y> <z> <amount> <interval> <vRange> <hRange>
-                                .then(hRangeArg.executes(FireworkCommand::executeFixedFirework_XYZ_Amount_Interval_VRange_HRange))
-                        )
-                )
-        );
+        amountArg_fixed.then(intervalArg_fixed).executes(FireworkCommand::executeFixedFirework_XYZ_Amount);
+        coordBase.then(amountArg_fixed);
 
         // /firework <player>
         playerBase.executes(FireworkCommand::executePlayerTrackingFirework_Player);
-
+        RequiredArgumentBuilder<CommandSourceStack, Integer> amountArg_player = Commands.argument(AMOUNT, IntegerArgumentType.integer(1));
+        RequiredArgumentBuilder<CommandSourceStack, Integer> intervalArg_player = Commands.argument(INTERVAL, IntegerArgumentType.integer(1));
+        RequiredArgumentBuilder<CommandSourceStack, Float> vRangeArg_player = Commands.argument(VERTICAL_RANGE, FloatArgumentType.floatArg(0.0F));
+        RequiredArgumentBuilder<CommandSourceStack, Float> hRangeArg_player = Commands.argument(HORIZONTAL_RANGE, FloatArgumentType.floatArg(0.0F));
+        // /firework <player> <amount> <interval> <vRange> <hRange>
+        hRangeArg_player.executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount_Interval_VRange_HRange);
+        // /firework <player> <amount> <interval> <vRange>
+        vRangeArg_player.then(hRangeArg_player).executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount_Interval_VRange);
+        // /firework <player> <amount> <interval>
+        intervalArg_player.then(vRangeArg_player).executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount_Interval);
         // /firework <player> <amount>
-        playerBase.then(amountArg.executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount)
-                // /firework <player> <amount> <interval>
-                .then(intervalArg.executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount_Interval)
-                        // /firework <player> <amount> <interval> <vRange>
-                        .then(vRangeArg.executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount_Interval_VRange)
-                                // /firework <player> <amount> <interval> <vRange> <hRange>
-                                .then(hRangeArg.executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount_Interval_VRange_HRange))
-                        )
-                )
-        );
+        amountArg_player.then(intervalArg_player).executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount); // 这一步也是关键！
+        playerBase.then(amountArg_player);
 
         fireworkCommand.then(coordBase);
         fireworkCommand.then(playerBase);
-
         fireworkCommand.then(Commands.literal(CLEAR)
                 .executes(FireworkCommand::executeClearFireworks));
 
