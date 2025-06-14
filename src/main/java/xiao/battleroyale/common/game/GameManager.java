@@ -16,6 +16,7 @@ import xiao.battleroyale.common.game.effect.firework.FireworkManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
+import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
@@ -46,6 +47,10 @@ public class GameManager extends AbstractGameManager {
     private GameManager() {}
 
     public static void init() {
+        GameruleManager.init();
+        GameLootManager.init();
+        SpawnManager.init();
+        StatsManager.init();
         TeamManager.init();
         ZoneManager.init();
     }
@@ -65,8 +70,6 @@ public class GameManager extends AbstractGameManager {
     private int spawnConfigId = 0;
     private int botConfigId = 0;
     private int maxGameTime; // 最大游戏持续时间，配置项
-    private boolean recordStats; // 是否在游戏结束后记录日志，配置项
-    public boolean shouldRecordStats() { return recordStats; }
     private int maxInvalidTime = 60; // 最大离线/未加载时间，过期强制淘汰，配置项
     private int getMaxInvalidTick() { return maxInvalidTime * 20; }
     private int maxBotInvalidTime = 10 * 20;
@@ -527,6 +530,7 @@ public class GameManager extends AbstractGameManager {
     public @Nullable GameTeam getGameTeamById(int teamId) { return TeamManager.get().getGameTeamById(teamId); }
     public List<GamePlayer> getGamePlayers() { return TeamManager.get().getGamePlayersList(); }
     public List<GamePlayer> getStandingGamePlayers() { return TeamManager.get().getStandingGamePlayersList(); }
+    public boolean shouldRecordStats() { return StatsManager.get().shouldRecordStats(); }
 
     public int getGameTime() { return this.gameTime; }
 
@@ -561,7 +565,6 @@ public class GameManager extends AbstractGameManager {
     private void initGameConfigSetup() {
         BattleroyaleEntry brEntry = GameConfigManager.get().getGameruleConfig(gameruleConfigId).getBattleRoyaleEntry();
         maxGameTime = brEntry.maxGameTime;
-        recordStats = brEntry.recordGameStats;
     }
     private void initGameConfigSubManager() {
         GameLootManager.get().initGameConfig(serverLevel);
@@ -619,6 +622,7 @@ public class GameManager extends AbstractGameManager {
         this.winnerGamePlayers.clear(); // 游戏结束后不手动重置
         // 注册事件监听
         DamageEventHandler.register();
+        StatsEventHandler.register();
         LoopEventHandler.register();
         PlayerEventHandler.register();
         // 重置同步信息

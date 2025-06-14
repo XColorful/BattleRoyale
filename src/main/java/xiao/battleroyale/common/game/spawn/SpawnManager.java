@@ -27,30 +27,26 @@ import java.util.UUID;
 
 public class SpawnManager extends AbstractGameManager {
 
+    private static class SpawnManagerHolder {
+        private static final SpawnManager INSTANCE = new SpawnManager();
+    }
+
+    public static SpawnManager get() {
+        return SpawnManagerHolder.INSTANCE;
+    }
+
+    private SpawnManager() {}
+
+    public static void init() {
+        ;
+    }
+
     private static SpawnManager instance;
 
     private Vec3 lobbyPos;
     private Vec3 lobbyDimension;
     private boolean lobbyMuteki = true;
     private IGameSpawner gameSpawner;
-
-    private SpawnManager() {
-        ;
-    }
-
-    public static void init() {
-        if (instance == null) {
-            instance = new SpawnManager();
-        }
-    }
-
-    @NotNull
-    public static SpawnManager get() {
-        if (instance == null) {
-            SpawnManager.init();
-        }
-        return instance;
-    }
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {

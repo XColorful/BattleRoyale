@@ -33,6 +33,7 @@ public class TeamManager extends AbstractGameManager {
     private TeamManager() {}
 
     public static void init() {
+        ;
     }
 
     private int playerLimit = 0; // 实际已经在 teamData.clear(playerLimit) 前初始化

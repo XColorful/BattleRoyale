@@ -29,6 +29,7 @@ public class ZoneManager extends AbstractGameManager {
     private ZoneManager() {}
 
     public static void init() {
+        ;
     }
 
     private final ZoneData zoneData = new ZoneData();
