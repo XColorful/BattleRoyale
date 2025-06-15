@@ -9,7 +9,6 @@ import xiao.battleroyale.api.game.zone.shape.end.EndDimensionType;
 import xiao.battleroyale.api.game.zone.shape.start.StartCenterType;
 import xiao.battleroyale.api.game.zone.shape.start.StartDimensionType;
 import xiao.battleroyale.config.common.game.GameConfigManager;
-import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.UnsafeFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.*;

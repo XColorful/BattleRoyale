@@ -135,6 +135,9 @@
   "battleroyale.message.decline": "[拒绝]",
   "battleroyale.message.team": "队伍%s",
 
+  "battleroyale.message.player_leaved_from_level": "游戏玩家 %s 离开了当前维度",
+  "battleroyale.message.player_backed_to_level": "游戏玩家 %s 回到了当前维度",
+  "battleroyale.message.saved_game_stats": "已保存游戏统计数据",
   "battleroyale.message.eliminated_invalid_player": "已淘汰无效玩家 %s",
   "battleroyale.message.reach_max_game_time": "达到最大游戏时长",
 

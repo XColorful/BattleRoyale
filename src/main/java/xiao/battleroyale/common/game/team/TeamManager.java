@@ -187,6 +187,42 @@ public class TeamManager extends AbstractGameManager {
         return teamData.getTotalStandingPlayerCount();
     }
 
+    /**
+     * 返回非人机队伍数量
+     */
+    public int getPlayerTeamCount() {
+        int count = 0;
+        Set<Integer> playerTeamId = new HashSet<>();
+        for (GamePlayer gamePlayer : getGamePlayersList()) {
+            if (!gamePlayer.isBot()) {
+                int teamId = gamePlayer.getGameTeamId();
+                if (!playerTeamId.contains(teamId)) {
+                    playerTeamId.add(teamId);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * 返回未被淘汰的非人机队伍数量
+     */
+    public int getStandingPlayerTeamCount() {
+        int count = 0;
+        Set<Integer> playerTeamId = new HashSet<>();
+        for (GamePlayer gamePlayer : getStandingGamePlayersList()) {
+            if (!gamePlayer.isBot()) {
+                int teamId = gamePlayer.getGameTeamId();
+                if (!playerTeamId.contains(teamId)) {
+                    playerTeamId.add(teamId);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     public boolean isPlayerLeader(UUID playerUUID) {
         GamePlayer gamePlayer = teamData.getGamePlayerByUUID(playerUUID);
         if (gamePlayer == null) {
@@ -863,19 +899,28 @@ public class TeamManager extends AbstractGameManager {
         pendingRequests.clear();
     }
 
+    /**
+     * 判断是否有足够队伍开始游戏
+     */
     private boolean hasEnoughPlayerTeamToStart() {
         return hasEnoughPlayerToStart() && hasEnoughTeamToStart();
     }
-
+    // 至少要有2人
     private boolean hasEnoughPlayerToStart() {
         int totalPlayerAndBots = getTotalMembers();
-        BattleRoyale.LOGGER.info("TeamManager::totalPlayer: {}, aiEnemy: {}", totalPlayerAndBots, aiEnemy ? "true" : "false");
-        return totalPlayerAndBots > 1 || (totalPlayerAndBots == 1 && aiEnemy);
+        return totalPlayerAndBots > 1
+                || (totalPlayerAndBots == 1 && aiEnemy);
     }
-
+    // 至少要有2队
     private boolean hasEnoughTeamToStart() {
-        int totalTeamCount = teamData.getTotalTeamCount();
-        BattleRoyale.LOGGER.info("TeamManager::totalTeamCount: {}, aiEnemy: {}", totalTeamCount, aiEnemy ? "true" : "false");
-        return totalTeamCount > 1 || (totalTeamCount == 1 && aiEnemy);
+        if (!GameManager.get().isAllowRemainingBot()) { // 不允许剩余人机打架 -> 开局不能直接只有剩余人机
+            int totalTeamCount = teamData.getTotalTeamCount();
+            return totalTeamCount > 1
+                    || (totalTeamCount == 1 && aiEnemy);
+        } else {
+            int totalPlayerTeam = getPlayerTeamCount();
+            return totalPlayerTeam > 1
+                    || totalPlayerTeam == 0 && aiEnemy;
+        }
     }
 }

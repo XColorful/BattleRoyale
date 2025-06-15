@@ -37,9 +37,12 @@ public class DamageEventHandler {
     }
 
     /**
+     * 监听实体受到伤害事件
      * 取消游戏玩家与非游戏玩家之间的伤害
+     * 通知队伍更新成员信息
+     * @param event 实体受到伤害事件
      */
-    @SubscribeEvent(priority = EventPriority.NORMAL)
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onLivingDamage(LivingDamageEvent event) {
         LivingEntity damagedEntity = event.getEntity();
         if (!(damagedEntity instanceof ServerPlayer targetPlayer)) { // 受伤方为玩家

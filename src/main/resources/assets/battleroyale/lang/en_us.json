@@ -135,6 +135,9 @@
   "battleroyale.message.decline": "[Decline]",
   "battleroyale.message.team": "Team %s",
 
+  "battleroyale.message.player_leaved_from_level": "Game player %s leaved from current level",
+  "battleroyale.message.player_backed_to_level": "Game player %s backed to current level",
+  "battleroyale.message.saved_game_stats": "Saved game stats",
   "battleroyale.message.eliminated_invalid_player": "Eliminated invalid player %s",
   "battleroyale.message.reach_max_game_time": "Reached max game time",
 

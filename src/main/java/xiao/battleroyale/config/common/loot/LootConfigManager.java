@@ -23,7 +23,8 @@ import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.*;
 
 public class LootConfigManager extends AbstractConfigManager<LootConfigManager.LootConfig> {
 
-    public static final String LOOT_CONFIG_PATH = Paths.get(AbstractConfigManager.MOD_CONFIG_PATH).resolve("loot").toString();
+    public static final String LOOT_CONFIG_SUB_PATH = "loot";
+    public static final String LOOT_CONFIG_PATH = Paths.get(AbstractConfigManager.MOD_CONFIG_PATH).resolve(LOOT_CONFIG_SUB_PATH).toString();
 
     protected final int DEFAULT_LOOT_CONFIG_DATA_ID = LOOT_SPAWNER;
 

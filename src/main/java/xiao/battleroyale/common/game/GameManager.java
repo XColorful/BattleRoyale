@@ -6,6 +6,8 @@ import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -74,6 +76,8 @@ public class GameManager extends AbstractGameManager {
     private int getMaxInvalidTick() { return maxInvalidTime * 20; }
     private int maxBotInvalidTime = 10 * 20;
     private boolean removeInvalidTeam = false; // TODO 增加配置，使默认false
+    private boolean allowRemainingBot = true; // TODO 增加配置，使默认false
+    public boolean isAllowRemainingBot() { return allowRemainingBot; }
     private boolean keepTeamAfterGame = true; // TODO 增加配置，使默认true
     public boolean shouldKeepTeamAfterGame() { return keepTeamAfterGame; }
     private boolean teleportAfterGame = true; // TODO 增加配置，使默认true
@@ -161,7 +165,7 @@ public class GameManager extends AbstractGameManager {
             }
         }
 
-        checkAndUpdateInvalidPlayer();
+        checkAndUpdateInvalidGamePlayer(this.serverLevel); // 供gameTime = 1时使用
         if (startGameSubManager()) {
             startGameSetup();
             return true;
@@ -193,7 +197,7 @@ public class GameManager extends AbstractGameManager {
      * 游戏主逻辑，调度各 Manager，向客户端通信
      */
     public void onGameTick(int gameTime) {
-        checkAndUpdateInvalidPlayer();
+        checkAndUpdateInvalidGamePlayer(this.serverLevel); // 为其他Manager预处理当前tick
 
         GameLootManager.get().onGameTick(gameTime);
 
@@ -201,6 +205,7 @@ public class GameManager extends AbstractGameManager {
         GameruleManager.get().onGameTick(gameTime);
         SpawnManager.get().onGameTick(gameTime);
         ZoneManager.get().onGameTick(gameTime);
+        // StatsManager.get().onGameTick(gameTime); // 基于事件主动记录，不用tick
 
         this.boostData.onGameTick(gameTime);
     }
@@ -213,31 +218,21 @@ public class GameManager extends AbstractGameManager {
      * 检查所有未淘汰玩家是否在线，更新不在线时长或更新最后有效位置
      * 检查队伍成员是否均为倒地或者不在线，淘汰队伍（所有成员）
      */
-    private void checkAndUpdateInvalidPlayer() {
+    private void checkAndUpdateInvalidGamePlayer(ServerLevel serverLevel) {
+        if (serverLevel == null) {
+            return;
+        }
+
         List<GamePlayer> invalidPlayers = new ArrayList<>();
         // 筛选并增加无效时间计数
         for (GamePlayer gamePlayer : getStandingGamePlayers()) {
-            ServerPlayer serverPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-            if (serverPlayer == null) { // 不在线或者不在游戏运行的 level
-                gamePlayer.setActiveEntity(false);
-                if (eliminateInactiveTeam(gamePlayer)) {
-                    continue;
-                }
-                gamePlayer.addInvalidTime();
-                if (!gamePlayer.isBot()) { // 玩家离线时间检查
-                    if (gamePlayer.getInvalidTime() >= getMaxInvalidTick()) { // 达到允许的最大离线时间
-                        invalidPlayers.add(gamePlayer);
-                    }
-                } else { // 人机离线时间检查
-                    if (gamePlayer.getInvalidTime() >= maxBotInvalidTime) {
-                        invalidPlayers.add(gamePlayer);
-                    }
-                }
-            } else { // 更新最后有效位置
-                gamePlayer.setActiveEntity(true);
-                gamePlayer.setLastPos(serverPlayer.position());
+            if (!gamePlayer.isBot()) { // 真人玩家
+                updateInvalidServerPlayer(gamePlayer, serverLevel, invalidPlayers);
+            } else { // 人机
+                updateInvalidBotPlayer(gamePlayer, serverLevel, invalidPlayers);
             }
         }
+
         // 清理无效玩家
         if (!invalidPlayers.isEmpty()) {
             for (GamePlayer invalidPlayer : invalidPlayers) {
@@ -247,6 +242,67 @@ public class GameManager extends AbstractGameManager {
                 }
             }
         }
+    }
+    private void updateInvalidServerPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers) {
+        ServerPlayer serverPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+        if (serverPlayer == null) { // 不在线或者不在游戏运行的 level
+            if (gamePlayer.isActiveEntity()) {
+                notifyGamePlayerIsInactive(gamePlayer);
+            }
+            gamePlayer.setActiveEntity(false);
+            gamePlayer.addInvalidTime();
+            if (eliminateInactiveTeam(gamePlayer)) { // 队伍全员离线
+                return;
+            } else if (gamePlayer.getInvalidTime() >= getMaxInvalidTick()) { // 达到允许的最大离线时间
+                invalidPlayers.add(gamePlayer); // 淘汰单个离线玩家
+            }
+        } else { // 更新最后有效位置
+            if (!gamePlayer.isActiveEntity()) { // 刚上线
+                notifyGamePlayerIsActive(gamePlayer);
+                float lastHealth = gamePlayer.getLastHealth();
+                if (lastHealth <= 0) {
+                    invalidPlayers.add(gamePlayer);
+                    return;
+                }
+                serverPlayer.setHealth(lastHealth); // 不用maxHealth检查，可能包含吸收血量
+            }
+            gamePlayer.setActiveEntity(true);
+            gamePlayer.setLastHealth(serverPlayer.getHealth());
+            gamePlayer.setLastPos(serverPlayer.position());
+        }
+    }
+    private void updateInvalidBotPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers) {
+        Entity entity = serverLevel.getEntity(gamePlayer.getPlayerUUID());
+        if (!(entity instanceof LivingEntity livingEntity)) {
+            if (gamePlayer.isActiveEntity()) {
+                notifyGamePlayerIsInactive(gamePlayer);
+            }
+            gamePlayer.setActiveEntity(false);
+            gamePlayer.addInvalidTime();
+            if (eliminateInactiveTeam(gamePlayer)) { // 队伍全员离线啊
+                return;
+            } else if (gamePlayer.getInvalidTime() >= maxBotInvalidTime) {
+                invalidPlayers.add(gamePlayer); // 淘汰单个人机
+            }
+        } else {
+            if (!gamePlayer.isActiveEntity()) { // 刚上线
+                notifyGamePlayerIsActive(gamePlayer);
+                float lastHealth = gamePlayer.getLastHealth();
+                if (lastHealth <= 0) {
+                    invalidPlayers.add(gamePlayer);
+                }
+                livingEntity.setHealth(lastHealth);
+            }
+            gamePlayer.setActiveEntity(true);
+            gamePlayer.setLastHealth(livingEntity.getHealth());
+            gamePlayer.setLastPos(livingEntity.position());
+        }
+    }
+    private void notifyGamePlayerIsInactive(GamePlayer gamePlayer) {
+        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_leaved_from_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
+    }
+    private void notifyGamePlayerIsActive(GamePlayer gamePlayer) {
+        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_backed_to_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
     }
 
     /**
@@ -286,20 +342,29 @@ public class GameManager extends AbstractGameManager {
             return;
         }
 
-        checkAndUpdateInvalidPlayer();
-        if (TeamManager.get().getStandingTeamCount() <= 1) {
-            finishGame();
+        checkAndUpdateInvalidGamePlayer(this.serverLevel);
+        if (!allowRemainingBot) { // 不允许只剩人机继续打架，即提前终止游戏
+            int playerTeamCount = TeamManager.get().getStandingPlayerTeamCount();
+            if (playerTeamCount > 0) {
+                return;
+            }
+            boolean hasWinnerBotTeam = TeamManager.get().getStandingTeamCount() <= 1;
+            finishGame(hasWinnerBotTeam);
+        } else if (TeamManager.get().getStandingTeamCount() <= 1) {
+            finishGame(true);
         }
     }
 
     /**
      * 结束游戏，使所有未淘汰玩家均胜利
      */
-    public void finishGame() {
-        for (GamePlayer gamePlayer : TeamManager.get().getStandingGamePlayersList()) {
-            winnerGamePlayers.add(gamePlayer);
-            winnerGameTeams.add(gamePlayer.getTeam());
-            notifyWinner(gamePlayer);
+    public void finishGame(boolean hasWinner) {
+        if (hasWinner) {
+            for (GamePlayer gamePlayer : getStandingGamePlayers()) {
+                winnerGamePlayers.add(gamePlayer);
+                winnerGameTeams.add(gamePlayer.getTeam());
+                notifyWinner(gamePlayer);
+            }
         }
         stopGame(this.serverLevel);
     }
@@ -347,7 +412,6 @@ public class GameManager extends AbstractGameManager {
         }
         FireworkManager.get().addFixedPositionFireworkTask(serverLevel, pos, amount, interval, vRange, hRange);
     }
-
     /**
      * 跟随玩家生成烟花
      * @param player 玩家
@@ -433,7 +497,7 @@ public class GameManager extends AbstractGameManager {
         // 取消事件监听
         DamageEventHandler.unregister();
         LoopEventHandler.unregister();
-        PlayerEventHandler.unregister();
+        PlayerDeathEventHandler.unregister();
         LogEventHandler.unregister();
 
         this.boostData.endGame(); // 更新到syncData
@@ -451,6 +515,8 @@ public class GameManager extends AbstractGameManager {
         // 清空同步信息
         this.syncData.clear();
         this.boostData.clear();
+
+        StatsManager.get().stopGame(serverLevel);
     }
 
     public boolean teleportToLobby(@NotNull ServerPlayer player) {
@@ -489,6 +555,9 @@ public class GameManager extends AbstractGameManager {
         }
     }
 
+    /**
+     * 调用即视为gamePlayer死亡
+     */
     public void onPlayerDeath(@NotNull GamePlayer gamePlayer) {
         gamePlayer.setAlive(false); // GamePlayer内部会自动更新eliminated
 
@@ -572,13 +641,15 @@ public class GameManager extends AbstractGameManager {
         SpawnManager.get().initGameConfig(serverLevel);
         TeamManager.get().initGameConfig(serverLevel);
         ZoneManager.get().initGameConfig(serverLevel);
+        StatsManager.get().initGameConfig(serverLevel);
     }
     private boolean gameConfigAllReady() {
         return (GameLootManager.get().isPreparedForGame() // 判定的优先级最低
                 && GameruleManager.get().isPreparedForGame()
                 && SpawnManager.get().isPreparedForGame()
                 && TeamManager.get().isPreparedForGame()
-                && ZoneManager.get().isPreparedForGame());
+                && ZoneManager.get().isPreparedForGame()
+                && StatsManager.get().isPreparedForGame());
     }
     private void initGameSetup() {
         // 同步信息
@@ -593,6 +664,7 @@ public class GameManager extends AbstractGameManager {
         GameruleManager.get().initGame(serverLevel); // Gamerule会进行一次默认游戏模式切换
         SpawnManager.get().initGame(serverLevel); // SpawnManager会进行一次传送，放在TeamManager之后
         ZoneManager.get().initGame(serverLevel);
+        StatsManager.get().initGame(serverLevel);
     }
     private boolean startGameSubManager() {
         if (!GameLootManager.get().startGame(serverLevel)) { // 判定的优先级最高
@@ -610,6 +682,9 @@ public class GameManager extends AbstractGameManager {
         } else if (!SpawnManager.get().startGame(serverLevel)) { // SpawnManager在onGameTick处理出生，提前处理过就行
             BattleRoyale.LOGGER.warn("SpawnManager failed to start game");
             return false;
+        } else if (!StatsManager.get().startGame(serverLevel)) {
+            BattleRoyale.LOGGER.warn("StatsManager failed to start game");
+            return false;
         }
         return true;
     }
@@ -622,9 +697,8 @@ public class GameManager extends AbstractGameManager {
         this.winnerGamePlayers.clear(); // 游戏结束后不手动重置
         // 注册事件监听
         DamageEventHandler.register();
-        StatsEventHandler.register();
         LoopEventHandler.register();
-        PlayerEventHandler.register();
+        PlayerDeathEventHandler.register();
         // 重置同步信息
         this.syncData.startGame();
         this.boostData.startGame();
@@ -645,7 +719,8 @@ public class GameManager extends AbstractGameManager {
                 && GameruleManager.get().isReady()
                 && SpawnManager.get().isReady()
                 // && TeamManager.get().isReady() // Team会变动
-                && ZoneManager.get().isReady();
+                && ZoneManager.get().isReady()
+                && StatsManager.get().isReady();
     }
     /**
      * 开始游戏的检查
