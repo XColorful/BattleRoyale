@@ -15,6 +15,7 @@ public final class ZoneShapeTag {
     public static final String FIXED = "fixed";
     public static final String PREVIOUS = "previous";
     public static final String PREVIOUS_ID = "previousZoneId";
+    public static final String PREVIOUS_PROGRESS = "progress";
     public static final String RELATIVE = "relative";
     public static final String LOCK_PLAYER = "lockPlayer";
     public static final String PREVIOUS_SCALE = "scale";

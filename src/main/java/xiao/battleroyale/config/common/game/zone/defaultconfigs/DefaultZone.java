@@ -6,8 +6,6 @@ import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.api.game.zone.shape.end.EndCenterType;
 import xiao.battleroyale.api.game.zone.shape.end.EndDimensionType;
-import xiao.battleroyale.api.game.zone.shape.start.StartCenterType;
-import xiao.battleroyale.api.game.zone.shape.start.StartDimensionType;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.FireworkFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
@@ -45,10 +43,12 @@ public class DefaultZone {
 
         config.add(ZoneConfigTag.ZONE_FUNC, safeFuncEntry.toJson());
 
-        StartEntry startEntry = new StartEntry(StartCenterType.FIXED, new Vec3(0, -60, 0), -1, 0, 0, false,
-                StartDimensionType.FIXED, new Vec3(128, 255, 128), -1, 1, 0);
-        EndEntry endEntry = new EndEntry(EndCenterType.FIXED, new Vec3(0, -60, 0), -1, 0, 0, false,
-                EndDimensionType.FIXED, new Vec3(128, 255, 128), -1, 1, 0);
+        StartEntry startEntry = new StartEntry();
+        startEntry.addFixedCenter(new Vec3(0, -60, 0));
+        startEntry.addFixedDimension(new Vec3(128, 255, 128));
+        EndEntry endEntry = new EndEntry();
+        endEntry.addFixedCenter(new Vec3(0, -60, 0));
+        endEntry.addFixedDimension(new Vec3(128, 255, 128));
 
         SquareEntry squareEntry = new SquareEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, squareEntry.toJson());
@@ -68,10 +68,16 @@ public class DefaultZone {
 
         config.add(ZoneConfigTag.ZONE_FUNC, safeFuncEntry.toJson());
 
-        StartEntry startEntry = new StartEntry(StartCenterType.PREVIOUS, new Vec3(-1, -1, -1), 0, 0, 0, false,
-                StartDimensionType.PREVIOUS, new Vec3(-1, -1, -1), 0, Math.sqrt(2), 0);
-        EndEntry endEntry = new EndEntry(EndCenterType.PREVIOUS, new Vec3(0, 0, 0), 1, 64, 0, false,
-                EndDimensionType.PREVIOUS, new Vec3(-1, -1, -1), 1, 0.5, 0);
+        StartEntry startEntry = new StartEntry();
+        startEntry.addPreviousCenter(0, 1);
+        startEntry.addPreviousDimension(0, 1);
+        startEntry.addDimensionScale(Math.sqrt(2));
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addPreviousCenter(1, 0);
+        endEntry.addCenterRange(64);
+        endEntry.addPreviousDimension(1, 0);
+        endEntry.addDimensionScale(0.5);
 
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, circleEntry.toJson());
@@ -92,10 +98,17 @@ public class DefaultZone {
         config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
         // 中心点(0, 0)，初始圆包含 Simple Border 的边界正方形，缩圈后半径为原先 0.5 倍
-        StartEntry startEntry = new StartEntry(StartCenterType.FIXED, new Vec3(0, -30, 0), -1, 128, 0, false,
-                StartDimensionType.FIXED, new Vec3(30, 20, 50), -1, -1, 10);
-        EndEntry endEntry = new EndEntry(EndCenterType.FIXED, new Vec3(0, -50, 0), -1, 64, 0, false,
-                EndDimensionType.FIXED, new Vec3(30, 20, 50), -1, -1, 20);
+        StartEntry startEntry = new StartEntry();
+        startEntry.addFixedCenter(new Vec3(0, -30, 0));
+        startEntry.addFixedDimension(new Vec3(30, 20, 50));
+        startEntry.addCenterRange(128);
+        startEntry.addDimensionRange(10);
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addFixedCenter(new Vec3(0, -50, 0));
+        endEntry.addCenterRange(64);
+        endEntry.addFixedDimension(new Vec3(30, 20, 50));
+        endEntry.addDimensionRange(20);
 
         RectangleEntry rectangleEntry = new RectangleEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, rectangleEntry.toJson());
@@ -116,8 +129,11 @@ public class DefaultZone {
 
         config.add(ZoneConfigTag.ZONE_FUNC, fireworkFuncEntry.toJson());
 
-        StartEntry startEntry = new StartEntry(StartCenterType.RELATIVE, new Vec3(0, 10, 0), 1, 0, 0, false,
-                StartDimensionType.RELATIVE, new Vec3(-50, -230, -50), 1, 1, 0);
+        StartEntry startEntry = new StartEntry();
+        startEntry.addPreviousCenter(1, 1);
+        startEntry.addRelativeDimension(new Vec3(0, 10, 0));
+        startEntry.addPreviousDimension(1, 1);
+        startEntry.addRelativeDimension(new Vec3(-50, -230, -50));
         EndEntry endEntry = new EndEntry(EndCenterType.RELATIVE, new Vec3(0, 20, 0), 3, 0, 0, false,
                 EndDimensionType.RELATIVE, new Vec3(50, -5, 50), 3, 1, 0);
 
@@ -139,10 +155,19 @@ public class DefaultZone {
 
         config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
-        StartEntry startEntry = new StartEntry(StartCenterType.RELATIVE, new Vec3(0, 0, 0), 0, 0, 0, false,
-                StartDimensionType.RELATIVE, new Vec3(-100, -240, -100), 0, 1, 10);
-        EndEntry endEntry = new EndEntry(EndCenterType.RELATIVE, new Vec3(0, -10, 0), 4, 100, 0, false,
-                EndDimensionType.RELATIVE, new Vec3(0, 10, 0), 4, 1, 0);
+        StartEntry startEntry = new StartEntry();
+        startEntry.addPreviousCenter(0, 1);
+        startEntry.addRelativeCenter(new Vec3(0, 0, 0));
+        startEntry.addPreviousDimension(0, 1);
+        startEntry.addRelativeDimension(new Vec3(-100, -240, -100));
+        startEntry.addDimensionRange(10);
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addPreviousCenter(4, 0);
+        endEntry.addRelativeCenter(new Vec3(0, -10, 0));
+        endEntry.addCenterRange(100);
+        endEntry.addPreviousCenter(4, 0);
+        endEntry.addRelativeCenter(new Vec3(0, 10, 0));
 
         HexagonEntry hexagonEntry = new HexagonEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, hexagonEntry.toJson());
@@ -162,10 +187,13 @@ public class DefaultZone {
 
         config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
-        StartEntry startEntry = new StartEntry(StartCenterType.LOCK_PLAYER, new Vec3(0, -60, 0), -1, 0, 0, true,
-                StartDimensionType.FIXED, new Vec3(80, 2, 80), -1, 1, 0);
-        EndEntry endEntry = new EndEntry(EndCenterType.FIXED, new Vec3(0, -60, 0), -1, 0, 0, false,
-                EndDimensionType.FIXED, new Vec3(15, 4, 15), -1, 1, 0);
+        StartEntry startEntry = new StartEntry();
+        startEntry.addLockCenter(0, true);
+        startEntry.addFixedDimension(new Vec3(80, 2, 80));
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addFixedCenter(new Vec3(0, -60, 0));
+        endEntry.addFixedDimension(new Vec3(15, 4, 15));
 
         PolygonEntry polygonEntry = new PolygonEntry(startEntry, endEntry, 5);
         config.add(ZoneConfigTag.ZONE_SHAPE, polygonEntry.toJson());

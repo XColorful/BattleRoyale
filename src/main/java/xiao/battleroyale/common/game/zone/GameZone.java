@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
@@ -256,6 +257,11 @@ public class GameZone implements IGameZone {
     public @Nullable Vec3 getDimension(double progress) { return spatialZone.getDimension(progress); }
     @Override
     public @Nullable Vec3 getEndDimension() { return spatialZone.getEndDimension(); }
+
+    @Override
+    public int getSegments() {
+        return spatialZone.getSegments();
+    }
 
     // ITickableZone
     @Override
