@@ -431,13 +431,13 @@ public class GameManager extends AbstractGameManager {
     /**
      * 用于向胜利玩家发送消息，传送回大厅
      */
-    private void sendLobbyTeleportMessage(@NotNull ServerPlayer player) {
+    public void sendLobbyTeleportMessage(@NotNull ServerPlayer player, boolean isWinner) {
         String toLobbyCommandString = GameCommand.toLobbyCommandString();
 
         Component fullMessage = Component.translatable("battleroyale.message.back_to_lobby")
                 .append(Component.literal(" "))
                 .append(Component.translatable("battleroyale.message.teleport")
-                        .withStyle(ChatFormatting.GOLD)
+                        .withStyle(isWinner ? ChatFormatting.GOLD :  ChatFormatting.WHITE)
                         .withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, toLobbyCommandString))
                                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(toLobbyCommandString)))
                         )
@@ -458,7 +458,7 @@ public class GameManager extends AbstractGameManager {
                 if (teleportWinnerAfterGame) { // 传送
                     teleportToLobby(player); // 传送胜利玩家回大厅
                 } else { // 不传送，改为发送传送消息
-                    sendLobbyTeleportMessage(player);
+                    sendLobbyTeleportMessage(player, true);
                 }
             }
 

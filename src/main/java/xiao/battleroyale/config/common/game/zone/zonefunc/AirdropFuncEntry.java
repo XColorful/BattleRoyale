@@ -6,15 +6,10 @@ import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.common.game.zone.tickable.AirdropFunc;
 
-public class AirdropFuncEntry implements IZoneFuncEntry {
-
-    private final double damage = 0;
-    private final int moveDelay;
-    private final int moveTime;
+public class AirdropFuncEntry extends AbstractFuncEntry {
 
     public AirdropFuncEntry(int moveDelay, int moveTime) {
-        this.moveDelay = moveDelay;
-        this.moveTime = moveTime;
+        super(moveDelay, moveTime);
     }
 
     @Override

@@ -3,6 +3,7 @@ package xiao.battleroyale.common.game.zone;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
@@ -118,7 +119,6 @@ public class GameZone implements IGameZone {
     }
 
     /**
-     * 只关注
      * @param serverLevel 当前世界
      * @param gamePlayerList 当前游戏玩家列表
      * @param gameZones 当前游戏所有圈实例，但通常圈自身逻辑与其他圈无关
@@ -126,7 +126,7 @@ public class GameZone implements IGameZone {
      * @param gameTime 游戏进行时间
      */
     @Override
-    public void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
+    public void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
         if (!shouldTick(gameTime)) {
             return;
         }
@@ -175,7 +175,7 @@ public class GameZone implements IGameZone {
     }
 
     @Override
-    public void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
+    public void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
                      int gameTime, double progress, ISpatialZone spatialZone) {
         tickableZone.tick(serverLevel, gamePlayerList, gameZones, random, gameTime, progress, spatialZone);
     }

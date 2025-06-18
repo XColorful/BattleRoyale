@@ -7,16 +7,10 @@ import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.common.game.zone.tickable.UnsafeFunc;
 
-public class UnsafeFuncEntry implements IZoneFuncEntry {
-
-    private final double damage;
-    private final int moveDelay;
-    private final int moveTime;
+public class UnsafeFuncEntry extends AbstractFuncEntry {
 
     public UnsafeFuncEntry(double damage, int moveDelay, int moveTime) {
-        this.damage = damage;
-        this.moveDelay = moveDelay;
-        this.moveTime = moveTime;
+        super(damage, moveDelay, moveTime);
     }
 
     @Override

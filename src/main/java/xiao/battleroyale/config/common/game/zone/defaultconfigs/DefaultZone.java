@@ -9,6 +9,7 @@ import xiao.battleroyale.api.game.zone.shape.end.EndDimensionType;
 import xiao.battleroyale.api.game.zone.shape.start.StartCenterType;
 import xiao.battleroyale.api.game.zone.shape.start.StartDimensionType;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.config.common.game.zone.zonefunc.FireworkFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.UnsafeFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.*;
@@ -110,9 +111,10 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 400);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 11600);
 
-        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(2, 600, 1200); // 30秒后刷圈，缩圈1分钟
+        FireworkFuncEntry fireworkFuncEntry = new FireworkFuncEntry(600, 1200, // 30秒后刷圈，缩圈1分钟
+                true, 1, 20, 5, 3, false);
 
-        config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
+        config.add(ZoneConfigTag.ZONE_FUNC, fireworkFuncEntry.toJson());
 
         StartEntry startEntry = new StartEntry(StartCenterType.RELATIVE, new Vec3(0, 10, 0), 1, 0,
                 StartDimensionType.RELATIVE, new Vec3(-50, -230, -50), 1, 1, 0);

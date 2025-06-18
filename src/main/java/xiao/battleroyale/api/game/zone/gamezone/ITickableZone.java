@@ -1,6 +1,7 @@
 package xiao.battleroyale.api.game.zone.gamezone;
 
 import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
@@ -51,7 +52,7 @@ public interface ITickableZone {
      * @param progress 圈进度
      * @param spatialZone 提供圈的状态，计算与玩家相关的逻辑
      */
-    void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
+    void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
               int gameTime, double progress, ISpatialZone spatialZone);
 
     /**
