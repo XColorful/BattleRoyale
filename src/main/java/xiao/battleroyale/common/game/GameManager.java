@@ -20,7 +20,6 @@ import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.stats.StatsManager;
-import xiao.battleroyale.common.game.stats.game.GameruleRecord;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
@@ -34,7 +33,6 @@ import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.ColorUtils;
 
-import javax.json.JsonObject;
 import java.util.*;
 import java.util.List;
 import java.util.function.Supplier;
@@ -608,11 +606,21 @@ public class GameManager extends AbstractGameManager {
     public void recordBoolGamerule(Map<String, Boolean> boolGamerule) { StatsManager.get().onRecordBoolGamerule(boolGamerule); }
     public void recordDoubleGamerule(Map<String, Double> doubleGamerule) { StatsManager.get().onRecordDoubleGamerule(doubleGamerule); }
     public void recordStringGamerule(Map<String, String> stringGamerule) { StatsManager.get().onRecordStringGamerule(stringGamerule); }
-    public void recordGamerule(IStatsWriter gamerule) {
-        recordIntGamerule(gamerule.getIntGamerule());
-        recordBoolGamerule(gamerule.getBoolGamerule());
-        recordDoubleGamerule(gamerule.getDoubleGamerule());
-        recordStringGamerule(gamerule.getStringGamerule());
+    public void recordGamerule(IStatsWriter gameruleWriter) {
+        recordIntGamerule(gameruleWriter.getIntWriter());
+        recordBoolGamerule(gameruleWriter.getBoolWriter());
+        recordDoubleGamerule(gameruleWriter.getDoubleWriter());
+        recordStringGamerule(gameruleWriter.getStringWriter());
+    }
+    public void recordSpawnInt(String key, Map<String, Integer> spawnInt) { StatsManager.get().onRecordSpawnInt(key, spawnInt); }
+    public void recordSpawnBool(String key, Map<String, Boolean> spawnBool) { StatsManager.get().onRecordSpawnBool(key, spawnBool); }
+    public void recordSpawnDouble(String key, Map<String, Double> spawnDouble) { StatsManager.get().onRecordSpawnDouble(key, spawnDouble); }
+    public void recordSpawnString(String key, Map<String, String> spawnString) { StatsManager.get().onRecordSpawnString(key, spawnString); }
+    public void recordSpawn(String key, IStatsWriter spawnWriter) {
+        recordSpawnInt(key, spawnWriter.getIntWriter());
+        recordSpawnBool(key, spawnWriter.getBoolWriter());
+        recordSpawnDouble(key, spawnWriter.getDoubleWriter());
+        recordSpawnString(key, spawnWriter.getStringWriter());
     }
 
     public int getGameTime() { return this.gameTime; }

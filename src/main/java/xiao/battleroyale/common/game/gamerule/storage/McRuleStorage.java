@@ -111,7 +111,7 @@ public class McRuleStorage implements IRuleStorage {
         this.backupRule = null;
     }
 
-    public Map<String, Integer> getIntGamerule() {
+    public Map<String, Integer> getIntWriter() {
         if (currentRule == null) {
             return new HashMap<>();
         }
@@ -119,7 +119,7 @@ public class McRuleStorage implements IRuleStorage {
         intGamerule.put(MinecraftEntryTag.TIME_SET, currentRule.timeSet);
         return intGamerule;
     }
-    public Map<String, Boolean> getBoolGamerule() {
+    public Map<String, Boolean> getBoolWriter() {
         if (currentRule == null) {
             return new HashMap<>();
         }

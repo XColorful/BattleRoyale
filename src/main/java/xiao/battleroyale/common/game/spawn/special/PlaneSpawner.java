@@ -2,13 +2,18 @@ package xiao.battleroyale.common.game.spawn.special;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
+import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
+import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.spawn.AbstractSimpleSpawner;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.config.common.game.spawn.type.PlaneEntry;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -51,6 +56,27 @@ public class PlaneSpawner extends AbstractSimpleSpawner {
         }
 
         this.prepared = true;
+    }
+
+    @Override
+    public String getSpawnerTypeString() {
+        return SpawnTypeTag.SPAWN_TYPE_PLANE;
+    }
+
+    @Override
+    public void addWriterDetailProperty() {
+        Map<String, String> stringWriter = new HashMap<>();
+        stringWriter.put(SpawnDetailTag.TYPE_NAME, detailType.getName());
+        GameManager.get().recordSpawnString(SPAWNER_KEY_TAG, stringWriter);
+
+        Map<String, Boolean> boolWriter = new HashMap<>();
+        boolWriter.put(SpawnDetailTag.PLANE_FIXED_TIME, fixedReachTime);
+        GameManager.get().recordSpawnBool(SPAWNER_KEY_TAG, boolWriter);
+
+        Map<String, Double> doubleWriter = new HashMap<>();
+        doubleWriter.put(SpawnDetailTag.PLANE_HEIGHT, planeHeight);
+        doubleWriter.put(SpawnDetailTag.PLANE_SPEED, planeSpeed);
+        GameManager.get().recordSpawnDouble(SPAWNER_KEY_TAG, doubleWriter);
     }
 
     /**

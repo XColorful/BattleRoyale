@@ -66,7 +66,7 @@ public class TeleportEntry implements ISpawnEntry {
         // detail
         jsonObject.addProperty(SpawnDetailTag.TYPE_NAME, detailType.getName());
         switch (this.detailType) {
-            case FIXED -> { jsonObject.add(SpawnDetailTag.GROUND_FIXED_POS, JsonUtils.writeVec3ListToJson(this.detailInfo.fixedPos));}
+            case FIXED -> jsonObject.add(SpawnDetailTag.GROUND_FIXED_POS, JsonUtils.writeVec3ListToJson(this.detailInfo.fixedPos));
             case RANDOM -> {}
         }
         jsonObject.addProperty(SpawnDetailTag.GROUND_TEAM_TOGETHER, this.detailInfo.teamTogether);

@@ -6,19 +6,19 @@ import java.util.Map;
 public interface IStatsWriter {
 
     default
-    Map<String, Integer> getIntGamerule() {
+    Map<String, Integer> getIntWriter() {
         return new HashMap<>();
     }
     default
-    Map<String, Boolean> getBoolGamerule() {
+    Map<String, Boolean> getBoolWriter() {
         return new HashMap<>();
     }
     default
-    Map<String, Double> getDoubleGamerule() {
+    Map<String, Double> getDoubleWriter() {
         return new HashMap<>();
     }
     default
-    Map<String, String> getStringGamerule() {
+    Map<String, String> getStringWriter() {
         return new HashMap<>();
     }
 }

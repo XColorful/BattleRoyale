@@ -12,8 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.common.game.stats.game.GameruleRecord;
-import xiao.battleroyale.common.game.stats.game.SpawnRecord;
+import xiao.battleroyale.common.game.stats.game.SimpleRecord;
 import xiao.battleroyale.common.game.stats.game.ZoneRecord;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.TeamManager;
@@ -47,7 +46,9 @@ public class StatsManager extends AbstractGameManager {
     public static final String STATS_SUB_PATH = "stats";
     public static final String STATS_PATH = Paths.get(AbstractGameManager.MOD_DATA_PATH).resolve(STATS_SUB_PATH).toString();
     private static final String STATS_TAG = "stats";
+    private static final String GAME_TAG = "game";
     private static final String GAMERULE_TAG = "gamerule";
+    private static final String SPAWN_TAG = "spawn";
     private static final String TIMELINE_TAG = "timeline";
     private static final String RANK_TAG = "rank";
     private static final String DETAIL_TAG = "detail";
@@ -55,11 +56,10 @@ public class StatsManager extends AbstractGameManager {
     // player
     private final Map<GamePlayer, GamePlayerStats> gamePlayerStats = new HashMap<>();
     private final Map<DamageSource, DamageSourceStats> damageSourceStats = new HashMap<>();
-    // zone
+    // game
+    private final SimpleRecord gameruleStats = new SimpleRecord();
+    private final Map<String, SimpleRecord> spawnStats = new TreeMap<>(); // key/singleId -> spawnRecord
     private final Map<Integer, ZoneRecord> zoneStats = new HashMap<>(); // zoneId -> ZoneRecord
-    private final Map<Integer, SpawnRecord> spawnStats = new HashMap<>(); // gameSingleId -> SpawnRecord
-    // gamerule
-    private final GameruleRecord gameruleStats = new GameruleRecord();
 
     private int timeOrder = 0;
     private int minRank = Integer.MAX_VALUE;
@@ -123,6 +123,8 @@ public class StatsManager extends AbstractGameManager {
         gamePlayerStats.clear();
         damageSourceStats.clear();
         zoneStats.clear();
+        spawnStats.clear();
+        gameruleStats.clear();
         timeOrder = 0;
         minRank = Integer.MAX_VALUE;
         maxRank = Integer.MIN_VALUE;
@@ -209,52 +211,80 @@ public class StatsManager extends AbstractGameManager {
             return;
         }
 
-        intGamerule.forEach((key, value) -> {
-            if (value != null) {
-                gameruleStats.intGamerule.put(key, value);
-            } else {
-                gameruleStats.intGamerule.remove(key);
-            }
-        });
+        updateRecordMap(gameruleStats.intRecord, intGamerule);
     }
     public void onRecordBoolGamerule(Map<String, Boolean> boolGamerule) {
         if (!shouldRecordStats()) {
             return;
         }
 
-        boolGamerule.forEach((key, value) -> {
-            if (Boolean.TRUE.equals(value)) {
-                gameruleStats.boolGamerule.put(key, value);
-            } else {
-                gameruleStats.boolGamerule.remove(key);
-            }
-        });
+        updateBoolRecordMap(gameruleStats.boolRecord, boolGamerule);
     }
     public void onRecordDoubleGamerule(Map<String, Double> doubleGamerule) {
         if (!shouldRecordStats()) {
             return;
         }
 
-        doubleGamerule.forEach((key, value) -> {
-            if (value != null) {
-                gameruleStats.doubleGamerule.put(key, value);
-            } else {
-                gameruleStats.doubleGamerule.remove(key);
-            }
-        });
+        updateRecordMap(gameruleStats.doubleRecord, doubleGamerule);
     }
     public void onRecordStringGamerule(Map<String, String> stringGamerule) {
         if (!shouldRecordStats()) {
             return;
         }
 
-        stringGamerule.forEach((key, value) -> {
-            if (value != null) {
-                gameruleStats.stringGamerule.put(key, value);
-            } else {
-                gameruleStats.stringGamerule.remove(key);
-            }
-        });
+        updateRecordMap(gameruleStats.stringRecord, stringGamerule);
+    }
+
+    private SimpleRecord getOrCreateSpawnRecord(String key) {
+        return spawnStats.computeIfAbsent(key, k -> new SimpleRecord());
+    }
+    public void onRecordSpawnInt(String key, Map<String, Integer> spawnInt) {
+        if (!shouldRecordStats()) {
+            return;
+        }
+
+        if (spawnInt != null) {
+            SimpleRecord record = getOrCreateSpawnRecord(key);
+            updateRecordMap(record.intRecord, spawnInt);
+        } else {
+            spawnStats.remove(key);
+        }
+    }
+    public void onRecordSpawnBool(String key, Map<String, Boolean> spawnBool) {
+        if (!shouldRecordStats()) {
+            return;
+        }
+
+        if (spawnBool != null) {
+            SimpleRecord record = getOrCreateSpawnRecord(key);
+            updateRecordMap(record.boolRecord, spawnBool);
+        } else {
+            spawnStats.remove(key);
+        }
+    }
+    public void onRecordSpawnDouble(String key, Map<String, Double> spawnDouble) {
+        if (!shouldRecordStats()) {
+            return;
+        }
+
+        if (spawnDouble != null) {
+            SimpleRecord record = getOrCreateSpawnRecord(key);
+            updateRecordMap(record.doubleRecord, spawnDouble);
+        } else {
+            spawnStats.remove(key);
+        }
+    }
+    public void onRecordSpawnString(String key, Map<String, String> spawnString) {
+        if (!shouldRecordStats()) {
+            return;
+        }
+
+        if (spawnString != null) {
+            SimpleRecord record = getOrCreateSpawnRecord(key);
+            updateRecordMap(record.stringRecord, spawnString);
+        } else {
+            spawnStats.remove(key);
+        }
     }
 
     private String generateStateDirectory() {
@@ -275,7 +305,7 @@ public class StatsManager extends AbstractGameManager {
 
         String filePath = generateStateDirectory();
         JsonArray jsonArray = new JsonArray();
-        addGameruleStats(jsonArray);
+        addGameStats(jsonArray);
         JsonUtils.writeJsonToFile(filePath, jsonArray);
 
         ServerLevel serverLevel = GameManager.get().getServerLevel();
@@ -287,26 +317,80 @@ public class StatsManager extends AbstractGameManager {
         BattleRoyale.LOGGER.info("Saved game stats to {}", filePath);
     }
 
-    private void addGameruleStats(@NotNull JsonArray jsonArray) {
+    private void addGameStats(@NotNull JsonArray jsonArray) {
         JsonObject statsObject = new JsonObject();
-        statsObject.addProperty(STATS_TAG, GAMERULE_TAG);
-        JsonObject gameruleObject = new JsonObject();
 
-        for (Map.Entry<String, Integer> entry : gameruleStats.intGamerule.entrySet()) {
-            gameruleObject.addProperty(entry.getKey(), entry.getValue());
-        }
-        for (Map.Entry<String, Boolean> entry : gameruleStats.boolGamerule.entrySet()) {
-            gameruleObject.addProperty(entry.getKey(), entry.getValue());
-        }
-        for (Map.Entry<String, Double> entry : gameruleStats.doubleGamerule.entrySet()) {
-            gameruleObject.addProperty(entry.getKey(), entry.getValue());
-        }
-        for (Map.Entry<String, String> entry : gameruleStats.stringGamerule.entrySet()) {
-            gameruleObject.addProperty(entry.getKey(), entry.getValue());
-        }
+        statsObject.addProperty(STATS_TAG, GAME_TAG);
+        addGameruleProperty(statsObject);
+        addSpawnProperty(statsObject);
 
-        statsObject.add(GAMERULE_TAG, gameruleObject);
         jsonArray.add(statsObject);
+    }
+    private void addGameruleProperty(JsonObject jsonObject) {
+        JsonObject gameruleObject = new JsonObject();
+        for (Map.Entry<String, Integer> entry : gameruleStats.intRecord.entrySet()) {
+            gameruleObject.addProperty(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<String, Boolean> entry : gameruleStats.boolRecord.entrySet()) {
+            gameruleObject.addProperty(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<String, Double> entry : gameruleStats.doubleRecord.entrySet()) {
+            gameruleObject.addProperty(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<String, String> entry : gameruleStats.stringRecord.entrySet()) {
+            gameruleObject.addProperty(entry.getKey(), entry.getValue());
+        }
+
+        jsonObject.add(GAMERULE_TAG, gameruleObject);
+    }
+    private void addSpawnProperty(JsonObject jsonObject) {
+        JsonObject spawnRootObject = new JsonObject();
+
+        for (Map.Entry<String, SimpleRecord> entry : spawnStats.entrySet()) {
+            String spawnKey = entry.getKey();
+            SimpleRecord record = entry.getValue();
+            JsonObject individualSpawnObject = new JsonObject();
+
+            for (Map.Entry<String, Integer> intEntry : record.intRecord.entrySet()) {
+                individualSpawnObject.addProperty(intEntry.getKey(), intEntry.getValue());
+            }
+            for (Map.Entry<String, Boolean> boolEntry : record.boolRecord.entrySet()) {
+                individualSpawnObject.addProperty(boolEntry.getKey(), boolEntry.getValue());
+            }
+            for (Map.Entry<String, Double> doubleEntry : record.doubleRecord.entrySet()) {
+                individualSpawnObject.addProperty(doubleEntry.getKey(), doubleEntry.getValue());
+            }
+            for (Map.Entry<String, String> stringEntry : record.stringRecord.entrySet()) {
+                individualSpawnObject.addProperty(stringEntry.getKey(), stringEntry.getValue());
+            }
+
+            spawnRootObject.add(spawnKey, individualSpawnObject);
+        }
+
+        jsonObject.add(SPAWN_TAG, spawnRootObject);
+    }
+
+    private <T> void updateRecordMap(Map<String, T> targetMap, Map<String, T> sourceMap) {
+        if (sourceMap != null) {
+            sourceMap.forEach((key, value) -> {
+                if (value != null) {
+                    targetMap.put(key, value);
+                } else {
+                    targetMap.remove(key);
+                }
+            });
+        }
+    }
+    private void updateBoolRecordMap(Map<String, Boolean> targetMap, Map<String, Boolean> sourceMap) {
+        if (sourceMap != null) {
+            sourceMap.forEach((key, value) -> {
+                if (Boolean.TRUE.equals(value)) {
+                    targetMap.put(key, value);
+                } else {
+                    targetMap.remove(key);
+                }
+            });
+        }
     }
 
     /**

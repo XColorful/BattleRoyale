@@ -22,14 +22,14 @@ public class TeamConfig implements IStatsWriter {
     }
 
     @Override
-    public Map<String, Integer> getIntGamerule() {
+    public Map<String, Integer> getIntWriter() {
         Map<String, Integer> intGamerule = new HashMap<>();
         intGamerule.put(BattleroyaleEntryTag.PLAYER_TOTAL, playerLimit);
         intGamerule.put(BattleroyaleEntryTag.TEAM_SIZE, teamSize);
         return intGamerule;
     }
     @Override
-    public Map<String, Boolean> getBoolGamerule() {
+    public Map<String, Boolean> getBoolWriter() {
         Map<String, Boolean> boolGamerule = new HashMap<>();
         boolGamerule.put(BattleroyaleEntryTag.AI_TEAMMATE, aiTeammate);
         boolGamerule.put(BattleroyaleEntryTag.AI_ENEMY, aiEnemy);

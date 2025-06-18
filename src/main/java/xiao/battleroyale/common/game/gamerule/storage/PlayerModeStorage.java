@@ -110,7 +110,7 @@ public class PlayerModeStorage implements IRuleStorage {
     }
 
     @Override
-    public Map<String, Boolean> getBoolGamerule() {
+    public Map<String, Boolean> getBoolWriter() {
         if (gameMode == null) {
             return new HashMap<>();
         }
