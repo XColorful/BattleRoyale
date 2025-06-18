@@ -16,6 +16,8 @@ public class EndEntry {
     public Vec3 endCenterPos; // fixed x, z / relative x, z
     public int endCenterZoneId;
     public double endCenterRange;
+    public int playerId;
+    public boolean selectStanding;
 
     public EndDimensionType endDimensionType;
     public Vec3 endDimension; // radius / size / a, b
@@ -23,12 +25,13 @@ public class EndEntry {
     public double endDimensionScale; // previous dimension scale
     public double endDimensionRange;
 
-    public EndEntry(EndCenterType endCenterType, Vec3 endCenterPos, int endCenterZoneId, double endCenterRange,
+    public EndEntry(EndCenterType endCenterType, Vec3 endCenterPos, int endCenterZoneId, double endCenterRange, int playerId, boolean selectStanding,
                     EndDimensionType endDimensionType, Vec3 endDimension, int endDimensionZoneId, double endDimensionScale, double endDimensionRange) {
         this.endCenterType = endCenterType;
         this.endCenterPos = endCenterPos;
         this.endCenterZoneId = endCenterZoneId;
         this.endCenterRange = endCenterRange;
+        this.playerId = playerId;
 
         this.endDimensionType = endDimensionType;
         this.endDimension = endDimension;
@@ -58,6 +61,8 @@ public class EndEntry {
         Vec3 centerPos = Vec3.ZERO;
         int centerZoneId = -1;
         double centerRange = 0;
+        int playerId = 0;
+        boolean selectStanding = true;
         switch (centerType) {
             case FIXED -> {
                 String centerPosString = centerObject.has(ZoneShapeTag.FIXED) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.FIXED).getAsString() : "";
@@ -81,6 +86,14 @@ public class EndEntry {
                         return null;
                     }
                 }
+            }
+            case LOCK_PLAYER -> {
+                playerId = centerObject.has(ZoneShapeTag.PLAYER_ID) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.PLAYER_ID).getAsInt() : 0;
+                if (playerId < 0) {
+                    BattleRoyale.LOGGER.info("Invalid playerId {}, defaulting to 0 (random select)", playerId);
+                    playerId = 0;
+                }
+                selectStanding = centerObject.has(ZoneShapeTag.SELECT_STANDING) && centerObject.getAsJsonPrimitive(ZoneShapeTag.SELECT_STANDING).getAsBoolean();
             }
         }
         centerRange = centerObject.has(ZoneShapeTag.RANDOM_RANGE) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.RANDOM_RANGE).getAsDouble() : 0;
@@ -120,7 +133,7 @@ public class EndEntry {
         }
         dimensionRange = dimensionObject.has(ZoneShapeTag.RANDOM_RANGE) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.RANDOM_RANGE).getAsDouble() : 0;
 
-        return new EndEntry(centerType, centerPos, centerZoneId, centerRange,
+        return new EndEntry(centerType, centerPos, centerZoneId, centerRange, playerId, selectStanding,
                 dimensionType, dimension, dimensionZoneId, dimensionScale, dimensionRange);
     }
 
@@ -147,6 +160,10 @@ public class EndEntry {
                 if (endCenterType == EndCenterType.RELATIVE) {
                     centerObject.addProperty(ZoneShapeTag.RELATIVE, StringUtils.vectorToString(endCenterPos));
                 }
+            }
+            case LOCK_PLAYER -> {
+                centerObject.addProperty(ZoneShapeTag.PLAYER_ID, playerId);
+                centerObject.addProperty(ZoneShapeTag.SELECT_STANDING, selectStanding);
             }
         }
         centerObject.addProperty(ZoneShapeTag.RANDOM_RANGE, endCenterRange);

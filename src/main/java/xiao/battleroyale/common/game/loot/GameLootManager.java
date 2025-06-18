@@ -15,6 +15,29 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GameLootManager extends AbstractGameManager {
 
+    private static class GameLootManagerHolder {
+        private static final GameLootManager INSTANCE = new GameLootManager();
+    }
+
+    public static GameLootManager get() {
+        return GameLootManagerHolder.INSTANCE;
+    }
+
+    private GameLootManager() {
+        this.processedChunksTracker = Collections.synchronizedSet(new HashSet<>());
+        this.processedChunkInfoMap = Collections.synchronizedMap(new HashMap<>());
+        this.chunksToProcessQueue = new ConcurrentLinkedQueue<>();
+        this.playerLastKnownChunk = Collections.synchronizedMap(new HashMap<>());
+        this.playerLastKnownSimulationDistance = Collections.synchronizedMap(new HashMap<>());
+
+        this.evictionIntervalTicks = 20 * 10; // 默认10秒清理一次
+        this.lootAreaCalculator = new LootAreaCalculator();
+    }
+
+    public static void init() {
+        ;
+    }
+
     private static GameLootManager instance;
 
     // 配置参数
@@ -38,24 +61,6 @@ public class GameLootManager extends AbstractGameManager {
 
     // 战利品区域计算器
     private final LootAreaCalculator lootAreaCalculator;
-
-    private GameLootManager() {
-        this.processedChunksTracker = Collections.synchronizedSet(new HashSet<>());
-        this.processedChunkInfoMap = Collections.synchronizedMap(new HashMap<>());
-        this.chunksToProcessQueue = new ConcurrentLinkedQueue<>();
-        this.playerLastKnownChunk = Collections.synchronizedMap(new HashMap<>());
-        this.playerLastKnownSimulationDistance = Collections.synchronizedMap(new HashMap<>());
-
-        this.evictionIntervalTicks = 20 * 10; // 默认10秒清理一次
-        this.lootAreaCalculator = new LootAreaCalculator();
-    }
-
-    public static GameLootManager get() {
-        if (instance == null) {
-            instance = new GameLootManager();
-        }
-        return instance;
-    }
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {

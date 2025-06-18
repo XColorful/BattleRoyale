@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
+import xiao.battleroyale.api.game.gamerule.MinecraftEntryTag;
 import xiao.battleroyale.api.game.gamerule.storage.IRuleStorage;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
@@ -20,7 +21,6 @@ import java.util.UUID;
 public class PlayerModeStorage implements IRuleStorage {
 
     private static GameType gameMode;
-
     private final Map<UUID, GameType> playerModeBackup = new HashMap<>();
 
     public PlayerModeStorage() {
@@ -107,5 +107,15 @@ public class PlayerModeStorage implements IRuleStorage {
     @Override
     public void clear() {
         playerModeBackup.clear();
+    }
+
+    @Override
+    public Map<String, Boolean> getBoolWriter() {
+        if (gameMode == null) {
+            return new HashMap<>();
+        }
+        Map<String, Boolean> boolGamerule = new HashMap<>();
+        boolGamerule.put(MinecraftEntryTag.ADVENTURE, gameMode == GameType.ADVENTURE);
+        return boolGamerule;
     }
 }

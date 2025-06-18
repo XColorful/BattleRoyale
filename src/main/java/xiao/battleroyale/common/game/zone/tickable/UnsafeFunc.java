@@ -2,9 +2,10 @@ package xiao.battleroyale.common.game.zone.tickable;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
+import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.init.ModDamageTypes;
@@ -16,18 +17,12 @@ import java.util.function.Supplier;
 
 public class UnsafeFunc extends AbstractSimpleFunc {
 
-
-    public UnsafeFunc(double damage, int moveDelay, int moveTime) {
-        super(damage, moveDelay, moveTime);
+    public UnsafeFunc(double damage, int moveDelay, int moveTime, int tickFreq, int tickOffset) {
+        super(damage, moveDelay, moveTime, tickFreq, tickOffset);
     }
 
     @Override
-    public void initFunc(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
-        this.ready = true;
-    }
-
-    @Override
-    public void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
+    public void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
                      int gameTime, double progress, ISpatialZone spatialZone) {
         List<GamePlayer> playersToProcess = new ArrayList<>(gamePlayerList); // 遍历副本，不然玩家挂了就 ConcurrentModificationException
         for (GamePlayer gamePlayer : playersToProcess) {
@@ -38,7 +33,7 @@ public class UnsafeFunc extends AbstractSimpleFunc {
                         entity.hurt(ModDamageTypes.unsafeZone(serverLevel), (float) this.damage);
                     }
                 } else {
-                    gamePlayer.addZoneDamageTaken((float) this.damage);
+                    StatsManager.get().onRecordDamage(gamePlayer, ModDamageTypes.unsafeZone(serverLevel), (float) this.damage);
                 }
             }
         }
@@ -48,5 +43,4 @@ public class UnsafeFunc extends AbstractSimpleFunc {
     public ZoneFuncType getFuncType() {
         return ZoneFuncType.UNSAFE;
     }
-
 }

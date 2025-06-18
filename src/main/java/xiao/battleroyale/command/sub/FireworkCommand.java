@@ -37,7 +37,7 @@ public class FireworkCommand {
         // /firework <x> <y> <z>
         coordBase.executes(FireworkCommand::executeFixedFirework_XYZ);
         RequiredArgumentBuilder<CommandSourceStack, Integer> amountArg_fixed = Commands.argument(AMOUNT, IntegerArgumentType.integer(1));
-        RequiredArgumentBuilder<CommandSourceStack, Integer> intervalArg_fixed = Commands.argument(INTERVAL, IntegerArgumentType.integer(1));
+        RequiredArgumentBuilder<CommandSourceStack, Integer> intervalArg_fixed = Commands.argument(INTERVAL, IntegerArgumentType.integer(0));
         RequiredArgumentBuilder<CommandSourceStack, Float> vRangeArg_fixed = Commands.argument(VERTICAL_RANGE, FloatArgumentType.floatArg(0.0F));
         RequiredArgumentBuilder<CommandSourceStack, Float> hRangeArg_fixed = Commands.argument(HORIZONTAL_RANGE, FloatArgumentType.floatArg(0.0F));
         // /firework <x> <y> <z> <amount> <interval> <vRange> <hRange>
@@ -53,7 +53,7 @@ public class FireworkCommand {
         // /firework <player>
         playerBase.executes(FireworkCommand::executePlayerTrackingFirework_Player);
         RequiredArgumentBuilder<CommandSourceStack, Integer> amountArg_player = Commands.argument(AMOUNT, IntegerArgumentType.integer(1));
-        RequiredArgumentBuilder<CommandSourceStack, Integer> intervalArg_player = Commands.argument(INTERVAL, IntegerArgumentType.integer(1));
+        RequiredArgumentBuilder<CommandSourceStack, Integer> intervalArg_player = Commands.argument(INTERVAL, IntegerArgumentType.integer(0));
         RequiredArgumentBuilder<CommandSourceStack, Float> vRangeArg_player = Commands.argument(VERTICAL_RANGE, FloatArgumentType.floatArg(0.0F));
         RequiredArgumentBuilder<CommandSourceStack, Float> hRangeArg_player = Commands.argument(HORIZONTAL_RANGE, FloatArgumentType.floatArg(0.0F));
         // /firework <player> <amount> <interval> <vRange> <hRange>

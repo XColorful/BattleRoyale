@@ -6,7 +6,5 @@ import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
 public interface IZoneFuncEntry extends IZoneEntry {
 
-    ZoneFuncType getZoneFuncType();
-
     ITickableZone createTickableZone();
 }

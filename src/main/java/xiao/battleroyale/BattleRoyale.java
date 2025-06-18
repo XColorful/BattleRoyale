@@ -15,10 +15,13 @@ import xiao.battleroyale.config.CommonConfig;
 import xiao.battleroyale.init.*;
 import xiao.battleroyale.resource.ResourceLoader;
 
+import java.util.Random;
+
 @Mod(BattleRoyale.MOD_ID)
 public class BattleRoyale {
     public static final String MOD_ID = "battleroyale";
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static final Random COMMON_RANDOM = new Random();
 
     public BattleRoyale(FMLJavaModLoadingContext context)
     {

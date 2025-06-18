@@ -33,16 +33,12 @@ public class TeamManager extends AbstractGameManager {
     private TeamManager() {}
 
     public static void init() {
+        ;
     }
 
-    private int playerLimit = 0; // 实际已经在 teamData.clear(playerLimit) 前初始化
-    public int getPlayerLimit() { return playerLimit; }
-    private int teamSize;
-    private boolean aiTeammate;
-    private boolean aiEnemy;
-    private boolean autoJoinGame;
-    public boolean shouldAutoJoin() { return this.autoJoinGame; }
-
+    private final TeamConfig teamConfig = new TeamConfig();
+    public int getPlayerLimit() { return teamConfig.playerLimit; }
+    public boolean shouldAutoJoin() { return this.teamConfig.autoJoinGame; }
     private final TeamData teamData = new TeamData();
 
     private record TeamInvite(UUID targetPlayerUUID, String targetPlayerName, int teamId, long expiryTime) {}
@@ -71,13 +67,13 @@ public class TeamManager extends AbstractGameManager {
             BattleRoyale.LOGGER.warn("Failed to get BattleroyaleEntry from GameruleConfig by id: {}", gameId);
             return;
         }
-        this.playerLimit = brEntry.playerTotal;
-        this.teamSize = brEntry.teamSize;
-        this.aiTeammate = brEntry.aiTeammate;
-        this.aiEnemy = brEntry.aiEnemy;
-        this.autoJoinGame = brEntry.autoJoinGame;
+        this.teamConfig.playerLimit = brEntry.playerTotal;
+        this.teamConfig.teamSize = brEntry.teamSize;
+        this.teamConfig.aiTeammate = brEntry.aiTeammate;
+        this.teamConfig.aiEnemy = brEntry.aiEnemy;
+        this.teamConfig.autoJoinGame = brEntry.autoJoinGame;
 
-        if (playerLimit < 1 || teamSize < 1) {
+        if (this.teamConfig.playerLimit < 1 || this.teamConfig.teamSize < 1) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.invalid_gamerule_config");
             BattleRoyale.LOGGER.warn("Invalid BattleroyaleEntry for TeamManager in initGameConfig");
             return;
@@ -94,14 +90,14 @@ public class TeamManager extends AbstractGameManager {
         }
 
         clearOrUpdateTeamIfLimitChanged();
-        if (!this.autoJoinGame) {
+        if (!this.teamConfig.autoJoinGame) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.require_manually_join");
         } else { // 自动加入队伍
             List<ServerPlayer> onlinePlayers = serverLevel.getPlayers(p -> true);
             Collections.shuffle(onlinePlayers);
-            if (onlinePlayers.size() > this.playerLimit) {
-                ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.reached_player_limit", this.playerLimit).withStyle(ChatFormatting.YELLOW));
-                onlinePlayers = onlinePlayers.subList(0, this.playerLimit);
+            if (onlinePlayers.size() > this.teamConfig.playerLimit) {
+                ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.reached_player_limit", this.teamConfig.playerLimit).withStyle(ChatFormatting.YELLOW));
+                onlinePlayers = onlinePlayers.subList(0, this.teamConfig.playerLimit);
             }
             for (ServerPlayer player : onlinePlayers) {
                 forceJoinTeam(player); // 初始化时先强制分配，后续调整玩家自行处理
@@ -112,6 +108,8 @@ public class TeamManager extends AbstractGameManager {
         if (hasEnoughPlayerTeamToStart()) {
             return;
         }
+
+        GameManager.get().recordGamerule(teamConfig);
         ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
     }
 
@@ -184,6 +182,42 @@ public class TeamManager extends AbstractGameManager {
 
     public int getStandingTeamCount() {
         return teamData.getTotalStandingPlayerCount();
+    }
+
+    /**
+     * 返回非人机队伍数量
+     */
+    public int getPlayerTeamCount() {
+        int count = 0;
+        Set<Integer> playerTeamId = new HashSet<>();
+        for (GamePlayer gamePlayer : getGamePlayersList()) {
+            if (!gamePlayer.isBot()) {
+                int teamId = gamePlayer.getGameTeamId();
+                if (!playerTeamId.contains(teamId)) {
+                    playerTeamId.add(teamId);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * 返回未被淘汰的非人机队伍数量
+     */
+    public int getStandingPlayerTeamCount() {
+        int count = 0;
+        Set<Integer> playerTeamId = new HashSet<>();
+        for (GamePlayer gamePlayer : getStandingGamePlayersList()) {
+            if (!gamePlayer.isBot()) {
+                int teamId = gamePlayer.getGameTeamId();
+                if (!playerTeamId.contains(teamId)) {
+                    playerTeamId.add(teamId);
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
     public boolean isPlayerLeader(UUID playerUUID) {
@@ -278,7 +312,7 @@ public class TeamManager extends AbstractGameManager {
         } else if (teamData.getGamePlayerByUUID(playerId) != null) { // 不自动离开队伍
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.already_in_team").withStyle(ChatFormatting.YELLOW));
             return;
-        } else if (targetTeam.getTeamMembers().size() >= this.teamSize) { // 队伍满员
+        } else if (targetTeam.getTeamMembers().size() >= this.teamConfig.teamSize) { // 队伍满员
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.team_full", targetTeamId).withStyle(ChatFormatting.RED));
             return;
         }
@@ -287,7 +321,7 @@ public class TeamManager extends AbstractGameManager {
             // 新建 GamePlayer
             int newPlayerId = teamData.generateNextPlayerId();
             if (newPlayerId < 1) { // 达到人数上限
-                ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.reached_player_limit", playerLimit).withStyle(ChatFormatting.RED));
+                ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.reached_player_limit", this.teamConfig.playerLimit).withStyle(ChatFormatting.RED));
                 return;
             }
             GamePlayer gamePlayer = new GamePlayer(player.getUUID(), player.getName().getString(), newPlayerId, false, targetTeam);
@@ -446,7 +480,7 @@ public class TeamManager extends AbstractGameManager {
         } else if (!senderGamePlayer.isLeader()) {
             ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.not_team_leader").withStyle(ChatFormatting.RED));
             return;
-        } else if (senderGamePlayer.getTeam().getTeamMemberCount() >= this.teamSize) {
+        } else if (senderGamePlayer.getTeam().getTeamMemberCount() >= this.teamConfig.teamSize) {
             ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.team_full").withStyle(ChatFormatting.RED));
             return;
         } else if (teamData.getGamePlayerByUUID(targetPlayer.getUUID()) != null) {
@@ -514,7 +548,7 @@ public class TeamManager extends AbstractGameManager {
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.team_does_not_exist", invite.teamId()).withStyle(ChatFormatting.RED));
             pendingInvites.remove(senderUUID);
             return;
-        } else if (targetTeam.getTeamMembers().size() >= this.teamSize) { // 目标队伍满员
+        } else if (targetTeam.getTeamMembers().size() >= this.teamConfig.teamSize) { // 目标队伍满员
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.team_full", invite.teamId()).withStyle(ChatFormatting.RED));
             pendingInvites.remove(senderUUID);
             return;
@@ -579,7 +613,7 @@ public class TeamManager extends AbstractGameManager {
         } else if (targetGamePlayer == null) { // 对方不在队伍里
             ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.target_not_in_a_team", targetPlayer.getName()).withStyle(ChatFormatting.RED));
             return;
-        } else if (targetGamePlayer.getTeam().getTeamMemberCount() >= teamSize) { // 对方队伍已满员
+        } else if (targetGamePlayer.getTeam().getTeamMemberCount() >= this.teamConfig.teamSize) { // 对方队伍已满员
             ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.team_full", targetPlayer.getName()).withStyle(ChatFormatting.RED));
             return;
         } else if (!targetGamePlayer.isLeader()) { // 对方不是队长
@@ -654,7 +688,7 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
         GameTeam targetTeam = leaderGamePlayer.getTeam();
-        if (targetTeam.getTeamMembers().size() >= this.teamSize) { // 检查目标队伍是否满员
+        if (targetTeam.getTeamMembers().size() >= this.teamConfig.teamSize) { // 检查目标队伍是否满员
             ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.team_full", targetTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
             pendingRequests.remove(requesterUUID);
             return;
@@ -768,14 +802,14 @@ public class TeamManager extends AbstractGameManager {
      * @return 可用的队伍，如无则 null
      */
     private int findNotFullTeamId() {
-        if (teamData.getTotalPlayerCount() >= playerLimit) {
+        if (teamData.getTotalPlayerCount() >= this.teamConfig.playerLimit) {
             return -1;
         }
 
         // 寻找已有的未满员队伍
         List<Integer> idList = new ArrayList<>();
         for (GameTeam team : teamData.getGameTeamsList()) {
-            if (team.getTeamMembers().size() < this.teamSize) {
+            if (team.getTeamMembers().size() < this.teamConfig.teamSize) {
                 idList.add(team.getGameTeamId());
             }
         }
@@ -842,10 +876,10 @@ public class TeamManager extends AbstractGameManager {
      * 尝试清除队伍信息，如果新的玩家数量限制缩小则清除，扩大限制则扩大可用id池
      */
     private void clearOrUpdateTeamIfLimitChanged() {
-        if (this.playerLimit < teamData.getMaxPlayersLimit()) {
+        if (this.teamConfig.playerLimit < teamData.getMaxPlayersLimit()) {
             clear();
-        } else if (this.playerLimit > teamData.getMaxPlayersLimit()) {
-            teamData.extendLimit(this.playerLimit);
+        } else if (this.teamConfig.playerLimit > teamData.getMaxPlayersLimit()) {
+            teamData.extendLimit(this.teamConfig.playerLimit);
         }
     }
 
@@ -857,24 +891,33 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
 
-        teamData.clear(playerLimit);
+        teamData.clear(this.teamConfig.playerLimit);
         pendingInvites.clear();
         pendingRequests.clear();
     }
 
+    /**
+     * 判断是否有足够队伍开始游戏
+     */
     private boolean hasEnoughPlayerTeamToStart() {
         return hasEnoughPlayerToStart() && hasEnoughTeamToStart();
     }
-
+    // 至少要有2人
     private boolean hasEnoughPlayerToStart() {
         int totalPlayerAndBots = getTotalMembers();
-        BattleRoyale.LOGGER.info("TeamManager::totalPlayer: {}, aiEnemy: {}", totalPlayerAndBots, aiEnemy ? "true" : "false");
-        return totalPlayerAndBots > 1 || (totalPlayerAndBots == 1 && aiEnemy);
+        return totalPlayerAndBots > 1
+                || (totalPlayerAndBots == 1 && this.teamConfig.aiEnemy);
     }
-
+    // 至少要有2队
     private boolean hasEnoughTeamToStart() {
-        int totalTeamCount = teamData.getTotalTeamCount();
-        BattleRoyale.LOGGER.info("TeamManager::totalTeamCount: {}, aiEnemy: {}", totalTeamCount, aiEnemy ? "true" : "false");
-        return totalTeamCount > 1 || (totalTeamCount == 1 && aiEnemy);
+        if (!GameManager.get().isAllowRemainingBot()) { // 不允许剩余人机打架 -> 开局不能直接只有剩余人机
+            int totalTeamCount = teamData.getTotalTeamCount();
+            return totalTeamCount > 1
+                    || (totalTeamCount == 1 && this.teamConfig.aiEnemy);
+        } else {
+            int totalPlayerTeam = getPlayerTeamCount();
+            return totalPlayerTeam > 1
+                    || totalPlayerTeam == 0 && this.teamConfig.aiEnemy;
+        }
     }
 }

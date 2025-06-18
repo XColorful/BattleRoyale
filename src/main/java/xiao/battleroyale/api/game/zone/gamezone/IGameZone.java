@@ -34,11 +34,11 @@ public interface IGameZone extends ITickableZone, ISpatialZone{
     /**
      * 为初始化 ITickableZone 和 ISpatialZone 传递参数
      * @param serverLevel 当前世界
-     * @param gamePlayerList 当前游戏玩家列表
+     * @param standingGamePlayers 当前游戏玩家列表
      * @param gameZones 当前游戏所有圈实例
      * @param random 随机数生产者
      */
-    void createZone(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random);
+    void createZone(ServerLevel serverLevel, List<GamePlayer> standingGamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random);
 
     /**
      * tick当前圈的功能
