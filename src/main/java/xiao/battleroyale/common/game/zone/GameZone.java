@@ -4,15 +4,20 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.api.game.zone.ZoneConfigTag;
+import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
+import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 import xiao.battleroyale.util.NBTUtils;
+import xiao.battleroyale.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -21,6 +26,35 @@ import java.util.function.Supplier;
  * 各功能圈通用的部分
  */
 public class GameZone implements IGameZone {
+
+    // common
+    private static final String COMMON_TAG = "common";
+    private static final String CREATE_TIME = COMMON_TAG + "-createTime";
+    private static final String ZONE_NAME_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_NAME;
+    private static final String ZONE_COLOR_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_COLOR;
+    private static final String ZONE_DELAY_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_DELAY;
+    private static final String ZONE_TIME_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_TIME;
+    // func
+    private static final String FUNC_TAG = "func";
+    private static final String FUNC_TYPE_TAG = FUNC_TAG + "-" + ZoneFuncTag.TYPE_NAME;
+    private static final String FUNC_DAMAGE_TAG = FUNC_TAG + "-" + ZoneFuncTag.DAMAGE;
+    private static final String FUNC_MOVE_DELAY_TAG = FUNC_TAG + "-" + ZoneFuncTag.MOVE_DELAY;
+    private static final String FUNC_MOVE_TIME_TAG = FUNC_TAG + "-" + ZoneFuncTag.MOVE_TIME;
+    private static final String FUNC_TICK_FREQUENCY_TAG = FUNC_TAG + "-" + ZoneFuncTag.TICK_FREQUENCY;
+    private static final String FUNC_TICK_OFFSET_TAG = FUNC_TAG + "-" + ZoneFuncTag.TICK_OFFSET;
+    // shape
+    private static final String SHAPE_TAG = "shape";
+    private static final String SHAPE_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.TYPE_NAME;
+    private static final String SHAPE_START_CENTER_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.CENTER_TYPE;
+    private static final String SHAPE_START_CENTER_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.CENTER;
+    private static final String SHAPE_START_DIMENSION_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.DIMENSION_TYPE;
+    private static final String SHAPE_START_DIMENSION_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.DIMENSION;
+    private static final String SHAPE_END_CENTER_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.CENTER_TYPE;
+    private static final String SHAPE_END_CENTER_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.CENTER;
+    private static final String SHAPE_END_DIMENSION_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.DIMENSION_TYPE;
+    private static final String SHAPE_END_DIMENSION_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.DIMENSION;
+    private static final String SHAPE_SEGMENTS = SHAPE_TAG + "-" + ZoneShapeTag.SEGMENTS;
+
     private final int zoneId;
     private final String zoneName;
     private final String zoneColor; // 格式如 #0000FF
@@ -54,9 +88,11 @@ public class GameZone implements IGameZone {
             spatialZone.calculateShape(serverLevel, gamePlayerList, random);
         }
         if (tickableZone.isReady() && spatialZone.isDetermined()) {
+            addZoneDetailProperty();
             created = true;
             present = true;
         } else {
+            addFailedZoneProperty();
             present = false;
             finished = true;
         }
@@ -153,6 +189,48 @@ public class GameZone implements IGameZone {
     @Override
     public void setFuncOffset(int funcOff) { tickableZone.setFuncOffset(funcOff); }
 
+    private void addZoneDetailProperty() {
+        Map<String, Integer> intWriter = new HashMap<>();
+        Map<String, Double> doubleWriter = new HashMap<>();
+        Map<String, String> stringWriter = new HashMap<>();
+
+        // common
+        intWriter.put(CREATE_TIME, GameManager.get().getGameTime());
+        stringWriter.put(ZONE_NAME_TAG, zoneName);
+        stringWriter.put(ZONE_COLOR_TAG, zoneColor);
+        intWriter.put(ZONE_DELAY_TAG, zoneDelay);
+        intWriter.put(ZONE_TIME_TAG, zoneTime);
+        // func
+        stringWriter.put(FUNC_TYPE_TAG, getFuncType().getName());
+        doubleWriter.put(FUNC_DAMAGE_TAG, getDamage());
+        intWriter.put(FUNC_MOVE_DELAY_TAG, getShapeMoveDelay());
+        intWriter.put(FUNC_MOVE_TIME_TAG, getShapeMoveTime());
+        intWriter.put(FUNC_TICK_FREQUENCY_TAG, getFuncFrequency());
+        intWriter.put(FUNC_TICK_OFFSET_TAG, getFuncOffset());
+        // shape
+        stringWriter.put(SHAPE_TYPE_TAG, getShapeType().getName());
+        stringWriter.put(SHAPE_START_CENTER_TAG, StringUtils.vectorToString(getStartCenterPos()));
+        stringWriter.put(SHAPE_START_DIMENSION_TAG, StringUtils.vectorToString(getStartDimension()));
+        stringWriter.put(SHAPE_END_CENTER_TAG, StringUtils.vectorToString(getEndCenterPos()));
+        stringWriter.put(SHAPE_END_DIMENSION_TAG, StringUtils.vectorToString(getEndDimension()));
+        intWriter.put(SHAPE_SEGMENTS, getSegments());
+
+        GameManager.get().recordZoneInt(this.zoneId, intWriter);
+        GameManager.get().recordZoneDouble(this.zoneId, doubleWriter);
+        GameManager.get().recordZoneString(this.zoneId, stringWriter);
+    }
+    private void addFailedZoneProperty() {
+        Map<String, Integer> intWriter = new HashMap<>();
+        Map<String, String> stringWriter = new HashMap<>();
+
+        // common
+        intWriter.put(CREATE_TIME, GameManager.get().getGameTime());
+        stringWriter.put(ZONE_NAME_TAG, zoneName);
+
+        GameManager.get().recordZoneInt(this.zoneId, intWriter);
+        GameManager.get().recordZoneString(this.zoneId, stringWriter);
+    }
+
     // ISpatialZone
     @Override
     public boolean isWithinZone(@Nullable Vec3 checkPos, double progress) {
@@ -192,4 +270,8 @@ public class GameZone implements IGameZone {
     public double getDamage() { return tickableZone.getDamage(); }
     @Override
     public double getShapeProgress(int currentGameTime, int zoneDelay) { return tickableZone.getShapeProgress(currentGameTime, zoneDelay); }
+    @Override
+    public int getShapeMoveDelay() { return tickableZone.getShapeMoveDelay(); }
+    @Override
+    public int getShapeMoveTime() { return tickableZone.getShapeMoveTime(); }
 }

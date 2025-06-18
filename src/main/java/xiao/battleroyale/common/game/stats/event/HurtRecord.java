@@ -1,11 +1,11 @@
-package xiao.battleroyale.common.game.stats.common;
+package xiao.battleroyale.common.game.stats.event;
 
 import javax.json.JsonObject;
 
 /**
  * 伤害事件的记录
  */
-public class HurtRecord extends AbstractCommonRecord<HurtRecord> {
+public class HurtRecord extends AbstractEventRecord<HurtRecord> {
 
     public HurtRecord(int gameTime, int timeOrder) {
         super(gameTime, timeOrder);

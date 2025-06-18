@@ -1,11 +1,11 @@
-package xiao.battleroyale.common.game.stats.common;
+package xiao.battleroyale.common.game.stats.event;
 
 import javax.json.JsonObject;
 
 /**
  * 倒地事件的记录
  */
-public class DownRecord extends AbstractCommonRecord<DownRecord> {
+public class DownRecord extends AbstractEventRecord<DownRecord> {
 
     public DownRecord(int gameTime, int timeOrder) {
         super(gameTime, timeOrder);

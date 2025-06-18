@@ -11,6 +11,8 @@ public final class ZoneFuncTag {
     public static final String DAMAGE = "damage";
     public static final String MOVE_DELAY = "moveDelay";
     public static final String MOVE_TIME = "moveTime";
+    public static final String TICK_FREQUENCY = "tickFrequency";
+    public static final String TICK_OFFSET = "tickOffset";
 
     private ZoneFuncTag() {};
 }

@@ -13,7 +13,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.stats.game.SimpleRecord;
-import xiao.battleroyale.common.game.stats.game.ZoneRecord;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -49,6 +48,7 @@ public class StatsManager extends AbstractGameManager {
     private static final String GAME_TAG = "game";
     private static final String GAMERULE_TAG = "gamerule";
     private static final String SPAWN_TAG = "spawn";
+    private static final String ZONE_TAG = "zone";
     private static final String TIMELINE_TAG = "timeline";
     private static final String RANK_TAG = "rank";
     private static final String DETAIL_TAG = "detail";
@@ -59,7 +59,7 @@ public class StatsManager extends AbstractGameManager {
     // game
     private final SimpleRecord gameruleStats = new SimpleRecord();
     private final Map<String, SimpleRecord> spawnStats = new TreeMap<>(); // key/singleId -> spawnRecord
-    private final Map<Integer, ZoneRecord> zoneStats = new HashMap<>(); // zoneId -> ZoneRecord
+    private final Map<Integer, SimpleRecord> zoneStats = new HashMap<>(); // zoneId -> ZoneRecord
 
     private int timeOrder = 0;
     private int minRank = Integer.MAX_VALUE;
@@ -287,6 +287,57 @@ public class StatsManager extends AbstractGameManager {
         }
     }
 
+    private SimpleRecord getOrCreateZoneRecord(Integer key) {
+        return zoneStats.computeIfAbsent(key, k -> new SimpleRecord());
+    }
+    public void onRecordZoneInt(int zoneId, Map<String, Integer> zoneIntWriter) {
+        if (!shouldRecordStats()) {
+            return;
+        }
+
+        if (zoneIntWriter != null) {
+            SimpleRecord record = getOrCreateZoneRecord(zoneId);
+            updateRecordMap(record.intRecord, zoneIntWriter);
+        } else {
+            zoneStats.remove(zoneId);
+        }
+    }
+    public void onRecordZoneBool(int zoneId, Map<String, Boolean> zoneBool) {
+        if (!shouldRecordStats()) {
+            return;
+        }
+        if (zoneBool != null) {
+            SimpleRecord record = getOrCreateZoneRecord(zoneId);
+            updateBoolRecordMap(record.boolRecord, zoneBool);
+        } else {
+            zoneStats.remove(zoneId);
+        }
+    }
+    public void onRecordZoneDouble(int zoneId, Map<String, Double> zoneDouble) {
+        if (!shouldRecordStats()) {
+            return;
+        }
+
+        if (zoneDouble != null) {
+            SimpleRecord record = getOrCreateZoneRecord(zoneId);
+            updateRecordMap(record.doubleRecord, zoneDouble);
+        } else {
+            zoneStats.remove(zoneId);
+        }
+    }
+    public void onRecordZoneString(int zoneId, Map<String, String> zoneString) {
+        if (!shouldRecordStats()) {
+            return;
+        }
+
+        if (zoneString != null) {
+            SimpleRecord record = getOrCreateZoneRecord(zoneId);
+            updateRecordMap(record.stringRecord, zoneString);
+        } else {
+            zoneStats.remove(zoneId);
+        }
+    }
+
     private String generateStateDirectory() {
         String fileName = startSystemTime + "_" + totalPlayers + ".json";
         return Paths.get(STATS_PATH, fileName).toString();
@@ -323,6 +374,7 @@ public class StatsManager extends AbstractGameManager {
         statsObject.addProperty(STATS_TAG, GAME_TAG);
         addGameruleProperty(statsObject);
         addSpawnProperty(statsObject);
+        addZoneProperty(statsObject);
 
         jsonArray.add(statsObject);
     }
@@ -344,30 +396,66 @@ public class StatsManager extends AbstractGameManager {
         jsonObject.add(GAMERULE_TAG, gameruleObject);
     }
     private void addSpawnProperty(JsonObject jsonObject) {
-        JsonObject spawnRootObject = new JsonObject();
+        JsonObject spawnObject = new JsonObject();
 
         for (Map.Entry<String, SimpleRecord> entry : spawnStats.entrySet()) {
             String spawnKey = entry.getKey();
             SimpleRecord record = entry.getValue();
-            JsonObject individualSpawnObject = new JsonObject();
-
+            JsonObject singleSpawnObject = new JsonObject();
             for (Map.Entry<String, Integer> intEntry : record.intRecord.entrySet()) {
-                individualSpawnObject.addProperty(intEntry.getKey(), intEntry.getValue());
+                singleSpawnObject.addProperty(intEntry.getKey(), intEntry.getValue());
             }
             for (Map.Entry<String, Boolean> boolEntry : record.boolRecord.entrySet()) {
-                individualSpawnObject.addProperty(boolEntry.getKey(), boolEntry.getValue());
+                singleSpawnObject.addProperty(boolEntry.getKey(), boolEntry.getValue());
             }
             for (Map.Entry<String, Double> doubleEntry : record.doubleRecord.entrySet()) {
-                individualSpawnObject.addProperty(doubleEntry.getKey(), doubleEntry.getValue());
+                singleSpawnObject.addProperty(doubleEntry.getKey(), doubleEntry.getValue());
             }
             for (Map.Entry<String, String> stringEntry : record.stringRecord.entrySet()) {
-                individualSpawnObject.addProperty(stringEntry.getKey(), stringEntry.getValue());
+                singleSpawnObject.addProperty(stringEntry.getKey(), stringEntry.getValue());
             }
 
-            spawnRootObject.add(spawnKey, individualSpawnObject);
+            spawnObject.add(spawnKey, singleSpawnObject);
         }
 
-        jsonObject.add(SPAWN_TAG, spawnRootObject);
+        jsonObject.add(SPAWN_TAG, spawnObject);
+    }
+    private void addZoneProperty(JsonObject jsonObject) {
+        JsonObject zoneObject = new JsonObject();
+
+        for (Map.Entry<Integer, SimpleRecord> entry : zoneStats.entrySet()) {
+            String zoneKey = Integer.toString(entry.getKey());
+            SimpleRecord record = entry.getValue();
+            JsonObject singleZoneObject = new JsonObject();
+            for (Map.Entry<String, Integer> intEntry : record.intRecord.entrySet()) {
+                singleZoneObject.addProperty(intEntry.getKey(), intEntry.getValue());
+            }
+            for (Map.Entry<String, Boolean> boolEntry : record.boolRecord.entrySet()) {
+                singleZoneObject.addProperty(boolEntry.getKey(), boolEntry.getValue());
+            }
+            for (Map.Entry<String, Double> doubleEntry : record.doubleRecord.entrySet()) {
+                singleZoneObject.addProperty(doubleEntry.getKey(), doubleEntry.getValue());
+            }
+            for (Map.Entry<String, String> stringEntry : record.stringRecord.entrySet()) {
+                singleZoneObject.addProperty(stringEntry.getKey(), stringEntry.getValue());
+            }
+
+            zoneObject.add(zoneKey, singleZoneObject);
+        }
+
+        jsonObject.add(ZONE_TAG, zoneObject);
+    }
+
+    private void addTimelineStats(@NotNull JsonArray jsonArray) {
+        ;
+    }
+
+    private void addRankStats(@NotNull JsonArray jsonArray) {
+        ;
+    }
+
+    private void addDetailStats(@NotNull JsonArray jsonArray) {
+        ;
     }
 
     private <T> void updateRecordMap(Map<String, T> targetMap, Map<String, T> sourceMap) {

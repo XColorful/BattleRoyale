@@ -1,11 +1,11 @@
-package xiao.battleroyale.common.game.stats.common;
+package xiao.battleroyale.common.game.stats.event;
 
 import javax.json.JsonObject;
 
 /**
  * 淘汰事件记录
  */
-public class KillRecord extends AbstractCommonRecord<KillRecord> {
+public class KillRecord extends AbstractEventRecord<KillRecord> {
 
     public KillRecord(int gameTime, int timeOrder) {
         super(gameTime, timeOrder);

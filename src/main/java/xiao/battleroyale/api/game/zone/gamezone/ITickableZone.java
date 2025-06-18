@@ -68,4 +68,7 @@ public interface ITickableZone {
      * @return [0,1] 的进度比例
      */
     double getShapeProgress(int currentGameTime, int zoneDelay);
+
+    int getShapeMoveDelay();
+    int getShapeMoveTime();
 }

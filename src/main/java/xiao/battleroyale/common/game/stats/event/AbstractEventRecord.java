@@ -1,14 +1,14 @@
-package xiao.battleroyale.common.game.stats.common;
+package xiao.battleroyale.common.game.stats.event;
 
 import javax.json.JsonObject;
 
-public abstract class AbstractCommonRecord<T extends AbstractCommonRecord<T>> {
+public abstract class AbstractEventRecord<T extends AbstractEventRecord<T>> {
 
     public final int gameTime;
     public final int timeOrder;
     protected int recordDuration = 0; // gameTime + recordDuration = 最终gameTime（相同时刻记录叠加，gameTime相减为0）
 
-    public AbstractCommonRecord(int gameTime, int timeOrder) {
+    public AbstractEventRecord(int gameTime, int timeOrder) {
         this.gameTime = gameTime;
         this.timeOrder = timeOrder;
     }

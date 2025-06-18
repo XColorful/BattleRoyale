@@ -602,25 +602,35 @@ public class GameManager extends AbstractGameManager {
     public List<GamePlayer> getStandingGamePlayers() { return TeamManager.get().getStandingGamePlayersList(); }
     // StatsManager
     public boolean shouldRecordStats() { return StatsManager.get().shouldRecordStats(); }
-    public void recordIntGamerule(Map<String, Integer> intGamerule) { StatsManager.get().onRecordIntGamerule(intGamerule); }
-    public void recordBoolGamerule(Map<String, Boolean> boolGamerule) { StatsManager.get().onRecordBoolGamerule(boolGamerule); }
-    public void recordDoubleGamerule(Map<String, Double> doubleGamerule) { StatsManager.get().onRecordDoubleGamerule(doubleGamerule); }
-    public void recordStringGamerule(Map<String, String> stringGamerule) { StatsManager.get().onRecordStringGamerule(stringGamerule); }
+    public void recordIntGamerule(Map<String, Integer> intGameruleWriter) { StatsManager.get().onRecordIntGamerule(intGameruleWriter); }
+    public void recordBoolGamerule(Map<String, Boolean> boolGameruleWriter) { StatsManager.get().onRecordBoolGamerule(boolGameruleWriter); }
+    public void recordDoubleGamerule(Map<String, Double> doubleGameruleWriter) { StatsManager.get().onRecordDoubleGamerule(doubleGameruleWriter); }
+    public void recordStringGamerule(Map<String, String> stringGameruleWriter) { StatsManager.get().onRecordStringGamerule(stringGameruleWriter); }
     public void recordGamerule(IStatsWriter gameruleWriter) {
         recordIntGamerule(gameruleWriter.getIntWriter());
         recordBoolGamerule(gameruleWriter.getBoolWriter());
         recordDoubleGamerule(gameruleWriter.getDoubleWriter());
         recordStringGamerule(gameruleWriter.getStringWriter());
     }
-    public void recordSpawnInt(String key, Map<String, Integer> spawnInt) { StatsManager.get().onRecordSpawnInt(key, spawnInt); }
-    public void recordSpawnBool(String key, Map<String, Boolean> spawnBool) { StatsManager.get().onRecordSpawnBool(key, spawnBool); }
-    public void recordSpawnDouble(String key, Map<String, Double> spawnDouble) { StatsManager.get().onRecordSpawnDouble(key, spawnDouble); }
-    public void recordSpawnString(String key, Map<String, String> spawnString) { StatsManager.get().onRecordSpawnString(key, spawnString); }
+    public void recordSpawnInt(String key, Map<String, Integer> spawnIntWriter) { StatsManager.get().onRecordSpawnInt(key, spawnIntWriter); }
+    public void recordSpawnBool(String key, Map<String, Boolean> spawnBoolWriter) { StatsManager.get().onRecordSpawnBool(key, spawnBoolWriter); }
+    public void recordSpawnDouble(String key, Map<String, Double> spawnDoubleWriter) { StatsManager.get().onRecordSpawnDouble(key, spawnDoubleWriter); }
+    public void recordSpawnString(String key, Map<String, String> spawnStringWriter) { StatsManager.get().onRecordSpawnString(key, spawnStringWriter); }
     public void recordSpawn(String key, IStatsWriter spawnWriter) {
         recordSpawnInt(key, spawnWriter.getIntWriter());
         recordSpawnBool(key, spawnWriter.getBoolWriter());
         recordSpawnDouble(key, spawnWriter.getDoubleWriter());
         recordSpawnString(key, spawnWriter.getStringWriter());
+    }
+    public void recordZoneInt(int zoneId, Map<String, Integer> zoneIntWriter) { StatsManager.get().onRecordZoneInt(zoneId, zoneIntWriter); }
+    public void recordZoneBool(int zoneId, Map<String, Boolean> zoneBoolWriter) { StatsManager.get().onRecordZoneBool(zoneId, zoneBoolWriter); }
+    public void recordZoneDouble(int zoneId, Map<String, Double> zoneDoubleWriter) { StatsManager.get().onRecordZoneDouble(zoneId, zoneDoubleWriter); }
+    public void recordZoneString(int zoneId, Map<String, String> zoneStringWriter) { StatsManager.get().onRecordZoneString(zoneId, zoneStringWriter); }
+    public void recordZone(int zoneId, IStatsWriter zoneWriter) {
+        recordZoneInt(zoneId, zoneWriter.getIntWriter());
+        recordZoneBool(zoneId, zoneWriter.getBoolWriter());
+        recordZoneDouble(zoneId, zoneWriter.getDoubleWriter());
+        recordZoneString(zoneId, zoneWriter.getStringWriter());
     }
 
     public int getGameTime() { return this.gameTime; }

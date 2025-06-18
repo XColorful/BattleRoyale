@@ -65,6 +65,12 @@ public abstract class AbstractSimpleFunc implements ITickableZone {
     }
 
     @Override
+    public int getShapeMoveDelay() { return this.moveDelay; }
+
+    @Override
+    public int getShapeMoveTime() { return this.moveTime; }
+
+    @Override
     public int getFuncFrequency() { return this.funcFreq; }
 
     @Override

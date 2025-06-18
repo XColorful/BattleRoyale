@@ -64,7 +64,7 @@ public class PlaneSpawner extends AbstractSimpleSpawner {
     }
 
     @Override
-    public void addWriterDetailProperty() {
+    public void addSpawnDetailProperty() {
         Map<String, String> stringWriter = new HashMap<>();
         stringWriter.put(SpawnDetailTag.TYPE_NAME, detailType.getName());
         GameManager.get().recordSpawnString(SPAWNER_KEY_TAG, stringWriter);
