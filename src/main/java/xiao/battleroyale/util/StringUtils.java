@@ -2,7 +2,6 @@ package xiao.battleroyale.util;
 
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
-
 import java.util.regex.Pattern;
 
 public class StringUtils {
@@ -53,5 +52,13 @@ public class StringUtils {
             return "";
         }
         return String.format("%f,%f,%f", vec3.x, vec3.y, vec3.z);
+    }
+
+    public static String buildCommandString(String... parts) {
+        StringBuilder commandBuilder = new StringBuilder("/");
+        for (String part : parts) {
+            commandBuilder.append(part).append(" ");
+        }
+        return commandBuilder.toString().trim();
     }
 }

@@ -13,12 +13,12 @@ public abstract class AbstractGameManagerData {
 
     protected void lockData() {
         this.locked = true;
-        BattleRoyale.LOGGER.info("{} locked", dataName);
+        BattleRoyale.LOGGER.debug("{} locked", dataName);
     }
 
     protected void unlockData() {
         this.locked = false;
-        BattleRoyale.LOGGER.info("{} unlocked", dataName);
+        BattleRoyale.LOGGER.debug("{} unlocked", dataName);
     }
 
     public abstract void clear();

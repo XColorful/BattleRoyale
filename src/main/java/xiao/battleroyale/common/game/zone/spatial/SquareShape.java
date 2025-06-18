@@ -30,4 +30,9 @@ public class SquareShape extends AbstractSimpleShape {
 
         return true;
     }
+    
+    @Override
+    public int getSegments() {
+        return 4;
+    }
 }

@@ -21,30 +21,26 @@ import java.util.*;
 
 public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.ZoneConfig> {
 
-    public static final String ZONE_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
-    public static final String ZONE_CONFIG_SUB_PATH = "zone";
+    private static class ZoneConfigManagerHolder {
+        private static final ZoneConfigManager INSTANCE = new ZoneConfigManager();
+    }
 
-    protected final int DEFAULT_ZONE_CONFIG_DATA_ID = 0;
-
-    private static ZoneConfigManager instance;
+    public static ZoneConfigManager get() {
+        return ZoneConfigManagerHolder.INSTANCE;
+    }
 
     private ZoneConfigManager() {
         allConfigData.put(DEFAULT_ZONE_CONFIG_DATA_ID, new ConfigData<>());
     }
 
     public static void init() {
-        if (instance == null) {
-            instance = new ZoneConfigManager();
-            instance.reloadZoneConfigs();
-        }
+        get().reloadZoneConfigs();
     }
 
-    public static ZoneConfigManager get() {
-        if (instance == null) {
-            ZoneConfigManager.init();
-        }
-        return instance;
-    }
+    public static final String ZONE_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
+    public static final String ZONE_CONFIG_SUB_PATH = "zone";
+
+    protected final int DEFAULT_ZONE_CONFIG_DATA_ID = 0;
 
     public static class ZoneConfig implements IZoneSingleEntry {
         public static final String CONFIG_TYPE = "ZoneConfig";

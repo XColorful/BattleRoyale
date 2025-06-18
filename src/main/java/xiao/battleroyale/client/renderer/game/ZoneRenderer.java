@@ -27,6 +27,7 @@ public class ZoneRenderer {
 
     private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(BattleRoyale.MOD_ID, "textures/white.png");
     private static final RenderType CUSTOM_ZONE_RENDER_TYPE = createRenderType();
+    public static final int CIRCLE_SEGMENTS = 64;
 
     private static ZoneRenderer instance;
 
@@ -95,7 +96,7 @@ public class ZoneRenderer {
                 switch (zoneData.shapeType) {
                     case CIRCLE ->
                             drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, 64, 0);
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, CIRCLE_SEGMENTS, 0);
                     case SQUARE, RECTANGLE ->
                             drawFilledRectangleBox(poseStack, consumer, r, g, b, a,
                                     (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y);

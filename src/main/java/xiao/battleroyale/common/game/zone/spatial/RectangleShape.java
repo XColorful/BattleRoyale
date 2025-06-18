@@ -18,4 +18,8 @@ public class RectangleShape extends AbstractSimpleShape {
         return ZoneShapeType.RECTANGLE;
     }
 
+    @Override
+    public int getSegments() {
+        return 4;
+    }
 }

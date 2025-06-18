@@ -29,10 +29,10 @@ public interface ISpatialZone {
     /**
      * 用于初始化起止状态
      * @param serverLevel 当前世界
-     * @param gamePlayerList 当前游戏玩家列表
+     * @param standingGamePlayers 当前存活玩家列表
      * @param random 随机数生产者
      */
-    void calculateShape(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Supplier<Float> random);
+    void calculateShape(ServerLevel serverLevel, List<GamePlayer> standingGamePlayers, Supplier<Float> random);
 
     /**
      * 判断起止状态是否已经确定
@@ -71,8 +71,5 @@ public interface ISpatialZone {
     /**
      * 供多边形使用
      */
-    default
-    int getSegments() {
-        return 3;
-    }
+    int getSegments();
 }

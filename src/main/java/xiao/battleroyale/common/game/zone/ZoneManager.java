@@ -1,7 +1,6 @@
 package xiao.battleroyale.common.game.zone;
 
 import net.minecraft.server.level.ServerLevel;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
@@ -9,7 +8,6 @@ import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.GameConfigManager;
-import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.util.ChatUtils;
 
@@ -18,29 +16,23 @@ import java.util.function.Supplier;
 
 public class ZoneManager extends AbstractGameManager {
 
-    private static ZoneManager instance;
+    private static class ZoneManagerHolder {
+        private static final ZoneManager INSTANCE = new ZoneManager();
+    }
+
+    public static ZoneManager get() {
+        return ZoneManagerHolder.INSTANCE;
+    }
+
+    private ZoneManager() {}
+
+    public static void init() {
+        ;
+    }
 
     private final ZoneData zoneData = new ZoneData();
 
     private boolean stackZoneConfig = true;
-
-    private ZoneManager() {
-        ;
-    }
-
-    public static void init() {
-        if (instance == null) {
-            instance = new ZoneManager();
-        }
-    }
-
-    @NotNull
-    public static ZoneManager get() {
-        if (instance == null) {
-            ZoneManager.init();
-        }
-        return instance;
-    }
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
@@ -90,7 +82,7 @@ public class ZoneManager extends AbstractGameManager {
             return false;
         }
 
-        randomizeZoneTickOff();
+        randomizeZoneTickOffset();
         this.zoneData.startGame();
 
         return true;
@@ -107,14 +99,12 @@ public class ZoneManager extends AbstractGameManager {
         return zoneData.hasEnoughZoneToStart();
     }
 
-    private void randomizeZoneTickOff() {
+    private void randomizeZoneTickOffset() {
         Supplier<Float> random = GameManager.get().getRandom();
         for (IGameZone gameZone : this.zoneData.getGameZonesList()) {
-            int funcFreq = gameZone.getFuncFrequency();
-            if (funcFreq <= 1) {
-                continue;
+            if (gameZone.getTickOffset() < 0) {
+                gameZone.setTickOffset((int) (random.get() * gameZone.getTickFrequency()));
             }
-            gameZone.setFuncOffset((int) (random.get() * funcFreq));
         }
     }
 
@@ -133,7 +123,7 @@ public class ZoneManager extends AbstractGameManager {
             return;
         }
         Supplier<Float> random = GameManager.get().getRandom();
-        List<GamePlayer> tickPlayer = GameManager.get().getStandingGamePlayers();
+        List<GamePlayer> standingGamePlayers = GameManager.get().getStandingGamePlayers();
 
         Set<Integer> finishedZoneId = new HashSet<>();
         Map<Integer, IGameZone> gameZones = this.zoneData.getGameZones(); // 缓存引用
@@ -145,7 +135,7 @@ public class ZoneManager extends AbstractGameManager {
             }
 
             if (!gameZone.isCreated()) { // 没创建就创建，等价于额外维护一个isPresent
-                gameZone.createZone(serverLevel, tickPlayer, gameZones, random);
+                gameZone.createZone(serverLevel, standingGamePlayers, gameZones, random);
                 if (!gameZone.isCreated()) { // 创建失败，内部自动维护finished，这里还是用isCreated防御一下
                     finishedZoneId.add(gameZone.getZoneId());
                     BattleRoyale.LOGGER.warn("Failed to create zone (id: {}, name: {}), skipped", gameZone.getZoneId(), gameZone.getZoneName());
@@ -153,7 +143,7 @@ public class ZoneManager extends AbstractGameManager {
                 }
             }
 
-            gameZone.tick(serverLevel, tickPlayer, gameZones, random, gameTime);
+            gameZone.tick(serverLevel, standingGamePlayers, gameZones, random, gameTime);
 
             if (gameZone.isFinished()) { // 在tick过程中遇到最后一tick并执行后，标记为finished
                 finishedZoneId.add(gameZone.getZoneId());

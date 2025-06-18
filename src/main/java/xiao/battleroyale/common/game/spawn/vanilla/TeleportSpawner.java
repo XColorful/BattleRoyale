@@ -7,6 +7,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.spawn.AbstractSimpleSpawner;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -14,6 +15,9 @@ import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.config.common.game.spawn.type.TeleportEntry;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
+import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
+import xiao.battleroyale.util.StringUtils;
+
 import static xiao.battleroyale.util.Vec3Utils.randomAdjustXZExpandY;
 import static xiao.battleroyale.util.Vec3Utils.randomCircleXZ;
 
@@ -58,6 +62,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
      */
     @Override
     public void init(Supplier<Float> random, int spawnPointsTotal) {
+        super.init(random, spawnPointsTotal);
         this.prepared = false;
 
         switch (detailType) {
@@ -93,18 +98,38 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
         this.prepared = true;
     }
 
+    @Override
+    public String getSpawnerTypeString() {
+        return SpawnTypeTag.SPAWN_TYPE_TELEPORT;
+    }
+
+    @Override
+    public void addSpawnDetailProperty() {
+        Map<String, String> stringWriter = new HashMap<>();
+        stringWriter.put(SpawnDetailTag.TYPE_NAME, detailType.getName());
+        GameManager.get().recordSpawnString(SPAWNER_KEY_TAG, stringWriter);
+
+        Map<String, Boolean> boolWriter = new HashMap<>();
+        boolWriter.put(SpawnDetailTag.GROUND_TEAM_TOGETHER, teamTogether);
+        boolWriter.put(SpawnDetailTag.GROUND_FIND_GROUND, findGround);
+        GameManager.get().recordSpawnBool(SPAWNER_KEY_TAG, boolWriter);
+
+        Map<String, Double> doubleWriter = new HashMap<>();
+        doubleWriter.put(SpawnDetailTag.GROUND_RANDOM_RANGE, randomRange);
+        GameManager.get().recordSpawnDouble(SPAWNER_KEY_TAG, doubleWriter);
+    }
+
     /**
      * 没有异步加载区块，不会阻塞主线程
      */
     @Override
     public void tick(int gameTime, List<GameTeam> gameTeams) {
-        int cnt = 1;
-        if (GameManager.get().shouldRecordStats()) {
+        if (gameTime == 1 && GameManager.get().shouldRecordStats()) {
+            int cnt = 1;
             for (Vec3 v : spawnPos) {
-                BattleRoyale.LOGGER.info("SpawnPos {}: {}", cnt++, v);
+                BattleRoyale.LOGGER.info("Pre-calculated SpawnPos {}: {}", cnt++, v);
             }
         }
-
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel == null) {
             return;
@@ -116,6 +141,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
         }
 
         boolean allTeleported = true;
+        // 按队伍传送，方便队伍统一传送
         for (GameTeam gameTeam : gameTeams) {
             if (telepotedTeamId.contains(gameTeam.getGameTeamId())) { // 队伍统一传送，并且传送过
                 continue;
@@ -136,10 +162,12 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
                 allTeleported = false;
             }
 
+            // 依次传送队伍内未被淘汰玩家
             List<GamePlayer> standingPlayers = gameTeam.getStandingPlayers();
             boolean indexAdded = false;
             for (int i = 0; i < standingPlayers.size(); i++) {
-                if (!teamTogether && i > 0) { // 找新点位
+                // 找新点位
+                if (!teamTogether && i > 0) {
                     targetSpawnPos = findSpawnPos(spawnPointIndex, serverLevel);
                     if (targetSpawnPos == null) {
                         teamAllTeleported = false;
@@ -151,6 +179,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
                     }
                 }
 
+                // 传送玩家
                 GamePlayer gamePlayer = standingPlayers.get(i);
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
                 if (player != null) {
@@ -159,6 +188,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
                         indexAdded = true;
                     }
                     GameManager.get().safeTeleport(player, targetSpawnPos);
+                    addSpawnStats(gamePlayer, targetSpawnPos);
                     gamePlayer.setLastPos(targetSpawnPos); // 立即更新，防止下一tick找不到又躲了逻辑位置
                     teleportedPlayerId.add(gamePlayer.getGameSingleId());
                     BattleRoyale.LOGGER.info("GroundSpawner: Telepoted gamePlayer {} to team spawn position {}", gamePlayer.getGameSingleId(), targetSpawnPos);
@@ -175,6 +205,19 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
 
         // 如果碰到缺失点位的情况（理论上点位充足，可能是碰到区块未加载），下一tick继续处理
         this.finished = allTeleported;
+    }
+
+    /**
+     * "id" : {
+     *     "player/bot": "playerName",
+     *     "spawnPos": "x,y,z"
+     * }
+     */
+    private void addSpawnStats(GamePlayer gamePlayer, Vec3 teleportPos) {
+        Map<String, String> stringWriter = new HashMap<>();
+        stringWriter.put(gamePlayer.isBot() ? "bot" : "player", gamePlayer.getPlayerName());
+        stringWriter.put("spawnPos", StringUtils.vectorToString(teleportPos));
+        GameManager.get().recordSpawnString(Integer.toString(gamePlayer.getGameSingleId()), stringWriter);
     }
 
     @Nullable

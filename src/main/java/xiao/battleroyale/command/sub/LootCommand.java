@@ -11,13 +11,13 @@ import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.loot.LootGenerationManager;
 import java.util.UUID;
 
+import static xiao.battleroyale.command.CommandArg.*;
+
 public class LootCommand {
-    private static final String LOOT_NAME = "loot";
-    private static final String GENERATE_NAME = "generate";
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
-        LiteralArgumentBuilder<CommandSourceStack> loot = Commands.literal(LOOT_NAME);
-        loot.then(Commands.literal(GENERATE_NAME)
+        LiteralArgumentBuilder<CommandSourceStack> loot = Commands.literal(LOOT);
+        loot.then(Commands.literal(GENERATE)
                 .executes(LootCommand::generateAllLoadedLoot)
         );
         return loot;

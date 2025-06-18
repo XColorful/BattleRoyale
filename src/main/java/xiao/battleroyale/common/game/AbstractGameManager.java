@@ -5,6 +5,8 @@ import xiao.battleroyale.api.game.IGameManager;
 
 public abstract class AbstractGameManager implements IGameManager {
 
+    public static String MOD_DATA_PATH = "battleroyale";
+
     protected boolean prepared = false;
     protected boolean ready = false;
 

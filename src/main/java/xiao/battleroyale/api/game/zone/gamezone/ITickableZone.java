@@ -1,6 +1,7 @@
 package xiao.battleroyale.api.game.zone.gamezone;
 
 import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
@@ -29,17 +30,17 @@ public interface ITickableZone {
      * 用于节约不必要的开销
      * @return tick 功能的频率
      */
-    int getFuncFrequency();
+    int getTickFrequency();
 
-    void setFuncFrequency(int funcFreq);
+    void setTickFrequency(int tickFreq);
 
     /**
      * 支持错峰 tick 实现分摊
      * @return tick 的时间偏移
      */
-    int getFuncOffset();
+    int getTickOffset();
 
-    void setFuncOffset(int funcOff);
+    void setTickOffset(int tickOffset);
 
     /**
      * tick当前圈的功能
@@ -51,7 +52,7 @@ public interface ITickableZone {
      * @param progress 圈进度
      * @param spatialZone 提供圈的状态，计算与玩家相关的逻辑
      */
-    void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
+    void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
               int gameTime, double progress, ISpatialZone spatialZone);
 
     /**
@@ -68,4 +69,7 @@ public interface ITickableZone {
      * @return [0,1] 的进度比例
      */
     double getShapeProgress(int currentGameTime, int zoneDelay);
+
+    int getShapeMoveDelay();
+    int getShapeMoveTime();
 }

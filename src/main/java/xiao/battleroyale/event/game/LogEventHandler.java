@@ -13,24 +13,22 @@ import xiao.battleroyale.common.game.team.TeamManager;
  */
 public class LogEventHandler {
 
-    private static LogEventHandler instance;
-
     private LogEventHandler() {}
 
-    public static LogEventHandler get() {
-        if (instance == null) {
-            instance = new LogEventHandler();
-        }
-        return instance;
+    private static class LogEventHandlerHolder {
+        private static final LogEventHandler INSTANCE = new LogEventHandler();
     }
 
-    public void register() {
+    public static LogEventHandler get() {
+        return LogEventHandlerHolder.INSTANCE;
+    }
+
+    public static void register() {
         MinecraftForge.EVENT_BUS.register(get());
     }
 
-    public void unregister() {
+    public static void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
-        instance = null;
     }
 
     /**

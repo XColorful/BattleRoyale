@@ -23,7 +23,8 @@ import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.*;
 
 public class LootConfigManager extends AbstractConfigManager<LootConfigManager.LootConfig> {
 
-    public static final String LOOT_CONFIG_PATH = Paths.get(AbstractConfigManager.MOD_CONFIG_PATH).resolve("loot").toString();
+    public static final String LOOT_CONFIG_SUB_PATH = "loot";
+    public static final String LOOT_CONFIG_PATH = Paths.get(AbstractConfigManager.MOD_CONFIG_PATH).resolve(LOOT_CONFIG_SUB_PATH).toString();
 
     protected final int DEFAULT_LOOT_CONFIG_DATA_ID = LOOT_SPAWNER;
 
@@ -33,7 +34,14 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     public static final String AIRDROP_SPECIAL_CONFIG_SUB_PATH = "airdrop_special";
     public static final String SECRET_ROOM_CONFIG_SUB_PATH = "secret_room";
 
-    private static LootConfigManager instance;
+    private static class LootConfigManagerHolder {
+        private static final LootConfigManager INSTANCE = new LootConfigManager();
+    }
+
+    public static LootConfigManager get() {
+        return LootConfigManagerHolder.INSTANCE;
+    }
+
 
     private LootConfigManager() {
         allConfigData.put(LOOT_SPAWNER, new ConfigData<>());
@@ -44,17 +52,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     }
 
     public static void init() {
-        if (instance == null) {
-            instance = new LootConfigManager();
-            instance.reloadAllLootConfigs();
-        }
-    }
-
-    public static LootConfigManager get() {
-        if (instance == null) {
-            LootConfigManager.init();
-        }
-        return instance;
+        get().reloadAllLootConfigs();
     }
 
     /**

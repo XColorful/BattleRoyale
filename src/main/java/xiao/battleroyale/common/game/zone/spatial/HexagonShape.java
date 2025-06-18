@@ -79,4 +79,9 @@ public class HexagonShape extends AbstractSimpleShape {
         }
         return true;
     }
+
+    @Override
+    public int getSegments() {
+        return 6;
+    }
 }

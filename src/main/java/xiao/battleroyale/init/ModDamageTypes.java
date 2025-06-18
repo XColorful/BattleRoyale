@@ -19,4 +19,8 @@ public class ModDamageTypes {
     public static DamageSource unsafeZone(ServerLevel serverLevel) {
         return new DamageSource(serverLevel.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(UNSAFE_ZONE_DAMAGE));
     }
+
+    public static boolean isZoneDamage(DamageSource damageSource) {
+        return damageSource.is(SAFE_ZONE_DAMAGE) || damageSource.is(UNSAFE_ZONE_DAMAGE);
+    }
 }

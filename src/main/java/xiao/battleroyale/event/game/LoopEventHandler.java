@@ -7,24 +7,22 @@ import xiao.battleroyale.common.game.GameManager;
 
 public class LoopEventHandler {
 
-    private static LoopEventHandler instance;
-
     private LoopEventHandler() {}
 
-    public static LoopEventHandler get() {
-        if (instance == null) {
-            instance = new LoopEventHandler();
-        }
-        return instance;
+    private static class LoopEventHandlerHolder {
+        private static final LoopEventHandler INSTANCE = new LoopEventHandler();
     }
 
-    public void register() {
+    public static LoopEventHandler get() {
+        return LoopEventHandlerHolder.INSTANCE;
+    }
+
+    public static void register() {
         MinecraftForge.EVENT_BUS.register(get());
     }
 
-    public void unregister() {
+    public static void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
-        instance = null;
     }
 
     @SubscribeEvent

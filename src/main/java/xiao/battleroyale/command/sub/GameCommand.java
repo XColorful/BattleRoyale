@@ -11,31 +11,34 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.TeamManager;
 
+import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.util.StringUtils.buildCommandString;
+
 public class GameCommand {
 
-    private static final String GAME_NAME = "game";
 
-    private static final String LOAD_NAME = "load";
-    private static final String INIT_NAME = "init";
-    private static final String START_NAME = "start";
-    private static final String STOP_NAME = "stop";
+    private static final String LOAD = "load";
+    private static final String INIT = "init";
+    private static final String START = "start";
+    private static final String STOP = "stop";
 
     private static final String LOBBY = "lobby";
     private static final String TO_LOBBY = "toLobby";
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
-        return Commands.literal(GAME_NAME)
-                .then(Commands.literal(LOAD_NAME)
+        return Commands.literal(GAME)
+                .then(Commands.literal(LOAD)
                         .executes(GameCommand::loadGameConfig))
-                .then(Commands.literal(INIT_NAME)
+                .then(Commands.literal(INIT)
                         .executes(GameCommand::initGame))
-                .then(Commands.literal(START_NAME)
+                .then(Commands.literal(START)
                         .executes(GameCommand::startGame))
-                .then(Commands.literal(STOP_NAME)
+                .then(Commands.literal(STOP)
                         .executes(GameCommand::stopGame))
                 .then(Commands.literal(LOBBY)
                         .executes(GameCommand::lobby))
@@ -149,5 +152,13 @@ public class GameCommand {
         } else {
             return 0;
         }
+    }
+
+    public static String toLobbyCommandString() {
+        return buildCommandString(
+                CommandArg.ROOT,
+                GAME,
+                TO_LOBBY
+        );
     }
 }

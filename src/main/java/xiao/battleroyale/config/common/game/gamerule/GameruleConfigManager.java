@@ -18,30 +18,27 @@ import java.util.List;
 
 public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigManager.GameruleConfig> {
 
-    public static final String GAMERULE_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
-    public static final String GAMERULE_CONFIG_SUB_PATH = "gamerule";
+    private static class GameruleConfigManagerHolder {
+        private static final GameruleConfigManager INSTANCE = new GameruleConfigManager();
+    }
 
-    protected final int DEFAULT_GAMERULE_CONFIG_DATA_ID = 0;
-
-    private static GameruleConfigManager instance;
+    public static GameruleConfigManager get() {
+        return GameruleConfigManagerHolder.INSTANCE;
+    }
 
     private GameruleConfigManager() {
         allConfigData.put(DEFAULT_GAMERULE_CONFIG_DATA_ID, new ConfigData<>());
     }
 
     public static void init() {
-        if (instance == null) {
-            instance = new GameruleConfigManager();
-            instance.reloadGameruleConfigs();
-        }
+        get().reloadGameruleConfigs();
     }
 
-    public static GameruleConfigManager get() {
-        if (instance == null) {
-            GameruleConfigManager.init();
-        }
-        return instance;
-    }
+
+    public static final String GAMERULE_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
+    public static final String GAMERULE_CONFIG_SUB_PATH = "gamerule";
+
+    protected final int DEFAULT_GAMERULE_CONFIG_DATA_ID = 0;
 
     public static class GameruleConfig implements IGameruleSingleEntry {
         public static final String CONFIG_TYPE = "GameruleConfig";

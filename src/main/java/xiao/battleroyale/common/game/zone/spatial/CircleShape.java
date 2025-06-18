@@ -3,6 +3,7 @@ package xiao.battleroyale.common.game.zone.spatial;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.client.renderer.game.ZoneRenderer;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
@@ -50,5 +51,10 @@ public class CircleShape extends AbstractSimpleShape {
         }
 
         return true;
+    }
+
+    @Override
+    public int getSegments() {
+        return ZoneRenderer.CIRCLE_SEGMENTS;
     }
 }

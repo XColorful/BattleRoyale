@@ -6,7 +6,8 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.GameZoneTag;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
-import xiao.battleroyale.util.NBTUtils;
+import xiao.battleroyale.util.ColorUtils;
+import xiao.battleroyale.util.StringUtils;
 
 import java.awt.*;
 
@@ -32,7 +33,7 @@ public class ClientZoneData {
 
     public void updateFromNbt(CompoundTag nbt) {
         this.name = nbt.getString(GameZoneTag.ZONE_NAME);
-        this.color = NBTUtils.parseColorFromString(nbt.getString(GameZoneTag.ZONE_COLOR));
+        this.color = ColorUtils.parseColorFromString(nbt.getString(GameZoneTag.ZONE_COLOR));
 
         String funcTypeName = nbt.getString(GameZoneTag.FUNC);
         this.funcType = ZoneFuncType.fromName(funcTypeName);

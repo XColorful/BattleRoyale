@@ -22,6 +22,20 @@ import java.util.List;
 
 public class GameruleManager extends AbstractGameManager {
 
+    private static class GameruleManagerHolder {
+        private static final GameruleManager INSTANCE = new GameruleManager();
+    }
+
+    public static GameruleManager get() {
+        return GameruleManagerHolder.INSTANCE;
+    }
+
+    private GameruleManager() {}
+
+    public static void init() {
+        ;
+    }
+
     private static GameruleManager instance;
 
     MinecraftEntry mcEntry;
@@ -29,24 +43,6 @@ public class GameruleManager extends AbstractGameManager {
     private final McRuleStorage gameruleBackup = new McRuleStorage();
 
     private boolean autoSaturation = true;
-
-    private GameruleManager() {
-        ;
-    }
-
-    public static void init() {
-        if (instance == null) {
-            instance = new GameruleManager();
-        }
-    }
-
-    @NotNull
-    public static GameruleManager get() {
-        if (instance == null) {
-            GameruleManager.init();
-        }
-        return instance;
-    }
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
@@ -79,6 +75,7 @@ public class GameruleManager extends AbstractGameManager {
 
         List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
         this.gameruleBackup.apply(serverLevel, gamePlayerList);
+        GameManager.get().recordGamerule(this.gameruleBackup);
         this.gamemodeBackup.apply(serverLevel, gamePlayerList);
 
         this.ready = true;
@@ -90,10 +87,10 @@ public class GameruleManager extends AbstractGameManager {
             return false;
         }
 
-        this.gamemodeBackup.store(mcEntry, serverLevel, GameManager.get().getGamePlayers());
-        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
+        List<GamePlayer> gamePlayerList = GameManager.get().getStandingGamePlayers();
+        this.gamemodeBackup.store(mcEntry, serverLevel, gamePlayerList);
         this.gamemodeBackup.apply(serverLevel, gamePlayerList);
-
+        GameManager.get().recordGamerule(this.gamemodeBackup);
         return true;
     }
 

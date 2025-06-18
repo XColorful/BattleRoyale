@@ -20,7 +20,15 @@ import java.util.UUID;
 
 public class LootGenerationManager {
 
-    private static LootGenerationManager instance;
+    private static class LootGeneratonManagerHolder {
+        private static final LootGenerationManager INSTANCE = new LootGenerationManager();
+    }
+
+    public static LootGenerationManager get() {
+        return LootGeneratonManagerHolder.INSTANCE;
+    }
+
+    private LootGenerationManager() {}
 
     private final int MAX_CHUNKS_PER_TICK = 5; // TODO 可配置：每tick最大处理的区块数
 
@@ -30,16 +38,6 @@ public class LootGenerationManager {
     private ServerLevel currentGenerationLevel = null;
     private int totalLootRefreshedInBatch = 0;
     private CommandSourceStack initiatingCommandSource = null;
-
-    private LootGenerationManager() {
-    }
-
-    public static LootGenerationManager get() {
-        if (instance == null) {
-            instance = new LootGenerationManager();
-        }
-        return instance;
-    }
 
     /**
      * 由 LootCommand 调用，初始化并开始战利品刷新任务。

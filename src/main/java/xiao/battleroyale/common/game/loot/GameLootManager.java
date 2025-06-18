@@ -15,6 +15,29 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GameLootManager extends AbstractGameManager {
 
+    private static class GameLootManagerHolder {
+        private static final GameLootManager INSTANCE = new GameLootManager();
+    }
+
+    public static GameLootManager get() {
+        return GameLootManagerHolder.INSTANCE;
+    }
+
+    private GameLootManager() {
+        this.processedChunksTracker = Collections.synchronizedSet(new HashSet<>());
+        this.processedChunkInfoMap = Collections.synchronizedMap(new HashMap<>());
+        this.chunksToProcessQueue = new ConcurrentLinkedQueue<>();
+        this.playerLastKnownChunk = Collections.synchronizedMap(new HashMap<>());
+        this.playerLastKnownSimulationDistance = Collections.synchronizedMap(new HashMap<>());
+
+        this.evictionIntervalTicks = 20 * 10; // 默认10秒清理一次
+        this.lootAreaCalculator = new LootAreaCalculator();
+    }
+
+    public static void init() {
+        ;
+    }
+
     private static GameLootManager instance;
 
     // 配置参数
@@ -39,24 +62,6 @@ public class GameLootManager extends AbstractGameManager {
     // 战利品区域计算器
     private final LootAreaCalculator lootAreaCalculator;
 
-    private GameLootManager() {
-        this.processedChunksTracker = Collections.synchronizedSet(new HashSet<>());
-        this.processedChunkInfoMap = Collections.synchronizedMap(new HashMap<>());
-        this.chunksToProcessQueue = new ConcurrentLinkedQueue<>();
-        this.playerLastKnownChunk = Collections.synchronizedMap(new HashMap<>());
-        this.playerLastKnownSimulationDistance = Collections.synchronizedMap(new HashMap<>());
-
-        this.evictionIntervalTicks = 20 * 10; // 默认10秒清理一次
-        this.lootAreaCalculator = new LootAreaCalculator();
-    }
-
-    public static GameLootManager get() {
-        if (instance == null) {
-            instance = new GameLootManager();
-        }
-        return instance;
-    }
-
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
         // TODO: 从配置文件加载所有参数，目前使用默认值。
@@ -69,13 +74,13 @@ public class GameLootManager extends AbstractGameManager {
     @Override
     public void initGame(ServerLevel serverLevel) {
         clear(); // 确保每次游戏开始时清空所有状态
-        this.ready = true;
         int gameTime = GameManager.get().getGameTime();
         this.lastEvictionCheckTick = gameTime; // 初始化清理时间
         this.lastFullBFSTick = gameTime; // 初始化全量BFS时间
 
         // 游戏启动时，强制进行一次全量BFS初始化，确保玩家初始区域战利品刷新
         initializeLootForPlayers(serverLevel);
+        this.ready = true;
     }
 
     @Override

@@ -6,10 +6,8 @@ import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.api.game.zone.shape.end.EndCenterType;
 import xiao.battleroyale.api.game.zone.shape.end.EndDimensionType;
-import xiao.battleroyale.api.game.zone.shape.start.StartCenterType;
-import xiao.battleroyale.api.game.zone.shape.start.StartDimensionType;
 import xiao.battleroyale.config.common.game.GameConfigManager;
-import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
+import xiao.battleroyale.config.common.game.zone.zonefunc.FireworkFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.UnsafeFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.*;
@@ -41,14 +39,16 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
 
-        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 0, 0); // 直接结束缩圈
+        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 0, 0, 20, 0); // 直接结束缩圈
 
         config.add(ZoneConfigTag.ZONE_FUNC, safeFuncEntry.toJson());
 
-        StartEntry startEntry = new StartEntry(StartCenterType.FIXED, new Vec3(0, -60, 0), -1, 0,
-                StartDimensionType.FIXED, new Vec3(128, 255, 128), -1, 1, 0);
-        EndEntry endEntry = new EndEntry(EndCenterType.FIXED, new Vec3(0, -60, 0), -1, 0,
-                EndDimensionType.FIXED, new Vec3(128, 255, 128), -1, 1, 0);
+        StartEntry startEntry = new StartEntry();
+        startEntry.addFixedCenter(new Vec3(0, -60, 0));
+        startEntry.addFixedDimension(new Vec3(128, 255, 128));
+        EndEntry endEntry = new EndEntry();
+        endEntry.addFixedCenter(new Vec3(0, -60, 0));
+        endEntry.addFixedDimension(new Vec3(128, 255, 128));
 
         SquareEntry squareEntry = new SquareEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, squareEntry.toJson());
@@ -64,14 +64,20 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
 
-        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 600, 1200); // 30秒后刷圈，缩圈1分钟
+        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 600, 1200, 20, -1); // 30秒后刷圈，缩圈1分钟
 
         config.add(ZoneConfigTag.ZONE_FUNC, safeFuncEntry.toJson());
 
-        StartEntry startEntry = new StartEntry(StartCenterType.PREVIOUS, new Vec3(-1, -1, -1), 0, 0,
-                StartDimensionType.PREVIOUS, new Vec3(-1, -1, -1), 0, Math.sqrt(2), 0);
-        EndEntry endEntry = new EndEntry(EndCenterType.PREVIOUS, new Vec3(0, 0, 0), 1, 64,
-                EndDimensionType.PREVIOUS, new Vec3(-1, -1, -1), 1, 0.5, 0);
+        StartEntry startEntry = new StartEntry();
+        startEntry.addPreviousCenter(0, 1);
+        startEntry.addPreviousDimension(0, 1);
+        startEntry.addDimensionScale(Math.sqrt(2));
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addPreviousCenter(1, 0);
+        endEntry.addCenterRange(64);
+        endEntry.addPreviousDimension(1, 0);
+        endEntry.addDimensionScale(0.5);
 
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, circleEntry.toJson());
@@ -87,15 +93,22 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 200);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 2400);
 
-        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(1, 600, 1200); // 30秒后刷圈，缩圈1分钟
+        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(1, 600, 1200, 20, -1); // 30秒后刷圈，缩圈1分钟
 
         config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
         // 中心点(0, 0)，初始圆包含 Simple Border 的边界正方形，缩圈后半径为原先 0.5 倍
-        StartEntry startEntry = new StartEntry(StartCenterType.FIXED, new Vec3(0, -30, 0), -1, 128,
-                StartDimensionType.FIXED, new Vec3(30, 20, 50), -1, -1, 10);
-        EndEntry endEntry = new EndEntry(EndCenterType.FIXED, new Vec3(0, -50, 0), -1, 64,
-                EndDimensionType.FIXED, new Vec3(30, 20, 50), -1, -1, 20);
+        StartEntry startEntry = new StartEntry();
+        startEntry.addFixedCenter(new Vec3(0, -30, 0));
+        startEntry.addFixedDimension(new Vec3(30, 20, 50));
+        startEntry.addCenterRange(128);
+        startEntry.addDimensionRange(10);
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addFixedCenter(new Vec3(0, -50, 0));
+        endEntry.addCenterRange(64);
+        endEntry.addFixedDimension(new Vec3(30, 20, 50));
+        endEntry.addDimensionRange(20);
 
         RectangleEntry rectangleEntry = new RectangleEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, rectangleEntry.toJson());
@@ -111,13 +124,17 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 400);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 11600);
 
-        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(2, 600, 1200); // 30秒后刷圈，缩圈1分钟
+        FireworkFuncEntry fireworkFuncEntry = new FireworkFuncEntry(600, 1200, 20, -1, // 30秒后刷圈，缩圈1分钟
+                true, 1, 20, 5, 3, false);
 
-        config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
+        config.add(ZoneConfigTag.ZONE_FUNC, fireworkFuncEntry.toJson());
 
-        StartEntry startEntry = new StartEntry(StartCenterType.RELATIVE, new Vec3(0, 10, 0), 1, 0,
-                StartDimensionType.RELATIVE, new Vec3(-50, -230, -50), 1, 1, 0);
-        EndEntry endEntry = new EndEntry(EndCenterType.RELATIVE, new Vec3(0, 20, 0), 3, 0,
+        StartEntry startEntry = new StartEntry();
+        startEntry.addPreviousCenter(1, 1);
+        startEntry.addRelativeDimension(new Vec3(0, 10, 0));
+        startEntry.addPreviousDimension(1, 1);
+        startEntry.addRelativeDimension(new Vec3(-50, -230, -50));
+        EndEntry endEntry = new EndEntry(EndCenterType.RELATIVE, new Vec3(0, 20, 0), 3, 0, 0, false,
                 EndDimensionType.RELATIVE, new Vec3(50, -5, 50), 3, 1, 0);
 
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry);
@@ -134,14 +151,23 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 600);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 11400);
 
-        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(10, 600, 600);
+        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(10, 600, 600, 20, -1);
 
         config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
-        StartEntry startEntry = new StartEntry(StartCenterType.RELATIVE, new Vec3(0, 0, 0), 0, 0,
-                StartDimensionType.RELATIVE, new Vec3(-100, -240, -100), 0, 1, 10);
-        EndEntry endEntry = new EndEntry(EndCenterType.RELATIVE, new Vec3(0, -10, 0), 4, 100,
-                EndDimensionType.RELATIVE, new Vec3(0, 10, 0), 4, 1, 0);
+        StartEntry startEntry = new StartEntry();
+        startEntry.addPreviousCenter(0, 1);
+        startEntry.addRelativeCenter(new Vec3(0, 0, 0));
+        startEntry.addPreviousDimension(0, 1);
+        startEntry.addRelativeDimension(new Vec3(-100, -240, -100));
+        startEntry.addDimensionRange(10);
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addPreviousCenter(4, 0);
+        endEntry.addRelativeCenter(new Vec3(0, -10, 0));
+        endEntry.addCenterRange(100);
+        endEntry.addPreviousCenter(4, 0);
+        endEntry.addRelativeCenter(new Vec3(0, 10, 0));
 
         HexagonEntry hexagonEntry = new HexagonEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, hexagonEntry.toJson());
@@ -152,19 +178,22 @@ public class DefaultZone {
     private static JsonObject generateDefaultZoneConfig5() {
         JsonObject config = new JsonObject();
         config.addProperty(ZoneConfigTag.ZONE_ID, 5);
-        config.addProperty(ZoneConfigTag.ZONE_NAME, "Black Polygon");
+        config.addProperty(ZoneConfigTag.ZONE_NAME, "Black Polygon Trap");
         config.addProperty(ZoneConfigTag.ZONE_COLOR, "#00000022");
-        config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
+        config.addProperty(ZoneConfigTag.ZONE_DELAY, 100);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
 
-        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(0.001, 600, 600);
+        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(0.001, 600, 600, 20, -1);
 
         config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
-        StartEntry startEntry = new StartEntry(StartCenterType.FIXED, new Vec3(0, -60, 0), -1, 0,
-                StartDimensionType.FIXED, new Vec3(80, 2, 80), -1, 1, 0);
-        EndEntry endEntry = new EndEntry(EndCenterType.FIXED, new Vec3(0, -60, 0), -1, 0,
-                EndDimensionType.FIXED, new Vec3(15, 4, 15), -1, 1, 0);
+        StartEntry startEntry = new StartEntry();
+        startEntry.addLockCenter(0, true);
+        startEntry.addFixedDimension(new Vec3(80, 2, 80));
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addFixedCenter(new Vec3(0, -60, 0));
+        endEntry.addFixedDimension(new Vec3(15, 4, 15));
 
         PolygonEntry polygonEntry = new PolygonEntry(startEntry, endEntry, 5);
         config.add(ZoneConfigTag.ZONE_SHAPE, polygonEntry.toJson());

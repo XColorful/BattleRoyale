@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
+import xiao.battleroyale.api.game.gamerule.MinecraftEntryTag;
 import xiao.battleroyale.api.game.gamerule.storage.IRuleStorage;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
@@ -20,7 +21,6 @@ import java.util.UUID;
 public class PlayerModeStorage implements IRuleStorage {
 
     private static GameType gameMode;
-
     private final Map<UUID, GameType> playerModeBackup = new HashMap<>();
 
     public PlayerModeStorage() {
@@ -43,6 +43,9 @@ public class PlayerModeStorage implements IRuleStorage {
         gameMode = mcEntry.adventureMode ? GameType.ADVENTURE : GameType.SURVIVAL;
 
         for (GamePlayer gamePlayer : gamePlayerList) {
+            if (gamePlayer.isBot()) {
+                continue;
+            }
             UUID playerUUID = gamePlayer.getPlayerUUID();
             try {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);
@@ -51,7 +54,7 @@ public class PlayerModeStorage implements IRuleStorage {
                 }
                 GameType gameMode = player.gameMode.getGameModeForPlayer();
                 playerModeBackup.put(player.getUUID(), gameMode);
-                BattleRoyale.LOGGER.info("Backup up gamemode {} for player {}: {}", gameMode.getName(), gamePlayer.getPlayerName(), gameMode.getName());
+                BattleRoyale.LOGGER.info("Backup up gamemode {} for player {}", gameMode.getName(), gamePlayer.getPlayerName());
             } catch (Exception e) {
                 BattleRoyale.LOGGER.error("Failed to backup gamemode {} for player {} (UUID: {}) , skipped", gameMode.getName(), gamePlayer.getPlayerName(), playerUUID);
             }
@@ -65,6 +68,9 @@ public class PlayerModeStorage implements IRuleStorage {
             return;
         }
         for (GamePlayer gamePlayer : gamePlayerList) {
+            if (gamePlayer.isBot()) {
+                continue;
+            }
             UUID playerUUID = gamePlayer.getPlayerUUID();
             try {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);
@@ -101,5 +107,15 @@ public class PlayerModeStorage implements IRuleStorage {
     @Override
     public void clear() {
         playerModeBackup.clear();
+    }
+
+    @Override
+    public Map<String, Boolean> getBoolWriter() {
+        if (gameMode == null) {
+            return new HashMap<>();
+        }
+        Map<String, Boolean> boolGamerule = new HashMap<>();
+        boolGamerule.put(MinecraftEntryTag.ADVENTURE, gameMode == GameType.ADVENTURE);
+        return boolGamerule;
     }
 }

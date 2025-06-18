@@ -1,6 +1,9 @@
 package xiao.battleroyale.util;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -57,6 +60,23 @@ public class ChatUtils {
     }
 
     /**
+     * 向所有在线玩家发送屏幕中央的标题和副标题。
+     * @param serverLevel 当前的 ServerLevel。
+     * @param title 标题 Component。
+     * @param subtitle 副标题 Component。
+     * @param fadeInTicks 标题淡入时间 (ticks)。
+     * @param stayTicks 标题显示时间 (ticks)。
+     * @param fadeOutTicks 标题淡出时间 (ticks)。
+     */
+    public static void sendTitleToAllPlayers(ServerLevel serverLevel, Component title, Component subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        for (ServerPlayer player : serverLevel.getServer().getPlayerList().getPlayers()) {
+            player.connection.send(new ClientboundSetTitlesAnimationPacket(fadeInTicks, stayTicks, fadeOutTicks)); // 动画时间设置包
+            player.connection.send(new ClientboundSetTitleTextPacket(title)); // 标题内容包
+            player.connection.send(new ClientboundSetSubtitleTextPacket(subtitle)); // 副标题内容包
+        }
+    }
+
+    /**
      * 向特定玩家发送普通文本消息。
      * @param player 接收消息的 ServerPlayer 对象。
      * @param message 要发送的字符串消息。
@@ -102,5 +122,20 @@ public class ChatUtils {
      */
     public static void sendClickableMessageToPlayer(ServerPlayer player, Component clickableComponent) {
         player.sendSystemMessage(clickableComponent);
+    }
+
+    /**
+     * 向特定玩家发送屏幕中央的标题和副标题。
+     * @param player 接收消息的 ServerPlayer 对象。
+     * @param title 标题 Component。
+     * @param subtitle 副标题 Component。
+     * @param fadeInTicks 标题淡入时间 (ticks)。
+     * @param stayTicks 标题显示时间 (ticks)。
+     * @param fadeOutTicks 标题淡出时间 (ticks)。
+     */
+    public static void sendTitleToPlayer(ServerPlayer player, Component title, Component subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        player.connection.send(new ClientboundSetTitlesAnimationPacket(fadeInTicks, stayTicks, fadeOutTicks)); // 动画时间设置包
+        player.connection.send(new ClientboundSetTitleTextPacket(title)); // 标题内容包
+        player.connection.send(new ClientboundSetSubtitleTextPacket(subtitle)); // 副标题内容包
     }
 }

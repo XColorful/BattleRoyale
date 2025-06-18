@@ -15,25 +15,6 @@ import java.util.List;
 
 public class NBTUtils {
 
-    public static Color parseColorFromString(String colorString) {
-        Color color = Color.WHITE;
-        try {
-            if (colorString.length() == 9 && colorString.startsWith("#")) { // #RRGGBBAA
-                int rgba = (int) Long.parseLong(colorString.substring(1), 16);
-                int r = (rgba >> 24) & 0xFF;
-                int g = (rgba >> 16) & 0xFF;
-                int b = (rgba >> 8) & 0xFF;
-                int a = rgba & 0xFF;
-                color = new Color(r, g, b, a);
-            } else { // #RRGGBB
-                color = Color.decode(colorString); // 默认 Alpha 为 255
-            }
-        } catch (NumberFormatException e) {
-            BattleRoyale.LOGGER.warn("Failed to decode color hex: {}, reason: {}", colorString, e.getMessage());
-        }
-        return color;
-    }
-
     public static CompoundTag serializeZoneToNBT(int zoneId, String zoneName, String zoneColor,
                                                  ITickableZone tickableZone, ISpatialZone spatialZone,
                                                  double progress) {
