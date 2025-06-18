@@ -123,7 +123,7 @@ public class ZoneManager extends AbstractGameManager {
             return;
         }
         Supplier<Float> random = GameManager.get().getRandom();
-        List<GamePlayer> tickPlayer = GameManager.get().getStandingGamePlayers();
+        List<GamePlayer> standingGamePlayers = GameManager.get().getStandingGamePlayers();
 
         Set<Integer> finishedZoneId = new HashSet<>();
         Map<Integer, IGameZone> gameZones = this.zoneData.getGameZones(); // 缓存引用
@@ -135,7 +135,7 @@ public class ZoneManager extends AbstractGameManager {
             }
 
             if (!gameZone.isCreated()) { // 没创建就创建，等价于额外维护一个isPresent
-                gameZone.createZone(serverLevel, tickPlayer, gameZones, random);
+                gameZone.createZone(serverLevel, standingGamePlayers, gameZones, random);
                 if (!gameZone.isCreated()) { // 创建失败，内部自动维护finished，这里还是用isCreated防御一下
                     finishedZoneId.add(gameZone.getZoneId());
                     BattleRoyale.LOGGER.warn("Failed to create zone (id: {}, name: {}), skipped", gameZone.getZoneId(), gameZone.getZoneName());
@@ -143,7 +143,7 @@ public class ZoneManager extends AbstractGameManager {
                 }
             }
 
-            gameZone.tick(serverLevel, tickPlayer, gameZones, random, gameTime);
+            gameZone.tick(serverLevel, standingGamePlayers, gameZones, random, gameTime);
 
             if (gameZone.isFinished()) { // 在tick过程中遇到最后一tick并执行后，标记为finished
                 finishedZoneId.add(gameZone.getZoneId());

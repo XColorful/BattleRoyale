@@ -5,7 +5,8 @@ import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 public enum StartCenterType {
     FIXED(ZoneShapeTag.FIXED),
     PREVIOUS(ZoneShapeTag.PREVIOUS),
-    RELATIVE(ZoneShapeTag.RELATIVE);
+    RELATIVE(ZoneShapeTag.RELATIVE),
+    LOCK_PLAYER(ZoneShapeTag.LOCK_PLAYER);
 
     private final String value;
 

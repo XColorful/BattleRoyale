@@ -83,10 +83,10 @@ public class GameZone implements IGameZone {
     }
 
     @Override
-    public void createZone(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
+    public void createZone(ServerLevel serverLevel, List<GamePlayer> standingGamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
         if (!created) {
-            tickableZone.initFunc(serverLevel, gamePlayerList, gameZones, random);
-            spatialZone.calculateShape(serverLevel, gamePlayerList, random);
+            tickableZone.initFunc(serverLevel, standingGamePlayers, gameZones, random);
+            spatialZone.calculateShape(serverLevel, standingGamePlayers, random);
         }
         if (tickableZone.isReady() && spatialZone.isDetermined()) {
             addZoneDetailProperty();
@@ -239,8 +239,8 @@ public class GameZone implements IGameZone {
     @Override
     public ZoneShapeType getShapeType() { return spatialZone.getShapeType(); }
     @Override
-    public void calculateShape(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Supplier<Float> random) {
-        spatialZone.calculateShape(serverLevel, gamePlayerList, random);
+    public void calculateShape(ServerLevel serverLevel, List<GamePlayer> standingGamePlayers, Supplier<Float> random) {
+        spatialZone.calculateShape(serverLevel, standingGamePlayers, random);
     }
     @Override
     public boolean isDetermined() { return spatialZone.isDetermined(); }

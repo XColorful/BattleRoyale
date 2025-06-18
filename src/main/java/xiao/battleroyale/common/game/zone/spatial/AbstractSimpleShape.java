@@ -9,6 +9,7 @@ import xiao.battleroyale.api.game.zone.shape.end.EndCenterType;
 import xiao.battleroyale.api.game.zone.shape.end.EndDimensionType;
 import xiao.battleroyale.api.game.zone.shape.start.StartCenterType;
 import xiao.battleroyale.api.game.zone.shape.start.StartDimensionType;
+import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
@@ -76,7 +77,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
     // TODO 根据玩家多的方向偏移，或增加机制防止圈刷特殊区域（暂定为防止刷海里）
     @Override
-    public void calculateShape(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Supplier<Float> random) {
+    public void calculateShape(ServerLevel serverLevel, List<GamePlayer> standingGamePlayers, Supplier<Float> random) {
         if (!determined) {
             // start center
             switch (startEntry.startCenterType) {
@@ -86,6 +87,22 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                     if (startEntry.startCenterType == StartCenterType.RELATIVE) {
                         startCenter = Vec3Utils.addVec(startCenter, startEntry.startCenterPos);
                     }
+                }
+                case LOCK_PLAYER -> {
+                    int playerId = this.startEntry.playerId;
+                    if (playerId <= 0) {
+                        if (this.startEntry.selectStanding) {
+                            playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
+                        } else {
+                            List<GamePlayer> gamePlayers = GameManager.get().getGamePlayers();
+                            playerId = gamePlayers.get((int) (random.get() * gamePlayers.size())).getGameSingleId();
+                        }
+                    }
+                    GamePlayer gamePlayer = GameManager.get().getGamePlayerBySingleId(playerId);
+                    if (gamePlayer == null) {
+                        return;
+                    }
+                    startCenter = gamePlayer.getLastPos();
                 }
             }
             if (startCenter == null) {
@@ -123,6 +140,22 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                     if (endEntry.endCenterType == EndCenterType.RELATIVE) {
                         endCenter = Vec3Utils.addVec(endCenter, endEntry.endCenterPos);
                     }
+                }
+                case LOCK_PLAYER -> {
+                    int playerId = this.endEntry.playerId;
+                    if (playerId <= 0) {
+                        if (this.endEntry.selectStanding) {
+                            playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
+                        } else {
+                            List<GamePlayer> gamePlayers = GameManager.get().getGamePlayers();
+                            playerId = gamePlayers.get((int) (random.get() * gamePlayers.size())).getGameSingleId();
+                        }
+                    }
+                    GamePlayer gamePlayer = GameManager.get().getGamePlayerBySingleId(playerId);
+                    if (gamePlayer == null) {
+                        return;
+                    }
+                    endCenter = gamePlayer.getLastPos();
                 }
             }
             if (endCenter == null) {
