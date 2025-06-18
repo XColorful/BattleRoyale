@@ -18,8 +18,8 @@ import java.util.function.Supplier;
 
 public class SafeFunc extends AbstractSimpleFunc {
 
-    public SafeFunc(double damage, int moveDelay, int moveTime) {
-        super(damage, moveDelay, moveTime);
+    public SafeFunc(double damage, int moveDelay, int moveTime, int tickFreq, int tickOffset) {
+        super(damage, moveDelay, moveTime, tickFreq, tickOffset);
     }
 
     @Override

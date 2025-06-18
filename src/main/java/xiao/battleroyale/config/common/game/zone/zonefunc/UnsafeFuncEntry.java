@@ -9,8 +9,8 @@ import xiao.battleroyale.common.game.zone.tickable.UnsafeFunc;
 
 public class UnsafeFuncEntry extends AbstractFuncEntry {
 
-    public UnsafeFuncEntry(double damage, int moveDelay, int moveTime) {
-        super(damage, moveDelay, moveTime);
+    public UnsafeFuncEntry(double damage, int moveDelay, int moveTime, int tickFreq, int tickOffset) {
+        super(damage, moveDelay, moveTime, tickFreq, tickOffset);
     }
 
     @Override
@@ -19,13 +19,8 @@ public class UnsafeFuncEntry extends AbstractFuncEntry {
     }
 
     @Override
-    public ZoneFuncType getZoneFuncType() {
-        return ZoneFuncType.UNSAFE;
-    }
-
-    @Override
     public ITickableZone createTickableZone() {
-        return new UnsafeFunc(damage, moveDelay, moveTime);
+        return new UnsafeFunc(damage, moveDelay, moveTime, tickFreq, tickOffset);
     }
 
     @Override
@@ -35,17 +30,18 @@ public class UnsafeFuncEntry extends AbstractFuncEntry {
         jsonObject.addProperty(ZoneFuncTag.DAMAGE, damage);
         jsonObject.addProperty(ZoneFuncTag.MOVE_DELAY, moveDelay);
         jsonObject.addProperty(ZoneFuncTag.MOVE_TIME, moveTime);
+        jsonObject.addProperty(ZoneFuncTag.TICK_FREQUENCY, tickFreq);
+        jsonObject.addProperty(ZoneFuncTag.TICK_OFFSET, tickOffset);
         return jsonObject;
     }
 
     public static UnsafeFuncEntry fromJson(JsonObject jsonObject) {
         double damage = jsonObject.has(ZoneFuncTag.DAMAGE) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.DAMAGE).getAsDouble() : 0;
-        if (damage < 0) {
-            BattleRoyale.LOGGER.info("DamageFuncEntry damage is lower than 0 ({}), defaulting to 0", damage);
-            damage = 0;
-        }
         int moveDelay = jsonObject.has(ZoneFuncTag.MOVE_DELAY) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.MOVE_DELAY).getAsInt() : 0;
         int moveTime = jsonObject.has(ZoneFuncTag.MOVE_TIME) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.MOVE_TIME).getAsInt() : 0;
-        return new UnsafeFuncEntry(damage, moveDelay, moveTime);
+        int tickFreq = jsonObject.has(ZoneFuncTag.TICK_FREQUENCY) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.TICK_FREQUENCY).getAsInt() : 20;
+        int tickOffset = jsonObject.has(ZoneFuncTag.TICK_OFFSET) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.TICK_OFFSET).getAsInt() : -1;
+
+        return new UnsafeFuncEntry(damage, moveDelay, moveTime, tickFreq, tickOffset);
     }
 }

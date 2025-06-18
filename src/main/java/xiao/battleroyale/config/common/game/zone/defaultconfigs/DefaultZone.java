@@ -41,7 +41,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
 
-        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 0, 0); // 直接结束缩圈
+        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 0, 0, 20, 0); // 直接结束缩圈
 
         config.add(ZoneConfigTag.ZONE_FUNC, safeFuncEntry.toJson());
 
@@ -64,7 +64,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
 
-        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 600, 1200); // 30秒后刷圈，缩圈1分钟
+        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 600, 1200, 20, -1); // 30秒后刷圈，缩圈1分钟
 
         config.add(ZoneConfigTag.ZONE_FUNC, safeFuncEntry.toJson());
 
@@ -87,7 +87,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 200);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 2400);
 
-        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(1, 600, 1200); // 30秒后刷圈，缩圈1分钟
+        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(1, 600, 1200, 20, -1); // 30秒后刷圈，缩圈1分钟
 
         config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
@@ -111,7 +111,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 400);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 11600);
 
-        FireworkFuncEntry fireworkFuncEntry = new FireworkFuncEntry(600, 1200, // 30秒后刷圈，缩圈1分钟
+        FireworkFuncEntry fireworkFuncEntry = new FireworkFuncEntry(600, 1200, 20, -1, // 30秒后刷圈，缩圈1分钟
                 true, 1, 20, 5, 3, false);
 
         config.add(ZoneConfigTag.ZONE_FUNC, fireworkFuncEntry.toJson());
@@ -135,7 +135,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 600);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 11400);
 
-        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(10, 600, 600);
+        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(10, 600, 600, 20, -1);
 
         config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
@@ -158,7 +158,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
 
-        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(0.001, 600, 600);
+        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(0.001, 600, 600, 20, -1);
 
         config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 

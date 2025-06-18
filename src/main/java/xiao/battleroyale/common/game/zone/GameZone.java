@@ -144,7 +144,7 @@ public class GameZone implements IGameZone {
             CompoundTag zoneInfo = toNBT(progress);
             GameManager.get().addZoneInfo(this.zoneId, zoneInfo);
         }
-        if ((gameTime + getFuncOffset()) % getFuncFrequency() == 0) {
+        if ((gameTime + getTickOffset()) % getTickFrequency() == 0) {
             tick(serverLevel, gamePlayerList, gameZones, random, gameTime, progress, spatialZone);
         }
     }
@@ -181,13 +181,13 @@ public class GameZone implements IGameZone {
     }
 
     @Override
-    public int getFuncFrequency() { return tickableZone.getFuncFrequency(); }
+    public int getTickFrequency() { return tickableZone.getTickFrequency(); }
     @Override
-    public void setFuncFrequency(int funcFreq) { tickableZone.setFuncFrequency(funcFreq);}
+    public void setTickFrequency(int tickFreq) { tickableZone.setTickFrequency(tickFreq);}
     @Override
-    public int getFuncOffset() { return tickableZone.getFuncOffset(); }
+    public int getTickOffset() { return tickableZone.getTickOffset(); }
     @Override
-    public void setFuncOffset(int funcOff) { tickableZone.setFuncOffset(funcOff); }
+    public void setTickOffset(int tickOff) { tickableZone.setTickOffset(tickOff); }
 
     private void addZoneDetailProperty() {
         Map<String, Integer> intWriter = new HashMap<>();
@@ -205,8 +205,8 @@ public class GameZone implements IGameZone {
         doubleWriter.put(FUNC_DAMAGE_TAG, getDamage());
         intWriter.put(FUNC_MOVE_DELAY_TAG, getShapeMoveDelay());
         intWriter.put(FUNC_MOVE_TIME_TAG, getShapeMoveTime());
-        intWriter.put(FUNC_TICK_FREQUENCY_TAG, getFuncFrequency());
-        intWriter.put(FUNC_TICK_OFFSET_TAG, getFuncOffset());
+        intWriter.put(FUNC_TICK_FREQUENCY_TAG, getTickFrequency());
+        intWriter.put(FUNC_TICK_OFFSET_TAG, getTickOffset());
         // shape
         stringWriter.put(SHAPE_TYPE_TAG, getShapeType().getName());
         stringWriter.put(SHAPE_START_CENTER_TAG, StringUtils.vectorToString(getStartCenterPos()));

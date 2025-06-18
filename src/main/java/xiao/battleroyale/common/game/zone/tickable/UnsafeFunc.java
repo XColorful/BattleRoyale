@@ -17,8 +17,8 @@ import java.util.function.Supplier;
 
 public class UnsafeFunc extends AbstractSimpleFunc {
 
-    public UnsafeFunc(double damage, int moveDelay, int moveTime) {
-        super(damage, moveDelay, moveTime);
+    public UnsafeFunc(double damage, int moveDelay, int moveTime, int tickFreq, int tickOffset) {
+        super(damage, moveDelay, moveTime, tickFreq, tickOffset);
     }
 
     @Override

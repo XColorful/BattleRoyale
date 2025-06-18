@@ -22,9 +22,9 @@ public class FireworkFunc extends AbstractSimpleFunc {
     private final int hRange;
     private final boolean outside;
 
-    public FireworkFunc(int moveDelay, int moveTime,
+    public FireworkFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset,
                         boolean trackPlayer, int amount, int interval, int vRange, int hRange, boolean outside) {
-        super(moveDelay, moveTime);
+        super(moveDelay, moveTime, tickFreq, tickOffset);
         this.trackPlayer = trackPlayer;
         this.amount = amount;
         this.interval = interval;

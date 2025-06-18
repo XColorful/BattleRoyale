@@ -9,7 +9,6 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public class ColorUtils {
@@ -83,7 +82,7 @@ public class ColorUtils {
             return FIREWORK_COLORS;
         }
 
-        Collections.shuffle(availableColors, new Random(random.nextLong()));
+        Collections.shuffle(availableColors, BattleRoyale.COMMON_RANDOM);
 
         int[] resultColors = new int[count];
         for (int i = 0; i < count; i++) {

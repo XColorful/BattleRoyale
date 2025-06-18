@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
 import net.minecraft.server.level.ServerLevel;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -15,8 +16,8 @@ public abstract class AbstractSimpleFunc implements ITickableZone {
     protected int moveDelay;
     protected int moveTime;
 
-    protected int funcFreq;
-    protected int funcOff;
+    protected int tickFreq; // 不小于0
+    protected int tickOffset; // [0, tickFreq - 1]
 
     protected boolean ready = false;
 
@@ -24,20 +25,20 @@ public abstract class AbstractSimpleFunc implements ITickableZone {
         this(0, moveDelay, moveTime, 20, 0);
     }
 
-    public AbstractSimpleFunc(int moveDelay, int moveTime, int tickFreq, int funcOff) {
-        this(0, moveDelay, moveTime, tickFreq, funcOff);
+    public AbstractSimpleFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset) {
+        this(0, moveDelay, moveTime, tickFreq, tickOffset);
     }
 
     public AbstractSimpleFunc(double damage, int moveDelay, int moveTime) {
         this(damage, moveDelay, moveTime, 20, 0);
     }
 
-    public AbstractSimpleFunc(double damage, int moveDelay, int moveTime, int funcFreq, int funcOff) {
+    public AbstractSimpleFunc(double damage, int moveDelay, int moveTime, int tickFreq, int tickOffset) {
         this.damage = damage;
         this.moveDelay = moveDelay;
         this.moveTime = moveTime;
-        setFuncFrequency(funcFreq);
-        setFuncOffset(funcOff);
+        setTickFrequency(tickFreq);
+        this.tickOffset = tickOffset;
     }
 
     @Override
@@ -71,21 +72,24 @@ public abstract class AbstractSimpleFunc implements ITickableZone {
     public int getShapeMoveTime() { return this.moveTime; }
 
     @Override
-    public int getFuncFrequency() { return this.funcFreq; }
+    public int getTickFrequency() { return this.tickFreq; }
 
     @Override
-    public int getFuncOffset() { return this.funcOff; }
+    public int getTickOffset() { return this.tickOffset; }
 
     @Override
-    public void setFuncFrequency(int funcFreq) {
-        this.funcFreq = Math.max(funcFreq, 1);
-        if (this.funcOff > this.funcFreq) {
-            this.funcOff = this.funcFreq;
+    public void setTickFrequency(int tickFreq) {
+        this.tickFreq = Math.max(tickFreq, 1);
+        if (this.tickOffset > this.tickFreq) {
+            setTickOffset(tickFreq - 1);
         }
     }
 
     @Override
-    public void setFuncOffset(int funcOff) {
-        this.funcOff = Math.min(Math.max(funcOff, 0), this.funcFreq);
+    public void setTickOffset(int tickOffset) {
+        if (tickOffset < 0) {
+            tickOffset = BattleRoyale.COMMON_RANDOM.nextInt(this.tickFreq + 1);
+        }
+        this.tickOffset = Math.min(Math.max(tickOffset, 0), this.tickFreq - 1);
     }
 }

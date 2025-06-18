@@ -1,7 +1,6 @@
 package xiao.battleroyale.common.game.zone;
 
 import net.minecraft.server.level.ServerLevel;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
@@ -9,7 +8,6 @@ import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.GameConfigManager;
-import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.util.ChatUtils;
 
@@ -84,7 +82,7 @@ public class ZoneManager extends AbstractGameManager {
             return false;
         }
 
-        randomizeZoneTickOff();
+        randomizeZoneTickOffset();
         this.zoneData.startGame();
 
         return true;
@@ -101,14 +99,12 @@ public class ZoneManager extends AbstractGameManager {
         return zoneData.hasEnoughZoneToStart();
     }
 
-    private void randomizeZoneTickOff() {
+    private void randomizeZoneTickOffset() {
         Supplier<Float> random = GameManager.get().getRandom();
         for (IGameZone gameZone : this.zoneData.getGameZonesList()) {
-            int funcFreq = gameZone.getFuncFrequency();
-            if (funcFreq <= 1) {
-                continue;
+            if (gameZone.getTickOffset() < 0) {
+                gameZone.setTickOffset((int) (random.get() * gameZone.getTickFrequency()));
             }
-            gameZone.setFuncOffset((int) (random.get() * funcFreq));
         }
     }
 

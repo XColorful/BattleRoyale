@@ -13,8 +13,8 @@ import java.util.function.Supplier;
 
 public class AirdropFunc extends AbstractSimpleFunc {
 
-    public AirdropFunc(int moveDelay, int moveTime) {
-        super(moveDelay, moveTime);
+    public AirdropFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset) {
+        super(moveDelay, moveTime, tickFreq, tickOffset);
     }
 
     @Override

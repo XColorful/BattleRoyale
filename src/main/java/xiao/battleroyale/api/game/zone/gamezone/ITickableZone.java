@@ -30,17 +30,17 @@ public interface ITickableZone {
      * 用于节约不必要的开销
      * @return tick 功能的频率
      */
-    int getFuncFrequency();
+    int getTickFrequency();
 
-    void setFuncFrequency(int funcFreq);
+    void setTickFrequency(int tickFreq);
 
     /**
      * 支持错峰 tick 实现分摊
      * @return tick 的时间偏移
      */
-    int getFuncOffset();
+    int getTickOffset();
 
-    void setFuncOffset(int funcOff);
+    void setTickOffset(int tickOffset);
 
     /**
      * tick当前圈的功能
