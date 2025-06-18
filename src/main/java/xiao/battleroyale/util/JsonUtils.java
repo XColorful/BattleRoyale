@@ -60,9 +60,9 @@ public class JsonUtils {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try {
             Files.writeString(path, gson.toJson(jsonArray));
-            BattleRoyale.LOGGER.info("Generated default config at: {}", path);
+            BattleRoyale.LOGGER.debug("Write json to file: {}", path);
         } catch (IOException e) {
-            BattleRoyale.LOGGER.warn("Failed to write default config: {}", e.getMessage());
+            BattleRoyale.LOGGER.warn("Failed to write json to file: {}", e.getMessage());
         }
     }
 

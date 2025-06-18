@@ -54,7 +54,7 @@ public class PlayerModeStorage implements IRuleStorage {
                 }
                 GameType gameMode = player.gameMode.getGameModeForPlayer();
                 playerModeBackup.put(player.getUUID(), gameMode);
-                BattleRoyale.LOGGER.info("Backup up gamemode {} for player {}: {}", gameMode.getName(), gamePlayer.getPlayerName(), gameMode.getName());
+                BattleRoyale.LOGGER.info("Backup up gamemode {} for player {}", gameMode.getName(), gamePlayer.getPlayerName());
             } catch (Exception e) {
                 BattleRoyale.LOGGER.error("Failed to backup gamemode {} for player {} (UUID: {}) , skipped", gameMode.getName(), gamePlayer.getPlayerName(), playerUUID);
             }

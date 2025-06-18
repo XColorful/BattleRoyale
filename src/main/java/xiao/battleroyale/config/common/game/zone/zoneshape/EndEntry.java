@@ -12,18 +12,20 @@ import xiao.battleroyale.util.StringUtils;
 
 public class EndEntry {
 
-    public EndCenterType endCenterType;
-    public Vec3 endCenterPos; // fixed x, z / relative x, z
-    public int endCenterZoneId;
-    public double endCenterRange;
-    public int playerId;
-    public boolean selectStanding;
+    public EndCenterType endCenterType = EndCenterType.FIXED;
+    public Vec3 endCenterPos = Vec3.ZERO; // fixed x, z / relative x, z
+    public int endCenterZoneId = 0;
+    public double endCenterProgress = 0;
+    public double endCenterRange = 0;
+    public int playerId = 0;
+    public boolean selectStanding = false;
 
-    public EndDimensionType endDimensionType;
-    public Vec3 endDimension; // radius / size / a, b
-    public int endDimensionZoneId; // previous zone id
-    public double endDimensionScale; // previous dimension scale
-    public double endDimensionRange;
+    public EndDimensionType endDimensionType = EndDimensionType.FIXED;
+    public Vec3 endDimension = Vec3.ZERO; // radius / size / a, b
+    public int endDimensionZoneId = 0; // previous zone id
+    public double endDimensionProgress = 0;
+    public double endDimensionScale = 1; // previous dimension scale
+    public double endDimensionRange = 0;
 
     public EndEntry(EndCenterType endCenterType, Vec3 endCenterPos, int endCenterZoneId, double endCenterRange, int playerId, boolean selectStanding,
                     EndDimensionType endDimensionType, Vec3 endDimension, int endDimensionZoneId, double endDimensionScale, double endDimensionRange) {
@@ -40,12 +42,59 @@ public class EndEntry {
         this.endDimensionRange = endDimensionRange;
     }
 
+    public EndEntry() {
+        ;
+    }
+    public void addFixedCenter(Vec3 endCenterPos) {
+        this.endCenterType = EndCenterType.FIXED;
+        this.endCenterPos = endCenterPos;
+    }
+    public void addPreviousCenter(int prevZoneId, double progress) {
+        this.endCenterType = EndCenterType.PREVIOUS;
+        this.endCenterZoneId = prevZoneId;
+        this.endCenterProgress = Math.min(Math.max(0, progress), 1);
+    }
+    public void addRelativeCenter(Vec3 relativeAdd) {
+        this.endCenterType = EndCenterType.RELATIVE;
+        this.endCenterPos = relativeAdd;
+    }
+    public void addLockCenter(int playerId, boolean selectStanding) {
+        this.endCenterType = EndCenterType.LOCK_PLAYER;
+        this.playerId = playerId;
+        this.selectStanding = selectStanding;
+    }
+    public void addCenterRange(double range) {
+        this.endCenterRange = range;
+    }
+
+    public void addFixedDimension(Vec3 endDimension) {
+        this.endDimensionType = EndDimensionType.FIXED;
+        BattleRoyale.LOGGER.info("addFixedDimension before: {}", this.endDimension);
+        this.endDimension = endDimension;
+        BattleRoyale.LOGGER.info("addFixedDimension after: {}", this.endDimension);
+    }
+    public void addPreviousDimension(int prevZoneId, double progress) {
+        this.endDimensionType = EndDimensionType.PREVIOUS;
+        this.endDimensionZoneId = prevZoneId;
+        this.endDimensionProgress = Math.min(Math.max(0, progress), 1);
+    }
+    public void addRelativeDimension(Vec3 relativeAdd) {
+        this.endDimensionType = EndDimensionType.RELATIVE;
+        this.endDimension = relativeAdd;
+    }
+    public void addDimensionScale(double scale) {
+        this.endDimensionScale = scale;
+    }
+    public void addDimensionRange(double range) {
+        this.endDimensionRange = range;
+    }
+
     @Nullable
     public static EndEntry fromJson(JsonObject jsonObject) {
         JsonObject centerObject = jsonObject.has(ZoneShapeTag.CENTER) ? jsonObject.getAsJsonObject(ZoneShapeTag.CENTER) : null;
         JsonObject dimensionObject = jsonObject.has(ZoneShapeTag.DIMENSION) ? jsonObject.getAsJsonObject(ZoneShapeTag.DIMENSION) : null;
         if (centerObject == null || dimensionObject == null) {
-            BattleRoyale.LOGGER.info("EndEntry missing member (center or dimension), skipped");
+            BattleRoyale.LOGGER.info("EndEntry missing member center or dimension, skipped");
             return null;
         }
 
@@ -57,63 +106,64 @@ public class EndEntry {
             BattleRoyale.LOGGER.info("Skipped invalid end centerType or dimensionType");
             return null;
         }
+        EndEntry endEntry = new EndEntry();
 
-        Vec3 centerPos = Vec3.ZERO;
-        int centerZoneId = -1;
-        double centerRange = 0;
-        int playerId = 0;
-        boolean selectStanding = true;
+        // center
         switch (centerType) {
             case FIXED -> {
                 String centerPosString = centerObject.has(ZoneShapeTag.FIXED) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.FIXED).getAsString() : "";
-                centerPos = StringUtils.parseVectorString(centerPosString);
+                Vec3 centerPos = StringUtils.parseVectorString(centerPosString);
                 if (centerPos == null) {
                     BattleRoyale.LOGGER.info("Skipped invalid end fixed centerPos string: {}", centerPosString);
                     return null;
                 }
+                endEntry.addFixedCenter(centerPos);
             }
             case PREVIOUS, RELATIVE -> {
-                centerZoneId = centerObject.has(ZoneShapeTag.PREVIOUS_ID) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_ID).getAsInt() : -1;
+                int centerZoneId = centerObject.has(ZoneShapeTag.PREVIOUS_ID) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_ID).getAsInt() : -1;
                 if (centerZoneId < 0) {
                     BattleRoyale.LOGGER.info("Skipped invalid start previous center zone id: {}", centerZoneId);
                     return null;
                 }
+                double centerProgress = centerObject.has(ZoneShapeTag.PREVIOUS_PROGRESS) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_PROGRESS).getAsDouble() : 1;
+                endEntry.addPreviousCenter(centerZoneId, centerProgress);
                 if (centerType == EndCenterType.RELATIVE) {
                     String centerPosString = centerObject.has(ZoneShapeTag.RELATIVE) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.RELATIVE).getAsString() : "";
-                    centerPos = StringUtils.parseVectorString(centerPosString);
+                    Vec3 centerPos = StringUtils.parseVectorString(centerPosString);
                     if (centerPos == null) {
                         BattleRoyale.LOGGER.info("Skipped invalid end relative centerPos string: {}", centerPosString);
                         return null;
                     }
+                    endEntry.addRelativeCenter(centerPos);
                 }
             }
             case LOCK_PLAYER -> {
-                playerId = centerObject.has(ZoneShapeTag.PLAYER_ID) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.PLAYER_ID).getAsInt() : 0;
+                int playerId = centerObject.has(ZoneShapeTag.PLAYER_ID) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.PLAYER_ID).getAsInt() : 0;
                 if (playerId < 0) {
                     BattleRoyale.LOGGER.info("Invalid playerId {}, defaulting to 0 (random select)", playerId);
                     playerId = 0;
                 }
-                selectStanding = centerObject.has(ZoneShapeTag.SELECT_STANDING) && centerObject.getAsJsonPrimitive(ZoneShapeTag.SELECT_STANDING).getAsBoolean();
+                boolean selectStanding = centerObject.has(ZoneShapeTag.SELECT_STANDING) && centerObject.getAsJsonPrimitive(ZoneShapeTag.SELECT_STANDING).getAsBoolean();
+                endEntry.addLockCenter(playerId, selectStanding);
             }
         }
-        centerRange = centerObject.has(ZoneShapeTag.RANDOM_RANGE) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.RANDOM_RANGE).getAsDouble() : 0;
+        double centerRange = centerObject.has(ZoneShapeTag.RANDOM_RANGE) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.RANDOM_RANGE).getAsDouble() : 0;
+        endEntry.addCenterRange(centerRange);
 
-        Vec3 dimension = Vec3.ZERO;
-        int dimensionZoneId = -1;
-        double dimensionScale = 1;
-        double dimensionRange = 0;
+        // dimension
         switch (dimensionType) {
             case FIXED -> {
                 String dimensionString = dimensionObject.has(ZoneShapeTag.FIXED) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.FIXED).getAsString() : "";
-                dimension = StringUtils.parseVectorString(dimensionString);
+                Vec3 dimension = StringUtils.parseVectorString(dimensionString);
                 if (dimension == null) {
                     BattleRoyale.LOGGER.info("Skipped invalid end fixed dimension string: {}", dimensionString);
                     return null;
                 }
+                endEntry.addFixedDimension(dimension);
             }
             case PREVIOUS, RELATIVE -> {
-                dimensionZoneId = dimensionObject.has(ZoneShapeTag.PREVIOUS_ID) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_ID).getAsInt() : -1;
-                dimensionScale = dimensionObject.has(ZoneShapeTag.PREVIOUS_SCALE) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_SCALE).getAsDouble() : 1;
+                int dimensionZoneId = dimensionObject.has(ZoneShapeTag.PREVIOUS_ID) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_ID).getAsInt() : -1;
+                double dimensionScale = dimensionObject.has(ZoneShapeTag.PREVIOUS_SCALE) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_SCALE).getAsDouble() : 1;
                 if (dimensionZoneId < 0) {
                     BattleRoyale.LOGGER.info("Skipped invalid start previous dimension zone id: {}", dimensionZoneId);
                     return null;
@@ -121,20 +171,24 @@ public class EndEntry {
                     BattleRoyale.LOGGER.info("Skipped invalid start previous dimension scale: {}", dimensionScale);
                     return null;
                 }
+                double dimensionProgress = dimensionObject.has(ZoneShapeTag.PREVIOUS_PROGRESS) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_PROGRESS).getAsDouble() : 1;
+                endEntry.addPreviousDimension(dimensionZoneId, dimensionProgress);
+                endEntry.addDimensionScale(dimensionScale);
                 if (dimensionType == EndDimensionType.RELATIVE) {
                     String dimensionString = dimensionObject.has(ZoneShapeTag.RELATIVE) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.RELATIVE).getAsString() : "";
-                    dimension = StringUtils.parseVectorString(dimensionString);
+                    Vec3 dimension = StringUtils.parseVectorString(dimensionString);
                     if (dimension == null) {
                         BattleRoyale.LOGGER.info("Skipped invalid end relative dimension string: {}", dimensionString);
                         return null;
                     }
+                    endEntry.addRelativeDimension(dimension);
                 }
             }
         }
-        dimensionRange = dimensionObject.has(ZoneShapeTag.RANDOM_RANGE) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.RANDOM_RANGE).getAsDouble() : 0;
+        double dimensionRange = dimensionObject.has(ZoneShapeTag.RANDOM_RANGE) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.RANDOM_RANGE).getAsDouble() : 0;
+        endEntry.addDimensionRange(dimensionRange);
 
-        return new EndEntry(centerType, centerPos, centerZoneId, centerRange, playerId, selectStanding,
-                dimensionType, dimension, dimensionZoneId, dimensionScale, dimensionRange);
+        return endEntry;
     }
 
     public JsonObject toJson() {
@@ -157,6 +211,7 @@ public class EndEntry {
             case FIXED -> centerObject.addProperty(ZoneShapeTag.FIXED, StringUtils.vectorToString(endCenterPos));
             case PREVIOUS, RELATIVE -> {
                 centerObject.addProperty(ZoneShapeTag.PREVIOUS_ID, endCenterZoneId);
+                centerObject.addProperty(ZoneShapeTag.PREVIOUS_PROGRESS, endCenterProgress);
                 if (endCenterType == EndCenterType.RELATIVE) {
                     centerObject.addProperty(ZoneShapeTag.RELATIVE, StringUtils.vectorToString(endCenterPos));
                 }
@@ -177,7 +232,8 @@ public class EndEntry {
         switch (endDimensionType) {
             case FIXED -> dimensionObject.addProperty(ZoneShapeTag.FIXED, StringUtils.vectorToString(endDimension));
             case PREVIOUS, RELATIVE -> {
-                dimensionObject.addProperty(ZoneShapeTag.PREVIOUS_ID, endCenterZoneId);
+                dimensionObject.addProperty(ZoneShapeTag.PREVIOUS_ID, endDimensionZoneId);
+                dimensionObject.addProperty(ZoneShapeTag.PREVIOUS_PROGRESS, endDimensionProgress);
                 dimensionObject.addProperty(ZoneShapeTag.PREVIOUS_SCALE, endDimensionScale);
                 if (endDimensionType == EndDimensionType.RELATIVE) {
                     dimensionObject.addProperty(ZoneShapeTag.RELATIVE, StringUtils.vectorToString(endDimension));

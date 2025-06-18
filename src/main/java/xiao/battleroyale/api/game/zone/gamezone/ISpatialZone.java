@@ -71,8 +71,5 @@ public interface ISpatialZone {
     /**
      * 供多边形使用
      */
-    default
-    int getSegments() {
-        return 3;
-    }
+    int getSegments();
 }
