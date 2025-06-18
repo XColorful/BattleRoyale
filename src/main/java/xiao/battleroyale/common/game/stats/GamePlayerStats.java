@@ -1,10 +1,10 @@
 package xiao.battleroyale.common.game.stats;
 
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.stats.type.DownRecord;
-import xiao.battleroyale.common.game.stats.type.HurtRecord;
-import xiao.battleroyale.common.game.stats.type.KillRecord;
-import xiao.battleroyale.common.game.stats.type.ReviveRecord;
+import xiao.battleroyale.common.game.stats.common.DownRecord;
+import xiao.battleroyale.common.game.stats.common.HurtRecord;
+import xiao.battleroyale.common.game.stats.common.KillRecord;
+import xiao.battleroyale.common.game.stats.common.ReviveRecord;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
 import java.util.ArrayList;

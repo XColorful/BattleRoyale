@@ -1,4 +1,6 @@
-package xiao.battleroyale.common.game.stats.type;
+package xiao.battleroyale.common.game.stats.common;
+
+import javax.json.JsonObject;
 
 /**
  * 伤害事件的记录
@@ -28,5 +30,15 @@ public class HurtRecord extends AbstractCommonRecord<HurtRecord> {
     public HurtRecord copyRecord(int gameTimeAppend, int timeOrder) {
         HurtRecord newRecord = new HurtRecord(this.gameTime + gameTimeAppend, timeOrder);
         return newRecord;
+    }
+
+    @Override
+    public JsonObject getSubjective() {
+        return null;
+    }
+
+    @Override
+    public JsonObject getObjective() {
+        return null;
     }
 }

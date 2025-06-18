@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.game.stats;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.stats.game.GameruleRecord;
+import xiao.battleroyale.common.game.stats.game.SpawnRecord;
+import xiao.battleroyale.common.game.stats.game.ZoneRecord;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -42,9 +46,21 @@ public class StatsManager extends AbstractGameManager {
 
     public static final String STATS_SUB_PATH = "stats";
     public static final String STATS_PATH = Paths.get(AbstractGameManager.MOD_DATA_PATH).resolve(STATS_SUB_PATH).toString();
+    private static final String STATS_TAG = "stats";
+    private static final String GAMERULE_TAG = "gamerule";
+    private static final String TIMELINE_TAG = "timeline";
+    private static final String RANK_TAG = "rank";
+    private static final String DETAIL_TAG = "detail";
 
-    private Map<GamePlayer, GamePlayerStats> gamePlayerStats = new HashMap<>();
-    private Map<DamageSource, DamageSourceStats> damageSourceStats = new HashMap<>();
+    // player
+    private final Map<GamePlayer, GamePlayerStats> gamePlayerStats = new HashMap<>();
+    private final Map<DamageSource, DamageSourceStats> damageSourceStats = new HashMap<>();
+    // zone
+    private final Map<Integer, ZoneRecord> zoneStats = new HashMap<>(); // zoneId -> ZoneRecord
+    private final Map<Integer, SpawnRecord> spawnStats = new HashMap<>(); // gameSingleId -> SpawnRecord
+    // gamerule
+    private final GameruleRecord gameruleStats = new GameruleRecord();
+
     private int timeOrder = 0;
     private int minRank = Integer.MAX_VALUE;
     private int maxRank = Integer.MIN_VALUE;
@@ -106,6 +122,7 @@ public class StatsManager extends AbstractGameManager {
     private void clearStats() {
         gamePlayerStats.clear();
         damageSourceStats.clear();
+        zoneStats.clear();
         timeOrder = 0;
         minRank = Integer.MAX_VALUE;
         maxRank = Integer.MIN_VALUE;
@@ -187,6 +204,59 @@ public class StatsManager extends AbstractGameManager {
 
     }
 
+    public void onRecordIntGamerule(Map<String, Integer> intGamerule) {
+        if (!shouldRecordStats()) {
+            return;
+        }
+
+        intGamerule.forEach((key, value) -> {
+            if (value != null) {
+                gameruleStats.intGamerule.put(key, value);
+            } else {
+                gameruleStats.intGamerule.remove(key);
+            }
+        });
+    }
+    public void onRecordBoolGamerule(Map<String, Boolean> boolGamerule) {
+        if (!shouldRecordStats()) {
+            return;
+        }
+
+        boolGamerule.forEach((key, value) -> {
+            if (Boolean.TRUE.equals(value)) {
+                gameruleStats.boolGamerule.put(key, value);
+            } else {
+                gameruleStats.boolGamerule.remove(key);
+            }
+        });
+    }
+    public void onRecordDoubleGamerule(Map<String, Double> doubleGamerule) {
+        if (!shouldRecordStats()) {
+            return;
+        }
+
+        doubleGamerule.forEach((key, value) -> {
+            if (value != null) {
+                gameruleStats.doubleGamerule.put(key, value);
+            } else {
+                gameruleStats.doubleGamerule.remove(key);
+            }
+        });
+    }
+    public void onRecordStringGamerule(Map<String, String> stringGamerule) {
+        if (!shouldRecordStats()) {
+            return;
+        }
+
+        stringGamerule.forEach((key, value) -> {
+            if (value != null) {
+                gameruleStats.stringGamerule.put(key, value);
+            } else {
+                gameruleStats.stringGamerule.remove(key);
+            }
+        });
+    }
+
     private String generateStateDirectory() {
         String fileName = startSystemTime + "_" + totalPlayers + ".json";
         return Paths.get(STATS_PATH, fileName).toString();
@@ -205,6 +275,7 @@ public class StatsManager extends AbstractGameManager {
 
         String filePath = generateStateDirectory();
         JsonArray jsonArray = new JsonArray();
+        addGameruleStats(jsonArray);
         JsonUtils.writeJsonToFile(filePath, jsonArray);
 
         ServerLevel serverLevel = GameManager.get().getServerLevel();
@@ -214,6 +285,28 @@ public class StatsManager extends AbstractGameManager {
             BattleRoyale.LOGGER.warn("GameManager doesn't have valid serverLevel, can't send message");
         }
         BattleRoyale.LOGGER.info("Saved game stats to {}", filePath);
+    }
+
+    private void addGameruleStats(@NotNull JsonArray jsonArray) {
+        JsonObject statsObject = new JsonObject();
+        statsObject.addProperty(STATS_TAG, GAMERULE_TAG);
+        JsonObject gameruleObject = new JsonObject();
+
+        for (Map.Entry<String, Integer> entry : gameruleStats.intGamerule.entrySet()) {
+            gameruleObject.addProperty(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<String, Boolean> entry : gameruleStats.boolGamerule.entrySet()) {
+            gameruleObject.addProperty(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<String, Double> entry : gameruleStats.doubleGamerule.entrySet()) {
+            gameruleObject.addProperty(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<String, String> entry : gameruleStats.stringGamerule.entrySet()) {
+            gameruleObject.addProperty(entry.getKey(), entry.getValue());
+        }
+
+        statsObject.add(GAMERULE_TAG, gameruleObject);
+        jsonArray.add(statsObject);
     }
 
     /**
@@ -229,6 +322,13 @@ public class StatsManager extends AbstractGameManager {
         ;
     }
     public void getGameTeamStats(int teamId) {
+        ;
+    }
+
+    /**
+     * 提供查询其他统计数据的接口
+     */
+    public void getGameruleStats(String gameruleName) {
         ;
     }
 }

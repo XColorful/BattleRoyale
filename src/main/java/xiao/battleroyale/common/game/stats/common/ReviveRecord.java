@@ -1,4 +1,6 @@
-package xiao.battleroyale.common.game.stats.type;
+package xiao.battleroyale.common.game.stats.common;
+
+import javax.json.JsonObject;
 
 /**
  * 救援事件的记录，包含倒地扶起，不死图腾自救
@@ -28,5 +30,15 @@ public class ReviveRecord extends AbstractCommonRecord<ReviveRecord> {
     public ReviveRecord copyRecord(int gameTimeAppend, int timeOrder) {
         ReviveRecord newRecord = new ReviveRecord(this.gameTime + gameTimeAppend, timeOrder);
         return newRecord;
+    }
+
+    @Override
+    public JsonObject getSubjective() {
+        return null;
+    }
+
+    @Override
+    public JsonObject getObjective() {
+        return null;
     }
 }

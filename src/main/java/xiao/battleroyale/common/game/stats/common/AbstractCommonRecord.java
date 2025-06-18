@@ -1,4 +1,6 @@
-package xiao.battleroyale.common.game.stats.type;
+package xiao.battleroyale.common.game.stats.common;
+
+import javax.json.JsonObject;
 
 public abstract class AbstractCommonRecord<T extends AbstractCommonRecord<T>> {
 
@@ -38,4 +40,14 @@ public abstract class AbstractCommonRecord<T extends AbstractCommonRecord<T>> {
     public int getRecordDuration() {
         return this.recordDuration;
     }
+
+    /**
+     * 返回个人视角下的记录
+     */
+    public abstract JsonObject getSubjective();
+
+    /**
+     * 返回客观视角的记录
+     */
+    public abstract JsonObject getObjective();
 }

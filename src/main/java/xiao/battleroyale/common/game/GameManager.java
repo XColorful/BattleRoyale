@@ -13,12 +13,14 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.common.game.effect.firework.FireworkManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.stats.StatsManager;
+import xiao.battleroyale.common.game.stats.game.GameruleRecord;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
@@ -32,6 +34,7 @@ import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.ColorUtils;
 
+import javax.json.JsonObject;
 import java.util.*;
 import java.util.List;
 import java.util.function.Supplier;
@@ -582,7 +585,6 @@ public class GameManager extends AbstractGameManager {
     public void safeTeleport(@NotNull ServerPlayer player, Vec3 teleportPos) {
         safeTeleport(player, teleportPos.x, teleportPos.y, teleportPos.z);
     }
-
     /**
      * 安全传送，文明掉落
      * 传送不规范，玩家两行泪
@@ -592,6 +594,7 @@ public class GameManager extends AbstractGameManager {
         player.teleportTo(x, y, z);
     }
 
+    // TeamManager
     public int getPlayerLimit() { return TeamManager.get().getPlayerLimit(); }
     public @Nullable GamePlayer getGamePlayerByUUID(UUID uuid) { return TeamManager.get().getGamePlayerByUUID(uuid); }
     public @Nullable GamePlayer getGamePlayerBySingleId(int playerId) { return TeamManager.get().getGamePlayerBySingleId(playerId); }
@@ -599,7 +602,18 @@ public class GameManager extends AbstractGameManager {
     public @Nullable GameTeam getGameTeamById(int teamId) { return TeamManager.get().getGameTeamById(teamId); }
     public List<GamePlayer> getGamePlayers() { return TeamManager.get().getGamePlayersList(); }
     public List<GamePlayer> getStandingGamePlayers() { return TeamManager.get().getStandingGamePlayersList(); }
+    // StatsManager
     public boolean shouldRecordStats() { return StatsManager.get().shouldRecordStats(); }
+    public void recordIntGamerule(Map<String, Integer> intGamerule) { StatsManager.get().onRecordIntGamerule(intGamerule); }
+    public void recordBoolGamerule(Map<String, Boolean> boolGamerule) { StatsManager.get().onRecordBoolGamerule(boolGamerule); }
+    public void recordDoubleGamerule(Map<String, Double> doubleGamerule) { StatsManager.get().onRecordDoubleGamerule(doubleGamerule); }
+    public void recordStringGamerule(Map<String, String> stringGamerule) { StatsManager.get().onRecordStringGamerule(stringGamerule); }
+    public void recordGamerule(IStatsWriter gamerule) {
+        recordIntGamerule(gamerule.getIntGamerule());
+        recordBoolGamerule(gamerule.getBoolGamerule());
+        recordDoubleGamerule(gamerule.getDoubleGamerule());
+        recordStringGamerule(gamerule.getStringGamerule());
+    }
 
     public int getGameTime() { return this.gameTime; }
 
@@ -659,12 +673,16 @@ public class GameManager extends AbstractGameManager {
         FireworkManager.get().forceEnd();
     }
     private void initGameSubManager() {
+        StatsManager.get().initGame(serverLevel); // 先清空stats
         GameLootManager.get().initGame(serverLevel);
         TeamManager.get().initGame(serverLevel);
         GameruleManager.get().initGame(serverLevel); // Gamerule会进行一次默认游戏模式切换
         SpawnManager.get().initGame(serverLevel); // SpawnManager会进行一次传送，放在TeamManager之后
         ZoneManager.get().initGame(serverLevel);
-        StatsManager.get().initGame(serverLevel);
+
+        Map<String, Integer> intGamerule = new HashMap<>();
+        intGamerule.put("maxGameTime", maxGameTime);
+        recordIntGamerule(intGamerule);
     }
     private boolean startGameSubManager() {
         if (!GameLootManager.get().startGame(serverLevel)) { // 判定的优先级最高

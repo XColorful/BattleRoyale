@@ -1,4 +1,6 @@
-package xiao.battleroyale.common.game.stats.type;
+package xiao.battleroyale.common.game.stats.common;
+
+import javax.json.JsonObject;
 
 /**
  * 倒地事件的记录
@@ -28,5 +30,15 @@ public class DownRecord extends AbstractCommonRecord<DownRecord> {
     public DownRecord copyRecord(int gameTimeAppend, int timeOrder) {
         DownRecord newRecord = new DownRecord(this.gameTime + gameTimeAppend, timeOrder);
         return newRecord;
+    }
+
+    @Override
+    public JsonObject getSubjective() {
+        return null;
+    }
+
+    @Override
+    public JsonObject getObjective() {
+        return null;
     }
 }

@@ -1,4 +1,6 @@
-package xiao.battleroyale.common.game.stats.type;
+package xiao.battleroyale.common.game.stats.common;
+
+import javax.json.JsonObject;
 
 /**
  * 淘汰事件记录
@@ -28,5 +30,15 @@ public class KillRecord extends AbstractCommonRecord<KillRecord> {
     public KillRecord copyRecord(int gameTimeAppend, int timeOrder) {
         KillRecord newRecord = new KillRecord(this.gameTime + gameTimeAppend, timeOrder);
         return newRecord;
+    }
+
+    @Override
+    public JsonObject getSubjective() {
+        return null;
+    }
+
+    @Override
+    public JsonObject getObjective() {
+        return null;
     }
 }

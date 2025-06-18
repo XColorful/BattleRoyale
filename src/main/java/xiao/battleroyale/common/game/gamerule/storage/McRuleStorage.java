@@ -7,9 +7,11 @@ import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.storage.IRuleStorage;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
+import xiao.battleroyale.api.game.gamerule.MinecraftEntryTag;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 public class McRuleStorage implements IRuleStorage {
 
@@ -107,5 +109,30 @@ public class McRuleStorage implements IRuleStorage {
     public void clear() {
         this.currentRule = null;
         this.backupRule = null;
+    }
+
+    public Map<String, Integer> getIntGamerule() {
+        if (currentRule == null) {
+            return new HashMap<>();
+        }
+        Map<String, Integer> intGamerule = new HashMap<>();
+        intGamerule.put(MinecraftEntryTag.TIME_SET, currentRule.timeSet);
+        return intGamerule;
+    }
+    public Map<String, Boolean> getBoolGamerule() {
+        if (currentRule == null) {
+            return new HashMap<>();
+        }
+        Map<String, Boolean> boolGamerule = new HashMap<>();
+        boolGamerule.put(MinecraftEntryTag.MOB_GRIEFING, currentRule.mobGriefing());
+        boolGamerule.put(MinecraftEntryTag.NATURAL_REGENERATION, currentRule.naturalRegeneration());
+        boolGamerule.put(MinecraftEntryTag.DO_MOB_SPAWNING, currentRule.doMobSpawning());
+        boolGamerule.put(MinecraftEntryTag.DO_FIRE_TICK, currentRule.doFireTick());
+        boolGamerule.put(MinecraftEntryTag.DO_DAYLIGHT_CYCLE, currentRule.doDaylightCycle());
+        boolGamerule.put(MinecraftEntryTag.DO_WEATHER_CYCLE, currentRule.doWeatherCycle());
+        boolGamerule.put(MinecraftEntryTag.FALL_DAMAGE, currentRule.fallDamage());
+        boolGamerule.put(MinecraftEntryTag.TNT_EXPLOSION_DROP_DECAY, currentRule.tntExplosionDropDecay());
+        boolGamerule.put(MinecraftEntryTag.SPECTATOR_GENERATE_CHUNKS, currentRule.spectatorGenerateChunks());
+        return boolGamerule;
     }
 }
