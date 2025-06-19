@@ -6,6 +6,7 @@ import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.api.loot.item.IItemLootEntry;
 import xiao.battleroyale.common.loot.data.ItemData;
+import xiao.battleroyale.util.JsonUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,9 +34,9 @@ public class ItemEntry implements IItemLootEntry {
     }
 
     public static ItemEntry fromJson(JsonObject jsonObject) {
-        String itemName = jsonObject.has(LootEntryTag.ITEM) ? jsonObject.getAsJsonPrimitive(LootEntryTag.ITEM).getAsString() : "";
-        int count = jsonObject.has(LootEntryTag.COUNT) ? jsonObject.getAsJsonPrimitive(LootEntryTag.COUNT).getAsInt() : 1;
-        String nbtString = jsonObject.has(LootEntryTag.NBT) ? jsonObject.getAsJsonPrimitive(LootEntryTag.NBT).getAsString() : null;
+        String itemName = JsonUtils.getJsonString(jsonObject, LootEntryTag.ITEM, "");
+        int count = JsonUtils.getJsonInt(jsonObject, LootEntryTag.COUNT, 1);
+        String nbtString = JsonUtils.getJsonString(jsonObject, LootEntryTag.NBT, null);
         return new ItemEntry(itemName, nbtString, count);
     }
 

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
+import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.StringUtils;
 
 public class BattleroyaleEntry implements IGameruleEntry {
@@ -57,24 +58,21 @@ public class BattleroyaleEntry implements IGameruleEntry {
         return jsonObject;
     }
 
-    @Nullable
     public static BattleroyaleEntry fromJson(JsonObject jsonObject) {
-        int playerTotal = jsonObject.has(BattleroyaleEntryTag.PLAYER_TOTAL) ? jsonObject.getAsJsonPrimitive(BattleroyaleEntryTag.PLAYER_TOTAL).getAsInt() : 0;
-        int teamSize = jsonObject.has(BattleroyaleEntryTag.TEAM_SIZE) ? jsonObject.getAsJsonPrimitive(BattleroyaleEntryTag.TEAM_SIZE).getAsInt() : 0;
-        boolean aiTeammate = jsonObject.has(BattleroyaleEntryTag.AI_TEAMMATE) && jsonObject.getAsJsonPrimitive(BattleroyaleEntryTag.AI_TEAMMATE).getAsBoolean();
-        boolean aiEnemy = jsonObject.has(BattleroyaleEntryTag.AI_ENEMY) && jsonObject.getAsJsonPrimitive(BattleroyaleEntryTag.AI_ENEMY).getAsBoolean();
-        int maxGameTime = jsonObject.has(BattleroyaleEntryTag.MAX_GAME_TIME) ? jsonObject.getAsJsonPrimitive(BattleroyaleEntryTag.MAX_GAME_TIME).getAsInt() : 0;
-        String lobbyCenterString = jsonObject.has(BattleroyaleEntryTag.LOBBY_CENTER) ? jsonObject.getAsJsonPrimitive(BattleroyaleEntryTag.LOBBY_CENTER).getAsString() : null;
-        Vec3 lobbyCenterPos = StringUtils.parseVectorString(lobbyCenterString);
-        String lobbyDimensionString = jsonObject.has(BattleroyaleEntryTag.LOBBY_DIMENSION) ? jsonObject.getAsJsonPrimitive(BattleroyaleEntryTag.LOBBY_DIMENSION).getAsString() : null;
-        Vec3 lobbyDimension = StringUtils.parseVectorString(lobbyDimensionString);
+        int playerTotal = JsonUtils.getJsonInt(jsonObject, BattleroyaleEntryTag.PLAYER_TOTAL, 0);
+        int teamSize = JsonUtils.getJsonInt(jsonObject, BattleroyaleEntryTag.TEAM_SIZE, 0);
+        boolean aiTeammate = JsonUtils.getJsonBoolean(jsonObject, BattleroyaleEntryTag.AI_TEAMMATE, false);
+        boolean aiEnemy = JsonUtils.getJsonBoolean(jsonObject, BattleroyaleEntryTag.AI_ENEMY, false);
+        int maxGameTime = JsonUtils.getJsonInt(jsonObject, BattleroyaleEntryTag.MAX_GAME_TIME, 0);
+        Vec3 lobbyCenterPos = JsonUtils.getJsonVec(jsonObject, BattleroyaleEntryTag.LOBBY_CENTER, null);
+        Vec3 lobbyDimension = JsonUtils.getJsonVec(jsonObject, BattleroyaleEntryTag.LOBBY_DIMENSION, null);
         if (lobbyCenterPos == null || lobbyDimension == null) {
             BattleRoyale.LOGGER.info("Invalid lobbyCenter or lobbyDimension for BattleroyaleEntry, skipped");
             return null;
         }
-        boolean lobbyMuteki = jsonObject.has(BattleroyaleEntryTag.LOBBY_MUTEKI) && jsonObject.getAsJsonPrimitive(BattleroyaleEntryTag.LOBBY_MUTEKI).getAsBoolean();
-        boolean recordGameStats = jsonObject.has(BattleroyaleEntryTag.RECORD_STATS) && jsonObject.getAsJsonPrimitive(BattleroyaleEntryTag.RECORD_STATS).getAsBoolean();
-        boolean autoJoinGame = jsonObject.has(BattleroyaleEntryTag.AUTO_JOIN) && jsonObject.getAsJsonPrimitive(BattleroyaleEntryTag.AUTO_JOIN).getAsBoolean();
+        boolean lobbyMuteki = JsonUtils.getJsonBoolean(jsonObject, BattleroyaleEntryTag.LOBBY_MUTEKI, false);
+        boolean recordGameStats = JsonUtils.getJsonBoolean(jsonObject, BattleroyaleEntryTag.RECORD_STATS, false);
+        boolean autoJoinGame = JsonUtils.getJsonBoolean(jsonObject, BattleroyaleEntryTag.AUTO_JOIN, false);
         return new BattleroyaleEntry(playerTotal, teamSize, aiTeammate, aiEnemy, maxGameTime,
                 lobbyCenterPos, lobbyDimension, lobbyMuteki,
                 recordGameStats, autoJoinGame);

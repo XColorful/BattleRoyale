@@ -8,6 +8,7 @@ import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
+import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ public class MultiEntry implements ILootEntry {
     public static MultiEntry fromJson(JsonObject jsonObject) {
         List<ILootEntry> entries = new ArrayList<>();
         if (jsonObject.has(LootEntryTag.ENTRIES)) {
-            JsonArray entriesArray = jsonObject.getAsJsonArray(LootEntryTag.ENTRIES);
+            JsonArray entriesArray = JsonUtils.getJsonArray(jsonObject, LootEntryTag.ENTRIES, null);
             if (entriesArray != null) {
                 for (JsonElement element : entriesArray) {
                     if (!element.isJsonObject()) {

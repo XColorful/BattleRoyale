@@ -3,11 +3,13 @@ package xiao.battleroyale.config.common.loot.type;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
+import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +20,9 @@ public class WeightEntry implements ILootEntry {
 
     public static class WeightedEntry {
         private final double weight;
-        private final ILootEntry entry;
+        protected final ILootEntry entry;
 
-        public WeightedEntry(double weight, ILootEntry entry) {
+        public WeightedEntry(double weight, @NotNull ILootEntry entry) {
             if (weight < 0) {
                 weight = 0;
             }
@@ -74,22 +76,18 @@ public class WeightEntry implements ILootEntry {
 
     public static WeightEntry fromJson(JsonObject jsonObject) {
         List<WeightedEntry> weightedEntries = new ArrayList<>();
-        if (jsonObject.has(LootEntryTag.ENTRIES)) {
-            JsonArray itemsArray = jsonObject.getAsJsonArray(LootEntryTag.ENTRIES);
-            if (itemsArray != null) {
-                for (JsonElement element : itemsArray) {
-                    if (!element.isJsonObject()) {
-                        continue;
-                    }
-                    JsonObject itemObject = element.getAsJsonObject();
-                    double weight = itemObject.has(LootEntryTag.WEIGHT) ? itemObject.getAsJsonPrimitive(LootEntryTag.WEIGHT).getAsDouble() : 0;
-                    if (itemObject.has(LootEntryTag.ENTRY)) {
-                        JsonObject entryObject = itemObject.getAsJsonObject(LootEntryTag.ENTRY);
-                        ILootEntry entry = LootConfig.deserializeLootEntry(entryObject);
-                        if (entry != null) {
-                            weightedEntries.add(new WeightedEntry(weight, entry));
-                        }
-                    }
+        JsonArray itemsArray = JsonUtils.getJsonArray(jsonObject, LootEntryTag.ENTRIES, null);
+        if (itemsArray != null) {
+            for (JsonElement element : itemsArray) {
+                if (!element.isJsonObject()) {
+                    continue;
+                }
+                JsonObject itemObject = element.getAsJsonObject();
+                double weight = JsonUtils.getJsonDouble(itemObject, LootEntryTag.WEIGHT, 0);
+                JsonObject entryObject = JsonUtils.getJsonObject(itemObject, LootEntryTag.ENTRY, null);
+                ILootEntry entry = LootConfig.deserializeLootEntry(entryObject);
+                if (entry != null) {
+                    weightedEntries.add(new WeightedEntry(weight, entry));
                 }
             }
         }
@@ -104,9 +102,7 @@ public class WeightEntry implements ILootEntry {
         for (WeightedEntry weightedEntry : weightedEntries) {
             JsonObject itemObject = new JsonObject();
             itemObject.addProperty(LootEntryTag.WEIGHT, weightedEntry.weight);
-            if (weightedEntry.entry != null) {
-                itemObject.add(LootEntryTag.ENTRY, weightedEntry.entry.toJson());
-            }
+            itemObject.add(LootEntryTag.ENTRY, weightedEntry.entry.toJson());
             itemsArray.add(itemObject);
         }
         jsonObject.add(LootEntryTag.ENTRIES, itemsArray);

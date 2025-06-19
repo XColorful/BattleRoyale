@@ -108,7 +108,12 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
             return getLootId();
         }
 
-        public static ILootEntry deserializeLootEntry(JsonObject jsonObject) {
+        @Nullable
+        public static ILootEntry deserializeLootEntry(@Nullable JsonObject jsonObject) {
+            if (jsonObject == null) {
+                BattleRoyale.LOGGER.warn("jsonObject is null, failed to deserialize LootEntry");
+                return null;
+            }
             try {
                 String type = jsonObject.getAsJsonPrimitive(LootEntryTag.TYPE_NAME).getAsString();
                 if (type == null) type = "";

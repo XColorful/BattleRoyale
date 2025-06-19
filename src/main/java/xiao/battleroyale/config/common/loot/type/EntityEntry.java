@@ -6,6 +6,7 @@ import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.api.loot.entity.IEntityLootEntry;
 import xiao.battleroyale.common.loot.data.EntityData;
+import xiao.battleroyale.util.JsonUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -52,10 +53,10 @@ public class EntityEntry implements IEntityLootEntry {
     }
 
     public static EntityEntry fromJson(JsonObject jsonObject) {
-        String entityName = jsonObject.has(LootEntryTag.ENTITY) ? jsonObject.getAsJsonPrimitive(LootEntryTag.ENTITY).getAsString() : "";
-        int count = jsonObject.has(LootEntryTag.COUNT) ? jsonObject.getAsJsonPrimitive(LootEntryTag.COUNT).getAsInt() : 1;
-        String nbtString = jsonObject.has(LootEntryTag.NBT) ? jsonObject.getAsJsonPrimitive(LootEntryTag.NBT).getAsString() : null;
-        int range = jsonObject.has(LootEntryTag.RANGE) ? jsonObject.getAsJsonPrimitive(LootEntryTag.RANGE).getAsInt() : 0;
+        String entityName = JsonUtils.getJsonString(jsonObject, LootEntryTag.ENTITY, "");
+        int count = JsonUtils.getJsonInt(jsonObject, LootEntryTag.COUNT, 1);
+        String nbtString = JsonUtils.getJsonString(jsonObject, LootEntryTag.NBT, null);
+        int range = JsonUtils.getJsonInt(jsonObject, LootEntryTag.RANGE, 0);
         return new EntityEntry(entityName, nbtString, count, range);
     }
 }

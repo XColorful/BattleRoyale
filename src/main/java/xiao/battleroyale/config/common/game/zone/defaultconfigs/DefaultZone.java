@@ -134,8 +134,12 @@ public class DefaultZone {
         startEntry.addRelativeDimension(new Vec3(0, 10, 0));
         startEntry.addPreviousDimension(1, 1);
         startEntry.addRelativeDimension(new Vec3(-50, -230, -50));
-        EndEntry endEntry = new EndEntry(EndCenterType.RELATIVE, new Vec3(0, 20, 0), 3, 0, 0, false,
-                EndDimensionType.RELATIVE, new Vec3(50, -5, 50), 3, 1, 0);
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addPreviousCenter(3, 0);
+        endEntry.addRelativeCenter(new Vec3(0, 20, 0));
+        endEntry.addPreviousDimension(3, 0);
+        endEntry.addRelativeDimension(new Vec3(50, -5, 50));
 
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry);
         config.add(ZoneConfigTag.ZONE_SHAPE, circleEntry.toJson());

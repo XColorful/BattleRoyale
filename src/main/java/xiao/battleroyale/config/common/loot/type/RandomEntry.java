@@ -1,11 +1,13 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
+import xiao.battleroyale.util.JsonUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +17,7 @@ public class RandomEntry implements ILootEntry {
     private final double chance;
     private final ILootEntry entry;
 
-    public RandomEntry(double chance, ILootEntry entry) {
+    public RandomEntry(double chance, @Nullable ILootEntry entry) {
         if (chance < 0) {
             chance = 0;
         }
@@ -45,8 +47,9 @@ public class RandomEntry implements ILootEntry {
     }
 
     public static RandomEntry fromJson(JsonObject jsonObject) {
-        double chance = jsonObject.has(LootEntryTag.CHANCE) ? jsonObject.getAsJsonPrimitive(LootEntryTag.CHANCE).getAsDouble() : 0;
-        ILootEntry entry = jsonObject.has(LootEntryTag.ENTRY) ? LootConfig.deserializeLootEntry(jsonObject.getAsJsonObject(LootEntryTag.ENTRY)) : null;
+        double chance = JsonUtils.getJsonDouble(jsonObject, LootEntryTag.CHANCE, 0);
+        JsonObject entryObject = JsonUtils.getJsonObject(jsonObject, LootEntryTag.ENTRY, null);
+        ILootEntry entry = LootConfig.deserializeLootEntry(entryObject);
         return new RandomEntry(chance, entry);
     }
 

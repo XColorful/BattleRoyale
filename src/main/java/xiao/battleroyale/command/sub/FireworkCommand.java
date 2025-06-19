@@ -63,7 +63,7 @@ public class FireworkCommand {
         // /firework <player> <amount> <interval>
         intervalArg_player.then(vRangeArg_player).executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount_Interval);
         // /firework <player> <amount>
-        amountArg_player.then(intervalArg_player).executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount); // 这一步也是关键！
+        amountArg_player.then(intervalArg_player).executes(FireworkCommand::executePlayerTrackingFirework_Player_Amount);
         playerBase.then(amountArg_player);
 
         fireworkCommand.then(coordBase);

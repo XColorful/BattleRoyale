@@ -79,38 +79,32 @@ public class TeleportEntry implements ISpawnEntry {
     @Nullable
     public static TeleportEntry fromJson(JsonObject jsonObject) {
         // common
-        String shapeTypeString = jsonObject.has(SpawnShapeTag.TYPE_NAME) ? jsonObject.getAsJsonPrimitive(SpawnShapeTag.TYPE_NAME).getAsString() : "";
-        SpawnShapeType shapeType = SpawnShapeType.fromName(shapeTypeString);
+        SpawnShapeType shapeType = SpawnShapeType.fromName(JsonUtils.getJsonString(jsonObject, SpawnShapeTag.TYPE_NAME, ""));
         if (shapeType == null) {
             BattleRoyale.LOGGER.info("Unknown shapeType in GroundEntry, skipped");
             return null;
         }
-        String centerString = jsonObject.has(SpawnShapeTag.CENTER) ? jsonObject.getAsJsonPrimitive(SpawnShapeTag.CENTER).getAsString() : "";
-        String dimensionString = jsonObject.has(SpawnShapeTag.DIMENSION) ? jsonObject.getAsJsonPrimitive(SpawnShapeTag.DIMENSION).getAsString() : "";
-        Vec3 center = StringUtils.parseVectorString(centerString);
-        Vec3 dimension = StringUtils.parseVectorString(dimensionString);
+        Vec3 center = JsonUtils.getJsonVec(jsonObject, SpawnShapeTag.CENTER, null);
+        Vec3 dimension = JsonUtils.getJsonVec(jsonObject, SpawnShapeTag.DIMENSION, null);
         if (center == null || dimension == null) {
             BattleRoyale.LOGGER.info("Invalid center or dimension in GroundEntry, skipped");
             return null;
         }
 
         // detail
-        String detailTypeString = jsonObject.has(SpawnDetailTag.TYPE_NAME) ? jsonObject.getAsJsonPrimitive(SpawnDetailTag.TYPE_NAME).getAsString() : "";
-        CommonDetailType detailType = CommonDetailType.fromName(detailTypeString);
+        CommonDetailType detailType = CommonDetailType.fromName(JsonUtils.getJsonString(jsonObject, SpawnDetailTag.TYPE_NAME, ""));
         if (detailType == null) {
             BattleRoyale.LOGGER.info("Unknown detailType for GroundEntry, skipped");
             return null;
         }
         List<Vec3> fixedPos = new ArrayList<>();
         switch (detailType) {
-            case FIXED -> { fixedPos = jsonObject.has(SpawnDetailTag.GROUND_FIXED_POS) ?
-                    JsonUtils.readVec3ListFromJson(jsonObject.getAsJsonArray(SpawnDetailTag.GROUND_FIXED_POS))
-                    : new ArrayList<>(); }
+            case FIXED -> fixedPos = JsonUtils.getJsonVecList(jsonObject, SpawnDetailTag.GROUND_FIXED_POS);
             case RANDOM -> {}
         }
-        boolean teamTogether = jsonObject.has(SpawnDetailTag.GROUND_TEAM_TOGETHER) && jsonObject.getAsJsonPrimitive(SpawnDetailTag.GROUND_TEAM_TOGETHER).getAsBoolean();
-        boolean findGround = jsonObject.has(SpawnDetailTag.GROUND_FIND_GROUND) && jsonObject.getAsJsonPrimitive(SpawnDetailTag.GROUND_FIND_GROUND).getAsBoolean();
-        double range = jsonObject.has(SpawnDetailTag.GROUND_RANDOM_RANGE) ? jsonObject.getAsJsonPrimitive(SpawnDetailTag.GROUND_RANDOM_RANGE).getAsDouble() : 0;
+        boolean teamTogether = JsonUtils.getJsonBoolean(jsonObject, SpawnDetailTag.GROUND_TEAM_TOGETHER, false);
+        boolean findGround = JsonUtils.getJsonBoolean(jsonObject, SpawnDetailTag.GROUND_FIND_GROUND, false);
+        double range = JsonUtils.getJsonDouble(jsonObject, SpawnDetailTag.GROUND_FIND_GROUND, 0);
 
         return new TeleportEntry(shapeType, center, dimension,
                 detailType,

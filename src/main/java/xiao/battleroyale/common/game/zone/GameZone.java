@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
@@ -230,6 +229,10 @@ public class GameZone implements IGameZone {
 
         GameManager.get().recordZoneInt(this.zoneId, intWriter);
         GameManager.get().recordZoneString(this.zoneId, stringWriter);
+    }
+
+    public static double allowedProgress(double progress) {
+        return Math.min(Math.max(0, progress), 1);
     }
 
     // ISpatialZone

@@ -12,6 +12,7 @@ import xiao.battleroyale.api.game.zone.shape.start.StartCenterType;
 import xiao.battleroyale.api.game.zone.shape.start.StartDimensionType;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
@@ -36,6 +37,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     protected Vec3 cachedCenter = Vec3.ZERO;
     protected Vec3 cachedDimension = Vec3.ZERO;
     protected double cachedProgress = -1;
+    protected static final double EPSILON = 1.0E-9; // 移动30分钟的圈每tick的变化为 2.778 x 10^-5
 
     protected boolean determined = false;
     protected Vec3 centerDist;
@@ -60,9 +62,9 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
         if (!isDetermined()) {
             return false;
         }
-        double allowedProgress = Math.min(progress, 1);
+        double allowedProgress = GameZone.allowedProgress(progress);
         Vec3 center, dimension;
-        if (Math.abs(allowedProgress - cachedProgress) < 0.0000001) {
+        if (Math.abs(allowedProgress - cachedProgress) < EPSILON) {
             center = cachedCenter;
             dimension = cachedDimension;
         } else {
@@ -90,7 +92,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                     }
                 }
                 case LOCK_PLAYER -> {
-                    int playerId = startEntry.playerId;
+                    int playerId = startEntry.centerPlayerId;
                     if (playerId <= 0) {
                         if (startEntry.selectStanding) {
                             playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
@@ -143,7 +145,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                     }
                 }
                 case LOCK_PLAYER -> {
-                    int playerId = endEntry.playerId;
+                    int playerId = endEntry.centerPlayerId;
                     if (playerId <= 0) {
                         if (endEntry.selectStanding) {
                             playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
@@ -219,7 +221,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
     @Override
     public @Nullable Vec3 getCenterPos(double progress) {
-        double allowedProgress = Math.max(Math.min(progress, 1), 0);
+        double allowedProgress = GameZone.allowedProgress(progress);
         if (!determined) {
             BattleRoyale.LOGGER.warn("Shape center is not fully determined yet, may produce unexpected progress calculation");
         }
@@ -240,7 +242,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
     @Override
     public @Nullable Vec3 getDimension(double progress) {
-        double allowedProgress = Math.max(Math.min(progress, 1), 0);
+        double allowedProgress = GameZone.allowedProgress(progress);
         if (!determined) {
             BattleRoyale.LOGGER.warn("Shape dimension is not fully determined yet, may produce unexpected progress calculation");
         }

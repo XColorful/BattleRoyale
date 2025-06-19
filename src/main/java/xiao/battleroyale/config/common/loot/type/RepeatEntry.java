@@ -1,11 +1,13 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
+import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,7 @@ public class RepeatEntry implements ILootEntry {
     private final int max;
     private final ILootEntry entry;
 
-    public RepeatEntry(int min, int max, ILootEntry entry) {
+    public RepeatEntry(int min, int max, @Nullable ILootEntry entry) {
         if (min < 0) {
             min = 0;
         }
@@ -52,9 +54,10 @@ public class RepeatEntry implements ILootEntry {
     }
 
     public static RepeatEntry fromJson(JsonObject jsonObject) {
-        int min = jsonObject.has(LootEntryTag.MIN) ? jsonObject.getAsJsonPrimitive(LootEntryTag.MIN).getAsInt() : 0;
-        int max = jsonObject.has(LootEntryTag.MAX) ? jsonObject.getAsJsonPrimitive(LootEntryTag.MAX).getAsInt() : 0;
-        ILootEntry entry = jsonObject.has(LootEntryTag.ENTRY) ? LootConfig.deserializeLootEntry(jsonObject.getAsJsonObject(LootEntryTag.ENTRY)) : null;
+        int min = JsonUtils.getJsonInt(jsonObject, LootEntryTag.MIN, 0);
+        int max = JsonUtils.getJsonInt(jsonObject, LootEntryTag.MAX, 0);
+        JsonObject entryObject = JsonUtils.getJsonObject(jsonObject, LootEntryTag.ENTRY, null);
+        ILootEntry entry = LootConfig.deserializeLootEntry(entryObject);
         return new RepeatEntry(min, max, entry);
     }
 
