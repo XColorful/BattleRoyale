@@ -26,9 +26,11 @@ public final class ZoneShapeTag {
 
     public static final String CENTER = "center";
     public static final String DIMENSION = "dimension";
+    public static final String ROTATION = "rotation";
 
     public static final String CENTER_TYPE = "centerType";
     public static final String DIMENSION_TYPE = "dimensionType";
+    public static final String ROTATION_TYPE = "rotationType";
 
     private ZoneShapeTag() {};
 }

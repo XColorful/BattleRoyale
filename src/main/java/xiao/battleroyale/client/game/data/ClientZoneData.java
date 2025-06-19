@@ -22,6 +22,7 @@ public class ClientZoneData {
     public ZoneShapeType shapeType;
     public Vec3 center;
     public Vec3 dimension;
+    public double rotateDegree = 0;
     public int segments = 3; // 供多边形使用
     public float angle = (float) (Math.PI / 2.0); // 使正上方为一个顶点
 
@@ -54,6 +55,8 @@ public class ClientZoneData {
 
         CompoundTag dimTag = nbt.getCompound(GameZoneTag.DIMENSION);
         this.dimension = new Vec3(dimTag.getDouble("x"), dimTag.getDouble("y"), dimTag.getDouble("z"));
+
+        this.rotateDegree = nbt.contains(GameZoneTag.ROTATE) ? nbt.getDouble(GameZoneTag.ROTATE) : 0;
 
         this.progress = nbt.getDouble(GameZoneTag.PROGRESS);
     }

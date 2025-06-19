@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -82,9 +83,13 @@ public class ZoneRenderer {
 
             poseStack.pushPose();
             try {
+                // 平移到区域中心，并抵消相机位置
                 poseStack.translate(zoneData.center.x - cameraPos.x,
                         zoneData.center.y - cameraPos.y,
                         zoneData.center.z - cameraPos.z);
+
+                // 正角度为顺时针旋转区域
+                poseStack.mulPose(Axis.YP.rotationDegrees((float) -zoneData.rotateDegree));
 
                 VertexConsumer consumer = bufferSource.getBuffer(CUSTOM_ZONE_RENDER_TYPE);
 

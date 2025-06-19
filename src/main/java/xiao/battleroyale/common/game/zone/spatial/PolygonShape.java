@@ -4,6 +4,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
@@ -11,7 +12,7 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 /**
  * 二维多边形
  */
-public class PolygonShape extends AbstractSimpleShape {
+public class PolygonShape extends AbstractPolyShape {
 
     protected int segments;
     protected float angle = (float) (Math.PI / 2.0); // 使正上方为一个顶点
@@ -19,7 +20,6 @@ public class PolygonShape extends AbstractSimpleShape {
     public PolygonShape(StartEntry startEntry, EndEntry endEntry, int segments) {
         super(startEntry, endEntry);
         this.segments = Math.max(segments, 3);
-        // 基于segments计算angle，使正上方为一个顶点
     }
 
     @Override
@@ -35,9 +35,25 @@ public class PolygonShape extends AbstractSimpleShape {
         if (!isDetermined()) {
             return false;
         }
-        double allowProgress = Math.min(progress, 1);
-        Vec3 center = getCenterPos(allowProgress);
-        Vec3 dimension = getDimension(allowProgress);
+        double allowedProgress = GameZone.allowedProgress(progress);
+        Vec3 center, dimension;
+        double rotateDegree;
+        double currentApothem; // 当前内接圆半径
+        if (Math.abs(allowedProgress - cachedProgress) < EPSILON) {
+            center = cachedCenter;
+            dimension = cachedDimension;
+            rotateDegree = cachedRotateDegree;
+            currentApothem = getApothem(allowedProgress);
+        } else {
+            center = getCenterPos(allowedProgress);
+            dimension = getDimension(allowedProgress);
+            rotateDegree = getRotateDegree(allowedProgress);
+            currentApothem = getApothem(allowedProgress);
+            cachedCenter = center;
+            cachedDimension = dimension;
+            cachedRotateDegree = rotateDegree;
+            cachedProgress = allowedProgress;
+        }
 
         double halfHeight = dimension.y / 2.0;
         double lowerY = center.y - halfHeight;
@@ -46,21 +62,36 @@ public class PolygonShape extends AbstractSimpleShape {
             return false;
         }
 
-        double pX = checkPos.x - center.x;
-        double pZ = checkPos.z - center.z;
+        double pX_relative = checkPos.x - center.x;
+        double pZ_relative = checkPos.z - center.z;
+
+        double pX_rotated;
+        double pZ_rotated;
+
+        if (Math.abs(rotateDegree) < EPSILON) {
+            pX_rotated = pX_relative;
+            pZ_rotated = pZ_relative;
+        } else {
+            double radians = Math.toRadians(rotateDegree);
+            double cosDegree = Math.cos(radians);
+            double sinDegree = Math.sin(radians);
+
+            pX_rotated = pX_relative * cosDegree + pZ_relative * sinDegree;
+            pZ_rotated = -pX_relative * sinDegree + pZ_relative * cosDegree;
+        }
+
 
         double radius = dimension.x; // 外接圆半径 (circumradius)
-        double distSq = pX * pX + pZ * pZ;
+        double distSq = pX_rotated * pX_rotated + pZ_rotated * pZ_rotated;
+
+        // 内接圆判断
+        if (distSq < currentApothem * currentApothem) {
+            return true;
+        }
 
         // 外接圆判断
         if (distSq > radius * radius) {
             return false;
-        }
-
-        // 内切圆判断
-        double apothem = radius * Mth.cos((float) (Math.PI / segments));
-        if (distSq < apothem * apothem) {
-            return true;
         }
 
         // 精确判断：点是否在多边形内部
@@ -68,13 +99,15 @@ public class PolygonShape extends AbstractSimpleShape {
         // 如果顶点是逆时针排列，则点应始终在边的左侧（叉积 >= 0）
         // 如果顶点是顺时针排列，则点应始终在边的右侧（叉积 <= 0）
         // 当前的角度计算是逆时针的 (angle1 -> angle2)，所以期望叉积 >= 0
-
+        // 顶点计算需要结合 `angle` 和 `rotateDegree`
         double[] vertexX = new double[segments];
         double[] vertexZ = new double[segments];
+        double totalRotationRadians = angle + Math.toRadians(rotateDegree);
+
         for (int i = 0; i < segments; i++) {
-            double currentAngle = angle + (2 * Math.PI * i / segments);
-            vertexX[i] = radius * Mth.cos((float) currentAngle);
-            vertexZ[i] = radius * Mth.sin((float) currentAngle);
+            double currentVertexAngle = totalRotationRadians + (2 * Math.PI * i / segments);
+            vertexX[i] = radius * Mth.cos((float) currentVertexAngle);
+            vertexZ[i] = radius * Mth.sin((float) currentVertexAngle);
         }
 
         for (int i = 0; i < segments; i++) {
@@ -86,8 +119,8 @@ public class PolygonShape extends AbstractSimpleShape {
             double edgeVecX = v2x - v1x;
             double edgeVecZ = v2z - v1z;
 
-            double pointVecX = pX - v1x;
-            double pointVecZ = pZ - v1z;
+            double pointVecX = pX_rotated - v1x;
+            double pointVecZ = pZ_rotated - v1z;
 
             // 2D 叉积: (edgeVecX * pointVecZ) - (edgeVecZ * pointVecX)
             // 如果叉积小于0，说明点在边的右侧，因此不在多边形内部
@@ -101,18 +134,5 @@ public class PolygonShape extends AbstractSimpleShape {
     @Override
     public ZoneShapeType getShapeType() {
         return ZoneShapeType.POLYGON;
-    }
-
-    @Override
-    protected boolean additionalCalculationCheck() {
-        if (startDimension.x != startDimension.z) {
-            BattleRoyale.LOGGER.warn("Unequal polygon shape start dimension (x: {}, z:{}), defaulting to x", startDimension.x, startDimension.z);
-            startDimension = new Vec3(startDimension.x, startDimension.y, startDimension.x);
-        }
-        if (endDimension.x != endDimension.z) {
-            BattleRoyale.LOGGER.warn("Unequal polygon shape end dimension (x: {}, z:{}), defaulting to x", endDimension.x, endDimension.z);
-            endDimension = new Vec3(endDimension.x, endDimension.y, endDimension.x);
-        }
-        return true;
     }
 }

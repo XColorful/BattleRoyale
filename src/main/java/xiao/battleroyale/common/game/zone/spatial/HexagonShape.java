@@ -3,6 +3,7 @@ package xiao.battleroyale.common.game.zone.spatial;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
@@ -10,7 +11,7 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 /**
  * 二维平顶正六边形
  */
-public class HexagonShape extends AbstractSimpleShape {
+public class HexagonShape extends AbstractPolyShape {
 
     public HexagonShape(StartEntry startEntry, EndEntry endEntry) {
         super(startEntry, endEntry);
@@ -24,24 +25,61 @@ public class HexagonShape extends AbstractSimpleShape {
         if (!isDetermined()) {
             return false;
         }
-        double allowProgress = Math.min(progress, 1);
-        Vec3 center = getCenterPos(allowProgress);
-        Vec3 dimension = getDimension(allowProgress);
+        double allowedProgress = GameZone.allowedProgress(progress);
+        Vec3 center, dimension;
+        double rotateDegree;
+        double currentApothem; // 当前内接圆半径
+        if (Math.abs(allowedProgress - cachedProgress) < EPSILON) {
+            center = cachedCenter;
+            dimension = cachedDimension;
+            rotateDegree = cachedRotateDegree;
+            currentApothem = getApothem(allowedProgress);
+        } else {
+            center = getCenterPos(allowedProgress);
+            dimension = getDimension(allowedProgress);
+            rotateDegree = getRotateDegree(allowedProgress);
+            currentApothem = getApothem(allowedProgress);
+            cachedCenter = center;
+            cachedDimension = dimension;
+            cachedRotateDegree = rotateDegree;
+            cachedProgress = allowedProgress;
+        }
 
         double radius = dimension.x; // 外接圆半径，即边长
-        double x = checkPos.x - center.x;
-        double z = checkPos.z - center.z;
+        double x_rotated;
+        double z_rotated;
 
-        // 先进行外接圆判断(忽略y轴)
-        double distSq = x * x + z * z;
-        if (distSq > radius * radius) { // 如果距离平方大于半径平方，则肯定在外面
+        if (Math.abs(rotateDegree) < EPSILON) {
+            x_rotated = checkPos.x - center.x;
+            z_rotated = checkPos.z - center.z;
+        } else {
+            double dx = checkPos.x - center.x;
+            double dz = checkPos.z - center.z;
+
+            double radians = Math.toRadians(rotateDegree);
+            double cosDegree = Math.cos(radians);
+            double sinDegree = Math.sin(radians);
+
+            x_rotated = dx * cosDegree + dz * sinDegree;
+            z_rotated = -dx * sinDegree + dz * cosDegree;
+        }
+
+        double distSq = x_rotated * x_rotated + z_rotated * z_rotated;
+
+        // 先内接圆判断是否在内（多数情况用safe安全区，判断在圈内）
+        if (distSq < currentApothem * currentApothem) {
+            return true;
+        }
+
+        // 后外接圆判断是否在外
+        if (distSq > radius * radius) {
             return false;
         }
 
         // 立方体坐标系判定 (Cube Coordinates)
-        double q = (x * 2.0 / 3.0) / radius;
-        double r = (-x / 3.0 + z * Math.sqrt(3.0) / 3.0) / radius;
-        double s = (-x / 3.0 - z * Math.sqrt(3.0) / 3.0) / radius;
+        double q = (x_rotated * 2.0 / 3.0) / radius;
+        double r = (-x_rotated / 3.0 + z_rotated * Math.sqrt(3.0) / 3.0) / radius;
+        double s = (-x_rotated / 3.0 - z_rotated * Math.sqrt(3.0) / 3.0) / radius;
 
         int rq = (int) Math.round(q);
         int rr = (int) Math.round(r);
@@ -65,19 +103,6 @@ public class HexagonShape extends AbstractSimpleShape {
     @Override
     public ZoneShapeType getShapeType() {
         return ZoneShapeType.HEXAGON;
-    }
-
-    @Override
-    protected boolean additionalCalculationCheck() {
-        if (startDimension.x != startDimension.z) {
-            BattleRoyale.LOGGER.warn("Unequal hexagon shape start dimension (x: {}, z:{}), defaulting to x", startDimension.x, startDimension.z);
-            startDimension = new Vec3(startDimension.x, startDimension.y, startDimension.x);
-        }
-        if (endDimension.x != endDimension.z) {
-            BattleRoyale.LOGGER.warn("Unequal hexagon shape end dimension (x: {}, z:{}), defaulting to x", endDimension.x, endDimension.z);
-            endDimension = new Vec3(endDimension.x, endDimension.y, endDimension.x);
-        }
-        return true;
     }
 
     @Override

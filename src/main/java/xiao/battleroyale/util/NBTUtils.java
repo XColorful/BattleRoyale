@@ -45,6 +45,11 @@ public class NBTUtils {
         dimTag.putDouble("z", dim.z);
         tag.put(GameZoneTag.DIMENSION, dimTag);
 
+        double rotate = spatialZone.getRotateDegree(progress);
+        if (rotate != 0) {
+            tag.putDouble(GameZoneTag.ROTATE, rotate);
+        }
+
         tag.putDouble(GameZoneTag.PROGRESS, progress);
         return tag;
     }

@@ -260,7 +260,12 @@ public class GameZone implements IGameZone {
     public @Nullable Vec3 getDimension(double progress) { return spatialZone.getDimension(progress); }
     @Override
     public @Nullable Vec3 getEndDimension() { return spatialZone.getEndDimension(); }
-
+    @Override
+    public double getStartRotateDegree() { return spatialZone.getStartRotateDegree(); }
+    @Override
+    public double getRotateDegree(double progress) { return spatialZone.getRotateDegree(progress); }
+    @Override
+    public double getEndRotateDegree() { return spatialZone.getEndRotateDegree(); }
     @Override
     public int getSegments() {
         return spatialZone.getSegments();

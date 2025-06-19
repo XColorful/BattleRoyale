@@ -68,6 +68,17 @@ public interface ISpatialZone {
     @Nullable
     Vec3 getEndDimension();
 
+    double getStartRotateDegree();
+
+    /**
+     * 特定进度的状态，基于 progress的比例，得出从 start 到 end 之间的状态
+     * @param progress 从 0 到 1 的比例
+     * @return 中心点的旋转角度
+     */
+    double getRotateDegree(double progress);
+
+    double getEndRotateDegree();
+
     /**
      * 供多边形使用
      */

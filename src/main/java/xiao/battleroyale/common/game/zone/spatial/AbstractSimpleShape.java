@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.game.zone.spatial;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -8,8 +9,10 @@ import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.shape.end.EndCenterType;
 import xiao.battleroyale.api.game.zone.shape.end.EndDimensionType;
+import xiao.battleroyale.api.game.zone.shape.end.EndRotationType;
 import xiao.battleroyale.api.game.zone.shape.start.StartCenterType;
 import xiao.battleroyale.api.game.zone.shape.start.StartDimensionType;
+import xiao.battleroyale.api.game.zone.shape.start.StartRotationType;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.GameZone;
@@ -31,17 +34,21 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
     protected Vec3 startCenter;
     protected Vec3 startDimension;
+    protected double startRotateDegree;
     protected Vec3 endCenter;
     protected Vec3 endDimension;
+    protected double endRotateDegree;
 
     protected Vec3 cachedCenter = Vec3.ZERO;
     protected Vec3 cachedDimension = Vec3.ZERO;
+    protected double cachedRotateDegree = 0;
     protected double cachedProgress = -1;
     protected static final double EPSILON = 1.0E-9; // 移动30分钟的圈每tick的变化为 2.778 x 10^-5
 
     protected boolean determined = false;
     protected Vec3 centerDist;
     protected Vec3 dimensionDist;
+    protected double rotateDist;
 
     public AbstractSimpleShape(StartEntry startEntry, EndEntry endEntry) {
         this.startEntry = startEntry;
@@ -64,18 +71,43 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
         }
         double allowedProgress = GameZone.allowedProgress(progress);
         Vec3 center, dimension;
+        double rotateDegree;
         if (Math.abs(allowedProgress - cachedProgress) < EPSILON) {
             center = cachedCenter;
             dimension = cachedDimension;
+            rotateDegree = cachedRotateDegree;
         } else {
             center = getCenterPos(allowedProgress);
             dimension = getDimension(allowedProgress);
+            rotateDegree = getRotateDegree(allowedProgress);
             cachedCenter = center;
             cachedDimension = dimension;
+            cachedRotateDegree = rotateDegree;
             cachedProgress = allowedProgress;
         }
-        return Math.abs(checkPos.x - center.x) <= dimension.x
-                && Math.abs(checkPos.z - center.z) <= dimension.z;
+
+        double finalCheckX;
+        double finalCheckZ;
+        double finalHalfWidth = dimension.x;
+        double finalHalfDepth = dimension.z;
+
+        if (Math.abs(rotateDegree) < EPSILON) {
+            finalCheckX = checkPos.x - center.x;
+            finalCheckZ = checkPos.z - center.z;
+        } else {
+            double dx = checkPos.x - center.x;
+            double dz = checkPos.z - center.z;
+
+            double radians = Math.toRadians(rotateDegree);
+            double cosDegree = Math.cos(radians);
+            double sinDegree = Math.sin(radians);
+
+            finalCheckX = dx * cosDegree + dz * sinDegree;
+            finalCheckZ = -dx * sinDegree + dz * cosDegree;
+        }
+
+        return Math.abs(finalCheckX) <= finalHalfWidth
+                && Math.abs(finalCheckZ) <= finalHalfDepth;
     }
 
     // TODO 根据玩家多的方向偏移，或增加机制防止圈刷特殊区域（暂定为防止刷海里）
@@ -94,15 +126,20 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 case LOCK_PLAYER -> {
                     int playerId = startEntry.centerPlayerId;
                     if (playerId <= 0) {
+                        if (standingGamePlayers.isEmpty()) {
+                            BattleRoyale.LOGGER.error("StandingGamePlayers is empty, but still calculate shape, may should end game instantly");
+                            return;
+                        }
                         if (startEntry.selectStanding) {
                             playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
                         } else {
-                            List<GamePlayer> gamePlayers = GameManager.get().getGamePlayers();
+                            List<GamePlayer> gamePlayers = GameManager.get().getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
                             playerId = gamePlayers.get((int) (random.get() * gamePlayers.size())).getGameSingleId();
                         }
                     }
                     GamePlayer gamePlayer = GameManager.get().getGamePlayerBySingleId(playerId);
-                    if (gamePlayer == null) {
+                    if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
+                        BattleRoyale.LOGGER.error("Failed to generate shape center: failed to get game player by id: {}", playerId);
                         return;
                     }
                     startCenter = gamePlayer.getLastPos();
@@ -135,6 +172,43 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             if (startEntry.startDimensionScale >= 0) {
                 startDimension = Vec3Utils.scaleXZ(startDimension, startEntry.startDimensionScale);
             }
+            // start rotation
+            switch (startEntry.startRotationType) {
+                case FIXED -> startRotateDegree = startEntry.startRotateDegree;
+                case PREVIOUS, RELATIVE -> {
+                    startRotateDegree = getPreviousRotateById(startEntry.startRotateZoneId, startEntry.startRotateProgress);
+                    if (startEntry.startRotationType == StartRotationType.RELATIVE) {
+                        startRotateDegree += startEntry.startRotateDegree;
+                    }
+                }
+                case LOCK_PLAYER -> {
+                    int playerId = startEntry.rotatePlayerId;
+                    if (playerId <= 0) {
+                        if (standingGamePlayers.isEmpty()) {
+                            BattleRoyale.LOGGER.error("StandingGamePlayers is empty, but still calculate shape, may should end game instantly");
+                            return;
+                        }
+                        playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
+                    }
+                    GamePlayer gamePlayer = GameManager.get().getGamePlayerBySingleId(playerId);
+                    if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
+                        BattleRoyale.LOGGER.error("Failed to generate shape rotation: failed to get game player by id: {}", playerId);
+                        return;
+                    }
+                    ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                    if (player == null) {
+                        BattleRoyale.LOGGER.info("Failed to generate shape rotation: can't find ServerPlayer {} (UUID:{})", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
+                        return;
+                    }
+                    startRotateDegree = player.getYRot();
+                }
+            }
+            if (startEntry.startRotateRange > 0) {
+                startRotateDegree += BattleRoyale.COMMON_RANDOM.nextDouble() * startEntry.startRotateRange;
+            }
+            if (startEntry.startRotateScale >= 0) {
+                startRotateDegree *= startEntry.startRotateScale;
+            }
             // end center
             switch (endEntry.endCenterType) {
                 case FIXED -> endCenter = endEntry.endCenterPos;
@@ -147,15 +221,20 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 case LOCK_PLAYER -> {
                     int playerId = endEntry.centerPlayerId;
                     if (playerId <= 0) {
+                        if (standingGamePlayers.isEmpty()) {
+                            BattleRoyale.LOGGER.error("StandingGamePlayers is empty, but still calculate shape, may should end game instantly");
+                            return;
+                        }
                         if (endEntry.selectStanding) {
                             playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
                         } else {
-                            List<GamePlayer> gamePlayers = GameManager.get().getGamePlayers();
+                            List<GamePlayer> gamePlayers = GameManager.get().getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
                             playerId = gamePlayers.get((int) (random.get() * gamePlayers.size())).getGameSingleId();
                         }
                     }
                     GamePlayer gamePlayer = GameManager.get().getGamePlayerBySingleId(playerId);
-                    if (gamePlayer == null) {
+                    if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
+                        BattleRoyale.LOGGER.error("Failed to generate end center: failed to get game player by id: {}", playerId);
                         return;
                     }
                     endCenter = gamePlayer.getLastPos();
@@ -180,12 +259,50 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             }
             if (endDimension == null) {
                 BattleRoyale.LOGGER.warn("Failed to calculate end dimension, type: {}", endEntry.endDimensionType.getValue());
+                return;
             }
             if (endEntry.endDimensionRange > 0) {
                 endDimension = randomAdjustXZ(endDimension, endEntry.endDimensionRange, random);
             }
             if (endEntry.endDimensionScale >= 0) {
                 endDimension = Vec3Utils.scaleXZ(endDimension, endEntry.endDimensionScale);
+            }
+            // end rotation
+            switch (endEntry.endRotationType) {
+                case FIXED -> endRotateDegree = endEntry.endRotateDegree;
+                case PREVIOUS, RELATIVE -> {
+                    endRotateDegree = getPreviousRotateById(endEntry.endRotateZoneId, endEntry.endRotateProgress);
+                    if (endEntry.endRotationType == EndRotationType.RELATIVE) {
+                        endRotateDegree += endEntry.endRotateDegree;
+                    }
+                }
+                case LOCK_PLAYER -> {
+                    int playerId = endEntry.rotatePlayerId;
+                    if (playerId <= 0) {
+                        if (standingGamePlayers.isEmpty()) {
+                            BattleRoyale.LOGGER.error("StandingGamePlayers is empty, but still calculate shape, may should end game instantly");
+                            return;
+                        }
+                        playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
+                    }
+                    GamePlayer gamePlayer = GameManager.get().getGamePlayerBySingleId(playerId);
+                    if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
+                        BattleRoyale.LOGGER.error("Failed to generate end rotation: failed to get game player by id: {}", playerId);
+                        return;
+                    }
+                    ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                    if (player == null) {
+                        BattleRoyale.LOGGER.info("Failed to generate end rotation: can't find ServerPlayer {} (UUID:{})", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
+                        return;
+                    }
+                    endRotateDegree = player.getYRot();
+                }
+            }
+            if (endEntry.endRotateRange > 0) {
+                endRotateDegree += BattleRoyale.COMMON_RANDOM.nextDouble() * endEntry.endRotateRange;
+            }
+            if (endEntry.endRotateScale >= 0) {
+                endRotateDegree *= endEntry.endRotateScale;
             }
         }
         if (additionalCalculationCheck()
@@ -197,6 +314,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             dimensionDist = new Vec3(endDimension.x - startDimension.x,
                     endDimension.y - startDimension.y,
                     endDimension.z - startDimension.z);
+            rotateDist = endRotateDegree - startRotateDegree;
             // 缓存，用于加速判断isWithinZone
             cachedCenter = startCenter;
             cachedDimension = startDimension;
@@ -223,7 +341,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     public @Nullable Vec3 getCenterPos(double progress) {
         double allowedProgress = GameZone.allowedProgress(progress);
         if (!determined) {
-            BattleRoyale.LOGGER.warn("Shape center is not fully determined yet, may produce unexpected progress calculation");
+            BattleRoyale.LOGGER.warn("Shape is not fully determined yet, may produce unexpected center calculation");
         }
         return new Vec3(startCenter.x + centerDist.x * allowedProgress,
                 startCenter.y + centerDist.y * allowedProgress,
@@ -244,7 +362,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     public @Nullable Vec3 getDimension(double progress) {
         double allowedProgress = GameZone.allowedProgress(progress);
         if (!determined) {
-            BattleRoyale.LOGGER.warn("Shape dimension is not fully determined yet, may produce unexpected progress calculation");
+            BattleRoyale.LOGGER.warn("Shape is not fully determined yet, may produce unexpected dimension calculation");
         }
         return new Vec3(startDimension.x + dimensionDist.x * allowedProgress,
                 startDimension.y + dimensionDist.y * allowedProgress,
@@ -256,11 +374,30 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
         return endDimension;
     }
 
+    @Override
+    public double getStartRotateDegree() {
+        return startRotateDegree;
+    }
+
+    @Override
+    public double getRotateDegree(double progress) {
+        double allowedProgress = GameZone.allowedProgress(progress);
+        if (!determined) {
+            BattleRoyale.LOGGER.warn("Shape is not fully determined yet, may produce unexpected rotation calculation");
+        }
+        return startRotateDegree + rotateDist * allowedProgress;
+    }
+
+    @Override
+    public double getEndRotateDegree() {
+        return endRotateDegree;
+    }
+
     @Nullable
     public Vec3 getPreviousCenterById(int zoneId, double progress) {
         IGameZone gameZone = ZoneManager.get().getZoneById(zoneId);
         if (gameZone == null) {
-            BattleRoyale.LOGGER.warn("Failed to get previous gameZone end center by zoneId: {}", zoneId);
+            BattleRoyale.LOGGER.warn("Failed to get previous gameZone center by zoneId: {}", zoneId);
             return null;
         }
 
@@ -269,16 +406,14 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
         } else if (progress <= 0) {
             return gameZone.getStartCenterPos();
         }
-        Vec3 v = gameZone.getCenterPos(progress);
-        BattleRoyale.LOGGER.info("getPreviousCenterById, progress: {}, centerPos: {}", progress, v);
-        return v;
+        return gameZone.getCenterPos(progress);
     }
 
     @Nullable
     public Vec3 getPreviousDimensionById(int zoneId, double progress) {
         IGameZone gameZone = ZoneManager.get().getZoneById(zoneId);
         if (gameZone == null) {
-            BattleRoyale.LOGGER.warn("Failed to get previous gameZone end dimension by zoneId: {}", zoneId);
+            BattleRoyale.LOGGER.warn("Failed to get previous gameZone dimension by zoneId: {}", zoneId);
             return null;
         }
 
@@ -287,8 +422,21 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
         } else if (progress <= 0) {
             return gameZone.getStartDimension();
         }
-        Vec3 v = gameZone.getDimension(progress);
-        BattleRoyale.LOGGER.info("getPreviousDimensionById, progress: {}, dimension: {}", progress, v);
-        return v;
+        return gameZone.getDimension(progress);
+    }
+
+    public double getPreviousRotateById(int zoneId, double progress) {
+        IGameZone gameZone = ZoneManager.get().getZoneById(zoneId);
+        if (gameZone == null) {
+            BattleRoyale.LOGGER.warn("Failed to get previous gameZone rotation by zoneId: {}, defaulting to 0", zoneId);
+            return 0;
+        }
+
+        if (progress >= 1) {
+            return gameZone.getEndRotateDegree();
+        } else if (progress <= 0) {
+            return gameZone.getStartRotateDegree();
+        }
+        return gameZone.getRotateDegree(progress);
     }
 }
