@@ -48,7 +48,7 @@ public class EffectManager implements IEffectManager {
     }
 
     /**
-     * 使指定玩家免伤
+     * 使指定实体免伤
      * @param serverLevel 生效维度
      * @param livingEntity 生效实体
      * @param duration 持续时间
