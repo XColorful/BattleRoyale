@@ -33,22 +33,23 @@ public class PolygonEntry extends AbstractSimpleEntry {
 
     @Nullable
     public static PolygonEntry fromJson(JsonObject jsonObject) {
-        JsonObject startEntryObject = jsonObject.has(ZoneShapeTag.START) ? jsonObject.getAsJsonObject(ZoneShapeTag.START) : null;
-        JsonObject endEntryObject = jsonObject.has(ZoneShapeTag.END) ? jsonObject.getAsJsonObject(ZoneShapeTag.END) : null;
-        if (startEntryObject == null || endEntryObject == null) {
-            BattleRoyale.LOGGER.info("PolygonEntry missing start or end member, skipped");
+        StartEntry startEntry = AbstractSimpleEntry.readStartEntry(jsonObject);
+        if (startEntry == null) {
+            BattleRoyale.LOGGER.info("Invalid startEntry for PolygonEntry, skipped");
             return null;
         }
-        StartEntry startEntry = StartEntry.fromJson(startEntryObject);
-        EndEntry endEntry = EndEntry.fromJson(endEntryObject);
-        if (startEntry == null || endEntry == null) {
-            BattleRoyale.LOGGER.info("Invalid startEntry or endEntry for PolygonEntry, skipped");
+
+        EndEntry endEntry = AbstractSimpleEntry.readEndEntry(jsonObject);
+        if (endEntry == null) {
+            BattleRoyale.LOGGER.info("Invalid endEntry for PolygonEntry, skipped");
             return null;
         }
+
         int segments = jsonObject.has(ZoneShapeTag.SEGMENTS) ? jsonObject.get(ZoneShapeTag.SEGMENTS).getAsInt() : 3;
         if (segments < 3) {
             return null;
         }
+
         return new PolygonEntry(startEntry, endEntry, segments);
     }
 

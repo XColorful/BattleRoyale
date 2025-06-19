@@ -31,18 +31,18 @@ public class SquareEntry extends AbstractSimpleEntry {
 
     @Nullable
     public static SquareEntry fromJson(JsonObject jsonObject) {
-        JsonObject startEntryObject = jsonObject.has(ZoneShapeTag.START) ? jsonObject.getAsJsonObject(ZoneShapeTag.START) : null;
-        JsonObject endEntryObject = jsonObject.has(ZoneShapeTag.END) ? jsonObject.getAsJsonObject(ZoneShapeTag.END) : null;
-        if (startEntryObject == null || endEntryObject == null) {
-            BattleRoyale.LOGGER.info("SquareEntry missing start or end member, skipped");
+        StartEntry startEntry = AbstractSimpleEntry.readStartEntry(jsonObject);
+        if (startEntry == null) {
+            BattleRoyale.LOGGER.info("Invalid startEntry for HexagonEntry, skipped");
             return null;
         }
-        StartEntry startEntry = StartEntry.fromJson(startEntryObject);
-        EndEntry endEntry = EndEntry.fromJson(endEntryObject);
-        if (startEntry == null || endEntry == null) {
-            BattleRoyale.LOGGER.info("Invalid startEntry or endEntry for SquareEntry, skipped");
+
+        EndEntry endEntry = AbstractSimpleEntry.readEndEntry(jsonObject);
+        if (endEntry == null) {
+            BattleRoyale.LOGGER.info("Invalid endEntry for HexagonEntry, skipped");
             return null;
         }
+
         return new SquareEntry(startEntry, endEntry);
     }
 }

@@ -1,36 +1,36 @@
 package xiao.battleroyale.config.common.game.zone.zoneshape;
 
 import com.google.gson.JsonObject;
-import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
-import xiao.battleroyale.common.game.zone.spatial.HexagonShape;
+import xiao.battleroyale.common.game.zone.spatial.EllipseShape;
 
-public class HexagonEntry extends AbstractSimpleEntry {
+import javax.annotation.Nullable;
 
-    public HexagonEntry(StartEntry startEntry, EndEntry endEntry) {
+public class EllipseEntry extends AbstractSimpleEntry {
+
+    public EllipseEntry(StartEntry startEntry, EndEntry endEntry) {
         super(startEntry, endEntry);
     }
 
     @Override
     public String getType() {
-        return ZoneShapeTag.HEXAGON;
+        return ZoneShapeTag.ELLIPSE;
     }
 
     @Override
     public ZoneShapeType getZoneShapeType() {
-        return ZoneShapeType.HEXAGON;
+        return ZoneShapeType.ELLIPSE;
     }
 
     @Override
     public ISpatialZone createSpatialZone() {
-        return new HexagonShape(startEntry, endEntry);
+        return new EllipseShape(startEntry, endEntry);
     }
 
-
     @Nullable
-    public static HexagonEntry fromJson(JsonObject jsonObject) {
+    public static EllipseEntry fromJson(JsonObject jsonObject) {
         StartEntry startEntry = AbstractSimpleEntry.readStartEntry(jsonObject);
         if (startEntry == null) {
             BattleRoyale.LOGGER.info("Invalid startEntry for HexagonEntry, skipped");
@@ -39,10 +39,10 @@ public class HexagonEntry extends AbstractSimpleEntry {
 
         EndEntry endEntry = AbstractSimpleEntry.readEndEntry(jsonObject);
         if (endEntry == null) {
-            BattleRoyale.LOGGER.info("Invalid startEntry or endEntry for HexagonEntry, skipped");
+            BattleRoyale.LOGGER.info("Invalid endEntry for HexagonEntry, skipped");
             return null;
         }
-        
-        return new HexagonEntry(startEntry, endEntry);
+
+        return new EllipseEntry(startEntry, endEntry);
     }
 }

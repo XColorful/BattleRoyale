@@ -4,6 +4,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.client.renderer.game.ZoneRenderer;
+import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
@@ -25,7 +26,7 @@ public class CircleShape extends AbstractSimpleShape {
         if (!isDetermined()) {
             return false;
         }
-        double allowProgress = Math.min(progress, 1);
+        double allowProgress = GameZone.allowedProgress(progress);
         Vec3 center = getCenterPos(allowProgress);
         Vec3 dimension = getDimension(allowProgress);
         // 旋转对圆没有几何影响

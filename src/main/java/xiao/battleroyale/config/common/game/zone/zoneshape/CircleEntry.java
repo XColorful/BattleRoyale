@@ -30,18 +30,18 @@ public class CircleEntry extends AbstractSimpleEntry {
 
     @Nullable
     public static CircleEntry fromJson(JsonObject jsonObject) {
-        JsonObject startEntryObject = jsonObject.has(ZoneShapeTag.START) ? jsonObject.getAsJsonObject(ZoneShapeTag.START) : null;
-        JsonObject endEntryObject = jsonObject.has(ZoneShapeTag.END) ? jsonObject.getAsJsonObject(ZoneShapeTag.END) : null;
-        if (startEntryObject == null || endEntryObject == null) {
-            BattleRoyale.LOGGER.info("CircleEntry missing start or end member, skipped");
+        StartEntry startEntry = AbstractSimpleEntry.readStartEntry(jsonObject);
+        if (startEntry == null) {
+            BattleRoyale.LOGGER.info("Invalid startEntry for CircleEntry, skipped");
             return null;
         }
-        StartEntry startEntry = StartEntry.fromJson(startEntryObject);
-        EndEntry endEntry = EndEntry.fromJson(endEntryObject);
-        if (startEntry == null || endEntry == null) {
+
+        EndEntry endEntry = AbstractSimpleEntry.readEndEntry(jsonObject);
+        if (endEntry == null) {
             BattleRoyale.LOGGER.info("Invalid startEntry or endEntry for CircleEntry, skipped");
             return null;
         }
+
         return new CircleEntry(startEntry, endEntry);
     }
 }

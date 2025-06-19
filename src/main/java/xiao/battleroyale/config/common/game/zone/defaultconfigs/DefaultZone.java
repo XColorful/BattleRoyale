@@ -26,6 +26,7 @@ public class DefaultZone {
         zoneConfigJson.add(generateDefaultZoneConfig3());
         zoneConfigJson.add(generateDefaultZoneConfig4());
         zoneConfigJson.add(generateDefaultZoneConfig5());
+        zoneConfigJson.add(generateDefaultZoneConfig6());
         writeJsonToFile(Paths.get(GameConfigManager.get().getZoneConfigPath(), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
@@ -200,6 +201,36 @@ public class DefaultZone {
 
         PolygonEntry polygonEntry = new PolygonEntry(startEntry, endEntry, 5);
         config.add(ZoneConfigTag.ZONE_SHAPE, polygonEntry.toJson());
+
+        return config;
+    }
+
+    private static JsonObject generateDefaultZoneConfig6() {
+        JsonObject config = new JsonObject();
+        config.addProperty(ZoneConfigTag.ZONE_ID, 6);
+        config.addProperty(ZoneConfigTag.ZONE_NAME, "Rotating Ellipse monitor");
+        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#FFFF0022");
+        config.addProperty(ZoneConfigTag.ZONE_DELAY, 200);
+        config.addProperty(ZoneConfigTag.ZONE_TIME, 400);
+
+        FireworkFuncEntry fireworkFuncEntry = new FireworkFuncEntry(0, 400, 10, -1,
+                false, 1, 0, 0, 0, false);
+
+        config.add(ZoneConfigTag.ZONE_FUNC, fireworkFuncEntry.toJson());
+
+        StartEntry startEntry = new StartEntry();
+        startEntry.addPreviousCenter(0, 0);
+        startEntry.addFixedDimension(new Vec3(128, 1.5, 12.8));
+        startEntry.addFixedRotate(-360);
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addPreviousCenter(0, 0);
+        endEntry.addPreviousDimension(6, 0);
+        endEntry.addPreviousRotate(6, 0);
+        endEntry.addRelativeRotate(360 * 2);
+
+        EllipseEntry ellipseEntry = new EllipseEntry(startEntry, endEntry);
+        config.add(ZoneConfigTag.ZONE_SHAPE, ellipseEntry.toJson());
 
         return config;
     }

@@ -9,6 +9,7 @@ public final class ZoneShapeTag {
     public static final String RECTANGLE = "rectangle";
     public static final String HEXAGON = "hexagon";
     public static final String POLYGON = "polygon";
+    public static final String ELLIPSE = "ellipse";
 
     public static final String START = "start";
     public static final String END = "end";
