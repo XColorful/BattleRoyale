@@ -19,6 +19,7 @@ import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
+import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.Vec3Utils;
 
 import static xiao.battleroyale.util.Vec3Utils.randomAdjustXZ;
@@ -110,7 +111,6 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 && Math.abs(finalCheckZ) <= finalHalfDepth;
     }
 
-    // TODO 根据玩家多的方向偏移，或增加机制防止圈刷特殊区域（暂定为防止刷海里）
     @Override
     public void calculateShape(ServerLevel serverLevel, List<GamePlayer> standingGamePlayers, Supplier<Float> random) {
         if (!determined) {
@@ -151,6 +151,9 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             }
             if (startEntry.startCenterRange > 0) {
                 startCenter = randomAdjustXZ(startCenter, startEntry.startCenterRange, random);
+            }
+            if (startEntry.playerCenterLerp != 0) {
+                startCenter = GameUtils.calculateCenterAndLerp(startCenter, standingGamePlayers, startEntry.playerCenterLerp);
             }
             // start dimension
             switch (startEntry.startDimensionType) {
@@ -246,6 +249,9 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             }
             if (endEntry.endCenterRange > 0) {
                 endCenter = randomAdjustXZ(endCenter, endEntry.endCenterRange, random);
+            }
+            if (endEntry.playerCenterLerp != 0) {
+                endCenter = GameUtils.calculateCenterAndLerp(endCenter, standingGamePlayers, endEntry.playerCenterLerp);
             }
             // end dimension
             switch (endEntry.endDimensionType) {

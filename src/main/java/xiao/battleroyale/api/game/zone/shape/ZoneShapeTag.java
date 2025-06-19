@@ -22,6 +22,7 @@ public final class ZoneShapeTag {
     public static final String RANDOM_RANGE = "randomRange";
     public static final String PLAYER_ID = "playerId";
     public static final String SELECT_STANDING = "selectStanding";
+    public static final String PLAYER_CENTER_LERP = "playerCenterLerp";
     public static final String SEGMENTS = "segments";
 
     public static final String CENTER = "center";

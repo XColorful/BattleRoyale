@@ -22,6 +22,7 @@ public class StartEntry {
     public double startCenterRange = 0;
     public int centerPlayerId = 0;
     public boolean selectStanding = false;
+    public double playerCenterLerp = 0;
 
     public StartDimensionType startDimensionType = StartDimensionType.FIXED;
     public Vec3 startDimension = Vec3.ZERO; // radius / side / a, b
@@ -63,6 +64,9 @@ public class StartEntry {
     }
     public void addCenterRange(double range) {
         this.startCenterRange = range;
+    }
+    public void addPlayerCenterLerp(double lerp) {
+        this.playerCenterLerp = lerp;
     }
     // build dimension
     public void addFixedDimension(Vec3 startDimension) {
@@ -167,6 +171,8 @@ public class StartEntry {
         }
         double centerRange = JsonUtils.getJsonDouble(centerObject, ZoneShapeTag.RANDOM_RANGE, 0);
         startEntry.addCenterRange(centerRange);
+        double playerCenterLerp = JsonUtils.getJsonDouble(centerObject, ZoneShapeTag.PLAYER_CENTER_LERP, 0);
+        startEntry.addPlayerCenterLerp(playerCenterLerp);
 
         // dimension
         switch (dimensionType) {
@@ -275,6 +281,7 @@ public class StartEntry {
             }
         }
         centerObject.addProperty(ZoneShapeTag.RANDOM_RANGE, startCenterRange);
+        centerObject.addProperty(ZoneShapeTag.PLAYER_CENTER_LERP, playerCenterLerp);
         return centerObject;
     }
 

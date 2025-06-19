@@ -4,8 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
-import xiao.battleroyale.api.game.zone.shape.end.EndCenterType;
-import xiao.battleroyale.api.game.zone.shape.end.EndDimensionType;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.FireworkFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
@@ -150,7 +148,7 @@ public class DefaultZone {
     private static JsonObject generateDefaultZoneConfig4() {
         JsonObject config = new JsonObject();
         config.addProperty(ZoneConfigTag.ZONE_ID, 4);
-        config.addProperty(ZoneConfigTag.ZONE_NAME, "Relative White Hexagon");
+        config.addProperty(ZoneConfigTag.ZONE_NAME, "Unwelcomed White Hexagon");
         config.addProperty(ZoneConfigTag.ZONE_COLOR, "#FFFFFFAA");
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 600);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 11400);
@@ -165,6 +163,7 @@ public class DefaultZone {
         startEntry.addPreviousDimension(0, 1);
         startEntry.addRelativeDimension(new Vec3(-100, -240, -100));
         startEntry.addDimensionRange(10);
+        startEntry.addPlayerCenterLerp(0.2);
 
         EndEntry endEntry = new EndEntry();
         endEntry.addPreviousCenter(4, 0);

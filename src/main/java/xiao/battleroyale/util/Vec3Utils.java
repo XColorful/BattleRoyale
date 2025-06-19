@@ -17,6 +17,25 @@ public class Vec3Utils {
     }
 
     /**
+     * 对两个 Vec3 进行线性插值
+     * 结果点 = startVec + (endVec - startVec) * delta
+     * @param startVec 起始向量 (当delta为0时返回)
+     * @param endVec 结束向量 (当delta为1时返回)
+     * @param delta 插值因子，通常在0.0到1.0之间
+     * @return 插值后的 Vec3
+     */
+    public static Vec3 lerp(Vec3 startVec, Vec3 endVec, double delta) {
+        if (delta == 0) {
+            return startVec;
+        }
+        return new Vec3(
+                startVec.x + (endVec.x - startVec.x) * delta,
+                startVec.y + (endVec.y - startVec.y) * delta,
+                startVec.z + (endVec.z - startVec.z) * delta
+        );
+    }
+
+    /**
      * 以输入向量为基准，往XZ正反方向
      */
     public static Vec3 randomAdjustXZ(@NotNull Vec3 baseVec, double range, Supplier<Float> random) {
