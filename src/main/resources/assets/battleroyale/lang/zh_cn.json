@@ -167,5 +167,10 @@
 
   "battleroyale.message.add_player_firework": "为玩家 %s 添加了烟花追踪器",
   "battleroyale.message.add_fixed_firework": "在 %s, %s, %s 添加烟花追踪器",
-  "battleroyale.message.clear_firework_tracker": "已清除所有烟花追踪"
+  "battleroyale.message.clear_firework_tracker": "已清除所有烟花追踪",
+  "battleroyale.message.add_player_muteki": "玩家 %s 已无敌",
+  "battleroyale.message.muteki_end": "无敌效果已结束",
+  "battleroyale.message.clear_all_muteki": "已清除所有无敌效果",
+  "battleroyale.message.clear_muteki": "已清除玩家 %s 的无敌效果",
+  "battleroyale.message.player_not_muteki": "玩家 %s 没有无敌效果"
 }

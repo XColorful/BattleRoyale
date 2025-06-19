@@ -10,21 +10,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.event.game.FireworkEventHandler;
+import xiao.battleroyale.api.game.effect.IEffectManager;
+import xiao.battleroyale.event.effect.FireworkEventHandler;
 import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.Vec3Utils;
 
-import javax.naming.directory.BasicAttribute;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class FireworkManager {
-
-    private final List<FixedFireworkTask> fixedTasks = new ArrayList<>();
-    private final List<PlayerTrackingFireworkTask> playerTrackingTasks = new ArrayList<>();
+public class FireworkManager implements IEffectManager {
 
     private FireworkManager() {}
 
@@ -35,6 +31,9 @@ public class FireworkManager {
     public static FireworkManager get() {
         return FireworkManagerHolder.INSTANCE;
     }
+
+    private final List<FixedFireworkTask> fixedTasks = new ArrayList<>();
+    private final List<PlayerTrackingFireworkTask> playerTrackingTasks = new ArrayList<>();
 
     public void onTick() {
         RandomSource random = null;
@@ -138,13 +137,13 @@ public class FireworkManager {
     }
 
     public void clear() {
-        fixedTasks.clear();
-        playerTrackingTasks.clear();
-        FireworkEventHandler.unregister();
+        forceEnd();
     }
 
     public void forceEnd() {
-        clear();
+        fixedTasks.clear();
+        playerTrackingTasks.clear();
+        FireworkEventHandler.unregister();
     }
 
     public boolean shouldEnd() {

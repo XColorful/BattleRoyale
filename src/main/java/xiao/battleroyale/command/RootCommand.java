@@ -24,6 +24,8 @@ public class RootCommand {
                 .requires(source -> source.hasPermission(2)));
         root.then(FireworkCommand.get()
                 .requires(source -> source.hasPermission(2)));
+        root.then(MutekiCommand.get()
+                .requires(source -> source.hasPermission(2)));
 
         dispatcher.register(root);
     }

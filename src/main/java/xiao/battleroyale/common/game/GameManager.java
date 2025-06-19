@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.command.sub.GameCommand;
-import xiao.battleroyale.common.game.effect.firework.FireworkManager;
+import xiao.battleroyale.common.game.effect.EffectManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
@@ -395,37 +395,7 @@ public class GameManager extends AbstractGameManager {
 
         ChatUtils.sendTitleToPlayer(player, winnerTitle, teamWinMessage, 10, 80, 20);
 
-        spawnPlayerFirework(player, 16, 4, 1.0F, 16.0F);
-    }
-
-    /**
-     * 在特定位置生成垂直烟花
-     * @param serverLevel 烟花所在level
-     * @param pos 生成位置中心点
-     * @param amount 总生成数量
-     * @param interval 每个烟花的时间间隔
-     * @param vRange 使中心点往上随机偏移
-     * @param hRange 水平偏移半径
-     */
-    public void spawnFirework(ServerLevel serverLevel, Vec3 pos, int amount, int interval, float vRange, float hRange) {
-        if (serverLevel == null) {
-            return;
-        }
-        FireworkManager.get().addFixedPositionFireworkTask(serverLevel, pos, amount, interval, vRange, hRange);
-    }
-    /**
-     * 跟随玩家生成烟花
-     * @param player 玩家
-     * @param amount 总生成数量
-     * @param interval 每个烟花的时间间隔
-     * @param vRange 使中心点往上随机偏移
-     * @param hRange 水平偏移半径
-     */
-    public void spawnPlayerFirework(@Nullable ServerPlayer player, int amount, int interval, float vRange, float hRange) {
-        if (player == null) {
-            return;
-        }
-        FireworkManager.get().addPlayerTrackingFireworkTask((ServerLevel) player.level(), player.getUUID(), amount, interval, vRange, hRange);
+        EffectManager.get().spawnPlayerFirework(player, 16, 4, 1.0F, 16.0F);
     }
 
     /**
@@ -687,8 +657,8 @@ public class GameManager extends AbstractGameManager {
         // 同步信息
         this.syncData.initGame();
         SyncEventHandler.register();
-        // 清理待处理的烟花
-        FireworkManager.get().forceEnd();
+        // 清除游戏效果
+        EffectManager.get().forceEnd();
     }
     private void initGameSubManager() {
         StatsManager.get().initGame(serverLevel); // 先清空stats

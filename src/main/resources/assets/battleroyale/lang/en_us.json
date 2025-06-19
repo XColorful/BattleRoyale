@@ -167,5 +167,10 @@
 
   "battleroyale.message.add_player_firework": "Add firework tracker to player %s",
   "battleroyale.message.add_fixed_firework": "Add firework tracker at %s, %s, %s",
-  "battleroyale.message.clear_firework_tracker": "Cleared all firework tracker"
+  "battleroyale.message.clear_firework_tracker": "Cleared all firework tracker",
+  "battleroyale.message.add_player_muteki": "Player %s is muteki now",
+  "battleroyale.message.muteki_end": "Muteki time's up",
+  "battleroyale.message.clear_all_muteki": "Cleared all muteki effect",
+  "battleroyale.message.clear_muteki": "Cleared %s' muteki effect",
+  "battleroyale.message.player_not_muteki": "Player %s is not muteki"
 }

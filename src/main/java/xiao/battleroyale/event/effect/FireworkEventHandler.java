@@ -1,4 +1,4 @@
-package xiao.battleroyale.event.game;
+package xiao.battleroyale.event.effect;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
