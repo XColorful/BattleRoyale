@@ -55,13 +55,6 @@ public class PolygonShape extends AbstractPolyShape {
             cachedProgress = allowedProgress;
         }
 
-        double halfHeight = dimension.y / 2.0;
-        double lowerY = center.y - halfHeight;
-        double upperY = center.y + halfHeight;
-        if (checkPos.y < lowerY || checkPos.y > upperY) {
-            return false;
-        }
-
         double pX_relative = checkPos.x - center.x;
         double pZ_relative = checkPos.z - center.z;
 
