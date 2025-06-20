@@ -66,7 +66,10 @@ public class ZoneRenderer {
     }
 
     public void onRenderLevelStage(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) return;
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS
+                || !ClientGameDataManager.get().hasZoneRender()) {
+            return;
+        }
 
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) {
@@ -117,6 +120,9 @@ public class ZoneRenderer {
                     case STAR -> // 尖顶星形
                             Shape2D.drawFilledStarCylinder(poseStack, consumer, r, g, b, a,
                                     (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y, zoneData.segments, POINTING_POLYGON_ANGLE);
+                    default -> {
+                        ;
+                    }
                 }
             } finally {
                 poseStack.popPose();

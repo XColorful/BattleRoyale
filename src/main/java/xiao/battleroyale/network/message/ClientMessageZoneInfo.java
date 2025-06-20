@@ -31,7 +31,7 @@ public class ClientMessageZoneInfo implements IMessage<ClientMessageZoneInfo> {
     @Override
     public void handle(ClientMessageZoneInfo message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
-        context.enqueueWork(() -> {
+        context.enqueueWork(() -> { // 延迟处理，防竞态条件
             ClientGameDataManager.get().updateZoneInfo(message.zoneSyncNbt);
         });
         context.setPacketHandled(true);

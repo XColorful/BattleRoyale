@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.team.TeamTag;
+import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.util.ColorUtils;
@@ -29,10 +30,15 @@ public class ClientTeamData {
     public static final double OFFLINE = -1;
     public static final double ELIMINATED = -2;
 
+    public long lastUpdateTime = 0;
+
     public ClientTeamData() {
         clear();
     }
 
+    /*
+     * 需推迟到主线程
+     */
     public void updateFromNbt(CompoundTag nbt) {
         this.teamId = nbt.getInt(TeamTag.TEAM_ID);
         this.teamColor = ColorUtils.parseColorFromString(nbt.getString(TeamTag.TEAM_COLOR));
@@ -48,8 +54,9 @@ public class ClientTeamData {
             ));
         }
         teamMemberInfoList.sort(Comparator.comparingInt(TeamMemberInfo::playerId));
-
         this.inTeam = isInTeam();
+
+        this.lastUpdateTime = ClientGameDataManager.currentTick;  // updateFromNbt推迟到主线程
     }
 
     private boolean isInTeam() {
@@ -61,6 +68,7 @@ public class ClientTeamData {
         this.teamColor = Color.BLACK;
         this.teamMemberInfoList.clear();
         this.inTeam = false;
+        this.lastUpdateTime = 0;
     }
 
     @NotNull

@@ -61,6 +61,8 @@ public class GameZone implements IGameZone {
     private static final String SHAPE_HAS_BAD_SHAPE = SHAPE_TAG + "-hasBadShape";
     private static final String SHAPE_SEGMENTS = SHAPE_TAG + "-" + ZoneShapeTag.SEGMENTS;
 
+    public static final int FORCE_SYNC_FREQUENCY = 20 * 3; // 3秒强制通信
+
     private final int zoneId;
     private final String zoneName;
     private final String zoneColor; // 格式如 #0000FF
@@ -144,7 +146,7 @@ public class GameZone implements IGameZone {
         }
 
         double progress = tickableZone.getShapeProgress(gameTime, zoneDelay);
-        if (Math.abs(progress - prevShapeProgress) > 0.001F || gameTime % 20 == 0) { // 同步客户端，最多1秒间隔
+        if (Math.abs(progress - prevShapeProgress) > 0.001F || gameTime % FORCE_SYNC_FREQUENCY == 0) { // 同步客户端
             prevShapeProgress = progress;
             CompoundTag zoneInfo = toNBT(progress);
             GameManager.get().addZoneInfo(this.zoneId, zoneInfo);
