@@ -177,12 +177,8 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 BattleRoyale.LOGGER.warn("Failed to calculate start dimension, type: {}", startEntry.startDimensionType.getValue());
                 return;
             }
-            if (startEntry.startDimensionRange > 0) {
-                startDimension = randomAdjustXZ(startDimension, startEntry.startDimensionRange, random);
-            }
-            if (startEntry.startDimensionScale >= 0) {
-                startDimension = Vec3Utils.scaleXZ(startDimension, startEntry.startDimensionScale);
-            }
+            startDimension = randomAdjustXZ(startDimension, startEntry.startDimensionRange, random);
+            startDimension = Vec3Utils.scaleXZ(startDimension, startEntry.startDimensionScale);
             // start rotation
             switch (startEntry.startRotationType) {
                 case FIXED -> startRotateDegree = startEntry.startRotateDegree;
@@ -214,12 +210,8 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                     startRotateDegree = player.getYRot();
                 }
             }
-            if (startEntry.startRotateRange > 0) {
-                startRotateDegree += BattleRoyale.COMMON_RANDOM.nextDouble() * startEntry.startRotateRange;
-            }
-            if (startEntry.startRotateScale >= 0) {
-                startRotateDegree *= startEntry.startRotateScale;
-            }
+            startRotateDegree += random.get() * startEntry.startRotateRange;
+            startRotateDegree *= startEntry.startRotateScale;
             // end center
             switch (endEntry.endCenterType) {
                 case FIXED -> endCenter = endEntry.endCenterPos;
@@ -275,12 +267,8 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 BattleRoyale.LOGGER.warn("Failed to calculate end dimension, type: {}", endEntry.endDimensionType.getValue());
                 return;
             }
-            if (endEntry.endDimensionRange > 0) {
-                endDimension = randomAdjustXZ(endDimension, endEntry.endDimensionRange, random);
-            }
-            if (endEntry.endDimensionScale >= 0) {
-                endDimension = Vec3Utils.scaleXZ(endDimension, endEntry.endDimensionScale);
-            }
+            endDimension = randomAdjustXZ(endDimension, endEntry.endDimensionRange, random);
+            endDimension = Vec3Utils.scaleXZ(endDimension, endEntry.endDimensionScale);
             // end rotation
             switch (endEntry.endRotationType) {
                 case FIXED -> endRotateDegree = endEntry.endRotateDegree;
@@ -312,12 +300,8 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                     endRotateDegree = player.getYRot();
                 }
             }
-            if (endEntry.endRotateRange > 0) {
-                endRotateDegree += BattleRoyale.COMMON_RANDOM.nextDouble() * endEntry.endRotateRange;
-            }
-            if (endEntry.endRotateScale >= 0) {
-                endRotateDegree *= endEntry.endRotateScale;
-            }
+            endRotateDegree += random.get() * endEntry.endRotateRange;
+            endRotateDegree *= endEntry.endRotateScale;
         }
         if (additionalCalculationCheck()
                 && startCenter != null&& startDimension != null

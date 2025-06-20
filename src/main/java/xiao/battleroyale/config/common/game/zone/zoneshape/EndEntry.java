@@ -190,9 +190,6 @@ public class EndEntry {
                 if (dimensionZoneId < 0) {
                     BattleRoyale.LOGGER.info("Skipped invalid end previous dimension zone id: {}", dimensionZoneId);
                     return null;
-                } else if (dimensionScale < 0) {
-                    BattleRoyale.LOGGER.info("Invalid end previous dimension scale {}, defaulting to 0", dimensionScale);
-                    dimensionScale = 0;
                 }
                 double dimensionProgress = JsonUtils.getJsonDouble(dimensionObject, ZoneShapeTag.PREVIOUS_PROGRESS, 0);
                 endEntry.addPreviousDimension(dimensionZoneId, dimensionProgress);
@@ -220,9 +217,6 @@ public class EndEntry {
                     if (rotateZoneId < 0) {
                         BattleRoyale.LOGGER.info("Skipped invalid end rotate zone id: {}", rotateZoneId);
                         return null;
-                    } else if (rotateScale < 0) {
-                        BattleRoyale.LOGGER.info("Invalid end previous rotate scale {}, defaulting to 0", rotateScale);
-                        rotateScale = 0;
                     }
                     double rotateProgress = JsonUtils.getJsonDouble(rotationObject, ZoneShapeTag.PREVIOUS_PROGRESS, 0);
                     endEntry.addPreviousRotate(rotateZoneId, rotateProgress);
