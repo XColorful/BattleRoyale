@@ -8,18 +8,18 @@ import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 import xiao.battleroyale.util.ColorUtils;
-import xiao.battleroyale.util.StringUtils;
 
 import java.awt.*;
 
 public class ClientZoneData {
 
+    public boolean useClientColor = false; // TODO 添加配置
+    public String clientColorString = "#0000FF"; // 半透明蓝色
+
     public final int id;
     public String name;
     public Color color;
-
     public ZoneFuncType funcType;
-
     public ZoneShapeType shapeType;
     public Vec3 center;
     public Vec3 dimension;
@@ -39,6 +39,9 @@ public class ClientZoneData {
     public void updateFromNbt(CompoundTag nbt) {
         this.name = nbt.getString(GameZoneTag.ZONE_NAME);
         this.color = ColorUtils.parseColorFromString(nbt.getString(GameZoneTag.ZONE_COLOR));
+        if (useClientColor) {
+            this.color = ColorUtils.changeColorExceptAlpha(this.color, clientColorString);
+        }
 
         String funcTypeName = nbt.getString(GameZoneTag.FUNC);
         this.funcType = ZoneFuncType.fromName(funcTypeName);

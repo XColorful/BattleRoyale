@@ -3,6 +3,7 @@ package xiao.battleroyale.api.game.zone.func;
 public final class ZoneFuncTag {
     public static final String TYPE_NAME = "zoneFuncType";
 
+    public static final String NO_FUNC = "noFunc";
     public static final String SAFE = "safe";
     public static final String UNSAFE = "unsafe";
     public static final String DANGER = "danger";

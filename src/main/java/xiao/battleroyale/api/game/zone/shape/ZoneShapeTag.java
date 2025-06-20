@@ -4,6 +4,7 @@ public final class ZoneShapeTag {
 
     public static final String TYPE_NAME = "zoneShapeType";
 
+    // 2D shape
     public static final String CIRCLE = "circle";
     public static final String SQUARE = "square";
     public static final String RECTANGLE = "rectangle";
@@ -11,6 +12,12 @@ public final class ZoneShapeTag {
     public static final String POLYGON = "polygon";
     public static final String ELLIPSE = "ellipse";
     public static final String STAR = "star";
+    // 3D shape
+    public static final String SPHERE = "sphere";
+    public static final String HEMI_SPHERE = "hemiSphere";
+    public static final String CUBE = "cube";
+    public static final String CUBOID = "cuboid";
+    public static final String ELLIPSOID = "ellipsoid";
 
     public static final String START = "start";
     public static final String END = "end";

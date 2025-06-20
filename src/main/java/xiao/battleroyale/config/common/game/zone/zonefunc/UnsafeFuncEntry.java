@@ -10,8 +10,11 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class UnsafeFuncEntry extends AbstractFuncEntry {
 
+    protected final double damage;
+
     public UnsafeFuncEntry(double damage, int moveDelay, int moveTime, int tickFreq, int tickOffset) {
-        super(damage, moveDelay, moveTime, tickFreq, tickOffset);
+        super(moveDelay, moveTime, tickFreq, tickOffset);
+        this.damage = damage;
     }
 
     @Override

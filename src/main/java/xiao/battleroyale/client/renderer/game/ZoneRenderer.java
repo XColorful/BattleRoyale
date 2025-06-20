@@ -29,6 +29,7 @@ public class ZoneRenderer {
     public static final int CIRCLE_SEGMENTS = 64;
     public static final int ELLIPSE_SEGMENTS = 64;
     public static final float POINTING_POLYGON_ANGLE = (float) (Math.PI / 2.0);
+    public static final int SPHERE_SEGMENTS = 64;
 
     private static ZoneRenderer instance;
 
@@ -102,6 +103,7 @@ public class ZoneRenderer {
                 float a = zoneData.color.getAlpha() / 255.0f;
 
                 switch (zoneData.shapeType) {
+                    // 2D shape
                     case CIRCLE ->
                             Shape2D.drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
                                     (float) zoneData.dimension.x, (float) zoneData.dimension.y, CIRCLE_SEGMENTS, 0);
@@ -120,6 +122,10 @@ public class ZoneRenderer {
                     case STAR -> // 尖顶星形
                             Shape2D.drawFilledStarCylinder(poseStack, consumer, r, g, b, a,
                                     (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y, zoneData.segments, POINTING_POLYGON_ANGLE);
+                    // 3D shape
+                    case SPHERE ->
+                            Shape3D.drawFilledSphere(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.y, SPHERE_SEGMENTS);
                     default -> {
                         ;
                     }

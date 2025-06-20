@@ -6,10 +6,7 @@ import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.common.game.zone.tickable.MutekiFunc;
 import xiao.battleroyale.config.common.game.GameConfigManager;
-import xiao.battleroyale.config.common.game.zone.zonefunc.FireworkFuncEntry;
-import xiao.battleroyale.config.common.game.zone.zonefunc.MutekiFuncEntry;
-import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
-import xiao.battleroyale.config.common.game.zone.zonefunc.UnsafeFuncEntry;
+import xiao.battleroyale.config.common.game.zone.zonefunc.*;
 import xiao.battleroyale.config.common.game.zone.zoneshape.*;
 
 import java.nio.file.Paths;
@@ -30,6 +27,7 @@ public class DefaultZone {
         zoneConfigJson.add(generateDefaultZoneConfig5());
         zoneConfigJson.add(generateDefaultZoneConfig6());
         zoneConfigJson.add(generateDefaultZoneConfig7());
+        zoneConfigJson.add(generateDefaultZoneConfig10());
         writeJsonToFile(Paths.get(GameConfigManager.get().getZoneConfigPath(), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
@@ -267,6 +265,34 @@ public class DefaultZone {
 
         StarEntry starEntry = new StarEntry(startEntry, endEntry, true, 5);
         config.add(ZoneConfigTag.ZONE_SHAPE, starEntry.toJson());
+
+        return config;
+    }
+
+    private static JsonObject generateDefaultZoneConfig10() {
+        JsonObject config = new JsonObject();
+        config.addProperty(ZoneConfigTag.ZONE_ID, 10);
+        config.addProperty(ZoneConfigTag.ZONE_NAME, "1st sphere");
+        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#0000FF77");
+        config.addProperty(ZoneConfigTag.ZONE_DELAY, 200);
+        config.addProperty(ZoneConfigTag.ZONE_TIME, 700);
+
+        NoFuncEntry noFuncEntry = new NoFuncEntry(200, 400);
+
+        config.add(ZoneConfigTag.ZONE_FUNC, noFuncEntry.toJson());
+
+        StartEntry startEntry = new StartEntry();
+        startEntry.addLockCenter(1, true);
+        startEntry.addFixedDimension(new Vec3(10, 10, 10));
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addPreviousCenter(0, 0);
+        endEntry.addRelativeCenter(new Vec3(0, 5, 0));
+        endEntry.addPreviousDimension(10, 0);
+
+        SphereEntry sphereEntry = new SphereEntry(startEntry, endEntry, false);
+        config.add(ZoneConfigTag.ZONE_SHAPE, sphereEntry.toJson());
+
         return config;
     }
 }

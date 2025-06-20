@@ -14,7 +14,8 @@ public enum ZoneFuncType {
     DANGER(ZoneFuncTag.DANGER, DangerFuncEntry::fromJson),
     AIRDROP(ZoneFuncTag.AIRDROP, AirdropFuncEntry::fromJson),
     FIREWORK(ZoneFuncTag.FIREWORK, FireworkFuncEntry::fromJson),
-    MUTEKI(ZoneFuncTag.MUTEKI, MutekiFuncEntry::fromJson);
+    MUTEKI(ZoneFuncTag.MUTEKI, MutekiFuncEntry::fromJson),
+    NO_FUNC(ZoneFuncTag.NO_FUNC, NoFuncEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends IZoneFuncEntry> deserializer;

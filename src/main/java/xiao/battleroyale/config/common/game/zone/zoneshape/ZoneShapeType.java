@@ -9,13 +9,16 @@ import java.util.Map;
 import java.util.function.Function;
 
 public enum ZoneShapeType {
+    // 2D shape
     CIRCLE(ZoneShapeTag.CIRCLE, CircleEntry::fromJson),
     SQUARE(ZoneShapeTag.SQUARE, SquareEntry::fromJson),
     RECTANGLE(ZoneShapeTag.RECTANGLE, RectangleEntry::fromJson),
     HEXAGON(ZoneShapeTag.HEXAGON, HexagonEntry::fromJson),
     POLYGON(ZoneShapeTag.POLYGON, PolygonEntry::fromJson),
     ELLIPSE(ZoneShapeTag.ELLIPSE, EllipseEntry::fromJson),
-    STAR(ZoneShapeTag.STAR, StarEntry::fromJson);
+    STAR(ZoneShapeTag.STAR, StarEntry::fromJson),
+    // 3D shape
+    SPHERE(ZoneShapeTag.SPHERE, SphereEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends IZoneShapeEntry> deserializer;
