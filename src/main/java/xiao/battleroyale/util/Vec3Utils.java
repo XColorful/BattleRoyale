@@ -9,6 +9,8 @@ import java.util.function.Supplier;
 
 public class Vec3Utils {
 
+    public static final double EPSILON = 1e-9;
+
     @Nullable
     public static Vec3 addVec(@Nullable Vec3 baseVec, @Nullable Vec3 addedVec) {
         if (addedVec == null || baseVec == null) {
@@ -49,14 +51,14 @@ public class Vec3Utils {
      */
     public static boolean equalAbs(Vec3 v1, Vec3 v2) {
         return v1.equals(v2)
-                || Math.abs(v1.x) == Math.abs(v2.x) && Math.abs(v1.y) == Math.abs(v2.y) && Math.abs(v1.z) == Math.abs(v2.z);
+                || (Math.abs(Math.abs(v1.x) - Math.abs(v2.x)) < EPSILON && Math.abs(Math.abs(v1.y) - Math.abs(v2.y)) < EPSILON && Math.abs(Math.abs(v1.z) - Math.abs(v2.z)) < EPSILON);
     }
 
     /**
      * 判断向量的XZ分量绝对值是否相等
      */
     public static boolean equalXZAbs(Vec3 v) {
-        return Math.abs(v.x) == Math.abs(v.z);
+        return Math.abs(Math.abs(v.x) - Math.abs(v.z)) < EPSILON;
     }
 
     /**
@@ -64,7 +66,8 @@ public class Vec3Utils {
      */
     public static boolean equalXYZAbs(Vec3 v) {
         double yAbs = Math.abs(v.y);
-        return Math.abs(v.x) == yAbs && yAbs == Math.abs(v.z);
+        return Math.abs(Math.abs(v.x) - yAbs) < EPSILON
+                && Math.abs(yAbs - Math.abs(v.z)) < EPSILON;
     }
 
     /**
@@ -86,56 +89,39 @@ public class Vec3Utils {
      * 以输入向量为基准，往XZ正反方向随机偏移
      */
     public static Vec3 randomAdjustXZ(@NotNull Vec3 baseVec, double range, Supplier<Float> random) {
-        return new Vec3(baseVec.x + range * (random.get() - 0.5F) * 2,
-                baseVec.y,
-                baseVec.z + range * (random.get() - 0.5F) * 2
-        );
+        return baseVec.add(range * (random.get() - 0.5F) * 2, 0, range * (random.get() - 0.5F) * 2);
     }
     public static Vec3 randomAdjustXZ(@NotNull Vec3 baseVec, Vec3 offVec, Supplier<Float> random) {
         return randomAdjustXZ(baseVec, offVec.x, offVec.z, random);
     }
     public static Vec3 randomAdjustXZ(@NotNull Vec3 baseVec, double x, double z, Supplier<Float> random) {
-        double xOff = x * (random.get() - 0.5F) * 2;
-        double zOff = z * (random.get() - 0.5F) * 2;
-        return baseVec.add(xOff, 0, zOff);
+        return baseVec.add(x * (random.get() - 0.5F) * 2, 0, z * (random.get() - 0.5F) * 2);
     }
 
     /**
      * 以输入向量为基准，往XYZ正反方向随机偏移
      */
     public static Vec3 randomAdjustXYZ(@NotNull Vec3 baseVec, double range, Supplier<Float> random) {
-        return new Vec3(baseVec.x + range * (random.get() - 0.5F) * 2,
-                baseVec.y + range * (random.get() - 0.5F) * 2,
-                baseVec.z + range * (random.get() - 0.5F) * 2
-        );
+        return baseVec.add(range * (random.get() - 0.5F) * 2, range * (random.get() - 0.5F) * 2, range * (random.get() - 0.5F) * 2);
     }
     public static Vec3 randomAdjustXYZ(@NotNull Vec3 baseVec, Vec3 offVec, Supplier<Float> random) {
         return randomAdjustXYZ(baseVec, offVec.x, offVec.y, offVec.z, random);
     }
     public static Vec3 randomAdjustXYZ(@NotNull Vec3 baseVec, double x, double y, double z, Supplier<Float> random) {
-        double xOff = x * (random.get() - 0.5F) * 2;
-        double yOff = y * (random.get() - 0.5F) * 2;
-        double zOff = z * (random.get() - 0.5F) * 2;
-        return baseVec.add(xOff, yOff, zOff);
+        return baseVec.add(x * (random.get() - 0.5F) * 2, y * (random.get() - 0.5F) * 2, z * (random.get() - 0.5F) * 2);
     }
 
     /**
      * 以输入向量为基准，往XZ正反方向，Y正方向随机偏移
      */
     public static Vec3 randomAdjustXZExpandY(@NotNull Vec3 baseVec, double range, Supplier<Float> random) {
-        return new Vec3(baseVec.x + range * (random.get() - 0.5F) * 2,
-                baseVec.y + range * random.get(),
-                baseVec.z + range * (random.get() - 0.5F) * 2
-        );
+        return randomAdjustXZExpandY(baseVec, range, range, range, random);
     }
     public static Vec3 randomAdjustXZExpandY(@NotNull Vec3 baseVec, Vec3 offVec, Supplier<Float> random) {
         return randomAdjustXZExpandY(baseVec, offVec.x, offVec.y, offVec.z, random);
     }
     public static Vec3 randomAdjustXZExpandY(@NotNull Vec3 baseVec, double x, double y, double z, Supplier<Float> random) {
-        double xOff = x * (random.get() - 0.5F) * 2;
-        double yOff = y * random.get();
-        double zOff = z * (random.get() - 0.5F) * 2;
-        return baseVec.add(xOff, yOff, zOff);
+        return baseVec.add(x * (random.get() - 0.5F) * 2, y * random.get(), z * (random.get() - 0.5F) * 2);
     }
 
     /**
@@ -158,9 +144,7 @@ public class Vec3Utils {
     public static Vec3 randomCircleXZ(@NotNull Vec3 baseVec, Vec3 dimension, Supplier<Float> random) {
         double angle = 2 * Math.PI * random.get();
         double radius = dimension.x * Math.sqrt(random.get());
-        double xOff = radius * Math.cos(angle);
-        double zOff = radius * Math.sin(angle);
-        return baseVec.add(xOff, 0, zOff);
+        return baseVec.add(radius * Math.cos(angle), 0, radius * Math.sin(angle));
     }
 
     /**
@@ -169,9 +153,6 @@ public class Vec3Utils {
     public static Vec3 randomCircleXZExpandY(@NotNull Vec3 baseVec, Vec3 dimension, Supplier<Float> random) {
         double angle = 2 * Math.PI * random.get();
         double radius = dimension.x * Math.sqrt(random.get());
-        double xOff = radius * Math.cos(angle);
-        double yOff = dimension.y * random.get();
-        double zOff = radius * Math.sin(angle);
-        return baseVec.add(xOff, yOff, zOff);
+        return baseVec.add(radius * Math.cos(angle), dimension.y * random.get(), radius * Math.sin(angle));
     }
 }
