@@ -14,8 +14,8 @@ import javax.annotation.Nullable;
  */
 public class EllipseShape extends AbstractSimpleShape {
 
-    public EllipseShape(StartEntry startEntry, EndEntry endEntry) {
-        super(startEntry, endEntry);
+    public EllipseShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
+        super(startEntry, endEntry, allowBadShape);
     }
 
     @Override
@@ -43,22 +43,74 @@ public class EllipseShape extends AbstractSimpleShape {
             cachedProgress = allowedProgress;
         }
 
+        boolean isDimXNegative = dimension.x < 0;
+        boolean isDimZNegative = dimension.z < 0;
+        boolean isZoneInverted = isDimXNegative != isDimZNegative;
+
+        double effectiveA = Math.abs(dimension.x);
+        double effectiveB = Math.abs(dimension.z);
+
+        // 处理退化情况：点或线段
+        if (effectiveA <= EPSILON && effectiveB <= EPSILON) {
+            double distFromCenterSq = (checkPos.x - center.x) * (checkPos.x - center.x) + (checkPos.z - center.z) * (checkPos.z - center.z);
+            if (distFromCenterSq < EPSILON * EPSILON) {
+                return !isZoneInverted;
+            } else {
+                return isZoneInverted;
+            }
+        } else if (effectiveA <= EPSILON) { // 退化为Z轴线段
+            double x_translated = checkPos.x - center.x;
+            double z_translated = checkPos.z - center.z;
+            double x_rotated;
+            double z_rotated;
+            if (Math.abs(rotateDegree) < EPSILON) {
+                x_rotated = x_translated;
+                z_rotated = z_translated;
+            } else {
+                double radians = Math.toRadians(rotateDegree);
+                double cosDegree = Math.cos(radians);
+                double sinDegree = Math.sin(radians);
+                x_rotated = x_translated * cosDegree + z_translated * sinDegree;
+                z_rotated = -x_translated * sinDegree + z_translated * cosDegree;
+            }
+            return (Math.abs(x_rotated) < EPSILON) && (Math.abs(z_rotated) <= effectiveB) != isZoneInverted;
+        } else if (effectiveB <= EPSILON) { // 退化为X轴线段
+            double x_translated = checkPos.x - center.x;
+            double z_translated = checkPos.z - center.z;
+            double x_rotated;
+            double z_rotated;
+            if (Math.abs(rotateDegree) < EPSILON) {
+                x_rotated = x_translated;
+                z_rotated = z_translated;
+            } else {
+                double radians = Math.toRadians(rotateDegree);
+                double cosDegree = Math.cos(radians);
+                double sinDegree = Math.sin(radians);
+                x_rotated = x_translated * cosDegree + z_translated * sinDegree;
+                z_rotated = -x_translated * sinDegree + z_translated * cosDegree;
+            }
+            return (Math.abs(z_rotated) < EPSILON) && (Math.abs(x_rotated) <= effectiveA) != isZoneInverted;
+        }
+
         double x_translated = checkPos.x - center.x;
         double z_translated = checkPos.z - center.z;
 
-        double distSq = x_translated * x_translated + z_translated * z_translated;
+        double minRadiusSq = Math.min(effectiveA, effectiveB);
+        minRadiusSq *= minRadiusSq;
 
-        double a = dimension.x; // 半长轴
-        double b = dimension.z; // 半短轴
+        double maxRadiusSq = Math.max(effectiveA, effectiveB);
+        maxRadiusSq *= maxRadiusSq;
 
-        // 先内接圆判断是否在内（多数情况用safe安全区，判断在圈内）
-        if (distSq <= b * b) {
-            return true;
+        double distFromCenterSq = x_translated * x_translated + z_translated * z_translated;
+
+        // 内接圆判断
+        if (distFromCenterSq <= minRadiusSq) {
+            return !isZoneInverted;
         }
 
-        // 后外接圆判断是否在外
-        if (distSq > a * a) {
-            return false;
+        // 外接圆判断
+        if (distFromCenterSq >= maxRadiusSq) {
+            return isZoneInverted;
         }
 
         // 详细的椭圆方程计算
@@ -77,8 +129,14 @@ public class EllipseShape extends AbstractSimpleShape {
             z_rotated = -x_translated * sinDegree + z_translated * cosDegree;
         }
 
-        // 椭圆方程: (x_rotated^2 / a^2) + (z_rotated^2 / b^2) <= 1
-        return (x_rotated * x_rotated) / (a * a) + (z_rotated * z_rotated) / (b * b) <= 1.0;
+        /*
+         * 椭圆方程
+         * x^2   y^2
+         * --- + --- = 1，在椭圆上则=1，椭圆内则小于1
+         * a^2   b^2
+         */
+        double result = (x_rotated * x_rotated) / (effectiveA * effectiveA) + (z_rotated * z_rotated) / (effectiveB * effectiveB);
+        return (result <= 1.0 + EPSILON) != isZoneInverted;
     }
 
     @Override

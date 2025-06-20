@@ -9,8 +9,8 @@ import xiao.battleroyale.common.game.zone.spatial.CircleShape;
 
 public class CircleEntry extends AbstractSimpleEntry {
 
-    public CircleEntry(StartEntry startEntry, EndEntry endEntry) {
-        super(startEntry, endEntry);
+    public CircleEntry(StartEntry startEntry, EndEntry endEntry, boolean badShape) {
+        super(startEntry, endEntry, badShape);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class CircleEntry extends AbstractSimpleEntry {
 
     @Override
     public ISpatialZone createSpatialZone() {
-        return new CircleShape(startEntry, endEntry);
+        return new CircleShape(startEntry, endEntry, badShape);
     }
 
     @Nullable
@@ -42,6 +42,8 @@ public class CircleEntry extends AbstractSimpleEntry {
             return null;
         }
 
-        return new CircleEntry(startEntry, endEntry);
+        boolean badShape = AbstractSimpleEntry.readBadShape(jsonObject);
+
+        return new CircleEntry(startEntry, endEntry, badShape);
     }
 }

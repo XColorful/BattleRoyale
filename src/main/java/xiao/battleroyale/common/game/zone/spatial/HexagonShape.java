@@ -13,8 +13,8 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
  */
 public class HexagonShape extends AbstractPolyShape {
 
-    public HexagonShape(StartEntry startEntry, EndEntry endEntry) {
-        super(startEntry, endEntry);
+    public HexagonShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
+        super(startEntry, endEntry, allowBadShape);
     }
 
     @Override
@@ -29,6 +29,7 @@ public class HexagonShape extends AbstractPolyShape {
         Vec3 center, dimension;
         double rotateDegree;
         double currentApothem; // 当前内接圆半径
+
         if (Math.abs(allowedProgress - cachedProgress) < EPSILON) {
             center = cachedCenter;
             dimension = cachedDimension;
@@ -45,7 +46,16 @@ public class HexagonShape extends AbstractPolyShape {
             cachedProgress = allowedProgress;
         }
 
-        double radius = dimension.x; // 外接圆半径，即边长
+        double rawRadius = dimension.x;
+        double effectiveRadius = Math.abs(rawRadius);
+        double effectiveApothem = Math.abs(currentApothem);
+
+        if (effectiveRadius <= EPSILON) {
+            return false;
+        }
+
+        boolean isZoneInverted = rawRadius < 0;
+
         double x_rotated;
         double z_rotated;
 
@@ -66,25 +76,30 @@ public class HexagonShape extends AbstractPolyShape {
 
         double distSq = x_rotated * x_rotated + z_rotated * z_rotated;
 
-        // 先内接圆判断是否在内（多数情况用safe安全区，判断在圈内）
-        if (distSq < currentApothem * currentApothem) {
-            return true;
+        // 内接圆判断
+        if (distSq < effectiveApothem * effectiveApothem) {
+            return !isZoneInverted;
         }
 
-        // 后外接圆判断是否在外
-        if (distSq > radius * radius) {
-            return false;
+        // 外接圆判断
+        if (distSq > effectiveRadius * effectiveRadius) {
+            return isZoneInverted;
         }
 
-        // 立方体坐标系判定 (Cube Coordinates)
-        double q = (x_rotated * 2.0 / 3.0) / radius;
-        double r = (-x_rotated / 3.0 + z_rotated * Math.sqrt(3.0) / 3.0) / radius;
-        double s = (-x_rotated / 3.0 - z_rotated * Math.sqrt(3.0) / 3.0) / radius;
+        /*
+         * 立方体坐标系判定 (Cube Coordinates) - 恢复到之前正确的精确判定逻辑
+         * 将旋转后的点坐标归一化到单位六边形空间，再进行判断
+         */
+        double q = (x_rotated * 2.0 / 3.0) / effectiveRadius;
+        double r = (-x_rotated / 3.0 + z_rotated * Math.sqrt(3.0) / 3.0) / effectiveRadius;
+        double s = (-x_rotated / 3.0 - z_rotated * Math.sqrt(3.0) / 3.0) / effectiveRadius;
 
+        // 对轴向坐标进行四舍五入
         int rq = (int) Math.round(q);
         int rr = (int) Math.round(r);
         int rs = (int) Math.round(s);
 
+        // 调整舍入误差，确保 q+r+s = 0
         double q_diff = Math.abs(rq - q);
         double r_diff = Math.abs(rr - r);
         double s_diff = Math.abs(rs - s);
@@ -97,7 +112,7 @@ public class HexagonShape extends AbstractPolyShape {
             rs = -rq - rr;
         }
 
-        return (rq == 0 && rr == 0 && rs == 0);
+        return (rq == 0 && rr == 0 && rs == 0) != isZoneInverted;
     }
 
     @Override

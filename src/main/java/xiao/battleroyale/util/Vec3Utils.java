@@ -1,5 +1,6 @@
 package xiao.battleroyale.util;
 
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +34,36 @@ public class Vec3Utils {
                 startVec.y + (endVec.y - startVec.y) * delta,
                 startVec.z + (endVec.z - startVec.z) * delta
         );
+    }
+
+    public static Vec3 positive(Vec3 baseVec) {
+        return new Vec3(Math.abs(baseVec.x), Math.abs(baseVec.y), Math.abs(baseVec.z));
+    }
+
+    public static boolean hasNegative(Vec3 checkVec) {
+        return checkVec.x < 0 || checkVec.y < 0 || checkVec.z < 0;
+    }
+
+    /**
+     * 判断两向量各绝对值是否相等
+     */
+    public static boolean equalAbs(Vec3 v1, Vec3 v2) {
+        return v1.equals(v2)
+                || Math.abs(v1.x) == Math.abs(v2.x) && Math.abs(v1.y) == Math.abs(v2.y) && Math.abs(v1.z) == Math.abs(v2.z);
+    }
+
+    /**
+     * 判断向量的XZ分量绝对值是否相等
+     */
+    public static boolean equalXZAbs(Vec3 v) {
+        return Math.abs(v.x) == Math.abs(v.z);
+    }
+
+    /**
+     * 将向量的X分量的绝对值应用到Z分量
+     */
+    public static Vec3 applyXAbsToZ(Vec3 baseV) {
+        return new Vec3(baseV.x, baseV.y, Math.abs(baseV.x) * Mth.sign(baseV.z));
     }
 
     /**

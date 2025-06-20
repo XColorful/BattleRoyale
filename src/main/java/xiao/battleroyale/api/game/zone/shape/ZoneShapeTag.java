@@ -10,6 +10,7 @@ public final class ZoneShapeTag {
     public static final String HEXAGON = "hexagon";
     public static final String POLYGON = "polygon";
     public static final String ELLIPSE = "ellipse";
+    public static final String STAR = "star";
 
     public static final String START = "start";
     public static final String END = "end";
@@ -25,6 +26,7 @@ public final class ZoneShapeTag {
     public static final String SELECT_STANDING = "selectStanding";
     public static final String PLAYER_CENTER_LERP = "playerCenterLerp";
     public static final String SEGMENTS = "segments";
+    public static final String BAD_SHAPE = "allowBadShape";
 
     public static final String CENTER = "center";
     public static final String DIMENSION = "dimension";

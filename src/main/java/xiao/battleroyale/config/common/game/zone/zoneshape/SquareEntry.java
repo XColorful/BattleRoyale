@@ -10,8 +10,8 @@ import xiao.battleroyale.common.game.zone.spatial.SquareShape;
 
 public class SquareEntry extends AbstractSimpleEntry {
 
-    public SquareEntry(StartEntry startEntry, EndEntry endEntry) {
-        super(startEntry, endEntry);
+    public SquareEntry(StartEntry startEntry, EndEntry endEntry, boolean badShape) {
+        super(startEntry, endEntry, badShape);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class SquareEntry extends AbstractSimpleEntry {
 
     @Override
     public ISpatialZone createSpatialZone() {
-        return new SquareShape(startEntry, endEntry);
+        return new SquareShape(startEntry, endEntry, badShape);
     }
 
     @Nullable
@@ -43,6 +43,8 @@ public class SquareEntry extends AbstractSimpleEntry {
             return null;
         }
 
-        return new SquareEntry(startEntry, endEntry);
+        boolean badShape = AbstractSimpleEntry.readBadShape(jsonObject);
+
+        return new SquareEntry(startEntry, endEntry, badShape);
     }
 }

@@ -10,8 +10,8 @@ import javax.annotation.Nullable;
 
 public class EllipseEntry extends AbstractSimpleEntry {
 
-    public EllipseEntry(StartEntry startEntry, EndEntry endEntry) {
-        super(startEntry, endEntry);
+    public EllipseEntry(StartEntry startEntry, EndEntry endEntry, boolean badShape) {
+        super(startEntry, endEntry, badShape);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class EllipseEntry extends AbstractSimpleEntry {
 
     @Override
     public ISpatialZone createSpatialZone() {
-        return new EllipseShape(startEntry, endEntry);
+        return new EllipseShape(startEntry, endEntry, badShape);
     }
 
     @Nullable
@@ -43,6 +43,8 @@ public class EllipseEntry extends AbstractSimpleEntry {
             return null;
         }
 
-        return new EllipseEntry(startEntry, endEntry);
+        boolean badShape = AbstractSimpleEntry.readBadShape(jsonObject);
+
+        return new EllipseEntry(startEntry, endEntry, badShape);
     }
 }

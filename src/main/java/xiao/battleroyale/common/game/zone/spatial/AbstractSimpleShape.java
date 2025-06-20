@@ -30,8 +30,10 @@ import java.util.function.Supplier;
 
 public abstract class AbstractSimpleShape implements ISpatialZone {
 
-    protected StartEntry startEntry;
-    protected EndEntry endEntry;
+    protected final StartEntry startEntry;
+    protected final EndEntry endEntry;
+    protected final boolean allowBadShape;
+    protected boolean checkBadShape = false;
 
     protected Vec3 startCenter;
     protected Vec3 startDimension;
@@ -51,9 +53,10 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     protected Vec3 dimensionDist;
     protected double rotateDist;
 
-    public AbstractSimpleShape(StartEntry startEntry, EndEntry endEntry) {
+    public AbstractSimpleShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
         this.startEntry = startEntry;
         this.endEntry = endEntry;
+        this.allowBadShape = allowBadShape;
     }
 
     /**
@@ -89,8 +92,10 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
         double finalCheckX;
         double finalCheckZ;
-        double finalHalfWidth = dimension.x;
-        double finalHalfDepth = dimension.z;
+        double finalHalfWidth = Math.abs(dimension.x);
+        double finalHalfDepth = Math.abs(dimension.z);
+        boolean invertX = dimension.x < 0;
+        boolean invertZ = dimension.z < 0;
 
         if (Math.abs(rotateDegree) < EPSILON) {
             finalCheckX = checkPos.x - center.x;
@@ -107,8 +112,11 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             finalCheckZ = -dx * sinDegree + dz * cosDegree;
         }
 
-        return Math.abs(finalCheckX) <= finalHalfWidth
-                && Math.abs(finalCheckZ) <= finalHalfDepth;
+        boolean isWithinAbsX = Math.abs(finalCheckX) <= finalHalfWidth;
+        boolean isWithinAbsZ = Math.abs(finalCheckZ) <= finalHalfDepth;
+
+        return (isWithinAbsX != invertX)
+                && (isWithinAbsZ != invertZ);
     }
 
     @Override
@@ -314,6 +322,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
         if (additionalCalculationCheck()
                 && startCenter != null&& startDimension != null
                 && endCenter != null && endDimension != null) {
+            // 预计算
             centerDist = new Vec3(endCenter.x - startCenter.x,
                     endCenter.y - startCenter.y,
                     endCenter.z - startCenter.z);
@@ -329,8 +338,28 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
         }
     }
 
+    /**
+     * 检查是否需要自动更正为几何约束的形状，并设置标记
+     * 该父类方法仅假设区域单方向线性变化，只检查维度是否为负
+     * 如区域形状无特殊要求，此函数应始终返回true
+     */
     protected boolean additionalCalculationCheck() {
+        boolean willProduceBadShape = hasNegativeDimension();
+        checkBadShape = willProduceBadShape && !allowBadShape; // 会生成坏形状，并且不允许出现坏形状 -> 需要在运行时检查
         return true;
+    }
+
+    protected boolean hasNegativeDimension() {
+        return Vec3Utils.hasNegative(startDimension) || Vec3Utils.hasNegative(endDimension);
+    }
+
+    protected boolean hasEqualXZAbsDimension() {
+        return Vec3Utils.equalXZAbs(startDimension) && Vec3Utils.equalXZAbs(endDimension);
+    }
+
+    @Override
+    public boolean hasBadShape() {
+        return checkBadShape;
     }
 
     @Override
@@ -361,23 +390,31 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
     @Override
     public @Nullable Vec3 getStartDimension() {
-        return startDimension;
+        return checkBadShape ? Vec3Utils.positive(startDimension) : startDimension;
     }
 
     @Override
     public @Nullable Vec3 getDimension(double progress) {
         double allowedProgress = GameZone.allowedProgress(progress);
         if (!determined) {
+            if (dimensionDist == null) {
+                return null;
+            }
             BattleRoyale.LOGGER.warn("Shape is not fully determined yet, may produce unexpected dimension calculation");
         }
-        return new Vec3(startDimension.x + dimensionDist.x * allowedProgress,
-                startDimension.y + dimensionDist.y * allowedProgress,
-                startDimension.z + dimensionDist.z * allowedProgress);
+        Vec3 baseVec = getDimensionNoCheck(allowedProgress);
+        return checkBadShape ? Vec3Utils.positive(baseVec) : baseVec;
+    }
+
+    protected Vec3 getDimensionNoCheck(double progress) {
+        return new Vec3(startDimension.x + dimensionDist.x * progress,
+                startDimension.y + dimensionDist.y * progress,
+                startDimension.z + dimensionDist.z * progress);
     }
 
     @Override
     public @Nullable Vec3 getEndDimension() {
-        return endDimension;
+        return checkBadShape ? Vec3Utils.positive(endDimension) : endDimension;
     }
 
     @Override

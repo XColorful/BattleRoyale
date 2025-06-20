@@ -27,7 +27,7 @@ public class NBTUtils {
 
         ZoneShapeType shapeType = spatialZone.getShapeType();
         tag.putString(GameZoneTag.SHAPE, shapeType.getName());
-        if (shapeType == ZoneShapeType.POLYGON) {
+        if (shapeType == ZoneShapeType.POLYGON || shapeType == ZoneShapeType.STAR) {
             tag.putInt(GameZoneTag.SEGMENTS, spatialZone.getSegments());
         }
 

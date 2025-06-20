@@ -10,8 +10,8 @@ import xiao.battleroyale.common.game.zone.spatial.RectangleShape;
 
 public class RectangleEntry extends AbstractSimpleEntry {
 
-    public RectangleEntry(StartEntry startEntry, EndEntry endEntry) {
-        super(startEntry, endEntry);
+    public RectangleEntry(StartEntry startEntry, EndEntry endEntry, boolean badShape) {
+        super(startEntry, endEntry, badShape);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class RectangleEntry extends AbstractSimpleEntry {
 
     @Override
     public ISpatialZone createSpatialZone() {
-        return new RectangleShape(startEntry, endEntry);
+        return new RectangleShape(startEntry, endEntry, badShape);
     }
 
     @Nullable
@@ -42,7 +42,9 @@ public class RectangleEntry extends AbstractSimpleEntry {
             BattleRoyale.LOGGER.info("Invalid endEntry for RectangleEntry, skipped");
             return null;
         }
+
+        boolean badShape = AbstractSimpleEntry.readBadShape(jsonObject);
         
-        return new RectangleEntry(startEntry, endEntry);
+        return new RectangleEntry(startEntry, endEntry, badShape);
     }
 }

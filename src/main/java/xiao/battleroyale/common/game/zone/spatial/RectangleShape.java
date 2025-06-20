@@ -9,8 +9,8 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
  */
 public class RectangleShape extends AbstractSimpleShape {
 
-    public RectangleShape(StartEntry startEntry, EndEntry endEntry) {
-        super(startEntry, endEntry);
+    public RectangleShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
+        super(startEntry, endEntry, allowBadShape);
     }
 
     @Override

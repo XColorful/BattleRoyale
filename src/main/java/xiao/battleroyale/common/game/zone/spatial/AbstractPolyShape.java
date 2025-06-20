@@ -2,10 +2,12 @@ package xiao.battleroyale.common.game.zone.spatial;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
+import xiao.battleroyale.util.Vec3Utils;
 
 public abstract class AbstractPolyShape extends AbstractSimpleShape {
 
@@ -13,12 +15,12 @@ public abstract class AbstractPolyShape extends AbstractSimpleShape {
     protected double endApothem; // 终点内接圆半径
     protected double apothemDist; // 内接圆半径差值
 
-    public AbstractPolyShape(StartEntry startEntry, EndEntry endEntry) {
-        super(startEntry, endEntry);
+    public AbstractPolyShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
+        super(startEntry, endEntry, allowBadShape);
     }
 
     public double getStartApothem() {
-        return startApothem;
+        return checkBadShape ? Math.abs(startApothem) : startApothem;
     }
 
     public double getApothem(double progress) {
@@ -26,28 +28,62 @@ public abstract class AbstractPolyShape extends AbstractSimpleShape {
         if (!determined) {
             BattleRoyale.LOGGER.warn("Shape is not fully determined yet, may produce unexpected apothem calculation");
         }
-        return startApothem + apothemDist * allowedProgress;
+        double apothem = startApothem + apothemDist * allowedProgress;
+        return checkBadShape ? Math.abs(apothem) : apothem;
     }
 
     public double getEndApothem() {
-        return endApothem;
+        return checkBadShape ? Math.abs(endApothem) : endApothem;
     }
 
     @Override
     protected boolean additionalCalculationCheck() {
-        if (startDimension.x != startDimension.z) {
-            BattleRoyale.LOGGER.warn("Unequal hexagon shape start dimension (x: {}, z:{}), defaulting to x", startDimension.x, startDimension.z);
-            startDimension = new Vec3(startDimension.x, startDimension.y, startDimension.x);
-        }
-        if (endDimension.x != endDimension.z) {
-            BattleRoyale.LOGGER.warn("Unequal hexagon shape end dimension (x: {}, z:{}), defaulting to x", endDimension.x, endDimension.z);
-            endDimension = new Vec3(endDimension.x, endDimension.y, endDimension.x);
-        }
+        boolean willProduceBadShape = hasNegativeDimension()
+                || !Vec3Utils.equalXZAbs(startDimension) || !Vec3Utils.equalXZAbs(endDimension);
+        this.checkBadShape = willProduceBadShape && !allowBadShape;
 
         startApothem = startDimension.x * Mth.cos((float) (Math.PI / (float)getSegments()));
         endApothem = endDimension.x * Mth.cos((float) (Math.PI / (float)getSegments()));
         apothemDist = endApothem - startApothem;
 
         return true;
+    }
+
+    @Override
+    public @Nullable Vec3 getStartDimension() {
+        if (checkBadShape
+                && (Vec3Utils.hasNegative(startDimension) || !Vec3Utils.equalXZAbs(startDimension))) {
+            return Vec3Utils.positive(Vec3Utils.applyXAbsToZ(startDimension));
+        } else {
+            return startDimension;
+        }
+    }
+
+    @Override
+    public @Nullable Vec3 getDimension(double progress) {
+        double allowedProgress = GameZone.allowedProgress(progress);
+        if (!determined) {
+            if (dimensionDist == null) {
+                return null;
+            }
+            BattleRoyale.LOGGER.warn("Shape is not fully determined yet, may produce unexpected dimension calculation");
+        }
+        Vec3 baseVec = getDimensionNoCheck(allowedProgress);
+        if (checkBadShape
+                && (Vec3Utils.hasNegative(baseVec) || !Vec3Utils.equalXZAbs(baseVec))) {
+            return Vec3Utils.positive(Vec3Utils.applyXAbsToZ(baseVec));
+        } else {
+            return baseVec;
+        }
+    }
+
+    @Override
+    public @Nullable Vec3 getEndDimension() {
+        if (checkBadShape
+                && (Vec3Utils.hasNegative(endDimension) || !Vec3Utils.equalXZAbs(endDimension))) {
+            return Vec3Utils.positive(Vec3Utils.applyXAbsToZ(endDimension));
+        } else {
+            return endDimension;
+        }
     }
 }

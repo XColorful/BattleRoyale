@@ -58,6 +58,7 @@ public class GameZone implements IGameZone {
     private static final String SHAPE_END_DIMENSION_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.DIMENSION;
     private static final String SHAPE_END_ROTATION_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.ROTATION;
     private static final String SHAPE_END_ROTATION_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.ROTATION_TYPE;
+    private static final String SHAPE_HAS_BAD_SHAPE = SHAPE_TAG + "-hasBadShape";
     private static final String SHAPE_SEGMENTS = SHAPE_TAG + "-" + ZoneShapeTag.SEGMENTS;
 
     private final int zoneId;
@@ -195,6 +196,7 @@ public class GameZone implements IGameZone {
 
     private void addZoneDetailProperty() {
         Map<String, Integer> intWriter = new HashMap<>();
+        Map<String, Boolean> boolWriter = new HashMap<>();
         Map<String, Double> doubleWriter = new HashMap<>();
         Map<String, String> stringWriter = new HashMap<>();
 
@@ -219,9 +221,11 @@ public class GameZone implements IGameZone {
         stringWriter.put(SHAPE_END_CENTER_TAG, StringUtils.vectorToString(getEndCenterPos()));
         stringWriter.put(SHAPE_END_DIMENSION_TAG, StringUtils.vectorToString(getEndDimension()));
         doubleWriter.put(SHAPE_END_ROTATION_TAG, getEndRotateDegree());
+        boolWriter.put(SHAPE_HAS_BAD_SHAPE, hasBadShape());
         intWriter.put(SHAPE_SEGMENTS, getSegments());
 
         GameManager.get().recordZoneInt(this.zoneId, intWriter);
+        GameManager.get().recordZoneBool(this.zoneId, boolWriter);
         GameManager.get().recordZoneDouble(this.zoneId, doubleWriter);
         GameManager.get().recordZoneString(this.zoneId, stringWriter);
     }
@@ -272,6 +276,12 @@ public class GameZone implements IGameZone {
     public double getRotateDegree(double progress) { return spatialZone.getRotateDegree(progress); }
     @Override
     public double getEndRotateDegree() { return spatialZone.getEndRotateDegree(); }
+
+    @Override
+    public boolean hasBadShape() {
+        return spatialZone.hasBadShape();
+    }
+
     @Override
     public int getSegments() {
         return spatialZone.getSegments();

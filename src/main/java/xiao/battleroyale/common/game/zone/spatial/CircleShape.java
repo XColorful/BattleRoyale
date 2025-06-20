@@ -8,14 +8,17 @@ import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
+import xiao.battleroyale.util.Vec3Utils;
 
 /**
  * 二维 Circle
  */
 public class CircleShape extends AbstractSimpleShape {
 
-    public CircleShape(StartEntry startEntry, EndEntry endEntry) {
-        super(startEntry, endEntry);
+    protected boolean needEqualAbs = false;
+
+    public CircleShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
+        super(startEntry, endEntry, allowBadShape);
     }
 
     @Override
@@ -29,12 +32,14 @@ public class CircleShape extends AbstractSimpleShape {
         double allowProgress = GameZone.allowedProgress(progress);
         Vec3 center = getCenterPos(allowProgress);
         Vec3 dimension = getDimension(allowProgress);
+        double dimSq = dimension.x * dimension.z;
+        boolean isZoneInverted = dimSq < 0;
         // 旋转对圆没有几何影响
 
         // 忽略y方向
         double xDist = center.x - checkPos.x;
         double zDist = center.z - checkPos.z;
-        return (xDist * xDist + zDist * zDist) <= (dimension.x * dimension.z);
+        return (xDist * xDist + zDist * zDist) <= Math.abs(dimSq) != isZoneInverted;
     }
 
     @Override
@@ -44,20 +49,57 @@ public class CircleShape extends AbstractSimpleShape {
 
     @Override
     protected boolean additionalCalculationCheck() {
-        if (startDimension.x != startDimension.z) {
-            BattleRoyale.LOGGER.warn("Unequal circle shape start dimension (x: {}, z:{}), defaulting to x", startDimension.x, startDimension.z);
-            startDimension = new Vec3(startDimension.x, startDimension.y, startDimension.x);
-        }
-        if (endDimension.x != endDimension.z) {
-            BattleRoyale.LOGGER.warn("Unequal circle shape end dimension (x: {}, z:{}), defaulting to x", endDimension.x, endDimension.z);
-            endDimension = new Vec3(endDimension.x, endDimension.y, endDimension.x);
-        }
-
+        boolean willProduceBadShape = hasNegativeDimension();
+        checkBadShape = willProduceBadShape && !allowBadShape;
+        needEqualAbs = !hasEqualXZAbsDimension();
         return true;
     }
 
     @Override
     public int getSegments() {
         return ZoneRenderer.CIRCLE_SEGMENTS;
+    }
+
+    @Override
+    public @Nullable Vec3 getStartDimension() {
+        Vec3 baseV = needEqualAbs ? Vec3Utils.applyXAbsToZ(startDimension) : startDimension;
+        if (checkBadShape
+                && (Vec3Utils.hasNegative(startDimension) || !Vec3Utils.equalXZAbs(startDimension))) {
+            return Vec3Utils.positive(baseV);
+        } else {
+            return baseV;
+        }
+    }
+
+    @Override
+    public @Nullable Vec3 getDimension(double progress) {
+        double allowedProgress = GameZone.allowedProgress(progress);
+        if (!determined) {
+            if (dimensionDist == null) {
+                return null;
+            }
+            BattleRoyale.LOGGER.warn("Shape is not fully determined yet, may produce unexpected dimension calculation");
+        }
+        Vec3 baseVec = getDimensionNoCheck(allowedProgress);
+        if (needEqualAbs) {
+            baseVec = Vec3Utils.applyXAbsToZ(baseVec);
+        }
+        if (checkBadShape
+                && (Vec3Utils.hasNegative(baseVec) || !Vec3Utils.equalXZAbs(baseVec))) {
+            return Vec3Utils.positive(baseVec);
+        } else {
+            return baseVec;
+        }
+    }
+
+    @Override
+    public @Nullable Vec3 getEndDimension() {
+        Vec3 baseV = needEqualAbs ? Vec3Utils.applyXAbsToZ(endDimension) : endDimension;
+        if (checkBadShape
+                && (Vec3Utils.hasNegative(endDimension) || !Vec3Utils.equalXZAbs(endDimension))) {
+            return Vec3Utils.positive(baseV);
+        } else {
+            return baseV;
+        }
     }
 }

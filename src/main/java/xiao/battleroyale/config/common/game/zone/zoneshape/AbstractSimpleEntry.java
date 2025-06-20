@@ -4,17 +4,18 @@ import com.google.gson.JsonObject;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
-
-import javax.annotation.Nullable;
+import xiao.battleroyale.util.JsonUtils;
 
 public abstract class AbstractSimpleEntry implements IZoneShapeEntry {
 
     protected final StartEntry startEntry;
     protected final EndEntry endEntry;
+    protected final boolean badShape;
 
-    public AbstractSimpleEntry(StartEntry startEntry, EndEntry endEntry) {
+    public AbstractSimpleEntry(StartEntry startEntry, EndEntry endEntry, boolean badShape) {
         this.startEntry = startEntry;
         this.endEntry = endEntry;
+        this.badShape = badShape;
     }
 
     @Override
@@ -23,11 +24,12 @@ public abstract class AbstractSimpleEntry implements IZoneShapeEntry {
         jsonObject.addProperty(ZoneShapeTag.TYPE_NAME, getType());
         jsonObject.add(ZoneShapeTag.START, startEntry.toJson());
         jsonObject.add(ZoneShapeTag.END, endEntry.toJson());
+        jsonObject.addProperty(ZoneShapeTag.BAD_SHAPE, badShape);
         return jsonObject;
     }
 
     public static StartEntry readStartEntry(JsonObject jsonObject) {
-        JsonObject startEntryObject = jsonObject.has(ZoneShapeTag.START) ? jsonObject.getAsJsonObject(ZoneShapeTag.START) : null;
+        JsonObject startEntryObject = JsonUtils.getJsonObject(jsonObject, ZoneShapeTag.START, null);
         if (startEntryObject == null) {
             BattleRoyale.LOGGER.info("Shape entry missing start or end member, skipped");
             return null;
@@ -41,7 +43,7 @@ public abstract class AbstractSimpleEntry implements IZoneShapeEntry {
     }
 
     public static EndEntry readEndEntry(JsonObject jsonObject) {
-        JsonObject endEntryObject = jsonObject.has(ZoneShapeTag.END) ? jsonObject.getAsJsonObject(ZoneShapeTag.END) : null;
+        JsonObject endEntryObject = JsonUtils.getJsonObject(jsonObject, ZoneShapeTag.END, null);
         if (endEntryObject == null) {
             return null;
         }
@@ -51,5 +53,9 @@ public abstract class AbstractSimpleEntry implements IZoneShapeEntry {
             return null;
         }
         return endEntry;
+    }
+
+    public static boolean readBadShape(JsonObject jsonObject) {
+        return JsonUtils.getJsonBoolean(jsonObject, ZoneShapeTag.BAD_SHAPE, false);
     }
 }

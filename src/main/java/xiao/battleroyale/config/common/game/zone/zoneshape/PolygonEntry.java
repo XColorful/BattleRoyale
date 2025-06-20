@@ -6,13 +6,14 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.common.game.zone.spatial.PolygonShape;
+import xiao.battleroyale.util.JsonUtils;
 
 public class PolygonEntry extends AbstractSimpleEntry {
 
     private final int segments; // 边数
 
-    public PolygonEntry(StartEntry startEntry, EndEntry endEntry, int segments) {
-        super(startEntry, endEntry);
+    public PolygonEntry(StartEntry startEntry, EndEntry endEntry, boolean badShape, int segments) {
+        super(startEntry, endEntry, badShape);
         this.segments = segments;
     }
 
@@ -28,7 +29,7 @@ public class PolygonEntry extends AbstractSimpleEntry {
 
     @Override
     public ISpatialZone createSpatialZone() {
-        return new PolygonShape(startEntry, endEntry, segments);
+        return new PolygonShape(startEntry, endEntry, badShape, segments);
     }
 
     @Nullable
@@ -45,20 +46,19 @@ public class PolygonEntry extends AbstractSimpleEntry {
             return null;
         }
 
-        int segments = jsonObject.has(ZoneShapeTag.SEGMENTS) ? jsonObject.get(ZoneShapeTag.SEGMENTS).getAsInt() : 3;
+        boolean badShape = AbstractSimpleEntry.readBadShape(jsonObject);
+
+        int segments = JsonUtils.getJsonInt(jsonObject, ZoneShapeTag.SEGMENTS, 3);
         if (segments < 3) {
             return null;
         }
 
-        return new PolygonEntry(startEntry, endEntry, segments);
+        return new PolygonEntry(startEntry, endEntry, badShape, segments);
     }
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(ZoneShapeTag.TYPE_NAME, getType());
-        jsonObject.add(ZoneShapeTag.START, startEntry.toJson());
-        jsonObject.add(ZoneShapeTag.END, endEntry.toJson());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(ZoneShapeTag.SEGMENTS, segments);
         return jsonObject;
     }

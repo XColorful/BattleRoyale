@@ -80,6 +80,11 @@ public interface ISpatialZone {
     double getEndRotateDegree();
 
     /**
+     * 区域过程是否有含有几何约束异常的状态
+     */
+    boolean hasBadShape();
+
+    /**
      * 供多边形使用
      */
     int getSegments();

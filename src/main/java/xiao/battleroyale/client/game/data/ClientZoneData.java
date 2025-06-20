@@ -23,8 +23,7 @@ public class ClientZoneData {
     public Vec3 center;
     public Vec3 dimension;
     public double rotateDegree = 0;
-    public int segments = 3; // 供多边形使用
-    public float angle = (float) (Math.PI / 2.0); // 使正上方为一个顶点
+    public int segments = 3; // 供多边形和星形使用
 
     public double progress; // [0, 1]
 
@@ -46,8 +45,11 @@ public class ClientZoneData {
         this.shapeType = ZoneShapeType.fromName(shapeTypeName);
         if (this.shapeType == null) {
             BattleRoyale.LOGGER.warn("Unknown ZoneShapeType: {}", shapeTypeName);
-        } else if (this.shapeType == ZoneShapeType.POLYGON) {
+        } else if (this.shapeType == ZoneShapeType.POLYGON || this.shapeType == ZoneShapeType.STAR) {
             this.segments = nbt.getInt(GameZoneTag.SEGMENTS);
+            if (this.shapeType == ZoneShapeType.STAR) {
+                BattleRoyale.LOGGER.info("{}", nbt);
+            }
         }
 
         CompoundTag centerTag = nbt.getCompound(GameZoneTag.CENTER);
