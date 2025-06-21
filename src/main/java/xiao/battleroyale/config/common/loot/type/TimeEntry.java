@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
@@ -26,13 +27,15 @@ public class TimeEntry implements ILootEntry {
     }
 
     @Override
-    public List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
         int gameTime = GameManager.get().getGameTime();
-        if (entry != null && start <= gameTime && gameTime <= end) {
-            try {
-                return entry.generateLootData(random);
-            } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse time entry");
+        if (entry != null) {
+            if (start <= gameTime && gameTime <= end) {
+                try {
+                    return entry.generateLootData(random);
+                } catch (Exception e) {
+                    BattleRoyale.LOGGER.warn("Failed to parse time entry");
+                }
             }
         } else {
             BattleRoyale.LOGGER.warn("TimeEntry missing entry member or has invalid config");

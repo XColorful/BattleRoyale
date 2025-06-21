@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.loot.type;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
@@ -22,7 +23,7 @@ public class MultiEntry implements ILootEntry {
     }
 
     @Override
-    public List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
         List<ILootData> lootData = new ArrayList<>();
         if (!entries.isEmpty()) {
             try {

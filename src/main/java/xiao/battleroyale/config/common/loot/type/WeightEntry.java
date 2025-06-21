@@ -40,7 +40,7 @@ public class WeightEntry implements ILootEntry {
     }
 
     @Override
-    public List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
         double totalWeight = 0;
         for (WeightedEntry weightedEntry : weightedEntries) {
             totalWeight += weightedEntry.weight;

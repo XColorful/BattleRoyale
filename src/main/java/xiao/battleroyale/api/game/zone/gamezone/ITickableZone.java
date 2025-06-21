@@ -60,8 +60,6 @@ public interface ITickableZone {
      */
     ZoneFuncType getFuncType();
 
-    double getDamage();
-
     /**
      * 结合自身管理的 moveDelay, moveTime 得出当前圈的进度
      * @param currentGameTime 当前游戏进行的时间

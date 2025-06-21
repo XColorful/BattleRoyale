@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
@@ -26,7 +27,7 @@ public class RandomEntry implements ILootEntry {
     }
 
     @Override
-    public List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
         if (random.get() < chance) {
             if (entry != null) {
                 try {

@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.LootEntryTag;
@@ -24,7 +25,7 @@ public class ItemEntry implements IItemLootEntry {
     }
 
     @Override
-    public List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
         return Collections.singletonList(new ItemData(this.itemString, this.nbtString, this.count));
     }
 
