@@ -290,7 +290,7 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                 && endCenter != null && endDimension != null) {
             // 预计算
             centerDist = endCenter.subtract(startCenter);
-            dimensionDist = endDimension.subtract(startCenter);
+            dimensionDist = endDimension.subtract(endDimension);
             rotateDist = endRotateDegree - startRotateDegree;
             // 缓存，用于加速判断isWithinZone
             cachedCenter = startCenter;
