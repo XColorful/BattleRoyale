@@ -12,6 +12,7 @@ import xiao.battleroyale.config.common.AbstractConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.spawn.defaultconfigs.DefaultSpawnConfigGenerator;
 import xiao.battleroyale.config.common.game.spawn.type.SpawnEntryType;
+import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -147,15 +148,15 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
     @Override
     public SpawnConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
         try {
-            int id = configObject.has(SpawnConfigTag.SPAWN_ID) ? configObject.getAsJsonPrimitive(SpawnConfigTag.SPAWN_ID).getAsInt() : -1;
-            JsonObject spawnEntryObject = configObject.has(SpawnConfigTag.SPAWN_ENTRY) ? configObject.getAsJsonObject(SpawnConfigTag.SPAWN_ENTRY) : null;
+            int id = JsonUtils.getJsonInt(configObject, SpawnConfigTag.SPAWN_ID, -1);
+            JsonObject spawnEntryObject = JsonUtils.getJsonObject(configObject, SpawnConfigTag.SPAWN_ENTRY, null);
             if (id < 0 || spawnEntryObject == null) {
                 BattleRoyale.LOGGER.warn("Skipped invalid spawn config in {}", filePath);
                 return null;
             }
 
-            String name = configObject.has(SpawnConfigTag.SPAWN_NAME) ? configObject.getAsJsonPrimitive(SpawnConfigTag.SPAWN_NAME).getAsString() : "";
-            String color = configObject.has(SpawnConfigTag.SPAWN_COLOR) ? configObject.getAsJsonPrimitive(SpawnConfigTag.SPAWN_COLOR).getAsString() : "#FFFFFF";
+            String name = JsonUtils.getJsonString(configObject, SpawnConfigTag.SPAWN_NAME, "");
+            String color = JsonUtils.getJsonString(configObject, SpawnConfigTag.SPAWN_COLOR, "#FFFFFF");
             ISpawnEntry spawnEntry = SpawnConfig.deserializeSpawnEntry(spawnEntryObject);
             if (spawnEntry == null) {
                 BattleRoyale.LOGGER.warn("Failed to deserialize spawn entry for id: {} in {}", id, filePath);

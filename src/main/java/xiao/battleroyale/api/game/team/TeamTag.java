@@ -9,4 +9,6 @@ public class TeamTag {
     public static final String MEMBER_NAME = "name";
     public static final String MEMBER_HEALTH = "health";
     public static final String MEMBER_BOOST = "boost";
+
+    private TeamTag() {}
 }

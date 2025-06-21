@@ -15,6 +15,7 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.defaultconfigs.DefaultZoneConfigGenerator;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
+import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -193,18 +194,18 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
     @Override
     public ZoneConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
         try {
-            int zoneId = configObject.has(ZoneConfigTag.ZONE_ID) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_ID).getAsInt() : -1;
-            JsonObject zoneFuncObject = configObject.has(ZoneConfigTag.ZONE_FUNC) ? configObject.getAsJsonObject(ZoneConfigTag.ZONE_FUNC) : null;
-            JsonObject zoneShapeObject = configObject.has(ZoneConfigTag.ZONE_SHAPE) ? configObject.getAsJsonObject(ZoneConfigTag.ZONE_SHAPE) : null;
+            int zoneId = JsonUtils.getJsonInt(configObject, ZoneConfigTag.ZONE_ID, -1);
+            JsonObject zoneFuncObject = JsonUtils.getJsonObject(configObject, ZoneConfigTag.ZONE_FUNC, null);
+            JsonObject zoneShapeObject = JsonUtils.getJsonObject(configObject, ZoneConfigTag.ZONE_SHAPE, null);
             if (zoneId < 0 || zoneFuncObject == null || zoneShapeObject == null) {
                 BattleRoyale.LOGGER.warn("Skipped invalid zone config in {}", filePath);
                 return null;
             }
 
-            String zoneName = configObject.has(ZoneConfigTag.ZONE_NAME) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_NAME).getAsString() : "";
-            String zoneColor = configObject.has(ZoneConfigTag.ZONE_COLOR) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_COLOR).getAsString() : "#0000FF";
-            int zoneDelay = configObject.has(ZoneConfigTag.ZONE_DELAY) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_DELAY).getAsInt() : 0;
-            int zoneTime = configObject.has(ZoneConfigTag.ZONE_TIME) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_TIME).getAsInt() : 0;
+            String zoneName = JsonUtils.getJsonString(configObject, ZoneConfigTag.ZONE_NAME, "");
+            String zoneColor = JsonUtils.getJsonString(configObject, ZoneConfigTag.ZONE_COLOR, "#0000FF");
+            int zoneDelay = JsonUtils.getJsonInt(configObject, ZoneConfigTag.ZONE_DELAY, 0);
+            int zoneTime = JsonUtils.getJsonInt(configObject, ZoneConfigTag.ZONE_TIME, 0);
             IZoneFuncEntry zoneFuncEntry = ZoneConfig.deserializeZoneFuncEntry(zoneFuncObject);
             IZoneShapeEntry zoneShapeEntry = ZoneConfig.deserializeZoneShapeEntry(zoneShapeObject);
             if (zoneFuncEntry == null || zoneShapeEntry == null) {

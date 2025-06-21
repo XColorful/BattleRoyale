@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class GameConfigManager {
+
     public static final String GAME_CONFIG_SUB_PATH = "game";
     public static final String GAME_CONFIG_PATH = Paths.get(AbstractConfigManager.MOD_CONFIG_PATH).resolve(GAME_CONFIG_SUB_PATH).toString();
 

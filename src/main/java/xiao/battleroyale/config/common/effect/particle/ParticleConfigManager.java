@@ -1,0 +1,196 @@
+package xiao.battleroyale.config.common.effect.particle;
+
+import com.google.gson.JsonObject;
+import net.minecraft.server.level.ServerLevel;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.IConfigSingleEntry;
+import xiao.battleroyale.api.game.effect.particle.IParticleEntry;
+import xiao.battleroyale.api.game.effect.particle.IParticleSingleEntry;
+import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
+import xiao.battleroyale.common.game.effect.particle.ParticleData;
+import xiao.battleroyale.config.common.AbstractConfigManager;
+import xiao.battleroyale.config.common.effect.EffectConfigManager;
+import xiao.battleroyale.config.common.effect.particle.defaultconfigs.DefaultParticleConfigGenerator;
+import xiao.battleroyale.util.JsonUtils;
+
+import javax.annotation.Nullable;
+import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.List;
+
+public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigManager.ParticleConfig> {
+
+    private static class ParticleConfigManagerHolder {
+        private static final ParticleConfigManager INSTANCE = new ParticleConfigManager();
+    }
+
+    public static ParticleConfigManager get() {
+        return ParticleConfigManagerHolder.INSTANCE;
+    }
+
+    private ParticleConfigManager() {
+        allConfigData.put(DEFAULT_PARTICLE_CONFIG_DATA_ID, new ConfigData<>());
+    }
+
+    public static void init() {
+        get().reloadParticleConfigs();
+    }
+
+    public static final String PARTICLE_CONFIG_PATH = EffectConfigManager.EFFECT_CONFIG_PATH;
+    public static final String PARTICLE_CONFIG_SUB_PATH = "particle";
+
+    protected final int DEFAULT_PARTICLE_CONFIG_DATA_ID = 0;
+
+    public static class ParticleConfig implements IParticleSingleEntry {
+        public static final String CONFIG_TYPE = "ParticleConfig";
+
+        private final int id;
+        private final String name;
+        private final String  color;
+        private final ParticleDetailEntry entry;
+
+        public ParticleConfig(int id, String name, String color, ParticleDetailEntry entry) {
+            this.id = id;
+            this.name = name;
+            this.color = color;
+            this.entry = entry;
+        }
+
+        public int getId() {
+            return id;
+        }
+        public String getName() {
+            return name;
+        }
+        public String getColor() {
+            return color;
+        }
+        public IParticleEntry getEntry() {
+            return entry;
+        }
+
+        @Override
+        public ParticleData createParticleData(ServerLevel serverLevel) {
+            return entry.createParticleData(serverLevel);
+        }
+
+        @Override
+        public String getType() {
+            return CONFIG_TYPE;
+        }
+
+        @Override
+        public JsonObject toJson() {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty(ParticleConfigTag.PARTICLE_ID, id);
+            jsonObject.addProperty(ParticleConfigTag.PARTICLE_NAME, name);
+            jsonObject.addProperty(ParticleConfigTag.PARTICLE_COLOR, color);
+            if (entry != null) {
+                jsonObject.add(ParticleConfigTag.DETAIL_ENTRY, entry.toJson());
+            }
+
+            return jsonObject;
+        }
+
+        @Override
+        public int getConfigId() {
+            return getId();
+        }
+
+        public static ParticleDetailEntry deserializeParticleDetailEntry(JsonObject jsonObject) {
+            try {
+                ParticleDetailEntry detailEntry = ParticleDetailEntry.fromJson(jsonObject);
+                if (detailEntry != null) {
+                    return detailEntry;
+                } else {
+                    BattleRoyale.LOGGER.warn("Skipped invalid ParticleDetailEntry");
+                    return null;
+                }
+            } catch (Exception e) {
+                BattleRoyale.LOGGER.error("Failed to deserialize ParticleDetailEntry: {}", e.getMessage());
+                return null;
+            }
+        }
+    }
+
+    @Override protected Comparator<ParticleConfig> getConfigIdComparator(int configType) {
+        return Comparator.comparingInt(ParticleConfig::getConfigId);
+    }
+
+    /**
+     * IConfigManager
+     */
+    @Override public String getConfigType(int configType) {
+        return ParticleConfig.CONFIG_TYPE;
+    }
+
+    /**
+     * IConfigDefaultable
+     */
+    @Override public void generateDefaultConfigs() {
+        generateDefaultConfigs(DEFAULT_PARTICLE_CONFIG_DATA_ID);
+    }
+
+    @Override public void generateDefaultConfigs(int configType) {
+        DefaultParticleConfigGenerator.generateDefaultParticleConfigs();
+    }
+    @Override public int getDefaultConfigId() {
+        return getDefaultConfigId(DEFAULT_PARTICLE_CONFIG_DATA_ID);
+    }
+
+    /**
+     * IConfigLoadable
+     */
+    @Nullable
+    @Override
+    public ParticleConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
+        try {
+            int id = JsonUtils.getJsonInt(configObject, ParticleConfigTag.PARTICLE_ID, -1);
+            JsonObject detailEntryObject = JsonUtils.getJsonObject(configObject, ParticleConfigTag.DETAIL_ENTRY, null);
+            if (id < 0 || detailEntryObject == null) {
+                BattleRoyale.LOGGER.warn("Skipped invalid particle config in {}", filePath);
+                return null;
+            }
+
+            String name = JsonUtils.getJsonString(configObject, ParticleConfigTag.PARTICLE_NAME, "");
+            String color = JsonUtils.getJsonString(configObject, ParticleConfigTag.PARTICLE_COLOR, "#FFFFFF");
+            ParticleDetailEntry detailEntry = ParticleConfig.deserializeParticleDetailEntry(configObject);
+            if (detailEntry == null) {
+                BattleRoyale.LOGGER.warn("Failed to deserialize particle detail entry for id: {} in {}", id, filePath);
+                return null;
+            }
+
+            return new ParticleConfig(id, name, color, detailEntry);
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getConfigType(), filePath, e.getMessage());
+            return null;
+        }
+    }
+    @Override public String getConfigPath(int configType) {
+        return PARTICLE_CONFIG_PATH;
+    }
+    @Override public String getConfigSubPath(int configType) {
+        return PARTICLE_CONFIG_SUB_PATH;
+    }
+
+    /**
+     * 特定类别的获取接口
+     */
+    public ParticleConfig getParticleConfig(int id) {
+        return getConfigEntry(id, DEFAULT_PARTICLE_CONFIG_DATA_ID);
+    }
+    public List<ParticleConfig> getAllParticleConfigs() {
+        return getAllConfigEntries(DEFAULT_PARTICLE_CONFIG_DATA_ID);
+    }
+
+    /**
+     * 特定类别的重新读取接口
+     */
+    public void reloadParticleConfigs() {
+        reloadConfigs(DEFAULT_PARTICLE_CONFIG_DATA_ID);
+    }
+
+    @Override public void initializeDefaultConfigsIfEmpty() {
+        super.initializeDefaultConfigsIfEmpty(DEFAULT_PARTICLE_CONFIG_DATA_ID);
+    }
+}

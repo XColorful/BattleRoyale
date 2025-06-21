@@ -1,8 +1,10 @@
 package xiao.battleroyale.command;
 
+import xiao.battleroyale.BattleRoyale;
+
 public class CommandArg {
 
-    public static final String ROOT = "battleroyale";
+    public static final String ROOT = BattleRoyale.MOD_ID;
 
     public static final String CONFIG = "config";
     public static final String GAME = "game";
@@ -11,6 +13,8 @@ public class CommandArg {
     public static final String TEAM = "team";
     public static final String FIREWORK = "firework";
     public static final String MUTEKI = "muteki";
+    public static final String EFFECT = "effect";
+    public static final String PARTICLE = "particle";
 
     public static final String LOOT_SPAWNER = "loot_spawner";
     public static final String ENTITY_SPAWNER = "entity_spawner";

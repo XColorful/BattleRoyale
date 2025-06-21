@@ -39,7 +39,7 @@ public class BattleroyaleEntry implements IGameruleEntry {
 
     @Override
     public String getType() {
-        return "Hyper muteki lobby~";
+        return "battleroyaleEntry";
     }
 
     @Override

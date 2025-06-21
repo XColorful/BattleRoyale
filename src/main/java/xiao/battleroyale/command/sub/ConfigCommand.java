@@ -10,6 +10,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 
@@ -98,6 +99,16 @@ public class ConfigCommand {
                                         .executes(ConfigCommand::switchNextZoneConfig)
                                         .then(Commands.argument(FILE, StringArgumentType.string())
                                                 .executes(ConfigCommand::switchZoneConfig)
+                                        )
+                                )
+                        )
+                )
+                .then(Commands.literal(EFFECT)
+                        .then(Commands.literal(PARTICLE)
+                                .then(Commands.literal(SWITCH)
+                                        .executes(ConfigCommand::switchNextParticleConfig)
+                                        .then(Commands.argument(FILE, StringArgumentType.string())
+                                                .executes(ConfigCommand::switchParticleConfig)
                                         )
                                 )
                         )
@@ -337,6 +348,28 @@ public class ConfigCommand {
             return Command.SINGLE_SUCCESS;
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.no_zone_config_file", currentFileName));
+            return 0;
+        }
+    }
+
+    private static int switchNextParticleConfig(CommandContext<CommandSourceStack> context) {
+        if (EffectConfigManager.get().switchNextParticleConfig()) {
+            String currentFileName = EffectConfigManager.get().getParticleConfigEntryFileName();
+            BattleRoyale.LOGGER.info("Switch particle config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_particle_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            return 0;
+        }
+    }
+    private static int switchParticleConfig(CommandContext<CommandSourceStack> context) {
+        String currentFileName = StringArgumentType.getString(context, FILE);
+        if (EffectConfigManager.get().switchParticleConfig(currentFileName)) {
+            BattleRoyale.LOGGER.info("Switch particle config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_particle_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_particle_config_file", currentFileName));
             return 0;
         }
     }

@@ -40,10 +40,10 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
 
         private final int id;
         private final String name;
-        private final int color;
+        private final String color;
         private final IBotEntry entry;
 
-        public BotConfig(int id, String name, int color, IBotEntry entry) {
+        public BotConfig(int id, String name, String color, IBotEntry entry) {
             this.id = id;
             this.name = name;
             this.color = color;
@@ -56,7 +56,7 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
         public String getName() {
             return name;
         }
-        public int getColor() {
+        public String getColor() {
             return color;
         }
         public IBotEntry getEntry() {

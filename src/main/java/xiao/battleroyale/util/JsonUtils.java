@@ -1,6 +1,7 @@
 package xiao.battleroyale.util;
 
 import com.google.gson.*;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
@@ -217,6 +218,11 @@ public class JsonUtils {
         }
 
         return primitive.getAsString();
+    }
+
+    public static CompoundTag getJsonNBT(@Nullable JsonObject jsonObject, String key, CompoundTag defaultValue) {
+        String nbtString = getJsonString(jsonObject, key, "");
+        return NBTUtils.stringToNBT(nbtString);
     }
 
     public static Vec3 getJsonVec(@Nullable JsonObject jsonObject, String key, Vec3 defaultValue) {

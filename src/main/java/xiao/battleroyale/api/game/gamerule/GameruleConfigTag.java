@@ -10,5 +10,5 @@ public class GameruleConfigTag {
 
     public static final String MINECRAFT_ENTRY = "minecraft";
 
-    private GameruleConfigTag() {};
+    private GameruleConfigTag() {}
 }

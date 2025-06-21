@@ -10,6 +10,7 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.defaultconfigs.DefaultGameruleConfigGenerator;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
+import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -164,16 +165,16 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
     @Override
     public GameruleConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
         try {
-            int gameId = configObject.has(GameruleConfigTag.GAME_ID) ? configObject.getAsJsonPrimitive(GameruleConfigTag.GAME_ID).getAsInt() : -1;
-            JsonObject brEntryObject = configObject.has(GameruleConfigTag.BATTLEROYALE_ENTRY) ? configObject.getAsJsonObject(GameruleConfigTag.BATTLEROYALE_ENTRY) : null;
-            JsonObject mcEntryObject = configObject.has(GameruleConfigTag.MINECRAFT_ENTRY) ? configObject.getAsJsonObject(GameruleConfigTag.MINECRAFT_ENTRY) : null;
+            int gameId = JsonUtils.getJsonInt(configObject, GameruleConfigTag.GAME_ID, -1);
+            JsonObject brEntryObject = JsonUtils.getJsonObject(configObject, GameruleConfigTag.BATTLEROYALE_ENTRY, null);
+            JsonObject mcEntryObject = JsonUtils.getJsonObject(configObject, GameruleConfigTag.MINECRAFT_ENTRY, null);
             if (gameId < 0 || brEntryObject == null || mcEntryObject == null) {
                 BattleRoyale.LOGGER.warn("Skipped invalid gamerule config in {}", filePath);
                 return null;
             }
 
-            String gameName = configObject.has(GameruleConfigTag.GAME_NAME) ? configObject.getAsJsonPrimitive(GameruleConfigTag.GAME_NAME).getAsString() : "";
-            String color = configObject.has(GameruleConfigTag.GAME_COLOR) ? configObject.getAsJsonPrimitive(GameruleConfigTag.GAME_COLOR).getAsString() : "";
+            String gameName = JsonUtils.getJsonString(configObject, GameruleConfigTag.GAME_NAME, "");
+            String color = JsonUtils.getJsonString(configObject, GameruleConfigTag.GAME_COLOR, "");
             BattleroyaleEntry brEntry = GameruleConfig.deserializeBattleroyaleEntry(brEntryObject);
             MinecraftEntry mcEntry = GameruleConfig.deserializeMinecraftEntry(mcEntryObject);
             if (brEntry == null || mcEntry == null) {

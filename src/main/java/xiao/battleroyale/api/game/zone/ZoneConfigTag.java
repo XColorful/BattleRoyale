@@ -10,5 +10,5 @@ public final class ZoneConfigTag {
     public static final String ZONE_FUNC = "zoneFunc";
     public static final String ZONE_SHAPE = "zoneShape";
 
-    private ZoneConfigTag() {};
+    private ZoneConfigTag() {}
 }

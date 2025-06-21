@@ -9,6 +9,9 @@ import xiao.battleroyale.api.game.effect.IEffectManager;
 import xiao.battleroyale.common.game.effect.boost.BoostManager;
 import xiao.battleroyale.common.game.effect.firework.FireworkManager;
 import xiao.battleroyale.common.game.effect.muteki.MutekiManager;
+import xiao.battleroyale.common.game.effect.particle.FixedParticleChannel;
+import xiao.battleroyale.common.game.effect.particle.FixedParticleData;
+import xiao.battleroyale.common.game.effect.particle.ParticleData;
 import xiao.battleroyale.common.game.effect.particle.ParticleManager;
 
 import java.util.UUID;
@@ -57,17 +60,40 @@ public class EffectManager implements IEffectManager {
     public void addMutekiEntity(ServerLevel serverLevel, LivingEntity livingEntity, int duration) {
         MutekiManager.get().addMutekiEntity(serverLevel, livingEntity, duration);
     }
-
     public void addMutekiPlayer(ServerLevel serverLevel, ServerPlayer player, int duration) {
         MutekiManager.get().addMutekiEntityNotify(serverLevel, player, duration);
     }
 
+    /**
+     * 为指定实体添加能量条
+     * @param entityUUID 实体UUID
+     * @param boostAmount 能量
+     * @param serverLevel 生效维度
+     */
     public void addBoost(UUID entityUUID, int boostAmount, ServerLevel serverLevel) {
         BoostManager.get().addBoost(entityUUID, boostAmount, serverLevel);
     }
-
     public int getBoost(UUID entityUUID) {
         return BoostManager.get().getBoost(entityUUID);
+    }
+
+    /**
+     * 添加粒子效果
+     * @param channelKey 通道名称
+     * @param particleData 粒子数据
+     * @param cooldown 通道冷却时间
+     */
+    public void addParticle(UUID entityUUID, String channelKey, ParticleData particleData, int cooldown) {
+        ParticleManager.get().addEntityParticle(entityUUID, channelKey, particleData, cooldown);
+    }
+    public void addParticle(String channelKey, FixedParticleData particleData, int cooldown) {
+        ParticleManager.get().addFixedParticle(channelKey, particleData, cooldown);
+    }
+    public void addGameParticle(FixedParticleData particleData, int cooldown) {
+        addParticle(FixedParticleChannel.GAME_CHANNEL, particleData, cooldown);
+    }
+    public void addCommandParticle(FixedParticleData particleData, int cooldown) {
+        addParticle(FixedParticleChannel.COMMAND_CHANNEL, particleData, cooldown);
     }
 
     @Override
@@ -98,6 +124,18 @@ public class EffectManager implements IEffectManager {
 
     public void clearParticle() {
         ParticleManager.get().clear();
+    }
+    public void clearParticle(UUID entityUUID) {
+        ParticleManager.get().clear(entityUUID);
+    }
+    public void clearParticle(UUID entityUUID, String channelKey) {
+        ParticleManager.get().clear(entityUUID, channelKey);
+    }
+    public void clearGameParticle() {
+        ParticleManager.get().clear(FixedParticleChannel.GAME_CHANNEL);
+    }
+    public void clearCommandParticle() {
+        ParticleManager.get().clear(FixedParticleChannel.COMMAND_CHANNEL);
     }
 
     @Override

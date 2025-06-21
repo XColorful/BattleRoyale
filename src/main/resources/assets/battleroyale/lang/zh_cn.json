@@ -159,6 +159,8 @@
   "battleroyale.message.no_spawn_config_file": "没有出生配置文件'%s'",
   "battleroyale.message.switch_zone_config_file": "切换区域配置文件'%s'",
   "battleroyale.message.no_zone_config_file": "没有区域配置文件'%s'",
+  "battleroyale.message.switch_particle_config_file": "切换粒子配置文件'%s'",
+  "battleroyale.message.no_particle_config_file": "没有粒子配置文件'%s'",
 
   "battleroyale.message.winner_message": "大吉大利！今晚吃鸡！",
   "battleroyale.message.back_to_lobby": "返回至大厅",

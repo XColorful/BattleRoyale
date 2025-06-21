@@ -20,6 +20,7 @@ public class ParticleEventHandler {
         MinecraftForge.EVENT_BUS.register(get());
     }
 
+    // 仅限ParticleManager调用，内部维护是否已经注册
     public static void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
     }
