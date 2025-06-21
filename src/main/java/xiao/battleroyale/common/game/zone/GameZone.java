@@ -38,7 +38,6 @@ public class GameZone implements IGameZone {
     // func
     private static final String FUNC_TAG = "func";
     private static final String FUNC_TYPE_TAG = FUNC_TAG + "-" + ZoneFuncTag.TYPE_NAME;
-    private static final String FUNC_DAMAGE_TAG = FUNC_TAG + "-" + ZoneFuncTag.DAMAGE;
     private static final String FUNC_MOVE_DELAY_TAG = FUNC_TAG + "-" + ZoneFuncTag.MOVE_DELAY;
     private static final String FUNC_MOVE_TIME_TAG = FUNC_TAG + "-" + ZoneFuncTag.MOVE_TIME;
     private static final String FUNC_TICK_FREQUENCY_TAG = FUNC_TAG + "-" + ZoneFuncTag.TICK_FREQUENCY;
@@ -145,14 +144,14 @@ public class GameZone implements IGameZone {
             return;
         }
 
-        double progress = tickableZone.getShapeProgress(gameTime, zoneDelay);
-        if (Math.abs(progress - prevShapeProgress) > 0.001F || gameTime % FORCE_SYNC_FREQUENCY == 0) { // 同步客户端
-            prevShapeProgress = progress;
-            CompoundTag zoneInfo = toNBT(progress);
+        double shapeProgress = tickableZone.getShapeProgress(gameTime, zoneDelay);
+        if (Math.abs(shapeProgress - prevShapeProgress) > 0.001F || gameTime % FORCE_SYNC_FREQUENCY == 0) { // 同步客户端
+            prevShapeProgress = shapeProgress;
+            CompoundTag zoneInfo = toNBT(shapeProgress);
             GameManager.get().addZoneInfo(this.zoneId, zoneInfo);
         }
         if ((gameTime + getTickOffset()) % getTickFrequency() == 0) {
-            tick(serverLevel, gamePlayerList, gameZones, random, gameTime, progress, spatialZone);
+            tick(serverLevel, gamePlayerList, gameZones, random, gameTime, shapeProgress, spatialZone);
         }
     }
 
@@ -170,21 +169,21 @@ public class GameZone implements IGameZone {
     public String getZoneName() { return zoneName; }
 
     @Override
-    public CompoundTag toNBT(double progress) {
+    public CompoundTag toNBT(double shapeProgress) {
         return NBTUtils.serializeZoneToNBT(
                 this.zoneId,
                 this.zoneName,
                 this.zoneColor,
                 this.tickableZone,
                 this.spatialZone,
-                progress
+                shapeProgress
         );
     }
 
     @Override
     public void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
-                     int gameTime, double progress, ISpatialZone spatialZone) {
-        tickableZone.tick(serverLevel, gamePlayerList, gameZones, random, gameTime, progress, spatialZone);
+                     int gameTime, double shapeProgress, ISpatialZone spatialZone) {
+        tickableZone.tick(serverLevel, gamePlayerList, gameZones, random, gameTime, shapeProgress, spatialZone);
     }
 
     @Override
@@ -210,7 +209,6 @@ public class GameZone implements IGameZone {
         intWriter.put(ZONE_TIME_TAG, zoneTime);
         // func
         stringWriter.put(FUNC_TYPE_TAG, getFuncType().getName());
-        doubleWriter.put(FUNC_DAMAGE_TAG, getDamage());
         intWriter.put(FUNC_MOVE_DELAY_TAG, getShapeMoveDelay());
         intWriter.put(FUNC_MOVE_TIME_TAG, getShapeMoveTime());
         intWriter.put(FUNC_TICK_FREQUENCY_TAG, getTickFrequency());
@@ -298,8 +296,6 @@ public class GameZone implements IGameZone {
     public boolean isReady() { return tickableZone.isReady(); }
     @Override
     public ZoneFuncType getFuncType() { return tickableZone.getFuncType(); }
-    @Override
-    public double getDamage() { return tickableZone.getDamage(); }
     @Override
     public double getShapeProgress(int currentGameTime, int zoneDelay) { return tickableZone.getShapeProgress(currentGameTime, zoneDelay); }
     @Override

@@ -55,9 +55,6 @@ public class ClientZoneData {
             BattleRoyale.LOGGER.warn("Unknown ZoneShapeType: {}", shapeTypeName);
         } else if (this.shapeType == ZoneShapeType.POLYGON || this.shapeType == ZoneShapeType.STAR) {
             this.segments = nbt.getInt(GameZoneTag.SEGMENTS);
-            if (this.shapeType == ZoneShapeType.STAR) {
-                BattleRoyale.LOGGER.info("{}", nbt);
-            }
         }
 
         CompoundTag centerTag = nbt.getCompound(GameZoneTag.CENTER);

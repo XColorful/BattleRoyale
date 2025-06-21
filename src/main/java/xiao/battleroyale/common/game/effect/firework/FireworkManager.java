@@ -83,6 +83,10 @@ public class FireworkManager implements IEffectManager {
                 }
             }
         }
+
+        if (shouldEnd()) {
+            FireworkEventHandler.unregister();
+        }
     }
 
     public static void spawnFireworkAtExactPos(@NotNull ServerLevel level, @NotNull Vec3 exactPos) {

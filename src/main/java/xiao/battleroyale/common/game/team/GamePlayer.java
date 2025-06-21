@@ -3,6 +3,7 @@ package xiao.battleroyale.common.game.team;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.common.game.effect.EffectManager;
 
 import java.util.UUID;
 
@@ -18,9 +19,6 @@ public class GamePlayer {
     private boolean isEliminated = false; // 是否被淘汰，即彻底退出游戏循环
     private boolean isActiveEntity = true; // 是否已加载 (即玩家是否在线并加载在世界中)，该项在GameManager::initGame之后不持续更新
 
-    private int boost;
-    private int healCooldown;
-    private int effectCooldown;
     private int invalidTime; // 额外检查，防止重新加载区块的时候圈已经没了（模组支持自定义圈），超过invalidTime则清除，同时应用于玩家离线重连
 
     private GameTeam team; // 所属队伍
@@ -36,7 +34,6 @@ public class GamePlayer {
         this.gameTeamColor = team.getGameTeamColor();
         this.bot = isBot;
         this.team = team;
-        resetBoost();
         this.invalidTime = 0;
     }
 
@@ -50,9 +47,6 @@ public class GamePlayer {
     public boolean isActiveEntity() { return isActiveEntity; }
     public Vec3 getLastPos() { return lastPos; }
     public float getLastHealth() { return lastHealth; }
-    public int getBoost() { return boost; }
-    public int getHealCooldown() { return healCooldown; }
-    public int getEffectCooldown() { return effectCooldown; }
     public int getInvalidTime() { return invalidTime; }
     public boolean isBot() { return bot; }
     public GameTeam getTeam() { return team; }
@@ -71,7 +65,7 @@ public class GamePlayer {
         }
 
         if (!isAlive) {
-            this.boost = 0;
+            EffectManager.get().clearBoost(this.playerUUID);
         }
     }
 
@@ -90,42 +84,12 @@ public class GamePlayer {
     public void setActiveEntity(boolean activeEntity) { this.isActiveEntity = activeEntity; }
     public void setLastPos(Vec3 lastPos) { this.lastPos = lastPos; }
     public void setLastHealth(float lastHealth) { this.lastHealth = lastHealth; }
-    public void setBoost(int boost) { this.boost = Math.max(Math.min(boost, BOOST_LIMIT), 0); }
-    public void addBoost(int amount) { setBoost(this.boost + amount);}
-    public void dropBoost() { setBoost(this.boost - 1);}
-    public void resetBoost() { setBoost(0); healCooldown = 0; effectCooldown = 0; }
-    public void setHealCooldown(int cooldown) { this.healCooldown = cooldown; }
-    public void addHealCooldown(int amount) { setHealCooldown(this.healCooldown + amount);}
-    public void dropHealCooldown() { setHealCooldown(this.healCooldown - 1); }
-    public void setEffectCooldown(int cooldown) { this.effectCooldown = Math.max(cooldown, 0); }
-    public void addEffectCooldown(int amount) { setEffectCooldown(this.effectCooldown + amount); }
-    public void dropEffectCooldown() { setEffectCooldown(this.effectCooldown - 1); }
     public void setInvalidTime(int invalidTime) { this.invalidTime = invalidTime; }
     public void addInvalidTime() {this.invalidTime++; }
     public void setLeader(boolean leader) { this.isLeader = leader; }
     public void setTeam(GameTeam team) { this.team = team; } // 转移队伍
 
-    public static final int BOOST_LEVEL_4 = 0xAAd46f16;
-    public static final int BOOST_LEVEL_3 = 0xAAd7831e;
-    public static final int BOOST_LEVEL_2 = 0xAAe1a31c;
-    public static final int BOOST_LEVEL_1 = 0xAAe8c625;
     public static final int BOOST_LIMIT = 6000;
-    public static int getBoostLevel(int boost) {
-        if (boost >= 5400) { // 90%
-            return 4;
-        } else if (boost >= 3600) { // 60%
-            return 3;
-        } else if (boost >= 1200) { // 20%
-            return 2;
-        } else if (boost > 0) { // 0%
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-    public static double getBoostPercentage(int boost) {
-        return (double) boost / BOOST_LIMIT;
-    }
 
     /**
      * 用于切换人机玩家实体

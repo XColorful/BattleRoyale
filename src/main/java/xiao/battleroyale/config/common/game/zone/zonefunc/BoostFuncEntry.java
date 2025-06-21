@@ -1,30 +1,28 @@
 package xiao.battleroyale.config.common.game.zone.zonefunc;
 
 import com.google.gson.JsonObject;
-import xiao.battleroyale.api.game.zone.func.IZoneFuncEntry;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
-import xiao.battleroyale.common.game.zone.tickable.SafeFunc;
+import xiao.battleroyale.common.game.zone.tickable.BoostFunc;
 import xiao.battleroyale.util.JsonUtils;
 
-public class SafeFuncEntry extends AbstractFuncEntry {
+public class BoostFuncEntry extends AbstractFuncEntry {
 
-    protected final float damage;
+    protected final int boost;
 
-    public SafeFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset, float damage) {
+    public BoostFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset, int boost) {
         super(moveDelay, moveTime, tickFreq, tickOffset);
-        this.damage = damage;
-
+        this.boost = Math.max(boost, 0);
     }
 
     @Override
     public String getType() {
-        return ZoneFuncTag.SAFE;
+        return ZoneFuncTag.BOOST;
     }
 
     @Override
     public ITickableZone createTickableZone() {
-        return new SafeFunc(moveDelay, moveTime, tickFreq, tickOffset, damage);
+        return new BoostFunc(moveDelay, moveTime, tickFreq, tickOffset, boost);
     }
 
     @Override
@@ -36,19 +34,19 @@ public class SafeFuncEntry extends AbstractFuncEntry {
         jsonObject.addProperty(ZoneFuncTag.TICK_FREQUENCY, tickFreq);
         jsonObject.addProperty(ZoneFuncTag.TICK_OFFSET, tickOffset);
 
-        jsonObject.addProperty(ZoneFuncTag.DAMAGE, damage);
+        jsonObject.addProperty(ZoneFuncTag.BOOST, boost);
 
         return jsonObject;
     }
 
-    public static SafeFuncEntry fromJson(JsonObject jsonObject) {
+    public static BoostFuncEntry fromJson(JsonObject jsonObject) {
         int moveDelay = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.MOVE_DELAY, 0);
         int moveTime = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.MOVE_TIME, 0);
         int tickFreq = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.TICK_FREQUENCY, 20);
         int tickOffset = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.TICK_OFFSET, -1);
 
-        double damage = JsonUtils.getJsonDouble(jsonObject, ZoneFuncTag.DAMAGE, 0);
+        int boost = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.BOOST, 40);
 
-        return new SafeFuncEntry(moveDelay, moveTime, tickFreq, tickOffset, (float) damage);
+        return new BoostFuncEntry(moveDelay, moveTime, tickFreq, tickOffset, boost);
     }
 }

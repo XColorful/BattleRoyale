@@ -10,6 +10,8 @@ import net.minecraftforge.fml.common.Mod;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientTeamData;
+import xiao.battleroyale.client.game.data.TeamMemberInfo;
+import xiao.battleroyale.common.game.effect.boost.BoostData;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
 import java.awt.*;
@@ -70,14 +72,14 @@ public class TeamInfoRenderer {
         Color teamColor = teamData.teamColor;
         int idColor = teamColor.getRGB(); // 0xAARRGGBB
         int nameColor;
-        List<ClientTeamData.TeamMemberInfo> teamMemberInfos = teamData.teamMemberInfoList;
+        List<TeamMemberInfo> teamMemberInfos = teamData.teamMemberInfoList;
         int currentY = posY - LINE_OFFSET * teamMemberInfos.size(); // 单行左上角位置
-        for (ClientTeamData.TeamMemberInfo memberInfo : teamMemberInfos) {
-            String playerId = "[" + memberInfo.playerId() + "]";
-            String playerName = memberInfo.name();
-            double health = memberInfo.health();
+        for (TeamMemberInfo memberInfo : teamMemberInfos) {
+            String playerId = "[" + memberInfo.playerId + "]";
+            String playerName = memberInfo.name;
+            double health = memberInfo.health;
             nameColor = getNameColor(health);
-            int boost = memberInfo.boost();
+            int boost = memberInfo.boost;
             /*
             [id] playerName
             ---------------（血条）
@@ -103,28 +105,24 @@ public class TeamInfoRenderer {
     }
 
     private void renderBoostBar(int boost, int posX, int posY, GuiGraphics guiGraphics) {
-        int boostLevel = GamePlayer.getBoostLevel(boost);
-        double boostPercentage = GamePlayer.getBoostPercentage(boost);
+        int boostLevel = BoostData.getBoostLevel(boost);
+        double boostPercentage = BoostData.getBoostPercentage(boost);
         switch (boostLevel) {
-            case 4: {
-                int endX = (int) (posX + boostPercentage * BOOST_BAR_LENGTH + 0.99); // 全部向上取整，显示满能量条
-                guiGraphics.fill((int) (posX + 0.9 * BOOST_BAR_LENGTH), posY, endX, posY + BOOST_BAR_HEIGHT, GamePlayer.BOOST_LEVEL_4);
+            case BoostData.BOOST_LV4: {
+                int endX = posX + (int) Math.ceil(boostPercentage * BOOST_BAR_LENGTH);
+                guiGraphics.fill((int) (posX + 0.9 * BOOST_BAR_LENGTH), posY, endX, posY + BOOST_BAR_HEIGHT, BoostData.BOOST_LEVEL_4);
             }
-            case 3: {
-                int endX = (int) (posX + Math.min(0.9, boostPercentage) * BOOST_BAR_LENGTH + 0.99);
-                guiGraphics.fill((int) (posX + 0.6 * BOOST_BAR_LENGTH), posY, endX, posY + BOOST_BAR_HEIGHT, GamePlayer.BOOST_LEVEL_3);
+            case BoostData.BOOST_LV3: {
+                int endX = posX + (int) Math.ceil(Math.min(0.9, boostPercentage) * BOOST_BAR_LENGTH);
+                guiGraphics.fill((int) (posX + 0.6 * BOOST_BAR_LENGTH), posY, endX, posY + BOOST_BAR_HEIGHT, BoostData.BOOST_LEVEL_3);
             }
-            case 2: {
-                int endX = (int) (posX + Math.min(0.6, boostPercentage) * BOOST_BAR_LENGTH + 0.99);
-                guiGraphics.fill((int) (posX + 0.2 * BOOST_BAR_LENGTH), posY, endX, posY + BOOST_BAR_HEIGHT, GamePlayer.BOOST_LEVEL_2);
+            case BoostData.BOOST_LV2: {
+                int endX = posX + (int) Math.ceil(Math.min(0.6, boostPercentage) * BOOST_BAR_LENGTH);
+                guiGraphics.fill((int) (posX + 0.2 * BOOST_BAR_LENGTH), posY, endX, posY + BOOST_BAR_HEIGHT, BoostData.BOOST_LEVEL_2);
             }
-            case 1: {
-                int endX = (int) (posX + Math.min(0.2, boostPercentage) * BOOST_BAR_LENGTH + 0.99); // 全部向上取整，显示有能量
-                guiGraphics.fill(posX, posY, endX, posY + BOOST_BAR_HEIGHT, GamePlayer.BOOST_LEVEL_1);
-                break;
-            }
-            case 0: {
-                break;
+            case BoostData.BOOST_LV1: {
+                int endX = posX + (int) Math.ceil(Math.min(0.2, boostPercentage) * BOOST_BAR_LENGTH);
+                guiGraphics.fill(posX, posY, endX, posY + BOOST_BAR_HEIGHT, BoostData.BOOST_LEVEL_1);
             }
         }
     }

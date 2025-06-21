@@ -10,6 +10,7 @@ public final class ZoneFuncTag {
     public static final String AIRDROP = "airdrop";
     public static final String FIREWORK = "firework";
     public static final String MUTEKI = "muteki";
+    public static final String BOOST = "boost";
     public static final String EFFECT = "effect";
     public static final String ENTITY = "entity";
 

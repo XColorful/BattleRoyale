@@ -15,6 +15,7 @@ public enum ZoneFuncType {
     AIRDROP(ZoneFuncTag.AIRDROP, AirdropFuncEntry::fromJson),
     FIREWORK(ZoneFuncTag.FIREWORK, FireworkFuncEntry::fromJson),
     MUTEKI(ZoneFuncTag.MUTEKI, MutekiFuncEntry::fromJson),
+    BOOST(ZoneFuncTag.BOOST, BoostFuncEntry::fromJson),
     NO_FUNC(ZoneFuncTag.NO_FUNC, NoFuncEntry::fromJson);
 
     private final String name;

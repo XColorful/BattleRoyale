@@ -16,12 +16,12 @@ import java.util.function.Supplier;
 
 public class FireworkFunc extends AbstractSimpleFunc {
 
-    private final boolean trackPlayer;
-    private final int amount;
-    private final int interval;
-    private final int vRange;
-    private final int hRange;
-    private final boolean outside;
+    public final boolean trackPlayer;
+    public final int amount;
+    public final int interval;
+    public final int vRange;
+    public final int hRange;
+    public final boolean outside;
 
     public FireworkFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset,
                         boolean trackPlayer, int amount, int interval, int vRange, int hRange, boolean outside) {

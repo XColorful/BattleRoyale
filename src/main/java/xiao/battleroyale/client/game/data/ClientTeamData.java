@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.team.TeamTag;
 import xiao.battleroyale.client.game.ClientGameDataManager;
+import xiao.battleroyale.common.game.effect.EffectManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.util.ColorUtils;
@@ -27,8 +28,8 @@ public class ClientTeamData {
 
     private static final String DEFAULT_COLOR = "#000000FF"; // 读取格式用#RRGGBBAA，实际int转为AARRGGBB
     public static final int NO_TEAM = 0;
-    public static final double OFFLINE = -1;
-    public static final double ELIMINATED = -2;
+    public static final float OFFLINE = -1;
+    public static final float ELIMINATED = -2;
 
     public long lastUpdateTime = 0;
 
@@ -49,11 +50,11 @@ public class ClientTeamData {
             teamMemberInfoList.add(new TeamMemberInfo(
                     Integer.parseInt(key),
                     memberTag.getString(TeamTag.MEMBER_NAME),
-                    memberTag.getDouble(TeamTag.MEMBER_HEALTH),
+                    memberTag.getFloat(TeamTag.MEMBER_HEALTH),
                     memberTag.getInt(TeamTag.MEMBER_BOOST)
             ));
         }
-        teamMemberInfoList.sort(Comparator.comparingInt(TeamMemberInfo::playerId));
+        teamMemberInfoList.sort(Comparator.comparingInt(memberInfo -> memberInfo.playerId));
         this.inTeam = isInTeam();
 
         this.lastUpdateTime = ClientGameDataManager.currentTick;  // updateFromNbt推迟到主线程
@@ -84,7 +85,7 @@ public class ClientTeamData {
 
             // team member
             for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) {
-                double playerHealth;
+                float playerHealth;
                 if (gamePlayer.isEliminated()) { // 标记淘汰则优先
                     playerHealth = ELIMINATED;
                 } else if (!gamePlayer.isActiveEntity() || serverLevel == null) { // 被标记为离线或无法用serverLevel查血量
@@ -97,7 +98,8 @@ public class ClientTeamData {
                         gamePlayer.getGameSingleId(),
                         gamePlayer.getPlayerName(),
                         playerHealth,
-                        gamePlayer.getBoost()));
+                        EffectManager.get().getBoost(gamePlayer.getPlayerUUID()))
+                );
             }
         }
 
@@ -107,6 +109,4 @@ public class ClientTeamData {
                 memberInfos
         );
     }
-
-    public record TeamMemberInfo(int playerId, String name, double health, int boost) {}
 }

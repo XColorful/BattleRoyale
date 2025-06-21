@@ -12,29 +12,18 @@ import java.util.function.Supplier;
 
 public abstract class AbstractSimpleFunc implements ITickableZone {
 
-    protected double damage;
     protected int moveDelay;
     protected int moveTime;
-
     protected int tickFreq; // 不小于0
     protected int tickOffset; // [0, tickFreq - 1]
 
     protected boolean ready = false;
 
     public AbstractSimpleFunc(int moveDelay, int moveTime) {
-        this(0, moveDelay, moveTime, 20, 0);
+        this(moveDelay, moveTime, 20, 0);
     }
 
     public AbstractSimpleFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset) {
-        this(0, moveDelay, moveTime, tickFreq, tickOffset);
-    }
-
-    public AbstractSimpleFunc(double damage, int moveDelay, int moveTime) {
-        this(damage, moveDelay, moveTime, 20, 0);
-    }
-
-    public AbstractSimpleFunc(double damage, int moveDelay, int moveTime, int tickFreq, int tickOffset) {
-        this.damage = damage;
         this.moveDelay = moveDelay;
         this.moveTime = moveTime;
         setTickFrequency(tickFreq);
@@ -49,11 +38,6 @@ public abstract class AbstractSimpleFunc implements ITickableZone {
     @Override
     public boolean isReady() {
         return ready;
-    }
-
-    @Override
-    public double getDamage() {
-        return damage;
     }
 
     @Override

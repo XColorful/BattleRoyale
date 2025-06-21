@@ -4,7 +4,6 @@ import net.minecraft.nbt.CompoundTag;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.ClientZoneData;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,6 +42,8 @@ public class ClientGameDataManager {
         if (hasTeam) {
             if (currentTick - teamData.lastUpdateTime > TEAM_EXPIRE_TICK) { // 主线程引用
                 teamData.clear();
+            } else {
+                teamData.teamMemberInfoList.forEach(memberInfo -> memberInfo.boost--);
             }
         }
         // 下一tick一开始获取bool就会重置

@@ -2,22 +2,20 @@ package xiao.battleroyale.util;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.team.TeamTag;
 import xiao.battleroyale.api.game.zone.gamezone.GameZoneTag;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
-import xiao.battleroyale.client.game.data.ClientTeamData;
+import xiao.battleroyale.client.game.data.TeamMemberInfo;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 
-import java.awt.*;
 import java.util.List;
 
 public class NBTUtils {
 
     public static CompoundTag serializeZoneToNBT(int zoneId, String zoneName, String zoneColor,
                                                  ITickableZone tickableZone, ISpatialZone spatialZone,
-                                                 double progress) {
+                                                 double shapeProgress) {
         CompoundTag tag = new CompoundTag();
         tag.putInt(GameZoneTag.ZONE_ID, zoneId);
         tag.putString(GameZoneTag.ZONE_NAME, zoneName);
@@ -32,40 +30,40 @@ public class NBTUtils {
         }
 
         CompoundTag centerTag = new CompoundTag();
-        Vec3 center = spatialZone.getCenterPos(progress);
+        Vec3 center = spatialZone.getCenterPos(shapeProgress);
         centerTag.putDouble("x", center.x);
         centerTag.putDouble("y", center.y);
         centerTag.putDouble("z", center.z);
         tag.put(GameZoneTag.CENTER, centerTag);
 
         CompoundTag dimTag = new CompoundTag();
-        Vec3 dim = spatialZone.getDimension(progress);
+        Vec3 dim = spatialZone.getDimension(shapeProgress);
         dimTag.putDouble("x", dim.x);
         dimTag.putDouble("y", dim.y);
         dimTag.putDouble("z", dim.z);
         tag.put(GameZoneTag.DIMENSION, dimTag);
 
-        double rotate = spatialZone.getRotateDegree(progress);
+        double rotate = spatialZone.getRotateDegree(shapeProgress);
         if (rotate != 0) {
             tag.putDouble(GameZoneTag.ROTATE, rotate);
         }
 
-        tag.putDouble(GameZoneTag.PROGRESS, progress);
+        tag.putDouble(GameZoneTag.PROGRESS, shapeProgress);
         return tag;
     }
 
-    public static CompoundTag serializeTeamToNBT(int teamId, String teamColor, List<ClientTeamData.TeamMemberInfo> memberInfos) {
+    public static CompoundTag serializeTeamToNBT(int teamId, String teamColor, List<TeamMemberInfo> memberInfos) {
         CompoundTag tag = new CompoundTag();
         tag.putInt(TeamTag.TEAM_ID, teamId);
         tag.putString(TeamTag.TEAM_COLOR, teamColor);
 
         CompoundTag teamMemberTag = new CompoundTag();
-        for (ClientTeamData.TeamMemberInfo memberInfo : memberInfos) {
+        for (TeamMemberInfo memberInfo : memberInfos) {
             CompoundTag memberTag = new CompoundTag();
-            memberTag.putString(TeamTag.MEMBER_NAME, memberInfo.name());
-            memberTag.putDouble(TeamTag.MEMBER_HEALTH, memberInfo.health());
-            memberTag.putInt(TeamTag.MEMBER_BOOST, memberInfo.boost());
-            teamMemberTag.put(String.valueOf(memberInfo.playerId()), memberTag);
+            memberTag.putString(TeamTag.MEMBER_NAME, memberInfo.name);
+            memberTag.putFloat(TeamTag.MEMBER_HEALTH, memberInfo.health);
+            memberTag.putInt(TeamTag.MEMBER_BOOST, memberInfo.boost);
+            teamMemberTag.put(String.valueOf(memberInfo.playerId), memberTag);
         }
 
         tag.put(TeamTag.TEAM_MEMBER, teamMemberTag);

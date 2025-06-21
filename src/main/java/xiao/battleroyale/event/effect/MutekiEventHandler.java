@@ -33,9 +33,6 @@ public class MutekiEventHandler {
             return;
         }
         MutekiManager.get().onTick();
-        if (MutekiManager.get().shouldEnd())  {
-            unregister();
-        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

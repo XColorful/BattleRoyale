@@ -6,6 +6,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.effect.IEffectManager;
+import xiao.battleroyale.common.game.effect.boost.BoostManager;
 import xiao.battleroyale.common.game.effect.firework.FireworkManager;
 import xiao.battleroyale.common.game.effect.muteki.MutekiManager;
 import xiao.battleroyale.common.game.effect.particle.ParticleManager;
@@ -61,12 +62,20 @@ public class EffectManager implements IEffectManager {
         MutekiManager.get().addMutekiEntityNotify(serverLevel, player, duration);
     }
 
+    public void addBoost(UUID entityUUID, int boostAmount, ServerLevel serverLevel) {
+        BoostManager.get().addBoost(entityUUID, boostAmount, serverLevel);
+    }
+
+    public int getBoost(UUID entityUUID) {
+        return BoostManager.get().getBoost(entityUUID);
+    }
 
     @Override
     public void clear() {
         clearFirework();
-        MutekiManager.get().clear();
-        ParticleManager.get().clear();
+        clearMuteki();
+        clearBoost();
+        clearParticle();
     }
 
     public void clearFirework() {
@@ -80,11 +89,23 @@ public class EffectManager implements IEffectManager {
         return MutekiManager.get().clear(uuid);
     }
 
+    public void clearBoost() {
+        BoostManager.get().clear();
+    }
+    public void clearBoost(UUID entityUUID) {
+        BoostManager.get().clear(entityUUID);
+    }
+
+    public void clearParticle() {
+        ParticleManager.get().clear();
+    }
+
     @Override
     public void forceEnd() {
         FireworkManager.get().forceEnd();
         MutekiManager.get().forceEnd();
         ParticleManager.get().forceEnd();
+        BoostManager.get().forceEnd();
     }
 
     @Override

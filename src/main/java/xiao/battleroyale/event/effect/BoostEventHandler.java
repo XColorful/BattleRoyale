@@ -3,18 +3,18 @@ package xiao.battleroyale.event.effect;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import xiao.battleroyale.common.game.effect.firework.FireworkManager;
+import xiao.battleroyale.common.game.effect.boost.BoostManager;
 
-public class FireworkEventHandler {
+public class BoostEventHandler {
 
-    private FireworkEventHandler() {}
+    private BoostEventHandler() {}
 
-    private static class FireworkEventHandlerHolder {
-        private static final FireworkEventHandler INSTANCE = new FireworkEventHandler();
+    private static class BoostEventHandlerHolder {
+        private static final BoostEventHandler INSTANCE = new BoostEventHandler();
     }
 
-    public static FireworkEventHandler get() {
-        return FireworkEventHandlerHolder.INSTANCE;
+    public static BoostEventHandler get() {
+        return BoostEventHandlerHolder.INSTANCE;
     }
 
     public static void register() {
@@ -30,6 +30,6 @@ public class FireworkEventHandler {
         if (event.phase != TickEvent.Phase.END) {
             return;
         }
-        FireworkManager.get().onTick();
+        BoostManager.get().onTick();
     }
 }

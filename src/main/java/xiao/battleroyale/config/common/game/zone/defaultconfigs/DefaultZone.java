@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
-import xiao.battleroyale.common.game.zone.tickable.MutekiFunc;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.*;
 import xiao.battleroyale.config.common.game.zone.zoneshape.*;
@@ -39,7 +38,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
 
-        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 0, 0, 20, 0); // 直接结束缩圈
+        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(0, 0, 20, 0, 1.0F); // 直接结束缩圈
 
         config.add(ZoneConfigTag.ZONE_FUNC, safeFuncEntry.toJson());
 
@@ -64,7 +63,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
 
-        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(1, 600, 1200, 20, -1); // 30秒后刷圈，缩圈1分钟
+        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(600, 1200, 20, -1, 1.0F); // 30秒后刷圈，缩圈1分钟
 
         config.add(ZoneConfigTag.ZONE_FUNC, safeFuncEntry.toJson());
 
@@ -93,7 +92,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 200);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 2400);
 
-        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(1, 600, 1200, 20, -1); // 30秒后刷圈，缩圈1分钟
+        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(600, 1200, 20, -1, 1.0F); // 30秒后刷圈，缩圈1分钟
 
         config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
@@ -155,7 +154,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 600);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 11400);
 
-        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(10, 600, 600, 20, -1);
+        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(600, 600, 20, -1, 10.0F);
 
         config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
@@ -188,7 +187,7 @@ public class DefaultZone {
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 100);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
 
-        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(0.001, 600, 600, 20, -1);
+        UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(600, 600, 20, -1, 0.001F);
 
         config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
@@ -272,14 +271,14 @@ public class DefaultZone {
     private static JsonObject generateDefaultZoneConfig10() {
         JsonObject config = new JsonObject();
         config.addProperty(ZoneConfigTag.ZONE_ID, 10);
-        config.addProperty(ZoneConfigTag.ZONE_NAME, "1st sphere");
+        config.addProperty(ZoneConfigTag.ZONE_NAME, "1st boost sphere");
         config.addProperty(ZoneConfigTag.ZONE_COLOR, "#0000FF77");
         config.addProperty(ZoneConfigTag.ZONE_DELAY, 200);
         config.addProperty(ZoneConfigTag.ZONE_TIME, 700);
 
-        NoFuncEntry noFuncEntry = new NoFuncEntry(200, 400);
+        BoostFuncEntry boostFuncEntry = new BoostFuncEntry(200, 400, 20, -1, 80);
 
-        config.add(ZoneConfigTag.ZONE_FUNC, noFuncEntry.toJson());
+        config.add(ZoneConfigTag.ZONE_FUNC, boostFuncEntry.toJson());
 
         StartEntry startEntry = new StartEntry();
         startEntry.addLockCenter(1, true);
