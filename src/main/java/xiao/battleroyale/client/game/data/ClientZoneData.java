@@ -64,6 +64,6 @@ public class ClientZoneData {
         this.rotateDegree = nbt.contains(GameZoneTag.ROTATE) ? nbt.getDouble(GameZoneTag.ROTATE) : 0;
         this.progress = nbt.getDouble(GameZoneTag.PROGRESS);
 
-        this.lastUpdateTime = ClientGameDataManager.currentTick; // 推迟到主线程
+        this.lastUpdateTime = ClientGameDataManager.getCurrentTick(); // 推迟到主线程
     }
 }

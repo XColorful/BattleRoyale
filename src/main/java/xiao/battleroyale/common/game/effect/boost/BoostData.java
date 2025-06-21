@@ -6,10 +6,10 @@ import java.util.UUID;
 
 public class BoostData {
 
-    public static final int BOOST_LEVEL_4 = 0xAAd46f16;
-    public static final int BOOST_LEVEL_3 = 0xAAd7831e;
-    public static final int BOOST_LEVEL_2 = 0xAAe1a31c;
-    public static final int BOOST_LEVEL_1 = 0xAAe8c625;
+    public static final int COLOR_LV4 = 0xAAd46f16;
+    public static final int COLOR_LV3 = 0xAAd7831e;
+    public static final int COLOR_LV2 = 0xAAe1a31c;
+    public static final int COLOR_LV1 = 0xAAe8c625;
     public static final int BOOST_LIMIT = 6000;
 
     public final UUID uuid;

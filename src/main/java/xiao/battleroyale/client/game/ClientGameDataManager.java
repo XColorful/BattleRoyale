@@ -27,7 +27,8 @@ public class ClientGameDataManager {
 
     public static final long ZONE_EXPIRE_TICK = 20 * 10;
     public static final long TEAM_EXPIRE_TICK = 20 * 10;
-    public static long currentTick = 0; // 所有递增和引用操作，都通过enqueueWork确保在主线程进行，从而避免多线程竞态条件
+    private static long currentTick = 0; // 所有递增和引用操作，都通过enqueueWork确保在主线程进行，从而避免多线程竞态条件
+    public static long getCurrentTick() { return currentTick; }
 
     public void onClientTick() {
         currentTick++; // 主线程递增
@@ -40,9 +41,9 @@ public class ClientGameDataManager {
             activeZones.entrySet().removeIf(entry -> currentTick - entry.getValue().lastUpdateTime > ZONE_EXPIRE_TICK); // 主线程引用
         }
         if (hasTeam) {
-            if (currentTick - teamData.lastUpdateTime > TEAM_EXPIRE_TICK) { // 主线程引用
+            if (currentTick - teamData.getLastUpdateTick() > TEAM_EXPIRE_TICK) { // 主线程引用
                 teamData.clear();
-            } else {
+            } else { // 本地调整状态
                 teamData.teamMemberInfoList.forEach(memberInfo -> memberInfo.boost--);
             }
         }

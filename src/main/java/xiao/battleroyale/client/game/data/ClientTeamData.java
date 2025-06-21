@@ -12,7 +12,6 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.NBTUtils;
-import xiao.battleroyale.util.StringUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -31,7 +30,8 @@ public class ClientTeamData {
     public static final float OFFLINE = -1;
     public static final float ELIMINATED = -2;
 
-    public long lastUpdateTime = 0;
+    private long lastUpdateTick = 0;
+    public long getLastUpdateTick() { return lastUpdateTick; }
 
     public ClientTeamData() {
         clear();
@@ -57,7 +57,7 @@ public class ClientTeamData {
         teamMemberInfoList.sort(Comparator.comparingInt(memberInfo -> memberInfo.playerId));
         this.inTeam = isInTeam();
 
-        this.lastUpdateTime = ClientGameDataManager.currentTick;  // updateFromNbt推迟到主线程
+        this.lastUpdateTick = ClientGameDataManager.getCurrentTick();  // updateFromNbt推迟到主线程
     }
 
     private boolean isInTeam() {
@@ -69,7 +69,7 @@ public class ClientTeamData {
         this.teamColor = Color.BLACK;
         this.teamMemberInfoList.clear();
         this.inTeam = false;
-        this.lastUpdateTime = 0;
+        this.lastUpdateTick = 0;
     }
 
     @NotNull
