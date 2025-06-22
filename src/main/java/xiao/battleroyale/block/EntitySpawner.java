@@ -70,13 +70,13 @@ public class EntitySpawner extends AbstractLootBlock {
 
                     LootConfig nextConfig = allConfigs.get(0);
                     for (LootConfig config : allConfigs) {
-                        if (config.getLootId() > currentConfigId) {
+                        if (config.lootId() > currentConfigId) {
                             nextConfig = config;
                             break;
                         }
                     }
-                    entitySpawnerBlockEntity.setConfigId(nextConfig.getLootId());
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_spawner_lootid_switched", nextConfig.getLootId(), nextConfig.getName()));
+                    entitySpawnerBlockEntity.setConfigId(nextConfig.lootId());
+                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_spawner_lootid_switched", nextConfig.lootId(), nextConfig.name()));
                     return InteractionResult.SUCCESS;
                 }
             }

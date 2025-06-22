@@ -59,35 +59,10 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     /**
      * 目前generateLootData需要手动调用this.entry.generateLootData(Random)
      */
-    public static class LootConfig implements IConfigSingleEntry {
+    public record LootConfig(int lootId, String name, String color, ILootEntry entry) implements IConfigSingleEntry {
         public static final String CONFIG_TYPE = "LootConfig";
 
-        private final int lootId;
-        private final String name;
-        private final String color;
-        private final ILootEntry entry;
-
-        public LootConfig(int lootId, String name, String color, ILootEntry entry) {
-            this.lootId = lootId;
-            this.name = name;
-            this.color = color;
-            this.entry = entry;
-        }
-
-        public int getLootId() {
-            return lootId;
-        }
-        public String getName() {
-            return name;
-        }
-        public String getColor() {
-            return color;
-        }
-        public ILootEntry getEntry() {
-            return entry;
-        }
-
-        @Override
+    @Override
         public String getType() {
             return CONFIG_TYPE;
         }
@@ -106,7 +81,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
 
         @Override
         public int getConfigId() {
-            return getLootId();
+            return lootId();
         }
 
         @Nullable
@@ -132,7 +107,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     }
 
     @Override protected Comparator<LootConfig> getConfigIdComparator(int configType) {
-        return Comparator.comparingInt(LootConfig::getLootId);
+        return Comparator.comparingInt(LootConfig::lootId);
     }
 
     /**

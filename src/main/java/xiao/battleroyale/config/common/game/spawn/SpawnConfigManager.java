@@ -42,39 +42,13 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
 
     protected final int DEFAULT_SPAWN_CONFIG_DATA_ID = 0;
 
-    public static class SpawnConfig implements ISpawnSingleEntry {
+    public record SpawnConfig(int id, String name, String color, ISpawnEntry entry) implements ISpawnSingleEntry {
         public static final String CONFIG_TYPE = "SpawnConfig";
 
-        private final int id;
-        private final String name;
-        private final String color;
-        private final ISpawnEntry entry;
-
-        public SpawnConfig(int id, String name, String color, ISpawnEntry entry) {
-            this.id = id;
-            this.name = name;
-            this.color = color;
-            this.entry = entry;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getColor() {
-            return color;
-        }
-
-        public ISpawnEntry getEntry() {
-            return entry;
-        }
-
         @Override
-        public IGameSpawner createGameSpawner() { return entry.createGameSpawner(); }
+            public IGameSpawner createGameSpawner() {
+            return entry.createGameSpawner();
+        }
 
         @Override
         public String getType() {
@@ -95,7 +69,7 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
 
         @Override
         public int getConfigId() {
-            return getId();
+            return id();
         }
 
         public static ISpawnEntry deserializeSpawnEntry(JsonObject jsonObject) {
@@ -117,7 +91,7 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
     }
 
     @Override protected Comparator<SpawnConfig> getConfigIdComparator(int configType) {
-        return Comparator.comparingInt(SpawnConfig::getId);
+        return Comparator.comparingInt(SpawnConfig::id);
     }
 
     /**

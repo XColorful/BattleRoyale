@@ -35,48 +35,24 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
 
     protected final int DEFAULT_BOT_CONFIG_DATA_ID = 0;
 
-    public static class BotConfig implements IConfigSingleEntry {
-        public static final String CONFIG_TYPE = "BotConfig";
-
-        private final int id;
-        private final String name;
-        private final String color;
-        private final IBotEntry entry;
-
-        public BotConfig(int id, String name, String color, IBotEntry entry) {
-            this.id = id;
-            this.name = name;
-            this.color = color;
-            this.entry = entry;
-        }
-
-        public int getId() {
-            return id;
-        }
-        public String getName() {
-            return name;
-        }
-        public String getColor() {
-            return color;
-        }
-        public IBotEntry getEntry() {
-            return entry;
-        }
-        @Override
-        public String getType() {
-            return CONFIG_TYPE;
-        }
+    public record BotConfig(int id, String name, String color, IBotEntry entry) implements IConfigSingleEntry {
+            public static final String CONFIG_TYPE = "BotConfig";
 
         @Override
-        public JsonObject toJson() {
-            return null;
-        }
+            public String getType() {
+                return CONFIG_TYPE;
+            }
 
-        @Override
-        public int getConfigId() {
-            return getId();
+            @Override
+            public JsonObject toJson() {
+                return null;
+            }
+
+            @Override
+            public int getConfigId() {
+                return id();
+            }
         }
-    }
 
 
     @Override protected Comparator<BotConfig> getConfigIdComparator(int configType) {

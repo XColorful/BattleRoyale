@@ -3,8 +3,8 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.api.loot.LootConfigTag;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
+import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.type.ItemEntry;
 import xiao.battleroyale.config.common.loot.type.MultiEntry;
 
@@ -25,11 +25,6 @@ public class DefaultSecretRoom{
     }
 
     private static JsonObject generateDefaultSecretRoom() {
-        JsonObject config = new JsonObject();
-        config.addProperty(LootConfigTag.LOOT_ID, 0);
-        config.addProperty(LootConfigTag.LOOT_NAME, "Treasure trove (Not implemented yet)"); // TODO Secret room配置
-        config.addProperty(LootConfigTag.LOOT_COLOR, "#00FFFF");
-
         ILootEntry multiEntry = new MultiEntry(Arrays.asList(
                 new ItemEntry("minecraft:iron_ingot", null, 1),
                 new ItemEntry("minecraft:gold_ingot", null, 1),
@@ -41,8 +36,10 @@ public class DefaultSecretRoom{
                 new ItemEntry("minecraft:amethyst_shard", null, 1),
                 new ItemEntry("minecraft:netherite_ingot", null, 1)
         ));
-        
-        config.add(LootConfigTag.LOOT_ENTRY, multiEntry.toJson());
-        return config;
+
+        LootConfig lootConfig = new LootConfig(0, "Treasure trove (Not implemented yet)", "#00FFFF",
+                multiEntry);
+
+        return lootConfig.toJson();
     }
 }

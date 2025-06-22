@@ -2,8 +2,9 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import xiao.battleroyale.api.loot.LootConfigTag;
+import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
+import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.type.EntityEntry;
 import xiao.battleroyale.config.common.loot.type.NoneEntry;
 import xiao.battleroyale.config.common.loot.type.RandomEntry;
@@ -26,33 +27,25 @@ public class DefaultEntitySpawner {
     }
 
     private static JsonObject generateDefaultEntitySpawner0() {
-        JsonObject config = new JsonObject();
-        config.addProperty(LootConfigTag.LOOT_ID, 0);
-        config.addProperty(LootConfigTag.LOOT_NAME, "Horse Spawn with Probability");
-        config.addProperty(LootConfigTag.LOOT_COLOR, "#FFFFFFAA");
+        ILootEntry randomEntry = new RandomEntry(0.2,
+                new EntityEntry("minecraft:horse", null, 1, 1)
+        );
 
-        config.add(LootConfigTag.LOOT_ENTRY,
-                new RandomEntry(0.2,
-                        new EntityEntry("minecraft:horse", null, 1, 1)
-                )
-                .toJson());
+        LootConfig lootConfig = new LootConfig(0, "Horse Spawn with Probability", "#FFFFFFAA",
+                randomEntry);
 
-        return config;
+        return lootConfig.toJson();
     }
 
     private static JsonObject generateDefaultEntitySpawner1() {
-        JsonObject config = new JsonObject();
-        config.addProperty(LootConfigTag.LOOT_ID, 1);
-        config.addProperty(LootConfigTag.LOOT_NAME, "Zombie Spawn with High Probability");
-        config.addProperty(LootConfigTag.LOOT_COLOR, "#FFFFFFAA");
+        ILootEntry weightEntry = new WeightEntry(Arrays.asList(
+                WeightEntry.createWeightedEntry(0.8, new EntityEntry("minecraft:zombie", null, 5, 20)),
+                WeightEntry.createWeightedEntry(0.2, new NoneEntry())
+        ));
 
-        config.add(LootConfigTag.LOOT_ENTRY,
-                new WeightEntry(Arrays.asList(
-                        WeightEntry.createWeightedEntry(0.8, new EntityEntry("minecraft:zombie", null, 5, 20)),
-                        WeightEntry.createWeightedEntry(0.2, new NoneEntry())
-                ))
-                .toJson());
+        LootConfig lootConfig = new LootConfig(1, "Zombie Spawn with High Probability", "#FFFFFFAA",
+                weightEntry);
 
-        return config;
+        return lootConfig.toJson();
     }
 }

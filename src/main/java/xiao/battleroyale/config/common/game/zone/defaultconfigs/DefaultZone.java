@@ -3,8 +3,8 @@ package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.*;
 import xiao.battleroyale.config.common.game.zone.zoneshape.*;
 
@@ -31,16 +31,7 @@ public class DefaultZone {
     }
 
     private static JsonObject generateDefaultZoneConfig0() {
-        JsonObject config = new JsonObject();
-        config.addProperty(ZoneConfigTag.ZONE_ID, 0);
-        config.addProperty(ZoneConfigTag.ZONE_NAME, "Blue opaque border");
-        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#0000FFFF");
-        config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
-        config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
-
         SafeFuncEntry safeFuncEntry = new SafeFuncEntry(0, 0, 20, 0, 1.0F); // 直接结束缩圈
-
-        config.add(ZoneConfigTag.ZONE_FUNC, safeFuncEntry.toJson());
 
         StartEntry startEntry = new StartEntry();
         startEntry.addFixedCenter(new Vec3(0, -60, 0));
@@ -50,22 +41,16 @@ public class DefaultZone {
         endEntry.addFixedDimension(new Vec3(128, 255, 128));
 
         SquareEntry squareEntry = new SquareEntry(startEntry, endEntry, false);
-        config.add(ZoneConfigTag.ZONE_SHAPE, squareEntry.toJson());
 
-        return config;
+        ZoneConfig zoneConfig = new ZoneConfig(0, "Blue opaque border", "#0000FFFF",
+                0, 12000,
+                safeFuncEntry, squareEntry);
+
+        return zoneConfig.toJson();
     }
 
     private static JsonObject generateDefaultZoneConfig1() {
-        JsonObject config = new JsonObject();
-        config.addProperty(ZoneConfigTag.ZONE_ID, 1);
-        config.addProperty(ZoneConfigTag.ZONE_NAME, "Self shrink aqua circle");
-        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#00FFFFAA");
-        config.addProperty(ZoneConfigTag.ZONE_DELAY, 0);
-        config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
-
         SafeFuncEntry safeFuncEntry = new SafeFuncEntry(600, 1200, 20, -1, 1.0F); // 30秒后刷圈，缩圈1分钟
-
-        config.add(ZoneConfigTag.ZONE_FUNC, safeFuncEntry.toJson());
 
         StartEntry startEntry = new StartEntry();
         startEntry.addPreviousCenter(0, 1);
@@ -79,22 +64,16 @@ public class DefaultZone {
         endEntry.addDimensionScale(0.5);
 
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry, false);
-        config.add(ZoneConfigTag.ZONE_SHAPE, circleEntry.toJson());
 
-        return config;
+        ZoneConfig zoneConfig = new ZoneConfig(1, "Self shrink aqua circle", "#00FFFFAA",
+                0, 12000,
+                safeFuncEntry, circleEntry);
+
+        return zoneConfig.toJson();
     }
 
     private static JsonObject generateDefaultZoneConfig2() {
-        JsonObject config = new JsonObject();
-        config.addProperty(ZoneConfigTag.ZONE_ID, 2);
-        config.addProperty(ZoneConfigTag.ZONE_NAME, "Floating unsafe red rectangle");
-        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#FF0000AA");
-        config.addProperty(ZoneConfigTag.ZONE_DELAY, 200);
-        config.addProperty(ZoneConfigTag.ZONE_TIME, 2400);
-
         UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(600, 1200, 20, -1, 1.0F); // 30秒后刷圈，缩圈1分钟
-
-        config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
         // 中心点(0, 0)，初始圆包含 Simple Border 的边界正方形，缩圈后半径为原先 0.5 倍
         StartEntry startEntry = new StartEntry();
@@ -110,23 +89,17 @@ public class DefaultZone {
         endEntry.addDimensionRange(20);
 
         RectangleEntry rectangleEntry = new RectangleEntry(startEntry, endEntry, false);
-        config.add(ZoneConfigTag.ZONE_SHAPE, rectangleEntry.toJson());
 
-        return config;
+        ZoneConfig zoneConfig = new ZoneConfig(2, "Floating unsafe red rectangle", "#FF0000AA",
+                200, 2400,
+                unsafeFuncEntry, rectangleEntry);
+
+        return zoneConfig.toJson();
     }
 
     private static JsonObject generateDefaultZoneConfig3() {
-        JsonObject config = new JsonObject();
-        config.addProperty(ZoneConfigTag.ZONE_ID, 3);
-        config.addProperty(ZoneConfigTag.ZONE_NAME, "Relative Green Circle");
-        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#00FF00AA");
-        config.addProperty(ZoneConfigTag.ZONE_DELAY, 400);
-        config.addProperty(ZoneConfigTag.ZONE_TIME, 11600);
-
         FireworkFuncEntry fireworkFuncEntry = new FireworkFuncEntry(600, 1200, 20, -1, // 30秒后刷圈，缩圈1分钟
                 true, 1, 20, 5, 3, false);
-
-        config.add(ZoneConfigTag.ZONE_FUNC, fireworkFuncEntry.toJson());
 
         StartEntry startEntry = new StartEntry();
         startEntry.addPreviousCenter(1, 1);
@@ -141,22 +114,16 @@ public class DefaultZone {
         endEntry.addRelativeDimension(new Vec3(50, -5, 50));
 
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry, false);
-        config.add(ZoneConfigTag.ZONE_SHAPE, circleEntry.toJson());
 
-        return config;
+        ZoneConfig zoneConfig = new ZoneConfig(3, "Relative Green Circle", "#00FF00AA",
+                400, 11600,
+                fireworkFuncEntry, circleEntry);
+
+        return zoneConfig.toJson();
     }
 
     private static JsonObject generateDefaultZoneConfig4() {
-        JsonObject config = new JsonObject();
-        config.addProperty(ZoneConfigTag.ZONE_ID, 4);
-        config.addProperty(ZoneConfigTag.ZONE_NAME, "Unwelcomed White Hexagon");
-        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#FFFFFFAA");
-        config.addProperty(ZoneConfigTag.ZONE_DELAY, 600);
-        config.addProperty(ZoneConfigTag.ZONE_TIME, 11400);
-
         UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(600, 600, 20, -1, 10.0F);
-
-        config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
         StartEntry startEntry = new StartEntry();
         startEntry.addPreviousCenter(0, 1);
@@ -174,22 +141,16 @@ public class DefaultZone {
         endEntry.addRelativeCenter(new Vec3(0, 10, 0));
 
         HexagonEntry hexagonEntry = new HexagonEntry(startEntry, endEntry, false);
-        config.add(ZoneConfigTag.ZONE_SHAPE, hexagonEntry.toJson());
 
-        return config;
+        ZoneConfig zoneConfig = new ZoneConfig(4, "Unwelcomed White Hexagon", "#FFFFFFAA",
+                600, 11400,
+                unsafeFuncEntry, hexagonEntry);
+
+        return zoneConfig.toJson();
     }
 
     private static JsonObject generateDefaultZoneConfig5() {
-        JsonObject config = new JsonObject();
-        config.addProperty(ZoneConfigTag.ZONE_ID, 5);
-        config.addProperty(ZoneConfigTag.ZONE_NAME, "Black Polygon Trap");
-        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#00000022");
-        config.addProperty(ZoneConfigTag.ZONE_DELAY, 100);
-        config.addProperty(ZoneConfigTag.ZONE_TIME, 12000);
-
         UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(600, 600, 20, -1, 0.001F);
-
-        config.add(ZoneConfigTag.ZONE_FUNC, unsafeFuncEntry.toJson());
 
         StartEntry startEntry = new StartEntry();
         startEntry.addLockCenter(0, true);
@@ -200,23 +161,17 @@ public class DefaultZone {
         endEntry.addFixedDimension(new Vec3(15, 4, 15));
 
         PolygonEntry polygonEntry = new PolygonEntry(startEntry, endEntry, false, 5);
-        config.add(ZoneConfigTag.ZONE_SHAPE, polygonEntry.toJson());
 
-        return config;
+        ZoneConfig zoneConfig = new ZoneConfig(5, "Black Polygon Trap", "#00000022",
+                100, 12000,
+                unsafeFuncEntry, polygonEntry);
+
+        return zoneConfig.toJson();
     }
 
     private static JsonObject generateDefaultZoneConfig6() {
-        JsonObject config = new JsonObject();
-        config.addProperty(ZoneConfigTag.ZONE_ID, 6);
-        config.addProperty(ZoneConfigTag.ZONE_NAME, "Rotating Ellipse monitor");
-        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#FFFF0022");
-        config.addProperty(ZoneConfigTag.ZONE_DELAY, 200);
-        config.addProperty(ZoneConfigTag.ZONE_TIME, 400);
-
         FireworkFuncEntry fireworkFuncEntry = new FireworkFuncEntry(0, 400, 10, -1,
                 false, 1, 0, 0, 0, false);
-
-        config.add(ZoneConfigTag.ZONE_FUNC, fireworkFuncEntry.toJson());
 
         StartEntry startEntry = new StartEntry();
         startEntry.addPreviousCenter(0, 0);
@@ -230,23 +185,17 @@ public class DefaultZone {
         endEntry.addRelativeRotate(360 * 2);
 
         EllipseEntry ellipseEntry = new EllipseEntry(startEntry, endEntry, false);
-        config.add(ZoneConfigTag.ZONE_SHAPE, ellipseEntry.toJson());
 
-        return config;
+        ZoneConfig zoneConfig = new ZoneConfig(6, "Rotating Ellipse monitor", "#FFFF0022",
+                200, 400,
+                fireworkFuncEntry, ellipseEntry);
+
+        return zoneConfig.toJson();
     }
 
     private static JsonObject generateDefaultZoneConfig7() {
-        JsonObject config = new JsonObject();
-        config.addProperty(ZoneConfigTag.ZONE_ID, 7);
-        config.addProperty(ZoneConfigTag.ZONE_NAME, "Bug Star");
-        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#FFD70022");
-        config.addProperty(ZoneConfigTag.ZONE_DELAY, 200);
-        config.addProperty(ZoneConfigTag.ZONE_TIME, 700);
-
         MutekiFuncEntry mutekiFuncEntry = new MutekiFuncEntry(200, 400, 20, -1,
                 200);
-
-        config.add(ZoneConfigTag.ZONE_FUNC, mutekiFuncEntry.toJson());
 
         StartEntry startEntry = new StartEntry();
         startEntry.addLockCenter(0, true);
@@ -263,22 +212,16 @@ public class DefaultZone {
         endEntry.addRelativeRotate(720);
 
         StarEntry starEntry = new StarEntry(startEntry, endEntry, true, 5);
-        config.add(ZoneConfigTag.ZONE_SHAPE, starEntry.toJson());
 
-        return config;
+        ZoneConfig zoneConfig = new ZoneConfig(7, "Bug Star", "#FFD70022",
+                200, 700,
+                mutekiFuncEntry, starEntry);
+
+        return zoneConfig.toJson();
     }
 
     private static JsonObject generateDefaultZoneConfig10() {
-        JsonObject config = new JsonObject();
-        config.addProperty(ZoneConfigTag.ZONE_ID, 10);
-        config.addProperty(ZoneConfigTag.ZONE_NAME, "1st boost sphere");
-        config.addProperty(ZoneConfigTag.ZONE_COLOR, "#0000FF77");
-        config.addProperty(ZoneConfigTag.ZONE_DELAY, 200);
-        config.addProperty(ZoneConfigTag.ZONE_TIME, 700);
-
         BoostFuncEntry boostFuncEntry = new BoostFuncEntry(200, 400, 20, -1, 80);
-
-        config.add(ZoneConfigTag.ZONE_FUNC, boostFuncEntry.toJson());
 
         StartEntry startEntry = new StartEntry();
         startEntry.addLockCenter(1, true);
@@ -290,8 +233,11 @@ public class DefaultZone {
         endEntry.addPreviousDimension(10, 0);
 
         SphereEntry sphereEntry = new SphereEntry(startEntry, endEntry, false);
-        config.add(ZoneConfigTag.ZONE_SHAPE, sphereEntry.toJson());
 
-        return config;
+        ZoneConfig zoneConfig = new ZoneConfig(10, "1st boost sphere", "#0000FF77",
+                200, 700,
+                boostFuncEntry, sphereEntry);
+
+        return zoneConfig.toJson();
     }
 }

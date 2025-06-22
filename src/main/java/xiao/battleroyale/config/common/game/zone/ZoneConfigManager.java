@@ -46,7 +46,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
     public static class ZoneConfig implements IZoneSingleEntry {
         public static final String CONFIG_TYPE = "ZoneConfig";
 
-        private final int zoneId;
+        public final int zoneId;
         private final String zoneName;
         private final String zoneColor;
         private final int zoneDelay;

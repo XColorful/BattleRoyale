@@ -16,7 +16,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.common.game.effect.EffectManager;
-import xiao.battleroyale.common.game.effect.boost.BoostData;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
@@ -743,7 +742,7 @@ public class GameManager extends AbstractGameManager {
     }
     public String getSpawnConfigName(int id) {
         SpawnConfigManager.SpawnConfig config = SpawnConfigManager.get().getSpawnConfig(id);
-        return config != null ? config.getName() : "";
+        return config != null ? config.name() : "";
     }
     public boolean setBotConfigId(int id) {
         if (id < 0 || BotConfigManager.get().getBotConfig(id) == null) {
@@ -754,6 +753,6 @@ public class GameManager extends AbstractGameManager {
     }
     public String getBotConfigName(int id) {
         BotConfigManager.BotConfig config = BotConfigManager.get().getBotConfig(id);
-        return config != null ? config.getName() : "";
+        return config != null ? config.name() : "";
     }
 }
