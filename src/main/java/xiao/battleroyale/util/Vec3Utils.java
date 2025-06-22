@@ -30,6 +30,8 @@ public class Vec3Utils {
     public static Vec3 lerp(Vec3 startVec, Vec3 endVec, double delta) {
         if (delta == 0) {
             return startVec;
+        } else if (delta == 1) {
+            return endVec;
         }
         return new Vec3(
                 startVec.x + (endVec.x - startVec.x) * delta,

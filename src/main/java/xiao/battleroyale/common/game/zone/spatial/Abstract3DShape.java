@@ -139,9 +139,7 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                 BattleRoyale.LOGGER.warn("Failed to calculate start center, type: {}", startEntry.startCenterType.getValue());
                 return;
             }
-            if (startEntry.startCenterRange > 0) {
-                startCenter = randomAdjustXYZ(startCenter, startEntry.startCenterRange, random);
-            }
+            startCenter = randomAdjustXYZ(startCenter, startEntry.startCenterRange, random);
             if (startEntry.playerCenterLerp != 0) {
                 startCenter = GameUtils.calculateCenterAndLerp(startCenter, standingGamePlayers, startEntry.playerCenterLerp);
             }
@@ -229,12 +227,8 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                 BattleRoyale.LOGGER.warn("Failed to calculate end center, type: {}", endEntry.endCenterType.getValue());
                 return;
             }
-            if (endEntry.endCenterRange > 0) {
-                endCenter = randomAdjustXYZ(endCenter, endEntry.endCenterRange, random);
-            }
-            if (endEntry.playerCenterLerp != 0) {
-                endCenter = GameUtils.calculateCenterAndLerp(endCenter, standingGamePlayers, endEntry.playerCenterLerp);
-            }
+            endCenter = randomAdjustXYZ(endCenter, endEntry.endCenterRange, random);
+            endCenter = GameUtils.calculateCenterAndLerp(endCenter, standingGamePlayers, endEntry.playerCenterLerp);
             // end dimension
             switch (endEntry.endDimensionType) {
                 case FIXED -> endDimension = endEntry.endDimension;
