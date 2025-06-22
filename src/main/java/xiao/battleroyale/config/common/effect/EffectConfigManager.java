@@ -56,7 +56,7 @@ public class EffectConfigManager {
     public ParticleConfig getParticleConfig(int id) {
         return ParticleConfigManager.get().getParticleConfig(id);
     }
-    public List<ParticleConfig> getAllParticleConfigs() {
+    public List<ParticleConfig> getParticleConfigList() {
         return ParticleConfigManager.get().getAllParticleConfigs();
     }
 

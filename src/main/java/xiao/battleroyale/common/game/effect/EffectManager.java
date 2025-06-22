@@ -59,9 +59,11 @@ public class EffectManager implements IEffectManager {
      * @param livingEntity 生效实体
      * @param duration 持续时间
      */
+    // 仅GameZone调用
     public void addMutekiEntity(ServerLevel serverLevel, LivingEntity livingEntity, int duration) {
         MutekiManager.get().addMutekiEntity(serverLevel, livingEntity, duration);
     }
+    // 仅指令调用
     public void addMutekiPlayer(ServerLevel serverLevel, ServerPlayer player, int duration) {
         MutekiManager.get().addMutekiEntityNotify(serverLevel, player, duration);
     }

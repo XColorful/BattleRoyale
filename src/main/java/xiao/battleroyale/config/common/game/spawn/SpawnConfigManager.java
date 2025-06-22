@@ -30,7 +30,7 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
     }
 
     private SpawnConfigManager() {
-        allConfigData.put(DEFAULT_SPAWN_CONFIG_DATA_ID, new ConfigData<>());
+        allFolderConfigData.put(DEFAULT_SPAWN_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
@@ -40,7 +40,7 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
     public static final String SPAWN_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
     public static final String SPAWN_CONFIG_SUB_PATH = "spawn";
 
-    protected final int DEFAULT_SPAWN_CONFIG_DATA_ID = 0;
+    protected final int DEFAULT_SPAWN_CONFIG_FOLDER = 0;
 
     public record SpawnConfig(int id, String name, String color, ISpawnEntry entry) implements ISpawnSingleEntry {
         public static final String CONFIG_TYPE = "SpawnConfig";
@@ -74,13 +74,11 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
 
         public static ISpawnEntry deserializeSpawnEntry(JsonObject jsonObject) {
             try {
-                String type = jsonObject.has(SpawnTypeTag.TYPE_NAME) ? jsonObject.getAsJsonPrimitive(SpawnTypeTag.TYPE_NAME).getAsString() : "";
-                if (type == null) type = "";
-                SpawnEntryType spawnEntryType = SpawnEntryType.fromNames(type);
+                SpawnEntryType spawnEntryType = SpawnEntryType.fromNames(JsonUtils.getJsonString(jsonObject, SpawnTypeTag.TYPE_NAME, ""));
                 if (spawnEntryType != null) {
                     return spawnEntryType.getDeserializer().apply(jsonObject);
                 } else {
-                    BattleRoyale.LOGGER.warn("Skipped unknown spawn entry type: {}", type);
+                    BattleRoyale.LOGGER.warn("Skipped invalid SpawnEntry");
                     return null;
                 }
             } catch (Exception e) {
@@ -97,7 +95,7 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
     /**
      * IConfigManager
      */
-    @Override public String getConfigType(int configType) {
+    @Override public String getFolderType(int configType) {
         return SpawnConfig.CONFIG_TYPE;
     }
 
@@ -105,14 +103,14 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
      * IConfigDefaultable
      */
     @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_SPAWN_CONFIG_DATA_ID);
+        generateDefaultConfigs(DEFAULT_SPAWN_CONFIG_FOLDER);
     }
 
     @Override public void generateDefaultConfigs(int configType) {
         DefaultSpawnConfigGenerator.generateDefaultSpawnConfigs();
     }
     @Override public int getDefaultConfigId() {
-        return getDefaultConfigId(DEFAULT_SPAWN_CONFIG_DATA_ID);
+        return getDefaultConfigId(DEFAULT_SPAWN_CONFIG_FOLDER);
     }
 
     /**
@@ -139,7 +137,7 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
 
             return new SpawnConfig(id, name, color, spawnEntry);
         } catch (Exception e) {
-            BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getConfigType(), filePath, e.getMessage());
+            BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(), filePath, e.getMessage());
             return null;
         }
     }
@@ -154,20 +152,20 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
      * 特定类别的获取接口
      */
     public SpawnConfig getSpawnConfig(int id) {
-        return getConfigEntry(id, DEFAULT_SPAWN_CONFIG_DATA_ID);
+        return getConfigEntry(id, DEFAULT_SPAWN_CONFIG_FOLDER);
     }
-    public List<SpawnConfig> getAllSpawnConfigs() {
-        return getAllConfigEntries(DEFAULT_SPAWN_CONFIG_DATA_ID);
+    public List<SpawnConfig> getSpawnConfigList() {
+        return getConfigEntryList(DEFAULT_SPAWN_CONFIG_FOLDER);
     }
 
     /**
      * 特定类别的重新读取接口
      */
     public void reloadSpawnConfigs() {
-        reloadConfigs(DEFAULT_SPAWN_CONFIG_DATA_ID);
+        reloadConfigs(DEFAULT_SPAWN_CONFIG_FOLDER);
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {
-        super.initializeDefaultConfigsIfEmpty(DEFAULT_SPAWN_CONFIG_DATA_ID);
+        super.initializeDefaultConfigsIfEmpty(DEFAULT_SPAWN_CONFIG_FOLDER);
     }
 }

@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.IConfigSingleEntry;
 import xiao.battleroyale.api.game.effect.particle.IParticleEntry;
 import xiao.battleroyale.api.game.effect.particle.IParticleSingleEntry;
 import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
@@ -31,7 +30,7 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
     }
 
     private ParticleConfigManager() {
-        allConfigData.put(DEFAULT_PARTICLE_CONFIG_DATA_ID, new ConfigData<>());
+        allFolderConfigData.put(DEFAULT_PARTICLE_CONFIG_FOLDER_ID, new FolderConfigData<>());
     }
 
     public static void init() {
@@ -41,7 +40,7 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
     public static final String PARTICLE_CONFIG_PATH = EffectConfigManager.EFFECT_CONFIG_PATH;
     public static final String PARTICLE_CONFIG_SUB_PATH = "particle";
 
-    protected final int DEFAULT_PARTICLE_CONFIG_DATA_ID = 0;
+    protected final int DEFAULT_PARTICLE_CONFIG_FOLDER_ID = 0;
 
     public static class ParticleConfig implements IParticleSingleEntry {
         public static final String CONFIG_TYPE = "ParticleConfig";
@@ -127,7 +126,7 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
     /**
      * IConfigManager
      */
-    @Override public String getConfigType(int configType) {
+    @Override public String getFolderType(int configType) {
         return ParticleConfig.CONFIG_TYPE;
     }
 
@@ -135,14 +134,14 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
      * IConfigDefaultable
      */
     @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_PARTICLE_CONFIG_DATA_ID);
+        generateDefaultConfigs(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
     }
 
     @Override public void generateDefaultConfigs(int configType) {
         DefaultParticleConfigGenerator.generateDefaultParticleConfigs();
     }
     @Override public int getDefaultConfigId() {
-        return getDefaultConfigId(DEFAULT_PARTICLE_CONFIG_DATA_ID);
+        return getDefaultConfigId(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
     }
 
     /**
@@ -161,7 +160,8 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
 
             String name = JsonUtils.getJsonString(configObject, ParticleConfigTag.PARTICLE_NAME, "");
             String color = JsonUtils.getJsonString(configObject, ParticleConfigTag.PARTICLE_COLOR, "#FFFFFF");
-            ParticleDetailEntry detailEntry = ParticleConfig.deserializeParticleDetailEntry(configObject);
+            JsonObject jsonObject = JsonUtils.getJsonObject(configObject, ParticleConfigTag.DETAIL_ENTRY, null);
+            ParticleDetailEntry detailEntry = ParticleConfig.deserializeParticleDetailEntry(jsonObject);
             if (detailEntry == null) {
                 BattleRoyale.LOGGER.warn("Failed to deserialize particle detail entry for id: {} in {}", id, filePath);
                 return null;
@@ -169,7 +169,7 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
 
             return new ParticleConfig(id, name, color, detailEntry);
         } catch (Exception e) {
-            BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getConfigType(), filePath, e.getMessage());
+            BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(), filePath, e.getMessage());
             return null;
         }
     }
@@ -184,20 +184,20 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
      * 特定类别的获取接口
      */
     public ParticleConfig getParticleConfig(int id) {
-        return getConfigEntry(id, DEFAULT_PARTICLE_CONFIG_DATA_ID);
+        return getConfigEntry(id, DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
     }
     public List<ParticleConfig> getAllParticleConfigs() {
-        return getAllConfigEntries(DEFAULT_PARTICLE_CONFIG_DATA_ID);
+        return getConfigEntryList(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
     }
 
     /**
      * 特定类别的重新读取接口
      */
     public void reloadParticleConfigs() {
-        reloadConfigs(DEFAULT_PARTICLE_CONFIG_DATA_ID);
+        reloadConfigs(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {
-        super.initializeDefaultConfigsIfEmpty(DEFAULT_PARTICLE_CONFIG_DATA_ID);
+        super.initializeDefaultConfigsIfEmpty(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
     }
 }

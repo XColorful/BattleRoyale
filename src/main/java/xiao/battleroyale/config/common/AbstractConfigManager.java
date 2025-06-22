@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.IConfigEntry;
@@ -26,18 +27,22 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
 
     public static String MOD_CONFIG_PATH = "config/battleroyale";
 
-    protected final int DEFAULT_CONFIG_DATA_ID = 0;
-    protected final Map<Integer, ConfigData<T>> allConfigData = new HashMap<>();
+    protected final int DEFAULT_CONFIG_FOLDER = 0;
+    protected final Map<Integer, FolderConfigData<T>> allFolderConfigData = new HashMap<>();
 
-    protected ConfigData<T> getConfigData() {
-        return getConfigData(DEFAULT_CONFIG_DATA_ID);
+    /**
+     * 获取特定子文件夹的数据
+     * 包含文件夹下所有json文件数据
+     */
+    protected FolderConfigData<T> getConfigFolderData() {
+        return getConfigFolderData(DEFAULT_CONFIG_FOLDER);
     }
-    protected final ConfigData<T> getConfigData(int dataId) {
-        if (allConfigData.containsKey(dataId)) {
-            return allConfigData.get(dataId);
+    protected final FolderConfigData<T> getConfigFolderData(int folderId) {
+        if (allFolderConfigData.containsKey(folderId)) {
+            return allFolderConfigData.get(folderId);
         } else { // 默认不会触发，触发了也别崩溃
-            BattleRoyale.LOGGER.error("Unexpected ConfigManager dataId {}, default config dir: {}", dataId, getConfigDirPath());
-            return allConfigData.get(DEFAULT_CONFIG_DATA_ID);
+            BattleRoyale.LOGGER.error("Unexpected ConfigManager folderId {}, default config dir: {}", folderId, getConfigDirPath());
+            return allFolderConfigData.get(DEFAULT_CONFIG_FOLDER);
         }
     }
 
@@ -48,65 +53,70 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
         }
     }
 
-    protected static class ConfigData<T extends IConfigEntry> {
+    protected static class FolderConfigData<T extends IConfigEntry> {
         public int DEFAULT_CONFIG_ID = 0;
-        public final Map<String, Map<Integer, T>> fileConfigs = new HashMap<>();
-        public final Map<String, List<T>> allFileConfigs = new HashMap<>();
+        // 文件夹下所有json文件数据
+        public final Map<String, Map<Integer, T>> fileConfigs = new HashMap<>(); // fileName -> .json
+        public final Map<String, List<T>> fileConfigsList = new HashMap<>(); // fileName -> .json
+        // 当前json文件数据
         public Map<Integer, T> configs = new HashMap<>();
-        public List<T> allConfigs = new ArrayList<>();
+        public List<T> configsList = new ArrayList<>();
         public final ConfigFileName configFileName = new ConfigFileName();
 
-        public ConfigData() {
+        public FolderConfigData() {
             ;
         }
     }
 
     public AbstractConfigManager() {
-        allConfigData.put(DEFAULT_CONFIG_DATA_ID, new ConfigData<>()); // 手动添加一个0键，子类构造函数没写也不会崩溃
+        allFolderConfigData.put(DEFAULT_CONFIG_FOLDER, new FolderConfigData<>()); // 手动添加一个0键，子类构造函数没写也不会崩溃
     }
 
     /**
      * 供子类内部调用变量的getter
-     * 没重载方法对configType进行switch case就默认没有
+     * 没重载方法对folderId进行switch case就默认没有
      */
-    protected Map<String, Map<Integer, T>> getFileConfigs() { return getFileConfigs(DEFAULT_CONFIG_DATA_ID); }
-    protected Map<String, Map<Integer, T>> getFileConfigs(int configType) { return getConfigData(configType).fileConfigs; }
-    protected Map<String, List<T>> getAllFileConfigs() { return getAllFileConfigs(DEFAULT_CONFIG_DATA_ID); }
-    protected Map<String, List<T>> getAllFileConfigs(int configType) { return getConfigData(configType).allFileConfigs; }
-    protected Map<Integer, T> getConfigs() { return getConfigs(DEFAULT_CONFIG_DATA_ID); }
-    protected Map<Integer, T> getConfigs(int configType) { return getConfigData(configType).configs; }
-    protected List<T> getAllConfigs() { return getAllConfigs(DEFAULT_CONFIG_DATA_ID); }
-    protected List<T> getAllConfigs(int configType) { return getConfigData(configType).allConfigs; }
-    protected ConfigFileName getConfigFileName() { return getConfigFileName(DEFAULT_CONFIG_DATA_ID); }
-    protected ConfigFileName getConfigFileName(int configType) { return getConfigData(configType).configFileName; }
+    // 获取指定文件夹下所有json文件数据
+    protected Map<String, Map<Integer, T>> getFileConfigs() { return getFileConfigs(DEFAULT_CONFIG_FOLDER); }
+    protected Map<String, Map<Integer, T>> getFileConfigs(int folderId) { return getConfigFolderData(folderId).fileConfigs; }
+    protected Map<String, List<T>> getFileConfigsList() { return getFileConfigsList(DEFAULT_CONFIG_FOLDER); }
+    protected Map<String, List<T>> getFileConfigsList(int folderId) { return getConfigFolderData(folderId).fileConfigsList; }
+    // 获取指定文件夹下当前选中的json文件数据
+    protected Map<Integer, T> getConfigs() { return getConfigs(DEFAULT_CONFIG_FOLDER); }
+    protected Map<Integer, T> getConfigs(int folderId) { return getConfigFolderData(folderId).configs; }
+    protected List<T> getConfigsList() { return getConfigsList(DEFAULT_CONFIG_FOLDER); }
+    protected List<T> getConfigsList(int folderId) { return getConfigFolderData(folderId).configsList; }
+    // 获取指定文件夹下当前选中的json文件名
+    protected ConfigFileName getConfigFileName() { return getConfigFileName(DEFAULT_CONFIG_FOLDER); }
+    protected ConfigFileName getConfigFileName(int folderId) { return getConfigFolderData(folderId).configFileName; }
 
     protected Comparator<T> getConfigIdComparator() {
         return getConfigIdComparator(getDefaultConfigId());
     }
-    protected abstract Comparator<T> getConfigIdComparator(int configType);
+    protected abstract Comparator<T> getConfigIdComparator(int folderId);
 
     protected void clear() {
         this.clear(getDefaultConfigId());
     }
-    protected void clear(int configType) {
-        getFileConfigs(configType).clear();
-        getAllFileConfigs(configType).clear();
-        getConfigs(configType).clear();
-        getAllConfigs(configType).clear();
-        getConfigFileName(configType).string = "";
+    protected void clear(int folderId) {
+        getFileConfigs(folderId).clear();
+        getFileConfigsList(folderId).clear();
+        getConfigs(folderId).clear();
+        getConfigsList(folderId).clear();
+        getConfigFileName(folderId).string = "";
     }
 
     /**
-     * 从单个文件读取配置
+     * 从单个json文件数据读取配置
      */
-    protected void loadConfigFromFile(Path filePath, Map<Integer, T> newFileConfigs, List<T> newAllFileConfigs, int configType) {
+    protected void loadConfigFromFile(Path filePath, Map<Integer, T> newFileConfigs, List<T> newFileConfigsList, int folderId) {
         try (InputStream inputStream = Files.newInputStream(filePath);
              InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
 
              Gson gson = new Gson();
              JsonArray configArray = gson.fromJson(reader, JsonArray.class);
              if (configArray == null) {
-                 BattleRoyale.LOGGER.info("Skipped empty config from {} for type {}", filePath, getConfigType(configType));
+                 BattleRoyale.LOGGER.info("Skipped empty config from {} for type {}", filePath, getFolderType(folderId));
                  return;
              }
 
@@ -117,35 +127,35 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
 
                  JsonObject configObject = element.getAsJsonObject();
                  try {
-                     T config = parseConfigEntry(configObject, filePath, configType);
+                     T config = parseConfigEntry(configObject, filePath, folderId);
                      if (config == null) {
-                         BattleRoyale.LOGGER.info("Skipped invalid config in {} for type {}", filePath, getConfigType(configType));
+                         BattleRoyale.LOGGER.info("Skipped invalid config in {} for type {}", filePath, getFolderType(folderId));
                          continue;
                      }
                      int configId = config.getConfigId();
                      if (newFileConfigs.containsKey(configId)) {
-                         BattleRoyale.LOGGER.info("Config with the same id: {}, will overwrite in {} for type {}", configId, filePath, getConfigType(configType));
+                         BattleRoyale.LOGGER.info("Config with the same id: {}, will overwrite in {} for type {}", configId, filePath, getFolderType(folderId));
                      }
                      newFileConfigs.put(configId, config);
-                     newAllFileConfigs.add(config);
+                     newFileConfigsList.add(config);
                  } catch (Exception e) {
-                     BattleRoyale.LOGGER.info("Error parsing config entry in {} for type {}: {}", filePath, getConfigType(configType), e.getMessage());
+                     BattleRoyale.LOGGER.info("Error parsing config entry in {} for type {}: {}", filePath, getFolderType(folderId), e.getMessage());
                  }
              }
         } catch (IOException e) {
-            BattleRoyale.LOGGER.error("Failed to load config from {}: {} for type {}", filePath.getFileName(), e.getMessage(), getConfigType(configType), e);
+            BattleRoyale.LOGGER.error("Failed to load config from {}: {} for type {}", filePath.getFileName(), e.getMessage(), getFolderType(folderId), e);
         }
     }
 
     /**
-     * 从目录读取所有文件
+     * 从文件夹下读取所有json文件数据
      */
     protected void loadAllConfigsFromDirectory(Path dirPath,
-                                               Map<String, Map<Integer, T>> fileConfigs, Map<String, List<T>> allFileConfigs, int configType) {
+                                               Map<String, Map<Integer, T>> fileConfigs, Map<String, List<T>> fileConfigsList, int folderId) {
         try {
             if (!Files.exists(dirPath)) {
                 Files.createDirectories(dirPath);
-                BattleRoyale.LOGGER.info("Created config directory: {} for type {}", dirPath, getConfigType(configType));
+                BattleRoyale.LOGGER.info("Created config directory: {} for type {}", dirPath, getFolderType(folderId));
                 return; // 目录刚创建，里面没有文件
             }
 
@@ -153,26 +163,28 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
                     .filter(path -> path.toString().endsWith(".json"))
                     .toList();
             if (jsonFiles.isEmpty()) {
-                BattleRoyale.LOGGER.info("No {} config file found in directory: {} ", getConfigType(configType), dirPath);
+                BattleRoyale.LOGGER.info("No {} config file found in directory: {} ", getFolderType(folderId), dirPath);
                 return;
             }
 
+            // 遍历文件夹下所有json文件
             for (Path filePath : jsonFiles) {
-                String fileNameWithoutExtension = filePath.getFileName().toString().replace(".json", "");
+                String fileNameNoExtension = filePath.getFileName().toString().replace(".json", "");
                 Map<Integer, T> newFileConfigs = new HashMap<>();
-                List<T> newAllFileConfigs = new ArrayList<>();
-                loadConfigFromFile(filePath, newFileConfigs, newAllFileConfigs, configType);
+                List<T> newFileConfigsList = new ArrayList<>();
+                // 读取单个json文件数据
+                loadConfigFromFile(filePath, newFileConfigs, newFileConfigsList, folderId);
+
                 if (!newFileConfigs.isEmpty()) {
-                    fileConfigs.put(fileNameWithoutExtension, newFileConfigs);
-                    newAllFileConfigs.sort(getConfigIdComparator(configType));
-                    allFileConfigs.put(fileNameWithoutExtension, newAllFileConfigs);
-                    BattleRoyale.LOGGER.info("Loaded {} {} config from file: {} for type {}", newFileConfigs.size(), getConfigSubPath(configType), filePath.getFileName(), getConfigType(configType));
+                    fileConfigs.put(fileNameNoExtension, newFileConfigs); // 允许文件名如".json"
+                    newFileConfigsList.sort(getConfigIdComparator(folderId)); fileConfigsList.put(fileNameNoExtension, newFileConfigsList);
+                    BattleRoyale.LOGGER.info("Loaded {} {} config from file: {} for type {}", newFileConfigs.size(), getConfigSubPath(folderId), filePath.getFileName(), getFolderType(folderId));
                 } else {
-                    BattleRoyale.LOGGER.info("No valid config for type {} found in file: {}", getConfigType(configType), filePath.getFileName());
+                    BattleRoyale.LOGGER.info("No valid config for type {} found in file: {}", getFolderType(folderId), filePath.getFileName());
                 }
             }
         } catch (IOException e) {
-            BattleRoyale.LOGGER.error("Could not list files in directory: {} for type {}", dirPath, getConfigType(configType), e);
+            BattleRoyale.LOGGER.error("Could not list files in directory: {} for type {}", dirPath, getFolderType(folderId), e);
         }
     }
 
@@ -182,23 +194,23 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
     @Override public @Nullable T getConfigEntry(int id) {
         return getConfigEntry(id, getDefaultConfigId());
     }
-    @Override public @Nullable T getConfigEntry(int id, int configType) {
-        return getConfigs(configType).get(id);
+    @Override public @Nullable T getConfigEntry(int id, int folderId) {
+        return getConfigs(folderId).get(id);
     }
-    @Override public @Nullable  List<T> getAllConfigEntries() {
-        return getAllConfigEntries(getDefaultConfigId());
+    @Override public @Nullable  List<T> getConfigEntryList() {
+        return getConfigEntryList(getDefaultConfigId());
     }
-    @Override public @Nullable List<T> getAllConfigEntries(int configType) {
-        return Collections.unmodifiableList(getAllConfigs(configType));
+    @Override public @Nullable List<T> getConfigEntryList(int folderId) {
+        return Collections.unmodifiableList(getConfigsList(folderId));
     }
     @Override public String getConfigEntryFileName() {
         return getConfigEntryFileName(getDefaultConfigId());
     }
-    @Override public String getConfigEntryFileName(int configType) {
-        return getConfigFileName(configType).string;
+    @Override public String getConfigEntryFileName(int folderId) {
+        return getConfigFileName(folderId).string;
     }
-    @Override public String getConfigType() {
-        return getConfigType(getDefaultConfigId());
+    @Override public String getFolderType() {
+        return getFolderType(getDefaultConfigId());
     }
     /**
      * IConfigLoadable
@@ -206,31 +218,38 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
     @Override public Set<String> getAvailableConfigFileNames() {
         return getAvailableConfigFileNames(getDefaultConfigId());
     }
-    @Override public Set<String> getAvailableConfigFileNames(int configType) {
-        return getAllFileConfigs(configType).keySet();
+    @Override public Set<String> getAvailableConfigFileNames(int folderId) {
+        return getFileConfigsList(folderId).keySet();
     }
-    @Override public void reloadConfigs() {
-        reloadConfigs(getDefaultConfigId());
+    @Override public boolean reloadConfigs() {
+        return reloadConfigs(getDefaultConfigId());
     }
-    @Override public void reloadConfigs(int configType) {
-        String fileNameString = getConfigFileName(configType).string; // 在清除前获取名称
-        this.clear(configType);
+    @Override public boolean reloadConfigs(int folderId) { // 读取子文件夹下所有文件数据
+        String fileNameString = getConfigFileName(folderId).string; // 在清除前获取当前使用的配置文件名称
+        this.clear(folderId);
 
-        Path configDirPath = getConfigDirPath(configType);
-        Map<String, Map<Integer, T>> fileConfigs = getFileConfigs(configType);
-        Map<String, List<T>> allFileConfigs = getAllFileConfigs(configType);
+        // 获取当前子文件夹下所有文件数据引用
+        Path configDirPath = getConfigDirPath(folderId);
+        Map<String, Map<Integer, T>> fileConfigs = getFileConfigs(folderId); // fileName -> .json
+        Map<String, List<T>> allFileConfigs = getFileConfigsList(folderId); // fileName -> .json
+
+        // 读取当前子文件夹下所有文件
         loadAllConfigsFromDirectory(configDirPath,
-                fileConfigs, allFileConfigs, configType);
-
-        // 如果之前设置的文件名仍然有效则保持选中
-        if (!fileNameString.isEmpty() && fileConfigs.containsKey(fileNameString)) {
-            switchConfigFile(fileNameString, configType);
-        } else if (!fileConfigs.isEmpty()) { // hasConfigLoaded(configType)检查的是已经选中的
-            String firstFileName = fileConfigs.keySet().iterator().next();
-            switchConfigFile(firstFileName, configType);
-        } else {
-            initializeDefaultConfigsIfEmpty(configType);
+                fileConfigs, allFileConfigs, folderId);
+        if (!hasConfigLoaded(folderId)) { // 没有文件或者文件无效
+            initializeDefaultConfigsIfEmpty(folderId); // 写入默认文件之后再读一次
+            loadAllConfigsFromDirectory(configDirPath,
+                    fileConfigs, allFileConfigs, folderId);
+            if (!hasConfigLoaded(folderId)) {
+                BattleRoyale.LOGGER.error("Failed to load default configs after generation for type: {}", getFolderType(folderId));
+                return false;
+            }
         }
+
+        if (!fileConfigs.containsKey(fileNameString)) { // 之前的文件名不存在
+            fileNameString = fileConfigs.keySet().iterator().next();
+        }
+        return switchConfigFile(fileNameString, folderId);
     }
     @Override public @Nullable T parseConfigEntry(JsonObject jsonObject, Path filePath) {
         return parseConfigEntry(jsonObject, filePath, getDefaultConfigId());
@@ -238,32 +257,24 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
     @Override public boolean hasConfigLoaded() {
         return hasConfigLoaded(getDefaultConfigId());
     }
-    @Override public boolean hasConfigLoaded(int configType) { // 只关心已经选定的配置是否为空
-        return (!getConfigs(configType).isEmpty()) && (!getAllConfigs(configType).isEmpty());
+    @Override public boolean hasConfigLoaded(int folderId) { // 仅判断是否已经读取到数据，不代表已经选中
+        return (!getFileConfigs(folderId).isEmpty()) && (!getFileConfigsList(folderId).isEmpty());
     }
     @Override public void initializeDefaultConfigsIfEmpty() {
         initializeDefaultConfigsIfEmpty(getDefaultConfigId());
     }
-    @Override public void initializeDefaultConfigsIfEmpty(int configType) {
-        if (hasConfigLoaded(configType)) {
+    @Override public void initializeDefaultConfigsIfEmpty(int folderId) {
+        if (hasConfigLoaded(folderId)) { // 防御一下
             return;
         }
-        generateDefaultConfigs(configType);
-        Path configDirPath = getConfigDirPath(configType);
+        generateDefaultConfigs(folderId);
+        Path configDirPath = getConfigDirPath(folderId);
         BattleRoyale.LOGGER.info("Generating default configs in {}", configDirPath);
-        loadAllConfigsFromDirectory(configDirPath,
-                getFileConfigs(configType), getAllFileConfigs(configType), configType);
-        if (hasConfigLoaded(configType)) {
-            String firstFileName = getAllFileConfigs(configType).keySet().iterator().next();
-            switchConfigFile(firstFileName, configType);
-        } else {
-            BattleRoyale.LOGGER.error("Failed to load default configs after generation for type: {}", getConfigType(configType));
-        }
     }
     @Override  public String getConfigPath() {
         return getConfigPath(getDefaultConfigId());
     }
-    @Override public String getConfigPath(int configType) {
+    @Override public String getConfigPath(int folderId) {
         return MOD_CONFIG_PATH;
     }
     @Override public String getConfigSubPath() {
@@ -272,8 +283,8 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
     @Override public Path getConfigDirPath() {
         return getConfigDirPath(getDefaultConfigId());
     }
-    @Override public Path getConfigDirPath(int configType) {
-        return Paths.get(getConfigPath(configType)).resolve(getConfigSubPath(configType));
+    @Override public Path getConfigDirPath(int folderId) {
+        return Paths.get(getConfigPath(folderId)).resolve(getConfigSubPath(folderId));
     }
 
     /**
@@ -284,41 +295,41 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
         return switchConfigFile(getDefaultConfigId());
     }
     @Override
-    public boolean switchConfigFile(int configType) {
-        if (!hasConfigLoaded(configType)) {
+    public boolean switchConfigFile(int folderId) {
+        List<String> fileNames = new ArrayList<>(getFileConfigsList(folderId).keySet());
+        if (fileNames.isEmpty()) {
             return false;
         }
-        List<String> fileNames = new ArrayList<>(getAllFileConfigs(configType).keySet());
         fileNames.sort(String::compareTo);
 
-        int currentIndex = fileNames.indexOf(getConfigFileName(configType).string);
-        int nextIndex = (currentIndex + 1) % fileNames.size();
+        int currentIndex = fileNames.indexOf(getConfigFileName(folderId).string); // indexOf可能返回-1
+        int nextIndex = (currentIndex + 1) % fileNames.size(); // isEmpty()已经保证不会对0取模
         String nextFileName = fileNames.get(nextIndex);
-        return switchConfigFile(nextFileName, configType);
+        return switchConfigFile(nextFileName, folderId);
     }
     @Override
     public boolean switchConfigFile(String fileName) {
         return switchConfigFile(fileName, getDefaultConfigId());
     }
     @Override
-    public boolean switchConfigFile(String fileName, int configType) {
-        Map<String, Map<Integer, T>> fileConfigs = getFileConfigs(configType);
-        Map<String, List<T>> allFileConfigs = getAllFileConfigs(configType);
+    public boolean switchConfigFile(@NotNull String fileName, int folderId) {
+        Map<String, Map<Integer, T>> fileConfigs = getFileConfigs(folderId);
+        Map<String, List<T>> allFileConfigs = getFileConfigsList(folderId);
 
-        Map<Integer, T> configs = getConfigs(configType);
-        List<T> allConfigs = getAllConfigs(configType);
-        ConfigFileName configFileName = getConfigFileName(configType);
+        Map<Integer, T> configs = getConfigs(folderId);
+        List<T> allConfigs = getConfigsList(folderId);
+        ConfigFileName configFileName = getConfigFileName(folderId);
 
-        if (allFileConfigs.containsKey(fileName)) {
+        if (allFileConfigs.containsKey(fileName)) { // TreeSet默认不支持null，尽管没使用
             configFileName.string = fileName;
             configs.clear();
             configs.putAll(fileConfigs.get(fileName));
             allConfigs.clear();
             allConfigs.addAll(allFileConfigs.get(fileName));
-            BattleRoyale.LOGGER.info("Switched to config file '{}' for type: {}", fileName, getConfigType(configType));
+            BattleRoyale.LOGGER.info("Switched to config file '{}' for type: {}", fileName, getFolderType(folderId));
             return true;
         } else {
-            BattleRoyale.LOGGER.warn("Config file '{}' not found for type {}", fileName, getConfigType(configType));
+            BattleRoyale.LOGGER.warn("Config file '{}' not found for type {}", fileName, getFolderType(folderId));
             return false;
         }
     }
@@ -330,21 +341,21 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
         generateDefaultConfigs(getDefaultConfigId());
     }
     @Override public int getDefaultConfigId() {
-        return getDefaultConfigId(DEFAULT_CONFIG_DATA_ID);
+        return getDefaultConfigId(DEFAULT_CONFIG_FOLDER);
     }
-    @Override public int getDefaultConfigId(int configType) {
-        return getConfigData(configType).DEFAULT_CONFIG_ID;
+    @Override public int getDefaultConfigId(int folderId) {
+        return getConfigFolderData(folderId).DEFAULT_CONFIG_ID;
     }
     @Override public void setDefaultConfigId(int id) {
         setDefaultConfigId(id, getDefaultConfigId());
     }
-    @Override public void setDefaultConfigId(int id, int configType) {
-        getConfigData(configType).DEFAULT_CONFIG_ID = id;
+    @Override public void setDefaultConfigId(int id, int folderId) {
+        getConfigFolderData(folderId).DEFAULT_CONFIG_ID = id;
     }
     @Override public @Nullable T getDefaultConfig() {
         return getDefaultConfig(getDefaultConfigId());
     }
-    @Override public @Nullable T getDefaultConfig(int configType) {
-        return getConfigEntry(getDefaultConfigId(configType));
+    @Override public @Nullable T getDefaultConfig(int folderId) {
+        return getConfigEntry(getDefaultConfigId(folderId));
     }
 }

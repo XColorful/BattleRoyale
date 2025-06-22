@@ -114,26 +114,26 @@ public class GameConfigManager {
     public BotConfig getBotConfig(int id) {
         return BotConfigManager.get().getBotConfig(id);
     }
-    public List<BotConfig> getAllBotConfigs() {
-        return BotConfigManager.get().getAllBotConfigs();
+    public List<BotConfig> getBotConfigList() {
+        return BotConfigManager.get().getBotConfigList();
     }
     public GameruleConfig getGameruleConfig(int gameId) {
         return GameruleConfigManager.get().getGameruleConfig(gameId);
     }
-    public List<GameruleConfig> getAllGameruleConfigs() {
-        return GameruleConfigManager.get().getAllGameruleConfigs();
+    public List<GameruleConfig> getGameruleConfigList() {
+        return GameruleConfigManager.get().getGameruleConfigList();
     }
     public SpawnConfig getSpawnConfig(int id) {
         return SpawnConfigManager.get().getSpawnConfig(id);
     }
-    public List<SpawnConfig> getAllSpawnConfigs() {
-        return SpawnConfigManager.get().getAllSpawnConfigs();
+    public List<SpawnConfig> getSpawnConfigList() {
+        return SpawnConfigManager.get().getSpawnConfigList();
     }
     public ZoneConfig getZoneConfig(int zoneId) {
         return ZoneConfigManager.get().getZoneConfig(zoneId);
     }
-    public List<ZoneConfig> getAllZoneConfigs() {
-        return ZoneConfigManager.get().getAllConfigEntries();
+    public List<ZoneConfig> getZoneConfigList() {
+        return ZoneConfigManager.get().getZoneConfigList();
     }
 
 

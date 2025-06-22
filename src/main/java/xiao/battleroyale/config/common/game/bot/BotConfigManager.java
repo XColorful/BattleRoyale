@@ -23,7 +23,7 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
     }
 
     private BotConfigManager() {
-        allConfigData.put(DEFAULT_BOT_CONFIG_DATA_ID, new ConfigData<>());
+        allFolderConfigData.put(DEFAULT_BOT_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
@@ -33,7 +33,7 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
     public static final String BOT_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
     public static final String BOT_CONFIG_SUB_PATH = "bot";
 
-    protected final int DEFAULT_BOT_CONFIG_DATA_ID = 0;
+    protected final int DEFAULT_BOT_CONFIG_FOLDER = 0;
 
     public record BotConfig(int id, String name, String color, IBotEntry entry) implements IConfigSingleEntry {
             public static final String CONFIG_TYPE = "BotConfig";
@@ -62,7 +62,7 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
     /**
      * IConfigManager
      */
-    @Override public String getConfigType(int configType) {
+    @Override public String getFolderType(int configType) {
         return BotConfig.CONFIG_TYPE;
     }
 
@@ -70,13 +70,13 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
      * IConfigDefaultable
      */
     @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_BOT_CONFIG_DATA_ID);
+        generateDefaultConfigs(DEFAULT_BOT_CONFIG_FOLDER);
     }
 
     @Override public void generateDefaultConfigs(int configType) {
     }
     @Override public int getDefaultConfigId() {
-        return getDefaultConfigId(DEFAULT_BOT_CONFIG_DATA_ID);
+        return getDefaultConfigId(DEFAULT_BOT_CONFIG_FOLDER);
     }
 
     /**
@@ -98,20 +98,20 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
      * 特定类别的获取接口
      */
     public BotConfig getBotConfig(int id) {
-        return getConfigEntry(id, DEFAULT_BOT_CONFIG_DATA_ID);
+        return getConfigEntry(id, DEFAULT_BOT_CONFIG_FOLDER);
     }
-    public List<BotConfig> getAllBotConfigs() {
-        return getAllConfigEntries(DEFAULT_BOT_CONFIG_DATA_ID);
+    public List<BotConfig> getBotConfigList() {
+        return getConfigEntryList(DEFAULT_BOT_CONFIG_FOLDER);
     }
 
     /**
      * 特定类别的重新读取接口
      */
     public void reloadBotConfigs() {
-        reloadConfigs(DEFAULT_BOT_CONFIG_DATA_ID);
+        reloadConfigs(DEFAULT_BOT_CONFIG_FOLDER);
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {
-        super.initializeDefaultConfigsIfEmpty(DEFAULT_BOT_CONFIG_DATA_ID);
+        super.initializeDefaultConfigsIfEmpty(DEFAULT_BOT_CONFIG_FOLDER);
     }
 }
