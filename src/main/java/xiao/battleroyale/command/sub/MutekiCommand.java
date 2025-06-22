@@ -29,18 +29,15 @@ public class MutekiCommand {
         RequiredArgumentBuilder<CommandSourceStack, Integer> timeArgument = Commands.argument(TIME, IntegerArgumentType.integer(1, MutekiManager.MAX_MUTEKI_TIME));
         RequiredArgumentBuilder<CommandSourceStack, EntitySelector> playerArgument = Commands.argument(PLAYER, EntityArgument.players());
 
-        // muteki <players> [time]
         // muteki <players> <time>
         timeArgument.executes(MutekiCommand::executeAddMutekiWithTimeForPlayers);
         // muteki <players>
         playerArgument.executes(MutekiCommand::executeAddMutekiDefaultTimeForPlayers);
         playerArgument.then(timeArgument);
 
-        // muteki clear [players]
+        // muteki clear
         LiteralArgumentBuilder<CommandSourceStack> clearCommand = Commands.literal(CLEAR)
                 .requires(source -> source.hasPermission(3));
-
-        // muteki clear
         clearCommand.executes(MutekiCommand::executeClearAllMuteki);
 
         // muteki clear <players>

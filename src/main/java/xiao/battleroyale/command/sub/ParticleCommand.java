@@ -57,7 +57,6 @@ public class ParticleCommand {
 
         // /battleroyale particle clear all
         clearCommand.then(Commands.literal(ALL)
-                .requires(source -> source.hasPermission(4))
                 .executes(ParticleCommand::executeClearAllParticles));
 
         particleCommand.then(clearCommand);

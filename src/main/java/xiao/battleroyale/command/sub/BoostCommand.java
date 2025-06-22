@@ -30,22 +30,21 @@ public class BoostCommand {
         RequiredArgumentBuilder<CommandSourceStack, EntitySelector> playerBase = Commands.argument(PLAYER, EntityArgument.players());
         RequiredArgumentBuilder<CommandSourceStack, Integer> amountArg = Commands.argument(AMOUNT, IntegerArgumentType.integer(1, BoostData.BOOST_LIMIT));
 
-        // boost <player>
+        // boost <players>
         playerBase.executes(BoostCommand::executeAddBoostForPlayersDefault);
-        // boost <player> <amount>
+        // boost <players> <amount>
         amountArg.executes(BoostCommand::executeAddBoostForPlayersWithAmount);
         playerBase.then(amountArg);
 
-        // Add top-level arguments to boostCommand (Order matters for command parsing)
-        boostCommand.then(playerBase); // Represents 'boost <player>'
+        boostCommand.then(playerBase);
 
-        // boost clear [player] / boost clear all
+        // boost clear [players] / boost clear
         LiteralArgumentBuilder<CommandSourceStack> clearCommand = Commands.literal(CLEAR)
                 .requires(source -> source.hasPermission(3));
 
-        // boost clear all
+        // boost clear=
         clearCommand.executes(BoostCommand::executeClearAllBoost);
-        // boost clear <player>
+        // boost clear <players>
         clearCommand.then(Commands.argument(PLAYER, EntityArgument.players())
                 .executes(BoostCommand::executeClearPlayersBoost));
 

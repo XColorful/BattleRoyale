@@ -6,7 +6,6 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import xiao.battleroyale.common.game.effect.EffectManager;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
