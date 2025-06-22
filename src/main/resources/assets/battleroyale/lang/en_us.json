@@ -183,7 +183,7 @@
   "battleroyale.message.failed_add_particle": "Failed to add particle %s, either missing config or in cooldown",
   "battleroyale.message.clear_particle": "Cleared particle",
   "battleroyale.message.clear_all_particle": "Cleared all particle",
-  "battleroyale.message.add_player_boost": "Add boost for %s (%s% boost)",
+  "battleroyale.message.add_player_boost": "Add boost for %s (%s%% boost)",
   "battleroyale.message.clear_player_boost": "Cleared %s's boost",
   "battleroyale.message.clear_all_boost": "Cleared all player's boost"
 }

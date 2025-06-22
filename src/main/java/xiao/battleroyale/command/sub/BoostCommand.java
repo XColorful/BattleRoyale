@@ -61,7 +61,8 @@ public class BoostCommand {
         }
         for (ServerPlayer player : players) {
             EffectManager.get().addBoost(player.getUUID(), DEFAULT_BOOST, context.getSource().getLevel());
-            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_boost", player.getName(), DEFAULT_BOOST), false);
+            int hundredInt = (int) (BoostData.getBoostPercentage(DEFAULT_BOOST) * 100);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_boost", player.getName(), hundredInt), false);
         }
         return Command.SINGLE_SUCCESS;
     }
@@ -74,7 +75,8 @@ public class BoostCommand {
         }
         for (ServerPlayer player : players) {
             EffectManager.get().addBoost(player.getUUID(), amount, context.getSource().getLevel());
-            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_boost", player.getName(), amount), false);
+            int hundredInt = (int) (BoostData.getBoostPercentage(amount) * 100);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_boost", player.getName(), hundredInt), false);
         }
         return Command.SINGLE_SUCCESS;
     }

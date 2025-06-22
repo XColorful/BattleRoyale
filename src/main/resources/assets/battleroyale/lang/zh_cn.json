@@ -183,7 +183,7 @@
   "battleroyale.message.failed_add_particle": "无法添加粒子效果%s，缺失配置或冷却中",
   "battleroyale.message.clear_particle": "已清除粒子效果",
   "battleroyale.message.clear_all_particle": "已清除所有粒子效果",
-  "battleroyale.message.add_player_boost": "已为玩家补充 %s %s%能量",
+  "battleroyale.message.add_player_boost": "已为玩家%s 补充%s%%能量",
   "battleroyale.message.clear_player_boost": "已清除玩家 %s 能量",
   "battleroyale.message.clear_all_boost": "已清除所有玩家能量"
 }
