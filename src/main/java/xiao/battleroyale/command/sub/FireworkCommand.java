@@ -70,6 +70,7 @@ public class FireworkCommand {
         fireworkCommand.then(coordBase);
         fireworkCommand.then(playerBase);
         fireworkCommand.then(Commands.literal(CLEAR)
+                .requires(source -> source.hasPermission(3))
                 .executes(FireworkCommand::executeClearFireworks));
 
         return fireworkCommand;
