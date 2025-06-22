@@ -3,11 +3,13 @@ package xiao.battleroyale.command.sub;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.common.game.effect.EffectManager;
@@ -24,19 +26,30 @@ public class MutekiCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         LiteralArgumentBuilder<CommandSourceStack> mutekiCommand = Commands.literal(MUTEKI);
 
-        // muteki clear
-        mutekiCommand.then(Commands.literal(CLEAR)
-                .executes(MutekiCommand::executeClearAllMuteki)
-                // muteki clear <players>
-                .then(Commands.argument(PLAYER, EntityArgument.players())
-                        .executes(MutekiCommand::executeClearPlayersMuteki)));
+        RequiredArgumentBuilder<CommandSourceStack, Integer> timeArgument = Commands.argument(TIME, IntegerArgumentType.integer(1, MutekiManager.MAX_MUTEKI_TIME));
+        RequiredArgumentBuilder<CommandSourceStack, EntitySelector> playerArgument = Commands.argument(PLAYER, EntityArgument.players());
 
         // muteki <players> [time]
-        mutekiCommand.then(Commands.argument(PLAYER, EntityArgument.players())
-                .executes(MutekiCommand::executeAddMutekiDefaultTimeForPlayers)
-                // muteki <players> <time>
-                .then(Commands.argument(TIME, IntegerArgumentType.integer(1, MutekiManager.MAX_MUTEKI_TIME))
-                        .executes(MutekiCommand::executeAddMutekiWithTimeForPlayers)));
+        // muteki <players> <time>
+        timeArgument.executes(MutekiCommand::executeAddMutekiWithTimeForPlayers);
+        // muteki <players>
+        playerArgument.executes(MutekiCommand::executeAddMutekiDefaultTimeForPlayers);
+        playerArgument.then(timeArgument);
+
+        // muteki clear [players]
+        LiteralArgumentBuilder<CommandSourceStack> clearCommand = Commands.literal(CLEAR)
+                .requires(source -> source.hasPermission(3));
+
+        // muteki clear
+        clearCommand.executes(MutekiCommand::executeClearAllMuteki);
+
+        // muteki clear <players>
+        clearCommand.then(Commands.argument(PLAYER, EntityArgument.players())
+                .executes(MutekiCommand::executeClearPlayersMuteki));
+
+        mutekiCommand.then(playerArgument);
+        mutekiCommand.then(clearCommand);
+
         return mutekiCommand;
     }
 
@@ -45,7 +58,6 @@ public class MutekiCommand {
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.clear_all_muteki"), true);
         return Command.SINGLE_SUCCESS;
     }
-
     private static int executeClearPlayersMuteki(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Collection<ServerPlayer> players = EntityArgument.getPlayers(context, PLAYER);
         if (players.isEmpty()) {
@@ -72,7 +84,6 @@ public class MutekiCommand {
         }
         return Command.SINGLE_SUCCESS;
     }
-
     private static int executeAddMutekiWithTimeForPlayers(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Collection<ServerPlayer> players = EntityArgument.getPlayers(context, PLAYER);
         int time = IntegerArgumentType.getInteger(context, TIME);
