@@ -13,12 +13,13 @@ public class AbstractParticleChannel<T> {
         ;
     }
 
-    public void addParticle(T particleData, int channelCooldown) {
+    public boolean addParticle(T particleData, int channelCooldown) {
         if (channelCooldown > 0) {
-            return;
+            return false;
         }
         this.channelCooldown += channelCooldown;
         particles.add(particleData);
+        return true;
     }
 
     public boolean shouldEnd() {

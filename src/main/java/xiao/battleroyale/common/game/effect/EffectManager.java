@@ -13,6 +13,8 @@ import xiao.battleroyale.common.game.effect.particle.FixedParticleChannel;
 import xiao.battleroyale.common.game.effect.particle.FixedParticleData;
 import xiao.battleroyale.common.game.effect.particle.ParticleData;
 import xiao.battleroyale.common.game.effect.particle.ParticleManager;
+import xiao.battleroyale.config.common.effect.EffectConfigManager;
+import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager.ParticleConfig;
 
 import java.util.UUID;
 
@@ -79,21 +81,36 @@ public class EffectManager implements IEffectManager {
 
     /**
      * 添加粒子效果
+     * @param serverLevel 粒子生效维度
      * @param channelKey 通道名称
-     * @param particleData 粒子数据
-     * @param cooldown 通道冷却时间
+     * @param particleId 粒子id
+     * @param channelCooldown 通道冷却时间
      */
-    public void addParticle(UUID entityUUID, String channelKey, ParticleData particleData, int cooldown) {
-        ParticleManager.get().addEntityParticle(entityUUID, channelKey, particleData, cooldown);
+    // 仅ZoneFunc调用
+    public boolean addParticle(ServerLevel serverLevel, UUID entityUUID, String channelKey, int particleId, int channelCooldown) {
+        ParticleConfig particleConfig = EffectConfigManager.get().getParticleConfig(particleId);
+        if (particleConfig != null) {
+            ParticleData particleData = particleConfig.createParticleData(serverLevel);
+            return ParticleManager.get().addEntityParticle(entityUUID, channelKey, particleData, channelCooldown);
+        }
+        return false;
     }
-    public void addParticle(String channelKey, FixedParticleData particleData, int cooldown) {
-        ParticleManager.get().addFixedParticle(channelKey, particleData, cooldown);
+    // 仅玩家指令调用
+    public boolean addParticle(ServerLevel serverLevel, Vec3 spawnPos, String channelKey, int particleId, int channelCooldown) {
+        ParticleConfig particleConfig = EffectConfigManager.get().getParticleConfig(particleId);
+        if (particleConfig != null) {
+            FixedParticleData particleData = particleConfig.createParticleData(serverLevel, spawnPos);
+            return ParticleManager.get().addFixedParticle(channelKey, particleData, channelCooldown);
+        }
+        return false;
     }
-    public void addGameParticle(FixedParticleData particleData, int cooldown) {
-        addParticle(FixedParticleChannel.GAME_CHANNEL, particleData, cooldown);
+    // 仅GameManager调用
+    public boolean addGameParticle(ServerLevel serverLevel, Vec3 spawnPos, int particleId, int channelCooldown) {
+        return addParticle(serverLevel, spawnPos, FixedParticleChannel.GAME_CHANNEL, particleId, channelCooldown);
     }
-    public void addCommandParticle(FixedParticleData particleData, int cooldown) {
-        addParticle(FixedParticleChannel.COMMAND_CHANNEL, particleData, cooldown);
+    // 仅非玩家指令调用
+    public boolean addCommandParticle(ServerLevel serverLevel, Vec3 spawnPos, int particleId, int channelCooldown) {
+        return addParticle(serverLevel, spawnPos, FixedParticleChannel.COMMAND_CHANNEL, particleId, channelCooldown);
     }
 
     @Override
@@ -122,18 +139,22 @@ public class EffectManager implements IEffectManager {
         BoostManager.get().clear(entityUUID);
     }
 
+    // 清除所有粒子
     public void clearParticle() {
         ParticleManager.get().clear();
     }
+    // 仅游戏区域调用
     public void clearParticle(UUID entityUUID) {
         ParticleManager.get().clear(entityUUID);
     }
     public void clearParticle(UUID entityUUID, String channelKey) {
         ParticleManager.get().clear(entityUUID, channelKey);
     }
+    // 仅GameManager调用
     public void clearGameParticle() {
         ParticleManager.get().clear(FixedParticleChannel.GAME_CHANNEL);
     }
+    // 仅非玩家指令调用
     public void clearCommandParticle() {
         ParticleManager.get().clear(FixedParticleChannel.COMMAND_CHANNEL);
     }

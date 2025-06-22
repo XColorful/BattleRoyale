@@ -6,6 +6,8 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import xiao.battleroyale.common.game.effect.EffectManager;
+import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.BattleRoyale;
@@ -37,15 +39,20 @@ public class ReloadCommand {
                         .then(Commands.literal(SPAWN)
                                 .executes(context -> reloadGameConfigs(context, SPAWN)))
                         .then(Commands.literal(GAMERULE)
-                                .executes(context -> reloadGameConfigs(context, GAMERULE))));
+                                .executes(context -> reloadGameConfigs(context, GAMERULE))))
+                .then(Commands.literal(EFFECT)
+                        .executes(context -> reloadEffectConfigs(context, null))
+                        .then(Commands.literal(PARTICLE)
+                                .executes(context -> reloadEffectConfigs(context, PARTICLE))));
     }
 
     private static int reloadAllConfigs(CommandContext<CommandSourceStack> context) {
         LootConfigManager.get().reloadAllLootConfigs();
         GameConfigManager.get().reloadAllConfigs();
+        EffectConfigManager.get().reloadAllConfigs();
 
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.all_configs_reloaded"), true);
-        BattleRoyale.LOGGER.info("Reloaded all battleroyale configs");
+        BattleRoyale.LOGGER.info("Reloaded all {} configs", BattleRoyale.MOD_ID);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -83,7 +90,7 @@ public class ReloadCommand {
             }
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
-        BattleRoyale.LOGGER.info("Reloaded {} loot configs via command", subType != null ? subType : "all loot");
+        BattleRoyale.LOGGER.info("Reloaded {} configs via command", subType != null ? subType : "all loot");
         return Command.SINGLE_SUCCESS;
     }
 
@@ -113,7 +120,28 @@ public class ReloadCommand {
             }
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
-        BattleRoyale.LOGGER.info("Reloaded {} game configs via command", subType != null ? subType : "all game");
+        BattleRoyale.LOGGER.info("Reloaded {} configs via command", subType != null ? subType : "all game");
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int reloadEffectConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        String messageKey;
+        if (subType == null) {
+            EffectConfigManager.get().reloadAllConfigs();
+            messageKey = "battleroyale.message.effect_config_reloaded";
+        } else {
+            switch (subType) {
+                case PARTICLE:
+                    EffectConfigManager.get().reloadParticleConfigs();
+                    messageKey = "battleroyale.message.particle_config_reloaded";
+                    break;
+                default:
+                    context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_game_sub_type", subType));
+                    return 0;
+            }
+        }
+        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        BattleRoyale.LOGGER.info("Reloaded {} effect configs via command", subType != null ? subType : "all effect");
         return Command.SINGLE_SUCCESS;
     }
 }

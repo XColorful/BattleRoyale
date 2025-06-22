@@ -32,6 +32,7 @@
   "battleroyale.message.no_gamerule_config_available": "No gamerule config available",
   "battleroyale.message.no_spawn_config_available": "No spawn config available",
   "battleroyale.message.no_zone_config_available": "No zone config available",
+  "battleroyale.message.no_particle_config_available": "No particle config available",
 
   "battleroyale.message.all_configs_reloaded": "Reloaded all battleroyale configs",
   "battleroyale.message.loot_config_reloaded": "Reloaded all loot configs",
@@ -45,9 +46,12 @@
   "battleroyale.message.spawn_config_reloaded": "Reloaded spawn configs",
   "battleroyale.message.gamerule_config_reloaded": "Reloaded gamerule configs",
   "battleroyale.message.bot_config_reloaded": "Reloaded bot configs",
+  "battleroyale.message.effect_config_reloaded": "Reloaded all effect configs",
+  "battleroyale.message.particle_config_reloaded": "Reloaded particle configs",
 
   "battleroyale.message.unknown_loot_sub_type": "Unknown loot sub-type: %s",
   "battleroyale.message.unknown_game_sub_type": "Unknown game sub-type: %s",
+  "battleroyale.message.unknown_effect_sub_type": "Unknown effect sub-type: %s",
 
   "battleroyale.message.game_cancel_loot": "Currently in game, cancel loot generation",
   "battleroyale.message.game_stop_loot": "Currently in game, stopped queued loot generation",
@@ -174,5 +178,9 @@
   "battleroyale.message.muteki_end": "Muteki time's up",
   "battleroyale.message.clear_all_muteki": "Cleared all muteki effect",
   "battleroyale.message.clear_muteki": "Cleared %s' muteki effect",
-  "battleroyale.message.player_not_muteki": "Player %s is not muteki"
+  "battleroyale.message.player_not_muteki": "Player %s is not muteki",
+  "battleroyale.message.add_particle": "Add particle %s (%s,%s,%s)",
+  "battleroyale.message.failed_add_particle": "Failed to add particle %s, either missing config or in cooldown",
+  "battleroyale.message.clear_particle": "Cleared particle",
+  "battleroyale.message.clear_all_particle": "Cleared all particle"
 }

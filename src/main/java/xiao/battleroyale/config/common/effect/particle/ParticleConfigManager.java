@@ -2,11 +2,13 @@ package xiao.battleroyale.config.common.effect.particle;
 
 import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.IConfigSingleEntry;
 import xiao.battleroyale.api.game.effect.particle.IParticleEntry;
 import xiao.battleroyale.api.game.effect.particle.IParticleSingleEntry;
 import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
+import xiao.battleroyale.common.game.effect.particle.FixedParticleData;
 import xiao.battleroyale.common.game.effect.particle.ParticleData;
 import xiao.battleroyale.config.common.AbstractConfigManager;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
@@ -72,6 +74,11 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
         @Override
         public ParticleData createParticleData(ServerLevel serverLevel) {
             return entry.createParticleData(serverLevel);
+        }
+
+        @Override
+        public FixedParticleData createParticleData(ServerLevel serverLevel, Vec3 fixedPos) {
+            return new FixedParticleData(serverLevel, entry, fixedPos);
         }
 
         @Override

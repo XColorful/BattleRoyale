@@ -30,7 +30,7 @@ public record ParticleParameterEntry(float speed, @NotNull Vec3 offset,
         // 大多数粒子
         this.motion = motion != null ? motion : Vec3.ZERO;
         // 自定义粒子预留
-        this.nbt = nbt;
+        this.nbt = nbt != null ? nbt : new CompoundTag();
     }
 
     @Override

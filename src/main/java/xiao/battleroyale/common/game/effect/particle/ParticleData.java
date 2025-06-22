@@ -38,7 +38,9 @@ public class ParticleData {
     }
 
     public void spawnParticle(Vec3 spawnPos) {
+        BattleRoyale.LOGGER.info("In ParticleData, attempt to spawn particle");
         if (this.level == null || this.level.isClientSide()) {
+            BattleRoyale.LOGGER.info("Failed: this.level == null || this.level.isClientSide()");
             return;
         }
 
@@ -85,7 +87,7 @@ public class ParticleData {
 
         float speed = (parameter != null) ? parameter.speed() : 0.0F;
         Vec3 offset = (parameter != null) ? parameter.offset() : Vec3.ZERO;
-
+        BattleRoyale.LOGGER.info("options:{}, spawnPos:{}, offset:{}, particle.count():{}, speed:{}", options, spawnPos, offset, this.particle.count(), speed);
         this.level.sendParticles(options,
                 spawnPos.x() + offset.x(),
                 spawnPos.y() + offset.y(),

@@ -359,6 +359,7 @@ public class ConfigCommand {
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_particle_config_file", currentFileName), true);
             return Command.SINGLE_SUCCESS;
         } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_particle_config_available"));
             return 0;
         }
     }

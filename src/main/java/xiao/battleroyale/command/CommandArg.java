@@ -52,4 +52,6 @@ public class CommandArg {
     public static final String HORIZONTAL_RANGE = "hRange";
     public static final String CLEAR = "clear";
     public static final String TIME = "time";
+    public static final String COOLDOWN = "cooldown";
+    public static final String ALL = "all";
 }

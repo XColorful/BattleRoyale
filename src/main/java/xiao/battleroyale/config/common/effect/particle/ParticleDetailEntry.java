@@ -20,10 +20,12 @@ public record ParticleDetailEntry(ResourceLocation particleType, int count, int 
         this.particleType = particleType;
         this.count = Math.max(count, 0);
         this.lifeTime = Math.max(lifeTime, 0);
+
+        this.parameter = parameter;
+
         this.initDelay = Math.max(initDelay, 0); // 初始延迟
         this.interval = Math.max(interval, 0);
         this.repeat = Math.max(repeat, 0);
-        this.parameter = parameter;
     }
 
     @Override
