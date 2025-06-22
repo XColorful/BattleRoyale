@@ -15,6 +15,7 @@ public class CommandArg {
     public static final String MUTEKI = "muteki";
     public static final String EFFECT = "effect";
     public static final String PARTICLE = "particle";
+    public static final String BOOST = "boost";
 
     public static final String LOOT_SPAWNER = "loot_spawner";
     public static final String ENTITY_SPAWNER = "entity_spawner";

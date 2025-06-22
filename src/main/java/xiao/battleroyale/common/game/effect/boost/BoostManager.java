@@ -63,7 +63,10 @@ public class BoostManager implements IEffectManager {
                         || !(data.level.getEntity(data.uuid) instanceof LivingEntity livingEntity)) {
                     return true;
                 }
-                livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, EFFECT_COOLDOWN, boostLevel > 3 ? 1 : 0, false, false));
+                int boostEffect = boostLevel - 3;
+                if (boostEffect >= 0) {
+                    livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, EFFECT_COOLDOWN, boostEffect, false, false));
+                }
                 data.effectCooldown = EFFECT_COOLDOWN;
             }
             // 同步消息
