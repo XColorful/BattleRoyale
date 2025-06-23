@@ -247,12 +247,12 @@ public class DefaultZone {
 
     private static JsonObject generateDefaultZoneConfig11() {
         ParticleFuncEntry particleFuncEntry = new ParticleFuncEntry(200, 400, 20, -1,
-                Arrays.asList(1, 1, 2), 1,"", 50);
+                Arrays.asList(1, 1, 2), 1,"zone11", 50);
 
         StartEntry startEntry = new StartEntry();
         startEntry.addLockCenter(0, true);
         startEntry.addPlayerCenterLerp(-0.2);
-        startEntry.addFixedDimension(new Vec3(20, 20, 20));
+        startEntry.addFixedDimension(new Vec3(10, 10, 10));
         startEntry.addLockRotate(0);
 
         EndEntry endEntry = new EndEntry();
@@ -281,7 +281,7 @@ public class DefaultZone {
         StartEntry startEntry = new StartEntry();
         startEntry.addLockCenter(0, true);
         startEntry.addPlayerCenterLerp(0.2);
-        startEntry.addFixedDimension(new Vec3(20, 20, 20));
+        startEntry.addFixedDimension(new Vec3(20, 10, 10));
         startEntry.addLockRotate(0);
 
         EndEntry endEntry = new EndEntry();
@@ -292,11 +292,11 @@ public class DefaultZone {
         endEntry.addPreviousRotate(11, 0);
         endEntry.addRotateRange(360);
 
-        CubeEntry cubeEntry = new CubeEntry(startEntry, endEntry, false);
+        CuboidEntry cuboidEntry = new CuboidEntry(startEntry, endEntry, false);
 
         ZoneConfig zoneConfig = new ZoneConfig(12, "Speed effect Cuboid", "#00FF0099",
                 200, 700,
-                effectFuncEntry, cubeEntry);
+                effectFuncEntry, cuboidEntry);
 
         return zoneConfig.toJson();
     }
