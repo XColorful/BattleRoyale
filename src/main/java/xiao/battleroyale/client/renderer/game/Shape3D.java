@@ -81,4 +81,60 @@ public class Shape3D {
             }
         }
     }
+
+    /**
+     * 绘制一个以模型原点为中心的填充长方体。
+     * 长方体的所有六个面都将被渲染。
+     * @param halfWidth 长方体在X轴方向上的半长。
+     * @param halfHeight 长方体在Y轴方向上的半高。
+     * @param halfDepth 长方体在Z轴方向上的半深。
+     */
+    public static void drawFilledBox(PoseStack poseStack, VertexConsumer consumer,
+                                     float r, float g, float b, float a,
+                                     float halfWidth, float halfHeight, float halfDepth) {
+        final Matrix4f currentPoseMatrix = poseStack.last().pose();
+
+        float x_neg = -halfWidth;
+        float y_neg = -halfHeight;
+        float z_neg = -halfDepth;
+        float x_pos = halfWidth;
+        float y_pos = halfHeight;
+        float z_pos = halfDepth;
+
+        // 前面 (负Z轴方向)
+        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
+
+        // 后面 (正Z轴方向)
+        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
+
+        // 左侧 (负X轴方向)
+        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
+
+        // 右侧 (正X轴方向)
+        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
+
+        // 顶面 (正Y方向)
+        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 1, 0).endVertex();
+
+        // 底面 (负Y方向)
+        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, -1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, -1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, -1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, -1, 0).endVertex();
+    }
 }

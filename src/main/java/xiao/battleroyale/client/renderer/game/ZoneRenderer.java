@@ -126,6 +126,9 @@ public class ZoneRenderer {
                     case SPHERE ->
                             Shape3D.drawFilledSphere(poseStack, consumer, r, g, b, a,
                                     (float) zoneData.dimension.y, SPHERE_SEGMENTS);
+                    case CUBE, CUBOID ->
+                            Shape3D.drawFilledBox(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, (float) zoneData.dimension.z);
                     default -> {
                         ;
                     }
