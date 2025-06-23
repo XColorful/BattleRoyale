@@ -465,7 +465,6 @@ public class GameManager extends AbstractGameManager {
         // 取消事件监听
         unregisterGameEvent();
 
-        EffectManager.get().forceEnd();
         if (!shouldKeepTeamAfterGame()) {
             SyncEventHandler.unregister();
             for (GamePlayer gamePlayer : getGamePlayers()) { // 先保留通知列表
