@@ -10,6 +10,13 @@ public class Shape2D {
 
     public static final float FLOAT_EPSILON = 1.0E-5F;
 
+    /**
+     * 绘制一个以模型原点为中心的填充矩形盒子。
+     * 盒子在Y轴上具有高度，底面位于Y=0平面。
+     * @param halfWidth 矩形在X轴方向上的半宽。
+     * @param halfDepth 矩形在Z轴方向上的半深。
+     * @param height 矩形在Y轴方向上的高度。
+     */
     public static void drawFilledRectangleBox(PoseStack poseStack, VertexConsumer consumer,
                                         float r, float g, float b, float a,
                                         float halfWidth, float halfDepth, float height) {
@@ -47,6 +54,14 @@ public class Shape2D {
         consumer.vertex(currentPoseMatrix, x2, height, z1).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
     }
 
+    /**
+     * 绘制一个以模型原点为中心的填充多边形柱体。
+     * 柱体的底面是一个正多边形，位于Y=0平面，向上延伸至指定高度。
+     * @param radius 多边形的外接圆半径。
+     * @param height 柱体的高度。
+     * @param segments 多边形的边数（或圆的近似段数），值越大越平滑。
+     * @param initialAngle 初始旋转角度（弧度），用于调整多边形的朝向。
+     */
     public static void drawFilledPolygonCylinder(PoseStack poseStack, VertexConsumer consumer,
                                            float r, float g, float b, float a,
                                            float radius, float height, int segments, float initialAngle) {
@@ -82,6 +97,14 @@ public class Shape2D {
         }
     }
 
+    /**
+     * 绘制一个以模型原点为中心的填充椭圆柱体。
+     * 柱体的底面是一个椭圆，位于Y=0平面，向上延伸至指定高度。
+     * @param halfA 椭圆在X轴方向上的半轴长。
+     * @param halfB 椭圆在Z轴方向上的半轴长。
+     * @param height 柱体的高度。
+     * @param segments 椭圆的近似段数，值越大越平滑。
+     */
     public static void drawFilledEllipseCylinder(PoseStack poseStack, VertexConsumer consumer,
                                            float r, float g, float b, float a,
                                            float halfA, float halfB, float height, int segments) {
@@ -123,6 +146,15 @@ public class Shape2D {
         }
     }
 
+    /**
+     * 绘制一个以模型原点为中心的填充星形柱体。
+     * 柱体的底面是一个星形，位于Y=0平面，向上延伸至指定高度。
+     * @param outerRadius 星形外顶点到中心的距离。
+     * @param innerRadius 星形内凹点到中心的距离。
+     * @param height 柱体的高度。
+     * @param segments 星形的瓣数（通常为5或更多），一个瓣由两条边组成。
+     * @param initialAngle 初始旋转角度（弧度），用于调整星形的朝向。
+     */
     public static void drawFilledStarCylinder(PoseStack poseStack, VertexConsumer consumer,
                                               float r, float g, float b, float a,
                                               float outerRadius, float innerRadius, float height, int segments, float initialAngle) {

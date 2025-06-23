@@ -1,57 +1,25 @@
 package xiao.battleroyale.common.game.zone.spatial;
 
-import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.client.renderer.game.ZoneRenderer;
 import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 import xiao.battleroyale.util.Vec3Utils;
 
-public class SphereShape extends Abstract3DShape {
+public class CubeShape extends Abstract3DShape {
 
     protected boolean needEqualAbs = false;
 
-    public SphereShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
+    public CubeShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
         super(startEntry, endEntry, allowBadShape);
     }
 
     @Override
-    public boolean isWithinZone(@Nullable Vec3 checkPos, double progress) {
-        if (checkPos == null || progress < 0 || !isDetermined()) {
-            return false;
-        }
-
-        double allowedProgress = GameZone.allowedProgress(progress);
-        Vec3 center, dimension;
-
-        if (Math.abs(allowedProgress - cachedProgress) < EPSILON) {
-            center = cachedCenter;
-            dimension = cachedDimension;
-        } else {
-            center = getCenterPos(allowedProgress);
-            dimension = getDimension(allowedProgress);
-            cachedCenter = center;
-            cachedDimension = dimension;
-            cachedProgress = allowedProgress;
-        }
-
-        boolean isZoneInverted = Mth.sign(dimension.x) * Mth.sign(dimension.y) * Mth.sign(dimension.z) < 0;
-        double radiusSq = dimension.y * dimension.y;
-        // 旋转对球没有几何影响
-
-        double xDist = center.x - checkPos.x;
-        double yDist = center.y - checkPos.y;
-        double zDist = center.z - checkPos.z;
-        return (xDist*xDist + yDist*yDist + zDist*zDist <= Math.abs(radiusSq)) != isZoneInverted;
-    }
-
-    @Override
     public ZoneShapeType getShapeType() {
-        return ZoneShapeType.SPHERE;
+        return ZoneShapeType.CUBE;
     }
 
     @Override
@@ -64,8 +32,9 @@ public class SphereShape extends Abstract3DShape {
 
     @Override
     public int getSegments() {
-        return ZoneRenderer.SPHERE_SEGMENTS;
+        return 4;
     }
+
 
     @Override
     public @Nullable Vec3 getStartDimension() {

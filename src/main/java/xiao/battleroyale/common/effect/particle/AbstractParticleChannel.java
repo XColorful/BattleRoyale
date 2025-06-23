@@ -6,7 +6,7 @@ import java.util.Set;
 public class AbstractParticleChannel<T> {
 
 
-    public int channelCooldown;
+    public int channelCooldown = 0; // 往通道添加粒子的冷却
     public final Set<T> particles = new HashSet<>();
 
     public AbstractParticleChannel() {
@@ -14,11 +14,11 @@ public class AbstractParticleChannel<T> {
     }
 
     public boolean addParticle(T particleData, int channelCooldown) {
-        if (channelCooldown > 0) {
+        if (this.channelCooldown > 0) {
             return false;
         }
-        this.channelCooldown += channelCooldown;
         particles.add(particleData);
+        this.channelCooldown += channelCooldown;
         return true;
     }
 

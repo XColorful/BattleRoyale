@@ -30,6 +30,7 @@ public class ZoneRenderer {
     public static final int ELLIPSE_SEGMENTS = 64;
     public static final float POINTING_POLYGON_ANGLE = (float) (Math.PI / 2.0);
     public static final int SPHERE_SEGMENTS = 64;
+    public static final int ELLIPSOID_SEGMENTS = 64;
 
     private static ZoneRenderer instance;
 
@@ -126,6 +127,12 @@ public class ZoneRenderer {
                     case SPHERE ->
                             Shape3D.drawFilledSphere(poseStack, consumer, r, g, b, a,
                                     (float) zoneData.dimension.y, SPHERE_SEGMENTS);
+                    case CUBE, CUBOID ->
+                            Shape3D.drawFilledCuboid(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, (float) zoneData.dimension.z);
+                    case ELLIPSOID ->
+                            Shape3D.drawFilledEllipsoid(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, (float) zoneData.dimension.z, ELLIPSOID_SEGMENTS);
                     default -> {
                         ;
                     }
