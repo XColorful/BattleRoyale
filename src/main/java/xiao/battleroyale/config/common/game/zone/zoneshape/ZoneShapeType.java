@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.game.zone.zoneshape;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
+import xiao.battleroyale.common.game.zone.spatial.EllipsoidShape;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,8 @@ public enum ZoneShapeType {
     // 3D shape
     SPHERE(ZoneShapeTag.SPHERE, SphereEntry::fromJson),
     CUBE(ZoneShapeTag.CUBE, CubeEntry::fromJson),
-    CUBOID(ZoneShapeTag.CUBOID, CuboidEntry::fromJson);
+    CUBOID(ZoneShapeTag.CUBOID, CuboidEntry::fromJson),
+    ELLIPSOID(ZoneShapeTag.ELLIPSOID, EllipsoidEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends IZoneShapeEntry> deserializer;

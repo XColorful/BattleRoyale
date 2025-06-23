@@ -31,6 +31,7 @@ public class DefaultZone {
         zoneConfigJson.add(generateDefaultZoneConfig10());
         zoneConfigJson.add(generateDefaultZoneConfig11());
         zoneConfigJson.add(generateDefaultZoneConfig12());
+        zoneConfigJson.add(generateDefaultZoneConfig13());
         writeJsonToFile(Paths.get(GameConfigManager.get().getZoneConfigPath(), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
@@ -297,6 +298,28 @@ public class DefaultZone {
         ZoneConfig zoneConfig = new ZoneConfig(12, "Speed effect Cuboid", "#00FF0099",
                 200, 700,
                 effectFuncEntry, cuboidEntry);
+
+        return zoneConfig.toJson();
+    }
+
+    private static JsonObject generateDefaultZoneConfig13() {
+        NoFuncEntry noFuncEntry = new NoFuncEntry(0, 1200);
+
+        StartEntry startEntry = new StartEntry();
+        startEntry.addPreviousCenter(0, 0);
+        startEntry.addRelativeCenter(new Vec3(0, 50, 0));
+        startEntry.addFixedDimension(new Vec3(15, 5, 8));
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addPreviousCenter(13, 0);
+        endEntry.addPreviousDimension(13, 0);
+        endEntry.addFixedRotate(360 * 15);
+
+        EllipsoidEntry ellipsoidEntry = new EllipsoidEntry(startEntry, endEntry, false);
+
+        ZoneConfig zoneConfig = new ZoneConfig(13, "Harmonious ellipsoid spectator", "#FF000066",
+                600, 1800,
+                noFuncEntry, ellipsoidEntry);
 
         return zoneConfig.toJson();
     }

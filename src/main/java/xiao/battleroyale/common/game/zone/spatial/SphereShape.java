@@ -26,8 +26,18 @@ public class SphereShape extends Abstract3DShape {
         }
 
         double allowedProgress = GameZone.allowedProgress(progress);
-        Vec3 center = getCenterPos(allowedProgress);
-        Vec3 dimension = getDimension(allowedProgress);
+        Vec3 center, dimension;
+
+        if (Math.abs(allowedProgress - cachedProgress) < EPSILON) {
+            center = cachedCenter;
+            dimension = cachedDimension;
+        } else {
+            center = getCenterPos(allowedProgress);
+            dimension = getDimension(allowedProgress);
+            cachedCenter = center;
+            cachedDimension = dimension;
+            cachedProgress = allowedProgress;
+        }
 
         boolean isZoneInverted = Mth.sign(dimension.x) * Mth.sign(dimension.y) * Mth.sign(dimension.z) < 0;
         double radiusSq = dimension.y * dimension.y;
