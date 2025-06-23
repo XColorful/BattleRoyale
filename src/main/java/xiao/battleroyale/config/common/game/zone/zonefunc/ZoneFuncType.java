@@ -17,7 +17,8 @@ public enum ZoneFuncType {
     MUTEKI(ZoneFuncTag.MUTEKI, MutekiFuncEntry::fromJson),
     BOOST(ZoneFuncTag.BOOST, BoostFuncEntry::fromJson),
     NO_FUNC(ZoneFuncTag.NO_FUNC, NoFuncEntry::fromJson),
-    PARTICLE(ZoneFuncTag.PARTICLE, ParticleFuncEntry::fromJson);
+    PARTICLE(ZoneFuncTag.PARTICLE, ParticleFuncEntry::fromJson),
+    EFFECT(ZoneFuncTag.EFFECT, EffectFuncEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends IZoneFuncEntry> deserializer;

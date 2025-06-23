@@ -39,6 +39,10 @@ public final class ZoneFuncTag {
     public static final String COOLDOWN = "cooldown";
 
     // effect
+    public static final String EFFECTS = "effects";
+    public static final String EFFECT_TYPE = "type";
+    public static final String EFFECT_DURATION = "duration";
+    public static final String EFFECT_LEVEL = "level";
 
     // entity
 
