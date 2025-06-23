@@ -3,8 +3,8 @@ package xiao.battleroyale.config.common.game.gamerule.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.api.game.gamerule.GameruleConfigTag;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
 
@@ -24,11 +24,6 @@ public class DefaultGamerule {
     }
 
     private static JsonObject generateDefaultGameruleConfig0() {
-        JsonObject config = new JsonObject();
-        config.addProperty(GameruleConfigTag.GAME_ID, 0);
-        config.addProperty(GameruleConfigTag.GAME_NAME, "Adventure battleroyale");
-        config.addProperty(GameruleConfigTag.GAME_COLOR, "#FFFFFFAA");
-
         BattleroyaleEntry brEntry = new BattleroyaleEntry(100, 4, true, true, 12000,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10),
                 true, false, true);
@@ -38,18 +33,13 @@ public class DefaultGamerule {
                 false, false, false,
                 false, false, 5000);
 
-        config.add(GameruleConfigTag.BATTLEROYALE_ENTRY, brEntry.toJson());
-        config.add(GameruleConfigTag.MINECRAFT_ENTRY, mcEntry.toJson());
+        GameruleConfig gameruleConfig = new GameruleConfig(0, "Adventure battleroyale", "#FFFFFFAA",
+                brEntry, mcEntry);
 
-        return config;
+        return gameruleConfig.toJson();
     }
 
     private static JsonObject generateDefaultGameruleConfig1() {
-        JsonObject config = new JsonObject();
-        config.addProperty(GameruleConfigTag.GAME_ID, 1);
-        config.addProperty(GameruleConfigTag.GAME_NAME, "Survival battleroyale");
-        config.addProperty(GameruleConfigTag.GAME_COLOR, "#FFFFFFAA");
-
         BattleroyaleEntry brEntry = new BattleroyaleEntry(100, 4, false, false, 12000,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10),
                 true, false, true);
@@ -59,9 +49,9 @@ public class DefaultGamerule {
                 true, true, true,
                 true, false, 5000);
 
-        config.add(GameruleConfigTag.BATTLEROYALE_ENTRY, brEntry.toJson());
-        config.add(GameruleConfigTag.MINECRAFT_ENTRY, mcEntry.toJson());
+        GameruleConfig gameruleConfig = new GameruleConfig(1, "Survival battleroyale", "#FFFFFFAA",
+                brEntry, mcEntry);
 
-        return config;
+        return gameruleConfig.toJson();
     }
 }

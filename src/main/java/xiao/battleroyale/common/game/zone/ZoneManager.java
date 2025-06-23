@@ -40,7 +40,7 @@ public class ZoneManager extends AbstractGameManager {
             return;
         }
 
-        List<ZoneConfig> allZoneConfigs = GameConfigManager.get().getAllZoneConfigs();
+        List<ZoneConfig> allZoneConfigs = GameConfigManager.get().getZoneConfigList();
         if (allZoneConfigs.isEmpty()) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_zone_config");
             BattleRoyale.LOGGER.warn("No zone config available for init game config");

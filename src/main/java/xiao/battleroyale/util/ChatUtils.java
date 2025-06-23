@@ -7,6 +7,9 @@ import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.MatchesPattern;
 
 public class ChatUtils {
 
@@ -15,7 +18,7 @@ public class ChatUtils {
      * @param serverLevel 当前的 ServerLevel。
      * @param message 要发送的字符串消息。
      */
-    public static void sendMessageToAllPlayers(ServerLevel serverLevel, String message) {
+    public static void sendMessageToAllPlayers(@NotNull ServerLevel serverLevel, String message) {
         MinecraftServer server = serverLevel.getServer();
         Component textComponent = Component.literal(message);
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
@@ -28,7 +31,7 @@ public class ChatUtils {
      * @param serverLevel 当前的 ServerLevel。
      * @param textComponent 要发送的 Minecraft Component 对象。
      */
-    public static void sendMessageToAllPlayers(ServerLevel serverLevel, Component textComponent) {
+    public static void sendMessageToAllPlayers(@NotNull ServerLevel serverLevel, Component textComponent) {
         MinecraftServer server = serverLevel.getServer();
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             player.sendSystemMessage(textComponent);
@@ -41,7 +44,7 @@ public class ChatUtils {
      * @param translationKey 翻译键。
      * @param args 翻译参数。
      */
-    public static void sendTranslatableMessageToAllPlayers(ServerLevel serverLevel, String translationKey, Object... args) {
+    public static void sendTranslatableMessageToAllPlayers(@NotNull ServerLevel serverLevel, String translationKey, Object... args) {
         Component translatableComponent = Component.translatable(translationKey, args);
         for (ServerPlayer player : serverLevel.getServer().getPlayerList().getPlayers()) {
             player.sendSystemMessage(translatableComponent);
@@ -53,7 +56,7 @@ public class ChatUtils {
      * @param serverLevel 当前的 ServerLevel。
      * @param translatableComponent 要发送的可翻译的 Minecraft Component 对象。
      */
-    public static void sendTranslatableMessageToAllPlayers(ServerLevel serverLevel, Component translatableComponent) {
+    public static void sendTranslatableMessageToAllPlayers(@NotNull ServerLevel serverLevel, Component translatableComponent) {
         for (ServerPlayer player : serverLevel.getServer().getPlayerList().getPlayers()) {
             player.sendSystemMessage(translatableComponent);
         }
@@ -68,7 +71,7 @@ public class ChatUtils {
      * @param stayTicks 标题显示时间 (ticks)。
      * @param fadeOutTicks 标题淡出时间 (ticks)。
      */
-    public static void sendTitleToAllPlayers(ServerLevel serverLevel, Component title, Component subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+    public static void sendTitleToAllPlayers(@NotNull ServerLevel serverLevel, Component title, Component subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
         for (ServerPlayer player : serverLevel.getServer().getPlayerList().getPlayers()) {
             player.connection.send(new ClientboundSetTitlesAnimationPacket(fadeInTicks, stayTicks, fadeOutTicks)); // 动画时间设置包
             player.connection.send(new ClientboundSetTitleTextPacket(title)); // 标题内容包
@@ -81,7 +84,7 @@ public class ChatUtils {
      * @param player 接收消息的 ServerPlayer 对象。
      * @param message 要发送的字符串消息。
      */
-    public static void sendMessageToPlayer(ServerPlayer player, String message) {
+    public static void sendMessageToPlayer(@NotNull ServerPlayer player, String message) {
         Component textComponent = Component.literal(message);
         player.sendSystemMessage(textComponent);
     }
@@ -91,7 +94,7 @@ public class ChatUtils {
      * @param player 接收消息的 ServerPlayer 对象。
      * @param textComponent 要发送的 Minecraft Component 对象。
      */
-    public static void sendMessageToPlayer(ServerPlayer player, Component textComponent) {
+    public static void sendMessageToPlayer(@NotNull ServerPlayer player, Component textComponent) {
         player.sendSystemMessage(textComponent);
     }
 
@@ -101,7 +104,7 @@ public class ChatUtils {
      * @param translationKey 翻译键。
      * @param args 翻译参数。
      */
-    public static void sendTranslatableMessageToPlayer(ServerPlayer player, String translationKey, Object... args) {
+    public static void sendTranslatableMessageToPlayer(@NotNull ServerPlayer player, String translationKey, Object... args) {
         Component translatableComponent = Component.translatable(translationKey, args);
         player.sendSystemMessage(translatableComponent);
     }
@@ -111,7 +114,7 @@ public class ChatUtils {
      * @param player 接收消息的 ServerPlayer 对象。
      * @param translatableComponent 要发送的可翻译的 Minecraft Component 对象。
      */
-    public static void sendTranslatableMessageToPlayer(ServerPlayer player, Component translatableComponent) {
+    public static void sendTranslatableMessageToPlayer(@NotNull ServerPlayer player, Component translatableComponent) {
         player.sendSystemMessage(translatableComponent);
     }
 
@@ -120,7 +123,7 @@ public class ChatUtils {
      * @param player 接收消息的 ServerPlayer 对象。
      * @param clickableComponent 要发送的可点击的 Minecraft Component 对象。
      */
-    public static void sendClickableMessageToPlayer(ServerPlayer player, Component clickableComponent) {
+    public static void sendClickableMessageToPlayer(@NotNull ServerPlayer player, Component clickableComponent) {
         player.sendSystemMessage(clickableComponent);
     }
 
@@ -133,7 +136,7 @@ public class ChatUtils {
      * @param stayTicks 标题显示时间 (ticks)。
      * @param fadeOutTicks 标题淡出时间 (ticks)。
      */
-    public static void sendTitleToPlayer(ServerPlayer player, Component title, Component subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+    public static void sendTitleToPlayer(@NotNull ServerPlayer player, Component title, Component subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
         player.connection.send(new ClientboundSetTitlesAnimationPacket(fadeInTicks, stayTicks, fadeOutTicks)); // 动画时间设置包
         player.connection.send(new ClientboundSetTitleTextPacket(title)); // 标题内容包
         player.connection.send(new ClientboundSetSubtitleTextPacket(subtitle)); // 副标题内容包

@@ -33,6 +33,11 @@ public class ColorUtils {
     };
     private static final int COLOR_TOTAL = FIREWORK_COLORS.length;
 
+    /**
+     * 解析 #RRGGBB 或 #RRGGBBAA
+     * 默认为白色
+     * 默认Alpha为255
+     */
     @NotNull
     public static Color parseColorFromString(String colorString) {
         Color color = Color.WHITE;
@@ -51,6 +56,14 @@ public class ColorUtils {
             BattleRoyale.LOGGER.warn("Failed to decode color hex: {}, reason: {}", colorString, e.getMessage());
         }
         return color;
+    }
+
+    /**
+     * 将字符串表示的颜色的RGB应用到输入颜色
+     */
+    public static Color changeColorExceptAlpha(Color baseColor, String colorString) {
+        Color newRGBColor = parseColorFromString(colorString);
+        return new Color(newRGBColor.getRed(), newRGBColor.getGreen(), newRGBColor.getBlue(), baseColor.getAlpha());
     }
 
     /**

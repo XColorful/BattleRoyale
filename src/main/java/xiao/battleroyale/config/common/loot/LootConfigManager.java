@@ -13,6 +13,7 @@ import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.AbstractConfigManager;
 import xiao.battleroyale.config.common.loot.defaultconfigs.DefaultLootConfigGenerator;
 import xiao.battleroyale.config.common.loot.type.LootEntryType;
+import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,7 +27,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     public static final String LOOT_CONFIG_SUB_PATH = "loot";
     public static final String LOOT_CONFIG_PATH = Paths.get(AbstractConfigManager.MOD_CONFIG_PATH).resolve(LOOT_CONFIG_SUB_PATH).toString();
 
-    protected final int DEFAULT_LOOT_CONFIG_DATA_ID = LOOT_SPAWNER;
+    protected final int DEFAULT_LOOT_CONFIG_FOLDER = LOOT_SPAWNER;
 
     public static final String LOOT_SPAWNER_CONFIG_SUB_PATH = "loot_spawner";
     public static final String ENTITY_SPAWNER_CONFIG_SUB_PATH = "entity_spawner";
@@ -44,11 +45,11 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
 
 
     private LootConfigManager() {
-        allConfigData.put(LOOT_SPAWNER, new ConfigData<>());
-        allConfigData.put(ENTITY_SPAWNER, new ConfigData<>());
-        allConfigData.put(AIRDROP, new ConfigData<>());
-        allConfigData.put(AIRDROP_SPECIAL, new ConfigData<>());
-        allConfigData.put(SECRET_ROOM, new ConfigData<>());
+        allFolderConfigData.put(LOOT_SPAWNER, new FolderConfigData<>());
+        allFolderConfigData.put(ENTITY_SPAWNER, new FolderConfigData<>());
+        allFolderConfigData.put(AIRDROP, new FolderConfigData<>());
+        allFolderConfigData.put(AIRDROP_SPECIAL, new FolderConfigData<>());
+        allFolderConfigData.put(SECRET_ROOM, new FolderConfigData<>());
     }
 
     public static void init() {
@@ -58,35 +59,10 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     /**
      * 目前generateLootData需要手动调用this.entry.generateLootData(Random)
      */
-    public static class LootConfig implements IConfigSingleEntry {
+    public record LootConfig(int lootId, String name, String color, ILootEntry entry) implements IConfigSingleEntry {
         public static final String CONFIG_TYPE = "LootConfig";
 
-        private final int lootId;
-        private final String name;
-        private final String color;
-        private final ILootEntry entry;
-
-        public LootConfig(int lootId, String name, String color, ILootEntry entry) {
-            this.lootId = lootId;
-            this.name = name;
-            this.color = color;
-            this.entry = entry;
-        }
-
-        public int getLootId() {
-            return lootId;
-        }
-        public String getName() {
-            return name;
-        }
-        public String getColor() {
-            return color;
-        }
-        public ILootEntry getEntry() {
-            return entry;
-        }
-
-        @Override
+    @Override
         public String getType() {
             return CONFIG_TYPE;
         }
@@ -105,17 +81,17 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
 
         @Override
         public int getConfigId() {
-            return getLootId();
+            return lootId();
         }
 
-        public static ILootEntry deserializeLootEntry(JsonObject jsonObject) {
+        @Nullable
+        public static ILootEntry deserializeLootEntry(@Nullable JsonObject jsonObject) {
             try {
-                String type = jsonObject.getAsJsonPrimitive(LootEntryTag.TYPE_NAME).getAsString();
-                if (type == null) type = "";
-                LootEntryType lootEntryType = LootEntryType.fromName(type);
+                LootEntryType lootEntryType = LootEntryType.fromName(JsonUtils.getJsonString(jsonObject, LootEntryTag.TYPE_NAME, ""));
                 if (lootEntryType != null) {
                     return lootEntryType.getDeserializer().apply(jsonObject);
                 } else {
+                    BattleRoyale.LOGGER.info("Skipped invalid LootEntry");
                     return null;
                 }
             } catch (Exception e) {
@@ -126,13 +102,13 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     }
 
     @Override protected Comparator<LootConfig> getConfigIdComparator(int configType) {
-        return Comparator.comparingInt(LootConfig::getLootId);
+        return Comparator.comparingInt(LootConfig::lootId);
     }
 
     /**
      * IConfigManager
      */
-    @Override public String getConfigType(int configType) {
+    @Override public String getFolderType(int configType) {
         return LootConfig.CONFIG_TYPE;
     }
     public String getLootSpawnerConfigEntryFileName() {
@@ -155,7 +131,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
      * IConfigDefaultable
      */
     @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_LOOT_CONFIG_DATA_ID);
+        generateDefaultConfigs(DEFAULT_LOOT_CONFIG_FOLDER);
     }
     @Override public void generateDefaultConfigs(int configType) {
         switch (configType) {
@@ -168,7 +144,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
         }
     }
     @Override public int getDefaultConfigId() {
-        return getDefaultConfigId(DEFAULT_LOOT_CONFIG_DATA_ID);
+        return getDefaultConfigId(DEFAULT_LOOT_CONFIG_FOLDER);
     }
 
     /**
@@ -178,16 +154,14 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     @Override
     public LootConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
         try {
-            int lootId = configObject.has(LootConfigTag.LOOT_ID) ? configObject.getAsJsonPrimitive(LootConfigTag.LOOT_ID).getAsInt() : -1;
-            JsonObject lootEntryObject = configObject.has(LootConfigTag.LOOT_ENTRY) ? configObject.getAsJsonObject(LootConfigTag.LOOT_ENTRY) : null;
+            int lootId = JsonUtils.getJsonInt(configObject, LootConfigTag.LOOT_ID, -1);
+            JsonObject lootEntryObject = JsonUtils.getJsonObject(configObject, LootConfigTag.LOOT_ENTRY, null);
             if (lootId < 0 || lootEntryObject == null) {
                 BattleRoyale.LOGGER.warn("Skipped invalid loot config in {}", filePath);
                 return null;
             }
-            String name = configObject.has(LootConfigTag.LOOT_NAME) ? configObject.getAsJsonPrimitive(LootConfigTag.LOOT_NAME).getAsString() : "";
-            String color = configObject.has(LootConfigTag.LOOT_COLOR) ? configObject.getAsJsonPrimitive(LootConfigTag.LOOT_COLOR).getAsString() : "#FFFFFF";
-            if (name == null) name = "";
-            if (color == null) color = "#FFFFFF";
+            String name = JsonUtils.getJsonString(configObject, LootConfigTag.LOOT_NAME, "");
+            String color = JsonUtils.getJsonString(configObject, LootConfigTag.LOOT_COLOR, "#FFFFFF");
             ILootEntry lootEntry = LootConfig.deserializeLootEntry(lootEntryObject);
             if (lootEntry == null) {
                 BattleRoyale.LOGGER.error("Failed to deserialize loot entry for id: {} in {}", lootId, filePath);
@@ -195,7 +169,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
             }
             return new LootConfig(lootId, name, color, lootEntry);
         } catch (Exception e) {
-            BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getConfigType(), filePath, e.getMessage());
+            BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(), filePath, e.getMessage());
             return null;
         }
     }
@@ -233,32 +207,32 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     public LootConfig getLootSpawnerConfig(int id) {
         return getConfigEntry(id, LOOT_SPAWNER);
     }
-    public List<LootConfig> getAllLootSpawnerConfigs() {
-        return getAllConfigEntries(LOOT_SPAWNER);
+    public List<LootConfig> getLootSpawnerConfigList() {
+        return getConfigEntryList(LOOT_SPAWNER);
     }
     public LootConfig getEntitySpawnerConfig(int id) {
         return getConfigEntry(id, ENTITY_SPAWNER);
     }
-    public List<LootConfig> getAllEntitySpawnerConfigs() {
-        return getAllConfigEntries(ENTITY_SPAWNER);
+    public List<LootConfig> getEntitySpawnerConfigList() {
+        return getConfigEntryList(ENTITY_SPAWNER);
     }
     public LootConfig getAirdropConfig(int id) {
         return getConfigEntry(id, AIRDROP);
     }
-    public List<LootConfig> getAllAirdropConfigs() {
-        return getAllConfigEntries(AIRDROP);
+    public List<LootConfig> getAirdropConfigList() {
+        return getConfigEntryList(AIRDROP);
     }
     public LootConfig getSpecialAirdropConfig(int id) {
         return getConfigEntry(id, AIRDROP_SPECIAL);
     }
-    public List<LootConfig> getAllSpecialAirdropConfigs() {
-        return getAllConfigEntries(AIRDROP_SPECIAL);
+    public List<LootConfig> getSpecialAirdropConfigList() {
+        return getConfigEntryList(AIRDROP_SPECIAL);
     }
     public LootConfig getSecretRoomConfig(int id) {
         return getConfigEntry(id, SECRET_ROOM);
     }
-    public List<LootConfig> getAllSecretRoomConfigs() {
-        return getAllConfigEntries(SECRET_ROOM);
+    public List<LootConfig> getSecretRoomConfigList() {
+        return getConfigEntryList(SECRET_ROOM);
     }
 
     /**
@@ -320,7 +294,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
 
 
     @Override public void initializeDefaultConfigsIfEmpty() {
-        initializeDefaultConfigsIfEmpty(DEFAULT_LOOT_CONFIG_DATA_ID);
+        initializeDefaultConfigsIfEmpty(DEFAULT_LOOT_CONFIG_FOLDER);
     }
     @Override public void initializeDefaultConfigsIfEmpty(int configType) {
         switch (configType) {

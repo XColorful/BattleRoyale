@@ -9,8 +9,8 @@ import xiao.battleroyale.common.game.zone.spatial.CircleShape;
 
 public class CircleEntry extends AbstractSimpleEntry {
 
-    public CircleEntry(StartEntry startEntry, EndEntry endEntry) {
-        super(startEntry, endEntry);
+    public CircleEntry(StartEntry startEntry, EndEntry endEntry, boolean badShape) {
+        super(startEntry, endEntry, badShape);
     }
 
     @Override
@@ -25,23 +25,25 @@ public class CircleEntry extends AbstractSimpleEntry {
 
     @Override
     public ISpatialZone createSpatialZone() {
-        return new CircleShape(startEntry, endEntry);
+        return new CircleShape(startEntry, endEntry, badShape);
     }
 
     @Nullable
     public static CircleEntry fromJson(JsonObject jsonObject) {
-        JsonObject startEntryObject = jsonObject.has(ZoneShapeTag.START) ? jsonObject.getAsJsonObject(ZoneShapeTag.START) : null;
-        JsonObject endEntryObject = jsonObject.has(ZoneShapeTag.END) ? jsonObject.getAsJsonObject(ZoneShapeTag.END) : null;
-        if (startEntryObject == null || endEntryObject == null) {
-            BattleRoyale.LOGGER.info("CircleEntry missing start or end member, skipped");
+        StartEntry startEntry = AbstractSimpleEntry.readStartEntry(jsonObject);
+        if (startEntry == null) {
+            BattleRoyale.LOGGER.info("Invalid startEntry for CircleEntry, skipped");
             return null;
         }
-        StartEntry startEntry = StartEntry.fromJson(startEntryObject);
-        EndEntry endEntry = EndEntry.fromJson(endEntryObject);
-        if (startEntry == null || endEntry == null) {
+
+        EndEntry endEntry = AbstractSimpleEntry.readEndEntry(jsonObject);
+        if (endEntry == null) {
             BattleRoyale.LOGGER.info("Invalid startEntry or endEntry for CircleEntry, skipped");
             return null;
         }
-        return new CircleEntry(startEntry, endEntry);
+
+        boolean badShape = AbstractSimpleEntry.readBadShape(jsonObject);
+
+        return new CircleEntry(startEntry, endEntry, badShape);
     }
 }

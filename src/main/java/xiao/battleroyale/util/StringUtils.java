@@ -2,6 +2,8 @@ package xiao.battleroyale.util;
 
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
+
+import javax.annotation.Nullable;
 import java.util.regex.Pattern;
 
 public class StringUtils {
@@ -15,7 +17,7 @@ public class StringUtils {
      * @param inputString 要解析的字符串。
      * @return 对应的 Vec3 对象。如果格式不匹配或解析失败，则返回 null。
      */
-    public static Vec3 parseVectorString(String inputString) {
+    public static Vec3 parseVectorString(@Nullable String inputString) {
         if (inputString == null || inputString.trim().isEmpty()) {
             return null;
         }

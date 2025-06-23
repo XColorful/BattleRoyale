@@ -54,7 +54,7 @@ public class LootSpawner extends AbstractLootBlock {
             if (blockEntity instanceof LootSpawnerBlockEntity lootSpawnerBlockEntity) {
                 if (player.isCreative() && player.isCrouching()) { // 切换物资刷新配置
                     int currentConfigId = lootSpawnerBlockEntity.getConfigId();
-                    List<LootConfig> allConfigs = LootConfigManager.get().getAllLootSpawnerConfigs();
+                    List<LootConfig> allConfigs = LootConfigManager.get().getLootSpawnerConfigList();
                     if (allConfigs.isEmpty()) {
                         player.sendSystemMessage(Component.translatable("battleroyale.message.no_loot_spawner_config_available"));
                         return InteractionResult.SUCCESS;
@@ -62,13 +62,13 @@ public class LootSpawner extends AbstractLootBlock {
 
                     LootConfig nextConfig = allConfigs.get(0);
                     for (LootConfig config : allConfigs) {
-                        if (config.getLootId() > currentConfigId) {
+                        if (config.lootId() > currentConfigId) {
                             nextConfig = config;
                             break;
                         }
                     }
-                    lootSpawnerBlockEntity.setConfigId(nextConfig.getLootId());
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.loot_spawner_lootid_switched", nextConfig.getLootId(), nextConfig.getName()));
+                    lootSpawnerBlockEntity.setConfigId(nextConfig.lootId());
+                    player.sendSystemMessage(Component.translatable("battleroyale.message.loot_spawner_lootid_switched", nextConfig.lootId(), nextConfig.name()));
                     return InteractionResult.SUCCESS;
                 } else { // 打开界面
                     NetworkHooks.openScreen((ServerPlayer) player, lootSpawnerBlockEntity, (buf) -> {

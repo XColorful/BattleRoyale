@@ -7,5 +7,5 @@ public class SpawnConfigTag {
     public static final String SPAWN_COLOR = "color";
     public static final String SPAWN_ENTRY = "entry";
 
-    private SpawnConfigTag() {};
+    private SpawnConfigTag() {}
 }

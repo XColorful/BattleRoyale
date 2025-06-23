@@ -32,6 +32,7 @@
   "battleroyale.message.no_gamerule_config_available": "当前没有已加载的大逃杀规则配置",
   "battleroyale.message.no_spawn_config_available": "当前没有已加载的玩家生成配置",
   "battleroyale.message.no_zone_config_available": "当前没有已加载的区域配置",
+  "battleroyale.message.no_particle_config_available": "当前没有已加载的粒子配置",
 
   "battleroyale.message.all_configs_reloaded": "已重新加载所有大逃杀配置",
   "battleroyale.message.loot_config_reloaded": "已重新加载所有物资刷新配置",
@@ -45,9 +46,12 @@
   "battleroyale.message.spawn_config_reloaded": "已重新加载玩家生成配置",
   "battleroyale.message.gamerule_config_reloaded": "已重新加载大逃杀规则配置",
   "battleroyale.message.bot_config_reloaded": "已重新加载人机配置",
+  "battleroyale.message.effect_config_reloaded": "已重新加载效果配置",
+  "battleroyale.message.particle_config_reloaded": "已重新加载粒子配置",
 
   "battleroyale.message.unknown_loot_sub_type": "未知物资刷新配置子类型: %s",
   "battleroyale.message.unknown_game_sub_type": "未知大逃杀配置子类型: %s",
+  "battleroyale.message.unknown_effect_sub_type": "未知效果配置子类型: %s",
 
   "battleroyale.message.game_cancel_loot": "当前正在进行游戏, 拒绝物资刷新",
   "battleroyale.message.game_stop_loot": "当前正在进行游戏, 停止待处理的物资刷新",
@@ -159,6 +163,8 @@
   "battleroyale.message.no_spawn_config_file": "没有出生配置文件'%s'",
   "battleroyale.message.switch_zone_config_file": "切换区域配置文件'%s'",
   "battleroyale.message.no_zone_config_file": "没有区域配置文件'%s'",
+  "battleroyale.message.switch_particle_config_file": "切换粒子配置文件'%s'",
+  "battleroyale.message.no_particle_config_file": "没有粒子配置文件'%s'",
 
   "battleroyale.message.winner_message": "大吉大利！今晚吃鸡！",
   "battleroyale.message.back_to_lobby": "返回至大厅",
@@ -167,5 +173,17 @@
 
   "battleroyale.message.add_player_firework": "为玩家 %s 添加了烟花追踪器",
   "battleroyale.message.add_fixed_firework": "在 %s, %s, %s 添加烟花追踪器",
-  "battleroyale.message.clear_firework_tracker": "已清除所有烟花追踪"
+  "battleroyale.message.clear_firework_tracker": "已清除所有烟花追踪",
+  "battleroyale.message.add_player_muteki": "玩家 %s 已无敌",
+  "battleroyale.message.muteki_end": "无敌效果已结束",
+  "battleroyale.message.clear_all_muteki": "已清除所有无敌效果",
+  "battleroyale.message.clear_muteki": "已清除玩家 %s 的无敌效果",
+  "battleroyale.message.player_not_muteki": "玩家 %s 没有无敌效果",
+  "battleroyale.message.add_particle": "已添加粒子效果%s (%s,%s,%s)",
+  "battleroyale.message.failed_add_particle": "无法添加粒子效果%s，缺失配置或冷却中",
+  "battleroyale.message.clear_particle": "已清除粒子效果",
+  "battleroyale.message.clear_all_particle": "已清除所有粒子效果",
+  "battleroyale.message.add_player_boost": "已为玩家 %s 补充%s%%能量",
+  "battleroyale.message.clear_player_boost": "已清除玩家 %s 能量",
+  "battleroyale.message.clear_all_boost": "已清除所有玩家能量"
 }

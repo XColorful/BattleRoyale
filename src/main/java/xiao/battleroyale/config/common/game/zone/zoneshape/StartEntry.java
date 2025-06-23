@@ -8,6 +8,9 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.api.game.zone.shape.start.StartCenterType;
 import xiao.battleroyale.api.game.zone.shape.start.StartDimensionType;
+import xiao.battleroyale.api.game.zone.shape.start.StartRotationType;
+import xiao.battleroyale.common.game.zone.GameZone;
+import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.StringUtils;
 
 public class StartEntry {
@@ -17,8 +20,9 @@ public class StartEntry {
     public int startCenterZoneId = 0; // previous zone id
     public double startCenterProgress = 1;
     public double startCenterRange = 0;
-    public int playerId = 0;
+    public int centerPlayerId = 0;
     public boolean selectStanding = false;
+    public double playerCenterLerp = 0;
 
     public StartDimensionType startDimensionType = StartDimensionType.FIXED;
     public Vec3 startDimension = Vec3.ZERO; // radius / side / a, b
@@ -27,9 +31,19 @@ public class StartEntry {
     public double startDimensionScale = 1; // previous dimension scale
     public double startDimensionRange = 0;
 
+    public StartRotationType startRotationType = StartRotationType.FIXED;
+    public double startRotateDegree = 0;
+    public int startRotateZoneId = 0;
+    public double startRotateProgress = 1;
+    public double startRotateScale = 1;
+    public double startRotateRange = 0;
+    public int rotatePlayerId = 0;
+    // 淘汰的玩家就没必要选择了
+
     public StartEntry() {
         ;
     }
+    // build center
     public void addFixedCenter(Vec3 startCenterPos) {
         this.startCenterType = StartCenterType.FIXED;
         this.startCenterPos = startCenterPos;
@@ -37,7 +51,7 @@ public class StartEntry {
     public void addPreviousCenter(int prevZoneId, double progress) {
         this.startCenterType = StartCenterType.PREVIOUS;
         this.startCenterZoneId = prevZoneId;
-        this.startCenterProgress = Math.min(Math.max(0, progress), 1);
+        this.startCenterProgress = GameZone.allowedProgress(progress);
     }
     public void addRelativeCenter(Vec3 relativeAdd) {
         this.startCenterType = StartCenterType.RELATIVE;
@@ -45,13 +59,16 @@ public class StartEntry {
     }
     public void addLockCenter(int playerId, boolean selectStanding) {
         this.startCenterType = StartCenterType.LOCK_PLAYER;
-        this.playerId = playerId;
+        this.centerPlayerId = playerId;
         this.selectStanding = selectStanding;
     }
     public void addCenterRange(double range) {
         this.startCenterRange = range;
     }
-
+    public void addPlayerCenterLerp(double lerp) {
+        this.playerCenterLerp = lerp;
+    }
+    // build dimension
     public void addFixedDimension(Vec3 startDimension) {
         this.startDimensionType = StartDimensionType.FIXED;
         this.startDimension = startDimension;
@@ -59,7 +76,7 @@ public class StartEntry {
     public void addPreviousDimension(int prevZoneId, double progress) {
         this.startDimensionType = StartDimensionType.PREVIOUS;
         this.startDimensionZoneId = prevZoneId;
-        this.startDimensionProgress = Math.min(Math.max(0, progress), 1);
+        this.startDimensionProgress = GameZone.allowedProgress(progress);
     }
     public void addRelativeDimension(Vec3 relativeAdd) {
         this.startDimensionType = StartDimensionType.RELATIVE;
@@ -71,20 +88,44 @@ public class StartEntry {
     public void addDimensionRange(double range) {
         this.startDimensionRange = range;
     }
+    // build rotation
+    public void addFixedRotate(double degree) {
+        this.startRotationType = StartRotationType.FIXED;
+        this.startRotateDegree = degree;
+    }
+    public void addPreviousRotate(int prevZoneId, double progress) {
+        this.startRotationType = StartRotationType.PREVIOUS;
+        this.startRotateZoneId = prevZoneId;
+        this.startRotateProgress = GameZone.allowedProgress(progress);
+    }
+    public void addRelativeRotate(double degree) {
+        this.startRotationType = StartRotationType.RELATIVE;
+        this.startRotateDegree = degree;
+    }
+    public void addRotateScale(double scale) {
+        this.startRotateScale = scale;
+    }
+    public void addRotateRange(double range) {
+        this.startRotateRange = range;
+    }
+    public void addLockRotate(int playerId) {
+        this.startRotationType = StartRotationType.LOCK_PLAYER;
+        this.rotatePlayerId = playerId;
+    }
 
     @Nullable
     public static StartEntry fromJson(JsonObject jsonObject) {
-        JsonObject centerObject = jsonObject.has(ZoneShapeTag.CENTER) ? jsonObject.getAsJsonObject(ZoneShapeTag.CENTER) : null;
-        JsonObject dimensionObject = jsonObject.has(ZoneShapeTag.DIMENSION) ? jsonObject.getAsJsonObject(ZoneShapeTag.DIMENSION) : null;
+        JsonObject centerObject = JsonUtils.getJsonObject(jsonObject, ZoneShapeTag.CENTER, null);
+        JsonObject dimensionObject = JsonUtils.getJsonObject(jsonObject, ZoneShapeTag.DIMENSION, null);
+        JsonObject rotationObject = JsonUtils.getJsonObject(jsonObject, ZoneShapeTag.ROTATION, null);
         if (centerObject == null || dimensionObject == null) {
             BattleRoyale.LOGGER.info("StartEntry missing center or dimension member, skipped");
             return null;
         }
 
-        String centerTypeString = centerObject.has(ZoneShapeTag.CENTER_TYPE) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.CENTER_TYPE).getAsString() : null;
-        StartCenterType centerType = StartCenterType.fromValue(centerTypeString);
-        String dimensionTypeString = dimensionObject.has(ZoneShapeTag.DIMENSION_TYPE) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.DIMENSION_TYPE).getAsString() : null;
-        StartDimensionType dimensionType = StartDimensionType.fromValue(dimensionTypeString);
+        StartCenterType centerType = StartCenterType.fromValue(JsonUtils.getJsonString(centerObject, ZoneShapeTag.CENTER_TYPE, ""));
+        StartDimensionType dimensionType = StartDimensionType.fromValue(JsonUtils.getJsonString(dimensionObject, ZoneShapeTag.DIMENSION_TYPE, ""));
+        StartRotationType rotationType = StartRotationType.fromValue(JsonUtils.getJsonString(rotationObject, ZoneShapeTag.ROTATION_TYPE, ""));
         if (centerType == null || dimensionType == null) {
             BattleRoyale.LOGGER.info("Skipped invalid start centerType or dimensionType");
             return null;
@@ -94,82 +135,108 @@ public class StartEntry {
         // center
         switch (centerType) {
             case FIXED -> {
-                String centerPosString = centerObject.has(ZoneShapeTag.FIXED) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.FIXED).getAsString() : "";
-                Vec3 centerPos = StringUtils.parseVectorString(centerPosString);
+                Vec3 centerPos = JsonUtils.getJsonVec(centerObject, ZoneShapeTag.FIXED, null);
                 if (centerPos == null) {
-                    BattleRoyale.LOGGER.info("Skipped invalid start fixed centerPos string: {}", centerPosString);
+                    BattleRoyale.LOGGER.info("Skipped invalid start fixed centerPos");
                     return null;
                 }
                 startEntry.addFixedCenter(centerPos);
             }
             case PREVIOUS, RELATIVE -> {
-                int centerZoneId = centerObject.has(ZoneShapeTag.PREVIOUS_ID) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_ID).getAsInt() : -1;
+                int centerZoneId = JsonUtils.getJsonInt(centerObject, ZoneShapeTag.PREVIOUS_ID, -1);
                 if (centerZoneId < 0) {
-                    BattleRoyale.LOGGER.info("Skipped invalid start previous center zone id: {}", centerZoneId);
+                    BattleRoyale.LOGGER.info("Skipped invalid start previous center zone id");
                     return null;
                 }
-                double centerProgress = centerObject.has(ZoneShapeTag.PREVIOUS_PROGRESS) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_PROGRESS).getAsDouble() : 1;
+                double centerProgress = JsonUtils.getJsonDouble(centerObject, ZoneShapeTag.PREVIOUS_PROGRESS, 1);
                 startEntry.addPreviousCenter(centerZoneId, centerProgress);
                 if (centerType == StartCenterType.RELATIVE) {
-                    String centerPosString = centerObject.has(ZoneShapeTag.RELATIVE) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.RELATIVE).getAsString() : "";
-                    Vec3 centerPos = StringUtils.parseVectorString(centerPosString);
+                    Vec3 centerPos = JsonUtils.getJsonVec(centerObject, ZoneShapeTag.RELATIVE, Vec3.ZERO);
                     if (centerPos == null) {
-                        BattleRoyale.LOGGER.info("Skipped invalid start relative centerPos string: {}", centerPosString);
-                        return null;
+                        BattleRoyale.LOGGER.info("Invalid start relative center, defaulting to zero vec");
+                        centerPos = Vec3.ZERO;
                     }
                     startEntry.addRelativeCenter(centerPos);
                 }
             }
             case LOCK_PLAYER -> {
-                int playerId = centerObject.has(ZoneShapeTag.PLAYER_ID) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.PLAYER_ID).getAsInt() : 0;
+                int playerId = JsonUtils.getJsonInt(centerObject, ZoneShapeTag.PLAYER_ID, 0);
                 if (playerId < 0) {
-                    BattleRoyale.LOGGER.info("Invalid playerId {}, defaulting to 0 (random select)", playerId);
+                    BattleRoyale.LOGGER.info("Invalid centerPlayerId {}, defaulting to 0 (random select)", playerId);
                     playerId = 0;
                 }
-                boolean selectStanding = centerObject.has(ZoneShapeTag.SELECT_STANDING) && centerObject.getAsJsonPrimitive(ZoneShapeTag.SELECT_STANDING).getAsBoolean();
+                boolean selectStanding = JsonUtils.getJsonBoolean(centerObject, ZoneShapeTag.SELECT_STANDING, false);
                 startEntry.addLockCenter(playerId, selectStanding);
             }
         }
-        double centerRange = centerObject.has(ZoneShapeTag.RANDOM_RANGE) ? centerObject.getAsJsonPrimitive(ZoneShapeTag.RANDOM_RANGE).getAsDouble() : 0;
+        double centerRange = JsonUtils.getJsonDouble(centerObject, ZoneShapeTag.RANDOM_RANGE, 0);
         startEntry.addCenterRange(centerRange);
+        double playerCenterLerp = JsonUtils.getJsonDouble(centerObject, ZoneShapeTag.PLAYER_CENTER_LERP, 0);
+        startEntry.addPlayerCenterLerp(playerCenterLerp);
 
         // dimension
         switch (dimensionType) {
             case FIXED -> {
-                String dimensionString = dimensionObject.has(ZoneShapeTag.FIXED) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.FIXED).getAsString() : "";
-                Vec3 dimension = StringUtils.parseVectorString(dimensionString);
+                Vec3 dimension = JsonUtils.getJsonVec(dimensionObject, ZoneShapeTag.FIXED, null);
                 if (dimension == null) {
-                    BattleRoyale.LOGGER.info("Skipped invalid start fixed dimension string: {}", dimensionString);
+                    BattleRoyale.LOGGER.info("Skipped invalid start fixed dimension");
                     return null;
                 }
                 startEntry.addFixedDimension(dimension);
             }
             case PREVIOUS, RELATIVE -> {
-                int dimensionZoneId = dimensionObject.has(ZoneShapeTag.PREVIOUS_ID) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_ID).getAsInt() : -1;
-                double dimensionScale = dimensionObject.has(ZoneShapeTag.PREVIOUS_SCALE) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_SCALE).getAsDouble() : 0;
+                int dimensionZoneId = JsonUtils.getJsonInt(dimensionObject, ZoneShapeTag.PREVIOUS_ID, -1);
+                double dimensionScale = JsonUtils.getJsonDouble(dimensionObject, ZoneShapeTag.PREVIOUS_SCALE, 1);
                 if (dimensionZoneId < 0) {
                     BattleRoyale.LOGGER.info("Skipped invalid start previous dimension zone id: {}", dimensionZoneId);
                     return null;
-                } else if (dimensionScale < 0) {
-                    BattleRoyale.LOGGER.info("Skipped invalid start previous dimension scale: {}", dimensionScale);
-                    return null;
                 }
-                double dimensionProgress = dimensionObject.has(ZoneShapeTag.PREVIOUS_PROGRESS) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.PREVIOUS_PROGRESS).getAsDouble() : 1;
+                double dimensionProgress = JsonUtils.getJsonDouble(dimensionObject, ZoneShapeTag.PREVIOUS_PROGRESS, 1);
                 startEntry.addPreviousDimension(dimensionZoneId, dimensionProgress);
                 startEntry.addDimensionScale(dimensionScale);
                 if (dimensionType == StartDimensionType.RELATIVE) {
-                    String dimensionString = dimensionObject.has(ZoneShapeTag.RELATIVE) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.RELATIVE).getAsString() : "";
-                    Vec3 dimension = StringUtils.parseVectorString(dimensionString);
+                    Vec3 dimension = JsonUtils.getJsonVec(dimensionObject, ZoneShapeTag.RELATIVE, Vec3.ZERO);
                     if (dimension == null) {
-                        BattleRoyale.LOGGER.info("Skipped invalid start relative dimension string: {}", dimensionString);
-                        return null;
+                        BattleRoyale.LOGGER.info("Invalid start relative dimension, defaulting to zero vec");
+                        dimension = Vec3.ZERO;
                     }
                     startEntry.addRelativeDimension(dimension);
                 }
             }
         }
-        double dimensionRange = dimensionObject.has(ZoneShapeTag.RANDOM_RANGE) ? dimensionObject.getAsJsonPrimitive(ZoneShapeTag.RANDOM_RANGE).getAsDouble() : 0;
+        double dimensionRange = JsonUtils.getJsonDouble(dimensionObject, ZoneShapeTag.RANDOM_RANGE, 0);
         startEntry.addDimensionRange(dimensionRange);
+
+        // rotation
+        if (rotationType != null && rotationObject != null) {
+            switch (rotationType) {
+                case FIXED -> startEntry.addFixedRotate(JsonUtils.getJsonDouble(rotationObject, ZoneShapeTag.FIXED, 0));
+                case PREVIOUS, RELATIVE -> {
+                    int rotateZoneId = JsonUtils.getJsonInt(rotationObject, ZoneShapeTag.PREVIOUS_ID, -1);
+                    double rotateScale = JsonUtils.getJsonDouble(rotationObject, ZoneShapeTag.PREVIOUS_SCALE, 1);
+                    if (rotateZoneId < 0) {
+                        BattleRoyale.LOGGER.info("Skipped invalid start rotate zone id: {}", rotateZoneId);
+                        return null;
+                    }
+                    double rotateProgress = JsonUtils.getJsonDouble(rotationObject, ZoneShapeTag.PREVIOUS_PROGRESS, 1);
+                    startEntry.addPreviousRotate(rotateZoneId, rotateProgress);
+                    startEntry.addRotateScale(rotateScale);
+                    if (rotationType == StartRotationType.RELATIVE) {
+                        startEntry.addRelativeRotate(JsonUtils.getJsonDouble(rotationObject, ZoneShapeTag.RELATIVE, 0));
+                    }
+                }
+                case LOCK_PLAYER -> {
+                    int playerId = JsonUtils.getJsonInt(rotationObject, ZoneShapeTag.PLAYER_ID, 0);
+                    if (playerId < 0) {
+                        BattleRoyale.LOGGER.info("Invalid rotatePlayerId {}, defaulting to 0 (random select)", playerId);
+                        playerId = 0;
+                    }
+                    startEntry.addLockRotate(playerId);
+                }
+            }
+        }
+        double rotateRange = JsonUtils.getJsonDouble(rotationObject, ZoneShapeTag.RANDOM_RANGE, 0);
+        startEntry.addRotateRange(rotateRange);
 
         return startEntry;
     }
@@ -177,17 +244,20 @@ public class StartEntry {
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
 
-        JsonObject centerObject = getCenterJsonObject();
+        JsonObject centerObject = generateCenterJson();
         jsonObject.add(ZoneShapeTag.CENTER, centerObject);
 
-        JsonObject dimensionObject = getDimensionJsonObject();
+        JsonObject dimensionObject = generateDimensionJson();
         jsonObject.add(ZoneShapeTag.DIMENSION, dimensionObject);
+
+        JsonObject rotationObject = generateRotationJson();
+        jsonObject.add(ZoneShapeTag.ROTATION, rotationObject);
 
         return jsonObject;
     }
 
     @NotNull
-    private JsonObject getCenterJsonObject() {
+    private JsonObject generateCenterJson() {
         JsonObject centerObject = new JsonObject();
         centerObject.addProperty(ZoneShapeTag.CENTER_TYPE, startCenterType.getValue());
         switch (startCenterType) {
@@ -200,16 +270,17 @@ public class StartEntry {
                 }
             }
             case LOCK_PLAYER -> {
-                centerObject.addProperty(ZoneShapeTag.PLAYER_ID, playerId);
+                centerObject.addProperty(ZoneShapeTag.PLAYER_ID, centerPlayerId);
                 centerObject.addProperty(ZoneShapeTag.SELECT_STANDING, selectStanding);
             }
         }
         centerObject.addProperty(ZoneShapeTag.RANDOM_RANGE, startCenterRange);
+        centerObject.addProperty(ZoneShapeTag.PLAYER_CENTER_LERP, playerCenterLerp);
         return centerObject;
     }
 
     @NotNull
-    private JsonObject getDimensionJsonObject() {
+    private JsonObject generateDimensionJson() {
         JsonObject dimensionObject = new JsonObject();
         dimensionObject.addProperty(ZoneShapeTag.DIMENSION_TYPE, startDimensionType.getValue());
         switch (startDimensionType) {
@@ -225,5 +296,25 @@ public class StartEntry {
         }
         dimensionObject.addProperty(ZoneShapeTag.RANDOM_RANGE, startDimensionRange);
         return dimensionObject;
+    }
+
+    @NotNull
+    private JsonObject generateRotationJson() {
+        JsonObject rotationObject = new JsonObject();
+        rotationObject.addProperty(ZoneShapeTag.ROTATION_TYPE, startRotationType.getValue());
+        switch (startRotationType) {
+            case FIXED -> rotationObject.addProperty(ZoneShapeTag.FIXED, startRotateDegree);
+            case PREVIOUS, RELATIVE -> {
+                rotationObject.addProperty(ZoneShapeTag.PREVIOUS_ID, startRotateZoneId);
+                rotationObject.addProperty(ZoneShapeTag.PREVIOUS_PROGRESS, startRotateProgress);
+                rotationObject.addProperty(ZoneShapeTag.PREVIOUS_SCALE, startRotateScale);
+                if (startRotationType == StartRotationType.RELATIVE) {
+                    rotationObject.addProperty(ZoneShapeTag.RELATIVE, startRotateDegree);
+                }
+            }
+            case LOCK_PLAYER -> rotationObject.addProperty(ZoneShapeTag.PLAYER_ID, rotatePlayerId);
+        }
+        rotationObject.addProperty(ZoneShapeTag.RANDOM_RANGE, startRotateRange);
+        return rotationObject;
     }
 }

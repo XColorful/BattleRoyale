@@ -1,5 +1,8 @@
 package xiao.battleroyale.api.game.zone.gamezone;
 
+/**
+ * 用于网络通信，省流
+ */
 public final class GameZoneTag {
 
     public static final String ZONE_ID = "id";
@@ -11,6 +14,7 @@ public final class GameZoneTag {
     public static final String SHAPE = "shape";
     public static final String CENTER = "center";
     public static final String DIMENSION = "dim";
+    public static final String ROTATE = "rot";
     public static final String SEGMENTS = "seg";
 
     public static final String PROGRESS = "prog";

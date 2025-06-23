@@ -1,13 +1,16 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
+import xiao.battleroyale.util.JsonUtils;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
@@ -17,21 +20,25 @@ public class TimeEntry implements ILootEntry {
     private final int end;
     private final ILootEntry entry;
 
-    public TimeEntry(int start, int end, ILootEntry entry) {
+    public TimeEntry(int start, int end, @Nullable ILootEntry entry) {
         this.start = start;
         this.end = end;
         this.entry = entry;
     }
 
     @Override
-    public List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
         int gameTime = GameManager.get().getGameTime();
-        if (start <= gameTime && gameTime <= end) {
-            try {
-                return entry.generateLootData(random);
-            } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse time entry");
+        if (entry != null) {
+            if (start <= gameTime && gameTime <= end) {
+                try {
+                    return entry.generateLootData(random);
+                } catch (Exception e) {
+                    BattleRoyale.LOGGER.warn("Failed to parse time entry");
+                }
             }
+        } else {
+            BattleRoyale.LOGGER.warn("TimeEntry missing entry member or has invalid config");
         }
         return Collections.emptyList();
     }
@@ -42,9 +49,10 @@ public class TimeEntry implements ILootEntry {
     }
 
     public static TimeEntry fromJson(JsonObject jsonObject) {
-        int start = jsonObject.has(LootEntryTag.START) ? jsonObject.getAsJsonPrimitive(LootEntryTag.START).getAsInt() : 0;
-        int end = jsonObject.has(LootEntryTag.END) ? jsonObject.getAsJsonPrimitive(LootEntryTag.END).getAsInt() : 0;
-        ILootEntry entry = jsonObject.has(LootEntryTag.ENTRY) ? LootConfig.deserializeLootEntry(jsonObject.getAsJsonObject(LootEntryTag.ENTRY)) : null;
+        int start = JsonUtils.getJsonInt(jsonObject, LootEntryTag.START, 0);
+        int end = JsonUtils.getJsonInt(jsonObject, LootEntryTag.END, 0);
+        JsonObject entryObject = JsonUtils.getJsonObject(jsonObject, LootEntryTag.ENTRY, null);
+        ILootEntry entry = LootConfig.deserializeLootEntry(entryObject);
         return new TimeEntry(start, end, entry);
     }
 

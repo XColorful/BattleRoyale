@@ -5,14 +5,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -28,6 +27,10 @@ public class ZoneRenderer {
     private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(BattleRoyale.MOD_ID, "textures/white.png");
     private static final RenderType CUSTOM_ZONE_RENDER_TYPE = createRenderType();
     public static final int CIRCLE_SEGMENTS = 64;
+    public static final int ELLIPSE_SEGMENTS = 64;
+    public static final float POINTING_POLYGON_ANGLE = (float) (Math.PI / 2.0);
+    public static final int SPHERE_SEGMENTS = 64;
+    public static final int ELLIPSOID_SEGMENTS = 64;
 
     private static ZoneRenderer instance;
 
@@ -65,7 +68,10 @@ public class ZoneRenderer {
     }
 
     public void onRenderLevelStage(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) return;
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS
+                || !ClientGameDataManager.get().hasZoneRender()) {
+            return;
+        }
 
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) {
@@ -82,9 +88,13 @@ public class ZoneRenderer {
 
             poseStack.pushPose();
             try {
+                // 平移到区域中心，并抵消相机位置
                 poseStack.translate(zoneData.center.x - cameraPos.x,
                         zoneData.center.y - cameraPos.y,
                         zoneData.center.z - cameraPos.z);
+
+                // 正角度为顺时针旋转区域
+                poseStack.mulPose(Axis.YP.rotationDegrees((float) -zoneData.rotateDegree));
 
                 VertexConsumer consumer = bufferSource.getBuffer(CUSTOM_ZONE_RENDER_TYPE);
 
@@ -94,77 +104,43 @@ public class ZoneRenderer {
                 float a = zoneData.color.getAlpha() / 255.0f;
 
                 switch (zoneData.shapeType) {
+                    // 2D shape
                     case CIRCLE ->
-                            drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
+                            Shape2D.drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
                                     (float) zoneData.dimension.x, (float) zoneData.dimension.y, CIRCLE_SEGMENTS, 0);
                     case SQUARE, RECTANGLE ->
-                            drawFilledRectangleBox(poseStack, consumer, r, g, b, a,
+                            Shape2D.drawFilledRectangleBox(poseStack, consumer, r, g, b, a,
                                     (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y);
-                    case HEXAGON -> // 起始角度为PI/6以实现平顶
-                            drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, 6, (float) (Math.PI / 6.0));
-                    case POLYGON ->
-                            drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, zoneData.segments, zoneData.angle);
+                    case HEXAGON -> // 平顶正六边形
+                            Shape2D.drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, 6, 0);
+                    case POLYGON -> // 尖顶正多边形
+                            Shape2D.drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, zoneData.segments, POINTING_POLYGON_ANGLE);
+                    case ELLIPSE ->
+                            Shape2D.drawFilledEllipseCylinder(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y, ELLIPSE_SEGMENTS);
+                    case STAR -> // 尖顶星形
+                            Shape2D.drawFilledStarCylinder(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y, zoneData.segments, POINTING_POLYGON_ANGLE);
+                    // 3D shape
+                    case SPHERE ->
+                            Shape3D.drawFilledSphere(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.y, SPHERE_SEGMENTS);
+                    case CUBE, CUBOID ->
+                            Shape3D.drawFilledCuboid(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, (float) zoneData.dimension.z);
+                    case ELLIPSOID ->
+                            Shape3D.drawFilledEllipsoid(poseStack, consumer, r, g, b, a,
+                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, (float) zoneData.dimension.z, ELLIPSOID_SEGMENTS);
+                    default -> {
+                        ;
+                    }
                 }
             } finally {
                 poseStack.popPose();
             }
         }
         bufferSource.endBatch();
-    }
-
-    private void drawFilledRectangleBox(PoseStack poseStack, VertexConsumer consumer,
-                                        float r, float g, float b, float a,
-                                        float halfWidth, float halfDepth, float height) {
-        float x1 = -halfWidth;
-        float z1 = -halfDepth;
-        float x2 = halfWidth;
-        float z2 = halfDepth;
-
-        consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, 0, z1).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, height, z1).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
-
-        consumer.vertex(poseStack.last().pose(), x1, 0, z2).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, height, z2).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
-
-        consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, height, z2).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
-        consumer.vertex(poseStack.last().pose(), x1, 0, z2).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
-
-        consumer.vertex(poseStack.last().pose(), x2, 0, z1).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
-        consumer.vertex(poseStack.last().pose(), x2, height, z1).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
-    }
-
-    private void drawFilledPolygonCylinder(PoseStack poseStack, VertexConsumer consumer,
-                                           float r, float g, float b, float a,
-                                           float radius, float height, int segments, float initialAngle) {
-        for (int i = 0; i < segments; i++) {
-            float angle1 = initialAngle + (float) (2 * Math.PI * i / segments);
-            float angle2 = initialAngle + (float) (2 * Math.PI * (i + 1) / segments);
-
-            float x1 = radius * Mth.cos(angle1);
-            float z1 = radius * Mth.sin(angle1);
-            float x2 = radius * Mth.cos(angle2);
-            float z2 = radius * Mth.sin(angle2);
-
-            // 计算侧面法线
-            // 法线应垂直于该侧面，指向外部
-            float midAngle = (angle1 + angle2) / 2.0f;
-            float normalX = Mth.cos(midAngle);
-            float normalZ = Mth.sin(midAngle);
-
-            consumer.vertex(poseStack.last().pose(), x1, 0, z1).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(poseStack.last().pose(), x1, height, z1).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(poseStack.last().pose(), x2, height, z2).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(poseStack.last().pose(), x2, 0, z2).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normalX, 0, normalZ).endVertex();
-        }
     }
 }

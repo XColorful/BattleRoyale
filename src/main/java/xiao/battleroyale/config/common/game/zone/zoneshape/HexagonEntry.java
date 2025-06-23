@@ -9,8 +9,8 @@ import xiao.battleroyale.common.game.zone.spatial.HexagonShape;
 
 public class HexagonEntry extends AbstractSimpleEntry {
 
-    public HexagonEntry(StartEntry startEntry, EndEntry endEntry) {
-        super(startEntry, endEntry);
+    public HexagonEntry(StartEntry startEntry, EndEntry endEntry, boolean badShape) {
+        super(startEntry, endEntry, badShape);
     }
 
     @Override
@@ -25,24 +25,26 @@ public class HexagonEntry extends AbstractSimpleEntry {
 
     @Override
     public ISpatialZone createSpatialZone() {
-        return new HexagonShape(startEntry, endEntry);
+        return new HexagonShape(startEntry, endEntry, badShape);
     }
 
 
     @Nullable
     public static HexagonEntry fromJson(JsonObject jsonObject) {
-        JsonObject startEntryObject = jsonObject.has(ZoneShapeTag.START) ? jsonObject.getAsJsonObject(ZoneShapeTag.START) : null;
-        JsonObject endEntryObject = jsonObject.has(ZoneShapeTag.END) ? jsonObject.getAsJsonObject(ZoneShapeTag.END) : null;
-        if (startEntryObject == null || endEntryObject == null) {
-            BattleRoyale.LOGGER.info("HexagonEntry missing start or end member, skipped");
+        StartEntry startEntry = AbstractSimpleEntry.readStartEntry(jsonObject);
+        if (startEntry == null) {
+            BattleRoyale.LOGGER.info("Invalid startEntry for HexagonEntry, skipped");
             return null;
         }
-        StartEntry startEntry = StartEntry.fromJson(startEntryObject);
-        EndEntry endEntry = EndEntry.fromJson(endEntryObject);
-        if (startEntry == null || endEntry == null) {
+
+        EndEntry endEntry = AbstractSimpleEntry.readEndEntry(jsonObject);
+        if (endEntry == null) {
             BattleRoyale.LOGGER.info("Invalid startEntry or endEntry for HexagonEntry, skipped");
             return null;
         }
-        return new HexagonEntry(startEntry, endEntry);
+
+        boolean badShape = AbstractSimpleEntry.readBadShape(jsonObject);
+        
+        return new HexagonEntry(startEntry, endEntry, badShape);
     }
 }
