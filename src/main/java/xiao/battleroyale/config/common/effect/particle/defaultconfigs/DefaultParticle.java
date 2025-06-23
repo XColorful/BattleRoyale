@@ -26,11 +26,12 @@ public class DefaultParticle {
     }
 
     private static JsonObject generateDefaultParticleConfig0() {
-        ParticleParameterEntry parameterEntry = new ParticleParameterEntry(0.1F, new Vec3(0, 0, 0), new Vec3(8, 1, 8), true,
-                "#FFD700", 1, 0, null);
+        ParticleParameterEntry parameterEntry = new ParticleParameterEntry(0.1F,"#FFD700", 1, 0, null);
 
         ParticleDetailEntry detailEntry = new ParticleDetailEntry(new ResourceLocation("minecraft:explosion_emitter"),
-                3, 200, parameterEntry, 1, 8, 3); // 1 + 8 * 3 = 史 * 寄
+                3, 1, 8, 3, // 1 + 8 * 3 = 史 * 寄
+                new Vec3(0, 0, 0), new Vec3(8, 1, 8), true,
+                parameterEntry);
 
         ParticleConfig particleConfig = new ParticleConfig(0, "Default particle for winner", "#FFFFFF", detailEntry);
 
@@ -39,7 +40,9 @@ public class DefaultParticle {
 
     private static JsonObject generateDefaultParticleConfig1() {
         ParticleDetailEntry detailEntry = new ParticleDetailEntry(new ResourceLocation("minecraft:explosion"),
-                1, 200, null, 20, 20, 10);
+                1,20, 20, 10,
+                null, null, false,
+                null);
 
         ParticleConfig particleConfig = new ParticleConfig(1, "Simple particle", "#FFFFFF", detailEntry);
 
@@ -47,11 +50,12 @@ public class DefaultParticle {
     }
 
     private static JsonObject generateDefaultParticleConfig2() {
-        ParticleParameterEntry parameterEntry = new ParticleParameterEntry(0.1F, new Vec3(1, 0, 1), new Vec3(2, 1, 2), false,
-                "#0000FF", 1, 0, null);
+        ParticleParameterEntry parameterEntry = new ParticleParameterEntry(0.1F,"#0000FF", 1, 0, null);
 
         ParticleDetailEntry detailEntry = new ParticleDetailEntry(new ResourceLocation("minecraft:dust"),
-                10, 200, parameterEntry, 20, 20, 10);
+                10, 20, 20, 10,
+                new Vec3(1, 0, 1), new Vec3(2, 1, 2), false,
+                parameterEntry);
 
         ParticleConfig particleConfig = new ParticleConfig(2, "Particle with parameter", "#FFFFFF", detailEntry);
 

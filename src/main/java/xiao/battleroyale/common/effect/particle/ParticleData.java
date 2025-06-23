@@ -87,15 +87,13 @@ public class ParticleData {
         }
 
         float speed = 0;
-        Vec3 offset = Vec3.ZERO;
-        Vec3 offsetRange = Vec3.ZERO;
-        boolean exactOffset = false;
         if (parameter != null) {
             speed = parameter.speed();
-            offset = parameter.offset();
-            offsetRange = parameter.offsetRange();
-            exactOffset = parameter.exactOffset();
         }
+
+        Vec3 offset = particle.offset();
+        Vec3 offsetRange = particle.offsetRange();
+        boolean exactOffset = particle.exactOffset();
         if (exactOffset) {
             for (int i = 0; i < this.particle.count(); i++) {
                 Vec3 offsetVec = Vec3Utils.randomAdjustXYZ(offset, offsetRange, BattleRoyale.COMMON_RANDOM::nextFloat);
