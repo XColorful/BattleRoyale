@@ -6,9 +6,11 @@ import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.*;
+import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry.EffectFuncEntryBuilder;
 import xiao.battleroyale.config.common.game.zone.zoneshape.*;
 
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
@@ -27,6 +29,8 @@ public class DefaultZone {
         zoneConfigJson.add(generateDefaultZoneConfig6());
         zoneConfigJson.add(generateDefaultZoneConfig7());
         zoneConfigJson.add(generateDefaultZoneConfig10());
+        zoneConfigJson.add(generateDefaultZoneConfig11());
+        zoneConfigJson.add(generateDefaultZoneConfig12());
         writeJsonToFile(Paths.get(GameConfigManager.get().getZoneConfigPath(), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
@@ -237,6 +241,62 @@ public class DefaultZone {
         ZoneConfig zoneConfig = new ZoneConfig(10, "1st boost sphere", "#0000FF77",
                 200, 700,
                 boostFuncEntry, sphereEntry);
+
+        return zoneConfig.toJson();
+    }
+
+    private static JsonObject generateDefaultZoneConfig11() {
+        ParticleFuncEntry particleFuncEntry = new ParticleFuncEntry(200, 400, 20, -1,
+                Arrays.asList(1, 1, 2), 1,"", 50);
+
+        StartEntry startEntry = new StartEntry();
+        startEntry.addLockCenter(0, true);
+        startEntry.addPlayerCenterLerp(-0.2);
+        startEntry.addFixedDimension(new Vec3(20, 20, 20));
+        startEntry.addLockRotate(0);
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addPreviousCenter(0, 0);
+        endEntry.addRelativeCenter(new Vec3(0, 9.99, 0));
+        endEntry.addCenterRange(20);
+        endEntry.addPreviousDimension(11, 0);
+        endEntry.addPreviousRotate(11, 0);
+        endEntry.addRotateRange(360);
+
+        CubeEntry cubeEntry = new CubeEntry(startEntry, endEntry, false);
+
+        ZoneConfig zoneConfig = new ZoneConfig(11, "Particle Cube", "#0000FF55",
+                200, 700,
+                particleFuncEntry, cubeEntry);
+
+        return zoneConfig.toJson();
+    }
+
+    private static JsonObject generateDefaultZoneConfig12() {
+        EffectFuncEntry effectFuncEntry = new EffectFuncEntryBuilder(200, 400, 20, -1)
+                .add("minecraft:speed", 20, 1)
+                .add("minecraft:jump_boost", 20, 1)
+                .build();
+
+        StartEntry startEntry = new StartEntry();
+        startEntry.addLockCenter(0, true);
+        startEntry.addPlayerCenterLerp(0.2);
+        startEntry.addFixedDimension(new Vec3(20, 20, 20));
+        startEntry.addLockRotate(0);
+
+        EndEntry endEntry = new EndEntry();
+        endEntry.addPreviousCenter(0, 0);
+        endEntry.addRelativeCenter(new Vec3(0, 9.99, 0));
+        endEntry.addCenterRange(20);
+        endEntry.addPreviousDimension(11, 0);
+        endEntry.addPreviousRotate(11, 0);
+        endEntry.addRotateRange(360);
+
+        CubeEntry cubeEntry = new CubeEntry(startEntry, endEntry, false);
+
+        ZoneConfig zoneConfig = new ZoneConfig(12, "Speed effect Cuboid", "#00FF0099",
+                200, 700,
+                effectFuncEntry, cubeEntry);
 
         return zoneConfig.toJson();
     }

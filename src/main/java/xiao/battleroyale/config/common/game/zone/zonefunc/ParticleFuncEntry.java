@@ -15,7 +15,8 @@ public class ParticleFuncEntry extends AbstractFuncEntry {
     private final String channel;
     private final int cooldown;
 
-    public ParticleFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset, List<Integer> particleIdList, int select, String channel, int cooldown) {
+    public ParticleFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset,
+                             List<Integer> particleIdList, int select, String channel, int cooldown) {
         super(moveDelay, moveTime, tickFreq, tickOffset);
         this.particleIdList = particleIdList;
         this.select = Math.max(select, 0);

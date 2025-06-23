@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry.EffectEntry;
+import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry.Effect;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
 import java.util.ArrayList;
@@ -17,9 +17,9 @@ import java.util.function.Supplier;
 
 public class EffectFunc extends AbstractSimpleFunc {
 
-    private final List<EffectEntry> effects;
+    private final List<Effect> effects;
 
-    public EffectFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset, List<EffectEntry> effects) {
+    public EffectFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset, List<Effect> effects) {
         super(moveDelay, moveTime, tickFreq, tickOffset);
         this.effects = effects;
     }
@@ -33,7 +33,7 @@ public class EffectFunc extends AbstractSimpleFunc {
                 if (gamePlayer.isActiveEntity()) {
                     LivingEntity entity = (LivingEntity) serverLevel.getEntity(gamePlayer.getPlayerUUID());
                     if (entity != null && entity.isAlive()) {
-                        for (EffectEntry effect : effects) {
+                        for (Effect effect : effects) {
                             MobEffectInstance effectInstance = new MobEffectInstance(
                                     effect.type(),
                                     effect.duration(),
