@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class UnsafeFunc extends AbstractSimpleFunc {
+public class UnsafeFunc extends AbstractDamageFunc {
 
-    public UnsafeFunc(double damage, int moveDelay, int moveTime, int tickFreq, int tickOffset) {
-        super(damage, moveDelay, moveTime, tickFreq, tickOffset);
+    public UnsafeFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset, float damage) {
+        super(moveDelay, moveTime, tickFreq, tickOffset, damage);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class UnsafeFunc extends AbstractSimpleFunc {
                 if (gamePlayer.isActiveEntity()) { // 造成一次毒圈伤害
                     LivingEntity entity = (LivingEntity) serverLevel.getEntity(gamePlayer.getPlayerUUID());
                     if (entity != null && entity.isAlive()) {
-                        entity.hurt(ModDamageTypes.unsafeZone(serverLevel), (float) this.damage);
+                        entity.hurt(ModDamageTypes.unsafeZone(serverLevel), this.damage);
                     }
                 } else {
                     StatsManager.get().onRecordDamage(gamePlayer, ModDamageTypes.unsafeZone(serverLevel), (float) this.damage);

@@ -15,6 +15,7 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.defaultconfigs.DefaultZoneConfigGenerator;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
+import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -30,7 +31,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
     }
 
     private ZoneConfigManager() {
-        allConfigData.put(DEFAULT_ZONE_CONFIG_DATA_ID, new ConfigData<>());
+        allFolderConfigData.put(DEFAULT_ZONE_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
@@ -40,12 +41,12 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
     public static final String ZONE_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
     public static final String ZONE_CONFIG_SUB_PATH = "zone";
 
-    protected final int DEFAULT_ZONE_CONFIG_DATA_ID = 0;
+    protected final int DEFAULT_ZONE_CONFIG_FOLDER = 0;
 
     public static class ZoneConfig implements IZoneSingleEntry {
         public static final String CONFIG_TYPE = "ZoneConfig";
 
-        private final int zoneId;
+        public final int zoneId;
         private final String zoneName;
         private final String zoneColor;
         private final int zoneDelay;
@@ -121,13 +122,11 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
 
         public static IZoneFuncEntry deserializeZoneFuncEntry(JsonObject jsonObject) {
             try {
-                String type = jsonObject.getAsJsonPrimitive(ZoneFuncTag.TYPE_NAME).getAsString();
-                if (type == null) type = "";
-                ZoneFuncType zoneFuncType = ZoneFuncType.fromName(type);
+                ZoneFuncType zoneFuncType = ZoneFuncType.fromName(JsonUtils.getJsonString(jsonObject, ZoneFuncTag.TYPE_NAME, ""));
                 if (zoneFuncType != null) {
                     return zoneFuncType.getDeserializer().apply(jsonObject);
                 } else {
-                    BattleRoyale.LOGGER.error("Unknown ZoneFuncEntry type: {}", type);
+                    BattleRoyale.LOGGER.error("Skipped invalid ZoneFuncEntry");
                     return null;
                 }
             } catch (Exception e) {
@@ -138,13 +137,11 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
 
         public static IZoneShapeEntry deserializeZoneShapeEntry(JsonObject jsonObject) {
             try {
-                String type = jsonObject.getAsJsonPrimitive(ZoneShapeTag.TYPE_NAME).getAsString();
-                if (type == null) type = "";
-                ZoneShapeType zoneShapeType = ZoneShapeType.fromName(type);
+                ZoneShapeType zoneShapeType = ZoneShapeType.fromName(JsonUtils.getJsonString(jsonObject, ZoneShapeTag.TYPE_NAME, ""));
                 if (zoneShapeType != null) {
                     return zoneShapeType.getDeserializer().apply(jsonObject);
                 } else {
-                    BattleRoyale.LOGGER.error("Unknown ZoneShapeEntry type: {}", type);
+                    BattleRoyale.LOGGER.error("Skipped invalid ZoneShapeEntry");
                     return null;
                 }
             } catch (Exception e) {
@@ -162,7 +159,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
     /**
      * IConfigManager
      */
-    @Override public String getConfigType(int configType) {
+    @Override public String getFolderType(int configType) {
         return ZoneConfig.CONFIG_TYPE;
     }
 
@@ -170,14 +167,14 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
      * IConfigDefaultable
      */
     @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_ZONE_CONFIG_DATA_ID);
+        generateDefaultConfigs(DEFAULT_ZONE_CONFIG_FOLDER);
     }
 
     @Override public void generateDefaultConfigs(int configType) {
         DefaultZoneConfigGenerator.generateAllDefaultConfigs();
     }
     @Override public int getDefaultConfigId() {
-        return getDefaultConfigId(DEFAULT_ZONE_CONFIG_DATA_ID);
+        return getDefaultConfigId(DEFAULT_ZONE_CONFIG_FOLDER);
     }
     @Override public void setDefaultConfigId(int id) {
         return;
@@ -193,18 +190,18 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
     @Override
     public ZoneConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
         try {
-            int zoneId = configObject.has(ZoneConfigTag.ZONE_ID) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_ID).getAsInt() : -1;
-            JsonObject zoneFuncObject = configObject.has(ZoneConfigTag.ZONE_FUNC) ? configObject.getAsJsonObject(ZoneConfigTag.ZONE_FUNC) : null;
-            JsonObject zoneShapeObject = configObject.has(ZoneConfigTag.ZONE_SHAPE) ? configObject.getAsJsonObject(ZoneConfigTag.ZONE_SHAPE) : null;
+            int zoneId = JsonUtils.getJsonInt(configObject, ZoneConfigTag.ZONE_ID, -1);
+            JsonObject zoneFuncObject = JsonUtils.getJsonObject(configObject, ZoneConfigTag.ZONE_FUNC, null);
+            JsonObject zoneShapeObject = JsonUtils.getJsonObject(configObject, ZoneConfigTag.ZONE_SHAPE, null);
             if (zoneId < 0 || zoneFuncObject == null || zoneShapeObject == null) {
                 BattleRoyale.LOGGER.warn("Skipped invalid zone config in {}", filePath);
                 return null;
             }
 
-            String zoneName = configObject.has(ZoneConfigTag.ZONE_NAME) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_NAME).getAsString() : "";
-            String zoneColor = configObject.has(ZoneConfigTag.ZONE_COLOR) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_COLOR).getAsString() : "#0000FF";
-            int zoneDelay = configObject.has(ZoneConfigTag.ZONE_DELAY) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_DELAY).getAsInt() : 0;
-            int zoneTime = configObject.has(ZoneConfigTag.ZONE_TIME) ? configObject.getAsJsonPrimitive(ZoneConfigTag.ZONE_TIME).getAsInt() : 0;
+            String zoneName = JsonUtils.getJsonString(configObject, ZoneConfigTag.ZONE_NAME, "");
+            String zoneColor = JsonUtils.getJsonString(configObject, ZoneConfigTag.ZONE_COLOR, "#0000FF");
+            int zoneDelay = JsonUtils.getJsonInt(configObject, ZoneConfigTag.ZONE_DELAY, 0);
+            int zoneTime = JsonUtils.getJsonInt(configObject, ZoneConfigTag.ZONE_TIME, 0);
             IZoneFuncEntry zoneFuncEntry = ZoneConfig.deserializeZoneFuncEntry(zoneFuncObject);
             IZoneShapeEntry zoneShapeEntry = ZoneConfig.deserializeZoneShapeEntry(zoneShapeObject);
             if (zoneFuncEntry == null || zoneShapeEntry == null) {
@@ -214,7 +211,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
 
             return new ZoneConfig(zoneId, zoneName, zoneColor, zoneDelay, zoneTime, zoneFuncEntry, zoneShapeEntry);
         } catch (Exception e) {
-            BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getConfigType(), filePath, e.getMessage());
+            BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(), filePath, e.getMessage());
             return null;
         }
     }
@@ -229,20 +226,20 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
      * 特定类别的获取接口
      */
     public ZoneConfig getZoneConfig(int id) {
-        return getConfigEntry(id, DEFAULT_ZONE_CONFIG_DATA_ID);
+        return getConfigEntry(id, DEFAULT_ZONE_CONFIG_FOLDER);
     }
-    public List<ZoneConfig> getZoneConfigs() {
-        return getAllConfigEntries(DEFAULT_ZONE_CONFIG_DATA_ID);
+    public List<ZoneConfig> getZoneConfigList() {
+        return getConfigEntryList(DEFAULT_ZONE_CONFIG_FOLDER);
     }
 
     /**
      * 特定类别的重新读取接口
      */
     public void reloadZoneConfigs() {
-        reloadConfigs(DEFAULT_ZONE_CONFIG_DATA_ID);
+        reloadConfigs(DEFAULT_ZONE_CONFIG_FOLDER);
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {
-        super.initializeDefaultConfigsIfEmpty(DEFAULT_ZONE_CONFIG_DATA_ID);
+        super.initializeDefaultConfigsIfEmpty(DEFAULT_ZONE_CONFIG_FOLDER);
     }
 }

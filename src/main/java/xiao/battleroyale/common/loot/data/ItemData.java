@@ -2,17 +2,18 @@ package xiao.battleroyale.common.loot.data;
 
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.item.IItemLootData;
+import xiao.battleroyale.util.NBTUtils;
 
 public class ItemData implements IItemLootData {
     private final @Nullable Item item;
-    private @Nullable CompoundTag nbt;
+    private final @NotNull CompoundTag nbt;
     private final int count;
 
     public ItemData(String rl, @Nullable String nbt, int count) {
@@ -20,13 +21,7 @@ public class ItemData implements IItemLootData {
         if (this.item == null) {
             BattleRoyale.LOGGER.warn("Faild to get item type from ResourceLocation {}", rl);
         }
-        if (nbt != null) {
-            try {
-                this.nbt = TagParser.parseTag(nbt);
-            } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse NBT {}: {}", rl, e.getMessage());
-            }
-        }
+        this.nbt = NBTUtils.stringToNBT(nbt);
         this.count = count;
     }
 
@@ -37,7 +32,7 @@ public class ItemData implements IItemLootData {
             return null;
         }
         ItemStack itemStack = new ItemStack(this.item, this.count);
-        if (this.nbt != null) {
+        if (!this.nbt.isEmpty()) {
             itemStack.setTag(this.nbt);
         }
         return itemStack;

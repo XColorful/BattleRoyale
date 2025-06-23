@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.command.sub.GameCommand;
-import xiao.battleroyale.common.game.effect.firework.FireworkManager;
+import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
@@ -62,7 +62,6 @@ public class GameManager extends AbstractGameManager {
     private UUID gameId;
     private boolean inGame;
     private final SyncData syncData = new SyncData();
-    private final BoostData boostData = new BoostData();
     private ResourceKey<Level> gameDimensionKey;
     private ServerLevel serverLevel;
     private final Set<GameTeam> winnerGameTeams = new HashSet<>();
@@ -207,8 +206,6 @@ public class GameManager extends AbstractGameManager {
         SpawnManager.get().onGameTick(gameTime);
         ZoneManager.get().onGameTick(gameTime);
         // StatsManager.get().onGameTick(gameTime); // 基于事件主动记录，不用tick
-
-        this.boostData.onGameTick(gameTime);
     }
 
     public void syncInfo() {
@@ -395,37 +392,7 @@ public class GameManager extends AbstractGameManager {
 
         ChatUtils.sendTitleToPlayer(player, winnerTitle, teamWinMessage, 10, 80, 20);
 
-        spawnPlayerFirework(player, 16, 4, 1.0F, 16.0F);
-    }
-
-    /**
-     * 在特定位置生成垂直烟花
-     * @param serverLevel 烟花所在level
-     * @param pos 生成位置中心点
-     * @param amount 总生成数量
-     * @param interval 每个烟花的时间间隔
-     * @param vRange 使中心点往上随机偏移
-     * @param hRange 水平偏移半径
-     */
-    public void spawnFirework(ServerLevel serverLevel, Vec3 pos, int amount, int interval, float vRange, float hRange) {
-        if (serverLevel == null) {
-            return;
-        }
-        FireworkManager.get().addFixedPositionFireworkTask(serverLevel, pos, amount, interval, vRange, hRange);
-    }
-    /**
-     * 跟随玩家生成烟花
-     * @param player 玩家
-     * @param amount 总生成数量
-     * @param interval 每个烟花的时间间隔
-     * @param vRange 使中心点往上随机偏移
-     * @param hRange 水平偏移半径
-     */
-    public void spawnPlayerFirework(@Nullable ServerPlayer player, int amount, int interval, float vRange, float hRange) {
-        if (player == null) {
-            return;
-        }
-        FireworkManager.get().addPlayerTrackingFireworkTask((ServerLevel) player.level(), player.getUUID(), amount, interval, vRange, hRange);
+        EffectManager.get().spawnPlayerFirework(player, 16, 4, 1.0F, 16.0F);
     }
 
     /**
@@ -496,12 +463,9 @@ public class GameManager extends AbstractGameManager {
         this.inGame = false;
         // this.ready = false; // 不使用ready标记，因为Team会变动
         // 取消事件监听
-        DamageEventHandler.unregister();
-        LoopEventHandler.unregister();
-        PlayerDeathEventHandler.unregister();
-        LogEventHandler.unregister();
+        unregisterGameEvent();
 
-        this.boostData.endGame(); // 更新到syncData
+        EffectManager.get().forceEnd();
         if (!shouldKeepTeamAfterGame()) {
             SyncEventHandler.unregister();
             for (GamePlayer gamePlayer : getGamePlayers()) { // 先保留通知列表
@@ -515,8 +479,6 @@ public class GameManager extends AbstractGameManager {
 
         // 清空同步信息
         this.syncData.clear();
-        this.boostData.clear();
-
         StatsManager.get().stopGame(serverLevel);
     }
 
@@ -651,14 +613,6 @@ public class GameManager extends AbstractGameManager {
     }
     public void addLeavedMember(UUID playerUUID) { this.syncData.addLeavedMember(playerUUID); }
 
-    public void addBoost(int amount, UUID playerUUID) {
-        GamePlayer gamePlayer = getGamePlayerByUUID(playerUUID);
-        if (gamePlayer == null) {
-            return;
-        }
-        this.boostData.addBoost(amount, gamePlayer);
-    }
-
     public int getGameruleConfigId() { return gameruleConfigId; }
     public int getSpawnConfigId() { return spawnConfigId; }
     public int getBotConfigId() { return botConfigId; }
@@ -687,8 +641,8 @@ public class GameManager extends AbstractGameManager {
         // 同步信息
         this.syncData.initGame();
         SyncEventHandler.register();
-        // 清理待处理的烟花
-        FireworkManager.get().forceEnd();
+        // 清除游戏效果
+        EffectManager.get().forceEnd();
     }
     private void initGameSubManager() {
         StatsManager.get().initGame(serverLevel); // 先清空stats
@@ -731,18 +685,20 @@ public class GameManager extends AbstractGameManager {
         this.gameTime = 0; // 游戏结束后不手动重置
         this.winnerGameTeams.clear(); // 游戏结束后不手动重置
         this.winnerGamePlayers.clear(); // 游戏结束后不手动重置
-        // 注册事件监听
+        registerGameEvent();
+        // 重置同步信息
+        this.syncData.startGame();
+    }
+    private void registerGameEvent() {
         DamageEventHandler.register();
         LoopEventHandler.register();
         PlayerDeathEventHandler.register();
-        // 重置同步信息
-        this.syncData.startGame();
-        this.boostData.startGame();
-        // TODO delete test
-        // 游戏开始时全部满能量条
-        for (GamePlayer gamePlayer : getStandingGamePlayers()) {
-            addBoost(6000, gamePlayer.getPlayerUUID());
-        }
+    }
+    private void unregisterGameEvent() {
+        DamageEventHandler.unregister();
+        LoopEventHandler.unregister();
+        PlayerDeathEventHandler.unregister();
+        LogEventHandler.unregister();
     }
 
     /**
@@ -786,7 +742,7 @@ public class GameManager extends AbstractGameManager {
     }
     public String getSpawnConfigName(int id) {
         SpawnConfigManager.SpawnConfig config = SpawnConfigManager.get().getSpawnConfig(id);
-        return config != null ? config.getName() : "";
+        return config != null ? config.name() : "";
     }
     public boolean setBotConfigId(int id) {
         if (id < 0 || BotConfigManager.get().getBotConfig(id) == null) {
@@ -797,6 +753,6 @@ public class GameManager extends AbstractGameManager {
     }
     public String getBotConfigName(int id) {
         BotConfigManager.BotConfig config = BotConfigManager.get().getBotConfig(id);
-        return config != null ? config.getName() : "";
+        return config != null ? config.name() : "";
     }
 }

@@ -40,11 +40,6 @@ public class DangerFunc extends AbstractSimpleFunc {
     }
 
     @Override
-    public double getDamage() {
-        return 0;
-    }
-
-    @Override
     public double getShapeProgress(int currentGameTime, int zoneDelay) {
         return 0;
     }

@@ -1,4 +1,4 @@
-package xiao.battleroyale.common.game.effect.firework;
+package xiao.battleroyale.common.effect.firework;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;

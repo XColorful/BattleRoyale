@@ -3,8 +3,8 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.api.loot.LootConfigTag;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
+import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.type.ItemEntry;
 import xiao.battleroyale.config.common.loot.type.MultiEntry;
 import xiao.battleroyale.config.common.loot.type.RandomEntry;
@@ -27,11 +27,6 @@ public class DefaultAirdrop{
     }
 
     private static JsonObject generateDefaultAirdrop() {
-        JsonObject config = new JsonObject();
-        config.addProperty(LootConfigTag.LOOT_ID, 201);
-        config.addProperty(LootConfigTag.LOOT_NAME, "Netherite Airdrop");
-        config.addProperty(LootConfigTag.LOOT_COLOR, "#FFFF00");
-
         ILootEntry multiEntry = new MultiEntry(Arrays.asList(
                 new ItemEntry("minecraft:netherite_helmet", null, 1),
                 new ItemEntry("minecraft:netherite_chestplate", null, 1),
@@ -42,7 +37,9 @@ public class DefaultAirdrop{
                 new RandomEntry(0.05, new ItemEntry("minecraft:enchanted_golden_apple", null, 1))
         ));
 
-        config.add(LootConfigTag.LOOT_ENTRY, multiEntry.toJson());
-        return config;
+        LootConfig lootConfig = new LootConfig(201, "Netherite Airdrop", "#FFFF00",
+                multiEntry);
+
+        return multiEntry.toJson();
     }
 }

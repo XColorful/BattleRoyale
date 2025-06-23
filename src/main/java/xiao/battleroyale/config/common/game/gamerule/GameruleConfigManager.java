@@ -10,6 +10,7 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.defaultconfigs.DefaultGameruleConfigGenerator;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
+import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -27,7 +28,7 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
     }
 
     private GameruleConfigManager() {
-        allConfigData.put(DEFAULT_GAMERULE_CONFIG_DATA_ID, new ConfigData<>());
+        allFolderConfigData.put(DEFAULT_GAMERULE_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
@@ -38,7 +39,7 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
     public static final String GAMERULE_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
     public static final String GAMERULE_CONFIG_SUB_PATH = "gamerule";
 
-    protected final int DEFAULT_GAMERULE_CONFIG_DATA_ID = 0;
+    protected final int DEFAULT_GAMERULE_CONFIG_FOLDER = 0;
 
     public static class GameruleConfig implements IGameruleSingleEntry {
         public static final String CONFIG_TYPE = "GameruleConfig";
@@ -139,7 +140,7 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
     /**
      * IConfigManager
      */
-    @Override public String getConfigType(int configType) {
+    @Override public String getFolderType(int configType) {
         return GameruleConfig.CONFIG_TYPE;
     }
 
@@ -147,14 +148,14 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
      * IConfigDefaultable
      */
     @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_GAMERULE_CONFIG_DATA_ID);
+        generateDefaultConfigs(DEFAULT_GAMERULE_CONFIG_FOLDER);
     }
 
     @Override public void generateDefaultConfigs(int configType) {
         DefaultGameruleConfigGenerator.generateDefaultGameruleConfigs();
     }
     @Override public int getDefaultConfigId() {
-        return getDefaultConfigId(DEFAULT_GAMERULE_CONFIG_DATA_ID);
+        return getDefaultConfigId(DEFAULT_GAMERULE_CONFIG_FOLDER);
     }
 
     /**
@@ -164,16 +165,16 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
     @Override
     public GameruleConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
         try {
-            int gameId = configObject.has(GameruleConfigTag.GAME_ID) ? configObject.getAsJsonPrimitive(GameruleConfigTag.GAME_ID).getAsInt() : -1;
-            JsonObject brEntryObject = configObject.has(GameruleConfigTag.BATTLEROYALE_ENTRY) ? configObject.getAsJsonObject(GameruleConfigTag.BATTLEROYALE_ENTRY) : null;
-            JsonObject mcEntryObject = configObject.has(GameruleConfigTag.MINECRAFT_ENTRY) ? configObject.getAsJsonObject(GameruleConfigTag.MINECRAFT_ENTRY) : null;
+            int gameId = JsonUtils.getJsonInt(configObject, GameruleConfigTag.GAME_ID, -1);
+            JsonObject brEntryObject = JsonUtils.getJsonObject(configObject, GameruleConfigTag.BATTLEROYALE_ENTRY, null);
+            JsonObject mcEntryObject = JsonUtils.getJsonObject(configObject, GameruleConfigTag.MINECRAFT_ENTRY, null);
             if (gameId < 0 || brEntryObject == null || mcEntryObject == null) {
                 BattleRoyale.LOGGER.warn("Skipped invalid gamerule config in {}", filePath);
                 return null;
             }
 
-            String gameName = configObject.has(GameruleConfigTag.GAME_NAME) ? configObject.getAsJsonPrimitive(GameruleConfigTag.GAME_NAME).getAsString() : "";
-            String color = configObject.has(GameruleConfigTag.GAME_COLOR) ? configObject.getAsJsonPrimitive(GameruleConfigTag.GAME_COLOR).getAsString() : "";
+            String gameName = JsonUtils.getJsonString(configObject, GameruleConfigTag.GAME_NAME, "");
+            String color = JsonUtils.getJsonString(configObject, GameruleConfigTag.GAME_COLOR, "");
             BattleroyaleEntry brEntry = GameruleConfig.deserializeBattleroyaleEntry(brEntryObject);
             MinecraftEntry mcEntry = GameruleConfig.deserializeMinecraftEntry(mcEntryObject);
             if (brEntry == null || mcEntry == null) {
@@ -183,7 +184,7 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
 
             return new GameruleConfig(gameId, gameName, color, brEntry, mcEntry);
         } catch (Exception e) {
-            BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getConfigType(), filePath, e.getMessage());
+            BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(), filePath, e.getMessage());
             return null;
         }
     }
@@ -198,20 +199,20 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
      * 特定类别的获取接口
      */
     public GameruleConfig getGameruleConfig(int gameId) {
-        return getConfigEntry(gameId, DEFAULT_GAMERULE_CONFIG_DATA_ID);
+        return getConfigEntry(gameId, DEFAULT_GAMERULE_CONFIG_FOLDER);
     }
-    public List<GameruleConfig> getAllGameruleConfigs() {
-        return getAllConfigEntries(DEFAULT_GAMERULE_CONFIG_DATA_ID);
+    public List<GameruleConfig> getGameruleConfigList() {
+        return getConfigEntryList(DEFAULT_GAMERULE_CONFIG_FOLDER);
     }
 
     /**
      * 特定类别的重新读取接口
      */
     public void reloadGameruleConfigs() {
-        reloadConfigs(DEFAULT_GAMERULE_CONFIG_DATA_ID);
+        reloadConfigs(DEFAULT_GAMERULE_CONFIG_FOLDER);
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {
-        super.initializeDefaultConfigsIfEmpty(DEFAULT_GAMERULE_CONFIG_DATA_ID);
+        super.initializeDefaultConfigsIfEmpty(DEFAULT_GAMERULE_CONFIG_FOLDER);
     }
 }

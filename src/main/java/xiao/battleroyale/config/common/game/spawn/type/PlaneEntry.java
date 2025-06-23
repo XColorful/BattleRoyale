@@ -12,6 +12,7 @@ import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.common.game.spawn.special.PlaneSpawner;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
+import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.StringUtils;
 
 public class PlaneEntry implements ISpawnEntry {
@@ -71,32 +72,28 @@ public class PlaneEntry implements ISpawnEntry {
     @Nullable
     public static PlaneEntry fromJson(JsonObject jsonObject) {
         // common
-        String shapeTypeString = jsonObject.has(SpawnShapeTag.TYPE_NAME) ? jsonObject.getAsJsonPrimitive(SpawnShapeTag.TYPE_NAME).getAsString() : "";
-        SpawnShapeType shapeType = SpawnShapeType.fromName(shapeTypeString);
+        SpawnShapeType shapeType = SpawnShapeType.fromName(JsonUtils.getJsonString(jsonObject, SpawnShapeTag.TYPE_NAME, ""));
         if (shapeType == null) {
             BattleRoyale.LOGGER.info("Unknown shapeType in PlaneEntry, skipped");
             return null;
         }
-        String centerString = jsonObject.has(SpawnShapeTag.CENTER) ? jsonObject.getAsJsonPrimitive(SpawnShapeTag.CENTER).getAsString() : "";
-        String dimensionString = jsonObject.has(SpawnShapeTag.DIMENSION) ? jsonObject.getAsJsonPrimitive(SpawnShapeTag.DIMENSION).getAsString() : "";
-        Vec3 center = StringUtils.parseVectorString(centerString);
-        Vec3 dimension = StringUtils.parseVectorString(dimensionString);
+        Vec3 center = StringUtils.parseVectorString(JsonUtils.getJsonString(jsonObject, SpawnShapeTag.CENTER, ""));
+        Vec3 dimension = StringUtils.parseVectorString(JsonUtils.getJsonString(jsonObject, SpawnShapeTag.DIMENSION, ""));
         if (center == null || dimension == null) {
             BattleRoyale.LOGGER.info("Invalid center or dimension in PlaneEntry, skipped");
             return null;
         }
 
-        String detailTypeString = jsonObject.has(SpawnDetailTag.TYPE_NAME) ? jsonObject.getAsJsonPrimitive(SpawnDetailTag.TYPE_NAME).getAsString() : "";
-        CommonDetailType detailType = CommonDetailType.fromName(detailTypeString);
+        CommonDetailType detailType = CommonDetailType.fromName(JsonUtils.getJsonString(jsonObject, SpawnDetailTag.TYPE_NAME, ""));
         if (detailType == null) {
             BattleRoyale.LOGGER.info("Unknown detailType for GroundEntry, skipped");
             return null;
         }
 
         // detail
-        double height = jsonObject.has(SpawnDetailTag.PLANE_HEIGHT) ? jsonObject.getAsJsonPrimitive(SpawnDetailTag.PLANE_HEIGHT).getAsDouble() : 0;
-        double speed = jsonObject.has(SpawnDetailTag.PLANE_SPEED) ? jsonObject.getAsJsonPrimitive(SpawnDetailTag.PLANE_SPEED).getAsDouble() : 0;
-        boolean fixedTime = jsonObject.has(SpawnDetailTag.PLANE_FIXED_TIME) && jsonObject.getAsJsonPrimitive(SpawnDetailTag.PLANE_FIXED_TIME).getAsBoolean();
+        double height = JsonUtils.getJsonDouble(jsonObject, SpawnDetailTag.PLANE_HEIGHT, 0);
+        double speed = JsonUtils.getJsonDouble(jsonObject, SpawnDetailTag.PLANE_SPEED, 1);
+        boolean fixedTime = JsonUtils.getJsonBoolean(jsonObject, SpawnDetailTag.PLANE_FIXED_TIME, false);
 
         return new PlaneEntry(shapeType, center, dimension,
                 detailType,

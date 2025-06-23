@@ -1,10 +1,11 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
-import xiao.battleroyale.common.game.effect.firework.FireworkManager;
+import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
@@ -15,12 +16,12 @@ import java.util.function.Supplier;
 
 public class FireworkFunc extends AbstractSimpleFunc {
 
-    private final boolean trackPlayer;
-    private final int amount;
-    private final int interval;
-    private final int vRange;
-    private final int hRange;
-    private final boolean outside;
+    public final boolean trackPlayer;
+    public final int amount;
+    public final int interval;
+    public final int vRange;
+    public final int hRange;
+    public final boolean outside;
 
     public FireworkFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset,
                         boolean trackPlayer, int amount, int interval, int vRange, int hRange, boolean outside) {
@@ -41,9 +42,12 @@ public class FireworkFunc extends AbstractSimpleFunc {
             boolean isWithinZone = spatialZone.isWithinZone(gamePlayer.getLastPos(), progress);
             if (isWithinZone != outside) {
                 if (trackPlayer) {
-                    FireworkManager.get().addPlayerTrackingFireworkTask(serverLevel, gamePlayer.getPlayerUUID(), amount, interval, vRange, hRange);
+                    ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                    if (player != null) {
+                        EffectManager.get().spawnPlayerFirework(player, amount, interval, vRange, hRange);
+                    }
                 } else {
-                    FireworkManager.get().addFixedPositionFireworkTask(serverLevel, gamePlayer.getLastPos(), amount, interval, vRange, hRange);
+                    EffectManager.get().spawnFirework(serverLevel, gamePlayer.getLastPos(), amount, interval, vRange, hRange);
                 }
             }
         }

@@ -30,8 +30,8 @@ public class SyncData extends AbstractGameManagerData {
     private final Set<Integer> changedZoneId = ConcurrentHashMap.newKeySet();
 
     private int lastExpireTime = 0; // zone过期信息
-    private final int KEEP_TIME = 3 * 20; // 保存3秒
-    private final int EXPIRE_FREQUENCY = 5 * 20; // 5秒进行一次清理
+    private final int KEEP_TIME = 20 * 5; // 保存5秒
+    private final int EXPIRE_FREQUENCY = 20 * 7; // 7秒进行一次清理
 
     // team
     private final Set<Integer> changedTeamId = ConcurrentHashMap.newKeySet();

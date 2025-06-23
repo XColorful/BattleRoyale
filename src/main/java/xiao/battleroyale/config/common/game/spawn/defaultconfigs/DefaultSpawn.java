@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.GameConfigManager;
-import xiao.battleroyale.api.game.spawn.SpawnConfigTag;
+import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.config.common.game.spawn.type.TeleportEntry;
 import xiao.battleroyale.config.common.game.spawn.type.PlaneEntry;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
@@ -29,52 +29,43 @@ public class DefaultSpawn {
     }
 
     private static JsonObject generateDefaultSpawnConfig0() {
-        JsonObject config = new JsonObject();
-        config.addProperty(SpawnConfigTag.SPAWN_ID, 0);
-        config.addProperty(SpawnConfigTag.SPAWN_NAME, "Random ground spawn");
-        config.addProperty(SpawnConfigTag.SPAWN_COLOR, "#FFFFFFAA");
-
-        TeleportEntry grondEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
+        TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.RANDOM,
                 new TeleportEntry.DetailInfo(new ArrayList<>(), false, true, 0)
         );
 
-        config.add(SpawnConfigTag.SPAWN_ENTRY, grondEntry.toJson());
-        return config;
+        SpawnConfig spawnConfig = new SpawnConfig(0, "Random ground spawn", "#FFFFFFAA",
+                groundEntry);
+
+        return spawnConfig.toJson();
     }
 
     private static JsonObject generateDefaultSpawnConfig1() {
-        JsonObject config = new JsonObject();
-        config.addProperty(SpawnConfigTag.SPAWN_ID, 1);
-        config.addProperty(SpawnConfigTag.SPAWN_NAME, "Fixed ground spawn");
-        config.addProperty(SpawnConfigTag.SPAWN_COLOR, "#FFFFFFAA");
-
-        TeleportEntry grondEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
+        TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.FIXED,
                 new TeleportEntry.DetailInfo(Arrays.asList(
                         new Vec3(0,-60,0),
                         new Vec3(-50,-60, -50),
+                        new Vec3(-50, -60, 50),
                         new Vec3(50, -60, -50),
-                        new Vec3(50, -60, -50),
-                        new Vec3(-50, -60, 50)),
+                        new Vec3(50, -60, 50)),
                         true, true, 0)
         );
 
-        config.add(SpawnConfigTag.SPAWN_ENTRY, grondEntry.toJson());
-        return config;
+        SpawnConfig spawnConfig = new SpawnConfig(1, "Fixed ground spawn", "#FFFFFFAA",
+                groundEntry);
+
+        return spawnConfig.toJson();
     }
 
     private static JsonObject generateDefaultSpawnConfig2() {
-        JsonObject config = new JsonObject();
-        config.addProperty(SpawnConfigTag.SPAWN_ID, 2);
-        config.addProperty(SpawnConfigTag.SPAWN_NAME, "Plane spawn (Not implemented)"); // TODO Plane spawn 配置
-        config.addProperty(SpawnConfigTag.SPAWN_COLOR, "#FFFFFF");
-
         PlaneEntry planeEntry = new PlaneEntry(SpawnShapeType.SQUARE, new Vec3(0, 65, 0), new Vec3(128, 0, 128),
                 CommonDetailType.RANDOM,
                 new PlaneEntry.DetailInfo(255, 2.5, true));
 
-        config.add(SpawnConfigTag.SPAWN_ENTRY, planeEntry.toJson());
-        return config;
+        SpawnConfig spawnConfig = new SpawnConfig(2, "Plane spawn (Not implemented)", "#FFFFFF",
+                planeEntry);
+
+        return spawnConfig.toJson();
     }
 }

@@ -2,19 +2,20 @@ package xiao.battleroyale.common.loot.data;
 
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.entity.IEntityLootData;
+import xiao.battleroyale.util.NBTUtils;
 
 import javax.annotation.Nullable;
 
 public class EntityData implements IEntityLootData {
     private final @Nullable EntityType<?> entityType;
-    private @Nullable CompoundTag nbt;
+    private final @NotNull CompoundTag nbt;
     private final int count;
     private final int range;
 
@@ -23,13 +24,7 @@ public class EntityData implements IEntityLootData {
         if (this.entityType == null) {
             BattleRoyale.LOGGER.warn("Faild to get entity type from ResourceLocation {}", rl);
         }
-        if (nbt != null) {
-            try {
-                this.nbt = TagParser.parseTag(nbt);
-            } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse NBT {}: {}", rl, e.getMessage());
-            }
-        }
+        this.nbt = NBTUtils.stringToNBT(nbt);
         this.count = count;
         this.range = range;
     }
@@ -51,7 +46,7 @@ public class EntityData implements IEntityLootData {
             return null;
         }
         Entity entity = this.entityType.create(level);
-        if (entity != null & this.nbt != null) {
+        if (entity != null & !this.nbt.isEmpty()) {
             entity.load(this.nbt);
         }
         return entity;

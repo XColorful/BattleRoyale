@@ -11,11 +11,11 @@ public interface IConfigManager<T> extends IConfigSwitchable, IConfigLoadable<T>
      */
     @Nullable T getConfigEntry(int id);
     @Nullable T getConfigEntry(int id, int configType);
-    List<T> getAllConfigEntries();
-    List<T> getAllConfigEntries(int configType);
+    List<T> getConfigEntryList();
+    List<T> getConfigEntryList(int configType);
     String getConfigEntryFileName();
     String getConfigEntryFileName(int configType);
 
-    String getConfigType();
-    String getConfigType(int configType);
+    String getFolderType();
+    String getFolderType(int configType);
 }

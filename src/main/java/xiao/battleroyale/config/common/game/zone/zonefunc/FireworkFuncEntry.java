@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.common.game.zone.tickable.FireworkFunc;
+import xiao.battleroyale.util.JsonUtils;
 
 public class FireworkFuncEntry extends AbstractFuncEntry {
 
@@ -56,17 +57,17 @@ public class FireworkFuncEntry extends AbstractFuncEntry {
     }
 
     public static FireworkFuncEntry fromJson(JsonObject jsonObject) {
-        int moveDelay = jsonObject.has(ZoneFuncTag.MOVE_DELAY) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.MOVE_DELAY).getAsInt() : 0;
-        int moveTime = jsonObject.has(ZoneFuncTag.MOVE_TIME) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.MOVE_TIME).getAsInt() : 0;
-        int tickFreq = jsonObject.has(ZoneFuncTag.TICK_FREQUENCY) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.TICK_FREQUENCY).getAsInt() : 20;
-        int tickOffset = jsonObject.has(ZoneFuncTag.TICK_OFFSET) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.TICK_OFFSET).getAsInt() : -1;
+        int moveDelay = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.MOVE_DELAY, 0);
+        int moveTime = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.MOVE_TIME, 0);
+        int tickFreq = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.TICK_FREQUENCY, 20);
+        int tickOffset = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.TICK_OFFSET, -1);
 
-        boolean trackPlayer = jsonObject.has(ZoneFuncTag.FIREWORK_TRACK) && jsonObject.getAsJsonPrimitive(ZoneFuncTag.FIREWORK_TRACK).getAsBoolean();
-        int amount = jsonObject.has(ZoneFuncTag.FIREWORK_AMOUNT) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.FIREWORK_AMOUNT).getAsInt() : 3;
-        int interval = jsonObject.has(ZoneFuncTag.FIREWORK_INTERVAL) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.FIREWORK_INTERVAL).getAsInt() : 20;
-        int vRange = jsonObject.has(ZoneFuncTag.FIREWORK_V_RANGE) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.FIREWORK_V_RANGE).getAsInt() : 5;
-        int hRange = jsonObject.has(ZoneFuncTag.FIREWORK_H_RANGE) ? jsonObject.getAsJsonPrimitive(ZoneFuncTag.FIREWORK_H_RANGE).getAsInt() : 3;
-        boolean outside = jsonObject.has(ZoneFuncTag.FIREWORK_OUTSIDE) && jsonObject.getAsJsonPrimitive(ZoneFuncTag.FIREWORK_OUTSIDE).getAsBoolean();
+        boolean trackPlayer = JsonUtils.getJsonBoolean(jsonObject, ZoneFuncTag.FIREWORK_TRACK, false);
+        int amount = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.FIREWORK_AMOUNT, 3);
+        int interval = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.FIREWORK_INTERVAL, 20);
+        int vRange = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.FIREWORK_V_RANGE, 5);
+        int hRange = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.FIREWORK_H_RANGE, 3);
+        boolean outside = JsonUtils.getJsonBoolean(jsonObject, ZoneFuncTag.FIREWORK_OUTSIDE, false);
 
         return new FireworkFuncEntry(moveDelay, moveTime, tickFreq, tickOffset, trackPlayer, amount, interval, vRange, hRange, outside);
     }

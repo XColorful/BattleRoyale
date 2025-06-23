@@ -1,9 +1,9 @@
-package xiao.battleroyale.event.game;
+package xiao.battleroyale.event.effect;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import xiao.battleroyale.common.game.effect.firework.FireworkManager;
+import xiao.battleroyale.common.effect.firework.FireworkManager;
 
 public class FireworkEventHandler {
 
@@ -31,8 +31,5 @@ public class FireworkEventHandler {
             return;
         }
         FireworkManager.get().onTick();
-        if (FireworkManager.get().shouldEnd()) {
-            unregister();
-        }
     }
 }

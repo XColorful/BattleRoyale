@@ -9,18 +9,23 @@ import java.util.Map;
 import java.util.function.Function;
 
 public enum ZoneShapeType {
+    // 2D shape
     CIRCLE(ZoneShapeTag.CIRCLE, CircleEntry::fromJson),
     SQUARE(ZoneShapeTag.SQUARE, SquareEntry::fromJson),
     RECTANGLE(ZoneShapeTag.RECTANGLE, RectangleEntry::fromJson),
     HEXAGON(ZoneShapeTag.HEXAGON, HexagonEntry::fromJson),
-    POLYGON(ZoneShapeTag.POLYGON, PolygonEntry::fromJson);
+    POLYGON(ZoneShapeTag.POLYGON, PolygonEntry::fromJson),
+    ELLIPSE(ZoneShapeTag.ELLIPSE, EllipseEntry::fromJson),
+    STAR(ZoneShapeTag.STAR, StarEntry::fromJson),
+    // 3D shape
+    SPHERE(ZoneShapeTag.SPHERE, SphereEntry::fromJson);
 
     private final String name;
-    private final Function<JsonObject, ? extends IZoneShapeEntry> deseralizer;
+    private final Function<JsonObject, ? extends IZoneShapeEntry> deserializer;
 
-    ZoneShapeType(String name, Function<JsonObject, ? extends IZoneShapeEntry> deseralizer) {
+    ZoneShapeType(String name, Function<JsonObject, ? extends IZoneShapeEntry> deserializer) {
         this.name = name;
-        this.deseralizer = deseralizer;
+        this.deserializer = deserializer;
     }
 
     public String getName() {
@@ -28,7 +33,7 @@ public enum ZoneShapeType {
     }
 
     public Function<JsonObject, ? extends IZoneShapeEntry> getDeserializer() {
-        return deseralizer;
+        return deserializer;
     }
 
     private static final Map<String, ZoneShapeType> NAME_TO_TYPE = new HashMap<>();
