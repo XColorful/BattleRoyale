@@ -34,22 +34,6 @@ public class JsonUtils {
         return GSON.toJson(object);
     }
 
-    public static ILootEntry deserializeLootEntry(JsonObject jsonObject) {
-        try {
-            String type = jsonObject.getAsJsonPrimitive(LootEntryTag.TYPE_NAME).getAsString();
-            if (type == null) type = "";
-            LootEntryType lootEntryType = LootEntryType.fromName(type);
-            if (lootEntryType != null) {
-                return lootEntryType.getDeserializer().apply(jsonObject);
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            BattleRoyale.LOGGER.error("Failed to deserialize LootEntry: {}", e.getMessage());
-            return null;
-        }
-    }
-
     public static void writeJsonToFile(String filePath, JsonArray jsonArray) {
         Path path = Paths.get(filePath);
         if (Files.notExists(path.getParent())) {
@@ -77,7 +61,11 @@ public class JsonUtils {
 
         try {
             for (JsonElement element : jsonArray) {
-                String vec3String = element.getAsJsonPrimitive().getAsString();
+                JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
+                if (!jsonPrimitive.isString()) {
+                    continue;
+                }
+                String vec3String = jsonPrimitive.getAsString();
                 Vec3 v = StringUtils.parseVectorString(vec3String);
                 if (v != null) {
                     vec3List.add(v);
@@ -90,11 +78,43 @@ public class JsonUtils {
         return vec3List;
     }
 
+    public static List<Integer> readIntListFromJson(@Nullable JsonArray jsonArray) {
+        List<Integer> intList = new ArrayList<>();
+        if (jsonArray == null) {
+            return intList;
+        }
+
+        try {
+            for (JsonElement element : jsonArray) {
+                JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
+                if (!jsonPrimitive.isNumber()) {
+                    continue;
+                }
+                int x = (int) jsonPrimitive.getAsDouble();
+                intList.add(x);
+            }
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.warn("Failed to read int list from json");
+        }
+
+        return intList;
+    }
+
     public static JsonArray writeVec3ListToJson(List<Vec3> vec3List) {
         JsonArray jsonArray = new JsonArray();
 
         for (Vec3 v : vec3List) {
             jsonArray.add(StringUtils.vectorToString(v));
+        }
+
+        return jsonArray;
+    }
+
+    public static JsonArray writeIntListToJson(List<Integer> intList) {
+        JsonArray jsonArray = new JsonArray();
+
+        for (Integer x : intList) {
+            jsonArray.add(x);
         }
 
         return jsonArray;
@@ -233,25 +253,12 @@ public class JsonUtils {
 
     @NotNull
     public static List<Vec3> getJsonVecList(@Nullable JsonObject jsonObject, String key) {
-        List<Vec3> vec3List = new ArrayList<>();
-        JsonArray jsonArray = JsonUtils.getJsonArray(jsonObject, key, null);
-        if (jsonArray == null) {
-            return vec3List;
-        }
+        return readVec3ListFromJson(JsonUtils.getJsonArray(jsonObject, key, null));
+    }
 
-        try {
-            for (JsonElement element : jsonArray) {
-                String vec3String = element.getAsJsonPrimitive().getAsString();
-                Vec3 v = StringUtils.parseVectorString(vec3String);
-                if (v != null) {
-                    vec3List.add(v);
-                }
-            }
-        } catch (Exception e) {
-            BattleRoyale.LOGGER.warn("Failed to read Vec3 list from json");
-        }
-
-        return vec3List;
+    @NotNull
+    public static List<Integer> getJsonIntList(@Nullable JsonObject jsonObject, String key) {
+        return readIntListFromJson(JsonUtils.getJsonArray(jsonObject, key, null));
     }
 
     /**

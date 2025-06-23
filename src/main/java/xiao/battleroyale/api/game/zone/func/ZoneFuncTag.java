@@ -11,6 +11,7 @@ public final class ZoneFuncTag {
     public static final String FIREWORK = "firework";
     public static final String MUTEKI = "muteki";
     public static final String BOOST = "boost";
+    public static final String PARTICLE = "particle";
     public static final String EFFECT = "effect";
     public static final String ENTITY = "entity";
 
@@ -30,6 +31,12 @@ public final class ZoneFuncTag {
 
     // muteki
     public static final String MUTEKI_TIME = "mutekiTime";
+
+    // particle
+    public static final String PARTICLES = "particles";
+    public static final String SELECT_COUNT = "selectCount";
+    public static final String CHANNEL = "channel";
+    public static final String COOLDOWN = "cooldown";
 
     // effect
 
