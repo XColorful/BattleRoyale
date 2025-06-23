@@ -1,4 +1,4 @@
-package xiao.battleroyale.common.game.effect.muteki;
+package xiao.battleroyale.common.effect.muteki;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

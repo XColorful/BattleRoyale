@@ -5,7 +5,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
-import xiao.battleroyale.common.game.effect.EffectManager;
+import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 

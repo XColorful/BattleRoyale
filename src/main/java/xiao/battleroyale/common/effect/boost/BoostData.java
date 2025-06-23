@@ -1,4 +1,4 @@
-package xiao.battleroyale.common.game.effect.boost;
+package xiao.battleroyale.common.effect.boost;
 
 import net.minecraft.server.level.ServerLevel;
 

@@ -12,8 +12,8 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import xiao.battleroyale.common.game.effect.EffectManager;
-import xiao.battleroyale.common.game.effect.muteki.MutekiManager;
+import xiao.battleroyale.common.effect.EffectManager;
+import xiao.battleroyale.common.effect.muteki.MutekiManager;
 
 import java.util.Collection;
 

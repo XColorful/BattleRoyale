@@ -14,7 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.effect.EffectManager;
+import xiao.battleroyale.common.effect.EffectManager;
 
 import static xiao.battleroyale.command.CommandArg.*;
 

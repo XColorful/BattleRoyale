@@ -1,4 +1,4 @@
-package xiao.battleroyale.common.game.effect.particle;
+package xiao.battleroyale.common.effect.particle;
 
 import net.minecraft.core.particles.*;
 import net.minecraft.nbt.CompoundTag;

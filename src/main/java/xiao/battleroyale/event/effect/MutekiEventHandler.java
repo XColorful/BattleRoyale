@@ -5,7 +5,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import xiao.battleroyale.common.game.effect.muteki.MutekiManager;
+import xiao.battleroyale.common.effect.muteki.MutekiManager;
 
 public class MutekiEventHandler {
 

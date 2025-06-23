@@ -7,7 +7,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.effect.particle.IParticleEntry;
 import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
-import xiao.battleroyale.common.game.effect.particle.ParticleData;
+import xiao.battleroyale.common.effect.particle.ParticleData;
 import xiao.battleroyale.util.JsonUtils;
 
 public record ParticleDetailEntry(ResourceLocation particleType, int count, int lifeTime,

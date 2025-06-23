@@ -1,4 +1,4 @@
-package xiao.battleroyale.common.game.effect.particle;
+package xiao.battleroyale.common.effect.particle;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -11,8 +11,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
-import xiao.battleroyale.common.game.effect.boost.BoostData;
-import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.effect.boost.BoostData;
 
 import java.awt.*;
 import java.util.List;

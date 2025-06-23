@@ -1,4 +1,4 @@
-package xiao.battleroyale.common.game.effect.particle;
+package xiao.battleroyale.common.effect.particle;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;

@@ -1,4 +1,4 @@
-package xiao.battleroyale.common.game.effect.muteki;
+package xiao.battleroyale.common.effect.muteki;
 
 import net.minecraft.server.level.ServerLevel;
 

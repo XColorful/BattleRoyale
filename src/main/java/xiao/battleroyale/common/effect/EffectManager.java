@@ -1,4 +1,4 @@
-package xiao.battleroyale.common.game.effect;
+package xiao.battleroyale.common.effect;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -6,13 +6,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.effect.IEffectManager;
-import xiao.battleroyale.common.game.effect.boost.BoostManager;
-import xiao.battleroyale.common.game.effect.firework.FireworkManager;
-import xiao.battleroyale.common.game.effect.muteki.MutekiManager;
-import xiao.battleroyale.common.game.effect.particle.FixedParticleChannel;
-import xiao.battleroyale.common.game.effect.particle.FixedParticleData;
-import xiao.battleroyale.common.game.effect.particle.ParticleData;
-import xiao.battleroyale.common.game.effect.particle.ParticleManager;
+import xiao.battleroyale.common.effect.boost.BoostManager;
+import xiao.battleroyale.common.effect.firework.FireworkManager;
+import xiao.battleroyale.common.effect.muteki.MutekiManager;
+import xiao.battleroyale.common.effect.particle.FixedParticleChannel;
+import xiao.battleroyale.common.effect.particle.FixedParticleData;
+import xiao.battleroyale.common.effect.particle.ParticleData;
+import xiao.battleroyale.common.effect.particle.ParticleManager;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager.ParticleConfig;
 

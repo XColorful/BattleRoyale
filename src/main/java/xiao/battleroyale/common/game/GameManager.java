@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.command.sub.GameCommand;
-import xiao.battleroyale.common.game.effect.EffectManager;
+import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;

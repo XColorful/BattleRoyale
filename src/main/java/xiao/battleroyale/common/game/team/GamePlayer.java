@@ -3,7 +3,7 @@ package xiao.battleroyale.common.game.team;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.common.game.effect.EffectManager;
+import xiao.battleroyale.common.effect.EffectManager;
 
 import java.util.UUID;
 

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.team.TeamTag;
 import xiao.battleroyale.client.game.ClientGameDataManager;
-import xiao.battleroyale.common.game.effect.EffectManager;
+import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.util.ColorUtils;
