@@ -4,7 +4,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.effect.IEffectManager;
 import xiao.battleroyale.event.effect.ParticleEventHandler;
 
@@ -30,9 +29,7 @@ public class ParticleManager implements IEffectManager {
     private static boolean registered = false;
 
     public void onTick() {
-        BattleRoyale.LOGGER.info("ParticleManager::onTick()");
         entityParticles.entrySet().removeIf(entry -> {
-            BattleRoyale.LOGGER.info("entityParticles.size() = {}", entityParticles.size());
             EntityParticleTask task = entry.getValue();
             UUID entityUUID = task.entityUUID;
             AtomicReference<ServerLevel> serverLevel = new AtomicReference<>();
@@ -42,7 +39,6 @@ public class ParticleManager implements IEffectManager {
                 channel.channelCooldown--;
                 channel.particles.removeIf(particleData -> {
                     if (--particleData.delayRemain > 0) {
-                        BattleRoyale.LOGGER.info("particleData.delayRemain = {} > 0", particleData.delayRemain);
                         return false;
                     }
                     if (serverLevel.get() != particleData.level) {
@@ -59,7 +55,6 @@ public class ParticleManager implements IEffectManager {
                     Vec3 spawnPos = livingEntity.get().position();
                     particleData.spawnParticle(spawnPos);
                     particleData.delayRemain = particleData.particle.interval();
-                    BattleRoyale.LOGGER.info("particleData.delayRemain = {} > 0", particleData.delayRemain);
                     return ++particleData.finishedRepeat >= particleData.particle.repeat();
                 });
                 return channel.shouldEnd();
@@ -68,18 +63,15 @@ public class ParticleManager implements IEffectManager {
         });
 
         fixedParticles.entrySet().removeIf(entry -> {
-            BattleRoyale.LOGGER.info("fixedParticles.size() = {}", fixedParticles.size());
             FixedParticleChannel channel = entry.getValue();
             channel.channelCooldown--;
             channel.particles.removeIf(particleData -> {
                 if (--particleData.delayRemain > 0) {
-                    BattleRoyale.LOGGER.info("particleData.delayRemain = {} > 0", particleData.delayRemain);
                     return false;
                 }
                 // 生成固定位置粒子
                 particleData.spawnParticle(particleData.particlePos);
                 particleData.delayRemain = particleData.particle.interval();
-                BattleRoyale.LOGGER.info("particleData.delayRemain = {}", particleData.delayRemain);
                 return ++particleData.finishedRepeat >= particleData.particle.repeat();
             });
             return channel.shouldEnd();

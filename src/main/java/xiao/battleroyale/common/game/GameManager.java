@@ -71,6 +71,8 @@ public class GameManager extends AbstractGameManager {
     private int gameruleConfigId = 0;
     private int spawnConfigId = 0;
     private int botConfigId = 0;
+    private int winnerFireworkId = 0; // TODO 添加配置
+    private int winnerParticleId = 0; // TODO 添加配置
     private int maxGameTime; // 最大游戏持续时间，配置项
     private int maxInvalidTime = 60; // 最大离线/未加载时间，过期强制淘汰，配置项
     private int getMaxInvalidTick() { return maxInvalidTime * 20; }
@@ -369,11 +371,12 @@ public class GameManager extends AbstractGameManager {
 
     /**
      * 大吉大利！今晚吃鸡！
-     * 附加烟花效果
+     * 附加烟花，粒子效果（人机不触发）
      */
     private void notifyWinner(@NotNull GamePlayer gamePlayer) {
         ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
         if (player == null) {
+            BattleRoyale.LOGGER.info("Skipped to notify winner game player {}", gamePlayer.getPlayerName());
             return;
         }
         int teamId = gamePlayer.getGameTeamId();
@@ -392,7 +395,9 @@ public class GameManager extends AbstractGameManager {
 
         ChatUtils.sendTitleToPlayer(player, winnerTitle, teamWinMessage, 10, 80, 20);
 
+        // 暂时硬编码
         EffectManager.get().spawnPlayerFirework(player, 16, 4, 1.0F, 16.0F);
+        EffectManager.get().addGameParticle(serverLevel, player.position(), winnerParticleId, 0);
     }
 
     /**

@@ -17,10 +17,11 @@ public class ParticleConfigTag {
     public static final String PARAMETER = "parameter";
     public static final String SPEED = "speed";
     public static final String OFFSET = "offset";
+    public static final String OFFSET_RANGE = "offsetRange";
+    public static final String EXACT_OFFSET = "exactOffset";
     public static final String COLOR = "color";
     public static final String SCALE = "scale";
     public static final String NOTE = "note";
-    public static final String MOTION = "motion";
     public static final String NBT = "nbt";
 
     private ParticleConfigTag() {}

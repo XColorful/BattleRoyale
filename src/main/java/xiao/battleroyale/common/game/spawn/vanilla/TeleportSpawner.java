@@ -124,12 +124,6 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
      */
     @Override
     public void tick(int gameTime, List<GameTeam> gameTeams) {
-        if (gameTime == 1 && GameManager.get().shouldRecordStats()) {
-            int cnt = 1;
-            for (Vec3 v : spawnPos) {
-                BattleRoyale.LOGGER.info("Pre-calculated SpawnPos {}: {}", cnt++, v);
-            }
-        }
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel == null) {
             return;

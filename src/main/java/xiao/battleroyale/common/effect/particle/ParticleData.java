@@ -14,6 +14,7 @@ import xiao.battleroyale.config.common.effect.particle.ParticleDetailEntry;
 import xiao.battleroyale.config.common.effect.particle.ParticleParameterEntry;
 import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.NBTUtils;
+import xiao.battleroyale.util.Vec3Utils;
 
 import java.awt.*;
 
@@ -38,9 +39,9 @@ public class ParticleData {
     }
 
     public void spawnParticle(Vec3 spawnPos) {
-        BattleRoyale.LOGGER.info("In ParticleData, attempt to spawn particle");
+        BattleRoyale.LOGGER.debug("In ParticleData, attempt to spawn particle");
         if (this.level == null || this.level.isClientSide()) {
-            BattleRoyale.LOGGER.info("Failed: this.level == null || this.level.isClientSide()");
+            BattleRoyale.LOGGER.debug("Failed: this.level == null || this.level.isClientSide()");
             return;
         }
 
@@ -81,19 +82,41 @@ public class ParticleData {
         }
 
         if (options == null) {
-            BattleRoyale.LOGGER.warn("Failed to create ParticleOptions for {}, skipped", particleRL);
+            BattleRoyale.LOGGER.debug("Failed to create ParticleOptions for {}, skipped", particleRL);
             return;
         }
 
-        float speed = (parameter != null) ? parameter.speed() : 0.0F;
-        Vec3 offset = (parameter != null) ? parameter.offset() : Vec3.ZERO;
-        BattleRoyale.LOGGER.info("options:{}, spawnPos:{}, offset:{}, particle.count():{}, speed:{}", options, spawnPos, offset, this.particle.count(), speed);
-        this.level.sendParticles(options,
-                spawnPos.x() + offset.x(),
-                spawnPos.y() + offset.y(),
-                spawnPos.z() + offset.z(),
-                this.particle.count(),
-                0.0D, 0.0D, 0.0D,
-                speed);
+        float speed = 0;
+        Vec3 offset = Vec3.ZERO;
+        Vec3 offsetRange = Vec3.ZERO;
+        boolean exactOffset = false;
+        if (parameter != null) {
+            speed = parameter.speed();
+            offset = parameter.offset();
+            offsetRange = parameter.offsetRange();
+            exactOffset = parameter.exactOffset();
+        }
+        if (exactOffset) {
+            for (int i = 0; i < this.particle.count(); i++) {
+                Vec3 offsetVec = Vec3Utils.randomAdjustXYZ(offset, offsetRange, BattleRoyale.COMMON_RANDOM::nextFloat);
+                this.level.sendParticles(options,
+                        spawnPos.x() + offsetVec.x(),
+                        spawnPos.y() + offsetVec.y(),
+                        spawnPos.z() + offsetVec.z(),
+                        1,
+                        0.0D, 0.0D, 0.0D,
+                        speed);
+            }
+        } else {
+            for (int i = 0; i < this.particle.count(); i++) {
+                this.level.sendParticles(options,
+                        spawnPos.x() + offset.x(),
+                        spawnPos.y() + offset.y(),
+                        spawnPos.z() + offset.z(),
+                        this.particle.count(),
+                        offsetRange.x, offsetRange.y, offsetRange.z,
+                        speed);
+            }
+        }
     }
 }
