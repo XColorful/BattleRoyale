@@ -167,7 +167,7 @@ public class LootGenerator {
             if (config == null) {
                 return false;
             }
-            ILootEntry entry = config.entry();
+            ILootEntry entry = config.entry;
             generateLoot(entry, blockEntity, () -> serverLevel.getRandom().nextFloat(), gameId);
             return true;
         }
@@ -177,7 +177,7 @@ public class LootGenerator {
         LootConfig config = LootConfigManager.get().getLootConfig(blockEntity, configId);
 
         if (config != null && (blockGameId == null || !blockGameId.equals(gameId))) {
-            ILootEntry entry = config.entry();
+            ILootEntry entry = config.entry;
             generateLoot(serverLevel, entry, (AbstractLootBlockEntity) lootObject, () -> serverLevel.getRandom().nextFloat(), gameId);
             lootObject.setGameId(gameId);
             blockEntity.setChanged();

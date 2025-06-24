@@ -1,6 +1,8 @@
 package xiao.battleroyale.api.game.gamerule;
 
-public class BattleroyaleEntryTag {
+import xiao.battleroyale.api.ConfigEntryTag;
+
+public class BattleroyaleEntryTag extends ConfigEntryTag {
 
     public static final String PLAYER_TOTAL = "playerTotal";
     public static final String TEAM_SIZE = "teamSize";

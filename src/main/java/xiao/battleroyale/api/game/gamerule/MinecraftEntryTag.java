@@ -1,6 +1,8 @@
 package xiao.battleroyale.api.game.gamerule;
 
-public class MinecraftEntryTag {
+import xiao.battleroyale.api.ConfigEntryTag;
+
+public class MinecraftEntryTag extends ConfigEntryTag {
 
     public static final String ADVENTURE = "adventureMode";
     public static final String MOB_GRIEFING = "mobGriefing";

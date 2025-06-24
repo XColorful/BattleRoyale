@@ -1,6 +1,8 @@
 package xiao.battleroyale.api.game.spawn;
 
-public class SpawnConfigTag {
+import xiao.battleroyale.api.ConfigEntryTag;
+
+public class SpawnConfigTag extends ConfigEntryTag {
 
     public static final String SPAWN_ID = "id";
     public static final String SPAWN_NAME = "name";

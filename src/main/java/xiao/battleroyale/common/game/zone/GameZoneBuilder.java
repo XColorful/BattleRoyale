@@ -22,7 +22,7 @@ public class GameZoneBuilder {
     public GameZoneBuilder withZoneConfig(ZoneConfig zoneConfig) {
         this.zoneId = zoneConfig.getZoneId();
         this.zoneName = zoneConfig.getZoneName();
-        this.zoneColor = zoneConfig.getColor();
+        this.zoneColor = zoneConfig.getZoneColor();
         this.zoneDelay = zoneConfig.getZoneDelay();
         this.zoneTime = zoneConfig.getZoneTime();
         this.funcEntry = zoneConfig.getZoneFuncEntry();

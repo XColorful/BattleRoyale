@@ -10,6 +10,7 @@ import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
 import xiao.battleroyale.common.effect.particle.FixedParticleData;
 import xiao.battleroyale.common.effect.particle.ParticleData;
 import xiao.battleroyale.config.common.AbstractConfigManager;
+import xiao.battleroyale.config.common.AbstractSingleConfig;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.effect.particle.defaultconfigs.DefaultParticleConfigGenerator;
 import xiao.battleroyale.util.JsonUtils;
@@ -42,18 +43,17 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
 
     protected final int DEFAULT_PARTICLE_CONFIG_FOLDER_ID = 0;
 
-    public static class ParticleConfig implements IParticleSingleEntry {
+    public static class ParticleConfig extends AbstractSingleConfig implements IParticleSingleEntry {
         public static final String CONFIG_TYPE = "ParticleConfig";
 
-        private final int id;
-        private final String name;
-        private final String  color;
-        private final ParticleDetailEntry entry;
+        public final ParticleDetailEntry entry;
 
         public ParticleConfig(int id, String name, String color, ParticleDetailEntry entry) {
-            this.id = id;
-            this.name = name;
-            this.color = color;
+            this(id, name, color, false, entry);
+        }
+
+        public ParticleConfig(int id, String name, String color, boolean isDefault, ParticleDetailEntry entry) {
+            super(id, name, color, isDefault);
             this.entry = entry;
         }
 
@@ -89,6 +89,7 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
         public JsonObject toJson() {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty(ParticleConfigTag.PARTICLE_ID, id);
+            jsonObject.addProperty(ParticleConfigTag.DEFAULT, isDefault);
             jsonObject.addProperty(ParticleConfigTag.PARTICLE_NAME, name);
             jsonObject.addProperty(ParticleConfigTag.PARTICLE_COLOR, color);
             if (entry != null) {
@@ -157,7 +158,7 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
                 BattleRoyale.LOGGER.warn("Skipped invalid particle config in {}", filePath);
                 return null;
             }
-
+            boolean isDefault = JsonUtils.getJsonBoolean(configObject, ParticleConfigTag.DETAIL_ENTRY, false);
             String name = JsonUtils.getJsonString(configObject, ParticleConfigTag.PARTICLE_NAME, "");
             String color = JsonUtils.getJsonString(configObject, ParticleConfigTag.PARTICLE_COLOR, "#FFFFFF");
             JsonObject jsonObject = JsonUtils.getJsonObject(configObject, ParticleConfigTag.DETAIL_ENTRY, null);
@@ -167,7 +168,7 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
                 return null;
             }
 
-            return new ParticleConfig(id, name, color, detailEntry);
+            return new ParticleConfig(id, name, color, isDefault, detailEntry);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(), filePath, e.getMessage());
             return null;

@@ -7,4 +7,6 @@ public interface IConfigSingleEntry extends IConfigEntry {
      * 用于对多个独立配置排序
      */
     int getConfigId();
+
+    boolean isDefaultSelect();
 }

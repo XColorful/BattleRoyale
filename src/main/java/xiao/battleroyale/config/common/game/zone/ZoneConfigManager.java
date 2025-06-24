@@ -11,6 +11,7 @@ import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.common.game.zone.GameZoneBuilder;
 import xiao.battleroyale.config.common.AbstractConfigManager;
+import xiao.battleroyale.config.common.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.defaultconfigs.DefaultZoneConfigGenerator;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
@@ -43,21 +44,20 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
 
     protected final int DEFAULT_ZONE_CONFIG_FOLDER = 0;
 
-    public static class ZoneConfig implements IZoneSingleEntry {
+    public static class ZoneConfig extends AbstractSingleConfig implements IZoneSingleEntry {
         public static final String CONFIG_TYPE = "ZoneConfig";
 
-        public final int zoneId;
-        private final String zoneName;
-        private final String zoneColor;
-        private final int zoneDelay;
-        private final int zoneTime;
-        private final IZoneFuncEntry zoneFuncEntry;
-        private final IZoneShapeEntry zoneShapeEntry;
+        public final int zoneDelay;
+        public final int zoneTime;
+        public final IZoneFuncEntry zoneFuncEntry;
+        public final IZoneShapeEntry zoneShapeEntry;
 
         public ZoneConfig(int zoneId, String zoneName, String zoneColor, int zoneDelay, int zoneTime, IZoneFuncEntry zoneFuncEntry, IZoneShapeEntry zoneShapeEntry) {
-            this.zoneId = zoneId;
-            this.zoneName = zoneName;
-            this.zoneColor = zoneColor;
+            this(zoneId, zoneName, zoneColor, false, zoneDelay, zoneTime, zoneFuncEntry, zoneShapeEntry);
+        }
+
+        public ZoneConfig(int zoneId, String zoneName, String zoneColor, boolean isDefault, int zoneDelay, int zoneTime, IZoneFuncEntry zoneFuncEntry, IZoneShapeEntry zoneShapeEntry) {
+            super(zoneId, zoneName, zoneColor, isDefault);
             this.zoneDelay = zoneDelay;
             this.zoneTime = zoneTime;
             this.zoneFuncEntry = zoneFuncEntry;
@@ -65,13 +65,13 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
         }
 
         public int getZoneId() {
-            return zoneId;
+            return id;
         }
         public String getZoneName() {
-            return zoneName;
+            return name;
         }
-        public String getColor() {
-            return zoneColor;
+        public String getZoneColor() { // 暂时用配置颜色作为区域颜色
+            return color;
         }
         public int getZoneDelay() {
             return zoneDelay;
@@ -101,9 +101,10 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
         @Override
         public JsonObject toJson() {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty(ZoneConfigTag.ZONE_ID, zoneId);
-            jsonObject.addProperty(ZoneConfigTag.ZONE_NAME, zoneName);
-            jsonObject.addProperty(ZoneConfigTag.ZONE_COLOR, zoneColor);
+            jsonObject.addProperty(ZoneConfigTag.ZONE_ID, id);
+            jsonObject.addProperty(ZoneConfigTag.DEFAULT, isDefault);
+            jsonObject.addProperty(ZoneConfigTag.ZONE_NAME, name);
+            jsonObject.addProperty(ZoneConfigTag.ZONE_COLOR, color);
             jsonObject.addProperty(ZoneConfigTag.ZONE_DELAY, zoneDelay);
             jsonObject.addProperty(ZoneConfigTag.ZONE_TIME, zoneTime);
             if (zoneFuncEntry != null) {
@@ -197,7 +198,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
                 BattleRoyale.LOGGER.warn("Skipped invalid zone config in {}", filePath);
                 return null;
             }
-
+            boolean isDefault = JsonUtils.getJsonBoolean(configObject, ZoneConfigTag.DEFAULT, false);
             String zoneName = JsonUtils.getJsonString(configObject, ZoneConfigTag.ZONE_NAME, "");
             String zoneColor = JsonUtils.getJsonString(configObject, ZoneConfigTag.ZONE_COLOR, "#0000FF");
             int zoneDelay = JsonUtils.getJsonInt(configObject, ZoneConfigTag.ZONE_DELAY, 0);
@@ -209,7 +210,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
                 return null;
             }
 
-            return new ZoneConfig(zoneId, zoneName, zoneColor, zoneDelay, zoneTime, zoneFuncEntry, zoneShapeEntry);
+            return new ZoneConfig(zoneId, zoneName, zoneColor, isDefault, zoneDelay, zoneTime, zoneFuncEntry, zoneShapeEntry);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(), filePath, e.getMessage());
             return null;
