@@ -6,6 +6,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.GameruleConfigTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleSingleEntry;
 import xiao.battleroyale.config.common.AbstractConfigManager;
+import xiao.battleroyale.config.common.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.defaultconfigs.DefaultGameruleConfigGenerator;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
@@ -41,28 +42,27 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
 
     protected final int DEFAULT_GAMERULE_CONFIG_FOLDER = 0;
 
-    public static class GameruleConfig implements IGameruleSingleEntry {
+    public static class GameruleConfig extends AbstractSingleConfig implements IGameruleSingleEntry {
         public static final String CONFIG_TYPE = "GameruleConfig";
 
-        private final int gameId;
-        private final String gameName;
-        private final String color;
-        private final BattleroyaleEntry brEntry;
-        private final MinecraftEntry mcEntry;
+        public final BattleroyaleEntry brEntry;
+        public final MinecraftEntry mcEntry;
 
         public GameruleConfig(int gameId, String name, String color, BattleroyaleEntry brEntry, MinecraftEntry mcEntry) {
-            this.gameId = gameId;
-            this.gameName = name;
-            this.color = color;
+            this(gameId, name, color, false, brEntry, mcEntry);
+        }
+
+        public GameruleConfig(int gameId, String name, String color, boolean isDefault, BattleroyaleEntry brEntry, MinecraftEntry mcEntry) {
+            super(gameId, name, color, isDefault);
             this.brEntry = brEntry;
             this.mcEntry = mcEntry;
         }
 
         public int getGameId() {
-            return gameId;
+            return id;
         }
         public String getGameName() {
-            return gameName;
+            return name;
         }
         public String getColor() {
             return color;
@@ -85,8 +85,9 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
         @Override
         public JsonObject toJson() {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty(GameruleConfigTag.GAME_ID, gameId);
-            jsonObject.addProperty(GameruleConfigTag.GAME_NAME, gameName);
+            jsonObject.addProperty(GameruleConfigTag.GAME_ID, id);
+            jsonObject.addProperty(GameruleConfigTag.DEFAULT, isDefault);
+            jsonObject.addProperty(GameruleConfigTag.GAME_NAME, name);
             jsonObject.addProperty(GameruleConfigTag.GAME_COLOR, color);
             if (brEntry != null) {
                 jsonObject.add(GameruleConfigTag.BATTLEROYALE_ENTRY, brEntry.toJson());
@@ -172,7 +173,7 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
                 BattleRoyale.LOGGER.warn("Skipped invalid gamerule config in {}", filePath);
                 return null;
             }
-
+            boolean isDefault = JsonUtils.getJsonBoolean(configObject, GameruleConfigTag.DEFAULT, false);
             String gameName = JsonUtils.getJsonString(configObject, GameruleConfigTag.GAME_NAME, "");
             String color = JsonUtils.getJsonString(configObject, GameruleConfigTag.GAME_COLOR, "");
             BattleroyaleEntry brEntry = GameruleConfig.deserializeBattleroyaleEntry(brEntryObject);

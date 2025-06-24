@@ -11,6 +11,7 @@ import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.AbstractConfigManager;
+import xiao.battleroyale.config.common.AbstractSingleConfig;
 import xiao.battleroyale.config.common.loot.defaultconfigs.DefaultLootConfigGenerator;
 import xiao.battleroyale.config.common.loot.type.LootEntryType;
 import xiao.battleroyale.util.JsonUtils;
@@ -59,8 +60,19 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     /**
      * 目前generateLootData需要手动调用this.entry.generateLootData(Random)
      */
-    public record LootConfig(int lootId, String name, String color, ILootEntry entry) implements IConfigSingleEntry {
+    public static class LootConfig extends AbstractSingleConfig {
         public static final String CONFIG_TYPE = "LootConfig";
+
+        public final ILootEntry entry;
+
+        public LootConfig(int lootId, String name, String color, ILootEntry entry) {
+            this(lootId, name, color, false, entry);
+        }
+
+        public LootConfig(int lootId, String name, String color, boolean isDefault, ILootEntry entry) {
+            super(lootId, name, color, isDefault);
+            this.entry = entry;
+        }
 
     @Override
         public String getType() {
@@ -70,18 +82,14 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
         @Override
         public JsonObject toJson() {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty(LootConfigTag.LOOT_ID, lootId);
+            jsonObject.addProperty(LootConfigTag.LOOT_ID, id);
+            jsonObject.addProperty(LootConfigTag.DEFAULT, isDefault);
             jsonObject.addProperty(LootConfigTag.LOOT_NAME, name);
             jsonObject.addProperty(LootConfigTag.LOOT_COLOR, color);
             if (entry != null) {
                 jsonObject.add(LootConfigTag.LOOT_ENTRY, entry.toJson());
             }
             return jsonObject;
-        }
-
-        @Override
-        public int getConfigId() {
-            return lootId();
         }
 
         @Nullable
@@ -102,7 +110,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     }
 
     @Override protected Comparator<LootConfig> getConfigIdComparator(int configType) {
-        return Comparator.comparingInt(LootConfig::lootId);
+        return Comparator.comparingInt(LootConfig::getConfigId);
     }
 
     /**
@@ -160,6 +168,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
                 BattleRoyale.LOGGER.warn("Skipped invalid loot config in {}", filePath);
                 return null;
             }
+            boolean isDefault = JsonUtils.getJsonBoolean(configObject, LootConfigTag.DEFAULT, false);
             String name = JsonUtils.getJsonString(configObject, LootConfigTag.LOOT_NAME, "");
             String color = JsonUtils.getJsonString(configObject, LootConfigTag.LOOT_COLOR, "#FFFFFF");
             ILootEntry lootEntry = LootConfig.deserializeLootEntry(lootEntryObject);
@@ -167,7 +176,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
                 BattleRoyale.LOGGER.error("Failed to deserialize loot entry for id: {} in {}", lootId, filePath);
                 return null;
             }
-            return new LootConfig(lootId, name, color, lootEntry);
+            return new LootConfig(lootId, name, color, isDefault, lootEntry);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(), filePath, e.getMessage());
             return null;

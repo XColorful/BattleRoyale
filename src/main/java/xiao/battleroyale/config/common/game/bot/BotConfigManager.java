@@ -2,9 +2,9 @@ package xiao.battleroyale.config.common.game.bot;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.IConfigSingleEntry;
 import xiao.battleroyale.api.game.bot.IBotEntry;
 import xiao.battleroyale.config.common.AbstractConfigManager;
+import xiao.battleroyale.config.common.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 
 import java.nio.file.Path;
@@ -35,24 +35,30 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
 
     protected final int DEFAULT_BOT_CONFIG_FOLDER = 0;
 
-    public record BotConfig(int id, String name, String color, IBotEntry entry) implements IConfigSingleEntry {
-            public static final String CONFIG_TYPE = "BotConfig";
+    public class BotConfig extends AbstractSingleConfig {
+        public static final String CONFIG_TYPE = "BotConfig";
+
+        public final IBotEntry entry;
+
+        public BotConfig(int id, String name, String color, IBotEntry entry) {
+            this(id, name, color, false, entry);
+        }
+
+        public BotConfig(int id, String name, String color, boolean isDefault, IBotEntry entry) {
+            super(id, name, color, isDefault);
+            this.entry = entry;
+        }
 
         @Override
-            public String getType() {
-                return CONFIG_TYPE;
-            }
-
-            @Override
-            public JsonObject toJson() {
-                return null;
-            }
-
-            @Override
-            public int getConfigId() {
-                return id();
-            }
+        public String getType() {
+            return CONFIG_TYPE;
         }
+
+        @Override
+        public JsonObject toJson() {
+            return null;
+        }
+    }
 
 
     @Override protected Comparator<BotConfig> getConfigIdComparator(int configType) {

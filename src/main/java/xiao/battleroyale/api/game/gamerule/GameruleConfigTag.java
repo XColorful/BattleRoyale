@@ -1,6 +1,8 @@
 package xiao.battleroyale.api.game.gamerule;
 
-public class GameruleConfigTag {
+import xiao.battleroyale.api.ConfigEntryTag;
+
+public class GameruleConfigTag extends ConfigEntryTag {
 
     public static final String GAME_ID = "gameId";
     public static final String GAME_NAME = "gameName";

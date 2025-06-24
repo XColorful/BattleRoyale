@@ -40,6 +40,6 @@ public class DefaultAirdrop{
         LootConfig lootConfig = new LootConfig(201, "Netherite Airdrop", "#FFFF00",
                 multiEntry);
 
-        return multiEntry.toJson();
+        return lootConfig.toJson();
     }
 }

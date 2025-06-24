@@ -1,6 +1,8 @@
 package xiao.battleroyale.api.game.effect.particle;
 
-public class ParticleConfigTag {
+import xiao.battleroyale.api.ConfigEntryTag;
+
+public class ParticleConfigTag extends ConfigEntryTag {
 
     public static final String PARTICLE_ID = "id";
     public static final String PARTICLE_NAME = "name";

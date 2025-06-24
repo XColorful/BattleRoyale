@@ -1,6 +1,8 @@
 package xiao.battleroyale.api.loot;
 
-public final class LootConfigTag {
+import xiao.battleroyale.api.ConfigEntryTag;
+
+public final class LootConfigTag extends ConfigEntryTag {
     
     public static final String LOOT_ID = "lootId";
     public static final String LOOT_NAME = "name";

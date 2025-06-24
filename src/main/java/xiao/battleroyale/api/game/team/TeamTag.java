@@ -1,6 +1,8 @@
 package xiao.battleroyale.api.game.team;
 
-public class TeamTag {
+import xiao.battleroyale.api.ConfigEntryTag;
+
+public class TeamTag extends ConfigEntryTag {
     
     public static final String TEAM_ID = "id";
     public static final String TEAM_COLOR = "color";

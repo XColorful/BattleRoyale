@@ -56,6 +56,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
     protected static class FolderConfigData<T extends IConfigEntry> {
         public int DEFAULT_CONFIG_ID = 0;
         // 文件夹下所有json文件数据
+        // Map<Integer, T>内容与List<T>相同，只是用T.id作为键加速查找
         public final Map<String, Map<Integer, T>> fileConfigs = new HashMap<>(); // fileName -> .json
         public final Map<String, List<T>> fileConfigsList = new HashMap<>(); // fileName -> .json
         // 当前json文件数据
@@ -248,6 +249,19 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
 
         if (!fileConfigs.containsKey(fileNameString)) { // 之前的文件名不存在
             fileNameString = fileConfigs.keySet().iterator().next();
+            for (Map.Entry<String, List<T>> entry : allFileConfigs.entrySet()) {
+                boolean foundDefault = false;
+                for (T configEntry : entry.getValue()) {
+                    if (configEntry.isDefaultSelect()) {
+                        fileNameString = entry.getKey();
+                        foundDefault = true;
+                        break;
+                    }
+                }
+                if (foundDefault) {
+                    break;
+                }
+            }
         }
         return switchConfigFile(fileNameString, folderId);
     }

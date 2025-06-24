@@ -62,13 +62,13 @@ public class LootSpawner extends AbstractLootBlock {
 
                     LootConfig nextConfig = allConfigs.get(0);
                     for (LootConfig config : allConfigs) {
-                        if (config.lootId() > currentConfigId) {
+                        if (config.getConfigId() > currentConfigId) {
                             nextConfig = config;
                             break;
                         }
                     }
-                    lootSpawnerBlockEntity.setConfigId(nextConfig.lootId());
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.loot_spawner_lootid_switched", nextConfig.lootId(), nextConfig.name()));
+                    lootSpawnerBlockEntity.setConfigId(nextConfig.getConfigId());
+                    player.sendSystemMessage(Component.translatable("battleroyale.message.loot_spawner_lootid_switched", nextConfig.getConfigId(), nextConfig.name));
                     return InteractionResult.SUCCESS;
                 } else { // 打开界面
                     NetworkHooks.openScreen((ServerPlayer) player, lootSpawnerBlockEntity, (buf) -> {
