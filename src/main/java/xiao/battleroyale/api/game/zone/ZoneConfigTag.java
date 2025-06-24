@@ -1,6 +1,8 @@
 package xiao.battleroyale.api.game.zone;
 
-public final class ZoneConfigTag {
+import xiao.battleroyale.api.ConfigEntryTag;
+
+public final class ZoneConfigTag extends ConfigEntryTag {
 
     public static final String ZONE_ID = "zoneId";
     public static final String ZONE_NAME = "zoneName";

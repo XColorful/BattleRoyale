@@ -13,7 +13,7 @@ import java.util.Arrays;
 import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.LOOT_SPAWNER;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
-public class DefaultLootSpawner{
+public class DefaultLootSpawner {
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 

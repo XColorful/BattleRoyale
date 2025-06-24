@@ -9,6 +9,7 @@ import xiao.battleroyale.api.game.spawn.ISpawnSingleEntry;
 import xiao.battleroyale.api.game.spawn.SpawnConfigTag;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.config.common.AbstractConfigManager;
+import xiao.battleroyale.config.common.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.spawn.defaultconfigs.DefaultSpawnConfigGenerator;
 import xiao.battleroyale.config.common.game.spawn.type.SpawnEntryType;
@@ -42,8 +43,19 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
 
     protected final int DEFAULT_SPAWN_CONFIG_FOLDER = 0;
 
-    public record SpawnConfig(int id, String name, String color, ISpawnEntry entry) implements ISpawnSingleEntry {
+    public static class SpawnConfig extends AbstractSingleConfig implements ISpawnSingleEntry {
         public static final String CONFIG_TYPE = "SpawnConfig";
+
+        public final ISpawnEntry entry;
+
+        public SpawnConfig(int id, String name, String color, ISpawnEntry entry) {
+            this(id, name, color, false, entry);
+        }
+
+        public SpawnConfig(int id, String name, String color, boolean isDefault, ISpawnEntry entry) {
+            super(id, name, color, isDefault);
+            this.entry = entry;
+        }
 
         @Override
             public IGameSpawner createGameSpawner() {
@@ -59,17 +71,13 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
         public JsonObject toJson() {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty(SpawnConfigTag.SPAWN_ID, id);
+            jsonObject.addProperty(SpawnConfigTag.DEFAULT, isDefault);
             jsonObject.addProperty(SpawnConfigTag.SPAWN_NAME, name);
             jsonObject.addProperty(SpawnConfigTag.SPAWN_COLOR, color);
             if (entry != null) {
                 jsonObject.add(SpawnConfigTag.SPAWN_ENTRY, entry.toJson());
             }
             return jsonObject;
-        }
-
-        @Override
-        public int getConfigId() {
-            return id();
         }
 
         public static ISpawnEntry deserializeSpawnEntry(JsonObject jsonObject) {
@@ -89,7 +97,7 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
     }
 
     @Override protected Comparator<SpawnConfig> getConfigIdComparator(int configType) {
-        return Comparator.comparingInt(SpawnConfig::id);
+        return Comparator.comparingInt(SpawnConfig::getConfigId);
     }
 
     /**
@@ -126,7 +134,7 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
                 BattleRoyale.LOGGER.warn("Skipped invalid spawn config in {}", filePath);
                 return null;
             }
-
+            boolean isDefault = JsonUtils.getJsonBoolean(configObject, SpawnConfigTag.DEFAULT, false);
             String name = JsonUtils.getJsonString(configObject, SpawnConfigTag.SPAWN_NAME, "");
             String color = JsonUtils.getJsonString(configObject, SpawnConfigTag.SPAWN_COLOR, "#FFFFFF");
             ISpawnEntry spawnEntry = SpawnConfig.deserializeSpawnEntry(spawnEntryObject);
@@ -135,7 +143,7 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
                 return null;
             }
 
-            return new SpawnConfig(id, name, color, spawnEntry);
+            return new SpawnConfig(id, name, color, isDefault, spawnEntry);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(), filePath, e.getMessage());
             return null;

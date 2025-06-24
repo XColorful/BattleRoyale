@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.game.bot;
 
-import xiao.battleroyale.api.IConfigEntry;
+import xiao.battleroyale.api.IConfigSingleEntry;
 
-public interface IBotEntry extends IConfigEntry {
+public interface IBotEntry extends IConfigSingleEntry {
 }

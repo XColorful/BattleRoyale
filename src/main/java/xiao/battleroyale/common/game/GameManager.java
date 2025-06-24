@@ -746,7 +746,7 @@ public class GameManager extends AbstractGameManager {
     }
     public String getSpawnConfigName(int id) {
         SpawnConfigManager.SpawnConfig config = SpawnConfigManager.get().getSpawnConfig(id);
-        return config != null ? config.name() : "";
+        return config != null ? config.name : "";
     }
     public boolean setBotConfigId(int id) {
         if (id < 0 || BotConfigManager.get().getBotConfig(id) == null) {
@@ -757,6 +757,6 @@ public class GameManager extends AbstractGameManager {
     }
     public String getBotConfigName(int id) {
         BotConfigManager.BotConfig config = BotConfigManager.get().getBotConfig(id);
-        return config != null ? config.name() : "";
+        return config != null ? config.name : "";
     }
 }
