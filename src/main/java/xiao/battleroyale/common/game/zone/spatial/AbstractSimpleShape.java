@@ -23,6 +23,7 @@ import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.Vec3Utils;
 
 import static xiao.battleroyale.util.Vec3Utils.randomAdjustXZ;
+import static xiao.battleroyale.util.Vec3Utils.randomCircleXZ;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -245,7 +246,11 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             }
             if (endEntry.useRangeAsStartDimScale) {
                 Vec3 endRangeVec = Vec3Utils.scaleXZ(startDimension, endEntry.endCenterRange);
-                endCenter = randomAdjustXZ(endCenter, endRangeVec, random);
+                if (endEntry.useCircleRange) {
+                    endCenter = randomCircleXZ(endCenter, endRangeVec, random);
+                } else {
+                    endCenter = randomAdjustXZ(endCenter, endRangeVec, random);
+                }
             } else {
                 endCenter = randomAdjustXZ(endCenter, endEntry.endCenterRange, random);
             }

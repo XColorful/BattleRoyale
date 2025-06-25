@@ -29,6 +29,7 @@ public final class ZoneShapeTag {
     public static final String LOCK_PLAYER = "lockPlayer";
     public static final String PREVIOUS_SCALE = "scale";
     public static final String RANGE_AS_START_DIM_SCALE = "rangeAsStartDimScale";
+    public static final String USE_CIRCLE_RANGE = "useCircleRange";
     public static final String RANDOM_RANGE = "randomRange";
     public static final String PLAYER_ID = "playerId";
     public static final String SELECT_STANDING = "selectStanding";

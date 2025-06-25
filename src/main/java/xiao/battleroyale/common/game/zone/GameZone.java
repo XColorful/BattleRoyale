@@ -100,16 +100,6 @@ public class GameZone implements IGameZone {
         }
         if (tickableZone.isReady() && spatialZone.isDetermined()) {
             addZoneDetailProperty();
-            if (zoneId > 0) {
-                BattleRoyale.LOGGER.info("StartCenter: {}", spatialZone.getStartCenterPos());
-                for (int i = 0; i < 10; i++) {
-                    BattleRoyale.LOGGER.info("Center {}%: {}", i * 10F, spatialZone.getCenterPos(i / 10F));
-                }
-                BattleRoyale.LOGGER.info("StartDim: {}", spatialZone.getStartDimension());
-                for (int i = 0; i < 10; i++) {
-                    BattleRoyale.LOGGER.info("Dim {}%: {}", i * 10F, spatialZone.getDimension(i / 10F));
-                }
-            }
             created = true;
             present = true;
         } else {
@@ -135,7 +125,18 @@ public class GameZone implements IGameZone {
     }
 
     private boolean shouldTick(int gameTime) {
+        checkShouldFinish(gameTime);
         return isCreated() && isPresent() && !isFinished(); // GameZone
+    }
+
+    private boolean checkShouldFinish(int gameTime) {
+        if (gameTime > zoneDelay + zoneTime) {
+            present = false;
+            finished = true;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -151,9 +152,7 @@ public class GameZone implements IGameZone {
             return;
         }
 
-        if (gameTime > zoneDelay + zoneTime) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置
-            present = false;
-            finished = true;
+        if (checkShouldFinish(gameTime)) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置
             GameManager.get().addZoneInfo(this.zoneId, null); // 传入null视为提醒置空NBT
             return;
         }
