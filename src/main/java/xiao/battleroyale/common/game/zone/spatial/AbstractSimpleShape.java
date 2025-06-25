@@ -300,7 +300,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 && endCenter != null && endDimension != null) {
             // 预计算
             centerDist = endCenter.subtract(startCenter);
-            dimensionDist = endDimension.subtract(endDimension);
+            dimensionDist = endDimension.subtract(startDimension);
             rotateDist = endRotateDegree - startRotateDegree;
             // 缓存，用于加速判断isWithinZone
             cachedCenter = startCenter;
