@@ -8,5 +8,6 @@ public class DefaultGameruleConfigGenerator {
 
     public static void generateDefaultGameruleConfigs() {
         DefaultGamerule.generateDefaultConfigs();
+        PubgGamerule.generateDefaultConfigs();
     }
 }

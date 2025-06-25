@@ -84,7 +84,7 @@ public class Pubg8000x8000Casual {
     private static final double ZONE9_SHRINK_SCALE = 0.001;
     private static final float ZONE9_DAMAGE = 11F / 5F;
 
-    private static final int GAME_TIME = INIT_ZONE_DELAY + ZONE1_TIME + ZONE2_TIME + ZONE3_TIME + ZONE4_TIME + ZONE5_TIME + ZONE6_TIME + ZONE7_TIME + ZONE8_TIME + ZONE9_TIME;
+    public static final int GAME_TIME = INIT_ZONE_DELAY + ZONE1_TIME + ZONE2_TIME + ZONE3_TIME + ZONE4_TIME + ZONE5_TIME + ZONE6_TIME + ZONE7_TIME + ZONE8_TIME + ZONE9_TIME;
 
     public static void generateDefaultConfigs() {
         JsonArray zoneConfigJson = new JsonArray();
