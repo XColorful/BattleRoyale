@@ -116,7 +116,9 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
             }
             jsonObject.addProperty(ZoneConfigTag.ZONE_NAME, name);
             jsonObject.addProperty(ZoneConfigTag.ZONE_COLOR, color);
-            jsonObject.addProperty(ZoneConfigTag.PREVIOUS_ZONE_DELAY_ID, preZoneDelayId);
+            if (preZoneDelayId > -1) {
+                jsonObject.addProperty(ZoneConfigTag.PREVIOUS_ZONE_DELAY_ID, preZoneDelayId);
+            }
             jsonObject.addProperty(ZoneConfigTag.ZONE_DELAY, zoneDelay);
             jsonObject.addProperty(ZoneConfigTag.ZONE_TIME, zoneTime);
             if (zoneFuncEntry != null) {
