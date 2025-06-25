@@ -44,7 +44,7 @@ public record ParticleParameterEntry(float speed, String color, float scale, int
         String color = JsonUtils.getJsonString(jsonObject, ParticleConfigTag.COLOR, "");
         float scale = (float) JsonUtils.getJsonDouble(jsonObject, ParticleConfigTag.SCALE, 1);
         int note = JsonUtils.getJsonInt(jsonObject, ParticleConfigTag.NOTE, 0);
-        CompoundTag nbt = JsonUtils.getJsonNBT(jsonObject, ParticleConfigTag.NBT, new CompoundTag());
+        CompoundTag nbt = JsonUtils.getJsonNBT(jsonObject, ParticleConfigTag.NBT);
 
         return new ParticleParameterEntry(speed, color, scale, note, nbt);
     }

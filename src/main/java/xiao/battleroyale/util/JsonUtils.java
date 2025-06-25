@@ -240,8 +240,8 @@ public class JsonUtils {
         return primitive.getAsString();
     }
 
-    public static CompoundTag getJsonNBT(@Nullable JsonObject jsonObject, String key, CompoundTag defaultValue) {
-        String nbtString = getJsonString(jsonObject, key, "");
+    public static CompoundTag getJsonNBT(@Nullable JsonObject jsonObject, String key) {
+        String nbtString = getJsonString(jsonObject, key, "{}");
         return NBTUtils.stringToNBT(nbtString);
     }
 

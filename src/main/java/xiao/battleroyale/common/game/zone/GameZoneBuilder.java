@@ -14,6 +14,7 @@ public class GameZoneBuilder {
     private int zoneId;
     private String zoneName;
     private String zoneColor;
+    private int preZoneDelayId;
     private int zoneDelay;
     private int zoneTime;
     private IZoneFuncEntry funcEntry;
@@ -23,6 +24,7 @@ public class GameZoneBuilder {
         this.zoneId = zoneConfig.getZoneId();
         this.zoneName = zoneConfig.getZoneName();
         this.zoneColor = zoneConfig.getZoneColor();
+        this.preZoneDelayId = zoneConfig.getPreZoneDelayId();
         this.zoneDelay = zoneConfig.getZoneDelay();
         this.zoneTime = zoneConfig.getZoneTime();
         this.funcEntry = zoneConfig.getZoneFuncEntry();
@@ -38,6 +40,6 @@ public class GameZoneBuilder {
         }
         ITickableZone tickableZone = funcEntry.createTickableZone();
         ISpatialZone spatialZone = shapeEntry.createSpatialZone();
-        return new GameZone(zoneId, zoneName, zoneColor, zoneDelay, zoneTime, tickableZone, spatialZone);
+        return new GameZone(zoneId, zoneName, zoneColor, preZoneDelayId, zoneDelay, zoneTime, tickableZone, spatialZone);
     }
 }

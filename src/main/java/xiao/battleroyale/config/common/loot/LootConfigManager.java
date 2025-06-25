@@ -83,7 +83,9 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
         public JsonObject toJson() {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty(LootConfigTag.LOOT_ID, id);
-            jsonObject.addProperty(LootConfigTag.DEFAULT, isDefault);
+            if (isDefault) {
+                jsonObject.addProperty(LootConfigTag.DEFAULT, isDefault);
+            }
             jsonObject.addProperty(LootConfigTag.LOOT_NAME, name);
             jsonObject.addProperty(LootConfigTag.LOOT_COLOR, color);
             if (entry != null) {

@@ -71,7 +71,9 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
         public JsonObject toJson() {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty(SpawnConfigTag.SPAWN_ID, id);
-            jsonObject.addProperty(SpawnConfigTag.DEFAULT, isDefault);
+            if (isDefault) {
+                jsonObject.addProperty(SpawnConfigTag.DEFAULT, isDefault);
+            }
             jsonObject.addProperty(SpawnConfigTag.SPAWN_NAME, name);
             jsonObject.addProperty(SpawnConfigTag.SPAWN_COLOR, color);
             if (entry != null) {

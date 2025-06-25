@@ -23,6 +23,7 @@ import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.Vec3Utils;
 
 import static xiao.battleroyale.util.Vec3Utils.randomAdjustXZ;
+import static xiao.battleroyale.util.Vec3Utils.randomCircleXZ;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -243,7 +244,16 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 BattleRoyale.LOGGER.warn("Failed to calculate end center, type: {}", endEntry.endCenterType.getValue());
                 return;
             }
-            endCenter = randomAdjustXZ(endCenter, endEntry.endCenterRange, random);
+            if (endEntry.useRangeAsStartDimScale) {
+                Vec3 endRangeVec = Vec3Utils.scaleXZ(startDimension, endEntry.endCenterRange);
+                if (endEntry.useCircleRange) {
+                    endCenter = randomCircleXZ(endCenter, endRangeVec, random);
+                } else {
+                    endCenter = randomAdjustXZ(endCenter, endRangeVec, random);
+                }
+            } else {
+                endCenter = randomAdjustXZ(endCenter, endEntry.endCenterRange, random);
+            }
             endCenter = GameUtils.calculateCenterAndLerp(endCenter, standingGamePlayers, endEntry.playerCenterLerp);
             // end dimension
             switch (endEntry.endDimensionType) {
@@ -300,7 +310,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 && endCenter != null && endDimension != null) {
             // 预计算
             centerDist = endCenter.subtract(startCenter);
-            dimensionDist = endDimension.subtract(endDimension);
+            dimensionDist = endDimension.subtract(startDimension);
             rotateDist = endRotateDegree - startRotateDegree;
             // 缓存，用于加速判断isWithinZone
             cachedCenter = startCenter;

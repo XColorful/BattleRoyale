@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.game.zone;
 
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.AbstractGameManagerData;
 
@@ -14,8 +15,17 @@ public class ZoneData extends AbstractGameManagerData {
     private final List<IGameZone> gameZonesList = new ArrayList<>();
     private final Map<Integer, IGameZone> gameZones = new HashMap<>();
     private final List<QueuedZoneInfo> queuedZoneInfos = new ArrayList<>(); // 待处理的Zone信息 (ID, Delay)
-    private record QueuedZoneInfo(int zoneId, int zoneDelay) {}
-    private final LinkedList<IGameZone> currentZones = new LinkedList<>();
+    private final List<IGameZone> currentZones = new ArrayList<>();
+    private static class QueuedZoneInfo {
+        public int zoneId;
+        public int zoneDelay;
+        public QueuedZoneInfo(int zoneId, int zoneDelay) {
+            this.zoneId = zoneId;
+            this.zoneDelay = zoneDelay;
+        }
+        public int zoneId() { return zoneId; }
+        public int zoneDelay() { return zoneDelay; }
+    }
 
     public ZoneData() {
         super(DATA_NAME);
@@ -39,13 +49,33 @@ public class ZoneData extends AbstractGameManagerData {
             return;
         }
 
-        queuedZoneInfos.sort(Comparator.comparingInt(QueuedZoneInfo::zoneDelay) // 按延迟和ID排序
+        Map<Integer, Integer> infoIndexMap = new HashMap<>();
+        for (int i = 0; i < queuedZoneInfos.size(); i++) {
+            infoIndexMap.put(queuedZoneInfos.get(i).zoneId, i);
+        }
+
+        // 处理区域延迟叠加
+        queuedZoneInfos.sort(Comparator.comparingInt(QueuedZoneInfo::zoneId)); // 先按ID排序
+        for (QueuedZoneInfo zoneInfo : queuedZoneInfos) {
+            IGameZone currentZone = gameZones.get(zoneInfo.zoneId);
+            int preZoneDelayId = currentZone.previousZoneDelayId();
+            if (preZoneDelayId < 0 || !infoIndexMap.containsKey(preZoneDelayId)) {
+                continue;
+            }
+            QueuedZoneInfo info = queuedZoneInfos.get(infoIndexMap.get(preZoneDelayId));
+            if (info != null) {
+                zoneInfo.zoneDelay += info.zoneDelay;
+            }
+        }
+        // 准备用于游戏的排序
+        queuedZoneInfos.sort(Comparator.comparingInt(QueuedZoneInfo::zoneDelay) // 再次排序，先延迟后ID
                 .thenComparingInt(QueuedZoneInfo::zoneId));
 
         currentZones.clear(); // 确保为新生成
         for (QueuedZoneInfo info : queuedZoneInfos) {
             IGameZone zone = gameZones.get(info.zoneId());
             if (zone != null) { // 防御一下，没多少开销？
+                zone.setZoneDelay(info.zoneDelay);
                 currentZones.add(zone);
             }
         }
@@ -106,6 +136,8 @@ public class ZoneData extends AbstractGameManagerData {
      * 依赖于 currentZones 已按 zoneDelay 排序。
      * @param gameTime 当前游戏时间 (tick)
      * @return 当前需要Tick的圈的列表
+     * 可以考虑缓存当前最后索引，每tick检查1或n次，总共检查n次
+     * 二分总共检查nlog(n)次，问题不大，不引入复杂性
      */
     public List<IGameZone> getCurrentTickZones(int gameTime) {
         if (!locked) {

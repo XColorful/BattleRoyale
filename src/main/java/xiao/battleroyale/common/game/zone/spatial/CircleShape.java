@@ -30,8 +30,17 @@ public class CircleShape extends AbstractSimpleShape {
             return false;
         }
         double allowProgress = GameZone.allowedProgress(progress);
-        Vec3 center = getCenterPos(allowProgress);
-        Vec3 dimension = getDimension(allowProgress);
+        Vec3 center, dimension;
+        if (Math.abs(allowProgress - cachedProgress) < EPSILON) {
+            center = cachedCenter;
+            dimension = cachedDimension;
+        } else {
+            center = getCenterPos(allowProgress);
+            dimension = getDimension(allowProgress);
+            cachedCenter = center;
+            cachedDimension = dimension;
+            cachedProgress = allowProgress;
+        }
         double dimSq = dimension.x * dimension.z;
         boolean isZoneInverted = dimSq < 0;
         // 旋转对圆没有几何影响
