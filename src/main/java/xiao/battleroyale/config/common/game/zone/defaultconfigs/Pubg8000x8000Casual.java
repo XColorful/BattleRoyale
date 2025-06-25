@@ -103,14 +103,11 @@ public class Pubg8000x8000Casual {
 
     // 游戏边界
     public static JsonObject generateBorder(float halfWidth, int GAME_TIME) {
-        halfWidth = 200; // TODO do not set to 200
-        GAME_TIME /= 10; // TODO
-
         SafeFuncEntry safeFuncEntry = new SafeFuncEntry(0, 0, 200, 0, 666); // 固定边界的检查频率低一些
 
         StartEntry startEntry = new StartEntry();
-        startEntry.addFixedCenter(new Vec3(0, -64, -8192)); // TODO reset center.z to 0
-        startEntry.addFixedDimension(new Vec3(halfWidth, 170, halfWidth)); // TODO reset dim.y = 384
+        startEntry.addFixedCenter(new Vec3(0, -64, 0));
+        startEntry.addFixedDimension(new Vec3(halfWidth, 384, halfWidth));
 
         EndEntry endEntry = new EndEntry();
         endEntry.addPreviousCenter(0, 0);
@@ -129,22 +126,22 @@ public class Pubg8000x8000Casual {
         zoneConfigJson.add(generateBorder(8000 / 2F, GAME_TIME));
     }
 
-    // 当phase为1时，自动将边长乘以根号2倍
     public static void addPhase(JsonArray zoneConfigJson, int phase, double SHRINK_RANGE, double SHRINK_SCALE, int PRE_ZONE_TIME, int ZONE_TIME,
                                 int MOVE_DELAY, int MOVE_TIME, float DAMAGE) {
-        // TODO clean speed
-        PRE_ZONE_TIME /= 10;
-        ZONE_TIME /= 10;
-        MOVE_DELAY /= 10;
-        MOVE_TIME /= 10;
+        addPhase(zoneConfigJson, phase, SHRINK_RANGE, SHRINK_SCALE, PRE_ZONE_TIME, ZONE_TIME,
+                MOVE_DELAY, MOVE_TIME, DAMAGE, 1);
+    }
 
+    // 当phase为1时，自动将边长乘以根号2倍
+    public static void addPhase(JsonArray zoneConfigJson, int phase, double SHRINK_RANGE, double SHRINK_SCALE, int PRE_ZONE_TIME, int ZONE_TIME,
+                                int MOVE_DELAY, int MOVE_TIME, float DAMAGE, int prePhaseMinus) {
         // Forecast zone
         int forecastPhase = phase * 10;
         NoFuncEntry noFuncEntry = new NoFuncEntry(0, 20);
 
         StartEntry startEntry = new StartEntry();
-        startEntry.addPreviousCenter(forecastPhase - 10, 1);
-        startEntry.addPreviousDimension(forecastPhase - 10, 1);
+        startEntry.addPreviousCenter(forecastPhase - prePhaseMinus * 10, 1);
+        startEntry.addPreviousDimension(forecastPhase - prePhaseMinus * 10, 1);
         startEntry.addDimensionScale(phase == 1 ? Math.sqrt(2) : 1); // 正方形半边长 * sqrt(2) = 圆半径
 
         EndEntry endEntry = new EndEntry();
@@ -156,7 +153,7 @@ public class Pubg8000x8000Casual {
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry, false);
 
         ZoneConfig zoneConfig = new ZoneConfig(forecastPhase, "Phase" + phase + "Forecast", "#00FF0033",
-                forecastPhase - 10, PRE_ZONE_TIME, ZONE_TIME,
+                forecastPhase - prePhaseMinus * 10, PRE_ZONE_TIME, ZONE_TIME,
                 noFuncEntry, circleEntry);
         zoneConfigJson.add(zoneConfig.toJson());
 
