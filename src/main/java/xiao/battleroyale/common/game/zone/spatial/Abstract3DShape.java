@@ -227,7 +227,12 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                 BattleRoyale.LOGGER.warn("Failed to calculate end center, type: {}", endEntry.endCenterType.getValue());
                 return;
             }
-            endCenter = randomAdjustXYZ(endCenter, endEntry.endCenterRange, random);
+            if (endEntry.useRangeAsStartDimScale) {
+                Vec3 endRangeVec = Vec3Utils.scaleXYZ(startDimension, endEntry.endCenterRange);
+                endCenter = randomAdjustXYZ(endCenter, endRangeVec, random);
+            } else {
+                endCenter = randomAdjustXYZ(endCenter, endEntry.endCenterRange, random);
+            }
             endCenter = GameUtils.calculateCenterAndLerp(endCenter, standingGamePlayers, endEntry.playerCenterLerp);
             // end dimension
             switch (endEntry.endDimensionType) {

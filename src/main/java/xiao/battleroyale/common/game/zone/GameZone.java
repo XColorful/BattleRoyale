@@ -2,9 +2,11 @@ package xiao.battleroyale.common.game.zone;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
@@ -65,7 +67,8 @@ public class GameZone implements IGameZone {
     private final int zoneId;
     private final String zoneName;
     private final String zoneColor; // 格式如 #0000FF
-    private final int zoneDelay;
+    private final int preZoneDelayId;
+    private int zoneDelay;
     private final int zoneTime;
 
     private final ITickableZone tickableZone;
@@ -77,11 +80,12 @@ public class GameZone implements IGameZone {
     private double prevShapeProgress = -1;
 
     // 构造函数，由 Builder 调用
-    public GameZone(int zoneId, String zoneName, String zoneColor, int zoneDelay, int zoneTime,
+    public GameZone(int zoneId, String zoneName, String zoneColor, int preZoneDelayId, int zoneDelay, int zoneTime,
                     ITickableZone tickableZone, ISpatialZone spatialZone) {
         this.zoneId = zoneId;
         this.zoneName = zoneName;
         this.zoneColor = zoneColor;
+        this.preZoneDelayId = preZoneDelayId;
         this.zoneDelay = zoneDelay;
         this.zoneTime = zoneTime;
         this.tickableZone = tickableZone;
@@ -96,6 +100,16 @@ public class GameZone implements IGameZone {
         }
         if (tickableZone.isReady() && spatialZone.isDetermined()) {
             addZoneDetailProperty();
+            if (zoneId > 0) {
+                BattleRoyale.LOGGER.info("StartCenter: {}", spatialZone.getStartCenterPos());
+                for (int i = 0; i < 10; i++) {
+                    BattleRoyale.LOGGER.info("Center {}%: {}", i * 10F, spatialZone.getCenterPos(i / 10F));
+                }
+                BattleRoyale.LOGGER.info("StartDim: {}", spatialZone.getStartDimension());
+                for (int i = 0; i < 10; i++) {
+                    BattleRoyale.LOGGER.info("Dim {}%: {}", i * 10F, spatialZone.getDimension(i / 10F));
+                }
+            }
             created = true;
             present = true;
         } else {
@@ -158,6 +172,16 @@ public class GameZone implements IGameZone {
     @Override
     public int getZoneId() {
         return zoneId;
+    }
+
+    @Override
+    public int previousZoneDelayId() {
+        return preZoneDelayId;
+    }
+
+    @Override
+    public void setZoneDelay(int zoneDelay) {
+        this.zoneDelay = zoneDelay;
     }
 
     @Override

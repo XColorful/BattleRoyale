@@ -11,7 +11,7 @@ public class ClientGameDataManager {
 
     private static ClientGameDataManager instance;
 
-    private final Map<Integer, ClientZoneData> activeZones = new ConcurrentHashMap<>();
+    private final Map<Integer, ClientZoneData> activeZones = new ConcurrentHashMap<>(); // zoneId -> zondData
     public boolean hasZoneRender() { return !activeZones.isEmpty(); }
     private final ClientTeamData teamData = new ClientTeamData();
     public boolean hasTeamInfo() { return teamData.inTeam; }

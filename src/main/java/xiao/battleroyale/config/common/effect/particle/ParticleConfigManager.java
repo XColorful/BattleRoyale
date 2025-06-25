@@ -89,7 +89,9 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
         public JsonObject toJson() {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty(ParticleConfigTag.PARTICLE_ID, id);
-            jsonObject.addProperty(ParticleConfigTag.DEFAULT, isDefault);
+            if (isDefault) {
+                jsonObject.addProperty(ParticleConfigTag.DEFAULT, isDefault);
+            }
             jsonObject.addProperty(ParticleConfigTag.PARTICLE_NAME, name);
             jsonObject.addProperty(ParticleConfigTag.PARTICLE_COLOR, color);
             if (entry != null) {

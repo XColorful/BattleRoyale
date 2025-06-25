@@ -243,7 +243,12 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 BattleRoyale.LOGGER.warn("Failed to calculate end center, type: {}", endEntry.endCenterType.getValue());
                 return;
             }
-            endCenter = randomAdjustXZ(endCenter, endEntry.endCenterRange, random);
+            if (endEntry.useRangeAsStartDimScale) {
+                Vec3 endRangeVec = Vec3Utils.scaleXZ(startDimension, endEntry.endCenterRange);
+                endCenter = randomAdjustXZ(endCenter, endRangeVec, random);
+            } else {
+                endCenter = randomAdjustXZ(endCenter, endEntry.endCenterRange, random);
+            }
             endCenter = GameUtils.calculateCenterAndLerp(endCenter, standingGamePlayers, endEntry.playerCenterLerp);
             // end dimension
             switch (endEntry.endDimensionType) {

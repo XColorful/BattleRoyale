@@ -19,6 +19,7 @@ public class EndEntry {
     public Vec3 endCenterPos = Vec3.ZERO; // fixed x, z / relative x, z
     public int endCenterZoneId = 0;
     public double endCenterProgress = 0;
+    public boolean useRangeAsStartDimScale = false;
     public double endCenterRange = 0;
     public int centerPlayerId = 0;
     public boolean selectStanding = false;
@@ -63,7 +64,11 @@ public class EndEntry {
         this.selectStanding = selectStanding;
     }
     public void addCenterRange(double range) {
+        addCenterRange(range, false);
+    }
+    public void addCenterRange(double range, boolean asStartDimScale) {
         this.endCenterRange = range;
+        this.useRangeAsStartDimScale = asStartDimScale;
     }
     public void addPlayerCenterLerp(double lerp) {
         this.playerCenterLerp = lerp;
@@ -169,8 +174,9 @@ public class EndEntry {
                 endEntry.addLockCenter(playerId, selectStanding);
             }
         }
+        boolean useRangeAsStartDimScale = JsonUtils.getJsonBoolean(centerObject, ZoneShapeTag.RANGE_AS_START_DIM_SCALE, false);
         double centerRange = JsonUtils.getJsonDouble(centerObject, ZoneShapeTag.RANDOM_RANGE, 0);
-        endEntry.addCenterRange(centerRange);
+        endEntry.addCenterRange(centerRange, useRangeAsStartDimScale);
         double playerCenterLerp = JsonUtils.getJsonDouble(centerObject, ZoneShapeTag.PLAYER_CENTER_LERP, 0);
         endEntry.addPlayerCenterLerp(playerCenterLerp);
 
@@ -274,6 +280,7 @@ public class EndEntry {
                 centerObject.addProperty(ZoneShapeTag.SELECT_STANDING, selectStanding);
             }
         }
+        centerObject.addProperty(ZoneShapeTag.RANGE_AS_START_DIM_SCALE, useRangeAsStartDimScale);
         centerObject.addProperty(ZoneShapeTag.RANDOM_RANGE, endCenterRange);
         centerObject.addProperty(ZoneShapeTag.PLAYER_CENTER_LERP, playerCenterLerp);
         return centerObject;
