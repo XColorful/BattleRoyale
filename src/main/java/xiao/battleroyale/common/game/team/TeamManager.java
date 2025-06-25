@@ -388,7 +388,8 @@ public class TeamManager extends AbstractGameManager {
             if (serverLevel != null) {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
                 if (player != null) {
-                    GameManager.get().teleportToLobby(player); // 强制淘汰后传送回大厅
+                    // TODO 生成战利品盒子
+                    GameManager.get().sendLobbyTeleportMessage(player, false);
                 }
             }
             return true;
