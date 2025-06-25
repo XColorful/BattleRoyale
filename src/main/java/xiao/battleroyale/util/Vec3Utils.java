@@ -157,4 +157,16 @@ public class Vec3Utils {
         double radius = dimension.x * Math.sqrt(random.get());
         return baseVec.add(radius * Math.cos(angle), dimension.y * random.get(), radius * Math.sin(angle));
     }
+
+    public static Vec3 randomSphereXYZ(@NotNull Vec3 baseVec, Vec3 dimension, Supplier<Float> random) {
+        double radius = dimension.y * Math.cbrt(random.get());
+        double theta = 2 * Math.PI * random.get();
+        double phi = Math.acos(2 * random.get() - 1);
+
+        double x = radius * Math.sin(phi) * Math.cos(theta);
+        double y = radius * Math.sin(phi) * Math.sin(theta);
+        double z = radius * Math.cos(phi);
+
+        return baseVec.add(x, y, z);
+    }
 }
