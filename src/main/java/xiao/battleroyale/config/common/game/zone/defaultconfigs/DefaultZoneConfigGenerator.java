@@ -10,5 +10,7 @@ public class DefaultZoneConfigGenerator {
         DefaultZone.generateDefaultConfigs();
         Pubg8000x8000Casual.generateDefaultConfigs();
         Pubg8000x8000Competitive.generateDefaultConfigs();
+        Pubg5340x5340Casual.generateDefaultConfigs();
+        Pubg881x881Casual.generateDefaultConfigs();
     }
 }
