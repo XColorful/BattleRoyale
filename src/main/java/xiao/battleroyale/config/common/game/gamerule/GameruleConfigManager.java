@@ -86,7 +86,9 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
         public JsonObject toJson() {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty(GameruleConfigTag.GAME_ID, id);
-            jsonObject.addProperty(GameruleConfigTag.DEFAULT, isDefault);
+            if (isDefault) {
+                jsonObject.addProperty(GameruleConfigTag.DEFAULT, isDefault);
+            }
             jsonObject.addProperty(GameruleConfigTag.GAME_NAME, name);
             jsonObject.addProperty(GameruleConfigTag.GAME_COLOR, color);
             if (brEntry != null) {

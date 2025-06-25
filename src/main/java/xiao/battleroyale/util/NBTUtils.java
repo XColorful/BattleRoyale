@@ -1,7 +1,6 @@
 package xiao.battleroyale.util;
 
 import com.mojang.serialization.DataResult;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
@@ -28,6 +27,9 @@ public class NBTUtils {
 
     @NotNull
     public static CompoundTag stringToNBT(String nbt) {
+        if (nbt == null || nbt.isEmpty()) {
+            return new CompoundTag();
+        }
         try {
             return TagParser.parseTag(nbt);
         } catch (Exception e) {

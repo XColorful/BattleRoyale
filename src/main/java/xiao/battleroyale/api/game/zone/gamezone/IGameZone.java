@@ -20,6 +20,14 @@ public interface IGameZone extends ITickableZone, ISpatialZone{
     int getZoneId();
 
     /**
+     * 将自身区域延迟加上先前区域延迟
+     * 若返回 zoneId 大于-1，则尝试叠加
+     * @return 选定的 zondId
+     */
+    int previousZoneDelayId();
+    void setZoneDelay(int zoneDelay);
+
+    /**
      * 用于与当前游戏进行时间比较
      * 游戏运行时长小于 zoneDelay 则不tick其功能
      * @return 当前圈生成的延迟 (tick)

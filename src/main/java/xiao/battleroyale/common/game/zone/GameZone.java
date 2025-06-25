@@ -65,7 +65,8 @@ public class GameZone implements IGameZone {
     private final int zoneId;
     private final String zoneName;
     private final String zoneColor; // 格式如 #0000FF
-    private final int zoneDelay;
+    private final int preZoneDelayId;
+    private int zoneDelay;
     private final int zoneTime;
 
     private final ITickableZone tickableZone;
@@ -77,11 +78,12 @@ public class GameZone implements IGameZone {
     private double prevShapeProgress = -1;
 
     // 构造函数，由 Builder 调用
-    public GameZone(int zoneId, String zoneName, String zoneColor, int zoneDelay, int zoneTime,
+    public GameZone(int zoneId, String zoneName, String zoneColor, int preZoneDelayId, int zoneDelay, int zoneTime,
                     ITickableZone tickableZone, ISpatialZone spatialZone) {
         this.zoneId = zoneId;
         this.zoneName = zoneName;
         this.zoneColor = zoneColor;
+        this.preZoneDelayId = preZoneDelayId;
         this.zoneDelay = zoneDelay;
         this.zoneTime = zoneTime;
         this.tickableZone = tickableZone;
@@ -121,7 +123,18 @@ public class GameZone implements IGameZone {
     }
 
     private boolean shouldTick(int gameTime) {
+        checkShouldFinish(gameTime);
         return isCreated() && isPresent() && !isFinished(); // GameZone
+    }
+
+    private boolean checkShouldFinish(int gameTime) {
+        if (gameTime > zoneDelay + zoneTime) {
+            present = false;
+            finished = true;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -137,9 +150,7 @@ public class GameZone implements IGameZone {
             return;
         }
 
-        if (gameTime > zoneDelay + zoneTime) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置
-            present = false;
-            finished = true;
+        if (checkShouldFinish(gameTime)) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置
             GameManager.get().addZoneInfo(this.zoneId, null); // 传入null视为提醒置空NBT
             return;
         }
@@ -158,6 +169,16 @@ public class GameZone implements IGameZone {
     @Override
     public int getZoneId() {
         return zoneId;
+    }
+
+    @Override
+    public int previousZoneDelayId() {
+        return preZoneDelayId;
+    }
+
+    @Override
+    public void setZoneDelay(int zoneDelay) {
+        this.zoneDelay = zoneDelay;
     }
 
     @Override

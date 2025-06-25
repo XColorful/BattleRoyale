@@ -41,7 +41,6 @@ public class TaczLootSpawner {
         RepeatEntry repeatEntry = new RepeatEntry(2, 3, itemTypeWeight);
 
         MultiEntry multiEntry = new MultiEntry(Arrays.asList(
-                itemTypeWeight,
                 repeatEntry,
                 minecraftItemEntry(),
                 specialItemEntry()
@@ -100,9 +99,9 @@ public class TaczLootSpawner {
 
     private static ILootEntry specialItemEntry() {
         // 机枪
-        MultiEntry minigun = gunAmmoBuilder("minigun", "308", 48);
+        MultiEntry minigun = gunSemiAmmoBuilder("minigun", "308", 48);
         // 火箭筒
-        MultiEntry rpg = gunAmmoBuilder("rpg7", "rpg_rocker", 1);
+        MultiEntry rpg = gunSemiAmmoBuilder("rpg7", "rpg_rocker", 1);
         // MC稀有物品
         ItemEntry gApplePlus = new ItemEntry("minecraft:enchanted_golden_apple", "{}", 1);
         WeightEntry itemTypeWeight = new WeightEntry(Arrays.asList(
@@ -138,9 +137,23 @@ public class TaczLootSpawner {
         return weaponTypeWeight;
     }
 
+    // 全自动
     private static MultiEntry gunAmmoBuilder(String gunName, String ammoName, int ammoCount) {
+        return gunAmmoBuilder(gunName, ammoName, ammoCount, "AUTO");
+    }
+
+    private static MultiEntry gunBurstAmmoBuilder(String gunName, String ammoName, int ammoCount) {
+        return gunAmmoBuilder(gunName, ammoName, ammoCount, "BURST");
+    }
+
+    // 单发
+    private static MultiEntry gunSemiAmmoBuilder(String gunName, String ammoName, int ammoCount) {
+        return gunAmmoBuilder(gunName, ammoName, ammoCount, "SEMI");
+    }
+
+    private static MultiEntry gunAmmoBuilder(String gunName, String ammoName, int ammoCount, String fireMode) {
         return new MultiEntry(Arrays.asList(
-                new ItemEntry("tacz:modern_kinetic_gun", "{GunId:\"tacz:" + gunName + "\"}", 1),
+                new ItemEntry("tacz:modern_kinetic_gun", "{GunId:\"tacz:" + gunName + "\",GunFireMode:\"" + fireMode + "\"}", 1),
                 ammoBuilder(ammoName, ammoCount)
         ));
     }
@@ -189,8 +202,8 @@ public class TaczLootSpawner {
     }
 
     private static ILootEntry commonSREntry() {
-        MultiEntry m24Ammo = gunAmmoBuilder("m700", "30_06", 5);
-        MultiEntry springAmmo = gunAmmoBuilder("springfield1873", "45_70", 5); // 这什么鸟枪只能装一发子弹
+        MultiEntry m24Ammo = gunSemiAmmoBuilder("m700", "30_06", 5);
+        MultiEntry springAmmo = gunSemiAmmoBuilder("springfield1873", "45_70", 5); // 这什么鸟枪只能装一发子弹
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(30, m24Ammo),
                 new WeightedEntry(40, springAmmo)
@@ -198,10 +211,10 @@ public class TaczLootSpawner {
     }
 
     private static ILootEntry rareSREntry() {
-        MultiEntry m95Ammo = gunAmmoBuilder("m95", "50bmg", 5);
-        MultiEntry m107Ammo = gunAmmoBuilder("m107", "50bmg", 10);
-        MultiEntry awmAmmo = gunAmmoBuilder("ai_awp", "338", 5);
-        MultiEntry m24Ammo = gunAmmoBuilder("m700", "30_06", 5);
+        MultiEntry m95Ammo = gunSemiAmmoBuilder("m95", "50bmg", 5);
+        MultiEntry m107Ammo = gunSemiAmmoBuilder("m107", "50bmg", 10);
+        MultiEntry awmAmmo = gunSemiAmmoBuilder("ai_awp", "338", 5);
+        MultiEntry m24Ammo = gunSemiAmmoBuilder("m700", "30_06", 5);
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(5, m95Ammo),
                 new WeightedEntry(10, m107Ammo),
@@ -211,8 +224,8 @@ public class TaczLootSpawner {
     }
 
     private static ILootEntry commonDMREntry() {
-        MultiEntry sksAmmo = gunAmmoBuilder("sks_tactical", "762x39", 10);
-        MultiEntry sprAmmo = gunAmmoBuilder("spr15hb", "556x45", 15);
+        MultiEntry sksAmmo = gunSemiAmmoBuilder("sks_tactical", "762x39", 10);
+        MultiEntry sprAmmo = gunSemiAmmoBuilder("spr15hb", "556x45", 15);
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(20, sksAmmo),
                 new WeightedEntry(20, sprAmmo)
@@ -220,8 +233,8 @@ public class TaczLootSpawner {
     }
 
     private static ILootEntry rareDMREntry() {
-        MultiEntry mk14Ammo = gunAmmoBuilder("mk14", "308", 10);
-        MultiEntry sksAmmo = gunAmmoBuilder("sks_tactical", "762x39", 10);
+        MultiEntry mk14Ammo = gunSemiAmmoBuilder("mk14", "308", 10); // 默认不用全自动
+        MultiEntry sksAmmo = gunSemiAmmoBuilder("sks_tactical", "762x39", 10);
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(5, mk14Ammo),
                 new WeightedEntry(10, sksAmmo)
@@ -229,9 +242,9 @@ public class TaczLootSpawner {
     }
 
     private static ILootEntry commonShotgunEntry() {
-        MultiEntry s1897Ammo = gunAmmoBuilder("m870", "12g", 5);
+        MultiEntry s1897Ammo = gunSemiAmmoBuilder("m870", "12g", 5);
         MultiEntry s12kAmmo = gunAmmoBuilder("aa12", "12g", 7);
-        MultiEntry s686Ammo = gunAmmoBuilder("db_long", "12g", 2);
+        MultiEntry s686Ammo = gunSemiAmmoBuilder("db_long", "12g", 2);
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(30, s1897Ammo),
                 new WeightedEntry(40, s686Ammo),
@@ -262,13 +275,13 @@ public class TaczLootSpawner {
     }
 
     private static ILootEntry commonPistolEntry() {
-        MultiEntry sawedAmmo = gunAmmoBuilder("db_short", "12g", 2);
-        MultiEntry deagleAmmo = gunAmmoBuilder("deagle", "50ae", 7);
-        MultiEntry deagleGAmmo = gunAmmoBuilder("deagle_golden", "357mag", 9);
-        MultiEntry m1911Ammo = gunAmmoBuilder("m1911", "45acp", 7);
-        MultiEntry p320Ammo = gunAmmoBuilder("p320", "45acp", 12);
-        MultiEntry b93rAmmo = gunAmmoBuilder("b93r", "9mm", 20);
-        MultiEntry glockAmmo = gunAmmoBuilder("glock_17", "9mm", 17);
+        MultiEntry sawedAmmo = gunSemiAmmoBuilder("db_short", "12g", 2); // 默认不用连发
+        MultiEntry deagleAmmo = gunSemiAmmoBuilder("deagle", "50ae", 7);
+        MultiEntry deagleGAmmo = gunSemiAmmoBuilder("deagle_golden", "357mag", 9);
+        MultiEntry m1911Ammo = gunSemiAmmoBuilder("m1911", "45acp", 7);
+        MultiEntry p320Ammo = gunSemiAmmoBuilder("p320", "45acp", 12);
+        MultiEntry b93rAmmo = gunBurstAmmoBuilder("b93r", "9mm", 20);
+        MultiEntry glockAmmo = gunSemiAmmoBuilder("glock_17", "9mm", 17);
         MultiEntry cz75Ammo = gunAmmoBuilder("cz75", "9mm", 16);
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(5, sawedAmmo),
