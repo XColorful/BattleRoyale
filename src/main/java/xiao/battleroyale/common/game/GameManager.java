@@ -438,7 +438,7 @@ public class GameManager extends AbstractGameManager {
             if (teleportAfterGame) {
                 List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
                 for (GamePlayer gamePlayer : gamePlayerList) {
-                    if (winnerGamePlayers.contains(gamePlayer)) {
+                    if (winnerGamePlayers.contains(gamePlayer) || gamePlayer.isEliminated()) {
                         continue;
                     }
 
@@ -446,7 +446,7 @@ public class GameManager extends AbstractGameManager {
                     if (player == null) {
                         continue;
                     }
-                    teleportToLobby(player); // 非胜利玩家直接回大厅
+                    teleportToLobby(player); // 非胜利存活玩家直接回大厅
                 }
             }
         }
@@ -506,7 +506,7 @@ public class GameManager extends AbstractGameManager {
 
         if (TeamManager.get().shouldAutoJoin() && !this.inGame) { // 没开游戏就加入
             TeamManager.get().joinTeam(player);
-            teleportToLobby(player); // 自动传到大厅
+            teleportToLobby(player); // 登录自动传到大厅
         }
     }
 

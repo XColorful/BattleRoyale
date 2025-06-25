@@ -400,7 +400,6 @@ public class TeamManager extends AbstractGameManager {
 
     /**
      * 在游戏中强制淘汰玩家并向队友发送消息
-     * 传送被淘汰的玩家至大厅
      */
     public void forceEliminatePlayerFromTeam(ServerPlayer player) {
         if (!GameManager.get().isInGame()) {
@@ -431,7 +430,6 @@ public class TeamManager extends AbstractGameManager {
             }
             BattleRoyale.LOGGER.info("Team {} has been eliminated for no standing player", gameTeam.getGameTeamId());
         }
-        GameManager.get().teleportToLobby(player); // 强制淘汰后传送回大厅
         onTeamChangedInGame();
     }
 
@@ -840,7 +838,12 @@ public class TeamManager extends AbstractGameManager {
         }
 
         if (teamData.hasStandingGamePlayer(player.getUUID())) { // 游戏进行中，且未被淘汰
-            forceEliminatePlayerFromTeam(player); // 强制淘汰包含传送
+            if (GameManager.get().teleportToLobby(player)) { // 若游戏中传送成功才淘汰
+                forceEliminatePlayerFromTeam(player); // 强制淘汰
+            } else {
+                BattleRoyale.LOGGER.error("Teleport in game player while not has lobby");
+                ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
+            }
         } else if (GameManager.get().teleportToLobby(player)) { // 传送，且传送成功
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.teleported_to_lobby").withStyle(ChatFormatting.GREEN));
         } else {
