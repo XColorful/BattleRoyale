@@ -24,6 +24,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
+import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
@@ -60,6 +61,7 @@ public class GameManager extends AbstractGameManager {
     }
 
     private int gameTime = 0; // 游戏运行时维护当前游戏时间
+    public int getGameTime() { return this.gameTime; }
     private UUID gameId;
     private boolean inGame;
     private final SyncData syncData = new SyncData();
@@ -593,13 +595,11 @@ public class GameManager extends AbstractGameManager {
         recordZoneString(zoneId, zoneWriter.getStringWriter());
     }
 
-    public int getGameTime() { return this.gameTime; }
-
     public Supplier<Float> getRandom() {
         return () -> this.serverLevel.getRandom().nextFloat();
     }
 
-    public void addZoneInfo(int id, @Nullable CompoundTag zoneInfo) { this.syncData.addZoneInfo(id, zoneInfo); }
+    public void addZoneNbtMessage(int zoneId, @Nullable CompoundTag nbtMessage) { MessageManager.get().addZoneNbtMessage(zoneId, nbtMessage); }
     public void addChangedTeamInfo(int teamId) {
         GameTeam gameTeam = TeamManager.get().getGameTeamById(teamId);
         if (gameTeam != null) {

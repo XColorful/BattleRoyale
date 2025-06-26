@@ -151,7 +151,7 @@ public class GameZone implements IGameZone {
         }
 
         if (checkShouldFinish(gameTime)) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置
-            GameManager.get().addZoneInfo(this.zoneId, null); // 传入null视为提醒置空NBT
+            GameManager.get().addZoneNbtMessage(this.zoneId, null); // 传入null视为提醒置空NBT
             return;
         }
 
@@ -159,7 +159,7 @@ public class GameZone implements IGameZone {
         if (Math.abs(shapeProgress - prevShapeProgress) > 0.001F || gameTime % FORCE_SYNC_FREQUENCY == 0) { // 同步客户端
             prevShapeProgress = shapeProgress;
             CompoundTag zoneInfo = toNBT(shapeProgress);
-            GameManager.get().addZoneInfo(this.zoneId, zoneInfo);
+            GameManager.get().addZoneNbtMessage(this.zoneId, zoneInfo);
         }
         if ((gameTime + getTickOffset()) % getTickFrequency() == 0) {
             tick(serverLevel, gamePlayerList, gameZones, random, gameTime, shapeProgress, spatialZone);
