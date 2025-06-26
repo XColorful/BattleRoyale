@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.gamerule.type;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.MinecraftEntryTag;
@@ -62,6 +63,7 @@ public class MinecraftEntry implements IGameruleEntry {
         return jsonObject;
     }
 
+    @NotNull
     public static MinecraftEntry fromJson(JsonObject jsonObject) {
         boolean adventureMode = JsonUtils.getJsonBoolean(jsonObject, MinecraftEntryTag.ADVENTURE, true);
         boolean mobGriefing = JsonUtils.getJsonBoolean(jsonObject, MinecraftEntryTag.MOB_GRIEFING, false);

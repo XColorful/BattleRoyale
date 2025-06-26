@@ -914,7 +914,7 @@ public class TeamManager extends AbstractGameManager {
     }
     // 至少要有2队
     private boolean hasEnoughTeamToStart() {
-        if (!GameManager.get().isAllowRemainingBot()) { // 不允许剩余人机打架 -> 开局不能直接只有剩余人机
+        if (!GameManager.get().getGameEntry().allowRemainingBot) { // 不允许剩余人机打架 -> 开局不能直接只有剩余人机
             int totalTeamCount = teamData.getTotalTeamCount();
             return totalTeamCount > 1
                     || (totalTeamCount == 1 && this.teamConfig.aiEnemy);
