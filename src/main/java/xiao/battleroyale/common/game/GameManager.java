@@ -591,6 +591,7 @@ public class GameManager extends AbstractGameManager {
     }
 
     public void addZoneNbtMessage(int zoneId, @Nullable CompoundTag nbtMessage) { MessageManager.get().addZoneNbtMessage(zoneId, nbtMessage); }
+    public void notifyZoneEnd(List<Integer> zoneIdList) { MessageManager.get().notifyZoneEnd(zoneIdList); }
     public void notifyTeamChange(int teamId) {
         MessageManager.get().notifyTeamChange(teamId);
     }

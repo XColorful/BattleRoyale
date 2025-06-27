@@ -52,6 +52,12 @@ public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> {
         }
     }
 
+    public void notifyZoneEnd(List<Integer> nbtIdList) {
+        for (int zoneId : nbtIdList) {
+            addNbtMessage(zoneId, null);
+        }
+    }
+
     @Override
     protected Function<Integer, ZoneMessage> createMessage() {
         return (nbtId) -> new ZoneMessage(new CompoundTag(), currentTime);

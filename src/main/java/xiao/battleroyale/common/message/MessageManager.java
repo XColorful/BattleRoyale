@@ -75,6 +75,10 @@ public class MessageManager {
         registerZoneMessage();
         ZoneMessageManager.get().notifyNbtChange(zoneId);
     }
+    public void notifyZoneEnd(List<Integer> zoneIdList) {
+        registerZoneMessage();
+        ZoneMessageManager.get().notifyZoneEnd(zoneIdList);
+    }
 
     public void addTeamNbtMessage(int teamId, @Nullable CompoundTag nbtMessage) {
         registerTeamMessage();
