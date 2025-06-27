@@ -70,7 +70,7 @@ public class BoostManager implements IEffectManager {
                 data.effectCooldown = EFFECT_COOLDOWN;
             }
             // 同步消息
-            if (-data.syncCooldown <= 0) {
+            if (--data.syncCooldown <= 0) {
                 GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(data.uuid);
                 if (gamePlayer != null) {
                     GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
