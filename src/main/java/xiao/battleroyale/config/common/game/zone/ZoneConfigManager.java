@@ -253,6 +253,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
      */
     public void reloadZoneConfigs() {
         reloadConfigs(DEFAULT_ZONE_CONFIG_FOLDER);
+        // Zone以整个文件为选择，不需要切换
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {

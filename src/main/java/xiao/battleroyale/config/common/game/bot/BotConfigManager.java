@@ -6,6 +6,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.bot.BotConfigTag;
 import xiao.battleroyale.api.game.bot.IBotEntry;
 import xiao.battleroyale.api.game.bot.IBotSingleEntry;
+import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.AbstractConfigManager;
 import xiao.battleroyale.config.common.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -143,6 +144,12 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
      */
     public void reloadBotConfigs() {
         reloadConfigs(DEFAULT_BOT_CONFIG_FOLDER);
+        for (BotConfig botConfig : getConfigs().values()) {
+            if (botConfig.isDefault) {
+                GameManager.get().setBotConfigId(botConfig.getConfigId());
+                return;
+            }
+        }
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {

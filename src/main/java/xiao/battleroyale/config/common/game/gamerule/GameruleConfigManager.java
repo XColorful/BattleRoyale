@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.GameruleConfigTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleSingleEntry;
+import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.AbstractConfigManager;
 import xiao.battleroyale.config.common.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -228,6 +229,12 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
      */
     public void reloadGameruleConfigs() {
         reloadConfigs(DEFAULT_GAMERULE_CONFIG_FOLDER);
+        for (GameruleConfig gameruleConfig : getConfigs().values()) {
+            if (gameruleConfig.isDefault) {
+                GameManager.get().setGameruleConfigId(gameruleConfig.getConfigId());
+                return;
+            }
+        }
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {
