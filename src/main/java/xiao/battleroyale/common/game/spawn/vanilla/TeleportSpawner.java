@@ -177,15 +177,17 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
                 GamePlayer gamePlayer = standingPlayers.get(i);
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
                 if (player != null) {
-                    if ((!indexAdded || !teamTogether) && targetSpawnPos.y != queuedHeight) { // (没添加过计数就添加一次，不是队伍统一传送就添加一次) && 成功找到地面
-                        spawnPointIndex++;
-                        indexAdded = true;
-                    }
                     GameManager.get().safeTeleport(player, targetSpawnPos);
                     addSpawnStats(gamePlayer, targetSpawnPos);
                     gamePlayer.setLastPos(targetSpawnPos); // 立即更新，防止下一tick找不到又躲了逻辑位置
                     teleportedPlayerId.add(gamePlayer.getGameSingleId());
-                    BattleRoyale.LOGGER.info("GroundSpawner: Telepoted gamePlayer {} to team spawn position {}", gamePlayer.getGameSingleId(), targetSpawnPos);
+                    if ((!indexAdded || !teamTogether) && targetSpawnPos.y != queuedHeight) { // (没添加过计数就添加一次，不是队伍统一传送就添加一次) && 成功找到地面
+                        spawnPointIndex++;
+                        indexAdded = true;
+                        BattleRoyale.LOGGER.debug("GroundSpawner: Telepoted gamePlayer {} to team spawn position {}", gamePlayer.getGameSingleId(), targetSpawnPos);
+                    } else {
+                        BattleRoyale.LOGGER.info("GroundSpawner: Telepoted gamePlayer {} to team spawn position {}", gamePlayer.getGameSingleId(), targetSpawnPos);
+                    }
                 } else {
                     teamAllTeleported = false; // 离线玩家也保留其尝试次数，超过最大限制后即使登录也不重新传送
                     allTeleported = false;
@@ -230,7 +232,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
         double targetY = groundY + 1.0;
         // 在主世界加载失败时 targetY 返回 -63（最小建筑高度 -64），加2保证在范围内
         if (targetY < serverLevel.getMinBuildHeight() + 2) {
-            BattleRoyale.LOGGER.warn("GroundSpawner attempt to use invalid targetY {}, adjusting to default height ({}) for queued spawn", targetY, queuedHeight);
+            BattleRoyale.LOGGER.debug("GroundSpawner attempt to use invalid targetY {}, adjusting to default height ({}) for queued spawn", targetY, queuedHeight);
             return new Vec3(basePos.x, queuedHeight, basePos.z);
         }
         return new Vec3(basePos.x, targetY, basePos.z);
