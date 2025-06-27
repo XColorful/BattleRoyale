@@ -13,6 +13,7 @@ import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 import xiao.battleroyale.util.NBTUtils;
@@ -156,10 +157,13 @@ public class GameZone implements IGameZone {
         }
 
         double shapeProgress = tickableZone.getShapeProgress(gameTime, zoneDelay);
-        if (Math.abs(shapeProgress - prevShapeProgress) > 0.001F || gameTime % FORCE_SYNC_FREQUENCY == 0) { // 同步客户端
+        // 同步客户端
+        if (Math.abs(shapeProgress - prevShapeProgress) > 0.001F) { // 圈在移动，频繁更新
             prevShapeProgress = shapeProgress;
             CompoundTag zoneInfo = toNBT(shapeProgress);
-            GameManager.get().addZoneNbtMessage(this.zoneId, zoneInfo);
+            MessageManager.get().addZoneNbtMessage(this.zoneId, zoneInfo);
+        } else if (gameTime % FORCE_SYNC_FREQUENCY == 0) { // 圈不在频繁移动，延长时间
+            MessageManager.get().extendZoneMessageTime(zoneId, FORCE_SYNC_FREQUENCY);
         }
         if ((gameTime + getTickOffset()) % getTickFrequency() == 0) {
             tick(serverLevel, gamePlayerList, gameZones, random, gameTime, shapeProgress, spatialZone);

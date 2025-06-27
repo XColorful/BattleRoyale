@@ -7,11 +7,8 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.common.game.team.TeamManager;
-import xiao.battleroyale.init.ModDamageTypes;
 
 /**
  * 伤害数值调整
@@ -66,7 +63,7 @@ public class DamageEventHandler {
 
         if (isTargetGamePlayer) { // 被攻击方
             int teamId = targetGamePlayer.getGameTeamId();
-            GameManager.get().addChangedTeamInfo(teamId);
+            GameManager.get().notifyTeamChange(teamId);
         }
     }
 }

@@ -64,7 +64,6 @@ public class GameManager extends AbstractGameManager {
     public int getGameTime() { return this.gameTime; }
     private UUID gameId;
     private boolean inGame;
-    private final SyncData syncData = new SyncData();
     private ResourceKey<Level> gameDimensionKey;
     private ServerLevel serverLevel;
     private final Set<GameTeam> winnerGameTeams = new HashSet<>();
@@ -206,10 +205,6 @@ public class GameManager extends AbstractGameManager {
         // StatsManager.get().onGameTick(gameTime); // 基于事件主动记录，不用tick
     }
 
-    public void syncInfo() {
-        this.syncData.syncInfo(gameTime);
-    }
-
     /**
      * 检查所有未淘汰玩家是否在线，更新不在线时长或更新最后有效位置
      * 检查队伍成员是否均为倒地或者不在线，淘汰队伍（所有成员）
@@ -260,6 +255,7 @@ public class GameManager extends AbstractGameManager {
                     invalidPlayers.add(gamePlayer);
                     return;
                 }
+                // TODO GamePlayer health 和 absorptionAmount 处理
                 serverPlayer.setHealth(lastHealth); // 不用maxHealth检查，可能包含吸收血量
             }
             gamePlayer.setActiveEntity(true);
@@ -467,18 +463,12 @@ public class GameManager extends AbstractGameManager {
         unregisterGameEvent();
 
         if (!gameEntry.keepTeamAfterGame) {
-            SyncEventHandler.unregister();
-            for (GamePlayer gamePlayer : getGamePlayers()) { // 先保留通知列表
-                this.syncData.addLeavedMember(gamePlayer.getPlayerUUID());
+            for (GamePlayer gamePlayer : getGamePlayers()) {
+                notifyLeavedMember(gamePlayer.getPlayerUUID(), gamePlayer.getGameTeamId());
             }
-        }
-        this.syncData.endGame(); // 通知更新zone，队伍信息
-        if (!gameEntry.keepTeamAfterGame) {
             TeamManager.get().clear();
         }
 
-        // 清空同步信息
-        this.syncData.clear();
         StatsManager.get().stopGame(serverLevel);
     }
 
@@ -495,6 +485,7 @@ public class GameManager extends AbstractGameManager {
         GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(player.getUUID());
         if (gamePlayer != null) {
             if (GameManager.get().isInGame() && gamePlayer.isEliminated()) {
+                notifyTeamChange(gamePlayer.getGameTeamId());
                 ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
             }
             return;
@@ -600,16 +591,12 @@ public class GameManager extends AbstractGameManager {
     }
 
     public void addZoneNbtMessage(int zoneId, @Nullable CompoundTag nbtMessage) { MessageManager.get().addZoneNbtMessage(zoneId, nbtMessage); }
-    public void addChangedTeamInfo(int teamId) {
-        GameTeam gameTeam = TeamManager.get().getGameTeamById(teamId);
-        if (gameTeam != null) {
-            for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) {
-                this.syncData.deleteLeavedMember(gamePlayer.getPlayerUUID());
-            }
-        }
-        this.syncData.addChangedTeam(teamId);
+    public void notifyTeamChange(int teamId) {
+        MessageManager.get().notifyTeamChange(teamId);
     }
-    public void addLeavedMember(UUID playerUUID) { this.syncData.addLeavedMember(playerUUID); }
+    public void notifyLeavedMember(UUID playerUUID, int teamId) {
+        MessageManager.get().notifyLeavedMember(playerUUID, teamId);
+    }
 
     public int getGameruleConfigId() { return gameruleConfigId; }
     public int getSpawnConfigId() { return spawnConfigId; }
@@ -648,9 +635,6 @@ public class GameManager extends AbstractGameManager {
                 && StatsManager.get().isPreparedForGame());
     }
     private void initGameSetup() {
-        // 同步信息
-        this.syncData.initGame();
-        SyncEventHandler.register();
         // 清除游戏效果
         EffectManager.get().forceEnd();
     }
@@ -696,8 +680,6 @@ public class GameManager extends AbstractGameManager {
         this.winnerGameTeams.clear(); // 游戏结束后不手动重置
         this.winnerGamePlayers.clear(); // 游戏结束后不手动重置
         registerGameEvent();
-        // 重置同步信息
-        this.syncData.startGame();
     }
     private void registerGameEvent() {
         DamageEventHandler.register();

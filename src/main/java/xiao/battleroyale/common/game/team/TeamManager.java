@@ -153,7 +153,7 @@ public class TeamManager extends AbstractGameManager {
         if (!noTeamPlayers.isEmpty()) {
             for (GamePlayer noTeamPlayer : noTeamPlayers) {
                 if (teamData.removePlayer(noTeamPlayer)) {
-                    GameManager.get().addLeavedMember(noTeamPlayer.getPlayerUUID()); // 防止游戏开始时无队伍的GamePlayer
+                    GameManager.get().notifyLeavedMember(noTeamPlayer.getPlayerUUID(), noTeamPlayer.getGameTeamId()); // 防止游戏开始时无队伍的GamePlayer
                 }
             }
         }
@@ -328,7 +328,7 @@ public class TeamManager extends AbstractGameManager {
             if (teamData.addPlayerToTeam(gamePlayer, targetTeam)) {
                 ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.joined_to_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.GREEN));
                 notifyPlayerJoinTeam(gamePlayer); // 通知队伍成员有新玩家加入
-                GameManager.get().addChangedTeamInfo(targetTeam.getGameTeamId()); // 玩家加入队伍，通知更新队伍HUD
+                GameManager.get().notifyTeamChange(targetTeam.getGameTeamId()); // 玩家加入队伍，通知更新队伍HUD
                 return;
             }
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.failed_to_join_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
@@ -758,8 +758,8 @@ public class TeamManager extends AbstractGameManager {
         int teamId = gamePlayer.getGameTeamId();
 
         if (teamData.removePlayer(playerId)) {
-            GameManager.get().addLeavedMember(playerId); // 离队后通知不渲染队伍HUD
-            GameManager.get().addChangedTeamInfo(teamId); // 离队后通知队伍成员更新队伍HUD
+            GameManager.get().notifyLeavedMember(playerId, teamId); // 离队后通知不渲染队伍HUD
+            GameManager.get().notifyTeamChange(teamId); // 离队后通知队伍成员更新队伍HUD
             return true;
         } else {
             return false;
@@ -788,7 +788,7 @@ public class TeamManager extends AbstractGameManager {
         }
         GamePlayer gamePlayer = new GamePlayer(player.getUUID(), player.getName().getString(), newPlayerId, false, newTeam);
         if (teamData.addPlayerToTeam(gamePlayer, newTeam)) {
-            GameManager.get().addChangedTeamInfo(newTeam.getGameTeamId()); // 新建队伍并加入，通知更新队伍HUD
+            GameManager.get().notifyTeamChange(newTeam.getGameTeamId()); // 新建队伍并加入，通知更新队伍HUD
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.joined_to_team", teamId).withStyle(ChatFormatting.GREEN));
             return true;
         }

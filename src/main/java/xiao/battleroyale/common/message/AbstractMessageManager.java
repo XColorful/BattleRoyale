@@ -12,7 +12,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import java.util.*;
 import java.util.function.Function;
 
-public abstract class AbstractMessageManager<K extends AbstractMessage> implements IMessageManager {
+public abstract class AbstractMessageManager<K extends AbstractCommonMessage> implements IMessageManager {
 
     protected int currentTime = 0;
 
@@ -47,6 +47,21 @@ public abstract class AbstractMessageManager<K extends AbstractMessage> implemen
             return;
         }
 
+        sendMessages();
+    }
+
+    protected void checkExpiredMessage() {
+        messages.entrySet().removeIf(entry -> {
+            K message = entry.getValue();
+            if (currentTime - message.updateTime > expireTime) {
+                changedId.add(entry.getKey());
+                return true;
+            }
+            return false;
+        });
+    }
+
+    protected void sendMessages() {
         CompoundTag nbtPacket = new CompoundTag();
         for (int id : changedId) {
             K message = messages.get(id);
@@ -63,17 +78,6 @@ public abstract class AbstractMessageManager<K extends AbstractMessage> implemen
         }
         sendMessageToGamePlayers(GameManager.get().getGamePlayers(), nbtPacket, serverLevel);
         changedId.clear();
-    }
-
-    protected void checkExpiredMessage() {
-        messages.entrySet().removeIf(entry -> {
-            K message = entry.getValue();
-            if (currentTime - message.updateTime > expireTime) {
-                changedId.add(entry.getKey());
-                return true;
-            }
-            return false;
-        });
     }
 
     @Override
@@ -109,7 +113,9 @@ public abstract class AbstractMessageManager<K extends AbstractMessage> implemen
     }
 
     protected void clear() {
+        changedId.addAll(messages.keySet());
         messages.clear();
+        sendMessages();
         changedId.clear();
     }
 

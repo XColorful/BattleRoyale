@@ -7,10 +7,7 @@ import xiao.battleroyale.common.message.team.TeamMessageManager;
 import xiao.battleroyale.common.message.zone.ZoneMessageManager;
 import xiao.battleroyale.event.MessageEventHandler;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class MessageManager {
 
@@ -32,6 +29,7 @@ public class MessageManager {
         messageManagerList.removeIf(manager -> {
             manager.tickMessage();
             if (manager.messageFinished()) {
+                manager.unregister();
                 messageManagers.remove(manager);
                 return true;
             }
@@ -66,13 +64,31 @@ public class MessageManager {
         MessageEventHandler.register();
     }
 
-    public void addZoneNbtMessage(int nbtId, @Nullable CompoundTag nbtMessage) {
+    public void addZoneNbtMessage(int zoneId, @Nullable CompoundTag nbtMessage) {
         registerZoneMessage();
-        ZoneMessageManager.get().addNbtMessage(nbtId, nbtMessage);
+        ZoneMessageManager.get().addNbtMessage(zoneId, nbtMessage);
+    }
+    public void extendZoneMessageTime(int zoneId, int extendTime) {
+        ZoneMessageManager.get().extendMessageTime(zoneId, extendTime);
+    }
+    public void notifyZoneChange(int zoneId) {
+        registerZoneMessage();
+        ZoneMessageManager.get().notifyNbtChange(zoneId);
     }
 
-    public void addTeamNbtMessage(int nbtId, @Nullable CompoundTag nbtMessage) {
+    public void addTeamNbtMessage(int teamId, @Nullable CompoundTag nbtMessage) {
         registerTeamMessage();
-        TeamMessageManager.get().addNbtMessage(nbtId, nbtMessage);
+        TeamMessageManager.get().addNbtMessage(teamId, nbtMessage);
+    }
+    public void extendTeamMessageTime(int teamId, int extendTime) {
+        TeamMessageManager.get().extendMessageTime(teamId, extendTime);
+    }
+    public void notifyTeamChange(int teamId) {
+        registerTeamMessage();
+        TeamMessageManager.get().notifyNbtChange(teamId);
+    }
+    public void notifyLeavedMember(UUID playerUUID, int teamId) {
+        registerTeamMessage();
+        TeamMessageManager.get().notifyLeavedMember(playerUUID, teamId);
     }
 }

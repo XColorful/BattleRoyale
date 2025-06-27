@@ -85,14 +85,11 @@ public class ClientTeamData {
 
             // team member
             for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) {
-                float playerHealth;
+                float playerHealth = gamePlayer.getLastHealth();
                 if (gamePlayer.isEliminated()) { // 标记淘汰则优先
                     playerHealth = ELIMINATED;
                 } else if (!gamePlayer.isActiveEntity() || serverLevel == null) { // 被标记为离线或无法用serverLevel查血量
                     playerHealth = OFFLINE;
-                } else {
-                    ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-                    playerHealth = player == null ? OFFLINE : player.getHealth();
                 }
                 memberInfos.add(new TeamMemberInfo(
                         gamePlayer.getGameSingleId(),

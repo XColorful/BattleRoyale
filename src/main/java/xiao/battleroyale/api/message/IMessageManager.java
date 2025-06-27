@@ -25,5 +25,7 @@ public interface IMessageManager {
 
     void extendMessageTime(int nbtId, int extendTime);
 
+    void notifyNbtChange(int nbtId);
+
     boolean messageFinished();
 }
