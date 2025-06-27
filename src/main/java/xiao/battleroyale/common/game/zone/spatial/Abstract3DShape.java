@@ -229,7 +229,11 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
             }
             if (endEntry.useRangeAsStartDimScale) {
                 Vec3 endRangeVec = Vec3Utils.scaleXYZ(startDimension, endEntry.endCenterRange);
-                endCenter = randomAdjustXYZ(endCenter, endRangeVec, random);
+                if (endEntry.useCircleRange) {
+                    endCenter = Vec3Utils.randomSphereXYZ(endCenter, endRangeVec, random);
+                } else {
+                    endCenter = randomAdjustXYZ(endCenter, endRangeVec, random);
+                }
             } else {
                 endCenter = randomAdjustXYZ(endCenter, endEntry.endCenterRange, random);
             }

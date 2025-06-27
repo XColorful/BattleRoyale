@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.game.team;
+package xiao.battleroyale.api.message.team;
 
 import xiao.battleroyale.api.ConfigEntryTag;
 

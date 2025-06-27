@@ -42,6 +42,13 @@ public class GameTeam {
 
     public List<GamePlayer> getTeamMembers() { return Collections.unmodifiableList(teamMembers); }
     public int getTeamMemberCount() { return teamMembers.size(); }
+    public List<UUID> getMemberUUIDList() {
+        List<UUID> uuidList = new ArrayList<>();
+        for (GamePlayer gamePlayer : teamMembers) {
+            uuidList.add(gamePlayer.getPlayerUUID());
+        }
+        return uuidList;
+    }
 
     public boolean isTeamEliminated() {
         if (teamMembers.isEmpty()) {

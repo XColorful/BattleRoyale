@@ -89,6 +89,12 @@ public class ZoneManager extends AbstractGameManager {
     }
 
     public void stopGame(@Nullable ServerLevel serverLevel) {
+        List<Integer> zoneIdList = new ArrayList<>();
+        for (IGameZone gameZone : this.zoneData.getCurrentTickZones(GameManager.get().getGameTime())) {
+            zoneIdList.add(gameZone.getZoneId());
+        }
+        GameManager.get().notifyZoneEnd(zoneIdList);
+
         this.zoneData.endGame();
         this.zoneData.clear();
         this.prepared = false;

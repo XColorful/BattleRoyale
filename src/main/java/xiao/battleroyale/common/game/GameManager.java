@@ -24,10 +24,13 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
+import xiao.battleroyale.common.message.MessageManager;
+import xiao.battleroyale.common.message.game.GameMessageManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
-import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
+import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.util.ChatUtils;
@@ -59,9 +62,9 @@ public class GameManager extends AbstractGameManager {
     }
 
     private int gameTime = 0; // 游戏运行时维护当前游戏时间
+    public int getGameTime() { return this.gameTime; }
     private UUID gameId;
     private boolean inGame;
-    private final SyncData syncData = new SyncData();
     private ResourceKey<Level> gameDimensionKey;
     private ServerLevel serverLevel;
     private final Set<GameTeam> winnerGameTeams = new HashSet<>();
@@ -71,19 +74,10 @@ public class GameManager extends AbstractGameManager {
     private int gameruleConfigId = 0;
     private int spawnConfigId = 0;
     private int botConfigId = 0;
-    private int winnerFireworkId = 0; // TODO 添加配置
-    private int winnerParticleId = 0; // TODO 添加配置
-    private int maxGameTime; // 最大游戏持续时间，配置项
-    private int maxInvalidTime = 60; // 最大离线/未加载时间，过期强制淘汰，配置项
-    private int getMaxInvalidTick() { return maxInvalidTime * 20; }
-    private int maxBotInvalidTime = 10 * 20;
-    private boolean removeInvalidTeam = false; // TODO 增加配置，使默认false
-    private boolean allowRemainingBot = true; // TODO 增加配置，使默认false
-    public boolean isAllowRemainingBot() { return allowRemainingBot; }
-    private boolean keepTeamAfterGame = true; // TODO 增加配置，使默认true
-    public boolean shouldKeepTeamAfterGame() { return keepTeamAfterGame; }
-    private boolean teleportAfterGame = true; // TODO 增加配置，使默认true
-    private boolean teleportWinnerAfterGame = false; // TODO 增加配置，使默认false
+
+    private int maxGameTime;
+    private GameEntry gameEntry;
+    public GameEntry getGameEntry() { return gameEntry; }
 
     @NotNull
     public UUID getGameId() {
@@ -117,7 +111,9 @@ public class GameManager extends AbstractGameManager {
         }
         this.serverLevel = serverLevel;
 
-        initGameConfigSetup();
+        if (!initGameConfigSetup()) {
+            return;
+        }
         initGameConfigSubManager();
 
         if (gameConfigAllReady()) {
@@ -210,10 +206,6 @@ public class GameManager extends AbstractGameManager {
         // StatsManager.get().onGameTick(gameTime); // 基于事件主动记录，不用tick
     }
 
-    public void syncInfo() {
-        this.syncData.syncInfo(gameTime);
-    }
-
     /**
      * 检查所有未淘汰玩家是否在线，更新不在线时长或更新最后有效位置
      * 检查队伍成员是否均为倒地或者不在线，淘汰队伍（所有成员）
@@ -253,7 +245,7 @@ public class GameManager extends AbstractGameManager {
             gamePlayer.addInvalidTime();
             if (eliminateInactiveTeam(gamePlayer)) { // 队伍全员离线
                 return;
-            } else if (gamePlayer.getInvalidTime() >= getMaxInvalidTick()) { // 达到允许的最大离线时间
+            } else if (gamePlayer.getInvalidTime() >= gameEntry.maxPlayerInvalidTime) { // 达到允许的最大离线时间
                 invalidPlayers.add(gamePlayer); // 淘汰单个离线玩家
             }
         } else { // 更新最后有效位置
@@ -264,6 +256,7 @@ public class GameManager extends AbstractGameManager {
                     invalidPlayers.add(gamePlayer);
                     return;
                 }
+                // TODO GamePlayer health 和 absorptionAmount 处理
                 serverPlayer.setHealth(lastHealth); // 不用maxHealth检查，可能包含吸收血量
             }
             gamePlayer.setActiveEntity(true);
@@ -281,7 +274,7 @@ public class GameManager extends AbstractGameManager {
             gamePlayer.addInvalidTime();
             if (eliminateInactiveTeam(gamePlayer)) { // 队伍全员离线啊
                 return;
-            } else if (gamePlayer.getInvalidTime() >= maxBotInvalidTime) {
+            } else if (gamePlayer.getInvalidTime() >= gameEntry.maxBotInvalidTime) {
                 invalidPlayers.add(gamePlayer); // 淘汰单个人机
             }
         } else {
@@ -310,7 +303,7 @@ public class GameManager extends AbstractGameManager {
      * 默认不开启，以防玩家倒地的时候队友离线导致 kibo 破灭
      */
     private boolean eliminateInactiveTeam(GamePlayer invalidPlayer) {
-        if (!removeInvalidTeam) {
+        if (!gameEntry.removeInvalidTeam) {
             return false;
         }
         GameTeam gameTeam = invalidPlayer.getTeam();
@@ -343,7 +336,7 @@ public class GameManager extends AbstractGameManager {
         }
 
         checkAndUpdateInvalidGamePlayer(this.serverLevel);
-        if (!allowRemainingBot) { // 不允许只剩人机继续打架，即提前终止游戏
+        if (!gameEntry.allowRemainingBot) { // 不允许只剩人机继续打架，即提前终止游戏
             int playerTeamCount = TeamManager.get().getStandingPlayerTeamCount();
             if (playerTeamCount > 0) {
                 return;
@@ -397,7 +390,7 @@ public class GameManager extends AbstractGameManager {
 
         // 暂时硬编码
         EffectManager.get().spawnPlayerFirework(player, 16, 4, 1.0F, 16.0F);
-        EffectManager.get().addGameParticle(serverLevel, player.position(), winnerParticleId, 0);
+        EffectManager.get().addGameParticle(serverLevel, player.position(), gameEntry.winnerParticleId, 0);
     }
 
     /**
@@ -427,7 +420,7 @@ public class GameManager extends AbstractGameManager {
                     continue;
                 }
 
-                if (teleportWinnerAfterGame) { // 传送
+                if (gameEntry.teleportWinnerAfterGame) { // 传送
                     teleportToLobby(player); // 传送胜利玩家回大厅
                 } else { // 不传送，改为发送传送消息
                     sendLobbyTeleportMessage(player, true);
@@ -435,7 +428,7 @@ public class GameManager extends AbstractGameManager {
             }
 
             // 非胜利玩家
-            if (teleportAfterGame) {
+            if (gameEntry.teleportAfterGame) {
                 List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
                 for (GamePlayer gamePlayer : gamePlayerList) {
                     if (winnerGamePlayers.contains(gamePlayer) || gamePlayer.isEliminated()) {
@@ -470,19 +463,13 @@ public class GameManager extends AbstractGameManager {
         // 取消事件监听
         unregisterGameEvent();
 
-        if (!shouldKeepTeamAfterGame()) {
-            SyncEventHandler.unregister();
-            for (GamePlayer gamePlayer : getGamePlayers()) { // 先保留通知列表
-                this.syncData.addLeavedMember(gamePlayer.getPlayerUUID());
+        if (!gameEntry.keepTeamAfterGame) {
+            for (GamePlayer gamePlayer : getGamePlayers()) {
+                notifyLeavedMember(gamePlayer.getPlayerUUID(), gamePlayer.getGameTeamId());
             }
-        }
-        this.syncData.endGame(); // 通知更新zone，队伍信息
-        if (!shouldKeepTeamAfterGame()) {
             TeamManager.get().clear();
         }
 
-        // 清空同步信息
-        this.syncData.clear();
         StatsManager.get().stopGame(serverLevel);
     }
 
@@ -499,6 +486,7 @@ public class GameManager extends AbstractGameManager {
         GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(player.getUUID());
         if (gamePlayer != null) {
             if (GameManager.get().isInGame() && gamePlayer.isEliminated()) {
+                notifyTeamChange(gamePlayer.getGameTeamId());
                 ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
             }
             return;
@@ -540,6 +528,8 @@ public class GameManager extends AbstractGameManager {
             }
             checkIfGameShouldEnd();
         }
+        notifyTeamChange(gamePlayer.getGameTeamId());
+        notifyAliveChange();
     }
 
     /**
@@ -599,31 +589,41 @@ public class GameManager extends AbstractGameManager {
         recordZoneString(zoneId, zoneWriter.getStringWriter());
     }
 
-    public int getGameTime() { return this.gameTime; }
-
     public Supplier<Float> getRandom() {
         return () -> this.serverLevel.getRandom().nextFloat();
     }
 
-    public void addZoneInfo(int id, @Nullable CompoundTag zoneInfo) { this.syncData.addZoneInfo(id, zoneInfo); }
-    public void addChangedTeamInfo(int teamId) {
-        GameTeam gameTeam = TeamManager.get().getGameTeamById(teamId);
-        if (gameTeam != null) {
-            for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) {
-                this.syncData.deleteLeavedMember(gamePlayer.getPlayerUUID());
-            }
-        }
-        this.syncData.addChangedTeam(teamId);
+    public void addZoneNbtMessage(int zoneId, @Nullable CompoundTag nbtMessage) { MessageManager.get().addZoneNbtMessage(zoneId, nbtMessage); }
+    public void notifyZoneEnd(List<Integer> zoneIdList) { MessageManager.get().notifyZoneEnd(zoneIdList); }
+    public void notifyTeamChange(int teamId) {
+        MessageManager.get().notifyTeamChange(teamId);
     }
-    public void addLeavedMember(UUID playerUUID) { this.syncData.addLeavedMember(playerUUID); }
+    public void notifyLeavedMember(UUID playerUUID, int teamId) {
+        MessageManager.get().notifyLeavedMember(playerUUID, teamId);
+    }
+    public void notifyAliveChange() {
+        MessageManager.get().notifyGameChange(GameMessageManager.ALIVE_CHANNEL);
+    }
 
     public int getGameruleConfigId() { return gameruleConfigId; }
     public int getSpawnConfigId() { return spawnConfigId; }
     public int getBotConfigId() { return botConfigId; }
 
-    private void initGameConfigSetup() {
-        BattleroyaleEntry brEntry = GameConfigManager.get().getGameruleConfig(gameruleConfigId).getBattleRoyaleEntry();
+    private boolean initGameConfigSetup() {
+        GameruleConfig gameruleConfig = GameConfigManager.get().getGameruleConfig(gameruleConfigId);
+        if (gameruleConfig == null) {
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            return false;
+        }
+        BattleroyaleEntry brEntry = gameruleConfig.getBattleRoyaleEntry();
+        GameEntry gameEntry = gameruleConfig.getGameEntry();
+        if (brEntry == null || gameEntry == null) {
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            return false;
+        }
         maxGameTime = brEntry.maxGameTime;
+        this.gameEntry = gameEntry;
+        return true;
     }
     private void initGameConfigSubManager() {
         GameLootManager.get().initGameConfig(serverLevel);
@@ -642,9 +642,6 @@ public class GameManager extends AbstractGameManager {
                 && StatsManager.get().isPreparedForGame());
     }
     private void initGameSetup() {
-        // 同步信息
-        this.syncData.initGame();
-        SyncEventHandler.register();
         // 清除游戏效果
         EffectManager.get().forceEnd();
     }
@@ -690,8 +687,7 @@ public class GameManager extends AbstractGameManager {
         this.winnerGameTeams.clear(); // 游戏结束后不手动重置
         this.winnerGamePlayers.clear(); // 游戏结束后不手动重置
         registerGameEvent();
-        // 重置同步信息
-        this.syncData.startGame();
+        notifyAliveChange();
     }
     private void registerGameEvent() {
         DamageEventHandler.register();
@@ -734,7 +730,7 @@ public class GameManager extends AbstractGameManager {
         return true;
     }
     public String getGameruleConfigName(int gameId) {
-        GameruleConfigManager.GameruleConfig config = GameConfigManager.get().getGameruleConfig(gameId);
+        GameruleConfig config = GameConfigManager.get().getGameruleConfig(gameId);
         return config != null ? config.getGameName() : "";
     }
     public boolean setSpawnConfigId(int id) {

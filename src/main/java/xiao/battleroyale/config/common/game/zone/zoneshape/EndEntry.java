@@ -283,8 +283,12 @@ public class EndEntry {
                 centerObject.addProperty(ZoneShapeTag.SELECT_STANDING, selectStanding);
             }
         }
-        centerObject.addProperty(ZoneShapeTag.RANGE_AS_START_DIM_SCALE, useRangeAsStartDimScale);
-        centerObject.addProperty(ZoneShapeTag.USE_CIRCLE_RANGE, useCircleRange);
+        if (useRangeAsStartDimScale) {
+            centerObject.addProperty(ZoneShapeTag.RANGE_AS_START_DIM_SCALE, useRangeAsStartDimScale);
+            if (useCircleRange) {
+                centerObject.addProperty(ZoneShapeTag.USE_CIRCLE_RANGE, useCircleRange);
+            }
+        }
         centerObject.addProperty(ZoneShapeTag.RANDOM_RANGE, endCenterRange);
         centerObject.addProperty(ZoneShapeTag.PLAYER_CENTER_LERP, playerCenterLerp);
         return centerObject;

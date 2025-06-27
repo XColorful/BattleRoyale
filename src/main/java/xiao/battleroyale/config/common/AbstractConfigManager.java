@@ -117,7 +117,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
              Gson gson = new Gson();
              JsonArray configArray = gson.fromJson(reader, JsonArray.class);
              if (configArray == null) {
-                 BattleRoyale.LOGGER.info("Skipped empty config from {} for type {}", filePath, getFolderType(folderId));
+                 BattleRoyale.LOGGER.debug("Skipped empty config from {} for type {}", filePath, getFolderType(folderId));
                  return;
              }
 
@@ -130,17 +130,17 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
                  try {
                      T config = parseConfigEntry(configObject, filePath, folderId);
                      if (config == null) {
-                         BattleRoyale.LOGGER.info("Skipped invalid config in {} for type {}", filePath, getFolderType(folderId));
+                         BattleRoyale.LOGGER.debug("Skipped invalid config in {} for type {}", filePath, getFolderType(folderId));
                          continue;
                      }
                      int configId = config.getConfigId();
                      if (newFileConfigs.containsKey(configId)) {
-                         BattleRoyale.LOGGER.info("Config with the same id: {}, will overwrite in {} for type {}", configId, filePath, getFolderType(folderId));
+                         BattleRoyale.LOGGER.debug("Config with the same id: {}, will overwrite in {} for type {}", configId, filePath, getFolderType(folderId));
                      }
                      newFileConfigs.put(configId, config);
                      newFileConfigsList.add(config);
                  } catch (Exception e) {
-                     BattleRoyale.LOGGER.info("Error parsing config entry in {} for type {}: {}", filePath, getFolderType(folderId), e.getMessage());
+                     BattleRoyale.LOGGER.debug("Error parsing config entry in {} for type {}: {}", filePath, getFolderType(folderId), e.getMessage());
                  }
              }
         } catch (IOException e) {
@@ -156,7 +156,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
         try {
             if (!Files.exists(dirPath)) {
                 Files.createDirectories(dirPath);
-                BattleRoyale.LOGGER.info("Created config directory: {} for type {}", dirPath, getFolderType(folderId));
+                BattleRoyale.LOGGER.debug("Created config directory: {} for type {}", dirPath, getFolderType(folderId));
                 return; // 目录刚创建，里面没有文件
             }
 
@@ -179,7 +179,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
                 if (!newFileConfigs.isEmpty()) {
                     fileConfigs.put(fileNameNoExtension, newFileConfigs); // 允许文件名如".json"
                     newFileConfigsList.sort(getConfigIdComparator(folderId)); fileConfigsList.put(fileNameNoExtension, newFileConfigsList);
-                    BattleRoyale.LOGGER.info("Loaded {} {} config from file: {} for type {}", newFileConfigs.size(), getConfigSubPath(folderId), filePath.getFileName(), getFolderType(folderId));
+                    BattleRoyale.LOGGER.debug("Loaded {} {} config from file: {} for type {}", newFileConfigs.size(), getConfigSubPath(folderId), filePath.getFileName(), getFolderType(folderId));
                 } else {
                     BattleRoyale.LOGGER.info("No valid config for type {} found in file: {}", getFolderType(folderId), filePath.getFileName());
                 }
@@ -340,7 +340,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
             configs.putAll(fileConfigs.get(fileName));
             allConfigs.clear();
             allConfigs.addAll(allFileConfigs.get(fileName));
-            BattleRoyale.LOGGER.info("Switched to config file '{}' for type: {}", fileName, getFolderType(folderId));
+            BattleRoyale.LOGGER.debug("Switched to config file '{}' for type: {}", fileName, getFolderType(folderId));
             return true;
         } else {
             BattleRoyale.LOGGER.warn("Config file '{}' not found for type {}", fileName, getFolderType(folderId));

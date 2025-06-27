@@ -38,7 +38,9 @@ public class ReloadCommand {
                         .then(Commands.literal(SPAWN)
                                 .executes(context -> reloadGameConfigs(context, SPAWN)))
                         .then(Commands.literal(GAMERULE)
-                                .executes(context -> reloadGameConfigs(context, GAMERULE))))
+                                .executes(context -> reloadGameConfigs(context, GAMERULE)))
+                        .then(Commands.literal(BOT)
+                                .executes(context -> reloadGameConfigs(context, BOT))))
                 .then(Commands.literal(EFFECT)
                         .executes(context -> reloadEffectConfigs(context, null))
                         .then(Commands.literal(PARTICLE)
@@ -111,6 +113,10 @@ public class ReloadCommand {
                 case GAMERULE:
                     GameConfigManager.get().reloadGameruleConfigs();
                     messageKey = "battleroyale.message.gamerule_config_reloaded";
+                    break;
+                case BOT:
+                    GameConfigManager.get().reloadBotConfigs();
+                    messageKey = "battleroyale.message.bot_config_reloaded";
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_game_sub_type", subType));

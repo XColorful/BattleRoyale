@@ -30,9 +30,9 @@ public class LoopEventHandler {
         if (event.phase != TickEvent.Phase.END) {
             return;
         }
+
         if (!GameManager.get().isInGame()) {
             unregister();
-            return;
         }
 
         GameManager.get().onGameTick();

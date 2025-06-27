@@ -141,7 +141,7 @@ public class GameConfigManager {
      * 特定类别的重新读取接口
      */
     public void reloadAllConfigs() {
-        // reloadBotConfigs();
+        reloadBotConfigs();
         reloadZoneConfigs();
         reloadSpawnConfigs();
         reloadGameruleConfigs();

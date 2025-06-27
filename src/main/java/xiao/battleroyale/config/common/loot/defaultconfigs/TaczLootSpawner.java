@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.minecraft.EquipmentLevel;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.type.*;
@@ -13,6 +14,7 @@ import java.util.Arrays;
 
 import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.LOOT_SPAWNER;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
+import static xiao.battleroyale.api.minecraft.EquipmentLevel.*;
 
 public class TaczLootSpawner {
 
@@ -36,9 +38,12 @@ public class TaczLootSpawner {
         WeightEntry itemTypeWeight = new WeightEntry(Arrays.asList(
                 new WeightedEntry(32, commonWeaponEntry()),
                 new WeightedEntry(22, commonAttachmentEntry()),
-                new WeightedEntry(8, commonAmmoEntry())
+                new WeightedEntry(8, commonAmmoEntry()),
+                new WeightedEntry(22, commomEquipmentEntry()),
+                new WeightedEntry(8, commonHealEntry()),
+                new WeightedEntry(8, commonToolEntry())
         ));
-        RepeatEntry repeatEntry = new RepeatEntry(2, 3, itemTypeWeight);
+        RepeatEntry repeatEntry = new RepeatEntry(1, 3, itemTypeWeight);
 
         MultiEntry multiEntry = new MultiEntry(Arrays.asList(
                 repeatEntry,
@@ -56,7 +61,8 @@ public class TaczLootSpawner {
         MultiEntry itemList = new MultiEntry(Arrays.asList(
                 rareWeaponEntry(),
                 rareAttachmentEntry(),
-                rareAmmoEntry()
+                rareAmmoEntry(),
+                rareEquipmentEntry()
         ));
 
         RepeatEntry repeatEntry = new RepeatEntry(2, 2, itemList);
@@ -660,6 +666,93 @@ public class TaczLootSpawner {
                 new WeightedEntry(3, minigun),
                 new WeightedEntry(12, t1Rifle),
                 new WeightedEntry(20, mk14)
+        ));
+    }
+
+    /**
+     * 钻石
+     * 锁链
+     * 皮革
+     */
+    private static ILootEntry commomEquipmentEntry() {
+        return new WeightEntry(Arrays.asList(
+                new WeightedEntry(50, commonVestEntry()),
+                new WeightedEntry(30, commonLeggingsEntry()),
+                new WeightedEntry(20, commonHelmetEntry())
+        ));
+    }
+
+    private static ILootEntry rareEquipmentEntry() {
+        return new MultiEntry(Arrays.asList(
+                rareHelmetEntry(),
+                rareVestEntry(),
+                rareLeggingsEntry()
+        ));
+    }
+
+    private static ILootEntry commonHelmetEntry() {
+        return new WeightEntry(Arrays.asList(
+                new WeightedEntry(65, EquipmentLevel.equipment(LEATHER, HELMET, 3)),
+                new WeightedEntry(35, EquipmentLevel.equipment(CHAINMAIL, HELMET, 4))
+        ));
+    }
+
+    private static ILootEntry rareHelmetEntry() {
+        return new WeightEntry(Arrays.asList(
+                new WeightedEntry(80, EquipmentLevel.equipment(CHAINMAIL, HELMET, 4)),
+                new WeightedEntry(20, EquipmentLevel.equipment(DIAMOND, HELMET, 4))
+        ));
+    }
+
+    private static ILootEntry commonVestEntry() {
+        return new WeightEntry(Arrays.asList(
+                new WeightedEntry(65, EquipmentLevel.equipment(LEATHER, CHESTPLATE, 14)),
+                new WeightedEntry(30, EquipmentLevel.equipment(CHAINMAIL, CHESTPLATE, 12)),
+                new WeightedEntry(5, EquipmentLevel.equipment(DIAMOND, CHESTPLATE, 10))
+        ));
+    }
+
+    private static ILootEntry rareVestEntry() {
+        return new WeightEntry(Arrays.asList(
+                new WeightedEntry(70, EquipmentLevel.equipment(CHAINMAIL, CHESTPLATE, 12)),
+                new WeightedEntry(30, EquipmentLevel.equipment(DIAMOND, CHESTPLATE, 10))
+        ));
+    }
+
+    private static ILootEntry commonLeggingsEntry() {
+        return new WeightEntry(Arrays.asList(
+                new WeightedEntry(65, EquipmentLevel.equipment(LEATHER, LEGGINGS, 5)),
+                new WeightedEntry(35, EquipmentLevel.equipment(CHAINMAIL, LEGGINGS, 7))
+        ));
+    }
+
+    private static ILootEntry rareLeggingsEntry() {
+        return new WeightEntry(Arrays.asList(
+                new WeightedEntry(75, EquipmentLevel.equipment(CHAINMAIL, LEGGINGS, 7)),
+                new WeightedEntry(25, EquipmentLevel.equipment(DIAMOND, LEGGINGS, 9))
+        ));
+    }
+
+    private static ILootEntry commonHealEntry() {
+        return new WeightEntry(Arrays.asList(
+                new WeightedEntry(28, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"Bandage\",\"color\":\"white\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:0,Duration:100,ShowParticles:0b,Ambient:0b}]}", 1)),
+                new WeightedEntry(16, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"First Aid Kit\",\"color\":\"red\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:3,Duration:90,ShowParticles:0b,Ambient:0b}]}", 1)),
+                new WeightedEntry(2, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"Med Kit\",\"color\":\"blue\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:3,Duration:120,ShowParticles:0b,Ambient:0b}]}", 1)),
+                new WeightedEntry(27, new EmptyEntry()),
+                new WeightedEntry(24, new EmptyEntry()),
+                new WeightedEntry(3, new EmptyEntry())
+        ));
+    }
+
+    private static ILootEntry commonToolEntry() {
+        return new WeightEntry(Arrays.asList(
+                new WeightedEntry(16, new ItemEntry("superbwarfare:hand_grenade", "", 1)),
+                new WeightedEntry(26, new EmptyEntry()),
+                new WeightedEntry(18, new EmptyEntry()),
+                new WeightedEntry(22, new EmptyEntry()),
+                new WeightedEntry(3, new EmptyEntry()),
+                new WeightedEntry(5, new ItemEntry("vc_gliders:paraglider_wood", "{Damage:25}", 1)),
+                new WeightedEntry(10, new EmptyEntry())
         ));
     }
 }

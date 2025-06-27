@@ -250,6 +250,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
      * 特定类别的重新读取接口
      */
     public void reloadAllLootConfigs() {
+        // 各物资刷新配置均以文件为选择，不需要切换
         reloadLootSpawnerConfigs();
         reloadEntitySpawnerConfigs();
         reloadAirdropConfigs();

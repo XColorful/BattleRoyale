@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.game.zone.gamezone;
+package xiao.battleroyale.api.message.zone;
 
 /**
  * 用于网络通信，省流
@@ -17,7 +17,7 @@ public final class GameZoneTag {
     public static final String ROTATE = "rot";
     public static final String SEGMENTS = "seg";
 
-    public static final String PROGRESS = "prog";
+    public static final String SHAPE_PROGRESS = "prog";
 
     private GameZoneTag() {};
 }

@@ -8,6 +8,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.network.message.ClientMessageGameInfo;
 import xiao.battleroyale.network.message.ClientMessageTeamInfo;
 import xiao.battleroyale.network.message.ClientMessageZoneInfo;
 
@@ -15,7 +16,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameInfoHandler {
-    private static final String PROTOCOL_VERSION = "1.0";
+    private static final String PROTOCOL_VERSION = "1.1";
 
     public static final SimpleChannel GAME_CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(BattleRoyale.MOD_ID, "game_channel"),
@@ -40,6 +41,14 @@ public class GameInfoHandler {
                 ClientMessageTeamInfo.class,
                 (message, buffer) -> message.encode(message, buffer),
                 ClientMessageTeamInfo::decode,
+                (message, contextSupplier) -> message.handle(message, contextSupplier),
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        );
+        GAME_CHANNEL.registerMessage(
+                ID_COUNT.getAndIncrement(),
+                ClientMessageGameInfo.class,
+                (message, buffer) -> message.encode(message, buffer),
+                ClientMessageGameInfo::decode,
                 (message, contextSupplier) -> message.handle(message, contextSupplier),
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT)
         );

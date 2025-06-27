@@ -48,7 +48,7 @@ public class PubgGamerule {
                 false, false, 5000);
 
         GameruleConfigManager.GameruleConfig gameruleConfig = new GameruleConfigManager.GameruleConfig(gameId, name + " " + playerTotal + " " + teamSize, "#FFFFFFAA",
-                brEntry, mcEntry);
+                brEntry, mcEntry, null);
 
         return gameruleConfig.toJson();
     }
