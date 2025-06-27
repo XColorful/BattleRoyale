@@ -21,6 +21,7 @@ public class TeamInfoRenderer {
 
     public static long OFFLINE_TIME_LIMIT = ClientGameDataManager.TEAM_EXPIRE_TICK / 2;
     public static int OFFLINE_COLOR = 0xFF585858;
+    public static int HEALTH_BACKGROUND_COLOR = 0xFF777777;
 
     private static double xRatio = -0.9; // TODO 可配置的队伍HUD位置比例
     private static double yRatio = -0.9;
@@ -98,12 +99,11 @@ public class TeamInfoRenderer {
     }
 
     private void renderHealthBar(double health, int posX, int posY, GuiGraphics guiGraphics, int healthColor) {
+        int healthEndX = posX + HEALTH_BAR_LENGTH;
+        guiGraphics.fill(posX, posY, healthEndX, posY + HEALTH_BAR_HEIGHT, HEALTH_BACKGROUND_COLOR);
         if (health > 0) {
-            int healthEndX = (int) (posX + HEALTH_BAR_LENGTH * (health / 20F));
+            healthEndX = (int) (posX + HEALTH_BAR_LENGTH * (health / 20F));
             guiGraphics.fill(posX, posY, healthEndX, posY + HEALTH_BAR_HEIGHT, healthColor);
-        } else {
-            int healthEndX = posX + HEALTH_BAR_LENGTH;
-            guiGraphics.fill(posX, posY, healthEndX, posY + HEALTH_BAR_HEIGHT, 0xFF777777);
         }
     }
 
