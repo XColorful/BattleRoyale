@@ -19,10 +19,33 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.client.game.ClientGameDataManager;
-import xiao.battleroyale.client.game.data.ClientZoneData;
+import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT, modid = BattleRoyale.MOD_ID)
 public class ZoneRenderer {
+
+    private static class ZoneRendererHolder {
+        private static final ZoneRenderer INSTANCE = new ZoneRenderer();
+    }
+
+    public static ZoneRenderer get() {
+        return ZoneRendererHolder.INSTANCE;
+    }
+
+    private ZoneRenderer() {}
+
+    private static boolean registered = false;
+    public static boolean isRegistered() { return registered; }
+
+    public static void register() {
+        MinecraftForge.EVENT_BUS.register(get());
+        registered = true;
+    }
+
+    public static void unregister() {
+        MinecraftForge.EVENT_BUS.unregister(get());
+        registered = false;
+    }
 
     private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(BattleRoyale.MOD_ID, "textures/white.png");
     private static final RenderType CUSTOM_ZONE_RENDER_TYPE = createRenderType();
@@ -31,17 +54,6 @@ public class ZoneRenderer {
     public static final float POINTING_POLYGON_ANGLE = (float) (Math.PI / 2.0);
     public static final int SPHERE_SEGMENTS = 64;
     public static final int ELLIPSOID_SEGMENTS = 64;
-
-    private static ZoneRenderer instance;
-
-    private ZoneRenderer() {}
-
-    public static ZoneRenderer get() {
-        if (instance == null) {
-            instance = new ZoneRenderer();
-        }
-        return instance;
-    }
 
     private static RenderType createRenderType() {
         RenderType.CompositeState compositeState = RenderType.CompositeState.builder()
@@ -63,10 +75,6 @@ public class ZoneRenderer {
                 compositeState);
     }
 
-    public static void register() {
-        MinecraftForge.EVENT_BUS.register(ZoneRenderer.get());
-    }
-
     public void onRenderLevelStage(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS
                 || !ClientGameDataManager.get().hasZoneRender()) {
@@ -83,7 +91,7 @@ public class ZoneRenderer {
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         Vec3 cameraPos = event.getCamera().getPosition();
 
-        for (ClientZoneData zoneData : ClientGameDataManager.get().getActiveZones().values()) {
+        for (ClientSingleZoneData zoneData : ClientGameDataManager.get().getActiveZones().values()) {
             if (zoneData == null || zoneData.center == null || zoneData.dimension == null) continue;
 
             poseStack.pushPose();

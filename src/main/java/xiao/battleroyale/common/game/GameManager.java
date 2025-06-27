@@ -25,6 +25,7 @@ import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.MessageManager;
+import xiao.battleroyale.common.message.game.GameMessageManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
@@ -527,6 +528,8 @@ public class GameManager extends AbstractGameManager {
             }
             checkIfGameShouldEnd();
         }
+        notifyTeamChange(gamePlayer.getGameTeamId());
+        notifyAliveChange();
     }
 
     /**
@@ -597,6 +600,9 @@ public class GameManager extends AbstractGameManager {
     }
     public void notifyLeavedMember(UUID playerUUID, int teamId) {
         MessageManager.get().notifyLeavedMember(playerUUID, teamId);
+    }
+    public void notifyAliveChange() {
+        MessageManager.get().notifyGameChange(GameMessageManager.ALIVE_CHANNEL);
     }
 
     public int getGameruleConfigId() { return gameruleConfigId; }
@@ -681,6 +687,7 @@ public class GameManager extends AbstractGameManager {
         this.winnerGameTeams.clear(); // 游戏结束后不手动重置
         this.winnerGamePlayers.clear(); // 游戏结束后不手动重置
         registerGameEvent();
+        notifyAliveChange();
     }
     private void registerGameEvent() {
         DamageEventHandler.register();

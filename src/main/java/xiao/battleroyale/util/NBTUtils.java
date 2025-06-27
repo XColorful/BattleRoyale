@@ -13,8 +13,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.game.team.TeamTag;
-import xiao.battleroyale.api.game.zone.gamezone.GameZoneTag;
+import xiao.battleroyale.api.message.team.TeamTag;
+import xiao.battleroyale.api.message.zone.GameZoneTag;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
@@ -73,7 +73,7 @@ public class NBTUtils {
             tag.putDouble(GameZoneTag.ROTATE, rotate);
         }
 
-        tag.putDouble(GameZoneTag.PROGRESS, shapeProgress);
+        tag.putDouble(GameZoneTag.SHAPE_PROGRESS, shapeProgress);
         return tag;
     }
 

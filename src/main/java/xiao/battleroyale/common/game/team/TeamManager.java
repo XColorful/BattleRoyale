@@ -162,9 +162,9 @@ public class TeamManager extends AbstractGameManager {
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
         this.teamData.endGame(); // 解锁
+        GameManager.get().notifyAliveChange();
         this.prepared = false;
         // this.ready = false; // 不使用ready标记，因为Team会变动
-        BattleRoyale.LOGGER.info("TeamManager stopped, clear all team info");
     }
 
     /**

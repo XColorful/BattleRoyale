@@ -3,6 +3,7 @@ package xiao.battleroyale.common.message;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.message.IMessageManager;
+import xiao.battleroyale.common.message.game.GameMessageManager;
 import xiao.battleroyale.common.message.team.TeamMessageManager;
 import xiao.battleroyale.common.message.zone.ZoneMessageManager;
 import xiao.battleroyale.event.MessageEventHandler;
@@ -53,9 +54,17 @@ public class MessageManager {
         messageManagers.add(manager); messageManagerList.add(manager);
         MessageEventHandler.register();
     }
-
     public void registerTeamMessage() {
         TeamMessageManager manager = TeamMessageManager.get();
+        if (messageManagers.contains(manager)) {
+            return;
+        }
+        manager.register(currentTime);
+        messageManagers.add(manager); messageManagerList.add(manager);
+        MessageEventHandler.register();
+    }
+    public void registerGameMessage() {
+        GameMessageManager manager = GameMessageManager.get();
         if (messageManagers.contains(manager)) {
             return;
         }
@@ -94,5 +103,17 @@ public class MessageManager {
     public void notifyLeavedMember(UUID playerUUID, int teamId) {
         registerTeamMessage();
         TeamMessageManager.get().notifyLeavedMember(playerUUID, teamId);
+    }
+
+    public void addGameNbtMessage(int channel, @Nullable CompoundTag nbtMessage) {
+        registerGameMessage();
+        GameMessageManager.get().notifyNbtChange(channel);
+    }
+    public void extendGameMessageTime(int channel, int extendTime) {
+        GameMessageManager.get().extendMessageTime(channel, extendTime);
+    }
+    public void notifyGameChange(int channel) {
+        registerGameMessage();
+        GameMessageManager.get().notifyNbtChange(channel);
     }
 }

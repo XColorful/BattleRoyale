@@ -19,6 +19,29 @@ import java.util.List;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT, modid = BattleRoyale.MOD_ID)
 public class TeamInfoRenderer {
 
+    private static class TeamInfoRendererHolder {
+        private static final TeamInfoRenderer INSTANCE = new TeamInfoRenderer();
+    }
+
+    public static TeamInfoRenderer get() {
+        return TeamInfoRendererHolder.INSTANCE;
+    }
+
+    private TeamInfoRenderer() {}
+
+    private static boolean registered = false;
+    public static boolean isRegistered() { return registered; }
+
+    public static void register() {
+        MinecraftForge.EVENT_BUS.register(get());
+        registered = true;
+    }
+
+    public static void unregister() {
+        MinecraftForge.EVENT_BUS.unregister(get());
+        registered = false;
+    }
+
     public static long OFFLINE_TIME_LIMIT = ClientGameDataManager.TEAM_EXPIRE_TICK / 2;
     public static int OFFLINE_COLOR = 0xFF585858;
     public static int HEALTH_BACKGROUND_COLOR = 0xFF777777;
@@ -39,20 +62,6 @@ public class TeamInfoRenderer {
     private static final int BOOST_BAR_HEIGHT = 1;
     private static final int LINE_OFFSET = 9;
 
-    private static TeamInfoRenderer instance;
-
-    private TeamInfoRenderer() {}
-
-    public static TeamInfoRenderer get() {
-        if (instance == null) {
-            instance = new TeamInfoRenderer();
-        }
-        return instance;
-    }
-
-    public static void register() {
-        MinecraftForge.EVENT_BUS.register(TeamInfoRenderer.get());
-    }
 
     public void onRenderGuiEvent(RenderGuiEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
@@ -68,7 +77,7 @@ public class TeamInfoRenderer {
         int posX = (int) (screenWidth * (0.5 + xRatio / 2));
         int posY = (int) (screenHeight * (0.5 - yRatio / 2)); // 让配置项符合不旋转的直角坐标系
         ClientTeamData teamData = ClientGameDataManager.get().getTeamData();
-        if (!teamData.inTeam) {
+        if (!teamData.inTeam()) {
             return;
         }
 

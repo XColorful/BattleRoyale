@@ -2,8 +2,9 @@ package xiao.battleroyale.client.game.data;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.game.zone.gamezone.GameZoneTag;
+import xiao.battleroyale.api.message.zone.GameZoneTag;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
@@ -11,7 +12,7 @@ import xiao.battleroyale.util.ColorUtils;
 
 import java.awt.*;
 
-public class ClientZoneData {
+public class ClientSingleZoneData extends AbstractClientExpireData {
 
     public boolean useClientColor = false; // TODO 添加配置
     public String clientColorString = "#0000FF"; // 半透明蓝色
@@ -27,16 +28,15 @@ public class ClientZoneData {
     public int segments = 3; // 供多边形和星形使用
     public double progress; // [0, 1]
 
-    public long lastUpdateTime = 0;
-
-    public ClientZoneData(int id) {
+    public ClientSingleZoneData(int id) {
         this.id = id;
     }
 
     /*
-    * 推迟到主线程
+     * 需推迟到主线程
      */
-    public void updateFromNbt(CompoundTag nbt) {
+    @Override
+    public void updateFromNbt(@NotNull CompoundTag nbt) {
         this.name = nbt.getString(GameZoneTag.ZONE_NAME);
         this.color = ColorUtils.parseColorFromString(nbt.getString(GameZoneTag.ZONE_COLOR));
         if (useClientColor) {
@@ -62,8 +62,8 @@ public class ClientZoneData {
         CompoundTag dimTag = nbt.getCompound(GameZoneTag.DIMENSION);
         this.dimension = new Vec3(dimTag.getDouble("x"), dimTag.getDouble("y"), dimTag.getDouble("z"));
         this.rotateDegree = nbt.contains(GameZoneTag.ROTATE) ? nbt.getDouble(GameZoneTag.ROTATE) : 0;
-        this.progress = nbt.getDouble(GameZoneTag.PROGRESS);
+        this.progress = nbt.getDouble(GameZoneTag.SHAPE_PROGRESS);
 
-        this.lastUpdateTime = ClientGameDataManager.getCurrentTick(); // 推迟到主线程
+        this.lastUpdateTick = ClientGameDataManager.getCurrentTick(); // 推迟到主线程
     }
 }

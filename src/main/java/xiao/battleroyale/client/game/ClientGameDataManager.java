@@ -1,8 +1,10 @@
 package xiao.battleroyale.client.game;
 
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.client.game.data.ClientGameData;
 import xiao.battleroyale.client.game.data.ClientTeamData;
-import xiao.battleroyale.client.game.data.ClientZoneData;
+import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,10 +13,19 @@ public class ClientGameDataManager {
 
     private static ClientGameDataManager instance;
 
-    private final Map<Integer, ClientZoneData> activeZones = new ConcurrentHashMap<>(); // zoneId -> zondData
+    // zone
+    private final Map<Integer, ClientSingleZoneData> activeZones = new ConcurrentHashMap<>(); // zoneId -> zondData
     public boolean hasZoneRender() { return !activeZones.isEmpty(); }
+    public Map<Integer, ClientSingleZoneData> getActiveZones() { return this.activeZones; }
+    // team
     private final ClientTeamData teamData = new ClientTeamData();
-    public boolean hasTeamInfo() { return teamData.inTeam; }
+    public boolean hasTeamInfo() { return teamData.inTeam(); }
+    public ClientTeamData getTeamData() { return this.teamData; }
+    // game
+    private final ClientGameData gameData = new ClientGameData();
+    public boolean hasGameInfo() { return gameData.inGame(); }
+    public ClientGameData getGameData() { return this.gameData; }
+
 
     private ClientGameDataManager() {}
 
@@ -27,6 +38,7 @@ public class ClientGameDataManager {
 
     public static final long ZONE_EXPIRE_TICK = 20 * 10;
     public static final long TEAM_EXPIRE_TICK = 20 * 10;
+    public static final long GAME_EXPIRE_TICK = 20 * 10;
     private static long currentTick = 0; // 所有递增和引用操作，都通过enqueueWork确保在主线程进行，从而避免多线程竞态条件
     public static long getCurrentTick() { return currentTick; }
 
@@ -34,11 +46,12 @@ public class ClientGameDataManager {
         currentTick++; // 主线程递增
         boolean hasZone = hasZoneRender();
         boolean hasTeam = hasTeamInfo();
-        if (!hasZone && !hasTeam) {
+        boolean hasGame = hasGameInfo();
+        if (!hasZone && !hasTeam && !hasGame) {
             return;
         }
         if (hasZone) {
-            activeZones.entrySet().removeIf(entry -> currentTick - entry.getValue().lastUpdateTime > ZONE_EXPIRE_TICK); // 主线程引用
+            activeZones.entrySet().removeIf(entry -> currentTick - entry.getValue().getLastUpdateTick() > ZONE_EXPIRE_TICK); // 主线程引用
         }
         if (hasTeam) {
             if (currentTick - teamData.getLastUpdateTick() > TEAM_EXPIRE_TICK) { // 主线程引用
@@ -47,32 +60,43 @@ public class ClientGameDataManager {
                 teamData.teamMemberInfoList.forEach(memberInfo -> memberInfo.boost--);
             }
         }
+        if (hasGame) {
+            if (currentTick - gameData.getLastUpdateTick() > GAME_EXPIRE_TICK) {
+                gameData.clear();
+            } else {
+                ;
+            }
+        }
         // 下一tick一开始获取bool就会重置
     }
 
     /*
     * 推迟到主线程
      */
-    public void updateZoneInfo(CompoundTag syncPacketNbt) {
-        for (String idStr : syncPacketNbt.getAllKeys()) {
-            int id = Integer.parseInt(idStr);
-            CompoundTag zoneNbt = syncPacketNbt.getCompound(idStr);
-            if (zoneNbt.isEmpty()) { // 空NBT表示置空
-                activeZones.remove(id);
-                continue;
-            }
-
-            activeZones.compute(id, (zoneId, existingData) -> {
-                if (existingData == null) {
-                    existingData = new ClientZoneData(zoneId);
+    public void updateZoneInfo(@NotNull CompoundTag syncPacketNbt) {
+        if (syncPacketNbt.isEmpty()) {
+            activeZones.clear();
+        } else {
+            for (String idStr : syncPacketNbt.getAllKeys()) {
+                int id = Integer.parseInt(idStr);
+                CompoundTag zoneNbt = syncPacketNbt.getCompound(idStr);
+                if (zoneNbt.isEmpty()) { // 空NBT表示置空
+                    activeZones.remove(id);
+                    continue;
                 }
-                existingData.updateFromNbt(zoneNbt); // 推迟到主线程
-                return existingData;
-            });
+
+                activeZones.compute(id, (zoneId, existingData) -> {
+                    if (existingData == null) {
+                        existingData = new ClientSingleZoneData(zoneId);
+                    }
+                    existingData.updateFromNbt(zoneNbt); // 推迟到主线程
+                    return existingData;
+                });
+            }
         }
     }
 
-    public void updateTeamInfo(CompoundTag syncPacketNbt) {
+    public void updateTeamInfo(@NotNull CompoundTag syncPacketNbt) {
         if (syncPacketNbt.isEmpty()) { // 空NBT表示置空
             teamData.clear();
         } else {
@@ -80,12 +104,12 @@ public class ClientGameDataManager {
         }
     }
 
-    public Map<Integer, ClientZoneData> getActiveZones() {
-        return this.activeZones;
-    }
-
-    public ClientTeamData getTeamData() {
-        return this.teamData;
+    public void updateGameInfo(@NotNull CompoundTag syncPacketNbt) {
+        if (syncPacketNbt.isEmpty()) {
+            gameData.clear();
+        } else {
+            gameData.updateFromNbt(syncPacketNbt);
+        }
     }
 
     public void clear() {
