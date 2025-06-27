@@ -1,5 +1,6 @@
 package xiao.battleroyale.event.game;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -57,9 +58,12 @@ public class DamageEventHandler {
             isTargetGamePlayer = true;
         }
 
-        if ((isAttackerGamePlayer && !isTargetGamePlayer) // 非游戏玩家打游戏玩家
-                || (!isAttackerGamePlayer && isTargetGamePlayer)) { // 游戏玩家打非游戏玩家
+        if (isAttackerGamePlayer && !isTargetGamePlayer) { // 游戏玩家打非游戏玩家
             event.setCanceled(true);
+        } else if (!isAttackerGamePlayer && isTargetGamePlayer) { // 非游戏玩家打游戏玩家
+            if (damageSource.getEntity() instanceof ServerPlayer) { // 需要保证是玩家
+                event.setCanceled(true);
+            }
         } else if (isTargetGamePlayer) {
             GameManager.get().notifyTeamChange(targetGamePlayer.getGameTeamId());
         }
