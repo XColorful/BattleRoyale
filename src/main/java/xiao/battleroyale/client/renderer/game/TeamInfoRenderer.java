@@ -147,7 +147,7 @@ public class TeamInfoRenderer {
             return 0xFFA5A5A5; // grey
         } else if (health >= 10) {
             return 0xFFF2F2F2; // white
-        } else if (health >= 0.25) {
+        } else if (health >= 5) {
             return 0xFFF9E4A5; // yellow
         } else {
             return 0xFFDC564A; // red
