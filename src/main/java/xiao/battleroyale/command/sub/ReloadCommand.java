@@ -63,6 +63,7 @@ public class ReloadCommand {
         LootConfigManager.get().reloadAllLootConfigs();
         GameConfigManager.get().reloadAllConfigs();
         EffectConfigManager.get().reloadAllConfigs();
+        ClientConfigManager.get().reloadAllConfigs();
 
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.all_config_reloaded"), true);
         BattleRoyale.LOGGER.info("Reloaded all {} configs", BattleRoyale.MOD_ID);
