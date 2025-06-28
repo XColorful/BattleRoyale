@@ -7,8 +7,8 @@ import xiao.battleroyale.api.game.bot.BotConfigTag;
 import xiao.battleroyale.api.game.bot.IBotEntry;
 import xiao.battleroyale.api.game.bot.IBotSingleEntry;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.config.common.AbstractConfigManager;
-import xiao.battleroyale.config.common.AbstractSingleConfig;
+import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.defaultconfigs.DefaultBotConfigGenerator;
 import xiao.battleroyale.util.JsonUtils;
@@ -72,17 +72,22 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
 
             return jsonObject;
         }
+
+        @Override
+        public void applyDefault() {
+            GameManager.get().setBotConfigId(getConfigId());
+        }
     }
 
 
-    @Override protected Comparator<BotConfig> getConfigIdComparator(int configType) {
+    @Override protected Comparator<BotConfig> getConfigIdComparator(int folderId) {
         return Comparator.comparingInt(BotConfig::getConfigId);
     }
 
     /**
      * IConfigManager
      */
-    @Override public String getFolderType(int configType) {
+    @Override public String getFolderType(int folderId) {
         return BotConfig.CONFIG_TYPE;
     }
 
@@ -93,7 +98,7 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
         generateDefaultConfigs(DEFAULT_BOT_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int configType) {
+    @Override public void generateDefaultConfigs(int folderId) {
         DefaultBotConfigGenerator.generateDefaultBotConfigs();
     }
     @Override public int getDefaultConfigId() {
@@ -105,7 +110,7 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
      */
     @Nullable
     @Override
-    public BotConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
+    public BotConfig parseConfigEntry(JsonObject configObject, Path filePath, int folderId) {
         try {
             int id = JsonUtils.getJsonInt(configObject, BotConfigTag.ID, -1);
             if (id < 0) {
@@ -122,10 +127,10 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
             return null;
         }
     }
-    @Override public String getConfigPath(int configType) {
+    @Override public String getConfigPath(int folderId) {
         return BOT_CONFIG_PATH;
     }
-    @Override public String getConfigSubPath(int configType) {
+    @Override public String getConfigSubPath(int folderId) {
         return BOT_CONFIG_SUB_PATH;
     }
 
@@ -144,12 +149,6 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
      */
     public void reloadBotConfigs() {
         reloadConfigs(DEFAULT_BOT_CONFIG_FOLDER);
-        for (BotConfig botConfig : getConfigs().values()) {
-            if (botConfig.isDefault) {
-                GameManager.get().setBotConfigId(botConfig.getConfigId());
-                return;
-            }
-        }
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {

@@ -4,14 +4,13 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.IConfigSingleEntry;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootConfigTag;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
-import xiao.battleroyale.config.common.AbstractConfigManager;
-import xiao.battleroyale.config.common.AbstractSingleConfig;
+import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.loot.defaultconfigs.DefaultLootConfigGenerator;
 import xiao.battleroyale.config.common.loot.type.LootEntryType;
 import xiao.battleroyale.util.JsonUtils;
@@ -111,14 +110,14 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
         }
     }
 
-    @Override protected Comparator<LootConfig> getConfigIdComparator(int configType) {
+    @Override protected Comparator<LootConfig> getConfigIdComparator(int folderId) {
         return Comparator.comparingInt(LootConfig::getConfigId);
     }
 
     /**
      * IConfigManager
      */
-    @Override public String getFolderType(int configType) {
+    @Override public String getFolderType(int folderId) {
         return LootConfig.CONFIG_TYPE;
     }
     public String getLootSpawnerConfigEntryFileName() {
@@ -143,8 +142,8 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     @Override public void generateDefaultConfigs() {
         generateDefaultConfigs(DEFAULT_LOOT_CONFIG_FOLDER);
     }
-    @Override public void generateDefaultConfigs(int configType) {
-        switch (configType) {
+    @Override public void generateDefaultConfigs(int folderId) {
+        switch (folderId) {
             case LOOT_SPAWNER -> DefaultLootConfigGenerator.generateDefaultLootSpawnerConfig();
             case ENTITY_SPAWNER -> DefaultLootConfigGenerator.generateDefaultEntitySpawnerConfig();
             case AIRDROP -> DefaultLootConfigGenerator.generateDefaultAirdropConfig();
@@ -162,7 +161,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
      */
     @Nullable
     @Override
-    public LootConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
+    public LootConfig parseConfigEntry(JsonObject configObject, Path filePath, int folderId) {
         try {
             int lootId = JsonUtils.getJsonInt(configObject, LootConfigTag.LOOT_ID, -1);
             JsonObject lootEntryObject = JsonUtils.getJsonObject(configObject, LootConfigTag.LOOT_ENTRY, null);
@@ -184,11 +183,11 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
             return null;
         }
     }
-    @Override public String getConfigPath(int configType) {
+    @Override public String getConfigPath(int folderId) {
         return LOOT_CONFIG_PATH;
     }
-    @Override public String getConfigSubPath(int configType) {
-        return switch (configType) {
+    @Override public String getConfigSubPath(int folderId) {
+        return switch (folderId) {
             case LOOT_SPAWNER -> LOOT_SPAWNER_CONFIG_SUB_PATH;
             case ENTITY_SPAWNER -> ENTITY_SPAWNER_CONFIG_SUB_PATH;
             case AIRDROP -> AIRDROP_CONFIG_SUB_PATH;
@@ -308,8 +307,8 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     @Override public void initializeDefaultConfigsIfEmpty() {
         initializeDefaultConfigsIfEmpty(DEFAULT_LOOT_CONFIG_FOLDER);
     }
-    @Override public void initializeDefaultConfigsIfEmpty(int configType) {
-        switch (configType) {
+    @Override public void initializeDefaultConfigsIfEmpty(int folderId) {
+        switch (folderId) {
             case LOOT_SPAWNER -> super.initializeDefaultConfigsIfEmpty(LOOT_SPAWNER);
             case ENTITY_SPAWNER -> super.initializeDefaultConfigsIfEmpty(ENTITY_SPAWNER);
             case AIRDROP -> super.initializeDefaultConfigsIfEmpty(AIRDROP);

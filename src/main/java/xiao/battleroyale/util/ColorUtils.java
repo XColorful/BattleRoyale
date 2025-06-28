@@ -59,6 +59,20 @@ public class ColorUtils {
     }
 
     /**
+     * 解析字符串，输出0xAARRGGBB
+     */
+    public static int parseColorToInt(String colorString) {
+        return parseColorToInt(parseColorFromString(colorString));
+    }
+
+    /**
+     * 获取颜色0xAARRGGBB
+     */
+    public static int parseColorToInt(Color color) {
+        return color.getRGB();
+    }
+
+    /**
      * 将字符串表示的颜色的RGB应用到输入颜色
      */
     public static Color changeColorExceptAlpha(Color baseColor, String colorString) {

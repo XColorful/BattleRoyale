@@ -10,8 +10,8 @@ import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.common.game.zone.GameZoneBuilder;
-import xiao.battleroyale.config.common.AbstractConfigManager;
-import xiao.battleroyale.config.common.AbstractSingleConfig;
+import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.defaultconfigs.DefaultZoneConfigGenerator;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
@@ -167,14 +167,14 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
     }
 
 
-    @Override protected Comparator<ZoneConfig> getConfigIdComparator(int configType) {
+    @Override protected Comparator<ZoneConfig> getConfigIdComparator(int folderId) {
         return Comparator.comparingInt(ZoneConfig::getConfigId);
     }
 
     /**
      * IConfigManager
      */
-    @Override public String getFolderType(int configType) {
+    @Override public String getFolderType(int folderId) {
         return ZoneConfig.CONFIG_TYPE;
     }
 
@@ -185,7 +185,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
         generateDefaultConfigs(DEFAULT_ZONE_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int configType) {
+    @Override public void generateDefaultConfigs(int folderId) {
         DefaultZoneConfigGenerator.generateAllDefaultConfigs();
     }
     @Override public int getDefaultConfigId() {
@@ -194,7 +194,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
     @Override public void setDefaultConfigId(int id) {
         return;
     }
-    @Override public void setDefaultConfigId(int id, int configType) {
+    @Override public void setDefaultConfigId(int id, int folderId) {
         return;
     }
 
@@ -203,7 +203,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
      */
     @Nullable
     @Override
-    public ZoneConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
+    public ZoneConfig parseConfigEntry(JsonObject configObject, Path filePath, int folderId) {
         try {
             int zoneId = JsonUtils.getJsonInt(configObject, ZoneConfigTag.ZONE_ID, -1);
             JsonObject zoneFuncObject = JsonUtils.getJsonObject(configObject, ZoneConfigTag.ZONE_FUNC, null);
@@ -231,10 +231,10 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
             return null;
         }
     }
-    @Override public String getConfigPath(int configType) {
+    @Override public String getConfigPath(int folderId) {
         return ZONE_CONFIG_PATH;
     }
-    @Override public String getConfigSubPath(int configType) {
+    @Override public String getConfigSubPath(int folderId) {
         return ZONE_CONFIG_SUB_PATH;
     }
 

@@ -9,8 +9,8 @@ import xiao.battleroyale.api.game.effect.particle.IParticleSingleEntry;
 import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
 import xiao.battleroyale.common.effect.particle.FixedParticleData;
 import xiao.battleroyale.common.effect.particle.ParticleData;
-import xiao.battleroyale.config.common.AbstractConfigManager;
-import xiao.battleroyale.config.common.AbstractSingleConfig;
+import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.effect.particle.defaultconfigs.DefaultParticleConfigGenerator;
 import xiao.battleroyale.util.JsonUtils;
@@ -122,14 +122,14 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
         }
     }
 
-    @Override protected Comparator<ParticleConfig> getConfigIdComparator(int configType) {
+    @Override protected Comparator<ParticleConfig> getConfigIdComparator(int folderId) {
         return Comparator.comparingInt(ParticleConfig::getConfigId);
     }
 
     /**
      * IConfigManager
      */
-    @Override public String getFolderType(int configType) {
+    @Override public String getFolderType(int folderId) {
         return ParticleConfig.CONFIG_TYPE;
     }
 
@@ -140,7 +140,7 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
         generateDefaultConfigs(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
     }
 
-    @Override public void generateDefaultConfigs(int configType) {
+    @Override public void generateDefaultConfigs(int folderId) {
         DefaultParticleConfigGenerator.generateDefaultParticleConfigs();
     }
     @Override public int getDefaultConfigId() {
@@ -152,7 +152,7 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
      */
     @Nullable
     @Override
-    public ParticleConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
+    public ParticleConfig parseConfigEntry(JsonObject configObject, Path filePath, int folderId) {
         try {
             int id = JsonUtils.getJsonInt(configObject, ParticleConfigTag.PARTICLE_ID, -1);
             JsonObject detailEntryObject = JsonUtils.getJsonObject(configObject, ParticleConfigTag.DETAIL_ENTRY, null);
@@ -176,10 +176,10 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
             return null;
         }
     }
-    @Override public String getConfigPath(int configType) {
+    @Override public String getConfigPath(int folderId) {
         return PARTICLE_CONFIG_PATH;
     }
-    @Override public String getConfigSubPath(int configType) {
+    @Override public String getConfigSubPath(int folderId) {
         return PARTICLE_CONFIG_SUB_PATH;
     }
 

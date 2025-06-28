@@ -1,6 +1,6 @@
 package xiao.battleroyale.config.common.effect;
 
-import xiao.battleroyale.config.common.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigManager;
 import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager;
 import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager.ParticleConfig;
 

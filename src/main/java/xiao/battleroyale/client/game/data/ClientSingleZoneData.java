@@ -14,8 +14,10 @@ import java.awt.*;
 
 public class ClientSingleZoneData extends AbstractClientExpireData {
 
-    public boolean useClientColor = false; // TODO 添加配置
-    public String clientColorString = "#0000FF"; // 半透明蓝色
+    private static boolean useClientColor = false;
+    public static void setUseClientColor(boolean use) { useClientColor = use; }
+    private static String clientColorString = "#0000FF";
+    public static void setClientColorString(String colorString) { clientColorString = colorString; }
 
     public final int id;
     public String name;

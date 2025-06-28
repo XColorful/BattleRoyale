@@ -9,8 +9,8 @@ import xiao.battleroyale.api.game.spawn.ISpawnSingleEntry;
 import xiao.battleroyale.api.game.spawn.SpawnConfigTag;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.config.common.AbstractConfigManager;
-import xiao.battleroyale.config.common.AbstractSingleConfig;
+import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.spawn.defaultconfigs.DefaultSpawnConfigGenerator;
 import xiao.battleroyale.config.common.game.spawn.type.SpawnEntryType;
@@ -97,16 +97,21 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
                 return null;
             }
         }
+
+        @Override
+        public void applyDefault() {
+            GameManager.get().setSpawnConfigId(getConfigId());
+        }
     }
 
-    @Override protected Comparator<SpawnConfig> getConfigIdComparator(int configType) {
+    @Override protected Comparator<SpawnConfig> getConfigIdComparator(int folderId) {
         return Comparator.comparingInt(SpawnConfig::getConfigId);
     }
 
     /**
      * IConfigManager
      */
-    @Override public String getFolderType(int configType) {
+    @Override public String getFolderType(int folderId) {
         return SpawnConfig.CONFIG_TYPE;
     }
 
@@ -117,7 +122,7 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
         generateDefaultConfigs(DEFAULT_SPAWN_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int configType) {
+    @Override public void generateDefaultConfigs(int folderId) {
         DefaultSpawnConfigGenerator.generateDefaultSpawnConfigs();
     }
     @Override public int getDefaultConfigId() {
@@ -129,7 +134,7 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
      */
     @Nullable
     @Override
-    public SpawnConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
+    public SpawnConfig parseConfigEntry(JsonObject configObject, Path filePath, int folderId) {
         try {
             int id = JsonUtils.getJsonInt(configObject, SpawnConfigTag.SPAWN_ID, -1);
             JsonObject spawnEntryObject = JsonUtils.getJsonObject(configObject, SpawnConfigTag.SPAWN_ENTRY, null);
@@ -152,10 +157,10 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
             return null;
         }
     }
-    @Override public String getConfigPath(int configType) {
+    @Override public String getConfigPath(int folderId) {
         return SPAWN_CONFIG_PATH;
     }
-    @Override public String getConfigSubPath(int configType) {
+    @Override public String getConfigSubPath(int folderId) {
         return SPAWN_CONFIG_SUB_PATH;
     }
 
@@ -174,12 +179,6 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
      */
     public void reloadSpawnConfigs() {
         reloadConfigs(DEFAULT_SPAWN_CONFIG_FOLDER);
-        for (SpawnConfig spawnConfig : getConfigs().values()) {
-            if (spawnConfig.isDefault) {
-                GameManager.get().setSpawnConfigId(spawnConfig.getConfigId());
-                return;
-            }
-        }
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {

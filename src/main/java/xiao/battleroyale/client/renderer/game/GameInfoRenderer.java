@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.Mod;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientGameData;
+import xiao.battleroyale.util.ColorUtils;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT, modid = BattleRoyale.MOD_ID)
 public class GameInfoRenderer {
@@ -38,11 +39,18 @@ public class GameInfoRenderer {
         registered = false;
     }
 
-    public static int ALIVE_COLOR = 0xFFFFFFFF;
-    public static int ALIVE_COUNT_COLOR = 0xFF00FFFF; // #AARRGGBB
+    private static boolean displayAlive = true;
+    public static void setDisplayAlive(boolean shouldDisplay) { displayAlive = shouldDisplay;}
 
-    private static double alive_xRatio = 0.85; // TODO 可配置的存活HUD位置比例
+    private static double alive_xRatio = 0.85;
+    public static void setAliveXRatio(double ratio) { alive_xRatio = ratio; }
     private static double alive_yRatio = 0.9;
+    public static void setAliveYRatio(double ratio) { alive_yRatio = ratio; }
+
+    private static int ALIVE_COLOR = ColorUtils.parseColorToInt("#FFFFFFFF");
+    public static void setAliveColor(String colorString) { ALIVE_COLOR = ColorUtils.parseColorToInt(colorString); }
+    private static int ALIVE_COUNT_COLOR = ColorUtils.parseColorToInt("#00FFFFFF");
+    public static void setAliveCountColor(String colorString) { ALIVE_COUNT_COLOR = ColorUtils.parseColorToInt(colorString); }
 
     /*
     右上角
@@ -50,7 +58,7 @@ public class GameInfoRenderer {
      */
     public void onRenderGuiEvent(RenderGuiEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || mc.player == null) {
+        if (!displayAlive || mc.level == null || mc.player == null) {
             return;
         }
 

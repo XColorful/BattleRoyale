@@ -12,6 +12,7 @@ import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
 import xiao.battleroyale.common.effect.boost.BoostData;
+import xiao.battleroyale.util.ColorUtils;
 
 import java.awt.*;
 import java.util.List;
@@ -42,12 +43,18 @@ public class TeamInfoRenderer {
         registered = false;
     }
 
-    public static long OFFLINE_TIME_LIMIT = ClientGameDataManager.TEAM_EXPIRE_TICK / 2;
-    public static int OFFLINE_COLOR = 0xFF585858;
-    public static int HEALTH_BACKGROUND_COLOR = 0xFF777777;
+    private static boolean displayTeam = true;
+    public static void setDisplayTeam(boolean shouldDisplay) { displayTeam = shouldDisplay; }
 
-    private static double xRatio = -0.9; // TODO 可配置的队伍HUD位置比例
+    private static long OFFLINE_TIME_LIMIT = ClientGameDataManager.TEAM_EXPIRE_TICK / 2;
+    public static void setOfflineTimeLimit(int time) { OFFLINE_TIME_LIMIT = time; }
+    public static int OFFLINE_COLOR = ColorUtils.parseColorToInt("#585858FF");
+    public static int HEALTH_BACKGROUND_COLOR = ColorUtils.parseColorToInt("#777777FF");
+
+    private static double xRatio = -0.9;
+    public static void setXRatio(double ratio) { xRatio = ratio; }
     private static double yRatio = -0.9;
+    public static void setYRatio(double ratio) { yRatio = ratio; }
 
     /*
     左上角
@@ -65,7 +72,7 @@ public class TeamInfoRenderer {
 
     public void onRenderGuiEvent(RenderGuiEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || mc.player == null) {
+        if (!displayTeam || mc.level == null || mc.player == null) {
             return;
         }
 
