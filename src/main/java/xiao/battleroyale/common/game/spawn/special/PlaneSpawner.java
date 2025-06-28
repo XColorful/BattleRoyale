@@ -31,10 +31,10 @@ public class PlaneSpawner extends AbstractSimpleSpawner {
 
     private Entity monitoredPlane; // TODO 需要先完成飞机模型及实体
 
-    public PlaneSpawner(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
+    public PlaneSpawner(SpawnShapeType shapeType, Vec3 center, Vec3 dimension, int zoneId,
                         CommonDetailType detailType,
                         PlaneEntry.DetailInfo detailInfo) {
-        super(shapeType, center, dimension);
+        super(shapeType, center, dimension, zoneId);
 
         this.detailType = detailType;
         this.planeHeight = detailInfo.planeHeight();

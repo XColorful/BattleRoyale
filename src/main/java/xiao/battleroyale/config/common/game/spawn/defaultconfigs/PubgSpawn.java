@@ -34,7 +34,7 @@ public class PubgSpawn {
         );
 
         SpawnConfig spawnConfig = new SpawnConfig(id, border + "x" + border + " Circle radius " + radius + " * " + percentageHundred + "%", "#FFFFFFAA",
-                groundEntry);
+                0, groundEntry);
 
         return spawnConfig.toJson();
     }
@@ -46,7 +46,7 @@ public class PubgSpawn {
         );
 
         SpawnConfig spawnConfig = new SpawnConfig(id, border + "x" + border + " Square side " + side + " * " + percentageHundred + "%", "#FFFFFFAA",
-                groundEntry);
+                0, groundEntry);
 
         return spawnConfig.toJson();
     }

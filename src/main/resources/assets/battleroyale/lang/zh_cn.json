@@ -200,6 +200,7 @@
   "battleroyale.message.add_player_boost": "已为玩家 %s 补充%s%%能量",
   "battleroyale.message.clear_player_boost": "已清除玩家 %s 能量",
   "battleroyale.message.clear_all_boost": "已清除所有玩家能量",
+  "battleroyale.message.set_global_offset": "将全局偏移设置为%s,%s,%s",
 
   "battleroyale.label.alive": "生存"
 }

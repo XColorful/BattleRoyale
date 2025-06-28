@@ -58,4 +58,12 @@ public class CommandArg {
     public static final String TIME = "time";
     public static final String COOLDOWN = "cooldown";
     public static final String ALL = "all";
+
+    public static final String LOAD = "load";
+    public static final String INIT = "init";
+    public static final String START = "start";
+    public static final String STOP = "stop";
+    public static final String LOBBY = "lobby";
+    public static final String TO_LOBBY = "toLobby";
+    public static final String OFFSET = "offset";
 }

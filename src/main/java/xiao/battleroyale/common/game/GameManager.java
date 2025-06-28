@@ -74,6 +74,15 @@ public class GameManager extends AbstractGameManager {
     private int gameruleConfigId = 0;
     private int spawnConfigId = 0;
     private int botConfigId = 0;
+    private Vec3 globalCenterOffset = Vec3.ZERO;
+    public Vec3 getGlobalCenterOffset() { return globalCenterOffset; }
+    public boolean setGlobalCenterOffset(Vec3 offset) {
+        if (isInGame()) {
+            return false;
+        }
+        globalCenterOffset = offset;
+        return true;
+    }
 
     private int maxGameTime;
     private GameEntry gameEntry;
@@ -92,7 +101,7 @@ public class GameManager extends AbstractGameManager {
     }
 
     public void setGameId(UUID gameId) {
-        if (this.inGame) {
+        if (isInGame()) {
             return;
         }
         this.gameId = gameId;
@@ -198,11 +207,11 @@ public class GameManager extends AbstractGameManager {
         checkAndUpdateInvalidGamePlayer(this.serverLevel); // 为其他Manager预处理当前tick
 
         GameLootManager.get().onGameTick(gameTime);
+        ZoneManager.get().onGameTick(gameTime);
 
         TeamManager.get().onGameTick(gameTime);
         GameruleManager.get().onGameTick(gameTime);
         SpawnManager.get().onGameTick(gameTime);
-        ZoneManager.get().onGameTick(gameTime);
         // StatsManager.get().onGameTick(gameTime); // 基于事件主动记录，不用tick
     }
 
@@ -331,7 +340,7 @@ public class GameManager extends AbstractGameManager {
      * 调用此方法将检查是否有胜利队伍
      */
     public void checkIfGameShouldEnd() {
-        if (!this.inGame) {
+        if (!isInGame()) {
             return;
         }
 
@@ -492,14 +501,14 @@ public class GameManager extends AbstractGameManager {
             return;
         }
 
-        if (TeamManager.get().shouldAutoJoin() && !this.inGame) { // 没开游戏就加入
+        if (TeamManager.get().shouldAutoJoin() && !isInGame()) { // 没开游戏就加入
             TeamManager.get().joinTeam(player);
             teleportToLobby(player); // 登录自动传到大厅
         }
     }
 
     public void onPlayerLoggedOut(ServerPlayer player) {
-        if (!this.inGame) {
+        if (!isInGame()) {
             TeamManager.get().removePlayerFromTeam(player.getUUID()); // 没开始游戏就直接踢了
         }
 

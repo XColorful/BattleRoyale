@@ -200,6 +200,7 @@
   "battleroyale.message.add_player_boost": "Add boost for %s (%s%% boost)",
   "battleroyale.message.clear_player_boost": "Cleared %s's boost",
   "battleroyale.message.clear_all_boost": "Cleared all player's boost",
+  "battleroyale.message.set_global_offset": "Set global offset to %s,%s,%s",
 
   "battleroyale.label.alive": "Alive"
 }

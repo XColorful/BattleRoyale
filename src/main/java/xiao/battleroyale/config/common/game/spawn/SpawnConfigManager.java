@@ -47,15 +47,22 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
     public static class SpawnConfig extends AbstractSingleConfig implements ISpawnSingleEntry {
         public static final String CONFIG_TYPE = "SpawnConfig";
 
+        public final int preZoneCenterOffset;
         public final ISpawnEntry entry;
 
         public SpawnConfig(int id, String name, String color, ISpawnEntry entry) {
-            this(id, name, color, false, entry);
+            this(id, name, color, -1, false, entry);
         }
 
-        public SpawnConfig(int id, String name, String color, boolean isDefault, ISpawnEntry entry) {
+        public SpawnConfig(int id, String name, String color, int preZoneCenterOffset, ISpawnEntry entry) {
+            this(id, name, color, preZoneCenterOffset, false, entry);
+        }
+
+        public SpawnConfig(int id, String name, String color, int preZoneCenterOffset, boolean isDefault, ISpawnEntry entry) {
             super(id, name, color, isDefault);
+            this.preZoneCenterOffset = preZoneCenterOffset;
             this.entry = entry;
+            this.entry.addPreZoneId(preZoneCenterOffset);
         }
 
         @Override
@@ -77,6 +84,9 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
             }
             jsonObject.addProperty(SpawnConfigTag.SPAWN_NAME, name);
             jsonObject.addProperty(SpawnConfigTag.SPAWN_COLOR, color);
+            if (preZoneCenterOffset >= 0) {
+                jsonObject.addProperty(SpawnConfigTag.PRE_ZONE_CENTER_OFFSET, preZoneCenterOffset);
+            }
             if (entry != null) {
                 jsonObject.add(SpawnConfigTag.SPAWN_ENTRY, entry.toJson());
             }
@@ -145,13 +155,14 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
             boolean isDefault = JsonUtils.getJsonBoolean(configObject, SpawnConfigTag.DEFAULT, false);
             String name = JsonUtils.getJsonString(configObject, SpawnConfigTag.SPAWN_NAME, "");
             String color = JsonUtils.getJsonString(configObject, SpawnConfigTag.SPAWN_COLOR, "#FFFFFF");
+            int preZoneId = JsonUtils.getJsonInt(configObject, SpawnConfigTag.PRE_ZONE_CENTER_OFFSET, -1);
             ISpawnEntry spawnEntry = SpawnConfig.deserializeSpawnEntry(spawnEntryObject);
             if (spawnEntry == null) {
                 BattleRoyale.LOGGER.warn("Failed to deserialize spawn entry for id: {} in {}", id, filePath);
                 return null;
             }
 
-            return new SpawnConfig(id, name, color, isDefault, spawnEntry);
+            return new SpawnConfig(id, name, color, preZoneId, isDefault, spawnEntry);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(), filePath, e.getMessage());
             return null;
