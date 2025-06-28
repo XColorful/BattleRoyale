@@ -150,7 +150,7 @@ public class TeamCommand {
 
     public static String acceptInviteCommandString(String senderName) {
         return buildCommandString(
-                CommandArg.ROOT,
+                MOD_ID,
                 TEAM,
                 ACCEPT,
                 INVITE,
@@ -160,7 +160,7 @@ public class TeamCommand {
 
     public static String declineInviteCommandString(String senderName) {
         return buildCommandString(
-                xiao.battleroyale.command.CommandArg.ROOT,
+                MOD_ID,
                 TEAM,
                 DECLINE,
                 INVITE,
@@ -170,7 +170,7 @@ public class TeamCommand {
 
     public static String acceptRequestCommandString(String name) {
         return buildCommandString(
-                xiao.battleroyale.command.CommandArg.ROOT,
+                MOD_ID,
                 TEAM,
                 ACCEPT,
                 REQUEST,
@@ -180,7 +180,7 @@ public class TeamCommand {
 
     public static String declineRequestCommandString(String name) {
         return buildCommandString(
-                xiao.battleroyale.command.CommandArg.ROOT,
+                MOD_ID,
                 TEAM,
                 DECLINE,
                 REQUEST,

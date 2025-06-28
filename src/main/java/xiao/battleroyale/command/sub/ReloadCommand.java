@@ -6,6 +6,8 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import xiao.battleroyale.command.ClientCommand;
+import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
@@ -47,12 +49,22 @@ public class ReloadCommand {
                                 .executes(context -> reloadEffectConfigs(context, PARTICLE))));
     }
 
+    public static LiteralArgumentBuilder<CommandSourceStack> getClient() {
+        return Commands.literal(RELOAD)
+                .then(Commands.literal(CLIENT)
+                        .executes(context -> reloadClientConfigs(context, null))
+                        .then(Commands.literal(RENDER)
+                                .executes(context -> reloadClientConfigs(context, RENDER)))
+                        .then(Commands.literal(DISPLAY)
+                                .executes(context -> reloadClientConfigs(context, DISPLAY))));
+    }
+
     private static int reloadAllConfigs(CommandContext<CommandSourceStack> context) {
         LootConfigManager.get().reloadAllLootConfigs();
         GameConfigManager.get().reloadAllConfigs();
         EffectConfigManager.get().reloadAllConfigs();
 
-        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.all_configs_reloaded"), true);
+        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.all_config_reloaded"), true);
         BattleRoyale.LOGGER.info("Reloaded all {} configs", BattleRoyale.MOD_ID);
         return Command.SINGLE_SUCCESS;
     }
@@ -147,6 +159,31 @@ public class ReloadCommand {
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Reloaded {} effect configs via command", subType != null ? subType : "all effect");
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int reloadClientConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        String messageKey;
+        if (subType == null) {
+            ClientConfigManager.get().reloadAllConfigs();
+            messageKey = "battleroyale.message.client_config_reloaded";
+        } else {
+            switch (subType) {
+                case RENDER:
+                    ClientConfigManager.get().reloadRenderConfigs();
+                    messageKey = "battleroyale.message.render_config_reloaded";
+                    break;
+                case DISPLAY:
+                    ClientConfigManager.get().reloadDisplayConfigs();
+                    messageKey = "battleroyale.message.display_config_reloaded";
+                    break;
+                default:
+                    context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_client_sub_type", subType));
+                    return 0;
+            }
+        }
+        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        BattleRoyale.LOGGER.info("Reloaded {} client configs via command", subType != null ? subType : "all client");
         return Command.SINGLE_SUCCESS;
     }
 }

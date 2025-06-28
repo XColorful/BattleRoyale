@@ -156,7 +156,7 @@ public class GameCommand {
 
     public static String toLobbyCommandString() {
         return buildCommandString(
-                CommandArg.ROOT,
+                MOD_ID,
                 GAME,
                 TO_LOBBY
         );

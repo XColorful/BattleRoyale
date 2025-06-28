@@ -100,4 +100,30 @@ public class ClientConfigManager {
     public boolean switchDisplayConfig(String fileName) {
         return DisplayConfigManager.get().switchConfigFile(fileName);
     }
+
+    public boolean applyRenderConfig(int id) {
+        RenderConfig renderConfig = getRenderConfig(id);
+        if (renderConfig == null) {
+            return false;
+        }
+        renderConfig.applyDefault();
+        return true;
+    }
+    public boolean applyDisplayConfig(int id) {
+        DisplayConfig displayConfig = getDisplayConfig(id);
+        if (displayConfig == null) {
+            return false;
+        }
+        displayConfig.applyDefault();
+        return true;
+    }
+
+    public String getRenderConfigName(int id) {
+        RenderConfig renderConfig = getRenderConfig(id);
+        return renderConfig != null ? renderConfig.name : "";
+    }
+    public String getDisplayConfigName(int id) {
+        DisplayConfig displayConfig = getDisplayConfig(id);
+        return displayConfig != null ? displayConfig.name : "";
+    }
 }

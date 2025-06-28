@@ -33,8 +33,10 @@
   "battleroyale.message.no_spawn_config_available": "No spawn config available",
   "battleroyale.message.no_zone_config_available": "No zone config available",
   "battleroyale.message.no_particle_config_available": "No particle config available",
+  "battleroyale.message.no_render_config_available": "No render config available",
+  "battleroyale.message.no_display_config_available": "No display config available",
 
-  "battleroyale.message.all_configs_reloaded": "Reloaded all battleroyale configs",
+  "battleroyale.message.all_config_reloaded": "Reloaded all battleroyale configs",
   "battleroyale.message.loot_config_reloaded": "Reloaded all loot configs",
   "battleroyale.message.loot_spawner_config_reloaded": "Reloaded loot spawner configs",
   "battleroyale.message.entity_spawner_config_reloaded": "Reloaded entity spawner configs",
@@ -48,10 +50,14 @@
   "battleroyale.message.bot_config_reloaded": "Reloaded bot configs",
   "battleroyale.message.effect_config_reloaded": "Reloaded all effect configs",
   "battleroyale.message.particle_config_reloaded": "Reloaded particle configs",
+  "battleroyale.message.client_config_reloaded": "Reloaded all client configs",
+  "battleroyale.message.render_config_reloaded": "Reloaded render configs",
+  "battleroyale.message.display_config_reloaded": "Reloaded display configs",
 
   "battleroyale.message.unknown_loot_sub_type": "Unknown loot sub-type: %s",
   "battleroyale.message.unknown_game_sub_type": "Unknown game sub-type: %s",
   "battleroyale.message.unknown_effect_sub_type": "Unknown effect sub-type: %s",
+  "battleroyale.message.unknown_client_sub_type": "Unknown client sub-type: %s",
 
   "battleroyale.message.game_cancel_loot": "Currently in game, cancel loot generation",
   "battleroyale.message.game_stop_loot": "Currently in game, stopped queued loot generation",
@@ -63,6 +69,10 @@
   "battleroyale.message.invalid_gamerule_config_id": "Impossible gamerule config id: %s",
   "battleroyale.message.bot_config_id_set": "Set bot config id to %s: %s",
   "battleroyale.message.invalid_bot_config_id": "Impossible bot config id: %s",
+  "battleroyale.message.render_config_applied": "Applied render config %s: %s",
+  "battleroyale.message.invalid_render_config_id": "Impossible render config id: %s",
+  "battleroyale.message.display_config_applied": "Applied display config %s: %s",
+  "battleroyale.message.invalid_display_config_id": "Impossible display config id: %s",
 
   "battleroyale.message.missing_gamerule_config": "Missing valid gamerule config for battleroyale game",
   "battleroyale.message.missing_spawn_config": "Missing valid spawn config for battleroyale game",
@@ -165,6 +175,10 @@
   "battleroyale.message.no_zone_config_file": "No zone config file '%s'",
   "battleroyale.message.switch_particle_config_file": "Switch particle config file to '%s'",
   "battleroyale.message.no_particle_config_file": "No particle config file '%s'",
+  "battleroyale.message.switch_render_config_file": "Switch render config file to '%s'",
+  "battleroyale.message.no_render_config_file": "No render config file '%s'",
+  "battleroyale.message.switch_display_config_file": "Switch display config file to '%s'",
+  "battleroyale.message.no_display_config_file": "No display config file '%s'",
 
   "battleroyale.message.winner_message": "Chicken Dinner!",
   "battleroyale.message.back_to_lobby": "Back to lobby",
