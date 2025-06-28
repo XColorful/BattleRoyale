@@ -218,4 +218,16 @@ public class SpawnManager extends AbstractGameManager {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
         }
     }
+
+    /**
+     * Compatibility to PUBGMC
+     */
+    public boolean setPubgmcLobby(Vec3 corrds, double radius) {
+        if (corrds == null || radius <= 0) {
+            return false;
+        }
+        this.lobbyPos = corrds;
+        this.lobbyDimension = new Vec3(radius, radius, radius);
+        return true;
+    }
 }

@@ -59,7 +59,7 @@ public class ReloadCommand {
                                 .executes(context -> reloadClientConfigs(context, DISPLAY))));
     }
 
-    private static int reloadAllConfigs(CommandContext<CommandSourceStack> context) {
+    public static int reloadAllConfigs(CommandContext<CommandSourceStack> context) {
         LootConfigManager.get().reloadAllLootConfigs();
         GameConfigManager.get().reloadAllConfigs();
         EffectConfigManager.get().reloadAllConfigs();

@@ -6,6 +6,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xiao.battleroyale.command.ClientCommand;
 import xiao.battleroyale.command.ServerCommand;
+import xiao.battleroyale.compat.pubgmc.PubgmcCommand;
 
 @Mod.EventBusSubscriber
 public class CommandRegistry {
@@ -13,6 +14,7 @@ public class CommandRegistry {
     @SubscribeEvent
     public static void onServerStarting(RegisterCommandsEvent event) {
         ServerCommand.register(event.getDispatcher());
+        PubgmcCommand.register(event.getDispatcher());
     }
 
     @SubscribeEvent

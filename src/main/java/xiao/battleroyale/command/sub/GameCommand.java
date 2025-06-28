@@ -63,7 +63,7 @@ public class GameCommand {
         }
     }
 
-    private static int initGame(CommandContext<CommandSourceStack> context) {
+    public static int initGame(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         ServerLevel serverLevel = source.getLevel();
         GameManager gameManager = GameManager.get();
@@ -89,7 +89,7 @@ public class GameCommand {
         }
     }
 
-    private static int startGame(CommandContext<CommandSourceStack> context) {
+    public static int startGame(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         ServerLevel serverLevel = source.getLevel();
         GameManager gameManager = GameManager.get();
@@ -110,7 +110,7 @@ public class GameCommand {
         }
     }
 
-    private static int stopGame(CommandContext<CommandSourceStack> context) {
+    public static int stopGame(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         ServerLevel serverLevel = source.getLevel();
         GameManager gameManager = GameManager.get();

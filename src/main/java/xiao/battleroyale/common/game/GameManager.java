@@ -545,7 +545,7 @@ public class GameManager extends AbstractGameManager {
      * 安全传送，文明掉落
      * 传送不规范，玩家两行泪
      */
-    public void safeTeleport(@NotNull ServerPlayer player, Vec3 teleportPos) {
+    public void safeTeleport(@NotNull ServerPlayer player, @NotNull Vec3 teleportPos) {
         safeTeleport(player, teleportPos.x, teleportPos.y, teleportPos.z);
     }
     /**

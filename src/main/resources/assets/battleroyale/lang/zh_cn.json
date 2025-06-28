@@ -202,5 +202,11 @@
   "battleroyale.message.clear_all_boost": "已清除所有玩家能量",
   "battleroyale.message.set_global_offset": "将全局偏移设置为%s,%s,%s",
 
-  "battleroyale.label.alive": "生存"
+  "battleroyale.label.alive": "生存",
+
+  "commands.pubgmc.game.lobby.created": "已创建大厅",
+  "commands.pubgmc.game.lobby.not_created": "未定义大厅",
+  "commands.pubgmc.game.type_selected": "已选择游戏类型“%s”",
+  "commands.pubgmc.game.map.created": "已创建地图“%s",
+  "commands.pubgmc.game.map.deleted": "已移除地图“%s"
 }

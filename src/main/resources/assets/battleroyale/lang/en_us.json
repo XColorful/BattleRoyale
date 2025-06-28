@@ -202,5 +202,11 @@
   "battleroyale.message.clear_all_boost": "Cleared all player's boost",
   "battleroyale.message.set_global_offset": "Set global offset to %s,%s,%s",
 
-  "battleroyale.label.alive": "Alive"
+  "battleroyale.label.alive": "Alive",
+
+  "commands.pubgmc.game.lobby.created": "Lobby has been successfully created",
+  "commands.pubgmc.game.lobby.not_created": "There is no lobby defined",
+  "commands.pubgmc.game.type_selected": "Game type '%s' has been selected successfully",
+  "commands.pubgmc.game.map.created": "Map '%s' has been created",
+  "commands.pubgmc.game.map.deleted": "Map '%s' has been removed"
 }
