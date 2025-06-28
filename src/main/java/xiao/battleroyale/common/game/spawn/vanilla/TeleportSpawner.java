@@ -177,13 +177,15 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
                 GamePlayer gamePlayer = standingPlayers.get(i);
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
                 if (player != null) {
+                    if ((!indexAdded || !teamTogether) && targetSpawnPos.y != queuedHeight) { // (没添加过计数就添加一次，不是队伍统一传送就添加一次) && 成功找到地面
+                        spawnPointIndex++;
+                        indexAdded = true;
+                    }
                     GameManager.get().safeTeleport(player, targetSpawnPos);
                     addSpawnStats(gamePlayer, targetSpawnPos);
                     gamePlayer.setLastPos(targetSpawnPos); // 立即更新，防止下一tick找不到又躲了逻辑位置
                     teleportedPlayerId.add(gamePlayer.getGameSingleId());
-                    if ((!indexAdded || !teamTogether) && targetSpawnPos.y != queuedHeight) { // (没添加过计数就添加一次，不是队伍统一传送就添加一次) && 成功找到地面
-                        spawnPointIndex++;
-                        indexAdded = true;
+                    if (targetSpawnPos.y == queuedHeight) {
                         BattleRoyale.LOGGER.debug("GroundSpawner: Telepoted gamePlayer {} to team spawn position {}", gamePlayer.getGameSingleId(), targetSpawnPos);
                     } else {
                         BattleRoyale.LOGGER.info("GroundSpawner: Telepoted gamePlayer {} to team spawn position {}", gamePlayer.getGameSingleId(), targetSpawnPos);
