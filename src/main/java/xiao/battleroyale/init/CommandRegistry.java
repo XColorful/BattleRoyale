@@ -9,13 +9,15 @@ import xiao.battleroyale.command.ServerCommand;
 import xiao.battleroyale.common.game.tempdata.TempDataManager;
 import xiao.battleroyale.compat.pubgmc.PubgmcCommand;
 
+import static xiao.battleroyale.api.game.tempdata.TempDataTag.*;
+
 @Mod.EventBusSubscriber
 public class CommandRegistry {
 
     @SubscribeEvent
     public static void onServerStarting(RegisterCommandsEvent event) {
         ServerCommand.register(event.getDispatcher());
-        Boolean registerPubgmc = TempDataManager.get().getBool("registry", "pubgmcCommand");
+        Boolean registerPubgmc = TempDataManager.get().getBool(REGISTRY, PUBGMC_COMMAND);
         if (registerPubgmc != null && registerPubgmc) {
             PubgmcCommand.register(event.getDispatcher());
         }

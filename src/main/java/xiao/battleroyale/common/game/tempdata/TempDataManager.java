@@ -200,6 +200,10 @@ public class TempDataManager extends AbstractGameManager {
         ;
     }
 
+    /**
+     * 开始游戏时立即异步写入配置
+     * 保证上一次游戏添加的临时数据能够重新读取
+     */
     @Override
     public boolean startGame(ServerLevel serverLevel) {
         tempDataToJsonAsync()

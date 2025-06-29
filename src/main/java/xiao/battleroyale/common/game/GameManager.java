@@ -23,6 +23,7 @@ import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
+import xiao.battleroyale.common.game.tempdata.TempDataManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.common.message.game.GameMessageManager;
@@ -35,10 +36,14 @@ import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.ColorUtils;
+import xiao.battleroyale.util.StringUtils;
+import xiao.battleroyale.util.Vec3Utils;
 
 import java.util.*;
 import java.util.List;
 import java.util.function.Supplier;
+
+import static xiao.battleroyale.api.game.tempdata.TempDataTag.*;
 
 public class GameManager extends AbstractGameManager {
 
@@ -50,7 +55,16 @@ public class GameManager extends AbstractGameManager {
         return GameManagerHolder.INSTANCE;
     }
 
-    private GameManager() {}
+    private GameManager() {
+        // 恢复全局偏移
+        String offsetString = TempDataManager.get().getString(GAME_MANAGER, GLOBAL_OFFSET);
+        if (offsetString != null) {
+            Vec3 offset = StringUtils.parseVectorString(offsetString);
+            if (offset != null) {
+                setGlobalCenterOffset(offset);
+            }
+        }
+    }
 
     public static void init() {
         GameruleManager.init();
@@ -81,6 +95,7 @@ public class GameManager extends AbstractGameManager {
             return false;
         }
         globalCenterOffset = offset;
+        TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(globalCenterOffset));
         return true;
     }
 
@@ -697,6 +712,8 @@ public class GameManager extends AbstractGameManager {
         this.winnerGamePlayers.clear(); // 游戏结束后不手动重置
         registerGameEvent();
         notifyAliveChange();
+        TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(globalCenterOffset));
+        TempDataManager.get().startGame(serverLevel); // 立即写入备份
     }
     private void registerGameEvent() {
         DamageEventHandler.register();
