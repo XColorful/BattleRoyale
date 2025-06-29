@@ -19,9 +19,9 @@ public class ServerCommand {
         root.then(ConfigCommand.get()
                 .requires(source -> source.hasPermission(2)));
         root.then(TeamCommand.get()
-                ); // 队伍管理不需要权限
+                ); // 队伍管理全都不需要权限
         root.then(GameCommand.get()
-                .requires(source -> source.hasPermission(2)));
+                ); // 大厅指令不需要权限
         root.then(FireworkCommand.get()
                 .requires(source -> source.hasPermission(2)));
         root.then(MutekiCommand.get()

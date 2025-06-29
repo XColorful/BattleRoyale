@@ -24,6 +24,11 @@ public class GameCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         return Commands.literal(GAME)
+                .then(Commands.literal(LOBBY)
+                        .executes(GameCommand::lobby))
+                .then(Commands.literal(TO_LOBBY)
+                        .executes(GameCommand::toLobby))
+                .requires(source -> source.hasPermission(2))
                 .then(Commands.literal(LOAD)
                         .executes(GameCommand::loadGameConfig))
                 .then(Commands.literal(INIT)
@@ -32,10 +37,6 @@ public class GameCommand {
                         .executes(GameCommand::startGame))
                 .then(Commands.literal(STOP)
                         .executes(GameCommand::stopGame))
-                .then(Commands.literal(LOBBY)
-                        .executes(GameCommand::lobby))
-                .then(Commands.literal(TO_LOBBY)
-                        .executes(GameCommand::toLobby))
                 .then(Commands.literal(OFFSET)
                         .then(Commands.argument(XYZ, Vec3Argument.vec3())
                                 .executes(GameCommand::globalOffset)));
