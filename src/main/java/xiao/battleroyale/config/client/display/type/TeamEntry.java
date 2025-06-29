@@ -33,7 +33,7 @@ public class TeamEntry extends AbstractHudEntry {
     }
 
     public static TeamEntry fromJson(JsonObject jsonObject) {
-        boolean display = JsonUtils.getJsonBoolean(jsonObject, DisplayConfigTag.SHOULD_DISPLAY, false);
+        boolean display = JsonUtils.getJsonBool(jsonObject, DisplayConfigTag.SHOULD_DISPLAY, false);
         if (!display) {
             return new TeamEntry(display);
         }

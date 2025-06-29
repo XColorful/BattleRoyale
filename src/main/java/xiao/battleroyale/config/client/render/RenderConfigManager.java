@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.render.IRenderSingleEntry;
 import xiao.battleroyale.api.client.render.RenderConfigTag;
-import xiao.battleroyale.client.renderer.block.LootContainerRenderer;
 import xiao.battleroyale.config.AbstractConfigManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.client.ClientConfigManager;
@@ -157,7 +156,7 @@ public class RenderConfigManager extends AbstractConfigManager<RenderConfigManag
                 BattleRoyale.LOGGER.warn("Skipped invalid render config in {}", filePath);
                 return null;
             }
-            boolean isDefault = JsonUtils.getJsonBoolean(configObject, RenderConfigTag.DEFAULT, false);
+            boolean isDefault = JsonUtils.getJsonBool(configObject, RenderConfigTag.DEFAULT, false);
             String name = JsonUtils.getJsonString(configObject, RenderConfigTag.NAME, "");
             String color = JsonUtils.getJsonString(configObject, RenderConfigTag.COLOR, "#FFFFFF");
             BlockEntry blockEntry = RenderConfig.deserializeBlockEntry(blockEntryObject);

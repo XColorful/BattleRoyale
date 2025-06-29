@@ -80,7 +80,7 @@ public class PlaneEntry extends AbstractCommonSpawnEntry {
         // detail
         double height = JsonUtils.getJsonDouble(jsonObject, SpawnDetailTag.PLANE_HEIGHT, 0);
         double speed = JsonUtils.getJsonDouble(jsonObject, SpawnDetailTag.PLANE_SPEED, 1);
-        boolean fixedTime = JsonUtils.getJsonBoolean(jsonObject, SpawnDetailTag.PLANE_FIXED_TIME, false);
+        boolean fixedTime = JsonUtils.getJsonBool(jsonObject, SpawnDetailTag.PLANE_FIXED_TIME, false);
 
         return new PlaneEntry(shapeType, center, dimension,
                 detailType,

@@ -212,7 +212,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
                 BattleRoyale.LOGGER.warn("Skipped invalid zone config in {}", filePath);
                 return null;
             }
-            boolean isDefault = JsonUtils.getJsonBoolean(configObject, ZoneConfigTag.DEFAULT, false);
+            boolean isDefault = JsonUtils.getJsonBool(configObject, ZoneConfigTag.DEFAULT, false);
             String zoneName = JsonUtils.getJsonString(configObject, ZoneConfigTag.ZONE_NAME, "");
             String zoneColor = JsonUtils.getJsonString(configObject, ZoneConfigTag.ZONE_COLOR, "#0000FF");
             int preZoneDelayId = JsonUtils.getJsonInt(configObject, ZoneConfigTag.PREVIOUS_ZONE_DELAY_ID, -1);

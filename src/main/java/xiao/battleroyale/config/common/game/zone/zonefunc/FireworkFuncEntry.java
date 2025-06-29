@@ -62,12 +62,12 @@ public class FireworkFuncEntry extends AbstractFuncEntry {
         int tickFreq = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.TICK_FREQUENCY, 20);
         int tickOffset = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.TICK_OFFSET, -1);
 
-        boolean trackPlayer = JsonUtils.getJsonBoolean(jsonObject, ZoneFuncTag.FIREWORK_TRACK, false);
+        boolean trackPlayer = JsonUtils.getJsonBool(jsonObject, ZoneFuncTag.FIREWORK_TRACK, false);
         int amount = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.FIREWORK_AMOUNT, 3);
         int interval = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.FIREWORK_INTERVAL, 20);
         int vRange = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.FIREWORK_V_RANGE, 5);
         int hRange = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.FIREWORK_H_RANGE, 3);
-        boolean outside = JsonUtils.getJsonBoolean(jsonObject, ZoneFuncTag.FIREWORK_OUTSIDE, false);
+        boolean outside = JsonUtils.getJsonBool(jsonObject, ZoneFuncTag.FIREWORK_OUTSIDE, false);
 
         return new FireworkFuncEntry(moveDelay, moveTime, tickFreq, tickOffset, trackPlayer, amount, interval, vRange, hRange, outside);
     }

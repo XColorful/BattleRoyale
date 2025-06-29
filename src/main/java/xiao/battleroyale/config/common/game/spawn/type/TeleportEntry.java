@@ -89,8 +89,8 @@ public class TeleportEntry extends AbstractCommonSpawnEntry {
             case FIXED -> fixedPos = JsonUtils.getJsonVecList(jsonObject, SpawnDetailTag.GROUND_FIXED_POS);
             case RANDOM -> {}
         }
-        boolean teamTogether = JsonUtils.getJsonBoolean(jsonObject, SpawnDetailTag.GROUND_TEAM_TOGETHER, false);
-        boolean findGround = JsonUtils.getJsonBoolean(jsonObject, SpawnDetailTag.GROUND_FIND_GROUND, false);
+        boolean teamTogether = JsonUtils.getJsonBool(jsonObject, SpawnDetailTag.GROUND_TEAM_TOGETHER, false);
+        boolean findGround = JsonUtils.getJsonBool(jsonObject, SpawnDetailTag.GROUND_FIND_GROUND, false);
         double range = JsonUtils.getJsonDouble(jsonObject, SpawnDetailTag.GROUND_FIND_GROUND, 0);
 
         return new TeleportEntry(shapeType, center, dimension,

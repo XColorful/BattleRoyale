@@ -195,7 +195,7 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
                 BattleRoyale.LOGGER.warn("Skipped invalid gamerule config in {}", filePath);
                 return null;
             }
-            boolean isDefault = JsonUtils.getJsonBoolean(configObject, GameruleConfigTag.DEFAULT, false);
+            boolean isDefault = JsonUtils.getJsonBool(configObject, GameruleConfigTag.DEFAULT, false);
             String gameName = JsonUtils.getJsonString(configObject, GameruleConfigTag.GAME_NAME, "");
             String color = JsonUtils.getJsonString(configObject, GameruleConfigTag.GAME_COLOR, "");
             BattleroyaleEntry brEntry = GameruleConfig.deserializeBattleroyaleEntry(brEntryObject);

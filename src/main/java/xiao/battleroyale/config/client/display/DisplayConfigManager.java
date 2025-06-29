@@ -1,7 +1,6 @@
 package xiao.battleroyale.config.client.display;
 
 import com.google.gson.JsonObject;
-import net.minecraft.commands.arguments.item.ItemArgument;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.display.IDisplaySingleEntry;
@@ -147,7 +146,7 @@ public class DisplayConfigManager extends AbstractConfigManager<DisplayConfigMan
                 BattleRoyale.LOGGER.warn("Skipped invalid display config in {}", filePath);
                 return null;
             }
-            boolean isDefault = JsonUtils.getJsonBoolean(configObject, DisplayConfigTag.DEFAULT, false);
+            boolean isDefault = JsonUtils.getJsonBool(configObject, DisplayConfigTag.DEFAULT, false);
             String name = JsonUtils.getJsonString(configObject, DisplayConfigTag.NAME, "");
             String color = JsonUtils.getJsonString(configObject, DisplayConfigTag.COLOR, "");
             TeamEntry teamEntry = DisplayConfigManager.deserializeTeamEntry(teamEntryObject);

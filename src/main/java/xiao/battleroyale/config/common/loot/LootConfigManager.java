@@ -169,7 +169,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
                 BattleRoyale.LOGGER.warn("Skipped invalid loot config in {}", filePath);
                 return null;
             }
-            boolean isDefault = JsonUtils.getJsonBoolean(configObject, LootConfigTag.DEFAULT, false);
+            boolean isDefault = JsonUtils.getJsonBool(configObject, LootConfigTag.DEFAULT, false);
             String name = JsonUtils.getJsonString(configObject, LootConfigTag.LOOT_NAME, "");
             String color = JsonUtils.getJsonString(configObject, LootConfigTag.LOOT_COLOR, "#FFFFFF");
             ILootEntry lootEntry = LootConfig.deserializeLootEntry(lootEntryObject);

@@ -2,7 +2,6 @@ package xiao.battleroyale.config.common.game.gamerule.type;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.MinecraftEntryTag;
 import xiao.battleroyale.util.JsonUtils;
@@ -65,17 +64,17 @@ public class MinecraftEntry implements IGameruleEntry {
 
     @NotNull
     public static MinecraftEntry fromJson(JsonObject jsonObject) {
-        boolean adventureMode = JsonUtils.getJsonBoolean(jsonObject, MinecraftEntryTag.ADVENTURE, true);
-        boolean mobGriefing = JsonUtils.getJsonBoolean(jsonObject, MinecraftEntryTag.MOB_GRIEFING, false);
-        boolean autoSaturation = JsonUtils.getJsonBoolean(jsonObject, MinecraftEntryTag.AUTO_SATURATION, true);
-        boolean naturalRegeneration = JsonUtils.getJsonBoolean(jsonObject, MinecraftEntryTag.NATURAL_REGENERATION, false);
-        boolean mobSpawning = JsonUtils.getJsonBoolean(jsonObject, MinecraftEntryTag.DO_MOB_SPAWNING, false);
-        boolean doFireTick = JsonUtils.getJsonBoolean(jsonObject, MinecraftEntryTag.DO_FIRE_TICK, false);
-        boolean doDaylightCycle = JsonUtils.getJsonBoolean(jsonObject, MinecraftEntryTag.DO_DAYLIGHT_CYCLE, false);
-        boolean doWeatherCycle = JsonUtils.getJsonBoolean(jsonObject, MinecraftEntryTag.DO_WEATHER_CYCLE, false);
-        boolean fallDamage = JsonUtils.getJsonBoolean(jsonObject, MinecraftEntryTag.FALL_DAMAGE, true);
-        boolean tntExplodes = JsonUtils.getJsonBoolean(jsonObject, MinecraftEntryTag.TNT_EXPLOSION_DROP_DECAY, false);
-        boolean spectatorGenerateChunks = JsonUtils.getJsonBoolean(jsonObject, MinecraftEntryTag.SPECTATOR_GENERATE_CHUNKS, false);
+        boolean adventureMode = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.ADVENTURE, true);
+        boolean mobGriefing = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.MOB_GRIEFING, false);
+        boolean autoSaturation = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.AUTO_SATURATION, true);
+        boolean naturalRegeneration = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.NATURAL_REGENERATION, false);
+        boolean mobSpawning = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.DO_MOB_SPAWNING, false);
+        boolean doFireTick = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.DO_FIRE_TICK, false);
+        boolean doDaylightCycle = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.DO_DAYLIGHT_CYCLE, false);
+        boolean doWeatherCycle = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.DO_WEATHER_CYCLE, false);
+        boolean fallDamage = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.FALL_DAMAGE, true);
+        boolean tntExplodes = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.TNT_EXPLOSION_DROP_DECAY, false);
+        boolean spectatorGenerateChunks = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.SPECTATOR_GENERATE_CHUNKS, false);
         int timeSet = JsonUtils.getJsonInt(jsonObject, MinecraftEntryTag.TIME_SET, 5000);
 
         return new MinecraftEntry(adventureMode, mobGriefing, autoSaturation,

@@ -117,7 +117,7 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
                 BattleRoyale.LOGGER.warn("Skipped invalid bot config in {}", filePath);
                 return null;
             }
-            boolean isDefault = JsonUtils.getJsonBoolean(configObject, BotConfigTag.DEFAULT, false);
+            boolean isDefault = JsonUtils.getJsonBool(configObject, BotConfigTag.DEFAULT, false);
             String name = JsonUtils.getJsonString(configObject, BotConfigTag.NAME, "");
             String color = JsonUtils.getJsonString(configObject, BotConfigTag.COLOR, "");
 

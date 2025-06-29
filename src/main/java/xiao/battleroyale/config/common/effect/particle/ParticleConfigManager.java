@@ -160,7 +160,7 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
                 BattleRoyale.LOGGER.warn("Skipped invalid particle config in {}", filePath);
                 return null;
             }
-            boolean isDefault = JsonUtils.getJsonBoolean(configObject, ParticleConfigTag.DETAIL_ENTRY, false);
+            boolean isDefault = JsonUtils.getJsonBool(configObject, ParticleConfigTag.DETAIL_ENTRY, false);
             String name = JsonUtils.getJsonString(configObject, ParticleConfigTag.PARTICLE_NAME, "");
             String color = JsonUtils.getJsonString(configObject, ParticleConfigTag.PARTICLE_COLOR, "#FFFFFF");
             JsonObject jsonObject = JsonUtils.getJsonObject(configObject, ParticleConfigTag.DETAIL_ENTRY, null);

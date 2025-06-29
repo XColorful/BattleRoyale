@@ -152,7 +152,7 @@ public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager
                 BattleRoyale.LOGGER.warn("Skipped invalid spawn config in {}", filePath);
                 return null;
             }
-            boolean isDefault = JsonUtils.getJsonBoolean(configObject, SpawnConfigTag.DEFAULT, false);
+            boolean isDefault = JsonUtils.getJsonBool(configObject, SpawnConfigTag.DEFAULT, false);
             String name = JsonUtils.getJsonString(configObject, SpawnConfigTag.SPAWN_NAME, "");
             String color = JsonUtils.getJsonString(configObject, SpawnConfigTag.SPAWN_COLOR, "#FFFFFF");
             int preZoneId = JsonUtils.getJsonInt(configObject, SpawnConfigTag.PRE_ZONE_CENTER_OFFSET, -1);

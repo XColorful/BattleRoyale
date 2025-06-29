@@ -58,11 +58,11 @@ public class GameEntry implements IGameruleEntry {
     public static GameEntry fromJson(JsonObject jsonObject) {
         int maxInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_PLAYER_INVALID_TIME, 20 * 60);
         int maxBotInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_BOT_INVALID_TIME, 20 * 10);
-        boolean removeInvalidTeam = JsonUtils.getJsonBoolean(jsonObject, GameEntryTag.REMOVE_INVALID_TEAM, false);
-        boolean allowRemainingBot = JsonUtils.getJsonBoolean(jsonObject, GameEntryTag.ALLOW_REMAINING_BOT, false);
-        boolean keepTeamAfterGame = JsonUtils.getJsonBoolean(jsonObject, GameEntryTag.KEEP_TEAM_AFTER_GAME, false);
-        boolean teleportAfterGame = JsonUtils.getJsonBoolean(jsonObject, GameEntryTag.TELEPORT_AFTER_GAME, false);
-        boolean teleportWinnerAfterGame = JsonUtils.getJsonBoolean(jsonObject, GameEntryTag.TELEPORT_WINNER_AFTER_GAME, false);
+        boolean removeInvalidTeam = JsonUtils.getJsonBool(jsonObject, GameEntryTag.REMOVE_INVALID_TEAM, false);
+        boolean allowRemainingBot = JsonUtils.getJsonBool(jsonObject, GameEntryTag.ALLOW_REMAINING_BOT, false);
+        boolean keepTeamAfterGame = JsonUtils.getJsonBool(jsonObject, GameEntryTag.KEEP_TEAM_AFTER_GAME, false);
+        boolean teleportAfterGame = JsonUtils.getJsonBool(jsonObject, GameEntryTag.TELEPORT_AFTER_GAME, false);
+        boolean teleportWinnerAfterGame = JsonUtils.getJsonBool(jsonObject, GameEntryTag.TELEPORT_WINNER_AFTER_GAME, false);
         int winnerFireworkId = JsonUtils.getJsonInt(jsonObject, GameEntryTag.WINNER_FIREWORK_ID, 0);
         int winnerParticleId = JsonUtils.getJsonInt(jsonObject, GameEntryTag.WINNER_PARTICLE_ID, 0);
 

@@ -36,7 +36,7 @@ public class GameEntry extends AbstractHudEntry {
     }
 
     public static GameEntry fromJson(JsonObject jsonObject) {
-        boolean display = JsonUtils.getJsonBoolean(jsonObject, DisplayConfigTag.SHOULD_DISPLAY, false);
+        boolean display = JsonUtils.getJsonBool(jsonObject, DisplayConfigTag.SHOULD_DISPLAY, false);
         if (!display) {
             return new GameEntry(display);
         }

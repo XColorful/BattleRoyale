@@ -39,7 +39,7 @@ public class ZoneEntry implements IRenderEntry {
 
     @NotNull
     public static ZoneEntry fromJson(JsonObject jsonObject) {
-        boolean useClientColor = JsonUtils.getJsonBoolean(jsonObject, RenderConfigTag.USE_CLIENT_COLOR, false);
+        boolean useClientColor = JsonUtils.getJsonBool(jsonObject, RenderConfigTag.USE_CLIENT_COLOR, false);
         String fixedColor = JsonUtils.getJsonString(jsonObject, RenderConfigTag.FIXED_COLOR, "");
 
         return new ZoneEntry(useClientColor, fixedColor);
