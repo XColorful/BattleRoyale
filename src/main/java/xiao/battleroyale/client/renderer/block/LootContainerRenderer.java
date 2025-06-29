@@ -22,7 +22,8 @@ import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
 
 public abstract class LootContainerRenderer<T extends AbstractLootContainerBlockEntity> implements BlockEntityRenderer<T> {
 
-    protected final int MAX_RENDER_DISTANCE_SQ = 16 * 16;
+    protected static double MAX_RENDER_DISTANCE_SQ = 16 * 16;
+    public static void setRenderDistance(double distance) { MAX_RENDER_DISTANCE_SQ = distance * distance; }
 
     protected final ItemRenderer itemRenderer;
     protected final BlockRenderDispatcher blockRenderDispatcher;

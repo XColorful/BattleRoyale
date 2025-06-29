@@ -56,6 +56,6 @@ public abstract class AbstractSimpleEntry implements IZoneShapeEntry {
     }
 
     public static boolean readBadShape(JsonObject jsonObject) {
-        return JsonUtils.getJsonBoolean(jsonObject, ZoneShapeTag.BAD_SHAPE, false);
+        return JsonUtils.getJsonBool(jsonObject, ZoneShapeTag.BAD_SHAPE, false);
     }
 }

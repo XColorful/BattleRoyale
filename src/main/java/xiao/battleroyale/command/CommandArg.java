@@ -4,7 +4,7 @@ import xiao.battleroyale.BattleRoyale;
 
 public class CommandArg {
 
-    public static final String ROOT = BattleRoyale.MOD_ID;
+    public static final String MOD_ID = BattleRoyale.MOD_ID;
 
     public static final String CONFIG = "config";
     public static final String GAME = "game";
@@ -16,6 +16,12 @@ public class CommandArg {
     public static final String EFFECT = "effect";
     public static final String PARTICLE = "particle";
     public static final String BOOST = "boost";
+    public static final String CLIENT = "client";
+    public static final String RENDER = "render";
+    public static final String DISPLAY = "display";
+    public static final String EXAMPLE = "example";
+    public static final String TEMP = "temp";
+    public static final String PUBGMC = "pubgmc";
 
     public static final String LOOT_SPAWNER = "loot_spawner";
     public static final String ENTITY_SPAWNER = "entity_spawner";
@@ -55,4 +61,14 @@ public class CommandArg {
     public static final String TIME = "time";
     public static final String COOLDOWN = "cooldown";
     public static final String ALL = "all";
+
+    public static final String LOAD = "load";
+    public static final String INIT = "init";
+    public static final String START = "start";
+    public static final String STOP = "stop";
+    public static final String LOBBY = "lobby";
+    public static final String TO_LOBBY = "toLobby";
+    public static final String OFFSET = "offset";
+
+    public static final String BOOL = "boolean";
 }

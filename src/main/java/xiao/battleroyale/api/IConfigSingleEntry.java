@@ -1,6 +1,6 @@
 package xiao.battleroyale.api;
 
-public interface IConfigSingleEntry extends IConfigEntry {
+public interface IConfigSingleEntry extends IConfigEntry, IConfigAppliable {
 
     /**
      * 获取配置id

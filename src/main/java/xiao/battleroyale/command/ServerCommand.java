@@ -6,12 +6,12 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import xiao.battleroyale.command.sub.*;
 
-import static xiao.battleroyale.command.CommandArg.ROOT;
+import static xiao.battleroyale.command.CommandArg.MOD_ID;
 
-public class RootCommand {
+public class ServerCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(ROOT);
+        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(MOD_ID);
         root.then(LootCommand.get()
                 .requires(source -> source.hasPermission(2)));
         root.then(ReloadCommand.get()
@@ -29,6 +29,10 @@ public class RootCommand {
         root.then(ParticleCommand.get()
                 .requires(source -> source.hasPermission(2)));
         root.then(BoostCommand.get()
+                .requires(source -> source.hasPermission(2)));
+        root.then(ExampleCommand.get()
+                .requires(source -> source.hasPermission(2)));
+        root.then(TempCommand.get()
                 .requires(source -> source.hasPermission(2)));
 
         dispatcher.register(root);

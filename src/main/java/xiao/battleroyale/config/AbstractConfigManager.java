@@ -1,4 +1,4 @@
-package xiao.battleroyale.config.common;
+package xiao.battleroyale.config;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -247,13 +247,16 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
             }
         }
 
+        // 切换到默认配置
         if (!fileConfigs.containsKey(fileNameString)) { // 之前的文件名不存在
             fileNameString = fileConfigs.keySet().iterator().next();
-            for (Map.Entry<String, List<T>> entry : allFileConfigs.entrySet()) {
-                boolean foundDefault = false;
-                for (T configEntry : entry.getValue()) {
+            boolean foundDefault = false;
+            for (Map.Entry<String, List<T>> entry : allFileConfigs.entrySet()) { // 遍历每个配置文件
+                for (T configEntry : entry.getValue()) { // 遍历文件内每个配置
                     if (configEntry.isDefaultSelect()) {
                         fileNameString = entry.getKey();
+                        switchConfigFile(fileNameString, folderId);
+                        configEntry.applyDefault();
                         foundDefault = true;
                         break;
                     }
@@ -263,6 +266,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
                 }
             }
         }
+
         return switchConfigFile(fileNameString, folderId);
     }
     @Override public @Nullable T parseConfigEntry(JsonObject jsonObject, Path filePath) {

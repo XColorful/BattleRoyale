@@ -23,6 +23,7 @@ import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
+import xiao.battleroyale.common.game.tempdata.TempDataManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.common.message.game.GameMessageManager;
@@ -35,10 +36,13 @@ import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.ColorUtils;
+import xiao.battleroyale.util.StringUtils;
 
 import java.util.*;
 import java.util.List;
 import java.util.function.Supplier;
+
+import static xiao.battleroyale.api.game.tempdata.TempDataTag.*;
 
 public class GameManager extends AbstractGameManager {
 
@@ -50,7 +54,16 @@ public class GameManager extends AbstractGameManager {
         return GameManagerHolder.INSTANCE;
     }
 
-    private GameManager() {}
+    private GameManager() {
+        // 恢复全局偏移
+        String offsetString = TempDataManager.get().getString(GAME_MANAGER, GLOBAL_OFFSET);
+        if (offsetString != null) {
+            Vec3 offset = StringUtils.parseVectorString(offsetString);
+            if (offset != null) {
+                setGlobalCenterOffset(offset);
+            }
+        }
+    }
 
     public static void init() {
         GameruleManager.init();
@@ -74,6 +87,16 @@ public class GameManager extends AbstractGameManager {
     private int gameruleConfigId = 0;
     private int spawnConfigId = 0;
     private int botConfigId = 0;
+    private Vec3 globalCenterOffset = Vec3.ZERO;
+    public Vec3 getGlobalCenterOffset() { return globalCenterOffset; }
+    public boolean setGlobalCenterOffset(Vec3 offset) {
+        if (isInGame()) {
+            return false;
+        }
+        globalCenterOffset = offset;
+        TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(globalCenterOffset));
+        return true;
+    }
 
     private int maxGameTime;
     private GameEntry gameEntry;
@@ -92,7 +115,7 @@ public class GameManager extends AbstractGameManager {
     }
 
     public void setGameId(UUID gameId) {
-        if (this.inGame) {
+        if (isInGame()) {
             return;
         }
         this.gameId = gameId;
@@ -198,11 +221,11 @@ public class GameManager extends AbstractGameManager {
         checkAndUpdateInvalidGamePlayer(this.serverLevel); // 为其他Manager预处理当前tick
 
         GameLootManager.get().onGameTick(gameTime);
+        ZoneManager.get().onGameTick(gameTime);
 
         TeamManager.get().onGameTick(gameTime);
         GameruleManager.get().onGameTick(gameTime);
         SpawnManager.get().onGameTick(gameTime);
-        ZoneManager.get().onGameTick(gameTime);
         // StatsManager.get().onGameTick(gameTime); // 基于事件主动记录，不用tick
     }
 
@@ -331,7 +354,7 @@ public class GameManager extends AbstractGameManager {
      * 调用此方法将检查是否有胜利队伍
      */
     public void checkIfGameShouldEnd() {
-        if (!this.inGame) {
+        if (!isInGame()) {
             return;
         }
 
@@ -492,14 +515,14 @@ public class GameManager extends AbstractGameManager {
             return;
         }
 
-        if (TeamManager.get().shouldAutoJoin() && !this.inGame) { // 没开游戏就加入
+        if (TeamManager.get().shouldAutoJoin() && !isInGame()) { // 没开游戏就加入
             TeamManager.get().joinTeam(player);
             teleportToLobby(player); // 登录自动传到大厅
         }
     }
 
     public void onPlayerLoggedOut(ServerPlayer player) {
-        if (!this.inGame) {
+        if (!isInGame()) {
             TeamManager.get().removePlayerFromTeam(player.getUUID()); // 没开始游戏就直接踢了
         }
 
@@ -536,7 +559,7 @@ public class GameManager extends AbstractGameManager {
      * 安全传送，文明掉落
      * 传送不规范，玩家两行泪
      */
-    public void safeTeleport(@NotNull ServerPlayer player, Vec3 teleportPos) {
+    public void safeTeleport(@NotNull ServerPlayer player, @NotNull Vec3 teleportPos) {
         safeTeleport(player, teleportPos.x, teleportPos.y, teleportPos.z);
     }
     /**
@@ -688,6 +711,8 @@ public class GameManager extends AbstractGameManager {
         this.winnerGamePlayers.clear(); // 游戏结束后不手动重置
         registerGameEvent();
         notifyAliveChange();
+        TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(globalCenterOffset));
+        TempDataManager.get().startGame(serverLevel); // 立即写入备份
     }
     private void registerGameEvent() {
         DamageEventHandler.register();

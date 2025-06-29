@@ -5,9 +5,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.api.loot.LootEntryTag;
-import xiao.battleroyale.config.common.loot.type.LootEntryType;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -153,6 +150,39 @@ public class JsonUtils {
     }
 
     /**
+     * 从 JsonObject 中安全地获取一个 Integer 对象。
+     * 如果键不存在、值为 null、或值不是一个可解析为整数的数字类型，则返回默认值。
+     *
+     * @param jsonObject 要从中获取值的 JsonObject。
+     * @param key        要获取的键名。
+     * @param defaultValue 如果获取失败，则返回的默认值。
+     * @return 解析后的 Integer 值或默认值。
+     */
+    @Nullable
+    public static Integer getJsonInteger(@Nullable JsonObject jsonObject, String key, @Nullable Integer defaultValue) {
+        if (jsonObject == null || key == null || key.isEmpty()) {
+            return defaultValue;
+        }
+
+        JsonElement element = jsonObject.get(key);
+
+        if (element == null || element.isJsonNull() || !element.isJsonPrimitive()) {
+            return defaultValue;
+        }
+
+        JsonPrimitive primitive = element.getAsJsonPrimitive();
+        if (!primitive.isNumber()) {
+            return defaultValue;
+        }
+
+        try {
+            return primitive.getAsInt();
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    /**
      * 从 JsonObject 中安全地获取一个 boolean 值。
      * 如果键不存在、值为 null、或值不是一个可解析为布尔类型，则返回默认值。
      *
@@ -161,7 +191,36 @@ public class JsonUtils {
      * @param defaultValue 如果获取失败，则返回的默认值。
      * @return 解析后的 boolean 值或默认值。
      */
-    public static boolean getJsonBoolean(@Nullable JsonObject jsonObject, String key, boolean defaultValue) {
+    public static boolean getJsonBool(@Nullable JsonObject jsonObject, String key, boolean defaultValue) {
+        if (jsonObject == null || key == null || key.isEmpty()) {
+            return defaultValue;
+        }
+
+        JsonElement element = jsonObject.get(key);
+
+        if (element == null || element.isJsonNull() || !element.isJsonPrimitive()) {
+            return defaultValue;
+        }
+
+        JsonPrimitive primitive = element.getAsJsonPrimitive();
+        if (!primitive.isBoolean()) {
+            return defaultValue;
+        }
+
+        return primitive.getAsBoolean();
+    }
+
+    /**
+     * 从 JsonObject 中安全地获取一个 Boolean 对象。
+     * 如果键不存在、值为 null、或值不是一个可解析为布尔类型，则返回默认值。
+     *
+     * @param jsonObject 要从中获取值的 JsonObject。
+     * @param key        要获取的键名。
+     * @param defaultValue 如果获取失败，则返回的默认值。
+     * @return 解析后的 Boolean 值或默认值。
+     */
+    @Nullable
+    public static Boolean getJsonBoolean(@Nullable JsonObject jsonObject, String key, @Nullable Boolean defaultValue) {
         if (jsonObject == null || key == null || key.isEmpty()) {
             return defaultValue;
         }
@@ -190,6 +249,39 @@ public class JsonUtils {
      * @return 解析后的 double 值或默认值。
      */
     public static double getJsonDouble(@Nullable JsonObject jsonObject, String key, double defaultValue) {
+        if (jsonObject == null || key == null || key.isEmpty()) {
+            return defaultValue;
+        }
+
+        JsonElement element = jsonObject.get(key);
+
+        if (element == null || element.isJsonNull() || !element.isJsonPrimitive()) {
+            return defaultValue;
+        }
+
+        JsonPrimitive primitive = element.getAsJsonPrimitive();
+        if (!primitive.isNumber()) {
+            return defaultValue;
+        }
+
+        try {
+            return primitive.getAsDouble();
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    /**
+     * 从 JsonObject 中安全地获取一个 Double 对象。
+     * 如果键不存在、值为 null、或值不是一个可解析为数字的类型，则返回默认值。
+     *
+     * @param jsonObject 要从中获取值的 JsonObject。
+     * @param key        要获取的键名。
+     * @param defaultValue 如果获取失败，则返回的默认值。
+     * @return 解析后的 Double 值或默认值。
+     */
+    @Nullable
+    public static Double getJsonDoubleClass(@Nullable JsonObject jsonObject, String key, @Nullable Double defaultValue) {
         if (jsonObject == null || key == null || key.isEmpty()) {
             return defaultValue;
         }

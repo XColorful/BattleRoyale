@@ -6,8 +6,8 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.GameruleConfigTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleSingleEntry;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.config.common.AbstractConfigManager;
-import xiao.battleroyale.config.common.AbstractSingleConfig;
+import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.defaultconfigs.DefaultGameruleConfigGenerator;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
@@ -148,16 +148,21 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
                 return null;
             }
         }
+
+        @Override
+        public void applyDefault() {
+            GameManager.get().setGameruleConfigId(getConfigId());
+        }
     }
 
-    @Override protected Comparator<GameruleConfig> getConfigIdComparator(int configType) {
+    @Override protected Comparator<GameruleConfig> getConfigIdComparator(int folderId) {
         return Comparator.comparingInt(GameruleConfig::getConfigId);
     }
 
     /**
      * IConfigManager
      */
-    @Override public String getFolderType(int configType) {
+    @Override public String getFolderType(int folderId) {
         return GameruleConfig.CONFIG_TYPE;
     }
 
@@ -168,7 +173,7 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
         generateDefaultConfigs(DEFAULT_GAMERULE_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int configType) {
+    @Override public void generateDefaultConfigs(int folderId) {
         DefaultGameruleConfigGenerator.generateDefaultGameruleConfigs();
     }
     @Override public int getDefaultConfigId() {
@@ -180,7 +185,7 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
      */
     @Nullable
     @Override
-    public GameruleConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
+    public GameruleConfig parseConfigEntry(JsonObject configObject, Path filePath, int folderId) {
         try {
             int gameId = JsonUtils.getJsonInt(configObject, GameruleConfigTag.GAME_ID, -1);
             JsonObject brEntryObject = JsonUtils.getJsonObject(configObject, GameruleConfigTag.BATTLEROYALE_ENTRY, null);
@@ -190,7 +195,7 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
                 BattleRoyale.LOGGER.warn("Skipped invalid gamerule config in {}", filePath);
                 return null;
             }
-            boolean isDefault = JsonUtils.getJsonBoolean(configObject, GameruleConfigTag.DEFAULT, false);
+            boolean isDefault = JsonUtils.getJsonBool(configObject, GameruleConfigTag.DEFAULT, false);
             String gameName = JsonUtils.getJsonString(configObject, GameruleConfigTag.GAME_NAME, "");
             String color = JsonUtils.getJsonString(configObject, GameruleConfigTag.GAME_COLOR, "");
             BattleroyaleEntry brEntry = GameruleConfig.deserializeBattleroyaleEntry(brEntryObject);
@@ -207,10 +212,10 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
             return null;
         }
     }
-    @Override public String getConfigPath(int configType) {
+    @Override public String getConfigPath(int folderId) {
         return GAMERULE_CONFIG_PATH;
     }
-    @Override public String getConfigSubPath(int configType) {
+    @Override public String getConfigSubPath(int folderId) {
         return GAMERULE_CONFIG_SUB_PATH;
     }
 
@@ -229,12 +234,6 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
      */
     public void reloadGameruleConfigs() {
         reloadConfigs(DEFAULT_GAMERULE_CONFIG_FOLDER);
-        for (GameruleConfig gameruleConfig : getConfigs().values()) {
-            if (gameruleConfig.isDefault) {
-                GameManager.get().setGameruleConfigId(gameruleConfig.getConfigId());
-                return;
-            }
-        }
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {

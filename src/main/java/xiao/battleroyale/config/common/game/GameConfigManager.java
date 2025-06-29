@@ -1,6 +1,6 @@
 package xiao.battleroyale.config.common.game;
 
-import xiao.battleroyale.config.common.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager.BotConfig;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
@@ -55,6 +55,12 @@ public class GameConfigManager {
     /**
      * IConfigDefaultable
      */
+    public void generateAllDefaultConfigs() {
+        generateDefaultBotConfigs();
+        generateDefaultGameruleConfigs();
+        generateDefaultSpawnConfigs();
+        generateDefaultZoneConfigs();
+    }
     public void generateDefaultBotConfigs() {
         BotConfigManager.get().generateDefaultConfigs();
     }

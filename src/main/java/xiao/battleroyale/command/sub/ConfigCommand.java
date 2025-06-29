@@ -10,6 +10,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
@@ -109,6 +110,32 @@ public class ConfigCommand {
                                         .executes(ConfigCommand::switchNextParticleConfig)
                                         .then(Commands.argument(FILE, StringArgumentType.string())
                                                 .executes(ConfigCommand::switchParticleConfig)
+                                        )
+                                )
+                        )
+                );
+    }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> getClient() {
+        return Commands.literal(CONFIG)
+                .then(Commands.literal(CLIENT)
+                        .then(Commands.literal(RENDER)
+                                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                                        .executes(ConfigCommand::applyRenderConfig))
+                                .then(Commands.literal(SWITCH)
+                                        .executes(ConfigCommand::switchNextRenderConfig)
+                                        .then(Commands.argument(FILE, StringArgumentType.string())
+                                                .executes(ConfigCommand::switchRenderConfig)
+                                        )
+                                )
+                        )
+                        .then(Commands.literal(DISPLAY)
+                                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                                        .executes(ConfigCommand::applyDisplayConfig))
+                                .then(Commands.literal(SWITCH)
+                                        .executes(ConfigCommand::switchNextDisplayConfig)
+                                        .then(Commands.argument(FILE, StringArgumentType.string())
+                                                .executes(ConfigCommand::switchDisplayConfig)
                                         )
                                 )
                         )
@@ -222,6 +249,72 @@ public class ConfigCommand {
             return Command.SINGLE_SUCCESS;
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.no_secret_room_config_file", currentFileName));
+            return 0;
+        }
+    }
+    private static int applyRenderConfig(CommandContext<CommandSourceStack> context) {
+        int id = IntegerArgumentType.getInteger(context, ID);
+        if (ClientConfigManager.get().applyRenderConfig(id)) {
+            BattleRoyale.LOGGER.info("Applied render config {} via command", id);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.render_config_applied", id, ClientConfigManager.get().getRenderConfigName(id)), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.invalid_render_config_id", id));
+            return 0;
+        }
+    }
+    private static int switchNextRenderConfig(CommandContext<CommandSourceStack> context) {
+        if (ClientConfigManager.get().switchNextRenderConfig()) {
+            String currentFileName = ClientConfigManager.get().getRenderConfigEntryFileName();
+            BattleRoyale.LOGGER.info("Switch render config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_render_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_render_config_available"));
+            return 0;
+        }
+    }
+    private static int switchRenderConfig(CommandContext<CommandSourceStack> context) {
+        String currentFileName = StringArgumentType.getString(context, FILE);
+        if (ClientConfigManager.get().switchRenderConfig(currentFileName)) {
+            BattleRoyale.LOGGER.info("Switch render config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_render_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_render_config_file", currentFileName));
+            return 0;
+        }
+    }
+    private static int applyDisplayConfig(CommandContext<CommandSourceStack> context) {
+        int id = IntegerArgumentType.getInteger(context, ID);
+        if (ClientConfigManager.get().applyDisplayConfig(id)) {
+            BattleRoyale.LOGGER.info("Applied display config {} via command", id);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.display_config_applied", id, ClientConfigManager.get().getDisplayConfigName(id)), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.invalid_display_config_id", id));
+            return 0;
+        }
+    }
+    private static int switchNextDisplayConfig(CommandContext<CommandSourceStack> context) {
+        if (ClientConfigManager.get().switchNextDisplayConfig()) {
+            String currentFileName = ClientConfigManager.get().getDisplayConfigEntryFileName();
+            BattleRoyale.LOGGER.info("Switch display config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_display_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_display_config_available"));
+            return 0;
+        }
+    }
+    private static int switchDisplayConfig(CommandContext<CommandSourceStack> context) {
+        String currentFileName = StringArgumentType.getString(context, FILE);
+        if (ClientConfigManager.get().switchDisplayConfig(currentFileName)) {
+            BattleRoyale.LOGGER.info("Switch display config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_display_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_display_config_file", currentFileName));
             return 0;
         }
     }

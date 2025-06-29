@@ -1,4 +1,4 @@
-package xiao.battleroyale.config.common;
+package xiao.battleroyale.config;
 
 import xiao.battleroyale.api.IConfigSingleEntry;
 
@@ -24,5 +24,10 @@ public abstract class AbstractSingleConfig implements IConfigSingleEntry {
     @Override
     public boolean isDefaultSelect() {
         return this.isDefault;
+    }
+
+    @Override
+    public void applyDefault() {
+        ;
     }
 }

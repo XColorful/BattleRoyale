@@ -1,6 +1,6 @@
 package xiao.battleroyale.config.common.effect;
 
-import xiao.battleroyale.config.common.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigManager;
 import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager;
 import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager.ParticleConfig;
 
@@ -33,10 +33,13 @@ public class EffectConfigManager {
     /**
      * IConfigDefaultable
      */
+    public void generateAllDefaultConfigs() {
+        generateDefaultParticleConfigs();
+    }
     public void generateDefaultParticleConfigs() {
         ParticleConfigManager.get().generateDefaultConfigs();
     }
-    public void generateDefaultParticleConfigID() {
+    public void getDefaultParticleConfigID() {
         ParticleConfigManager.get().getDefaultConfigId();
     }
     public void setDefaultParticleConfigId(int id) {

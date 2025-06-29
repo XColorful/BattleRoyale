@@ -5,7 +5,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
-import xiao.battleroyale.api.game.spawn.ISpawnEntry;
 import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
 import xiao.battleroyale.api.game.spawn.type.shape.SpawnShapeTag;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
@@ -13,17 +12,12 @@ import xiao.battleroyale.common.game.spawn.vanilla.TeleportSpawner;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.util.JsonUtils;
-import xiao.battleroyale.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeleportEntry implements ISpawnEntry {
+public class TeleportEntry extends AbstractCommonSpawnEntry {
 
-    // common
-    private final SpawnShapeType shapeType;
-    private final Vec3 centerPos;
-    private final Vec3 dimension;
     // detail
     private final CommonDetailType detailType;
     private final DetailInfo detailInfo;
@@ -36,9 +30,7 @@ public class TeleportEntry implements ISpawnEntry {
     public TeleportEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
                          CommonDetailType detailType,
                          DetailInfo detailInfo) {
-        this.shapeType = shapeType;
-        this.centerPos = center;
-        this.dimension = dimension;
+        super(shapeType, center, dimension);
 
         this.detailType = detailType;
         this.detailInfo = detailInfo;
@@ -51,18 +43,13 @@ public class TeleportEntry implements ISpawnEntry {
 
     @Override
     public IGameSpawner createGameSpawner() {
-        return new TeleportSpawner(shapeType, centerPos, dimension, detailType, detailInfo);
+        return new TeleportSpawner(shapeType, centerPos, dimension, preZoneId, detailType, detailInfo);
     }
 
     @Override
     public JsonObject toJson() {
         // common
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(SpawnTypeTag.TYPE_NAME, getType());
-        jsonObject.addProperty(SpawnShapeTag.TYPE_NAME, shapeType.getName());
-        jsonObject.addProperty(SpawnShapeTag.CENTER, StringUtils.vectorToString(centerPos));
-        jsonObject.addProperty(SpawnShapeTag.DIMENSION, StringUtils.vectorToString(dimension));
-
+        JsonObject jsonObject = super.toJson();
         // detail
         jsonObject.addProperty(SpawnDetailTag.TYPE_NAME, detailType.getName());
         switch (this.detailType) {
@@ -102,8 +89,8 @@ public class TeleportEntry implements ISpawnEntry {
             case FIXED -> fixedPos = JsonUtils.getJsonVecList(jsonObject, SpawnDetailTag.GROUND_FIXED_POS);
             case RANDOM -> {}
         }
-        boolean teamTogether = JsonUtils.getJsonBoolean(jsonObject, SpawnDetailTag.GROUND_TEAM_TOGETHER, false);
-        boolean findGround = JsonUtils.getJsonBoolean(jsonObject, SpawnDetailTag.GROUND_FIND_GROUND, false);
+        boolean teamTogether = JsonUtils.getJsonBool(jsonObject, SpawnDetailTag.GROUND_TEAM_TOGETHER, false);
+        boolean findGround = JsonUtils.getJsonBool(jsonObject, SpawnDetailTag.GROUND_FIND_GROUND, false);
         double range = JsonUtils.getJsonDouble(jsonObject, SpawnDetailTag.GROUND_FIND_GROUND, 0);
 
         return new TeleportEntry(shapeType, center, dimension,
