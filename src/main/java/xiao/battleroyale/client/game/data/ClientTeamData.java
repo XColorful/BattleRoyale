@@ -2,10 +2,9 @@ package xiao.battleroyale.client.game.data;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.game.team.TeamTag;
+import xiao.battleroyale.api.message.team.TeamTag;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -18,20 +17,18 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class ClientTeamData {
+public class ClientTeamData extends AbstractClientExpireData {
 
     public int teamId;
     public Color teamColor;
     public final List<TeamMemberInfo> teamMemberInfoList = new ArrayList<>();
-    public boolean inTeam;
+    private boolean inTeam;
+    public boolean inTeam() { return inTeam; }
 
     private static final String DEFAULT_COLOR = "#000000FF"; // 读取格式用#RRGGBBAA，实际int转为AARRGGBB
     public static final int NO_TEAM = 0;
     public static final float OFFLINE = -1;
     public static final float ELIMINATED = -2;
-
-    private long lastUpdateTick = 0;
-    public long getLastUpdateTick() { return lastUpdateTick; }
 
     public ClientTeamData() {
         clear();
@@ -40,7 +37,8 @@ public class ClientTeamData {
     /*
      * 需推迟到主线程
      */
-    public void updateFromNbt(CompoundTag nbt) {
+    @Override
+    public void updateFromNbt(@NotNull CompoundTag nbt) {
         this.teamId = nbt.getInt(TeamTag.TEAM_ID);
         this.teamColor = ColorUtils.parseColorFromString(nbt.getString(TeamTag.TEAM_COLOR));
         this.teamMemberInfoList.clear();
@@ -85,14 +83,11 @@ public class ClientTeamData {
 
             // team member
             for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) {
-                float playerHealth;
+                float playerHealth = gamePlayer.getLastHealth();
                 if (gamePlayer.isEliminated()) { // 标记淘汰则优先
                     playerHealth = ELIMINATED;
                 } else if (!gamePlayer.isActiveEntity() || serverLevel == null) { // 被标记为离线或无法用serverLevel查血量
                     playerHealth = OFFLINE;
-                } else {
-                    ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-                    playerHealth = player == null ? OFFLINE : player.getHealth();
                 }
                 memberInfos.add(new TeamMemberInfo(
                         gamePlayer.getGameSingleId(),

@@ -10,8 +10,8 @@ import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.common.game.zone.GameZoneBuilder;
-import xiao.battleroyale.config.common.AbstractConfigManager;
-import xiao.battleroyale.config.common.AbstractSingleConfig;
+import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.defaultconfigs.DefaultZoneConfigGenerator;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
@@ -116,7 +116,9 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
             }
             jsonObject.addProperty(ZoneConfigTag.ZONE_NAME, name);
             jsonObject.addProperty(ZoneConfigTag.ZONE_COLOR, color);
-            jsonObject.addProperty(ZoneConfigTag.PREVIOUS_ZONE_DELAY_ID, preZoneDelayId);
+            if (preZoneDelayId > -1) {
+                jsonObject.addProperty(ZoneConfigTag.PREVIOUS_ZONE_DELAY_ID, preZoneDelayId);
+            }
             jsonObject.addProperty(ZoneConfigTag.ZONE_DELAY, zoneDelay);
             jsonObject.addProperty(ZoneConfigTag.ZONE_TIME, zoneTime);
             if (zoneFuncEntry != null) {
@@ -165,14 +167,14 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
     }
 
 
-    @Override protected Comparator<ZoneConfig> getConfigIdComparator(int configType) {
+    @Override protected Comparator<ZoneConfig> getConfigIdComparator(int folderId) {
         return Comparator.comparingInt(ZoneConfig::getConfigId);
     }
 
     /**
      * IConfigManager
      */
-    @Override public String getFolderType(int configType) {
+    @Override public String getFolderType(int folderId) {
         return ZoneConfig.CONFIG_TYPE;
     }
 
@@ -183,8 +185,8 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
         generateDefaultConfigs(DEFAULT_ZONE_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int configType) {
-        DefaultZoneConfigGenerator.generateAllDefaultConfigs();
+    @Override public void generateDefaultConfigs(int folderId) {
+        DefaultZoneConfigGenerator.generateDefaultZoneConfig();
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_ZONE_CONFIG_FOLDER);
@@ -192,7 +194,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
     @Override public void setDefaultConfigId(int id) {
         return;
     }
-    @Override public void setDefaultConfigId(int id, int configType) {
+    @Override public void setDefaultConfigId(int id, int folderId) {
         return;
     }
 
@@ -201,7 +203,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
      */
     @Nullable
     @Override
-    public ZoneConfig parseConfigEntry(JsonObject configObject, Path filePath, int configType) {
+    public ZoneConfig parseConfigEntry(JsonObject configObject, Path filePath, int folderId) {
         try {
             int zoneId = JsonUtils.getJsonInt(configObject, ZoneConfigTag.ZONE_ID, -1);
             JsonObject zoneFuncObject = JsonUtils.getJsonObject(configObject, ZoneConfigTag.ZONE_FUNC, null);
@@ -210,7 +212,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
                 BattleRoyale.LOGGER.warn("Skipped invalid zone config in {}", filePath);
                 return null;
             }
-            boolean isDefault = JsonUtils.getJsonBoolean(configObject, ZoneConfigTag.DEFAULT, false);
+            boolean isDefault = JsonUtils.getJsonBool(configObject, ZoneConfigTag.DEFAULT, false);
             String zoneName = JsonUtils.getJsonString(configObject, ZoneConfigTag.ZONE_NAME, "");
             String zoneColor = JsonUtils.getJsonString(configObject, ZoneConfigTag.ZONE_COLOR, "#0000FF");
             int preZoneDelayId = JsonUtils.getJsonInt(configObject, ZoneConfigTag.PREVIOUS_ZONE_DELAY_ID, -1);
@@ -229,10 +231,10 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
             return null;
         }
     }
-    @Override public String getConfigPath(int configType) {
+    @Override public String getConfigPath(int folderId) {
         return ZONE_CONFIG_PATH;
     }
-    @Override public String getConfigSubPath(int configType) {
+    @Override public String getConfigSubPath(int folderId) {
         return ZONE_CONFIG_SUB_PATH;
     }
 
@@ -251,6 +253,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
      */
     public void reloadZoneConfigs() {
         reloadConfigs(DEFAULT_ZONE_CONFIG_FOLDER);
+        // Zone以整个文件为选择，不需要切换
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {

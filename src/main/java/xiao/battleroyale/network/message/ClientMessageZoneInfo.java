@@ -3,6 +3,7 @@ package xiao.battleroyale.network.message;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.message.IMessage;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 
@@ -10,12 +11,14 @@ import java.util.function.Supplier;
 
 public class ClientMessageZoneInfo implements IMessage<ClientMessageZoneInfo> {
 
-    private CompoundTag zoneSyncNbt;
+    private final @NotNull CompoundTag zoneSyncNbt;
 
-    public ClientMessageZoneInfo() {}
+    public ClientMessageZoneInfo() {
+        zoneSyncNbt = new CompoundTag();
+    }
 
     public ClientMessageZoneInfo(CompoundTag zoneSyncNbt) {
-        this.zoneSyncNbt = zoneSyncNbt;
+        this.zoneSyncNbt = zoneSyncNbt != null ? zoneSyncNbt : new CompoundTag();
     }
 
     @Override

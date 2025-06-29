@@ -165,7 +165,7 @@ public class StartEntry {
                     BattleRoyale.LOGGER.info("Invalid centerPlayerId {}, defaulting to 0 (random select)", playerId);
                     playerId = 0;
                 }
-                boolean selectStanding = JsonUtils.getJsonBoolean(centerObject, ZoneShapeTag.SELECT_STANDING, false);
+                boolean selectStanding = JsonUtils.getJsonBool(centerObject, ZoneShapeTag.SELECT_STANDING, false);
                 startEntry.addLockCenter(playerId, selectStanding);
             }
         }

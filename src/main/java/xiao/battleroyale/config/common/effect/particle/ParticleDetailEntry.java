@@ -72,7 +72,7 @@ public record ParticleDetailEntry(ResourceLocation particleType, int count, int 
         int repeat = JsonUtils.getJsonInt(jsonObject, ParticleConfigTag.REPEAT, 1);
         Vec3 offset = JsonUtils.getJsonVec(jsonObject, ParticleConfigTag.OFFSET, Vec3.ZERO);
         Vec3 offsetRange = JsonUtils.getJsonVec(jsonObject, ParticleConfigTag.OFFSET_RANGE, Vec3.ZERO);
-        boolean exactOffset = JsonUtils.getJsonBoolean(jsonObject, ParticleConfigTag.EXACT_OFFSET, false);
+        boolean exactOffset = JsonUtils.getJsonBool(jsonObject, ParticleConfigTag.EXACT_OFFSET, false);
         ParticleParameterEntry parameter = ParticleParameterEntry.fromJson(JsonUtils.getJsonObject(jsonObject, ParticleConfigTag.PARAMETER, null));
 
         return new ParticleDetailEntry(particleRL, count, initDelay, interval, repeat,

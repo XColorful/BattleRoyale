@@ -6,12 +6,13 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.TeamManager;
@@ -20,15 +21,6 @@ import static xiao.battleroyale.command.CommandArg.*;
 import static xiao.battleroyale.util.StringUtils.buildCommandString;
 
 public class GameCommand {
-
-
-    private static final String LOAD = "load";
-    private static final String INIT = "init";
-    private static final String START = "start";
-    private static final String STOP = "stop";
-
-    private static final String LOBBY = "lobby";
-    private static final String TO_LOBBY = "toLobby";
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         return Commands.literal(GAME)
@@ -43,7 +35,10 @@ public class GameCommand {
                 .then(Commands.literal(LOBBY)
                         .executes(GameCommand::lobby))
                 .then(Commands.literal(TO_LOBBY)
-                        .executes(GameCommand::toLobby));
+                        .executes(GameCommand::toLobby))
+                .then(Commands.literal(OFFSET)
+                        .then(Commands.argument(XYZ, Vec3Argument.vec3())
+                                .executes(GameCommand::globalOffset)));
     }
 
     private static int loadGameConfig(CommandContext<CommandSourceStack> context) {
@@ -68,7 +63,7 @@ public class GameCommand {
         }
     }
 
-    private static int initGame(CommandContext<CommandSourceStack> context) {
+    public static int initGame(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         ServerLevel serverLevel = source.getLevel();
         GameManager gameManager = GameManager.get();
@@ -94,7 +89,7 @@ public class GameCommand {
         }
     }
 
-    private static int startGame(CommandContext<CommandSourceStack> context) {
+    public static int startGame(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         ServerLevel serverLevel = source.getLevel();
         GameManager gameManager = GameManager.get();
@@ -115,7 +110,7 @@ public class GameCommand {
         }
     }
 
-    private static int stopGame(CommandContext<CommandSourceStack> context) {
+    public static int stopGame(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         ServerLevel serverLevel = source.getLevel();
         GameManager gameManager = GameManager.get();
@@ -131,7 +126,7 @@ public class GameCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int lobby(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    public static int lobby(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) { // 向调用的玩家发送消息
             ServerPlayer player = context.getSource().getPlayerOrException();
@@ -154,9 +149,24 @@ public class GameCommand {
         }
     }
 
+    private static int globalOffset(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        Vec3 offset = Vec3Argument.getVec3(context, XYZ);
+        if (GameManager.get().setGlobalCenterOffset(offset)) {
+            if (source.isPlayer()) {
+                source.sendSuccess(() -> Component.translatable("battleroyale.message.set_global_offset", String.format("%.2f", offset.x), String.format("%.2f", offset.y), String.format("%.2f", offset.z)).withStyle(ChatFormatting.GREEN), false);
+            }
+            BattleRoyale.LOGGER.info("Set global center offset to {} via command", offset);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            source.sendFailure(Component.translatable("battleroyale.message.game_in_progress"));
+            return 0;
+        }
+    }
+
     public static String toLobbyCommandString() {
         return buildCommandString(
-                CommandArg.ROOT,
+                MOD_ID,
                 GAME,
                 TO_LOBBY
         );

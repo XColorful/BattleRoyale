@@ -123,9 +123,12 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     @Override
     public void calculateShape(ServerLevel serverLevel, List<GamePlayer> standingGamePlayers, Supplier<Float> random) {
         if (!determined) {
+            // GameManager全局修改，仅用在Fixed类型
+            Vec3 globalCenterOffset = GameManager.get().getGlobalCenterOffset();
+
             // start center
             switch (startEntry.startCenterType) {
-                case FIXED -> startCenter = startEntry.startCenterPos;
+                case FIXED -> startCenter = startEntry.startCenterPos.add(globalCenterOffset);
                 case PREVIOUS, RELATIVE -> {
                     startCenter = getPreviousCenterById(startEntry.startCenterZoneId, startEntry.startCenterProgress);
                     if (startEntry.startCenterType == StartCenterType.RELATIVE) {
@@ -211,7 +214,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             startRotateDegree *= startEntry.startRotateScale;
             // end center
             switch (endEntry.endCenterType) {
-                case FIXED -> endCenter = endEntry.endCenterPos;
+                case FIXED -> endCenter = endEntry.endCenterPos.add(globalCenterOffset);
                 case PREVIOUS, RELATIVE -> {
                     endCenter = getPreviousCenterById(endEntry.endCenterZoneId, endEntry.endCenterProgress);
                     if (endEntry.endCenterType == EndCenterType.RELATIVE) {
@@ -306,7 +309,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             endRotateDegree *= endEntry.endRotateScale;
         }
         if (additionalCalculationCheck()
-                && startCenter != null&& startDimension != null
+                && startCenter != null && startDimension != null
                 && endCenter != null && endDimension != null) {
             // 预计算
             centerDist = endCenter.subtract(startCenter);

@@ -2,6 +2,5 @@
   "exhaustion": 0,
   "message_id": "unsafezone",
   "scaling": "never",
-  "death_message_type": "default",
-  "bypass_armor": true
+  "death_message_type": "default"
 }

@@ -2,7 +2,7 @@ package xiao.battleroyale.config.common.effect.particle.defaultconfigs;
 
 public class DefaultParticleConfigGenerator {
 
-    public static void generateAllDefaultConfig() {
+    public static void generateAllDefaultConfigs() {
         generateDefaultParticleConfigs();
     }
 

@@ -7,11 +7,8 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.common.game.team.TeamManager;
-import xiao.battleroyale.init.ModDamageTypes;
 
 /**
  * 伤害数值调整
@@ -44,29 +41,31 @@ public class DamageEventHandler {
      */
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onLivingDamage(LivingDamageEvent event) {
+
         LivingEntity damagedEntity = event.getEntity();
-        if (!(damagedEntity instanceof ServerPlayer targetPlayer)) { // 受伤方为玩家
-            return;
-        }
         DamageSource damageSource = event.getSource();
-        if (!(damageSource.getEntity() instanceof ServerPlayer attackerPlayer)) { // 攻击方为玩家
-            return;
+
+        boolean isTargetGamePlayer = false;
+        boolean isAttackerGamePlayer = false;
+        if (damageSource.getEntity() instanceof LivingEntity attackerEntity) {
+            GamePlayer attackerGamePlayer = GameManager.get().getGamePlayerByUUID(attackerEntity.getUUID());
+            if (attackerGamePlayer != null) {
+                isAttackerGamePlayer = true;
+            }
+        }
+        GamePlayer targetGamePlayer = GameManager.get().getGamePlayerByUUID(damagedEntity.getUUID());
+        if (targetGamePlayer != null) {
+            isTargetGamePlayer = true;
         }
 
-        GamePlayer targetGamePlayer = GameManager.get().getGamePlayerByUUID(targetPlayer.getUUID());
-        boolean isTargetGamePlayer = targetGamePlayer != null;
-        GamePlayer attackerGamePlayer = GameManager.get().getGamePlayerByUUID(attackerPlayer.getUUID());
-        boolean isAttackerGamePlayer = attackerGamePlayer != null;
-
-        if ((isAttackerGamePlayer && !isTargetGamePlayer) // 非游戏玩家打游戏玩家
-                || (!isAttackerGamePlayer && isTargetGamePlayer)) { // 游戏玩家打非游戏玩家
+        if (isAttackerGamePlayer && !isTargetGamePlayer) { // 游戏玩家打非游戏玩家
             event.setCanceled(true);
-            return;
-        }
-
-        if (isTargetGamePlayer) { // 被攻击方
-            int teamId = targetGamePlayer.getGameTeamId();
-            GameManager.get().addChangedTeamInfo(teamId);
+        } else if (!isAttackerGamePlayer && isTargetGamePlayer) { // 非游戏玩家打游戏玩家
+            if (damageSource.getEntity() instanceof ServerPlayer) { // 需要保证是玩家
+                event.setCanceled(true);
+            }
+        } else if (isTargetGamePlayer) {
+            GameManager.get().notifyTeamChange(targetGamePlayer.getGameTeamId());
         }
     }
 }

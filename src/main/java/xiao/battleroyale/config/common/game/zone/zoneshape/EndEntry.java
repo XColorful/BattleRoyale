@@ -172,12 +172,12 @@ public class EndEntry {
                     BattleRoyale.LOGGER.info("Invalid centerPlayerId {}, defaulting to 0 (random select)", playerId);
                     playerId = 0;
                 }
-                boolean selectStanding = JsonUtils.getJsonBoolean(centerObject, ZoneShapeTag.SELECT_STANDING, false);
+                boolean selectStanding = JsonUtils.getJsonBool(centerObject, ZoneShapeTag.SELECT_STANDING, false);
                 endEntry.addLockCenter(playerId, selectStanding);
             }
         }
-        boolean useRangeAsStartDimScale = JsonUtils.getJsonBoolean(centerObject, ZoneShapeTag.RANGE_AS_START_DIM_SCALE, false);
-        boolean useCircleRange = JsonUtils.getJsonBoolean(centerObject, ZoneShapeTag.USE_CIRCLE_RANGE, false);
+        boolean useRangeAsStartDimScale = JsonUtils.getJsonBool(centerObject, ZoneShapeTag.RANGE_AS_START_DIM_SCALE, false);
+        boolean useCircleRange = JsonUtils.getJsonBool(centerObject, ZoneShapeTag.USE_CIRCLE_RANGE, false);
         double centerRange = JsonUtils.getJsonDouble(centerObject, ZoneShapeTag.RANDOM_RANGE, 0);
         endEntry.addCenterRange(centerRange, useRangeAsStartDimScale, useCircleRange);
         double playerCenterLerp = JsonUtils.getJsonDouble(centerObject, ZoneShapeTag.PLAYER_CENTER_LERP, 0);
@@ -283,8 +283,12 @@ public class EndEntry {
                 centerObject.addProperty(ZoneShapeTag.SELECT_STANDING, selectStanding);
             }
         }
-        centerObject.addProperty(ZoneShapeTag.RANGE_AS_START_DIM_SCALE, useRangeAsStartDimScale);
-        centerObject.addProperty(ZoneShapeTag.USE_CIRCLE_RANGE, useCircleRange);
+        if (useRangeAsStartDimScale) {
+            centerObject.addProperty(ZoneShapeTag.RANGE_AS_START_DIM_SCALE, useRangeAsStartDimScale);
+            if (useCircleRange) {
+                centerObject.addProperty(ZoneShapeTag.USE_CIRCLE_RANGE, useCircleRange);
+            }
+        }
         centerObject.addProperty(ZoneShapeTag.RANDOM_RANGE, endCenterRange);
         centerObject.addProperty(ZoneShapeTag.PLAYER_CENTER_LERP, playerCenterLerp);
         return centerObject;

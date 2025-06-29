@@ -70,10 +70,10 @@ public class BoostManager implements IEffectManager {
                 data.effectCooldown = EFFECT_COOLDOWN;
             }
             // 同步消息
-            if (-data.syncCooldown <= 0) {
+            if (--data.syncCooldown <= 0) {
                 GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(data.uuid);
                 if (gamePlayer != null) {
-                    GameManager.get().addChangedTeamInfo(gamePlayer.getGameTeamId());
+                    GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
                 }
                 data.syncCooldown = SYNC_FREQUENCY;
             }
@@ -101,7 +101,7 @@ public class BoostManager implements IEffectManager {
         // 通知立即更新
         GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(entityUUID);
         if (gamePlayer != null) {
-            GameManager.get().addChangedTeamInfo(gamePlayer.getGameTeamId());
+            GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
         }
         BoostEventHandler.register();
     }
@@ -132,7 +132,7 @@ public class BoostManager implements IEffectManager {
         if (data != null) {
             GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(data.uuid);
             if (gamePlayer != null) {
-                GameManager.get().addChangedTeamInfo(gamePlayer.getGameTeamId());
+                GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
             }
         }
     }
@@ -144,7 +144,7 @@ public class BoostManager implements IEffectManager {
             BoostData data = entry.getValue();
             GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(data.uuid);
             if (gamePlayer != null) {
-                GameManager.get().addChangedTeamInfo(gamePlayer.getGameTeamId());
+                GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
             }
             return true;
         });

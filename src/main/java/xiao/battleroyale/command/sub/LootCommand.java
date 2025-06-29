@@ -23,7 +23,7 @@ public class LootCommand {
         return loot;
     }
 
-    private static int generateAllLoadedLoot(CommandContext<CommandSourceStack> context) {
+    public static int generateAllLoadedLoot(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         if (!GameManager.get().isInGame()) {
             GameManager.get().setGameId(UUID.randomUUID());

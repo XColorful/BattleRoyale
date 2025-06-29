@@ -2,7 +2,6 @@ package xiao.battleroyale.config.common.game.gamerule.type;
 
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
@@ -61,8 +60,8 @@ public class BattleroyaleEntry implements IGameruleEntry {
     public static BattleroyaleEntry fromJson(JsonObject jsonObject) {
         int playerTotal = JsonUtils.getJsonInt(jsonObject, BattleroyaleEntryTag.PLAYER_TOTAL, 0);
         int teamSize = JsonUtils.getJsonInt(jsonObject, BattleroyaleEntryTag.TEAM_SIZE, 0);
-        boolean aiTeammate = JsonUtils.getJsonBoolean(jsonObject, BattleroyaleEntryTag.AI_TEAMMATE, false);
-        boolean aiEnemy = JsonUtils.getJsonBoolean(jsonObject, BattleroyaleEntryTag.AI_ENEMY, false);
+        boolean aiTeammate = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.AI_TEAMMATE, false);
+        boolean aiEnemy = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.AI_ENEMY, false);
         int maxGameTime = JsonUtils.getJsonInt(jsonObject, BattleroyaleEntryTag.MAX_GAME_TIME, 0);
         Vec3 lobbyCenterPos = JsonUtils.getJsonVec(jsonObject, BattleroyaleEntryTag.LOBBY_CENTER, null);
         Vec3 lobbyDimension = JsonUtils.getJsonVec(jsonObject, BattleroyaleEntryTag.LOBBY_DIMENSION, null);
@@ -70,9 +69,9 @@ public class BattleroyaleEntry implements IGameruleEntry {
             BattleRoyale.LOGGER.info("Invalid lobbyCenter or lobbyDimension for BattleroyaleEntry, skipped");
             return null;
         }
-        boolean lobbyMuteki = JsonUtils.getJsonBoolean(jsonObject, BattleroyaleEntryTag.LOBBY_MUTEKI, false);
-        boolean recordGameStats = JsonUtils.getJsonBoolean(jsonObject, BattleroyaleEntryTag.RECORD_STATS, false);
-        boolean autoJoinGame = JsonUtils.getJsonBoolean(jsonObject, BattleroyaleEntryTag.AUTO_JOIN, false);
+        boolean lobbyMuteki = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.LOBBY_MUTEKI, false);
+        boolean recordGameStats = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.RECORD_STATS, false);
+        boolean autoJoinGame = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.AUTO_JOIN, false);
         return new BattleroyaleEntry(playerTotal, teamSize, aiTeammate, aiEnemy, maxGameTime,
                 lobbyCenterPos, lobbyDimension, lobbyMuteki,
                 recordGameStats, autoJoinGame);

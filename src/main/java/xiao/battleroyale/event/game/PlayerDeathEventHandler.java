@@ -54,7 +54,6 @@ public class PlayerDeathEventHandler {
                 ;
             } else { // 死亡
                 GameManager.get().onPlayerDeath(gamePlayer);
-                GameManager.get().addChangedTeamInfo(gamePlayer.getGameTeamId());
             }
         }
     }

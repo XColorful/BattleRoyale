@@ -19,14 +19,16 @@ public abstract class AbstractSimpleSpawner implements IGameSpawner {
     protected final SpawnShapeType shapeType;
     protected final Vec3 centerPos;
     protected final Vec3 dimension;
+    protected final int preZoneCenterId;
 
     protected boolean prepared = false;
     protected boolean finished = false;
 
-    public AbstractSimpleSpawner(SpawnShapeType shapeType, Vec3 center, Vec3 dimension) {
+    public AbstractSimpleSpawner(SpawnShapeType shapeType, Vec3 center, Vec3 dimension, int preZoneCenterId) {
         this.shapeType = shapeType;
         this.centerPos = center;
         this.dimension = dimension;
+        this.preZoneCenterId = preZoneCenterId;
     }
 
     @Override
