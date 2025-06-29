@@ -55,6 +55,12 @@ public class GameConfigManager {
     /**
      * IConfigDefaultable
      */
+    public void generateAllDefaultConfigs() {
+        generateDefaultBotConfigs();
+        generateDefaultGameruleConfigs();
+        generateDefaultSpawnConfigs();
+        generateDefaultZoneConfigs();
+    }
     public void generateDefaultBotConfigs() {
         BotConfigManager.get().generateDefaultConfigs();
     }

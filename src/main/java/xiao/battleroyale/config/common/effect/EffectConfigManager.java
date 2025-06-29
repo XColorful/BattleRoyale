@@ -33,10 +33,13 @@ public class EffectConfigManager {
     /**
      * IConfigDefaultable
      */
+    public void generateAllDefaultConfigs() {
+        generateDefaultParticleConfigs();
+    }
     public void generateDefaultParticleConfigs() {
         ParticleConfigManager.get().generateDefaultConfigs();
     }
-    public void generateDefaultParticleConfigID() {
+    public void getDefaultParticleConfigID() {
         ParticleConfigManager.get().getDefaultConfigId();
     }
     public void setDefaultParticleConfigId(int id) {

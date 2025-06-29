@@ -149,6 +149,9 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
             case AIRDROP -> DefaultLootConfigGenerator.generateDefaultAirdropConfig();
             case AIRDROP_SPECIAL -> DefaultLootConfigGenerator.generateDefaultAirdropSpecialConfig();
             case SECRET_ROOM -> DefaultLootConfigGenerator.generateDefaultSecretRoomConfig();
+            case ALL_LOOT -> {
+                DefaultLootConfigGenerator.generateAllDefaultConfigs();
+            }
             default -> DefaultLootConfigGenerator.generateDefaultLootSpawnerConfig();
         }
     }

@@ -41,6 +41,10 @@ public class ClientConfigManager {
     /**
      * IConfigDefaultable
      */
+    public void generateAllDefaultConfigs() {
+        generateDefaultRenderConfigs();
+        generateDefaultDisplayConfigs();
+    }
     public void generateDefaultRenderConfigs() {
         RenderConfigManager.get().generateDefaultConfigs();
     }

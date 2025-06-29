@@ -6,7 +6,6 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import xiao.battleroyale.command.ClientCommand;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -155,6 +154,7 @@ public class ReloadCommand {
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_game_sub_type", subType));
+                    BattleRoyale.LOGGER.warn("Unknown effect sub-type for reload command: {}", subType);
                     return 0;
             }
         }
@@ -180,6 +180,7 @@ public class ReloadCommand {
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_client_sub_type", subType));
+                    BattleRoyale.LOGGER.warn("Unknown client sub-type for reload command: {}", subType);
                     return 0;
             }
         }
