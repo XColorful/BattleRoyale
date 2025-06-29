@@ -255,6 +255,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
                 for (T configEntry : entry.getValue()) { // 遍历文件内每个配置
                     if (configEntry.isDefaultSelect()) {
                         fileNameString = entry.getKey();
+                        switchConfigFile(fileNameString, folderId);
                         configEntry.applyDefault();
                         foundDefault = true;
                         break;
