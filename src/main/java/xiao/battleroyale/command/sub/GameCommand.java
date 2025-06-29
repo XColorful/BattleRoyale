@@ -126,7 +126,7 @@ public class GameCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int lobby(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    public static int lobby(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) { // 向调用的玩家发送消息
             ServerPlayer player = context.getSource().getPlayerOrException();

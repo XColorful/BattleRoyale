@@ -6,6 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -16,7 +17,9 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.command.sub.GameCommand;
+import xiao.battleroyale.command.sub.LootCommand;
 import xiao.battleroyale.command.sub.ReloadCommand;
+import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 
@@ -25,10 +28,11 @@ import static xiao.battleroyale.compat.pubgmc.CommandArg.*;
 public class PubgmcCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(get());
+        dispatcher.register(getGame());
+        dispatcher.register(getLoot());
     }
 
-    public static LiteralArgumentBuilder<CommandSourceStack> get() {
+    public static LiteralArgumentBuilder<CommandSourceStack> getGame() {
         return Commands.literal(GAME)
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal(INIT)
@@ -38,6 +42,7 @@ public class PubgmcCommand {
                         .then(Commands.argument(MAP_NAME, StringArgumentType.string())
                                 .executes(PubgmcCommand::startGameWithMap)))
                 .then(Commands.literal(LOBBY)
+                        .executes(PubgmcCommand::lobbyInfo)
                         .then(Commands.argument(XYZ, Vec3Argument.vec3())
                                 .then(Commands.argument(RADIUS, DoubleArgumentType.doubleArg())
                                         .executes(PubgmcCommand::setLobbyWithCoordsAndRadius))))
@@ -46,6 +51,8 @@ public class PubgmcCommand {
                                 .executes(PubgmcCommand::selectBattleRoyaleMode)))
                 .then(Commands.literal(STOP)
                         .executes(PubgmcCommand::stopGame))
+                .then(Commands.literal(LEAVE)
+                        .executes(PubgmcCommand::leaveGame))
                 .then(Commands.literal(RELOAD_CONFIGS)
                         .executes(PubgmcCommand::reloadConfigs))
                 .then(Commands.literal(MAP)
@@ -58,6 +65,13 @@ public class PubgmcCommand {
                         .then(Commands.argument(MAP_NAME, StringArgumentType.string())
                                 .then(Commands.literal(DELETE)
                                         .executes(PubgmcCommand::deleteMap))));
+    }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> getLoot() {
+        return Commands.literal(GENERATOR)
+                .requires(source -> source.hasPermission(2))
+                .then(Commands.literal(GENERATE)
+                        .executes(PubgmcCommand::generatorGenerate));
     }
 
     private static int initGame(CommandContext<CommandSourceStack> context) {
@@ -84,6 +98,10 @@ public class PubgmcCommand {
             BattleRoyale.LOGGER.info("Failed to create pubgmc lobby");
             return 0;
         }
+    }
+
+    private static int lobbyInfo(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        return GameCommand.lobby(context);
     }
 
     private static int selectBattleRoyaleMode(CommandContext<CommandSourceStack> context) {
@@ -132,5 +150,13 @@ public class PubgmcCommand {
             source.sendFailure(Component.translatable("battleroyale.message.game_in_progress"));
             return 0;
         }
+    }
+
+    private static int generatorGenerate(CommandContext<CommandSourceStack> context) {
+        return LootCommand.generateAllLoadedLoot(context);
+    }
+
+    private static int leaveGame(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        return TeamCommand.leaveTeam(context);
     }
 }

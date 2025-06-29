@@ -20,4 +20,7 @@ public class CommandArg {
     public static final String SIDE = "side";
     public static final String DELETE = "delete";
     public static final String XZ = "xz";
+    public static final String GENERATOR = "generator";
+    public static final String GENERATE = "generate";
+    public static final String LEAVE = "leave";
 }

@@ -9,7 +9,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.server.level.ServerPlayer;
-import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.game.team.TeamManager;
 
 import static xiao.battleroyale.command.CommandArg.*;
@@ -87,7 +86,7 @@ public class TeamCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int leaveTeam(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    public static int leaveTeam(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         TeamManager.get().leaveTeam(player);
         return Command.SINGLE_SUCCESS;
