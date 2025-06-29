@@ -186,7 +186,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
     }
 
     @Override public void generateDefaultConfigs(int folderId) {
-        DefaultZoneConfigGenerator.generateAllDefaultConfigs();
+        DefaultZoneConfigGenerator.generateDefaultZoneConfig();
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_ZONE_CONFIG_FOLDER);

@@ -19,6 +19,8 @@ public class CommandArg {
     public static final String CLIENT = "client";
     public static final String RENDER = "render";
     public static final String DISPLAY = "display";
+    public static final String TEMP = "temp";
+    public static final String PUBGMC = "pubgmc";
 
     public static final String LOOT_SPAWNER = "loot_spawner";
     public static final String ENTITY_SPAWNER = "entity_spawner";
@@ -66,4 +68,6 @@ public class CommandArg {
     public static final String LOBBY = "lobby";
     public static final String TO_LOBBY = "toLobby";
     public static final String OFFSET = "offset";
+
+    public static final String BOOL = "boolean";
 }

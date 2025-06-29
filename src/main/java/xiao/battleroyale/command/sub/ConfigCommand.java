@@ -9,7 +9,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;

@@ -83,31 +83,26 @@ public class TempDataManager extends AbstractGameManager {
         JsonObject jsonObject = filenameToJson.get(fileName);
         return JsonUtils.getJsonString(jsonObject, key, null);
     }
-
     @Nullable
     public Integer getInt(String fileName, String key) {
         JsonObject jsonObject = filenameToJson.get(fileName);
         return JsonUtils.getJsonInteger(jsonObject, key, null);
     }
-
     @Nullable
     public Double getDouble(String fileName, String key) {
         JsonObject jsonObject = filenameToJson.get(fileName);
         return JsonUtils.getJsonDoubleClass(jsonObject, key, null);
     }
-
     @Nullable
     public Boolean getBool(String fileName, String key) {
         JsonObject jsonObject = filenameToJson.get(fileName);
         return JsonUtils.getJsonBoolean(jsonObject, key, null);
     }
-
     @Nullable
     public JsonObject getJsonObject(String fileName, String key) {
         JsonObject jsonObject = filenameToJson.get(fileName);
         return JsonUtils.getJsonObject(jsonObject, key, null);
     }
-
     @Nullable
     public JsonArray getJsonArray(String fileName, String key) {
         JsonObject jsonObject = filenameToJson.get(fileName);
@@ -115,8 +110,9 @@ public class TempDataManager extends AbstractGameManager {
     }
 
     /**
-     * 辅助方法：创建一个新的 JsonObject 并复制旧属性，然后添加新属性。
-     * 这确保了修改是针对一个新对象进行的，避免并发修改问题。
+     * 辅助方法
+     * 创建一个新的 JsonObject 并复制旧属性，然后添加新属性
+     * 确保修改是针对一个新对象进行的，避免并发修改问题
      */
     private JsonObject createNewJsonObjectWithProperty(JsonObject original, String key, JsonElement value) {
         JsonObject newObject = new JsonObject();
@@ -129,37 +125,32 @@ public class TempDataManager extends AbstractGameManager {
         return newObject;
     }
 
+    // 使用 compute 方法原子性地更新 Map 中的 JsonObject
     public void writeString(String fileName, String key, String value) {
-        // 使用 compute 方法原子性地更新 Map 中的 JsonObject
         filenameToJson.compute(fileName, (k, oldObject) ->
                 createNewJsonObjectWithProperty(oldObject, key, new JsonPrimitive(value))
         );
     }
-
     public void writeInt(String fileName, String key, int value) {
         filenameToJson.compute(fileName, (k, oldObject) ->
                 createNewJsonObjectWithProperty(oldObject, key, new JsonPrimitive(value))
         );
     }
-
     public void writeDouble(String fileName, String key, double value) {
         filenameToJson.compute(fileName, (k, oldObject) ->
                 createNewJsonObjectWithProperty(oldObject, key, new JsonPrimitive(value))
         );
     }
-
     public void writeBool(String fileName, String key, boolean value) {
         filenameToJson.compute(fileName, (k, oldObject) ->
                 createNewJsonObjectWithProperty(oldObject, key, new JsonPrimitive(value))
         );
     }
-
     public void writeJsonObject(String fileName, String key, JsonObject jsonObject) {
         filenameToJson.compute(fileName, (k, oldObject) ->
                 createNewJsonObjectWithProperty(oldObject, key, jsonObject)
         );
     }
-
     public void writeJsonArray(String fileName, String key, JsonArray jsonArray) {
         filenameToJson.compute(fileName, (k, oldObject) ->
                 createNewJsonObjectWithProperty(oldObject, key, jsonArray)
@@ -171,7 +162,7 @@ public class TempDataManager extends AbstractGameManager {
      * 该方法会获取当前 Map 的快照，并在后台线程中进行文件写入，
      * 从而不阻塞主线程和任何读写操作。
      */
-    public CompletableFuture<Void> tempDataToJsonAsync() {
+    private CompletableFuture<Void> tempDataToJsonAsync() {
         // 获取当前 Map 的快照
         final Map<String, JsonObject> snapshot = new HashMap<>(this.filenameToJson);
         return CompletableFuture.runAsync(() -> {
@@ -193,7 +184,53 @@ public class TempDataManager extends AbstractGameManager {
         });
     }
 
-    // 非实际GameManager，以下方法均留空
+    public void saveTempData() {
+        tempDataToJsonAsync()
+                .thenRun(() -> BattleRoyale.LOGGER.debug("Asynchronous temp data write completed"))
+                .exceptionally(ex -> {
+                    BattleRoyale.LOGGER.error("Asynchronous temp data write failed: {}", ex.getMessage());
+                    return null;
+                });
+    }
+
+    /**
+     * 异步删除已有json文件名并清空当前 Map
+     */
+    public CompletableFuture<Void> clearTempDataToJson() {
+        return CompletableFuture.runAsync(() -> {
+            // 清空内存 Map
+            this.filenameToJson = new ConcurrentHashMap<>(); // 原子替换，旧 Map 变为可被 GC
+            Path dirPath = Paths.get(TEMP_DATA_PATH);
+            if (Files.exists(dirPath)) {
+                try (Stream<Path> paths = Files.walk(dirPath)) {
+                    paths.filter(Files::isRegularFile)
+                            .filter(path -> path.toString().endsWith(".json"))
+                            .forEach(path -> {
+                                try {
+                                    Files.delete(path);
+                                    BattleRoyale.LOGGER.debug("Deleted temporary data file: {}", path);
+                                } catch (IOException e) {
+                                    BattleRoyale.LOGGER.error("Failed to delete temporary data file {}: {}", path, e.getMessage());
+                                }
+                            });
+                    // 尝试删除目录，如果为空的话
+                    Files.deleteIfExists(dirPath);
+                    BattleRoyale.LOGGER.info("Cleared all temporary data files.");
+                } catch (IOException e) {
+                    BattleRoyale.LOGGER.error("Failed to walk or delete temporary data directory: {}", e.getMessage());
+                }
+            }
+        });
+    }
+
+    public void clearTempData() {
+        clearTempDataToJson()
+                .thenRun(() -> BattleRoyale.LOGGER.debug("All temporary data cleared asynchronously"))
+                .exceptionally(ex -> {
+                    BattleRoyale.LOGGER.error("Failed to clear all temporary data asynchronously: {}", ex.getMessage());
+                    return null;
+                });
+    }
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
@@ -206,12 +243,7 @@ public class TempDataManager extends AbstractGameManager {
      */
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        tempDataToJsonAsync()
-                .thenRun(() -> BattleRoyale.LOGGER.debug("Asynchronous temp data write completed"))
-                .exceptionally(ex -> {
-                    BattleRoyale.LOGGER.error("Asynchronous temp data write failed: {}", ex.getMessage());
-                    return null;
-                });
+        saveTempData();
         return true;
     }
 

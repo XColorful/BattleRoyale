@@ -30,6 +30,8 @@ public class ServerCommand {
                 .requires(source -> source.hasPermission(2)));
         root.then(BoostCommand.get()
                 .requires(source -> source.hasPermission(2)));
+        root.then(TempCommand.get()
+                .requires(source -> source.hasPermission(2)));
 
         dispatcher.register(root);
     }
