@@ -1,9 +1,6 @@
 package xiao.battleroyale.common.game.tempdata;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -19,6 +16,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 public class TempDataManager extends AbstractGameManager {
@@ -37,10 +36,11 @@ public class TempDataManager extends AbstractGameManager {
 
     public static final String TEMP_DATA_SUB_PATH = "temp";
     public static final String TEMP_DATA_PATH = Paths.get(AbstractGameManager.MOD_DATA_PATH).resolve(TEMP_DATA_SUB_PATH).toString();
-    private final Map<String, JsonObject> filenameToJson = new HashMap<>();
+    private volatile Map<String, JsonObject> filenameToJson = new ConcurrentHashMap<>();
 
     public void reloadTempData() {
-        this.filenameToJson.clear();
+        // 不影响旧Map
+        Map<String, JsonObject> newFilenameToJson = new ConcurrentHashMap<>();
         Path dirPath = Paths.get(TEMP_DATA_PATH);
         if (!Files.exists(dirPath)) {
             try {
@@ -62,7 +62,7 @@ public class TempDataManager extends AbstractGameManager {
 
                             JsonElement element = JsonParser.parseReader(reader);
                             if (element.isJsonObject()) {
-                                this.filenameToJson.put(fileName, element.getAsJsonObject());
+                                newFilenameToJson.put(fileName, element.getAsJsonObject());
                                 BattleRoyale.LOGGER.debug("Loaded temporary data from file: {}", path);
                             } else {
                                 BattleRoyale.LOGGER.warn("File {} is not a valid JsonObject and will be ignored.", path);
@@ -74,6 +74,8 @@ public class TempDataManager extends AbstractGameManager {
         } catch (IOException e) {
             BattleRoyale.LOGGER.error("Failed to walk temporary data directory: {}", e.getMessage());
         }
+        // 原子替换引用
+        this.filenameToJson = newFilenameToJson;
     }
 
     @Nullable
@@ -112,55 +114,83 @@ public class TempDataManager extends AbstractGameManager {
         return JsonUtils.getJsonArray(jsonObject, key, null);
     }
 
+    /**
+     * 辅助方法：创建一个新的 JsonObject 并复制旧属性，然后添加新属性。
+     * 这确保了修改是针对一个新对象进行的，避免并发修改问题。
+     */
+    private JsonObject createNewJsonObjectWithProperty(JsonObject original, String key, JsonElement value) {
+        JsonObject newObject = new JsonObject();
+        if (original != null) {
+            for (Map.Entry<String, JsonElement> entry : original.entrySet()) {
+                newObject.add(entry.getKey(), entry.getValue());
+            }
+        }
+        newObject.add(key, value);
+        return newObject;
+    }
+
     public void writeString(String fileName, String key, String value) {
-        JsonObject jsonObject = filenameToJson.computeIfAbsent(fileName, k -> new JsonObject());
-        jsonObject.addProperty(key, value);
+        // 使用 compute 方法原子性地更新 Map 中的 JsonObject
+        filenameToJson.compute(fileName, (k, oldObject) ->
+                createNewJsonObjectWithProperty(oldObject, key, new JsonPrimitive(value))
+        );
     }
 
     public void writeInt(String fileName, String key, int value) {
-        JsonObject jsonObject = filenameToJson.computeIfAbsent(fileName, k -> new JsonObject());
-        jsonObject.addProperty(key, value);
+        filenameToJson.compute(fileName, (k, oldObject) ->
+                createNewJsonObjectWithProperty(oldObject, key, new JsonPrimitive(value))
+        );
     }
 
     public void writeDouble(String fileName, String key, double value) {
-        JsonObject jsonObject = filenameToJson.computeIfAbsent(fileName, k -> new JsonObject());
-        jsonObject.addProperty(key, value);
+        filenameToJson.compute(fileName, (k, oldObject) ->
+                createNewJsonObjectWithProperty(oldObject, key, new JsonPrimitive(value))
+        );
     }
 
     public void writeBool(String fileName, String key, boolean value) {
-        JsonObject jsonObject = filenameToJson.computeIfAbsent(fileName, k -> new JsonObject());
-        jsonObject.addProperty(key, value);
+        filenameToJson.compute(fileName, (k, oldObject) ->
+                createNewJsonObjectWithProperty(oldObject, key, new JsonPrimitive(value))
+        );
     }
 
     public void writeJsonObject(String fileName, String key, JsonObject jsonObject) {
-        JsonObject fileJsonObject = filenameToJson.computeIfAbsent(fileName, k -> new JsonObject());
-        fileJsonObject.add(key, jsonObject);
+        filenameToJson.compute(fileName, (k, oldObject) ->
+                createNewJsonObjectWithProperty(oldObject, key, jsonObject)
+        );
     }
 
     public void writeJsonArray(String fileName, String key, JsonArray jsonArray) {
-        JsonObject fileJsonObject = filenameToJson.computeIfAbsent(fileName, k -> new JsonObject());
-        fileJsonObject.add(key, jsonArray);
+        filenameToJson.compute(fileName, (k, oldObject) ->
+                createNewJsonObjectWithProperty(oldObject, key, jsonArray)
+        );
     }
 
-    public void tempDataToJson() {
-        for (Map.Entry<String, JsonObject> entry : filenameToJson.entrySet()) {
-            String fileName = entry.getKey();
-            JsonObject jsonObject = entry.getValue();
-            Path filePath = Paths.get(TEMP_DATA_PATH, fileName + ".json");
-            try {
-                // 使用 Gson 将 JsonObject 转换为格式化后的 JSON 字符串
-                String jsonString = JsonUtils.toJson(jsonObject);
-                // 确保父目录存在
-                if (!Files.exists(filePath.getParent())) {
-                    Files.createDirectories(filePath.getParent());
+    /**
+     * 将临时数据异步保存到 JSON 文件。
+     * 该方法会获取当前 Map 的快照，并在后台线程中进行文件写入，
+     * 从而不阻塞主线程和任何读写操作。
+     */
+    public CompletableFuture<Void> tempDataToJsonAsync() {
+        // 获取当前 Map 的快照
+        final Map<String, JsonObject> snapshot = new HashMap<>(this.filenameToJson);
+        return CompletableFuture.runAsync(() -> {
+            for (Map.Entry<String, JsonObject> entry : snapshot.entrySet()) {
+                String fileName = entry.getKey();
+                JsonObject jsonObject = entry.getValue();
+                Path filePath = Paths.get(TEMP_DATA_PATH, fileName + ".json");
+                try {
+                    String jsonString = JsonUtils.toJson(jsonObject);
+                    if (!Files.exists(filePath.getParent())) {
+                        Files.createDirectories(filePath.getParent());
+                    }
+                    Files.writeString(filePath, jsonString);
+                    BattleRoyale.LOGGER.debug("Wrote temporary data to file: {}", filePath);
+                } catch (IOException e) {
+                    BattleRoyale.LOGGER.error("Failed to write temporary data to file {}: {}", filePath, e.getMessage());
                 }
-                // 将字符串写入文件
-                Files.writeString(filePath, jsonString);
-                BattleRoyale.LOGGER.debug("Wrote temporary data to file: {}", filePath);
-            } catch (IOException e) {
-                BattleRoyale.LOGGER.error("Failed to write temporary data to file {}: {}", filePath, e.getMessage());
             }
-        }
+        });
     }
 
     // 非实际GameManager，以下方法均留空
@@ -172,6 +202,12 @@ public class TempDataManager extends AbstractGameManager {
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
+        tempDataToJsonAsync()
+                .thenRun(() -> BattleRoyale.LOGGER.debug("Asynchronous temp data write completed"))
+                .exceptionally(ex -> {
+                    BattleRoyale.LOGGER.error("Asynchronous temp data write failed: {}", ex.getMessage());
+                    return null;
+                });
         return true;
     }
 
