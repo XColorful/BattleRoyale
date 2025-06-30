@@ -100,11 +100,11 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
                 if (lootEntryType != null) {
                     return lootEntryType.getDeserializer().apply(jsonObject);
                 } else {
-                    BattleRoyale.LOGGER.info("Skipped invalid LootEntry");
+                    BattleRoyale.LOGGER.info("Skipped invalid GeneratorEntry");
                     return null;
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.error("Failed to deserialize LootEntry: {}", e.getMessage());
+                BattleRoyale.LOGGER.error("Failed to deserialize GeneratorEntry: {}", e.getMessage());
                 return null;
             }
         }

@@ -8,6 +8,7 @@ import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.loot.LootGenerator;
+import xiao.battleroyale.config.common.server.performance.type.GeneratorEntry;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -38,7 +39,33 @@ public class GameLootManager extends AbstractGameManager {
         ;
     }
 
-    private static GameLootManager instance;
+    private int MAX_LOOT_CHUNK_PER_TICK = 5; // 每Tick最多处理的区块数
+    private int MAX_LOOT_DISTANCE = 16; // BFS广度
+    private int TOLERANT_CENTER_DISTANCE = 3; // 将玩家中心周围一定距离的区块也算作中心区块
+    private int MAX_CACHED_CENTER; // 缓存玩家中心区块
+    private int MAX_QUEUED_CHUNK;
+    private int BFS_FREQUENCY;
+    private boolean INSTANT_NEXT_BFS;
+    private int MAX_CACHED_LOOT_CHUNK;
+    private int CLEAN_CACHED_CHUNK;
+    public void applyConfig(GeneratorEntry entry) {
+        MAX_LOOT_CHUNK_PER_TICK = Math.max(entry.maxGameTickLootChunk, 5);
+        MAX_LOOT_DISTANCE = Math.max(entry.maxGameLootDistance, 3);
+        TOLERANT_CENTER_DISTANCE = Math.max(entry.tolerantCenterDistance, 0);
+        MAX_CACHED_CENTER = Math.max(entry.maxCachedCenter, 0);
+        MAX_QUEUED_CHUNK = Math.max(entry.maxQueuedChunk, 100);
+        BFS_FREQUENCY = Math.max(entry.bfsFrequency, 20);
+        INSTANT_NEXT_BFS = entry.instantNextBfs;
+        MAX_CACHED_LOOT_CHUNK = Math.max(entry.maxCachedLootChunk, 100);
+        CLEAN_CACHED_CHUNK = Math.max(entry.cleanCachedChunk, 10);
+    }
+
+    private final Queue<ChunkInfo> queuedChunks = new ArrayDeque<>();
+    private final Set<ChunkInfo> processedChunks = new HashSet<>();
+    private final Set<ChunkInfo> cachedCenter = new HashSet<>();
+    private record ChunkInfo(ChunkPos chunkPos, int order) {}
+
+
 
     // 配置参数
     private int maxChunksPerTick = 150; // 每tick最大处理的区块数
@@ -64,6 +91,8 @@ public class GameLootManager extends AbstractGameManager {
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
+        // 预计算
+
         // TODO: 从配置文件加载所有参数，目前使用默认值。
         // this.maxChunksPerTick = ModConfigs.COMMON.MAX_CHUNKS_PER_TICK.get();
         // this.processedChunkRetentionTimeSeconds = ModConfigs.COMMON.PROCESSED_CHUNK_RETENTION_TIME_SECONDS.get();
@@ -73,13 +102,9 @@ public class GameLootManager extends AbstractGameManager {
 
     @Override
     public void initGame(ServerLevel serverLevel) {
-        clear(); // 确保每次游戏开始时清空所有状态
-        int gameTime = GameManager.get().getGameTime();
-        this.lastEvictionCheckTick = gameTime; // 初始化清理时间
-        this.lastFullBFSTick = gameTime; // 初始化全量BFS时间
+        clear();
+        this.lastFullBFSTick = 0;
 
-        // 游戏启动时，强制进行一次全量BFS初始化，确保玩家初始区域战利品刷新
-        initializeLootForPlayers(serverLevel);
         this.ready = true;
     }
 
