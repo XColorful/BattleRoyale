@@ -61,6 +61,10 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         jsonObject.addProperty(GameEntryTag.TELEPORT_WINNER_AFTER_GAME, teleportWinnerAfterGame);
         jsonObject.addProperty(GameEntryTag.WINNER_FIREWORK_ID, winnerFireworkId);
         jsonObject.addProperty(GameEntryTag.WINNER_PARTICLE_ID, winnerParticleId);
+
+        jsonObject.addProperty(GameEntryTag.MESSAGE_CLEAN_FREQUENCY, messageCleanFreq);
+        jsonObject.addProperty(GameEntryTag.MESSAGE_EXPIRE_TIME, messageExpireTime);
+        jsonObject.addProperty(GameEntryTag.MESSAGE_FORCE_SYNC_FREQUENCY, messageSyncFreq);
         return jsonObject;
     }
 
