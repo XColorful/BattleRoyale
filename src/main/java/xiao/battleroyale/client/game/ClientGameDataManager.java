@@ -37,7 +37,7 @@ public class ClientGameDataManager {
     }
 
     public static final long ZONE_EXPIRE_TICK = 20 * 10;
-    public static final long TEAM_EXPIRE_TICK = 20 * 10;
+    public static final long TEAM_EXPIRE_TICK = 20 * 15;
     public static final long GAME_EXPIRE_TICK = 20 * 10;
     private static long currentTick = 0; // 所有递增和引用操作，都通过enqueueWork确保在主线程进行，从而避免多线程竞态条件
     public static long getCurrentTick() { return currentTick; }
