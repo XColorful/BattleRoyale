@@ -10,7 +10,7 @@ public class TeamEntry extends AbstractHudEntry {
     public final int offlineTime;
 
     public TeamEntry(boolean display) {
-        this(display, 0, 0, 20 * 5);
+        this(display, 0, 0, 20 * 8);
     }
 
     public TeamEntry(boolean display, double xRatio, double yRatio, int offlineTime) {
@@ -40,7 +40,7 @@ public class TeamEntry extends AbstractHudEntry {
         double xRatio = JsonUtils.getJsonDouble(jsonObject, DisplayConfigTag.HUD_X_RATIO, 0);
         double yRatio = JsonUtils.getJsonDouble(jsonObject, DisplayConfigTag.HUD_Y_RATIO, 0);
 
-        int offlineTime = JsonUtils.getJsonInt(jsonObject, DisplayConfigTag.OFFLINE_TIME, 20 * 5);
+        int offlineTime = JsonUtils.getJsonInt(jsonObject, DisplayConfigTag.OFFLINE_TIME, 20 * 8);
 
         return new TeamEntry(display, xRatio, yRatio, offlineTime);
     }
@@ -51,6 +51,7 @@ public class TeamEntry extends AbstractHudEntry {
         if (display) {
             TeamInfoRenderer.setXRatio(xRatio);
             TeamInfoRenderer.setYRatio(yRatio);
+            TeamInfoRenderer.setOfflineTimeLimit(offlineTime);
         }
     }
 }

@@ -42,6 +42,9 @@ public class ColorUtils {
     public static Color parseColorFromString(String colorString) {
         Color color = Color.WHITE;
         try {
+            if (colorString.length() > 9) {
+                colorString = colorString.substring(0, 9);
+            }
             if (colorString.length() == 9 && colorString.startsWith("#")) { // #RRGGBBAA
                 int rgba = (int) Long.parseLong(colorString.substring(1), 16);
                 int r = (rgba >> 24) & 0xFF;

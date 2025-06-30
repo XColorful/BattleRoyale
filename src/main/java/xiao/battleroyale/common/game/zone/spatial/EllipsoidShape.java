@@ -2,7 +2,6 @@ package xiao.battleroyale.common.game.zone.spatial;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.client.renderer.game.ZoneRenderer;
 import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
@@ -11,6 +10,10 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 import javax.annotation.Nullable;
 
 public class EllipsoidShape extends Abstract3DShape {
+
+    private static int ELLIPSOID_SEGMENTS = 64;
+    public static int getEllipsoidSegments() { return ELLIPSOID_SEGMENTS; }
+    public static void setEllipsoidSegments(int segments) { ELLIPSOID_SEGMENTS = Math.max(32, segments); }
 
     public EllipsoidShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
         super(startEntry, endEntry, allowBadShape);
@@ -124,6 +127,6 @@ public class EllipsoidShape extends Abstract3DShape {
 
     @Override
     public int getSegments() {
-        return ZoneRenderer.ELLIPSOID_SEGMENTS;
+        return ELLIPSOID_SEGMENTS;
     }
 }

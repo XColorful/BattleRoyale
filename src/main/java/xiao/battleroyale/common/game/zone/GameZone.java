@@ -129,7 +129,7 @@ public class GameZone implements IGameZone {
     }
 
     private boolean checkShouldFinish(int gameTime) {
-        if (gameTime > zoneDelay + zoneTime) {
+        if (gameTime > zoneDelay + zoneTime) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置
             present = false;
             finished = true;
             return true;
@@ -148,10 +148,6 @@ public class GameZone implements IGameZone {
     @Override
     public void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
         if (!shouldTick(gameTime)) {
-            return;
-        }
-
-        if (checkShouldFinish(gameTime)) { // 圈存在时间取决于GameZone，代替shape以实现停留在终点位置
             GameManager.get().addZoneNbtMessage(this.zoneId, null); // 传入null视为提醒置空NBT
             return;
         }

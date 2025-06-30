@@ -1,7 +1,6 @@
 package xiao.battleroyale.common.game.zone.spatial;
 
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.client.renderer.game.ZoneRenderer;
 import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
@@ -13,6 +12,10 @@ import javax.annotation.Nullable;
  * 二维 椭圆
  */
 public class EllipseShape extends AbstractSimpleShape {
+
+    private static int ELLIPSE_SEGMENTS = 64;
+    public static int getEllipseSegments() { return ELLIPSE_SEGMENTS; }
+    public static void setEllipseSegments(int segments) { ELLIPSE_SEGMENTS = Math.max(32, segments); }
 
     public EllipseShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
         super(startEntry, endEntry, allowBadShape);
@@ -146,6 +149,6 @@ public class EllipseShape extends AbstractSimpleShape {
 
     @Override
     public int getSegments() {
-        return ZoneRenderer.ELLIPSE_SEGMENTS;
+        return ELLIPSE_SEGMENTS;
     }
 }

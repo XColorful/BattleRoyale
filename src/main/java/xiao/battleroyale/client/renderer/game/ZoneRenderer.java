@@ -49,11 +49,13 @@ public class ZoneRenderer {
 
     private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(BattleRoyale.MOD_ID, "textures/white.png");
     private static final RenderType CUSTOM_ZONE_RENDER_TYPE = createRenderType();
-    public static final int CIRCLE_SEGMENTS = 64;
-    public static final int ELLIPSE_SEGMENTS = 64;
+    public static int CIRCLE_SEGMENTS = 64;
+    public static int ELLIPSE_SEGMENTS = 64;
+    public static int getEllipseSegments() { return ELLIPSE_SEGMENTS; }
+    public static void setEllipseSegments(int segments) { ELLIPSE_SEGMENTS = Math.max(32, segments); }
     public static final float POINTING_POLYGON_ANGLE = (float) (Math.PI / 2.0);
-    public static final int SPHERE_SEGMENTS = 64;
-    public static final int ELLIPSOID_SEGMENTS = 64;
+    public static int SPHERE_SEGMENTS = 64;
+    public static int ELLIPSOID_SEGMENTS = 64;
 
     private static RenderType createRenderType() {
         RenderType.CompositeState compositeState = RenderType.CompositeState.builder()

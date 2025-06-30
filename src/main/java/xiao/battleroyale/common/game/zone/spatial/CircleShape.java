@@ -3,7 +3,6 @@ package xiao.battleroyale.common.game.zone.spatial;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.client.renderer.game.ZoneRenderer;
 import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
@@ -14,6 +13,10 @@ import xiao.battleroyale.util.Vec3Utils;
  * 二维 Circle
  */
 public class CircleShape extends AbstractSimpleShape {
+
+    private static int CIRCLE_SEGMENTS = 64;
+    public static int getCircleSegments() { return CIRCLE_SEGMENTS; }
+    public static void setCircleSegments(int segments) { CIRCLE_SEGMENTS = Math.max(32, segments); }
 
     protected boolean needEqualAbs = false;
 
@@ -66,7 +69,7 @@ public class CircleShape extends AbstractSimpleShape {
 
     @Override
     public int getSegments() {
-        return ZoneRenderer.CIRCLE_SEGMENTS;
+        return CIRCLE_SEGMENTS;
     }
 
     @Override

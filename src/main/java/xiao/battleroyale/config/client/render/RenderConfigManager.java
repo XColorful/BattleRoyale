@@ -194,7 +194,6 @@ public class RenderConfigManager extends AbstractConfigManager<RenderConfigManag
      */
     public void reloadRenderConfigs() {
         reloadConfigs(DEFAULT_RENDER_CONFIG_FOLDER);
-        // TODO for (RenderConfig renderConfig : getConfigs().values()) {
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {

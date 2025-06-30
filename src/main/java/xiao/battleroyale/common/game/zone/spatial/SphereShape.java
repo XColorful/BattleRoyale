@@ -4,7 +4,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.client.renderer.game.ZoneRenderer;
 import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
@@ -12,6 +11,10 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 import xiao.battleroyale.util.Vec3Utils;
 
 public class SphereShape extends Abstract3DShape {
+
+    private static int SPHERE_SEGMENTS = 64;
+    public static int getSphereSegments() { return SPHERE_SEGMENTS; }
+    public static void setSphereSegments(int segments) { SPHERE_SEGMENTS = Math.max(32, segments); }
 
     protected boolean needEqualAbs = false;
 
@@ -64,7 +67,7 @@ public class SphereShape extends Abstract3DShape {
 
     @Override
     public int getSegments() {
-        return ZoneRenderer.SPHERE_SEGMENTS;
+        return SPHERE_SEGMENTS;
     }
 
     @Override

@@ -24,7 +24,7 @@ public class DefaultDisplay {
     }
 
     private static JsonObject generateDefaultDisplayConfig0() {
-        TeamEntry teamEntry = new TeamEntry(true, -0.9, -0.9, 100);
+        TeamEntry teamEntry = new TeamEntry(true, -0.9, -0.9, 20 * 8);
         GameEntry gameEntry = new GameEntry(true, 0.85, 0.9, "#FFFFFFFF", "#00FFFFFF");
 
         DisplayConfig displayConfig = new DisplayConfig(0, "All display", "#FFFFFFAA", teamEntry, gameEntry);

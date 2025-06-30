@@ -37,7 +37,6 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
     public void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         poseStack.pushPose();
 
-        // TODO 暂时超过 16 米改渲染方块，以后再加配置
         boolean renderItem = (Minecraft.getInstance().player != null && blockEntity.getBlockPos().distSqr(Minecraft.getInstance().player.blockPosition()) <= MAX_RENDER_DISTANCE_SQ)
                 && !blockEntity.isEmpty(); // 玩家在范围内 且 容器不为空
         if (!renderItem) { // 渲染方块模型

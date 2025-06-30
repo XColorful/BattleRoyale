@@ -11,6 +11,10 @@ public class RenderConfigTag extends ConfigEntryTag {
 
     public static String USE_CLIENT_COLOR = "useClientColor";
     public static String FIXED_COLOR = "fixedColor";
-
+    public static String CIRCLE_SEGMENTS = "circleSegments";
+    public static String ELLIPSE_SEGMENTS = "ellipseSegments";
+    public static String SPHERE_SEGMENTS = "sphereSegments";
+    public static String ELLIPSOID_SEGMENTS = "ellispoidSegments";
+    
     private RenderConfigTag() {}
 }
