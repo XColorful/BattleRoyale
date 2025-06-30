@@ -51,6 +51,7 @@ public class TeamEntry extends AbstractHudEntry {
         if (display) {
             TeamInfoRenderer.setXRatio(xRatio);
             TeamInfoRenderer.setYRatio(yRatio);
+            TeamInfoRenderer.setOfflineTimeLimit(offlineTime);
         }
     }
 }

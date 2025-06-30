@@ -2,11 +2,13 @@ package xiao.battleroyale.config.common.game.gamerule.type;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.api.IConfigAppliable;
 import xiao.battleroyale.api.game.gamerule.GameEntryTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
+import xiao.battleroyale.common.message.AbstractMessageManager;
 import xiao.battleroyale.util.JsonUtils;
 
-public class GameEntry implements IGameruleEntry {
+public class GameEntry implements IGameruleEntry, IConfigAppliable {
 
     public final int maxPlayerInvalidTime;
     public final int maxBotInvalidTime;
@@ -17,12 +19,17 @@ public class GameEntry implements IGameruleEntry {
     public final boolean teleportWinnerAfterGame;
     public final int winnerFireworkId;
     public final int winnerParticleId;
+    public final int messageCleanFreq;
+    public final int messageExpireTime;
+    public final int messageSyncFreq;
 
     public GameEntry() {
-        this(20 * 60, 20 * 10, false, true, true, true, false, 0, 0);
+        this(20 * 60, 20 * 10, false, true, true, true, false, 0, 0,
+                20 * 7, 20 * 5, 20 * 5);
     }
 
-    public GameEntry(int maxPlayerInvalidTime, int maxBotInvalidTime, boolean removeInvalidTeam, boolean allowRemainingBot, boolean keepTeamAfterGame, boolean teleportAfterGame, boolean teleportWinnerAfterGame, int winnerFireworkId, int winnerParticleId) {
+    public GameEntry(int maxPlayerInvalidTime, int maxBotInvalidTime, boolean removeInvalidTeam, boolean allowRemainingBot, boolean keepTeamAfterGame, boolean teleportAfterGame, boolean teleportWinnerAfterGame, int winnerFireworkId, int winnerParticleId,
+                     int messageCleanFreq, int messageExpireTime, int messageSyncFreq) {
         this.maxPlayerInvalidTime = maxPlayerInvalidTime;
         this.maxBotInvalidTime = maxBotInvalidTime;
         this.removeInvalidTeam = removeInvalidTeam;
@@ -32,6 +39,9 @@ public class GameEntry implements IGameruleEntry {
         this.teleportWinnerAfterGame = teleportWinnerAfterGame;
         this.winnerFireworkId = winnerFireworkId;
         this.winnerParticleId = winnerParticleId;
+        this.messageCleanFreq = messageCleanFreq;
+        this.messageExpireTime = messageExpireTime;
+        this.messageSyncFreq = messageSyncFreq;
     }
 
     @Override
@@ -66,6 +76,18 @@ public class GameEntry implements IGameruleEntry {
         int winnerFireworkId = JsonUtils.getJsonInt(jsonObject, GameEntryTag.WINNER_FIREWORK_ID, 0);
         int winnerParticleId = JsonUtils.getJsonInt(jsonObject, GameEntryTag.WINNER_PARTICLE_ID, 0);
 
-        return new GameEntry(maxInvalidTime, maxBotInvalidTime, removeInvalidTeam, allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId);
+        int messageCleanFreq = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_CLEAN_FREQUENCY, 20 * 7);
+        int messageExpireTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_EXPIRE_TIME, 20 * 5);
+        int messageSyncFreq = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_FORCE_SYNC_FREQUENCY, 20 * 5);
+
+        return new GameEntry(maxInvalidTime, maxBotInvalidTime, removeInvalidTeam, allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId,
+                messageCleanFreq, messageExpireTime, messageSyncFreq);
+    }
+
+    @Override
+    public void applyDefault() {
+        AbstractMessageManager.setCleanFrequency(messageCleanFreq);
+        AbstractMessageManager.setExpireTime(messageExpireTime);
+        AbstractMessageManager.setForceSyncFrequency(messageSyncFreq);
     }
 }

@@ -4,6 +4,7 @@ import xiao.battleroyale.api.ConfigEntryTag;
 
 public class GameEntryTag extends ConfigEntryTag {
 
+    // game
     public static final String MAX_PLAYER_INVALID_TIME = "maxPlayerInvalidTime";
     public static final String MAX_BOT_INVALID_TIME = "maxBotInvalidTime";
     public static final String REMOVE_INVALID_TEAM = "removeInvalidTeam";
@@ -13,6 +14,10 @@ public class GameEntryTag extends ConfigEntryTag {
     public static final String TELEPORT_WINNER_AFTER_GAME = "teleportWinnerAfterGame";
     public static final String WINNER_FIREWORK_ID = "winnerFireworkId";
     public static final String WINNER_PARTICLE_ID = "winnerParticleId";
+    // message
+    public static final String MESSAGE_CLEAN_FREQUENCY = "messageCleanFrequency";
+    public static final String MESSAGE_EXPIRE_TIME = "messageExpireTime";
+    public static final String MESSAGE_FORCE_SYNC_FREQUENCY = "messageSyncFrequency";
 
     private GameEntryTag() {}
 

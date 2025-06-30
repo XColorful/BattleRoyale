@@ -19,9 +19,12 @@ public abstract class AbstractMessageManager<K extends AbstractCommonMessage> im
     protected final Map<Integer, K> messages = new HashMap<>();
     protected final Set<Integer> changedId = new HashSet<>();
     protected int lastCleanTime = 0;
-    protected int cleanFrequency = 20 * 7;
-    protected int expireTime = 20 * 5;
-    protected int forceSyncFrequency = 20 * 5;
+    protected static int cleanFrequency = 20 * 7;
+    public static void setCleanFrequency(int freq) { cleanFrequency = Math.max(freq, 0); }
+    protected static int expireTime = 20 * 5;
+    public static void setExpireTime(int time) { expireTime = Math.max(Math.max(time, cleanFrequency), 0); } // 过期时间不小于清理频率
+    protected static int forceSyncFrequency = 20 * 5;
+    public static void setForceSyncFrequency(int freq) { forceSyncFrequency = Math.max(Math.max(freq, expireTime), 0); } // 强制同步频率小于过期时间
 
     @Override
     public void register(int registerTime) {
