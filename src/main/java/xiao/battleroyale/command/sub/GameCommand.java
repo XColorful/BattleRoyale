@@ -28,6 +28,8 @@ public class GameCommand {
                         .executes(GameCommand::lobby))
                 .then(Commands.literal(TO_LOBBY)
                         .executes(GameCommand::toLobby))
+                .then(Commands.literal(SELECTED)
+                        .executes(GameCommand::selectedConfigs))
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal(LOAD)
                         .executes(GameCommand::loadGameConfig))
@@ -133,7 +135,8 @@ public class GameCommand {
             ServerPlayer player = context.getSource().getPlayerOrException();
             SpawnManager.get().sendLobbyInfo(player);
         } else { // 向全体玩家发送消息
-            SpawnManager.get().sendLobbyInfo();
+            ServerLevel serverLevel = source.getLevel();
+            SpawnManager.get().sendLobbyInfo(serverLevel);
         }
 
         return Command.SINGLE_SUCCESS;
@@ -163,6 +166,19 @@ public class GameCommand {
             source.sendFailure(Component.translatable("battleroyale.message.game_in_progress"));
             return 0;
         }
+    }
+
+    private static int selectedConfigs(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (source.isPlayer()) { // 向调用的玩家发送消息
+            ServerPlayer player = context.getSource().getPlayerOrException();
+            GameManager.get().sendSelectedConfigsInfo(player);
+        } else { // 向全体玩家发送消息
+            ServerLevel serverLevel = source.getLevel();
+            GameManager.get().sendSelectedConfigsInfo(serverLevel);
+        }
+
+        return Command.SINGLE_SUCCESS;
     }
 
     public static String toLobbyCommandString() {

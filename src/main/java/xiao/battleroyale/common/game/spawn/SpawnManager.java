@@ -195,6 +195,10 @@ public class SpawnManager extends AbstractGameManager {
     }
 
     public void sendLobbyInfo(ServerPlayer player) {
+        if (player == null) {
+            return;
+        }
+
         if (isLobbyCreated()) {
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_pos", lobbyPos.x, lobbyPos.y, lobbyPos.z).withStyle(ChatFormatting.AQUA));
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_dimension", lobbyDimension.x, lobbyDimension.y, lobbyDimension.z).withStyle(ChatFormatting.AQUA));
@@ -204,8 +208,7 @@ public class SpawnManager extends AbstractGameManager {
         }
     }
 
-    public void sendLobbyInfo() {
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+    public void sendLobbyInfo(ServerLevel serverLevel) {
         if (serverLevel == null) {
             return;
         }

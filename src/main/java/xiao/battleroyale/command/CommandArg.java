@@ -69,6 +69,7 @@ public class CommandArg {
     public static final String LOBBY = "lobby";
     public static final String TO_LOBBY = "toLobby";
     public static final String OFFSET = "offset";
+    public static final String SELECTED = "selected";
 
     public static final String BOOL = "boolean";
 }

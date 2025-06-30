@@ -780,4 +780,30 @@ public class GameManager extends AbstractGameManager {
         BotConfigManager.BotConfig config = BotConfigManager.get().getBotConfig(id);
         return config != null ? config.name : "";
     }
+
+    public String getZoneConfigFileName() {
+        return GameConfigManager.get().getZoneConfigEntryFileName();
+    }
+
+    public void sendSelectedConfigsInfo(ServerLevel serverLevel) {
+        if (serverLevel == null) {
+            return;
+        }
+
+        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_bot_config", getBotConfigId(), getBotConfigName(getBotConfigId())));
+        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_gamerule_config", getGameruleConfigId(), getGameruleConfigName(getGameruleConfigId())));
+        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_spawn_config", getSpawnConfigId(), getSpawnConfigName(getSpawnConfigId())));
+        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_zone_config", getZoneConfigFileName(), GameConfigManager.get().getZoneConfigList().size()));
+    }
+
+    public void sendSelectedConfigsInfo(ServerPlayer player) {
+        if (player == null) {
+            return;
+        }
+
+        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_bot_config", getBotConfigId(), getBotConfigName(getBotConfigId())));
+        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_gamerule_config", getGameruleConfigId(), getGameruleConfigName(getGameruleConfigId())));
+        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_spawn_config", getSpawnConfigId(), getSpawnConfigName(getSpawnConfigId())));
+        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_zone_config", getZoneConfigFileName(), GameConfigManager.get().getZoneConfigList().size()));
+    }
 }
