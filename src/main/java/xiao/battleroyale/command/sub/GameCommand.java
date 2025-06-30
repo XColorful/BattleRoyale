@@ -23,25 +23,34 @@ import static xiao.battleroyale.util.StringUtils.buildCommandString;
 public class GameCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
-        return Commands.literal(GAME)
+        // 不需要权限
+        LiteralArgumentBuilder<CommandSourceStack> gameCommand = Commands.literal(GAME)
                 .then(Commands.literal(LOBBY)
                         .executes(GameCommand::lobby))
                 .then(Commands.literal(TO_LOBBY)
                         .executes(GameCommand::toLobby))
                 .then(Commands.literal(SELECTED)
-                        .executes(GameCommand::selectedConfigs))
-                .requires(source -> source.hasPermission(2))
-                .then(Commands.literal(LOAD)
+                        .executes(GameCommand::selectedConfigs));
+
+        // 需要权限
+        gameCommand.then(Commands.literal(LOAD)
+                        .requires(source -> source.hasPermission(2))
                         .executes(GameCommand::loadGameConfig))
                 .then(Commands.literal(INIT)
+                        .requires(source -> source.hasPermission(2))
                         .executes(GameCommand::initGame))
                 .then(Commands.literal(START)
+                        .requires(source -> source.hasPermission(2))
                         .executes(GameCommand::startGame))
                 .then(Commands.literal(STOP)
+                        .requires(source -> source.hasPermission(2))
                         .executes(GameCommand::stopGame))
                 .then(Commands.literal(OFFSET)
+                        .requires(source -> source.hasPermission(2))
                         .then(Commands.argument(XYZ, Vec3Argument.vec3())
                                 .executes(GameCommand::globalOffset)));
+
+        return gameCommand;
     }
 
     private static int loadGameConfig(CommandContext<CommandSourceStack> context) {
