@@ -35,16 +35,16 @@ public class DefaultRender {
 
     private static JsonObject generateDefaultRenderConfig1() {
         BlockEntry blockEntry = new BlockEntry(0);
-        ZoneEntry zoneEntry = new ZoneEntry(true, "#0000FF");
+        ZoneEntry zoneEntry = new ZoneEntry(true, "#0000FF", 64, 64, 64, 64);
 
-        RenderConfig renderConfig = new RenderConfig(1, "No render", "#FFFFFFAA", blockEntry, zoneEntry);
+        RenderConfig renderConfig = new RenderConfig(1, "Client single color", "#FFFFFFAA", blockEntry, zoneEntry);
 
         return renderConfig.toJson();
     }
 
     private static JsonObject generateDefaultRenderConfig2() {
         BlockEntry blockEntry = new BlockEntry(8000);
-        ZoneEntry zoneEntry = new ZoneEntry(false);
+        ZoneEntry zoneEntry = new ZoneEntry(false, "", 1024, 1024, 1024, 1024);
 
         RenderConfig renderConfig = new RenderConfig(2, "Max render", "#FFFFFFAA", blockEntry, zoneEntry);
 
@@ -53,7 +53,7 @@ public class DefaultRender {
 
     private static JsonObject generateDefaultRenderConfig3() {
         BlockEntry blockEntry = new BlockEntry(4);
-        ZoneEntry zoneEntry = new ZoneEntry(false);
+        ZoneEntry zoneEntry = new ZoneEntry(false, "", 32, 32, 32, 32);
 
         RenderConfig renderConfig = new RenderConfig(3, "Better Performance", "#FFFFFFAA", blockEntry, zoneEntry);
 
