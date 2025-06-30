@@ -8,28 +8,45 @@ import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.common.message.AbstractMessageManager;
 import xiao.battleroyale.util.JsonUtils;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class GameEntry implements IGameruleEntry, IConfigAppliable {
+
+    public final int teamMsgExpireTimeSeconds;
+    public final List<String> teamColors;
+    public static final List<String> DEFAULT_TEAM_COLORS = Arrays.asList(
+            "#E9ECEC", "#F07613", "#BD44B3", "#3AAFD9", "#F8C627", "#70B919", "#ED8DAC", "#8E8E86",
+            "#A0A0A0", "#158991", "#792AAC", "#35399D", "#724728", "#546D1B", "#A02722", "#141519");
 
     public final int maxPlayerInvalidTime;
     public final int maxBotInvalidTime;
     public final boolean removeInvalidTeam;
+
     public final boolean allowRemainingBot;
     public final boolean keepTeamAfterGame;
     public final boolean teleportAfterGame;
     public final boolean teleportWinnerAfterGame;
     public final int winnerFireworkId;
     public final int winnerParticleId;
+
     public final int messageCleanFreq;
     public final int messageExpireTime;
     public final int messageSyncFreq;
 
     public GameEntry() {
-        this(20 * 60, 20 * 10, false, true, true, true, false, 0, 0,
+        this(300 * 1000, DEFAULT_TEAM_COLORS,
+                20 * 60, 20 * 10, false,
+                true, true, true, false, 0, 0,
                 20 * 7, 20 * 5, 20 * 5);
     }
 
-    public GameEntry(int maxPlayerInvalidTime, int maxBotInvalidTime, boolean removeInvalidTeam, boolean allowRemainingBot, boolean keepTeamAfterGame, boolean teleportAfterGame, boolean teleportWinnerAfterGame, int winnerFireworkId, int winnerParticleId,
+    public GameEntry(int teamMsgExpireTimeSeconds, List<String> teamColors,
+                     int maxPlayerInvalidTime, int maxBotInvalidTime, boolean removeInvalidTeam,
+                     boolean allowRemainingBot, boolean keepTeamAfterGame, boolean teleportAfterGame, boolean teleportWinnerAfterGame, int winnerFireworkId, int winnerParticleId,
                      int messageCleanFreq, int messageExpireTime, int messageSyncFreq) {
+        this.teamMsgExpireTimeSeconds = teamMsgExpireTimeSeconds;
+        this.teamColors = teamColors;
         this.maxPlayerInvalidTime = maxPlayerInvalidTime;
         this.maxBotInvalidTime = maxBotInvalidTime;
         this.removeInvalidTeam = removeInvalidTeam;
@@ -52,6 +69,9 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(GameEntryTag.TEAM_MSG_EXPIRE_SECONDS, teamMsgExpireTimeSeconds);
+        jsonObject.add(GameEntryTag.TEAM_COLORS, JsonUtils.writeStringListToJson(teamColors));
+
         jsonObject.addProperty(GameEntryTag.MAX_PLAYER_INVALID_TIME, maxPlayerInvalidTime);
         jsonObject.addProperty(GameEntryTag.MAX_BOT_INVALID_TIME, maxBotInvalidTime);
         jsonObject.addProperty(GameEntryTag.REMOVE_INVALID_TEAM, removeInvalidTeam);
@@ -70,6 +90,9 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
 
     @NotNull
     public static GameEntry fromJson(JsonObject jsonObject) {
+        int teamMsgExpireTimeSeconds = JsonUtils.getJsonInt(jsonObject, GameEntryTag.TEAM_MSG_EXPIRE_SECONDS, 300 * 1000);
+        List<String> teamColors = JsonUtils.getJsonStringList(jsonObject, GameEntryTag.TEAM_COLORS);
+
         int maxInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_PLAYER_INVALID_TIME, 20 * 60);
         int maxBotInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_BOT_INVALID_TIME, 20 * 10);
         boolean removeInvalidTeam = JsonUtils.getJsonBool(jsonObject, GameEntryTag.REMOVE_INVALID_TEAM, false);
@@ -84,7 +107,9 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         int messageExpireTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_EXPIRE_TIME, 20 * 5);
         int messageSyncFreq = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_FORCE_SYNC_FREQUENCY, 20 * 5);
 
-        return new GameEntry(maxInvalidTime, maxBotInvalidTime, removeInvalidTeam, allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId,
+        return new GameEntry(teamMsgExpireTimeSeconds, teamColors,
+                maxInvalidTime, maxBotInvalidTime, removeInvalidTeam,
+                allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId,
                 messageCleanFreq, messageExpireTime, messageSyncFreq);
     }
 

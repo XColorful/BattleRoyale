@@ -4,6 +4,9 @@ import xiao.battleroyale.api.ConfigEntryTag;
 
 public class GameEntryTag extends ConfigEntryTag {
 
+    // team
+    public static final String TEAM_MSG_EXPIRE_SECONDS = "teamMessageExpireSeconds";
+    public static final String TEAM_COLORS = "teamColors";
     // game
     public static final String MAX_PLAYER_INVALID_TIME = "maxPlayerInvalidTime";
     public static final String MAX_BOT_INVALID_TIME = "maxBotInvalidTime";
