@@ -35,7 +35,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public final int messageSyncFreq;
 
     public GameEntry() {
-        this(300 * 1000, DEFAULT_TEAM_COLORS,
+        this(300, DEFAULT_TEAM_COLORS,
                 20 * 60, 20 * 10, false,
                 true, true, true, false, 0, 0,
                 20 * 7, 20 * 5, 20 * 5);
@@ -90,7 +90,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
 
     @NotNull
     public static GameEntry fromJson(JsonObject jsonObject) {
-        int teamMsgExpireTimeSeconds = JsonUtils.getJsonInt(jsonObject, GameEntryTag.TEAM_MSG_EXPIRE_SECONDS, 300 * 1000);
+        int teamMsgExpireTimeSeconds = JsonUtils.getJsonInt(jsonObject, GameEntryTag.TEAM_MSG_EXPIRE_SECONDS, 300);
         List<String> teamColors = JsonUtils.getJsonStringList(jsonObject, GameEntryTag.TEAM_COLORS);
 
         int maxInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_PLAYER_INVALID_TIME, 20 * 60);
