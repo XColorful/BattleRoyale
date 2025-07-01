@@ -45,8 +45,7 @@ public class LootGenerator {
      */
     public static <T extends AbstractLootBlockEntity> void generateLoot(ServerLevel serverLevel, ILootEntry entry, T target, Supplier<Float> random, UUID gameId) {
         List<ILootData> lootData = entry.generateLootData(random);
-
-        if (lootData == null || lootData.isEmpty()) {
+        if (lootData.isEmpty()) {
             return;
         }
 
@@ -100,8 +99,7 @@ public class LootGenerator {
         }
 
         List<ILootData> lootData = entry.generateLootData(random);
-
-        if (lootData == null || lootData.isEmpty()) {
+        if (lootData.isEmpty()) {
             return;
         }
 
@@ -184,7 +182,7 @@ public class LootGenerator {
             generateLoot(serverLevel, entry, (AbstractLootBlockEntity) lootObject, () -> serverLevel.getRandom().nextFloat(), gameId);
             lootObject.setGameId(gameId);
             blockEntity.setChanged();
-            BattleRoyale.LOGGER.debug("Refreshed loot for {} at {} with configId {} for game {}", blockEntity.getClass().getSimpleName(), pos, configId, gameId);
+            // BattleRoyale.LOGGER.debug("Refreshed loot for {} at {} with configId {} for game {}", blockEntity.getClass().getSimpleName(), pos, configId, gameId);
             return true;
         }
         return false;

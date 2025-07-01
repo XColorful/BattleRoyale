@@ -336,9 +336,8 @@ public class ConfigCommand {
     private static int applyPerformanceConfig(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, ID);
         if (ServerConfigManager.get().applyPerformanceConfig(id)) {
-            String currentFileName = ServerConfigManager.get().getPerformanceConfigEntryFileName();
-            BattleRoyale.LOGGER.info("Switch performance config file to {} via command", currentFileName);
-            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_performance_config_file", currentFileName), true);
+            BattleRoyale.LOGGER.info("Applied performance config {} via command", id);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.performance_config_applied", id, ServerConfigManager.get().getPerformanceConfigName(id)), true);
             return Command.SINGLE_SUCCESS;
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.invalid_performance_config_id", id));
