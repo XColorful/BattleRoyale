@@ -9,5 +9,6 @@ public class DefaultSpawnConfigGenerator {
     public static void generateDefaultSpawnConfigs() {
         DefaultSpawn.generateDefaultConfigs();
         PubgSpawn.generateDefaultConfigs();
+        FunctionShowcase.generateDefaultConfigs();
     }
 }
