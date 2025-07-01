@@ -31,7 +31,7 @@ public class DefaultEntitySpawner {
                 new EntityEntry("minecraft:horse", null, 1, 1)
         );
 
-        LootConfig lootConfig = new LootConfig(0, "Horse Spawn with Probability", "#FFFFFFAA",
+        LootConfig lootConfig = new LootConfig(0, "Horse Spawn with Probability", "#FFFFFFAA", true,
                 randomEntry);
 
         return lootConfig.toJson();

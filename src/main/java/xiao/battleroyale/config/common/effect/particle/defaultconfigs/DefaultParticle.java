@@ -33,7 +33,7 @@ public class DefaultParticle {
                 new Vec3(0, 0, 0), new Vec3(8, 1, 8), true,
                 parameterEntry);
 
-        ParticleConfig particleConfig = new ParticleConfig(0, "Default particle for winner", "#FFFFFF", detailEntry);
+        ParticleConfig particleConfig = new ParticleConfig(0, "Default particle for winner", "#FFFFFF", true, detailEntry);
 
         return particleConfig.toJson();
     }

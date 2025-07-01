@@ -33,7 +33,7 @@ public class DefaultGamerule {
                 false, false, false,
                 false, false, 5000);
 
-        GameruleConfig gameruleConfig = new GameruleConfig(0, "Adventure battleroyale", "#FFFFFFAA",
+        GameruleConfig gameruleConfig = new GameruleConfig(0, "Adventure battleroyale", "#FFFFFFAA", true,
                 brEntry, mcEntry, null);
 
         return gameruleConfig.toJson();

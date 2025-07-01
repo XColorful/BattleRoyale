@@ -38,7 +38,7 @@ public class DefaultLootSpawner {
                 new TimeEntry(200, 12000, new ItemEntry("minecraft:dirt", null, 1))
         ));
 
-        LootConfig lootConfig = new LootConfig(0, "All entry type example", "#FFFFFFAA",
+        LootConfig lootConfig = new LootConfig(0, "All entry type example", "#FFFFFFAA", true,
                 multiEntry);
 
         return lootConfig.toJson();
