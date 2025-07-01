@@ -36,7 +36,7 @@ public class DefaultAirdropSpecial{
                 ))
         );
 
-        LootConfig lootConfig = new LootConfig(201, "Netherite Airdrop Special", "#FFFF00",
+        LootConfig lootConfig = new LootConfig(201, "Netherite Airdrop Special", "#FFFF00", true,
                 repeatEntry);
 
         return lootConfig.toJson();

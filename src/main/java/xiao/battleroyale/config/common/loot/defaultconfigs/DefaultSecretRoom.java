@@ -37,7 +37,7 @@ public class DefaultSecretRoom{
                 new ItemEntry("minecraft:netherite_ingot", null, 1)
         ));
 
-        LootConfig lootConfig = new LootConfig(0, "Treasure trove (Not implemented yet)", "#00FFFF",
+        LootConfig lootConfig = new LootConfig(0, "Treasure trove (Not implemented yet)", "#00FFFF", true,
                 multiEntry);
 
         return lootConfig.toJson();
