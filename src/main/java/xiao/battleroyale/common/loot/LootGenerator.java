@@ -158,7 +158,7 @@ public class LootGenerator {
 
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (!(blockEntity instanceof ILootObject lootObject)) {
-            if (LOOT_VANILLA_CHEST) {
+            if (!LOOT_VANILLA_CHEST) {
                 return false;
             }
             if (!(blockEntity instanceof Container)) {
