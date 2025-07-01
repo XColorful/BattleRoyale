@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class GameLootManager extends AbstractGameManager {
@@ -29,8 +30,6 @@ public class GameLootManager extends AbstractGameManager {
     }
 
     private GameLootManager() {
-        // 创建一个单线程的 ExecutorService，专门用于处理BFS任务
-        bfsExecutor = Executors.newSingleThreadExecutor();
     }
 
     public static void init() {
@@ -69,7 +68,7 @@ public class GameLootManager extends AbstractGameManager {
     private static final List<List<Offset2D>> cachedCenterOffset = new ArrayList<>();
     public record Offset2D(int x, int z) {}
 
-    private final ExecutorService bfsExecutor;
+    private ExecutorService bfsExecutor;
     private Future<?> bfsTaskFuture;
 
     /**
@@ -108,6 +107,25 @@ public class GameLootManager extends AbstractGameManager {
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
+        clear();
+
+        if (bfsExecutor != null) {
+            List<Runnable> unexecutedTasks = bfsExecutor.shutdownNow();
+            if (!unexecutedTasks.isEmpty()) {
+                BattleRoyale.LOGGER.warn("GameLootManager: {} BFS tasks were not executed before new game init.", unexecutedTasks.size());
+            }
+            try {
+                if (!bfsExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    BattleRoyale.LOGGER.error("GameLootManager: BFS executor did not terminate in time during new game init.");
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                BattleRoyale.LOGGER.error("GameLootManager: Interrupted while waiting for BFS executor to terminate during new game init.", e);
+            }
+        }
+
+        bfsExecutor = Executors.newSingleThreadExecutor();
+        bfsTaskFuture = null;
         this.prepared = true;
     }
 
@@ -311,5 +329,6 @@ public class GameLootManager extends AbstractGameManager {
         queuedChunksRef.get().clear();
         processedChunkCache.clear();
         cachedPlayerCenterChunks.clear();
+        bfsTaskFuture = null;
     }
 }
