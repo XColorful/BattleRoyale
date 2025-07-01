@@ -39,7 +39,7 @@ public class FunctionShowcase {
         endEntry.addFixedDimension(new Vec3(2, 2, 15));
 
         RectangleEntry rectangleEntry = new RectangleEntry(startEntry, endEntry, false);
-        ZoneConfigManager.ZoneConfig zoneConfig = new ZoneConfigManager.ZoneConfig(0, "First speed rectangle", "#00FFFF33", true, -1,
+        ZoneConfigManager.ZoneConfig zoneConfig = new ZoneConfigManager.ZoneConfig(0, "First speed rectangle", "#00FFFF33",
                 0, 99999,
                 effectFuncEntry, rectangleEntry);
         return zoneConfig.toJson();
