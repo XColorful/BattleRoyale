@@ -20,7 +20,7 @@ public class DefaultBot {
     }
 
     private static JsonObject generateDefaultBotConfig0() {
-        BotConfig botConfig = new BotConfig(0, "Not implemented yet", "#FFFFFF", null);
+        BotConfig botConfig = new BotConfig(0, "Not implemented yet", "#FFFFFF", true, null);
         return botConfig.toJson();
     }
 }

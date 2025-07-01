@@ -97,6 +97,30 @@ public class JsonUtils {
         return intList;
     }
 
+    public static List<String> readStringListFromJson(@Nullable JsonArray jsonArray) {
+        List<String> stringList = new ArrayList<>();
+        if (jsonArray == null) {
+            return stringList;
+        }
+
+        try {
+            for (JsonElement element : jsonArray) {
+                JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
+                if (!jsonPrimitive.isString()) {
+                    continue;
+                }
+                String str = jsonPrimitive.getAsString();
+                if (str != null) {
+                    stringList.add(str);
+                }
+            }
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.warn("Failed to read string list from json");
+        }
+
+        return stringList;
+    }
+
     public static JsonArray writeVec3ListToJson(List<Vec3> vec3List) {
         JsonArray jsonArray = new JsonArray();
 
@@ -112,6 +136,16 @@ public class JsonUtils {
 
         for (Integer x : intList) {
             jsonArray.add(x);
+        }
+
+        return jsonArray;
+    }
+
+    public static JsonArray writeStringListToJson(List<String> stringList) {
+        JsonArray jsonArray = new JsonArray();
+
+        for (String str : stringList) {
+            jsonArray.add(str);
         }
 
         return jsonArray;
@@ -351,6 +385,11 @@ public class JsonUtils {
     @NotNull
     public static List<Integer> getJsonIntList(@Nullable JsonObject jsonObject, String key) {
         return readIntListFromJson(JsonUtils.getJsonArray(jsonObject, key, null));
+    }
+
+    @NotNull
+    public static List<String> getJsonStringList(@Nullable JsonObject jsonObject, String key) {
+        return readStringListFromJson(JsonUtils.getJsonArray(jsonObject, key, null));
     }
 
     /**

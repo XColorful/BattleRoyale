@@ -30,7 +30,8 @@ public class LootGenerationManager {
 
     private LootGenerationManager() {}
 
-    private final int MAX_CHUNKS_PER_TICK = 5; // TODO 可配置：每tick最大处理的区块数
+    private static int MAX_CHUNKS_PER_TICK = 5;
+    public static void setMaxChunksPerTick(int chunks) { MAX_CHUNKS_PER_TICK = Math.min(Math.max(chunks, 5), 500); }
 
     private final Queue<ChunkPos> chunksToProcess = new ArrayDeque<>();
     private final Set<ChunkPos> processedChunkTracker = new HashSet<>(); // 用于去重和检查是否已在队列中

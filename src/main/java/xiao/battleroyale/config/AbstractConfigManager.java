@@ -247,26 +247,26 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
             }
         }
 
-        // 切换到默认配置
         if (!fileConfigs.containsKey(fileNameString)) { // 之前的文件名不存在
             fileNameString = fileConfigs.keySet().iterator().next();
-            boolean foundDefault = false;
-            for (Map.Entry<String, List<T>> entry : allFileConfigs.entrySet()) { // 遍历每个配置文件
-                for (T configEntry : entry.getValue()) { // 遍历文件内每个配置
-                    if (configEntry.isDefaultSelect()) {
-                        fileNameString = entry.getKey();
-                        switchConfigFile(fileNameString, folderId);
-                        configEntry.applyDefault();
-                        foundDefault = true;
-                        break;
-                    }
+        }
+        // 遍历每个配置文件
+        for (Map.Entry<String, List<T>> entry : allFileConfigs.entrySet()) {
+            // 遍历文件内每个配置
+            for (T configEntry : entry.getValue()) {
+                if (!configEntry.isDefaultSelect()) {
+                    continue;
                 }
-                if (foundDefault) {
-                    break;
+                fileNameString = entry.getKey();
+                if (switchConfigFile(fileNameString, folderId)) { // 先切换到配置再应用默认
+                    configEntry.applyDefault();
+                    BattleRoyale.LOGGER.info("Applied default config, fileName:{}, configId:{}, type:{}", fileNameString, configEntry.getConfigId(), configEntry.getType());
+                    return true;
+                } else {
+                    BattleRoyale.LOGGER.error("Unexpected config file switch, fileNameString:{}, configEntryId:{}, type:{}", fileNameString, configEntry.getConfigId(), configEntry.getType());
                 }
             }
         }
-
         return switchConfigFile(fileNameString, folderId);
     }
     @Override public @Nullable T parseConfigEntry(JsonObject jsonObject, Path filePath) {
@@ -286,8 +286,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
             return;
         }
         generateDefaultConfigs(folderId);
-        Path configDirPath = getConfigDirPath(folderId);
-        BattleRoyale.LOGGER.info("Generating default configs in {}", configDirPath);
+        BattleRoyale.LOGGER.info("Generated default configs in {}", getConfigDirPath(folderId));
     }
     @Override  public String getConfigPath() {
         return getConfigPath(getDefaultConfigId());

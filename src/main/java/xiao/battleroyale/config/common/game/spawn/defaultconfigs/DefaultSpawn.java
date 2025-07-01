@@ -34,7 +34,7 @@ public class DefaultSpawn {
                 new TeleportEntry.DetailInfo(new ArrayList<>(), false, true, 0)
         );
 
-        SpawnConfig spawnConfig = new SpawnConfig(0, "Random ground spawn", "#FFFFFFAA",
+        SpawnConfig spawnConfig = new SpawnConfig(0, "Random ground spawn", "#FFFFFFAA", -1, true,
                 groundEntry);
 
         return spawnConfig.toJson();

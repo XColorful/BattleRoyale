@@ -14,6 +14,7 @@ import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
+import xiao.battleroyale.config.common.server.ServerConfigManager;
 
 import static xiao.battleroyale.command.CommandArg.*;
 
@@ -110,6 +111,18 @@ public class ConfigCommand {
                                         .executes(ConfigCommand::switchNextParticleConfig)
                                         .then(Commands.argument(FILE, StringArgumentType.string())
                                                 .executes(ConfigCommand::switchParticleConfig)
+                                        )
+                                )
+                        )
+                )
+                .then(Commands.literal(SERVER)
+                        .then(Commands.literal(PERFORMANCE)
+                                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                                        .executes(ConfigCommand::applyPerformanceConfig))
+                                .then(Commands.literal(SWITCH)
+                                        .executes(ConfigCommand::switchNextPerformanceConfig)
+                                        .then(Commands.argument(FILE, StringArgumentType.string())
+                                                .executes(ConfigCommand::switchPerformanceConfig)
                                         )
                                 )
                         )
@@ -252,6 +265,7 @@ public class ConfigCommand {
             return 0;
         }
     }
+
     private static int applyRenderConfig(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, ID);
         if (ClientConfigManager.get().applyRenderConfig(id)) {
@@ -319,6 +333,39 @@ public class ConfigCommand {
         }
     }
 
+    private static int applyPerformanceConfig(CommandContext<CommandSourceStack> context) {
+        int id = IntegerArgumentType.getInteger(context, ID);
+        if (ServerConfigManager.get().applyPerformanceConfig(id)) {
+            BattleRoyale.LOGGER.info("Applied performance config {} via command", id);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.performance_config_applied", id, ServerConfigManager.get().getPerformanceConfigName(id)), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.invalid_performance_config_id", id));
+            return 0;
+        }
+    }
+    private static int switchNextPerformanceConfig(CommandContext<CommandSourceStack> context) {
+        if (ServerConfigManager.get().switchNextPerformanceConfig()) {
+            String currentFileName = ServerConfigManager.get().getPerformanceConfigEntryFileName();
+            BattleRoyale.LOGGER.info("Switch performance config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_performance_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_performance_config_available"));
+            return 0;
+        }
+    }
+    private static int switchPerformanceConfig(CommandContext<CommandSourceStack> context) {
+        String currentFileName = StringArgumentType.getString(context, FILE);
+        if (ServerConfigManager.get().switchPerformanceConfig(currentFileName)) {
+            BattleRoyale.LOGGER.info("Switch performance config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_performance_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_performance_config_file", currentFileName));
+            return 0;
+        }
+    }
 
     private static int setBotConfigId(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, ID);

@@ -7,4 +7,6 @@ public class ConfigEntryTag {
     public static final String DEFAULT = "default";
     public static String NAME = "name";
     public static String COLOR = "color";
+
+    public static String GENERATOR_ENTRY = "generator";
 }

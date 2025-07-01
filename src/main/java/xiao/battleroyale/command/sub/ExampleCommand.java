@@ -12,6 +12,7 @@ import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
+import xiao.battleroyale.config.common.server.ServerConfigManager;
 
 import javax.annotation.Nullable;
 
@@ -47,7 +48,11 @@ public class ExampleCommand {
                 .then(Commands.literal(EFFECT)
                         .executes(context -> generateEffectConfigs(context, null))
                         .then(Commands.literal(PARTICLE)
-                                .executes(context -> generateEffectConfigs(context, PARTICLE))));
+                                .executes(context -> generateEffectConfigs(context, PARTICLE))))
+                .then(Commands.literal(SERVER)
+                        .executes(context -> generateServerConfigs(context, null))
+                        .then(Commands.literal(PERFORMANCE)
+                                .executes(context -> generateServerConfigs(context, PERFORMANCE))));
     }
 
     public static LiteralArgumentBuilder<CommandSourceStack> getClient() {
@@ -188,6 +193,28 @@ public class ExampleCommand {
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Generated {} client configs via command", subType != null ? subType : "all client");
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int generateServerConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        String messageKey;
+        if (subType == null) {
+            ServerConfigManager.get().generateAllDefaultConfigs();
+            messageKey = "battleroyale.message.default_server_config_generated";
+        } else {
+            switch (subType) {
+                case PERFORMANCE:
+                    ServerConfigManager.get().generateDefaultPerformanceConfigs();
+                    messageKey = "battleroyale.message.default_performance_config_generated";
+                    break;
+                default:
+                    context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_server_sub_type", subType));
+                    BattleRoyale.LOGGER.warn("Unknown server sub-type for generate command: {}", subType);
+                    return 0;
+            }
+        }
+        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        BattleRoyale.LOGGER.info("Generated {} server configs via command", subType != null ? subType : "all server");
         return Command.SINGLE_SUCCESS;
     }
 }

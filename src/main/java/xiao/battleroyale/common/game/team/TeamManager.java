@@ -14,7 +14,9 @@ import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
+import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.*;
@@ -46,32 +48,34 @@ public class TeamManager extends AbstractGameManager {
     private record TeamRequest(UUID targetTeamLeaderUUID, String targetTeamLeaderName, int requestedTeamId, long expireTime) {}
     private final Map<UUID, TeamRequest> pendingRequests = new HashMap<>(); // 键是申请者的 UUID
 
-    private int expireTimeSeconds = 300; // TODO 增加配置
-    private int getExpireTimeMillis() { return expireTimeSeconds * 1000; }
-
-    private static final String[] TEAM_COLORS = { // TODO 改成从配置文件读取
-            "#E9ECEC", "#F07613", "#BD44B3", "#3AAFD9", "#F8C627", "#70B919", "#ED8DAC", "#8E8E86",
-            "#A0A0A0", "#158991", "#792AAC", "#35399D", "#724728", "#546D1B", "#A02722", "#141519"
-    };
-
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
         if (GameManager.get().isInGame()) {
             return;
         }
 
-        int gameId = GameManager.get().getGameruleConfigId();
-        BattleroyaleEntry brEntry = GameConfigManager.get().getGameruleConfig(gameId).getBattleRoyaleEntry();
-        if (brEntry == null) {
+        int configId = GameManager.get().getGameruleConfigId();
+        GameruleConfigManager.GameruleConfig gameruleConfig = GameConfigManager.get().getGameruleConfig(configId);
+        if (gameruleConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
-            BattleRoyale.LOGGER.warn("Failed to get BattleroyaleEntry from GameruleConfig by id: {}", gameId);
+            BattleRoyale.LOGGER.warn("Failed to get gameruleConfig by id: {}", configId);
             return;
         }
+        BattleroyaleEntry brEntry = gameruleConfig.getBattleRoyaleEntry();
+        GameEntry gameEntry = gameruleConfig.getGameEntry();
+        if (brEntry == null || gameEntry == null) {
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            BattleRoyale.LOGGER.warn("Failed to get BattleroyaleEntry or GameEntry from GameruleConfig by id: {}", configId);
+            return;
+        }
+
         this.teamConfig.playerLimit = brEntry.playerTotal;
         this.teamConfig.teamSize = brEntry.teamSize;
         this.teamConfig.aiTeammate = brEntry.aiTeammate;
         this.teamConfig.aiEnemy = brEntry.aiEnemy;
         this.teamConfig.autoJoinGame = brEntry.autoJoinGame;
+        this.teamConfig.setTeamMsgExpireTimeSeconds(gameEntry.teamMsgExpireTimeSeconds);
+        this.teamConfig.setTeamColors(gameEntry.teamColors);
 
         if (this.teamConfig.playerLimit < 1 || this.teamConfig.teamSize < 1) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.invalid_gamerule_config");
@@ -488,7 +492,7 @@ public class TeamManager extends AbstractGameManager {
         }
 
         int teamId = senderGamePlayer.getGameTeamId();
-        long expiryTime = System.currentTimeMillis() + getExpireTimeMillis();
+        long expiryTime = System.currentTimeMillis() + teamConfig.teamMsgExpireTimeMillis;
         String targetName = targetPlayer.getName().getString();
         pendingInvites.put(sender.getUUID(), new TeamInvite(targetPlayer.getUUID(), targetName, teamId, expiryTime));
         ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.invite_sent", targetName).withStyle(ChatFormatting.GREEN));
@@ -622,7 +626,7 @@ public class TeamManager extends AbstractGameManager {
 
         GameTeam gameTeam = targetGamePlayer.getTeam();
         int targetTeamId = gameTeam.getGameTeamId();
-        long expiryTime = System.currentTimeMillis() + getExpireTimeMillis();
+        long expiryTime = System.currentTimeMillis() + teamConfig.teamMsgExpireTimeMillis;
 
         pendingRequests.put(sender.getUUID(), new TeamRequest(targetGamePlayer.getPlayerUUID(), targetGamePlayer.getPlayerName(), targetTeamId, expiryTime));
         ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.request_sent", targetTeamId).withStyle(ChatFormatting.GREEN));
@@ -781,7 +785,7 @@ public class TeamManager extends AbstractGameManager {
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.reached_player_limit").withStyle(ChatFormatting.RED));
             return false;
         }
-        GameTeam newTeam = new GameTeam(teamId, TEAM_COLORS[teamId % TEAM_COLORS.length]);
+        GameTeam newTeam = new GameTeam(teamId, teamConfig.getTeamColor(teamId));
         if (!teamData.addGameTeam(newTeam)) {
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.failed_to_join_team", teamId).withStyle(ChatFormatting.RED));
             return false;

@@ -1,7 +1,6 @@
 package xiao.battleroyale.common.loot;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
@@ -15,7 +14,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
-import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.*;
 import xiao.battleroyale.api.loot.entity.IEntityLootData;
@@ -24,6 +22,7 @@ import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
 import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
+import xiao.battleroyale.util.GameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +30,11 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class LootGenerator {
+
+    private static boolean LOOT_VANILLA_CHEST = true;
+    public static void setLootVanillaChest(boolean bool) { LOOT_VANILLA_CHEST = bool; }
+    private static boolean REMOVE_INNOCENT_ENTITY = false;
+    public static void setRemoveInnocentEntity(boolean bool) { REMOVE_INNOCENT_ENTITY = bool; }
 
     /**
      * 根据战利品配置生成战利品到目标对象。
@@ -41,8 +45,7 @@ public class LootGenerator {
      */
     public static <T extends AbstractLootBlockEntity> void generateLoot(ServerLevel serverLevel, ILootEntry entry, T target, Supplier<Float> random, UUID gameId) {
         List<ILootData> lootData = entry.generateLootData(random);
-
-        if (lootData == null || lootData.isEmpty()) {
+        if (lootData.isEmpty()) {
             return;
         }
 
@@ -56,7 +59,7 @@ public class LootGenerator {
                     if (itemStack == null) {
                         continue;
                     }
-                    itemStack.getOrCreateTag().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+                    GameUtils.addGameId(itemStack, gameId);
                     container.setItemNoUpdate(i, itemStack); // 省流
                 } else {
                     BattleRoyale.LOGGER.warn("Ignore adding non-item to loot container at {}", target.getBlockPos());
@@ -72,7 +75,7 @@ public class LootGenerator {
                     if (entity == null) {
                         continue;
                     }
-                    entity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+                    GameUtils.addGameId(entity, gameId);
                     int count = entityData.getCount();
                     int range = entityData.getRange();
                     for (int j = 0; j < count; j++) {
@@ -90,14 +93,13 @@ public class LootGenerator {
     /**
      * 刷新原版箱子
      */
-    public static void generateLoot(ILootEntry entry, BlockEntity targetBlockEntity, Supplier<Float> random, UUID gameId) {
+    public static void generateVanillaLoot(ILootEntry entry, BlockEntity targetBlockEntity, Supplier<Float> random, UUID gameId) {
         if (!(targetBlockEntity instanceof Container container)) {
             return;
         }
 
         List<ILootData> lootData = entry.generateLootData(random);
-
-        if (lootData == null || lootData.isEmpty()) {
+        if (lootData.isEmpty()) {
             return;
         }
 
@@ -111,8 +113,7 @@ public class LootGenerator {
                 if (itemStack == null) {
                     continue;
                 }
-                // 为原版箱子中的物品设置 gameId
-                itemStack.getOrCreateTag().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+                GameUtils.addGameId(itemStack, gameId);
                 container.setItem(i, itemStack); // 使用 setItem 触发更新
             } else {
                 BattleRoyale.LOGGER.warn("Ignore adding non-item to vanilla container at {}", targetBlockEntity.getBlockPos());
@@ -157,7 +158,7 @@ public class LootGenerator {
 
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (!(blockEntity instanceof ILootObject lootObject)) {
-            if (false) { // TODO 添加配置，是否刷新原版箱子
+            if (LOOT_VANILLA_CHEST) {
                 return false;
             }
             if (!(blockEntity instanceof Container)) {
@@ -168,7 +169,7 @@ public class LootGenerator {
                 return false;
             }
             ILootEntry entry = config.entry;
-            generateLoot(entry, blockEntity, () -> serverLevel.getRandom().nextFloat(), gameId);
+            generateVanillaLoot(entry, blockEntity, () -> serverLevel.getRandom().nextFloat(), gameId);
             return true;
         }
 
@@ -181,7 +182,7 @@ public class LootGenerator {
             generateLoot(serverLevel, entry, (AbstractLootBlockEntity) lootObject, () -> serverLevel.getRandom().nextFloat(), gameId);
             lootObject.setGameId(gameId);
             blockEntity.setChanged();
-            BattleRoyale.LOGGER.debug("Refreshed loot for {} at {} with configId {} for game {}", blockEntity.getClass().getSimpleName(), pos, configId, gameId);
+            // BattleRoyale.LOGGER.debug("Refreshed loot for {} at {} with configId {} for game {}", blockEntity.getClass().getSimpleName(), pos, configId, gameId);
             return true;
         }
         return false;
@@ -211,7 +212,6 @@ public class LootGenerator {
         }
         return refreshedCount;
     }
-
     private static void clearOldLoot(ServerLevel level, ChunkPos chunkPos, UUID gameId) {
         BlockPos minPos = new BlockPos(chunkPos.getMinBlockX(), level.getMinBuildHeight(), chunkPos.getMinBlockZ());
         BlockPos maxPos = new BlockPos(chunkPos.getMaxBlockX() + 1, level.getMaxBuildHeight(), chunkPos.getMaxBlockZ() + 1);
@@ -221,7 +221,7 @@ public class LootGenerator {
         List<Entity> innocentEntities = new ArrayList<>();
 
         for (Entity entity : allEntitiesInChunk) {
-            UUID entityGameId = getEntityGameUUID(entity);
+            UUID entityGameId = GameUtils.getGameId(entity);
             if (entityGameId != null) {
                 if (!gameId.equals(entityGameId)) {
                     oldEntities.add(entity);
@@ -253,28 +253,11 @@ public class LootGenerator {
         }
 
         // 清除无GameId的实体
-         if (false) { // TODO 添加配置
+         if (REMOVE_INNOCENT_ENTITY) {
              for (Entity entity : innocentEntities) {
                  BattleRoyale.LOGGER.debug("Clear entity with no gameId tag: {} (UUID: {}) at {}", entity.getName().getString(), entity.getUUID(), entity.position());
                  entity.remove(Entity.RemovalReason.DISCARDED);
              }
          }
-    }
-
-    private static @Nullable UUID getEntityGameUUID(Entity entity) {
-        UUID entityGameId = null;
-        if (entity instanceof ItemEntity itemEntity) { // 物品掉落物，位于{Item:{tag:{GameId:UUID}}}
-            ItemStack itemStack = itemEntity.getItem();
-            CompoundTag itemTag = itemStack.getOrCreateTag();
-            if (itemTag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                entityGameId = itemTag.getUUID(LootNBTTag.GAME_ID_TAG);
-            }
-        } else { // 一般实体，位于{ForgeData:{GameId:UUID}}
-            CompoundTag persistentData = entity.getPersistentData();
-            if (persistentData.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                entityGameId = persistentData.getUUID(LootNBTTag.GAME_ID_TAG);
-            }
-        }
-        return entityGameId;
     }
 }

@@ -23,22 +23,34 @@ import static xiao.battleroyale.util.StringUtils.buildCommandString;
 public class GameCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
-        return Commands.literal(GAME)
-                .then(Commands.literal(LOAD)
-                        .executes(GameCommand::loadGameConfig))
-                .then(Commands.literal(INIT)
-                        .executes(GameCommand::initGame))
-                .then(Commands.literal(START)
-                        .executes(GameCommand::startGame))
-                .then(Commands.literal(STOP)
-                        .executes(GameCommand::stopGame))
+        // 不需要权限
+        LiteralArgumentBuilder<CommandSourceStack> gameCommand = Commands.literal(GAME)
                 .then(Commands.literal(LOBBY)
                         .executes(GameCommand::lobby))
                 .then(Commands.literal(TO_LOBBY)
                         .executes(GameCommand::toLobby))
+                .then(Commands.literal(SELECTED)
+                        .executes(GameCommand::selectedConfigs));
+
+        // 需要权限
+        gameCommand.then(Commands.literal(LOAD)
+                        .requires(source -> source.hasPermission(2))
+                        .executes(GameCommand::loadGameConfig))
+                .then(Commands.literal(INIT)
+                        .requires(source -> source.hasPermission(2))
+                        .executes(GameCommand::initGame))
+                .then(Commands.literal(START)
+                        .requires(source -> source.hasPermission(2))
+                        .executes(GameCommand::startGame))
+                .then(Commands.literal(STOP)
+                        .requires(source -> source.hasPermission(2))
+                        .executes(GameCommand::stopGame))
                 .then(Commands.literal(OFFSET)
+                        .requires(source -> source.hasPermission(2))
                         .then(Commands.argument(XYZ, Vec3Argument.vec3())
                                 .executes(GameCommand::globalOffset)));
+
+        return gameCommand;
     }
 
     private static int loadGameConfig(CommandContext<CommandSourceStack> context) {
@@ -132,7 +144,8 @@ public class GameCommand {
             ServerPlayer player = context.getSource().getPlayerOrException();
             SpawnManager.get().sendLobbyInfo(player);
         } else { // 向全体玩家发送消息
-            SpawnManager.get().sendLobbyInfo();
+            ServerLevel serverLevel = source.getLevel();
+            SpawnManager.get().sendLobbyInfo(serverLevel);
         }
 
         return Command.SINGLE_SUCCESS;
@@ -162,6 +175,19 @@ public class GameCommand {
             source.sendFailure(Component.translatable("battleroyale.message.game_in_progress"));
             return 0;
         }
+    }
+
+    private static int selectedConfigs(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (source.isPlayer()) { // 向调用的玩家发送消息
+            ServerPlayer player = context.getSource().getPlayerOrException();
+            GameManager.get().sendSelectedConfigsInfo(player);
+        } else { // 向全体玩家发送消息
+            ServerLevel serverLevel = source.getLevel();
+            GameManager.get().sendSelectedConfigsInfo(serverLevel);
+        }
+
+        return Command.SINGLE_SUCCESS;
     }
 
     public static String toLobbyCommandString() {

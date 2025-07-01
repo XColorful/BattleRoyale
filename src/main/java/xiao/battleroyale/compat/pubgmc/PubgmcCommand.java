@@ -34,6 +34,10 @@ public class PubgmcCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> getGame() {
         return Commands.literal(GAME)
+                .then(Commands.literal(LOBBY)
+                        .executes(PubgmcCommand::lobbyInfo))
+                .then(Commands.literal(LEAVE)
+                        .executes(PubgmcCommand::leaveGame))
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal(INIT)
                         .executes(PubgmcCommand::initGame))
@@ -42,7 +46,6 @@ public class PubgmcCommand {
                         .then(Commands.argument(MAP_NAME, StringArgumentType.string())
                                 .executes(PubgmcCommand::startGameWithMap)))
                 .then(Commands.literal(LOBBY)
-                        .executes(PubgmcCommand::lobbyInfo)
                         .then(Commands.argument(XYZ, Vec3Argument.vec3())
                                 .then(Commands.argument(RADIUS, DoubleArgumentType.doubleArg())
                                         .executes(PubgmcCommand::setLobbyWithCoordsAndRadius))))
@@ -51,8 +54,6 @@ public class PubgmcCommand {
                                 .executes(PubgmcCommand::selectBattleRoyaleMode)))
                 .then(Commands.literal(STOP)
                         .executes(PubgmcCommand::stopGame))
-                .then(Commands.literal(LEAVE)
-                        .executes(PubgmcCommand::leaveGame))
                 .then(Commands.literal(RELOAD_CONFIGS)
                         .executes(PubgmcCommand::reloadConfigs))
                 .then(Commands.literal(MAP)

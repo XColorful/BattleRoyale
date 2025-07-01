@@ -37,7 +37,7 @@ public class DefaultAirdrop{
                 new RandomEntry(0.05, new ItemEntry("minecraft:enchanted_golden_apple", null, 1))
         ));
 
-        LootConfig lootConfig = new LootConfig(201, "Netherite Airdrop", "#FFFF00",
+        LootConfig lootConfig = new LootConfig(201, "Netherite Airdrop", "#FFFF00", true,
                 multiEntry);
 
         return lootConfig.toJson();
