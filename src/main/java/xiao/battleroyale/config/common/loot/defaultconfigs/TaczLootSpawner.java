@@ -302,6 +302,15 @@ public class TaczLootSpawner {
     }
 
     private static ILootEntry commonMeleeEntry() {
+        return new WeightEntry(Arrays.asList(
+                new WeightedEntry(5, new ItemEntry("lrtactical:melee", "{MeleeWeaponId:\"lrtactical:baseball_bat\"}", 1)),
+                new WeightedEntry(10, new ItemEntry("lrtactical:melee", "{MeleeWeaponId:\"lrtactical:karambit\"}", 1)),
+                new WeightedEntry(15, new ItemEntry("lrtactical:melee", "{MeleeWeaponId:\"lrtactical:dagger\"}", 1)),
+                new WeightedEntry(70, commonMcMeleeEntry())
+        ));
+    }
+
+    private static ILootEntry commonMcMeleeEntry() {
         ItemEntry trident = new ItemEntry("trident", "{}", 1);
         ItemEntry shield = new ItemEntry("shield", "{}", 1);
         ItemEntry diamondSword = new ItemEntry("minecraft:diamond_sword", "{}", 1);
@@ -746,10 +755,10 @@ public class TaczLootSpawner {
 
     private static ILootEntry commonToolEntry() {
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(16, new ItemEntry("superbwarfare:hand_grenade", "", 1)),
-                new WeightedEntry(26, new EmptyEntry()),
-                new WeightedEntry(18, new EmptyEntry()),
-                new WeightedEntry(22, new EmptyEntry()),
+                new WeightedEntry(16, new ItemEntry("lrtactical:throwable", "{ThrowableId:\"lrtactical:m67\"}", 1)),
+                new WeightedEntry(26, new ItemEntry("lrtactical:throwable", "{ThrowableId:\"lrtactical:smoke_grenade\"}", 1)),
+                new WeightedEntry(18, new ItemEntry("lrtactical:throwable", "{ThrowableId:\"lrtactical:molotov\"}", 1)),
+                new WeightedEntry(22, new ItemEntry("lrtactical:throwable", "{ThrowableId:\"lrtactical:flash_grenade\"}", 1)),
                 new WeightedEntry(3, new EmptyEntry()),
                 new WeightedEntry(5, new ItemEntry("vc_gliders:paraglider_wood", "{Damage:25}", 1)),
                 new WeightedEntry(10, new EmptyEntry())

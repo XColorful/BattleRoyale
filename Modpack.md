@@ -10,6 +10,7 @@
 强烈建议搭配丰富的游戏地图和热闹的服务器氛围。你和你的朋友们可以利用这些强大的自定义功能，创造属于自己的独特玩法，尽情享受这场独一无二的生存对决！
 
 包含的模组：
+- [TaCZ] LesRaisins Tactical Equipments
 - (核心模组) [TaCZ] Timeless and Classics Zero by nekocrane, maydaymemory, TartaricAcid, f1zeil
 - Camera Overhaul Reforged
 - Cloth Config API
