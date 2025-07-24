@@ -13,13 +13,18 @@ import static xiao.battleroyale.command.CommandArg.*;
 public class ClientCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(MOD_ID);
+        dispatcher.register(get(MOD_ID));
+        dispatcher.register(get(MOD_NAME_SHORT));
+    }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> get(String rootName) {
+        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(rootName);
         root.then(ReloadCommand.getClient()
-                );
+        );
         root.then(ConfigCommand.getClient()
-                );
+        );
         root.then(ExampleCommand.getClient()
-                );
-        dispatcher.register(root);
+        );
+        return root;
     }
 }

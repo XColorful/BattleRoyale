@@ -7,11 +7,17 @@ import net.minecraft.commands.Commands;
 import xiao.battleroyale.command.sub.*;
 
 import static xiao.battleroyale.command.CommandArg.MOD_ID;
+import static xiao.battleroyale.command.CommandArg.MOD_NAME_SHORT;
 
 public class ServerCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(MOD_ID);
+        dispatcher.register(get(MOD_ID));
+        dispatcher.register(get(MOD_NAME_SHORT));
+    }
+
+    public static LiteralArgumentBuilder<CommandSourceStack> get(String rootName) {
+        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(rootName);
         root.then(LootCommand.get()
                 .requires(source -> source.hasPermission(2)));
         root.then(ReloadCommand.get()
@@ -19,9 +25,9 @@ public class ServerCommand {
         root.then(ConfigCommand.get()
                 .requires(source -> source.hasPermission(2)));
         root.then(TeamCommand.get()
-                ); // 队伍管理全都不需要权限
+        ); // 队伍管理全都不需要权限
         root.then(GameCommand.get()
-                ); // 大厅指令不需要权限
+        ); // 大厅指令不需要权限
         root.then(FireworkCommand.get()
                 .requires(source -> source.hasPermission(2)));
         root.then(MutekiCommand.get()
@@ -34,7 +40,6 @@ public class ServerCommand {
                 .requires(source -> source.hasPermission(2)));
         root.then(TempCommand.get()
                 .requires(source -> source.hasPermission(2)));
-
-        dispatcher.register(root);
+        return root;
     }
 }

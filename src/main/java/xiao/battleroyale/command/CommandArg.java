@@ -5,6 +5,7 @@ import xiao.battleroyale.BattleRoyale;
 public class CommandArg {
 
     public static final String MOD_ID = BattleRoyale.MOD_ID;
+    public static final String MOD_NAME_SHORT = BattleRoyale.MOD_NAME_SHORT;
 
     public static final String CONFIG = "config";
     public static final String GAME = "game";
