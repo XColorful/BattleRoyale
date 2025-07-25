@@ -1,18 +1,19 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
+import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class ExtraEntry implements ILootEntry {
     private final boolean countEmpty;
@@ -29,12 +30,12 @@ public class ExtraEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
         List<ILootData> lootData = new ArrayList<>(); // 防止emptyList不能修改 (UnsupportedOperationException)
         if (checkEntry != null) {
             try {
                 // 判断是否非空
-                List<ILootData> checkData = checkEntry.generateLootData(random);
+                List<ILootData> checkData = checkEntry.generateLootData(lootContext, target);
                 if (checkData.isEmpty() ||
                         (!countEmpty && checkData.stream().allMatch(ILootData::isEmpty))) {
                     return lootData;
@@ -44,7 +45,7 @@ public class ExtraEntry implements ILootEntry {
                     lootData.addAll(checkData);
                 }
                 if (extraEntry != null) {
-                    lootData.addAll(extraEntry.generateLootData(random));
+                    lootData.addAll(extraEntry.generateLootData(lootContext, target));
                 } else {
                     BattleRoyale.LOGGER.warn("ExtraEntry missing extraEntry member");
                 }

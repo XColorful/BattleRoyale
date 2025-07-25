@@ -1,18 +1,19 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
+import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class ShuffleEntry implements ILootEntry {
     private final boolean keepEmpty;
@@ -35,13 +36,13 @@ public class ShuffleEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
         List<ILootData> lootData = new ArrayList<>();
         if (entry != null) {
             try {
-                List<ILootData> queuedData = new ArrayList<>(entry.generateLootData(random));
+                List<ILootData> queuedData = new ArrayList<>(entry.generateLootData(lootContext, target));
                 Collections.shuffle(queuedData);
-                int select = Math.min(min + (int) ((max - min) * random.get()), queuedData.size());
+                int select = Math.min(min + (int) ((max - min) * lootContext.random.get()), queuedData.size());
 
                 queuedData.stream()
                         .filter(data -> (this.keepEmpty || !data.isEmpty()))

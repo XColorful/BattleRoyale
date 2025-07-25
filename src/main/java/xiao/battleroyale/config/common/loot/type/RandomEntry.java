@@ -1,18 +1,19 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
+import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class RandomEntry implements ILootEntry {
     private final double chance;
@@ -27,11 +28,11 @@ public class RandomEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
-        if (random.get() < chance) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
+        if (lootContext.random.get() < chance) {
             if (entry != null) {
                 try {
-                    return entry.generateLootData(random);
+                    return entry.generateLootData(lootContext, target);
                 } catch (Exception e) {
                     BattleRoyale.LOGGER.warn("Failed to parse random entry");
                 }

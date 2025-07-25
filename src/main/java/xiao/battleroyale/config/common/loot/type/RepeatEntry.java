@@ -1,18 +1,19 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
+import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class RepeatEntry implements ILootEntry {
     private final int min;
@@ -32,13 +33,13 @@ public class RepeatEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
-        int repeats = min + (int) (random.get() * (max - min + 1));
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
+        int repeats = min + (int) (lootContext.random.get() * (max - min + 1));
         List<ILootData> lootData = new ArrayList<>();
         if (entry != null) {
             try {
                 for (int i = 0; i < repeats; i++) {
-                    lootData.addAll(entry.generateLootData(random));
+                    lootData.addAll(entry.generateLootData(lootContext, target));
                 }
             } catch (Exception e) {
                 BattleRoyale.LOGGER.warn("Failed to parse repeat entry");

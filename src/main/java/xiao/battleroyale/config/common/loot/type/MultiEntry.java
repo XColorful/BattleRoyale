@@ -3,17 +3,18 @@ package xiao.battleroyale.config.common.loot.type;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
+import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class MultiEntry implements ILootEntry {
     private final @NotNull List<ILootEntry> entries;
@@ -23,12 +24,12 @@ public class MultiEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
         List<ILootData> lootData = new ArrayList<>();
         if (!entries.isEmpty()) {
             try {
                 for (ILootEntry entry : entries) {
-                    lootData.addAll(entry.generateLootData(random));
+                    lootData.addAll(entry.generateLootData(lootContext, target));
                 }
             } catch (Exception e) {
                 BattleRoyale.LOGGER.warn("Failed to parse multi entry");

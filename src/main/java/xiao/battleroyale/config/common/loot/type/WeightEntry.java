@@ -3,17 +3,18 @@ package xiao.battleroyale.config.common.loot.type;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
+import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class WeightEntry implements ILootEntry {
     private final List<WeightedEntry> weightedEntries;
@@ -40,7 +41,7 @@ public class WeightEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
         double totalWeight = 0;
         for (WeightedEntry weightedEntry : weightedEntries) {
             totalWeight += weightedEntry.weight;
@@ -49,14 +50,14 @@ public class WeightEntry implements ILootEntry {
             return new ArrayList<>();
         }
 
-        double randomNumber = random.get() * totalWeight;
+        double randomNumber = lootContext.random.get() * totalWeight;
         double currentWeight = 0;
         if (!weightedEntries.isEmpty()) {
             try {
                 for (WeightedEntry weightedEntry : weightedEntries) {
                     currentWeight += weightedEntry.weight;
                     if (randomNumber < currentWeight) {
-                        return weightedEntry.entry.generateLootData(random);
+                        return weightedEntry.entry.generateLootData(lootContext, target);
                     }
                 }
             } catch (Exception e) {

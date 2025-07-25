@@ -7,7 +7,7 @@ import xiao.battleroyale.api.IConfigAppliable;
 import xiao.battleroyale.api.server.performance.IPerformanceEntry;
 import xiao.battleroyale.api.server.performance.GeneratorEntryTag;
 import xiao.battleroyale.common.game.loot.GameLootManager;
-import xiao.battleroyale.common.loot.LootGenerationManager;
+import xiao.battleroyale.common.loot.CommonLootManager;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.util.JsonUtils;
 
@@ -15,6 +15,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
 
     // common
     public final boolean lootVanillaChest;
+    // TODO 移除原版战利品箱子标签
     public final boolean removeInnocentEntity;
     // normal
     public final int maxNormalTickLootChunk;
@@ -122,7 +123,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
     public void applyDefault() {
         LootGenerator.setLootVanillaChest(lootVanillaChest);
         LootGenerator.setRemoveInnocentEntity(removeInnocentEntity);
-        LootGenerationManager.setMaxChunksPerTick(maxNormalTickLootChunk);
+        CommonLootManager.setMaxChunksPerTick(maxNormalTickLootChunk);
         GameLootManager.get().applyConfig(this);
     }
 

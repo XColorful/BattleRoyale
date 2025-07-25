@@ -8,7 +8,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -37,14 +36,13 @@ public class LootGenerator {
     public static void setRemoveInnocentEntity(boolean bool) { REMOVE_INNOCENT_ENTITY = bool; }
 
     /**
-     * 根据战利品配置生成战利品到目标对象。
-     * @param serverLevel 当前level
-     * @param entry 战利品入口配置
+     * 根据物资刷新配置生成
+     * @param lootContext 物资刷新环境
      * @param target 战利品目标（如方块实体或实体）
-     * @param random 随机数生成器
+     * @param entry 战利品配置
      */
-    public static <T extends AbstractLootBlockEntity> void generateLoot(ServerLevel serverLevel, ILootEntry entry, T target, Supplier<Float> random, UUID gameId) {
-        List<ILootData> lootData = entry.generateLootData(random);
+    public static <T extends AbstractLootBlockEntity> void generateLoot(LootContext lootContext, T target, ILootEntry entry) {
+        List<ILootData> lootData = entry.generateLootData(lootContext, target);
         if (lootData.isEmpty()) {
             return;
         }
@@ -59,7 +57,7 @@ public class LootGenerator {
                     if (itemStack == null) {
                         continue;
                     }
-                    GameUtils.addGameId(itemStack, gameId);
+                    GameUtils.addGameId(itemStack, lootContext.gameId);
                     container.setItemNoUpdate(i, itemStack); // 省流
                 } else {
                     BattleRoyale.LOGGER.warn("Ignore adding non-item to loot container at {}", target.getBlockPos());
@@ -71,17 +69,17 @@ public class LootGenerator {
             for (ILootData data : lootData) {
                 if (data.getDataType() == LootDataType.ENTITY) {
                     IEntityLootData entityData = (IEntityLootData) data;
-                    Entity entity = entityData.getEntity(serverLevel);
+                    Entity entity = entityData.getEntity(lootContext.serverLevel);
                     if (entity == null) {
                         continue;
                     }
-                    GameUtils.addGameId(entity, gameId);
+                    GameUtils.addGameId(entity, lootContext.gameId);
                     int count = entityData.getCount();
                     int range = entityData.getRange();
                     for (int j = 0; j < count; j++) {
-                        BlockPos spawnPos = findValidSpawnPosition(serverLevel, spawnOrigin, range, random);
+                        BlockPos spawnPos = findValidSpawnPosition(lootContext, spawnOrigin, range);
                         entity.setPos(spawnPos.getX() + 0.5F, spawnPos.getY(), spawnPos.getZ() + 0.5F);
-                        serverLevel.addFreshEntity(entity);
+                        lootContext.serverLevel.addFreshEntity(entity);
                     }
                 } else {
                     BattleRoyale.LOGGER.warn("Ignore spawn non-entity at {}", spawnOrigin);
@@ -93,12 +91,12 @@ public class LootGenerator {
     /**
      * 刷新原版箱子
      */
-    public static void generateVanillaLoot(ILootEntry entry, BlockEntity targetBlockEntity, Supplier<Float> random, UUID gameId) {
+    public static void generateVanillaLoot(LootContext lootContext, BlockEntity targetBlockEntity, ILootEntry entry) {
         if (!(targetBlockEntity instanceof Container container)) {
             return;
         }
 
-        List<ILootData> lootData = entry.generateLootData(random);
+        List<ILootData> lootData = entry.generateLootData(lootContext, targetBlockEntity);
         if (lootData.isEmpty()) {
             return;
         }
@@ -113,7 +111,7 @@ public class LootGenerator {
                 if (itemStack == null) {
                     continue;
                 }
-                GameUtils.addGameId(itemStack, gameId);
+                GameUtils.addGameId(itemStack, lootContext.gameId);
                 container.setItem(i, itemStack); // 使用 setItem 触发更新
             } else {
                 BattleRoyale.LOGGER.warn("Ignore adding non-item to vanilla container at {}", targetBlockEntity.getBlockPos());
@@ -122,22 +120,21 @@ public class LootGenerator {
     }
 
     /**
-     * 寻找一个有效的实体生成位置。
-     * @param level 服务器世界
+     * 寻找一个有效的实体生成位置
+     * @param lootContext 物资刷新环境
      * @param centerPos 中心位置
      * @param range 刷新范围
-     * @param random 随机数生成器
      * @return 有效的刷新位置
      */
-    private static BlockPos findValidSpawnPosition(ServerLevel level, BlockPos centerPos, int range, Supplier<Float> random) {
+    private static BlockPos findValidSpawnPosition(LootContext lootContext, BlockPos centerPos, int range) {
         for (int i = 0; i < 4; i++) {
-            int dx = (int) ((random.get() - 0.5) * 2 * range);
-            int dz = (int) ((random.get() - 0.5) * 2 * range);
+            int dx = (int) ((lootContext.random.get() - 0.5) * 2 * range);
+            int dz = (int) ((lootContext.random.get() - 0.5) * 2 * range);
             BlockPos candidate = centerPos.offset(dx, 0, dz);
-            BlockPos ground = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, candidate);
-            BlockState below = level.getBlockState(ground.below());
+            BlockPos ground = lootContext.serverLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, candidate);
+            BlockState below = lootContext.serverLevel.getBlockState(ground.below());
 
-            if (!below.isAir() && !below.getCollisionShape(level, ground.below()).isEmpty()) {
+            if (!below.isAir() && !below.getCollisionShape(lootContext.serverLevel, ground.below()).isEmpty()) {
                 return ground;
             }
         }
@@ -146,17 +143,9 @@ public class LootGenerator {
 
     /**
      * 刷新单个战利品方块实体。
-     * @param level 当前世界
-     * @param pos 方块位置
-     * @param gameId 当前游戏的唯一ID
-     * @return true 如果成功刷新，false 否则
+     * @return 是否成功刷新
      */
-    public static boolean refreshLootObject(Level level, BlockPos pos, UUID gameId) {
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return false;
-        }
-
-        BlockEntity blockEntity = level.getBlockEntity(pos);
+    public static boolean refreshLootObject(LootContext lootContext, BlockEntity blockEntity) {
         if (!(blockEntity instanceof ILootObject lootObject)) {
             if (!LOOT_VANILLA_CHEST) {
                 return false;
@@ -169,7 +158,7 @@ public class LootGenerator {
                 return false;
             }
             ILootEntry entry = config.entry;
-            generateVanillaLoot(entry, blockEntity, () -> serverLevel.getRandom().nextFloat(), gameId);
+            generateVanillaLoot(lootContext, blockEntity, entry);
             return true;
         }
 
@@ -177,12 +166,11 @@ public class LootGenerator {
         int configId = lootObject.getConfigId();
         LootConfig config = LootConfigManager.get().getLootConfig(blockEntity, configId);
 
-        if (config != null && (blockGameId == null || !blockGameId.equals(gameId))) {
+        if (config != null && (blockGameId == null || !blockGameId.equals(lootContext.gameId))) {
             ILootEntry entry = config.entry;
-            generateLoot(serverLevel, entry, (AbstractLootBlockEntity) lootObject, () -> serverLevel.getRandom().nextFloat(), gameId);
-            lootObject.setGameId(gameId);
+            generateLoot(lootContext, (AbstractLootBlockEntity) lootObject, entry);
+            lootObject.setGameId(lootContext.gameId);
             blockEntity.setChanged();
-            // BattleRoyale.LOGGER.debug("Refreshed loot for {} at {} with configId {} for game {}", blockEntity.getClass().getSimpleName(), pos, configId, gameId);
             return true;
         }
         return false;
@@ -190,40 +178,37 @@ public class LootGenerator {
 
     /**
      * 刷新指定区块内的所有战利品方块。
-     * @param level 服务器世界
-     * @param chunkPos 区块位置
-     * @param gameId 当前游戏的唯一ID
      * @return 该区块内刷新的战利品方块数量
      */
-    public static int refreshLootInChunk(ServerLevel level, ChunkPos chunkPos, UUID gameId) {
+    public static int refreshLootInChunk(LootContext lootContext) {
         int refreshedCount = 0;
-        LevelChunk chunk = level.getChunkSource().getChunkNow(chunkPos.x, chunkPos.z);
+        LevelChunk chunk = lootContext.serverLevel.getChunkSource().getChunkNow(lootContext.chunkPos.x, lootContext.chunkPos.z);
 
         if (chunk == null) {
             return refreshedCount;
         }
 
-        clearOldLoot(level, chunkPos, gameId);
+        clearOldLoot(lootContext);
 
         for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
-            if (refreshLootObject(level, blockEntity.getBlockPos(), gameId)) {
+            if (refreshLootObject(lootContext, blockEntity)) {
                 refreshedCount++;
             }
         }
         return refreshedCount;
     }
-    private static void clearOldLoot(ServerLevel level, ChunkPos chunkPos, UUID gameId) {
-        BlockPos minPos = new BlockPos(chunkPos.getMinBlockX(), level.getMinBuildHeight(), chunkPos.getMinBlockZ());
-        BlockPos maxPos = new BlockPos(chunkPos.getMaxBlockX() + 1, level.getMaxBuildHeight(), chunkPos.getMaxBlockZ() + 1);
+    private static void clearOldLoot(LootContext lootContext) {
+        BlockPos minPos = new BlockPos(lootContext.chunkPos.getMinBlockX(), lootContext.serverLevel.getMinBuildHeight(), lootContext.chunkPos.getMinBlockZ());
+        BlockPos maxPos = new BlockPos(lootContext.chunkPos.getMaxBlockX() + 1, lootContext.serverLevel.getMaxBuildHeight(), lootContext.chunkPos.getMaxBlockZ() + 1);
         AABB chunkAABB = new AABB(minPos, maxPos);
-        List<Entity> allEntitiesInChunk = level.getEntitiesOfClass(Entity.class, chunkAABB, entity -> !(entity instanceof Player));
+        List<Entity> allEntitiesInChunk = lootContext.serverLevel.getEntitiesOfClass(Entity.class, chunkAABB, entity -> !(entity instanceof Player));
         List<Entity> oldEntities = new ArrayList<>();
         List<Entity> innocentEntities = new ArrayList<>();
 
         for (Entity entity : allEntitiesInChunk) {
             UUID entityGameId = GameUtils.getGameId(entity);
             if (entityGameId != null) {
-                if (!gameId.equals(entityGameId)) {
+                if (!lootContext.gameId.equals(entityGameId)) {
                     oldEntities.add(entity);
                 }
             } else {
@@ -259,5 +244,18 @@ public class LootGenerator {
                  entity.remove(Entity.RemovalReason.DISCARDED);
              }
          }
+    }
+
+    public static class LootContext {
+        public ServerLevel serverLevel;
+        public ChunkPos chunkPos;
+        public UUID gameId;
+        public Supplier<Float> random;
+        public LootContext(ServerLevel serverLevel, ChunkPos chunkPos, UUID gameId) {
+            this.serverLevel = serverLevel;
+            this.chunkPos = chunkPos;
+            this.gameId = gameId;
+            this.random = () -> serverLevel.getRandom().nextFloat();
+        }
     }
 }

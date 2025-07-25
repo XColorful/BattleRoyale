@@ -1,17 +1,18 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
+import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class CleanEntry implements ILootEntry {
     private final ILootEntry entry;
@@ -21,10 +22,10 @@ public class CleanEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
         List<ILootData> lootData = new ArrayList<>();
         if (entry != null) {
-            entry.generateLootData(random).stream()
+            entry.generateLootData(lootContext, target).stream()
                     .filter(data -> !data.isEmpty())
                     .forEach(lootData::add);
         } else {
