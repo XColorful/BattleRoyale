@@ -27,6 +27,7 @@ public final class LootEntryTag {
     public static final String START = "start";
     public static final String END = "end";
     public static final String WEIGHT = "weight";
+    public static final String TYPE = "type";
 
     private LootEntryTag() {};
 }

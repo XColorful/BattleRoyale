@@ -747,9 +747,9 @@ public class TaczLootSpawner {
                 new WeightedEntry(28, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"Bandage\",\"color\":\"white\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:0,Duration:100,ShowParticles:0b,Ambient:0b}]}", 1)),
                 new WeightedEntry(16, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"First Aid Kit\",\"color\":\"red\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:3,Duration:90,ShowParticles:0b,Ambient:0b}]}", 1)),
                 new WeightedEntry(2, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"Med Kit\",\"color\":\"blue\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:3,Duration:120,ShowParticles:0b,Ambient:0b}]}", 1)),
-                new WeightedEntry(27, new EmptyEntry()),
-                new WeightedEntry(24, new EmptyEntry()),
-                new WeightedEntry(3, new EmptyEntry())
+                new WeightedEntry(27, new EmptyEntry("item")),
+                new WeightedEntry(24, new EmptyEntry("item")),
+                new WeightedEntry(3, new EmptyEntry("item"))
         ));
     }
 
@@ -759,9 +759,9 @@ public class TaczLootSpawner {
                 new WeightedEntry(26, new ItemEntry("lrtactical:throwable", "{ThrowableId:\"lrtactical:smoke_grenade\"}", 1)),
                 new WeightedEntry(18, new ItemEntry("lrtactical:throwable", "{ThrowableId:\"lrtactical:molotov\"}", 1)),
                 new WeightedEntry(22, new ItemEntry("lrtactical:throwable", "{ThrowableId:\"lrtactical:flash_grenade\"}", 1)),
-                new WeightedEntry(3, new EmptyEntry()),
+                new WeightedEntry(3, new EmptyEntry("item")),
                 new WeightedEntry(5, new ItemEntry("vc_gliders:paraglider_wood", "{Damage:25}", 1)),
-                new WeightedEntry(10, new EmptyEntry())
+                new WeightedEntry(10, new EmptyEntry("item"))
         ));
     }
 }

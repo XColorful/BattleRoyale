@@ -21,7 +21,7 @@ public class EntityData implements IEntityLootData {
 
     public EntityData(String rl, @Nullable String nbt, int count, int range) {
         this.entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(rl));
-        if (this.entityType == null) {
+        if (this.entityType == null && !rl.isEmpty()) {
             BattleRoyale.LOGGER.warn("Faild to get entity type from ResourceLocation {}", rl);
         }
         this.nbt = NBTUtils.stringToNBT(nbt);
@@ -50,5 +50,10 @@ public class EntityData implements IEntityLootData {
             entity.load(this.nbt);
         }
         return entity;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.entityType == null;
     }
 }

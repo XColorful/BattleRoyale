@@ -18,11 +18,11 @@ public class ItemData implements IItemLootData {
 
     public ItemData(String rl, @Nullable String nbt, int count) {
         this.item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rl));
-        if (this.item == null) {
+        if (this.item == null && !rl.isEmpty()) {
             BattleRoyale.LOGGER.warn("Faild to get item type from ResourceLocation {}", rl);
         }
         this.nbt = NBTUtils.stringToNBT(nbt);
-        this.count = count;
+        this.count = count; // 原版已经处理小于等于0
     }
 
     @Nullable
@@ -36,5 +36,10 @@ public class ItemData implements IItemLootData {
             itemStack.setTag(this.nbt);
         }
         return itemStack;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.item == null;
     }
 }

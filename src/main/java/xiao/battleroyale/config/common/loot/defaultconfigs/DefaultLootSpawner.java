@@ -31,7 +31,7 @@ public class DefaultLootSpawner {
                 new WeightEntry(Arrays.asList(
                         WeightEntry.createWeightedEntry(20, new ItemEntry("minecraft:wooden_sword", null, 1)),
                         WeightEntry.createWeightedEntry(20, new ItemEntry("minecraft:wooden_axe", null, 1)),
-                        WeightEntry.createWeightedEntry(20, new EmptyEntry())
+                        WeightEntry.createWeightedEntry(20, new EmptyEntry("item"))
                 )),
                 new RandomEntry(0.5, new ItemEntry("minecraft:melon_slice", null, 1)),
                 new RepeatEntry(0, 5, new ItemEntry("minecraft:grass", null, 5)),
