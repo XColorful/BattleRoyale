@@ -18,6 +18,7 @@ public final class LootEntryTag {
     public static final String TYPE_SHUFFLE = "shuffle";
     public static final String TYPE_CLEAN = "clean";
     public static final String TYPE_BIOME = "biome";
+    public static final String TYPE_STRUCTURE = "structure";
 
     public static final String COUNT = "count";
     public static final String NBT = "nbt";
