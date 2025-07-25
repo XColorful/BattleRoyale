@@ -14,6 +14,7 @@ public final class LootEntryTag {
     public static final String TYPE_REPEAT = "repeat";
     public static final String TYPE_TIME = "time";
     public static final String TYPE_BOUND = "bound";
+    public static final String TYPE_EXTRA = "extra";
 
     public static final String COUNT = "count";
     public static final String NBT = "nbt";
@@ -31,6 +32,9 @@ public final class LootEntryTag {
     public static final String TYPE = "type";
     public static final String COUNT_EMPTY = "countEmpty";
     public static final String COUNT_LOOT_TIME = "countLootTime";
+    public static final String KEEP_CHECK = "keepCheck";
+    public static final String CHECK = "check";
+    public static final String EXTRA = "extra";
 
     private LootEntryTag() {};
 }

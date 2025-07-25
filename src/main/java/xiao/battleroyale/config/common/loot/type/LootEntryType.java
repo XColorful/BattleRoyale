@@ -18,7 +18,8 @@ public enum LootEntryType {
     NONE(LootEntryTag.TYPE_NONE, NoneEntry::fromJson),
     REPEAT(LootEntryTag.TYPE_REPEAT, RepeatEntry::fromJson),
     TIME(LootEntryTag.TYPE_TIME, TimeEntry::fromJson),
-    BOUND(LootEntryTag.TYPE_BOUND, BoundEntry::fromJson);
+    BOUND(LootEntryTag.TYPE_BOUND, BoundEntry::fromJson),
+    EXTRA(LootEntryTag.TYPE_EXTRA, ExtraEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends ILootEntry> deserializer;
