@@ -23,7 +23,8 @@ public enum LootEntryType {
     SHUFFLE(LootEntryTag.TYPE_SHUFFLE, ShuffleEntry::fromJson),
     CLEAN(LootEntryTag.TYPE_CLEAN, CleanEntry::fromJson),
     BIOME(LootEntryTag.TYPE_BIOME, BiomeEntry::fromJson),
-    STRUCTURE(LootEntryTag.TYPE_STRUCTURE, StructureEntry::fromJson);
+    STRUCTURE(LootEntryTag.TYPE_STRUCTURE, StructureEntry::fromJson),
+    REGEX(LootEntryTag.REGEX, RegexEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends ILootEntry> deserializer;

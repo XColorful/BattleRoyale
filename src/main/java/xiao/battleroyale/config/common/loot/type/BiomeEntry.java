@@ -47,10 +47,10 @@ public class BiomeEntry implements ILootEntry {
                     return entry.generateLootData(lootContext, target);
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse biome entry", e);
+                BattleRoyale.LOGGER.warn("Failed to parse biome entry, skipped at {}", target.getBlockPos(), e);
             }
         } else {
-            BattleRoyale.LOGGER.warn("BiomeEntry missing entry member, skipped");
+            BattleRoyale.LOGGER.warn("BiomeEntry missing entry member, skipped at {}", target.getBlockPos());
         }
         return Collections.emptyList();
     }

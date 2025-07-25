@@ -35,11 +35,11 @@ public class TimeEntry implements ILootEntry {
                 try {
                     return entry.generateLootData(lootContext, target);
                 } catch (Exception e) {
-                    BattleRoyale.LOGGER.warn("Failed to parse time entry", e);
+                    BattleRoyale.LOGGER.warn("Failed to parse time entry at {}", target.getBlockPos(), e);
                 }
             }
         } else {
-            BattleRoyale.LOGGER.warn("TimeEntry missing entry member or has invalid config");
+            BattleRoyale.LOGGER.warn("TimeEntry missing entry member, skipped at {}", target.getBlockPos());
         }
         return Collections.emptyList();
     }

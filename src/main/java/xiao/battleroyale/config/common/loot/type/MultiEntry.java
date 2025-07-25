@@ -32,10 +32,10 @@ public class MultiEntry implements ILootEntry {
                     lootData.addAll(entry.generateLootData(lootContext, target));
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse multi entry", e);
+                BattleRoyale.LOGGER.warn("Failed to parse multi entry, skipped at {}", target.getBlockPos(), e);
             }
         } else {
-            BattleRoyale.LOGGER.warn("MultiEntry missing entries member, skipped");
+            BattleRoyale.LOGGER.warn("MultiEntry missing entries member, skipped at {}", target.getBlockPos());
         }
         return lootData;
     }

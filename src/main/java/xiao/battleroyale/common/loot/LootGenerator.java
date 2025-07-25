@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.loot;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
@@ -32,6 +33,8 @@ public class LootGenerator {
 
     private static boolean LOOT_VANILLA_CHEST = true;
     public static void setLootVanillaChest(boolean bool) { LOOT_VANILLA_CHEST = bool; }
+    private static boolean REMOVE_LOOT_TABLE = false;
+    public static void setRemoveLootTable(boolean bool) { REMOVE_LOOT_TABLE = bool; }
     private static boolean REMOVE_INNOCENT_ENTITY = false;
     public static void setRemoveInnocentEntity(boolean bool) { REMOVE_INNOCENT_ENTITY = bool; }
 
@@ -42,6 +45,10 @@ public class LootGenerator {
      * @param entry 战利品配置
      */
     public static <T extends AbstractLootBlockEntity> void generateLoot(LootContext lootContext, T target, ILootEntry entry) {
+        if (REMOVE_LOOT_TABLE) {
+            removeLootTable(target);
+        }
+
         List<ILootData> lootData = entry.generateLootData(lootContext, target);
         if (lootData.isEmpty()) {
             return;
@@ -94,6 +101,9 @@ public class LootGenerator {
     public static void generateVanillaLoot(LootContext lootContext, BlockEntity targetBlockEntity, ILootEntry entry) {
         if (!(targetBlockEntity instanceof Container container)) {
             return;
+        }
+        if (REMOVE_LOOT_TABLE) {
+            removeLootTable(targetBlockEntity);
         }
 
         List<ILootData> lootData = entry.generateLootData(lootContext, targetBlockEntity);
@@ -244,6 +254,18 @@ public class LootGenerator {
                  entity.remove(Entity.RemovalReason.DISCARDED);
              }
          }
+    }
+
+    public static void removeLootTable(BlockEntity blockEntity) {
+        CompoundTag nbt = blockEntity.saveWithFullMetadata();
+        BattleRoyale.LOGGER.info("nbt before remove loot table:{}", nbt);
+        nbt.remove("LootTable");
+        nbt.remove("LootTableSeed");
+        blockEntity.load(nbt); // 写入内存，没写入硬盘
+        blockEntity.setChanged(); // 防止区块被卸载前还没交互
+
+        nbt = blockEntity.saveWithFullMetadata();
+        BattleRoyale.LOGGER.info("nbt after remove loot table:{}", nbt);
     }
 
     public static class LootContext {

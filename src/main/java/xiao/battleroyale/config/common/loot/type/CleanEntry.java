@@ -29,7 +29,7 @@ public class CleanEntry implements ILootEntry {
                     .filter(data -> !data.isEmpty())
                     .forEach(lootData::add);
         } else {
-            BattleRoyale.LOGGER.warn("CleanEntry missing entry member, skipped");
+            BattleRoyale.LOGGER.warn("CleanEntry missing entry member, skipped at {}", target.getBlockPos());
         }
         return lootData;
     }

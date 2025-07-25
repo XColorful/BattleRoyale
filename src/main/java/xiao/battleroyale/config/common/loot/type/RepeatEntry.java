@@ -42,10 +42,10 @@ public class RepeatEntry implements ILootEntry {
                     lootData.addAll(entry.generateLootData(lootContext, target));
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse repeat entry", e);
+                BattleRoyale.LOGGER.warn("Failed to parse repeat entry, skipped at {}", target.getBlockPos(), e);
             }
         } else {
-            BattleRoyale.LOGGER.warn("RepeatEntry missing entry member, skipped");
+            BattleRoyale.LOGGER.warn("RepeatEntry missing entry member, skipped at {}", target.getBlockPos());
         }
         return lootData;
     }

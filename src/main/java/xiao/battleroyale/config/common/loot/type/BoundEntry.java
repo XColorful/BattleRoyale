@@ -72,10 +72,10 @@ public class BoundEntry implements ILootEntry {
                             .forEach(lootData::add);
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse bound entry", e);
+                BattleRoyale.LOGGER.warn("Failed to parse bound entry, skipped at {}", target.getBlockPos(), e);
             }
         } else {
-            BattleRoyale.LOGGER.warn("BoundEntry missing entries member, skipped");
+            BattleRoyale.LOGGER.warn("BoundEntry missing entries member, skipped at {}", target.getBlockPos());
         }
         return count >= min ? lootData : Collections.emptyList();
     }

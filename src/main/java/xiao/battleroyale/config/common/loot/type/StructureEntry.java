@@ -57,10 +57,10 @@ public class StructureEntry implements ILootEntry {
                     return entry.generateLootData(lootContext, target);
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse structure entry", e);
+                BattleRoyale.LOGGER.warn("Failed to parse structure entry, skipped at {}", target.getBlockPos(), e);
             }
         } else {
-            BattleRoyale.LOGGER.warn("StructureEntry missing entry member, skipped");
+            BattleRoyale.LOGGER.warn("StructureEntry missing entry member, skipped at {}", target.getBlockPos());
         }
         return Collections.emptyList();
     }

@@ -34,10 +34,10 @@ public class RandomEntry implements ILootEntry {
                 try {
                     return entry.generateLootData(lootContext, target);
                 } catch (Exception e) {
-                    BattleRoyale.LOGGER.warn("Failed to parse random entry", e);
+                    BattleRoyale.LOGGER.warn("Failed to parse random entry, skipped at {}", target.getBlockPos(), e);
                 }
             } else {
-                BattleRoyale.LOGGER.warn("RandomEntry missing entry member, skipped");
+                BattleRoyale.LOGGER.warn("RandomEntry missing entry member, skipped at {}", target.getBlockPos());
             }
         }
         return Collections.emptyList();

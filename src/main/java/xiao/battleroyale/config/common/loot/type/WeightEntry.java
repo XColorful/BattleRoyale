@@ -61,10 +61,10 @@ public class WeightEntry implements ILootEntry {
                     }
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse weight entry", e);
+                BattleRoyale.LOGGER.warn("Failed to parse weight entry at {}", target.getBlockPos(), e);
             }
         } else {
-            BattleRoyale.LOGGER.warn("WeightEntry missing entries member, skipped");
+            BattleRoyale.LOGGER.warn("WeightEntry missing entries member, skipped at {}", target.getBlockPos());
         }
         BattleRoyale.LOGGER.warn("Unexpected WeightEntry loot result");
         return new ArrayList<>();

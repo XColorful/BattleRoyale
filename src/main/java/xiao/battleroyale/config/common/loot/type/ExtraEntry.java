@@ -50,10 +50,10 @@ public class ExtraEntry implements ILootEntry {
                     BattleRoyale.LOGGER.warn("ExtraEntry missing extraEntry member");
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse extra entry", e);
+                BattleRoyale.LOGGER.warn("Failed to parse extra entry, skipped at {}", target.getBlockPos(), e);
             }
         } else {
-            BattleRoyale.LOGGER.warn("ExtraEntry missing checkEntry member, skipped");
+            BattleRoyale.LOGGER.warn("ExtraEntry missing checkEntry member, skipped at {}", target.getBlockPos());
         }
         return lootData;
     }
