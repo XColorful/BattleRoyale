@@ -258,14 +258,15 @@ public class LootGenerator {
 
     public static void removeLootTable(BlockEntity blockEntity) {
         CompoundTag nbt = blockEntity.saveWithFullMetadata();
-        BattleRoyale.LOGGER.info("nbt before remove loot table:{}", nbt);
-        nbt.remove("LootTable");
-        nbt.remove("LootTableSeed");
+        // nbt.remove("LootTable"); // 无效
+        // nbt.remove("LootTableSeed");
+        if (nbt.contains("LootTable")) {
+            nbt.putString("LootTable", ""); // 必须为字符串类型，空字符串会解析为"minecraft:"，否则写不进去
+            // nbt.putLong("LootTableSeed", 0L); // LootTable解析不出来之后就已经没有LootTableSeed了
+        }
         blockEntity.load(nbt); // 写入内存，没写入硬盘
         blockEntity.setChanged(); // 防止区块被卸载前还没交互
-
-        nbt = blockEntity.saveWithFullMetadata();
-        BattleRoyale.LOGGER.info("nbt after remove loot table:{}", nbt);
+        // 之后LootEntry能读取到的已经是"LootTable":"minecraft:"
     }
 
     public static class LootContext {

@@ -15,7 +15,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
 
     // common
     public final boolean lootVanillaChest;
-    // TODO 移除原版战利品箱子标签
+    public final boolean removeLootTable;
     public final boolean removeInnocentEntity;
     // normal
     public final int maxNormalTickLootChunk;
@@ -30,10 +30,11 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
     public final int maxCachedLootChunk;
     public final int cleanCachedChunk;
 
-    public GeneratorEntry(boolean lootVanillaChest, boolean removeInnocentEntity,
+    public GeneratorEntry(boolean lootVanillaChest, boolean removeLootTable, boolean removeInnocentEntity,
                           int maxNormalTickLootChunk,
                           int maxGameTickLootChunk, int maxGameLootDistance, int tolerantCenterDistance, int maxCachedCenter, int maxQueuedChunk, int bfsFrequency, boolean instantNextBfs, int maxCachedLootChunk, int cleanCachedChunk) {
         this.lootVanillaChest = lootVanillaChest;
+        this.removeLootTable = removeLootTable;
         this.removeInnocentEntity = removeInnocentEntity;
         this.maxNormalTickLootChunk = maxNormalTickLootChunk;
         this.maxGameTickLootChunk = maxGameTickLootChunk;
@@ -47,7 +48,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         this.cleanCachedChunk = cleanCachedChunk;
     }
 
-    public static GeneratorEntry calculateRecommendedConfig(boolean lootVanillaChest, boolean removeInnocentEntity,
+    public static GeneratorEntry calculateRecommendedConfig(boolean lootVanillaChest, boolean removeLootTable, boolean removeInnocentEntity,
                                                             int maxNormalTickLootChunk,
                                                             int players, int simulationDistance, int bfsProcessTick, boolean instantNextBfs, double spaceFactor) {
         // 估算一个玩家周围距离为N的区块数：(2 * N + 1)^2
@@ -71,7 +72,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
 
         int tolerantCenterDistance = 3;
 
-        return new GeneratorEntry(lootVanillaChest, removeInnocentEntity,
+        return new GeneratorEntry(lootVanillaChest, removeLootTable, removeInnocentEntity,
                 maxNormalTickLootChunk,
                 maxGameTickLootChunk, simulationDistance, tolerantCenterDistance, maxCachedCenter, maxQueuedChunk, bfsProcessTick, instantNextBfs, maxCachedLootChunk, cleanCachedChunk);
     }
@@ -100,6 +101,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         }
         // common
         boolean lootVanillaChest = JsonUtils.getJsonBool(commonObject, GeneratorEntryTag.LOOT_VANILLA_CHEST, false);
+        boolean removeLootTable = JsonUtils.getJsonBool(commonObject, GeneratorEntryTag.REMOVE_LOOT_TABLE, false);
         boolean removeInnocentEntity = JsonUtils.getJsonBool(commonObject, GeneratorEntryTag.REMOVE_INNOCENT_ENTITY, false);
         // normal
         int maxNormalTickLootChunk = JsonUtils.getJsonInt(normalObject, GeneratorEntryTag.MAX_NORMAL_TICK_LOOT_CHUNK, 5);
@@ -114,7 +116,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         int maxCachedLootChunk = JsonUtils.getJsonInt(gameObject, GeneratorEntryTag.MAX_CACHED_LOOT_CHUNK, 50000);
         int cleanCachedChunk = JsonUtils.getJsonInt(gameObject, GeneratorEntryTag.CLEAN_CACHED_CHUNK, 2000);
 
-        return new GeneratorEntry(lootVanillaChest, removeInnocentEntity,
+        return new GeneratorEntry(lootVanillaChest, removeLootTable, removeInnocentEntity,
                 maxNormalTickLootChunk,
                 maxGameTickLootChunk, maxGameLootDistance, tolerantCenterDistance, maxCachedCenter, maxQueuedChunk, bfsFrequency, instantNextBfs, maxCachedLootChunk, cleanCachedChunk);
     }
@@ -122,6 +124,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
     @Override
     public void applyDefault() {
         LootGenerator.setLootVanillaChest(lootVanillaChest);
+        LootGenerator.setRemoveLootTable(removeLootTable);
         LootGenerator.setRemoveInnocentEntity(removeInnocentEntity);
         CommonLootManager.setMaxChunksPerTick(maxNormalTickLootChunk);
         GameLootManager.get().applyConfig(this);
@@ -131,6 +134,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
     private JsonObject generateCommonJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(GeneratorEntryTag.LOOT_VANILLA_CHEST, lootVanillaChest);
+        jsonObject.addProperty(GeneratorEntryTag.REMOVE_LOOT_TABLE, removeLootTable);
         jsonObject.addProperty(GeneratorEntryTag.REMOVE_INNOCENT_ENTITY, removeInnocentEntity);
         return jsonObject;
     }
