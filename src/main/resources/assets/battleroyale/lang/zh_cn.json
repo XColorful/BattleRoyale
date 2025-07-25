@@ -238,6 +238,9 @@
 
   "battleroyale.label.alive": "生存",
 
+  "battleroyale.loot.label": "[物资刷新]",
+  "battleroyale.loot.pos": "坐标%s,%s,%s",
+
   "commands.pubgmc.game.lobby.created": "已创建大厅",
   "commands.pubgmc.game.lobby.not_created": "未定义大厅",
   "commands.pubgmc.game.type_selected": "已选择游戏类型“%s”",

@@ -239,6 +239,9 @@
 
   "battleroyale.label.alive": "Alive",
 
+  "battleroyale.loot.label": "[Loot]",
+  "battleroyale.loot.pos": "Pos %s,%s,%s",
+
   "commands.pubgmc.game.lobby.created": "Lobby has been successfully created",
   "commands.pubgmc.game.lobby.not_created": "There is no lobby defined",
   "commands.pubgmc.game.type_selected": "Game type '%s' has been selected successfully",

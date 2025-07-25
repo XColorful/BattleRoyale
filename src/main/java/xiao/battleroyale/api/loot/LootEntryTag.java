@@ -20,6 +20,7 @@ public final class LootEntryTag {
     public static final String TYPE_BIOME = "biome";
     public static final String TYPE_STRUCTURE = "structure";
     public static final String TYPE_REGEX = "regex";
+    public static final String TYPE_MESSAGE = "message";
     public static final String TYPE_NBT = "nbt";
 
     public static final String COUNT = "count";
@@ -45,6 +46,10 @@ public final class LootEntryTag {
     public static final String INVERT = "invert";
     public static final String FILTER = "filter";
     public static final String REGEX = "regex";
+    public static final String ONLY_GAME_PLAYER = "onlyGamePlayer";
+    public static final String SEND_POSITION = "sendPosition";
+    public static final String MESSAGE = "message";
+    public static final String MESSAGE_COLOR = "messageColor";
     public static final String OVERWRITE = "overwrite";
     public static final String KEY_DELETE = "keyDelete";
 
