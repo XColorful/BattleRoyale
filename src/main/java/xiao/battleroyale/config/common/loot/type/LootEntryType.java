@@ -24,7 +24,8 @@ public enum LootEntryType {
     CLEAN(LootEntryTag.TYPE_CLEAN, CleanEntry::fromJson),
     BIOME(LootEntryTag.TYPE_BIOME, BiomeEntry::fromJson),
     STRUCTURE(LootEntryTag.TYPE_STRUCTURE, StructureEntry::fromJson),
-    REGEX(LootEntryTag.REGEX, RegexEntry::fromJson);
+    REGEX(LootEntryTag.TYPE_REGEX, RegexEntry::fromJson),
+    NBT(LootEntryTag.TYPE_NBT, NbtEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends ILootEntry> deserializer;
