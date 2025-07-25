@@ -20,10 +20,11 @@ public class BattleroyaleEntry implements IGameruleEntry {
     public final boolean lobbyMuteki;
     public final boolean recordGameStats;
     public final boolean autoJoinGame;
+    public final boolean clearInventory;
 
     public BattleroyaleEntry(int playerTotal, int teamSize, boolean aiTeammate, boolean aiEnemy, int maxGameTime,
                              Vec3 lobbyCenterPos, Vec3 lobbyDimension, boolean lobbyMuteki,
-                             boolean recordGameStats, boolean autoJoinGame) {
+                             boolean recordGameStats, boolean autoJoinGame, boolean clearInventory) {
         this.playerTotal = playerTotal;
         this.teamSize = teamSize;
         this.aiTeammate = aiTeammate;
@@ -34,6 +35,7 @@ public class BattleroyaleEntry implements IGameruleEntry {
         this.lobbyMuteki = lobbyMuteki;
         this.recordGameStats = recordGameStats;
         this.autoJoinGame = autoJoinGame;
+        this.clearInventory = clearInventory;
     }
 
     @Override
@@ -54,6 +56,7 @@ public class BattleroyaleEntry implements IGameruleEntry {
         jsonObject.addProperty(BattleroyaleEntryTag.LOBBY_MUTEKI, lobbyMuteki);
         jsonObject.addProperty(BattleroyaleEntryTag.RECORD_STATS, recordGameStats);
         jsonObject.addProperty(BattleroyaleEntryTag.AUTO_JOIN, autoJoinGame);
+        jsonObject.addProperty(BattleroyaleEntryTag.CLEAR_INVENTORY, clearInventory);
         return jsonObject;
     }
 
@@ -72,8 +75,9 @@ public class BattleroyaleEntry implements IGameruleEntry {
         boolean lobbyMuteki = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.LOBBY_MUTEKI, false);
         boolean recordGameStats = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.RECORD_STATS, false);
         boolean autoJoinGame = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.AUTO_JOIN, false);
+        boolean clearInventory = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.CLEAR_INVENTORY, false);
         return new BattleroyaleEntry(playerTotal, teamSize, aiTeammate, aiEnemy, maxGameTime,
                 lobbyCenterPos, lobbyDimension, lobbyMuteki,
-                recordGameStats, autoJoinGame);
+                recordGameStats, autoJoinGame, clearInventory);
     }
 }
