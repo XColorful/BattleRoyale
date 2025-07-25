@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,6 +11,7 @@ import xiao.battleroyale.api.loot.entity.IEntityLootEntry;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.data.EntityData;
 import xiao.battleroyale.util.JsonUtils;
+import xiao.battleroyale.util.NBTUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,19 +19,21 @@ import java.util.List;
 public class EntityEntry implements IEntityLootEntry {
     private final String entityString;
     private final @Nullable String nbtString;
+    private final @NotNull CompoundTag nbt;
     private final int count;
     private final int range;
 
     public EntityEntry(String rl, @Nullable String nbtString, int count, int range) {
         this.entityString = rl;
         this.nbtString = nbtString;
+        this.nbt = NBTUtils.stringToNBT(nbtString);
         this.count = count;
         this.range = range;
     }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, T target) {
-        return Collections.singletonList(new EntityData(this.entityString, this.nbtString, this.count, this.range));
+        return Collections.singletonList(new EntityData(this.entityString, this.nbt, this.count, this.range));
     }
 
     @Override

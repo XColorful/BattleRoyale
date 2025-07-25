@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.loot.ILootData;
@@ -28,13 +29,13 @@ public class EmptyEntry implements IItemLootEntry {
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, T target) {
         switch (type) {
             case ITEM -> {
-                return Collections.singletonList(new ItemData("", "", 0));
+                return Collections.singletonList(new ItemData("", new CompoundTag(), 0));
             }
             case ENTITY -> {
-                return Collections.singletonList(new EntityData("", "", 0, 0));
+                return Collections.singletonList(new EntityData("", new CompoundTag(), 0, 0));
             }
             default -> {
-                return Collections.singletonList(new ItemData("", "", 0));
+                return Collections.singletonList(new ItemData("", new CompoundTag(), 0));
             }
         }
     }

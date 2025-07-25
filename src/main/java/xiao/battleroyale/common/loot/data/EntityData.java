@@ -22,7 +22,7 @@ public class EntityData implements IEntityLootData {
     private static final String EMPTY_TYPE = "entity.minecraft.pig";
     private final boolean isEmpty;
 
-    public EntityData(String rl, @Nullable String nbt, int count, int range) {
+    public EntityData(String rl, @NotNull CompoundTag nbt, int count, int range) {
         this.entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(rl)); // 无论输入不存在的RL还是null都不会返回null，小Forge露出猪脚了吧[doge]
         if (this.entityType == null
                 || (this.entityType.toString().equals(EMPTY_TYPE) && !rl.equals(EMPTY_RL))) {
@@ -35,7 +35,7 @@ public class EntityData implements IEntityLootData {
         } else {
             this.isEmpty = false;
         }
-        this.nbt = NBTUtils.stringToNBT(nbt);
+        this.nbt = nbt;
         this.count = count;
         this.range = range;
     }
