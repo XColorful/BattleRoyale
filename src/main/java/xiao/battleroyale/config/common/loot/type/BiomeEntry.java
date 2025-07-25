@@ -43,7 +43,7 @@ public class BiomeEntry implements ILootEntry {
                 Holder<Biome> biomeHolder = lootContext.serverLevel.getBiome(pos);
                 boolean inBiome = biomeHolder.unwrapKey().isPresent() &&
                         biomes.contains(biomeHolder.unwrapKey().get());
-                if (inBiome != invert) {
+                if (inBiome == invert) {
                     return entry.generateLootData(lootContext, target);
                 }
             } catch (Exception e) {
