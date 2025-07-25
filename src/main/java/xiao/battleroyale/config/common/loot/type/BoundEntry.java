@@ -72,7 +72,7 @@ public class BoundEntry implements ILootEntry {
         } else {
             BattleRoyale.LOGGER.warn("BoundEntry missing entries member, skipped");
         }
-        return lootData.size() >= min ? lootData : Collections.emptyList();
+        return count >= min ? lootData : Collections.emptyList();
     }
 
     @Override
