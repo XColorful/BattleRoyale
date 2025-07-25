@@ -49,6 +49,7 @@ public class CleanEntry implements ILootEntry {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
         jsonObject.add(LootEntryTag.ENTRY, entry.toJson());
         return jsonObject;
     }

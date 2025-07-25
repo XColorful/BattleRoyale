@@ -72,6 +72,7 @@ public class BiomeEntry implements ILootEntry {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
         jsonObject.addProperty(LootEntryTag.INVERT, invert);
         jsonObject.add(LootEntryTag.FILTER, JsonUtils.writeStringListToJson(biomeList));
         if (entry != null) {

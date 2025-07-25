@@ -49,6 +49,7 @@ public class NbtEntry implements ILootEntry {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
         jsonObject.addProperty(LootEntryTag.OVERWRITE, overwrite);
         jsonObject.add(LootEntryTag.NBT, nbtJson);
         jsonObject.add(LootEntryTag.KEY_DELETE, JsonUtils.writeStringListToJson(keyDelete));

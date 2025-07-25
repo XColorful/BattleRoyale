@@ -78,6 +78,7 @@ public class ExtraEntry implements ILootEntry {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
         jsonObject.addProperty(LootEntryTag.COUNT_EMPTY, countEmpty);
         jsonObject.addProperty(LootEntryTag.KEEP_CHECK, keepCheck);
         if (checkEntry != null) {

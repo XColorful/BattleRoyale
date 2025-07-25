@@ -66,6 +66,7 @@ public class RegexEntry implements ILootEntry {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
         jsonObject.addProperty(LootEntryTag.INVERT, invert);
         jsonObject.addProperty(LootEntryTag.REGEX, regexString);
         if (entry != null) {

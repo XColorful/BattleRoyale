@@ -96,6 +96,7 @@ public class MessageEntry implements ILootEntry {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
         jsonObject.addProperty(LootEntryTag.ONLY_GAME_PLAYER, onlyGamePlayer);
         jsonObject.addProperty(LootEntryTag.SEND_POSITION, sendPosition);
         jsonObject.addProperty(LootEntryTag.MESSAGE, messageString);
