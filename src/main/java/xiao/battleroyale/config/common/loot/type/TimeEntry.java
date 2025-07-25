@@ -48,6 +48,7 @@ public class TimeEntry implements ILootEntry {
         return LootEntryTag.TYPE_TIME;
     }
 
+    @NotNull
     public static TimeEntry fromJson(JsonObject jsonObject) {
         int start = JsonUtils.getJsonInt(jsonObject, LootEntryTag.START, 0);
         int end = JsonUtils.getJsonInt(jsonObject, LootEntryTag.END, 0);

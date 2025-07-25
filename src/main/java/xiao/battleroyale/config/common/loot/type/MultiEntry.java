@@ -64,6 +64,7 @@ public class MultiEntry implements ILootEntry {
         return entries;
     }
 
+    @NotNull
     public static MultiEntry fromJson(JsonObject jsonObject) {
         return new MultiEntry(getEntries(jsonObject));
     }

@@ -29,6 +29,7 @@ public class NoneEntry implements ILootEntry {
         return jsonObject;
     }
 
+    @NotNull
     public static NoneEntry fromJson(JsonObject jsonObject) {
         return new NoneEntry();
     }

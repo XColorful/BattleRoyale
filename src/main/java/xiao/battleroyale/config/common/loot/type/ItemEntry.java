@@ -34,6 +34,7 @@ public class ItemEntry implements IItemLootEntry {
         return LootEntryTag.TYPE_ITEM;
     }
 
+    @NotNull
     public static ItemEntry fromJson(JsonObject jsonObject) {
         String itemName = JsonUtils.getJsonString(jsonObject, LootEntryTag.ITEM, "");
         int count = JsonUtils.getJsonInt(jsonObject, LootEntryTag.COUNT, 1);

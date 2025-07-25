@@ -54,6 +54,7 @@ public class RepeatEntry implements ILootEntry {
         return LootEntryTag.TYPE_REPEAT;
     }
 
+    @NotNull
     public static RepeatEntry fromJson(JsonObject jsonObject) {
         int min = JsonUtils.getJsonInt(jsonObject, LootEntryTag.MIN, 0);
         int max = JsonUtils.getJsonInt(jsonObject, LootEntryTag.MAX, 0);

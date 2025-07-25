@@ -74,6 +74,7 @@ public class WeightEntry implements ILootEntry {
         return LootEntryTag.TYPE_WEIGHT;
     }
 
+    @NotNull
     public static WeightEntry fromJson(JsonObject jsonObject) {
         List<WeightedEntry> weightedEntries = new ArrayList<>();
         JsonArray itemsArray = JsonUtils.getJsonArray(jsonObject, LootEntryTag.ENTRIES, null);

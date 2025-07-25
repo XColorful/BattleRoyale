@@ -47,6 +47,7 @@ public class RandomEntry implements ILootEntry {
         return LootEntryTag.TYPE_RANDOM;
     }
 
+    @NotNull
     public static RandomEntry fromJson(JsonObject jsonObject) {
         double chance = JsonUtils.getJsonDouble(jsonObject, LootEntryTag.CHANCE, 0);
         JsonObject entryObject = JsonUtils.getJsonObject(jsonObject, LootEntryTag.ENTRY, null);

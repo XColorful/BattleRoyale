@@ -53,6 +53,7 @@ public class EntityEntry implements IEntityLootEntry {
         return jsonObject;
     }
 
+    @NotNull
     public static EntityEntry fromJson(JsonObject jsonObject) {
         String entityName = JsonUtils.getJsonString(jsonObject, LootEntryTag.ENTITY, "");
         int count = JsonUtils.getJsonInt(jsonObject, LootEntryTag.COUNT, 1);
