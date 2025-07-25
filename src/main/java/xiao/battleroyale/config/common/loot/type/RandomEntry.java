@@ -34,7 +34,7 @@ public class RandomEntry implements ILootEntry {
                 try {
                     return entry.generateLootData(lootContext, target);
                 } catch (Exception e) {
-                    BattleRoyale.LOGGER.warn("Failed to parse random entry");
+                    BattleRoyale.LOGGER.warn("Failed to parse random entry", e);
                 }
             } else {
                 BattleRoyale.LOGGER.warn("RandomEntry missing entry member, skipped");

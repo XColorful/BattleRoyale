@@ -1,10 +1,12 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.api.loot.item.IItemLootEntry;
+import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.data.EntityData;
 import xiao.battleroyale.common.loot.data.ItemData;
 import xiao.battleroyale.util.JsonUtils;
@@ -23,7 +25,7 @@ public class EmptyEntry implements IItemLootEntry {
     }
 
     @Override
-    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, T target) {
         switch (type) {
             case ITEM -> {
                 return Collections.singletonList(new ItemData("", "", 0));

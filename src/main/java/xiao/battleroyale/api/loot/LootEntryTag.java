@@ -17,6 +17,7 @@ public final class LootEntryTag {
     public static final String TYPE_EXTRA = "extra";
     public static final String TYPE_SHUFFLE = "shuffle";
     public static final String TYPE_CLEAN = "clean";
+    public static final String TYPE_BIOME = "biome";
 
     public static final String COUNT = "count";
     public static final String NBT = "nbt";
@@ -38,6 +39,8 @@ public final class LootEntryTag {
     public static final String CHECK = "check";
     public static final String EXTRA = "extra";
     public static final String KEEP_EMPTY = "keepEmpty";
+    public static final String INVERT = "invert";
+    public static final String FILTER = "filter";
 
     private LootEntryTag() {};
 }

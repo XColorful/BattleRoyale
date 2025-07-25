@@ -1,17 +1,18 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.api.loot.entity.IEntityLootEntry;
+import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.data.EntityData;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class EntityEntry implements IEntityLootEntry {
     private final String entityString;
@@ -27,7 +28,7 @@ public class EntityEntry implements IEntityLootEntry {
     }
 
     @Override
-    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, T target) {
         return Collections.singletonList(new EntityData(this.entityString, this.nbtString, this.count, this.range));
     }
 

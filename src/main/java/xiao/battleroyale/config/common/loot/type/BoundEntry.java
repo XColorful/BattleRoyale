@@ -72,7 +72,7 @@ public class BoundEntry implements ILootEntry {
                             .forEach(lootData::add);
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse bound entry");
+                BattleRoyale.LOGGER.warn("Failed to parse bound entry", e);
             }
         } else {
             BattleRoyale.LOGGER.warn("BoundEntry missing entries member, skipped");

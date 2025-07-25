@@ -49,7 +49,7 @@ public class ShuffleEntry implements ILootEntry {
                         .limit(select)
                         .forEach(lootData::add);
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse shuffle entry");
+                BattleRoyale.LOGGER.warn("Failed to parse shuffle entry", e);
             }
         } else {
             BattleRoyale.LOGGER.warn("ShuffleEntry missing entry member, skipped");

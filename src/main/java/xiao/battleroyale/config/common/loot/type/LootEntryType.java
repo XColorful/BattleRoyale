@@ -21,7 +21,8 @@ public enum LootEntryType {
     BOUND(LootEntryTag.TYPE_BOUND, BoundEntry::fromJson),
     EXTRA(LootEntryTag.TYPE_EXTRA, ExtraEntry::fromJson),
     SHUFFLE(LootEntryTag.TYPE_SHUFFLE, ShuffleEntry::fromJson),
-    CLEAN(LootEntryTag.TYPE_CLEAN, CleanEntry::fromJson);
+    CLEAN(LootEntryTag.TYPE_CLEAN, CleanEntry::fromJson),
+    BIOME(LootEntryTag.TYPE_BIOME, BiomeEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends ILootEntry> deserializer;

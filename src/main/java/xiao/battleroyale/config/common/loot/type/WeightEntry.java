@@ -61,7 +61,7 @@ public class WeightEntry implements ILootEntry {
                     }
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse weight entry");
+                BattleRoyale.LOGGER.warn("Failed to parse weight entry", e);
             }
         } else {
             BattleRoyale.LOGGER.warn("WeightEntry missing entries member, skipped");

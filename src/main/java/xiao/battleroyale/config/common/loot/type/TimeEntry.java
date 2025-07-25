@@ -35,7 +35,7 @@ public class TimeEntry implements ILootEntry {
                 try {
                     return entry.generateLootData(lootContext, target);
                 } catch (Exception e) {
-                    BattleRoyale.LOGGER.warn("Failed to parse time entry");
+                    BattleRoyale.LOGGER.warn("Failed to parse time entry", e);
                 }
             }
         } else {
