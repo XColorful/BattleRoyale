@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class MultiEntry implements ILootEntry {
-    private final List<ILootEntry> entries;
+    private final @NotNull List<ILootEntry> entries;
 
-    public MultiEntry(List<ILootEntry> entries) {
+    public MultiEntry(@NotNull List<ILootEntry> entries) {
         this.entries = entries;
     }
 
@@ -43,8 +43,8 @@ public class MultiEntry implements ILootEntry {
     public String getType() {
         return LootEntryTag.TYPE_MULTI;
     }
-    
-    public static MultiEntry fromJson(JsonObject jsonObject) {
+
+    public static List<ILootEntry> getEntries(JsonObject jsonObject) {
         List<ILootEntry> entries = new ArrayList<>();
         if (jsonObject.has(LootEntryTag.ENTRIES)) {
             JsonArray entriesArray = JsonUtils.getJsonArray(jsonObject, LootEntryTag.ENTRIES, null);
@@ -61,7 +61,11 @@ public class MultiEntry implements ILootEntry {
                 }
             }
         }
-        return new MultiEntry(entries);
+        return entries;
+    }
+
+    public static MultiEntry fromJson(JsonObject jsonObject) {
+        return new MultiEntry(getEntries(jsonObject));
     }
 
     @Override
