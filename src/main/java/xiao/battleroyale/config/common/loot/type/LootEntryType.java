@@ -20,7 +20,8 @@ public enum LootEntryType {
     TIME(LootEntryTag.TYPE_TIME, TimeEntry::fromJson),
     BOUND(LootEntryTag.TYPE_BOUND, BoundEntry::fromJson),
     EXTRA(LootEntryTag.TYPE_EXTRA, ExtraEntry::fromJson),
-    SHUFFLE(LootEntryTag.TYPE_SHUFFLE, ShuffleEntry::fromJson);
+    SHUFFLE(LootEntryTag.TYPE_SHUFFLE, ShuffleEntry::fromJson),
+    CLEAN(LootEntryTag.TYPE_CLEAN, CleanEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends ILootEntry> deserializer;
