@@ -9,6 +9,7 @@ import xiao.battleroyale.config.common.loot.type.*;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 
 import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.LOOT_SPAWNER;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
@@ -21,6 +22,7 @@ public class DefaultLootSpawner {
         JsonArray lootSpawnerConfigsJson = new JsonArray();
         lootSpawnerConfigsJson.add(generateDefaultLootSpawner0());
         lootSpawnerConfigsJson.add(generateDefaultLootSpawner1());
+        lootSpawnerConfigsJson.add(generateDefaultLootSpawner2());
         writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(LOOT_SPAWNER), LootConfigManager.LOOT_SPAWNER_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), lootSpawnerConfigsJson);
     }
 
@@ -57,6 +59,36 @@ public class DefaultLootSpawner {
 
         LootConfig lootConfig = new LootConfig(1, "Basic Combat Gear", "#FFFFFFAA",
                 multiEntry);
+
+        return lootConfig.toJson();
+    }
+
+    private static JsonObject generateDefaultLootSpawner2() {
+        ILootEntry boundEntry = new BoundEntry(true, true, 2, 4, false,
+                Arrays.asList(
+                        new ExtraEntry(false, true,
+                                new RandomEntry(0.01, new EmptyEntry("item")),
+                                new MessageEntry(false, true, "Rare loot generated!", "#FF0000")),
+                        new RegexEntry(false, "minecraft:",
+                                new MultiEntry(Arrays.asList(
+                                        new BiomeEntry(false, List.of("minecraft:plains"),
+                                                new StructureEntry(false, List.of("minecraft:village_plains"),
+                                                        new ItemEntry("minecraft:diamond_helmet", "", 1)))
+                                ))),
+                        new CleanEntry(
+                                new ShuffleEntry(true, 0, 2,
+                                        new MultiEntry(Arrays.asList(
+                                                new EmptyEntry("item"),
+                                                new EmptyEntry("entity"),
+                                                new ItemEntry("minecraft:grass_block", "", 1)
+                                        ))
+                                )
+                        )
+                )
+        );
+
+        LootConfig lootConfig = new LootConfig(2, "Advanced loot example", "#FFFFFFAA",
+                boundEntry);
 
         return lootConfig.toJson();
     }
