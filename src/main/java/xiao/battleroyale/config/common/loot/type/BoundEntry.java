@@ -19,9 +19,10 @@ public class BoundEntry implements ILootEntry {
     private final boolean countLootTime;
     private final int min;
     private final int max;
+    private final boolean keepEmpty;
     private final @NotNull List<ILootEntry> entries;
 
-    public BoundEntry(boolean countEmpty, boolean countLootTime, int min, int max,
+    public BoundEntry(boolean countEmpty, boolean countLootTime, int min, int max, boolean keepEmpty,
                       @NotNull List<ILootEntry> entries) {
         this.countEmpty = countEmpty;
         this.countLootTime = countLootTime;
@@ -33,6 +34,7 @@ public class BoundEntry implements ILootEntry {
             max = min;
         }
         this.max = max;
+        this.keepEmpty = keepEmpty;
         this.entries = entries;
     }
 
@@ -64,7 +66,9 @@ public class BoundEntry implements ILootEntry {
                         }
                     }
 
-                    lootData.addAll(loots);
+                    loots.stream()
+                            .filter(data -> keepEmpty || !data.isEmpty())
+                            .forEach(lootData::add);
                 }
             } catch (Exception e) {
                 BattleRoyale.LOGGER.warn("Failed to parse bound entry");
@@ -86,7 +90,8 @@ public class BoundEntry implements ILootEntry {
         boolean countLootTime = JsonUtils.getJsonBool(jsonObject, LootEntryTag.COUNT_LOOT_TIME, true);
         int min = JsonUtils.getJsonInt(jsonObject, LootEntryTag.MIN, 0);
         int max = JsonUtils.getJsonInt(jsonObject, LootEntryTag.MAX, 0);
-        return new BoundEntry(countEmpty, countLootTime, min, max,
+        boolean keepEmpty = JsonUtils.getJsonBool(jsonObject, LootEntryTag.KEEP_EMPTY, false);
+        return new BoundEntry(countEmpty, countLootTime, min, max, keepEmpty,
                 MultiEntry.getEntries(jsonObject));
     }
 
@@ -102,6 +107,7 @@ public class BoundEntry implements ILootEntry {
         if (max >= 0) {
             jsonObject.addProperty(LootEntryTag.MAX, max);
         }
+        jsonObject.addProperty(LootEntryTag.KEEP_EMPTY, keepEmpty);
         JsonArray entriesArray = new JsonArray();
         for (ILootEntry entry : entries) {
             entriesArray.add(entry.toJson());
