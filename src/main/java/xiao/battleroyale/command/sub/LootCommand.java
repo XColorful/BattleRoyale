@@ -8,7 +8,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.common.loot.LootGenerationManager;
+import xiao.battleroyale.common.loot.CommonLootManager;
 import java.util.UUID;
 
 import static xiao.battleroyale.command.CommandArg.*;
@@ -31,7 +31,7 @@ public class LootCommand {
         }
         UUID currentWorldGameId = GameManager.get().getGameId();
 
-        int totalChunks = LootGenerationManager.get().startGenerationTask(source, currentWorldGameId);
+        int totalChunks = CommonLootManager.get().startGenerationTask(source, currentWorldGameId);
 
         if (totalChunks > 0) {
             source.sendSuccess(() -> Component.translatable("battleroyale.message.loot_generation_started", totalChunks), true);

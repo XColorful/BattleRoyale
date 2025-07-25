@@ -20,6 +20,7 @@ import java.util.Random;
 @Mod(BattleRoyale.MOD_ID)
 public class BattleRoyale {
     public static final String MOD_ID = "battleroyale";
+    public static final String MOD_NAME_SHORT = "cbr";
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final Random COMMON_RANDOM = new Random();
 

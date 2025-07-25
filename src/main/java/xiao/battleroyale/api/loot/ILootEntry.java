@@ -1,17 +1,18 @@
 package xiao.battleroyale.api.loot;
 
 import java.util.List;
-import java.util.function.Supplier;
 
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.IConfigEntry;
+import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 
 public interface ILootEntry extends IConfigEntry {
     /**
-     * 根据配置生成战利品列表
-     * @param random 提供随机数的 Supplier
-     * @return 生成的战利品列表
+     * 计算物资刷新生成内容
+     * @param lootContext 物资刷新环境
+     * @param target 方块实体，不应在函数内修改
      */
     @NotNull
-    List<ILootData> generateLootData(Supplier<Float> random);
+    <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target);
 }

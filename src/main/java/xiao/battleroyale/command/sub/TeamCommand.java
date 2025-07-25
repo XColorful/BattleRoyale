@@ -18,7 +18,7 @@ public class TeamCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         return Commands.literal(TEAM)
-                .requires(CommandSourceStack::isPlayer)
+                // .requires(CommandSourceStack::isPlayer) // 兼容命令方块内执行
                 .then(Commands.literal(JOIN)
                         .executes(TeamCommand::joinTeam)
                         .then(Commands.argument(TEAM_ID, IntegerArgumentType.integer(1))
@@ -68,7 +68,7 @@ public class TeamCommand {
                         )
                 )
                 .then(Commands.literal(ID)
-                        .requires(CommandSourceStack::isPlayer)
+                        // .requires(CommandSourceStack::isPlayer) // 兼容命令方块内执行
                         .executes(TeamCommand::queryPlayerTeamId)
                 );
     }

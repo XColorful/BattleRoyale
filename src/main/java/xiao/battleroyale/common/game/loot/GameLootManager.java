@@ -8,8 +8,8 @@ import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.loot.LootGenerator;
+import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.server.performance.type.GeneratorEntry;
-import xiao.battleroyale.util.ChatUtils;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -302,7 +302,7 @@ public class GameLootManager extends AbstractGameManager {
         while (!currentQueue.isEmpty() && processedCount < MAX_LOOT_CHUNK_PER_TICK) {
             ChunkPos chunkPos = currentQueue.poll();
             processedChunkCache.add(chunkPos);
-            lastBfsProcessedLoot += LootGenerator.refreshLootInChunk(serverLevel, chunkPos, GameManager.get().getGameId());
+            lastBfsProcessedLoot += LootGenerator.refreshLootInChunk(new LootContext(serverLevel, chunkPos, GameManager.get().getGameId()));
             processedCount++;
         }
         // ChatUtils.sendMessageToAllPlayers(serverLevel, "Chunk Processed this tick: " + processedCount);

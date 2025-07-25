@@ -1,5 +1,6 @@
 package xiao.battleroyale.util;
 
+import com.google.gson.JsonObject;
 import com.mojang.serialization.DataResult;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.message.team.TeamTag;
 import xiao.battleroyale.api.message.zone.GameZoneTag;
@@ -130,5 +132,17 @@ public class NBTUtils {
             BattleRoyale.LOGGER.warn("Failed to parse ItemStack from NBT: '{}', reason: {}", nbt, e.getMessage());
             return ItemStack.EMPTY;
         }
+    }
+
+    @NotNull
+    public static CompoundTag JsonToNBT(@Nullable JsonObject jsonObject) {
+        CompoundTag nbt = new CompoundTag();
+        if (jsonObject == null) {
+            return nbt;
+        }
+
+        // TODO Json转NBT
+
+        return nbt;
     }
 }

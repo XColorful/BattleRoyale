@@ -3,38 +3,39 @@ package xiao.battleroyale.config.common.loot.type;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
+import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class MultiEntry implements ILootEntry {
-    private final List<ILootEntry> entries;
+    private final @NotNull List<ILootEntry> entries;
 
-    public MultiEntry(List<ILootEntry> entries) {
+    public MultiEntry(@NotNull List<ILootEntry> entries) {
         this.entries = entries;
     }
 
     @Override
-    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
         List<ILootData> lootData = new ArrayList<>();
         if (!entries.isEmpty()) {
             try {
                 for (ILootEntry entry : entries) {
-                    lootData.addAll(entry.generateLootData(random));
+                    lootData.addAll(entry.generateLootData(lootContext, target));
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse multi entry");
+                BattleRoyale.LOGGER.warn("Failed to parse multi entry, skipped at {}", target.getBlockPos(), e);
             }
         } else {
-            BattleRoyale.LOGGER.warn("MultiEntry missing entries member, skipped");
+            BattleRoyale.LOGGER.warn("MultiEntry missing entries member, skipped at {}", target.getBlockPos());
         }
         return lootData;
     }
@@ -43,8 +44,8 @@ public class MultiEntry implements ILootEntry {
     public String getType() {
         return LootEntryTag.TYPE_MULTI;
     }
-    
-    public static MultiEntry fromJson(JsonObject jsonObject) {
+
+    public static List<ILootEntry> getEntries(JsonObject jsonObject) {
         List<ILootEntry> entries = new ArrayList<>();
         if (jsonObject.has(LootEntryTag.ENTRIES)) {
             JsonArray entriesArray = JsonUtils.getJsonArray(jsonObject, LootEntryTag.ENTRIES, null);
@@ -61,7 +62,12 @@ public class MultiEntry implements ILootEntry {
                 }
             }
         }
-        return new MultiEntry(entries);
+        return entries;
+    }
+
+    @NotNull
+    public static MultiEntry fromJson(JsonObject jsonObject) {
+        return new MultiEntry(getEntries(jsonObject));
     }
 
     @Override

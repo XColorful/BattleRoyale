@@ -1,19 +1,20 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class TimeEntry implements ILootEntry {
     private final int start;
@@ -27,18 +28,18 @@ public class TimeEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull List<ILootData> generateLootData(Supplier<Float> random) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
         int gameTime = GameManager.get().getGameTime();
         if (entry != null) {
             if (start <= gameTime && gameTime <= end) {
                 try {
-                    return entry.generateLootData(random);
+                    return entry.generateLootData(lootContext, target);
                 } catch (Exception e) {
-                    BattleRoyale.LOGGER.warn("Failed to parse time entry");
+                    BattleRoyale.LOGGER.warn("Failed to parse time entry at {}", target.getBlockPos(), e);
                 }
             }
         } else {
-            BattleRoyale.LOGGER.warn("TimeEntry missing entry member or has invalid config");
+            BattleRoyale.LOGGER.warn("TimeEntry missing entry member, skipped at {}", target.getBlockPos());
         }
         return Collections.emptyList();
     }
@@ -48,6 +49,7 @@ public class TimeEntry implements ILootEntry {
         return LootEntryTag.TYPE_TIME;
     }
 
+    @NotNull
     public static TimeEntry fromJson(JsonObject jsonObject) {
         int start = JsonUtils.getJsonInt(jsonObject, LootEntryTag.START, 0);
         int end = JsonUtils.getJsonInt(jsonObject, LootEntryTag.END, 0);

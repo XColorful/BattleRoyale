@@ -17,7 +17,16 @@ public enum LootEntryType {
     EMPTY(LootEntryTag.TYPE_EMPTY, EmptyEntry::fromJson),
     NONE(LootEntryTag.TYPE_NONE, NoneEntry::fromJson),
     REPEAT(LootEntryTag.TYPE_REPEAT, RepeatEntry::fromJson),
-    TIME(LootEntryTag.TYPE_TIME, TimeEntry::fromJson);
+    TIME(LootEntryTag.TYPE_TIME, TimeEntry::fromJson),
+    BOUND(LootEntryTag.TYPE_BOUND, BoundEntry::fromJson),
+    EXTRA(LootEntryTag.TYPE_EXTRA, ExtraEntry::fromJson),
+    SHUFFLE(LootEntryTag.TYPE_SHUFFLE, ShuffleEntry::fromJson),
+    CLEAN(LootEntryTag.TYPE_CLEAN, CleanEntry::fromJson),
+    BIOME(LootEntryTag.TYPE_BIOME, BiomeEntry::fromJson),
+    STRUCTURE(LootEntryTag.TYPE_STRUCTURE, StructureEntry::fromJson),
+    REGEX(LootEntryTag.TYPE_REGEX, RegexEntry::fromJson),
+    MESSAGE(LootEntryTag.TYPE_MESSAGE, MessageEntry::fromJson),
+    NBT(LootEntryTag.TYPE_NBT, NbtEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends ILootEntry> deserializer;
