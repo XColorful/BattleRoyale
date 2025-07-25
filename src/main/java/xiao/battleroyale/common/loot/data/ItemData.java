@@ -15,10 +15,15 @@ public class ItemData implements IItemLootData {
     private final @Nullable Item item;
     private final @NotNull CompoundTag nbt;
     private final int count;
+    private static final String EMPTY_RL = "minecraft:air";
+    private static final String EMPTY_TYPE = "air";
+    private final boolean isEmpty;
 
     public ItemData(String rl, @Nullable String nbt, int count) {
         this.item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rl));
-        if (this.item == null && !rl.isEmpty()) {
+        this.isEmpty = this.item == null
+                || (this.item.toString().equals(EMPTY_TYPE) && !rl.equals(EMPTY_RL));
+        if (this.item == null) {
             BattleRoyale.LOGGER.warn("Faild to get item type from ResourceLocation {}", rl);
         }
         this.nbt = NBTUtils.stringToNBT(nbt);
@@ -28,7 +33,7 @@ public class ItemData implements IItemLootData {
     @Nullable
     @Override
     public ItemStack getItemStack() {
-        if (this.item == null) {
+        if (this.isEmpty()) {
             return null;
         }
         ItemStack itemStack = new ItemStack(this.item, this.count);
@@ -40,6 +45,6 @@ public class ItemData implements IItemLootData {
 
     @Override
     public boolean isEmpty() {
-        return this.item == null;
+        return this.isEmpty;
     }
 }
