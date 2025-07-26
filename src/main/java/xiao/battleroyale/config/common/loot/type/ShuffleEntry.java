@@ -3,7 +3,6 @@ package xiao.battleroyale.config.common.loot.type;
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
@@ -13,14 +12,18 @@ import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class RepeatEntry implements ILootEntry {
+public class ShuffleEntry implements ILootEntry {
+    private final boolean keepEmpty;
     private final int min;
     private final int max;
     private final ILootEntry entry;
 
-    public RepeatEntry(int min, int max, @Nullable ILootEntry entry) {
+    public ShuffleEntry(boolean keepEmpty, int min, int max,
+                        ILootEntry entry) {
+        this.keepEmpty = keepEmpty;
         if (min < 0) {
             min = 0;
         }
@@ -34,48 +37,51 @@ public class RepeatEntry implements ILootEntry {
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
-        int repeats = min + (int) (lootContext.random.get() * (max - min + 1));
         List<ILootData> lootData = new ArrayList<>();
         if (entry != null) {
             try {
-                for (int i = 0; i < repeats; i++) {
-                    lootData.addAll(entry.generateLootData(lootContext, target));
-                }
+                List<ILootData> queuedData = new ArrayList<>(entry.generateLootData(lootContext, target));
+                Collections.shuffle(queuedData);
+                int select = Math.min(min + (int) ((max - min) * lootContext.random.get()), queuedData.size());
+
+                queuedData.stream()
+                        .filter(data -> (this.keepEmpty || !data.isEmpty()))
+                        .limit(select)
+                        .forEach(lootData::add);
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse repeat entry, skipped at {}", target.getBlockPos(), e);
+                BattleRoyale.LOGGER.warn("Failed to parse shuffle entry, skipped at {}", target.getBlockPos(), e);
             }
         } else {
-            BattleRoyale.LOGGER.warn("RepeatEntry missing entry member, skipped at {}", target.getBlockPos());
+            BattleRoyale.LOGGER.warn("ShuffleEntry missing entry member, skipped at {}", target.getBlockPos());
         }
         return lootData;
     }
 
     @Override
     public String getType() {
-        return LootEntryTag.TYPE_REPEAT;
+        return LootEntryTag.TYPE_SHUFFLE;
     }
 
     @NotNull
-    public static RepeatEntry fromJson(JsonObject jsonObject) {
+    public static ShuffleEntry fromJson(JsonObject jsonObject) {
+        boolean keepEmpty = JsonUtils.getJsonBool(jsonObject, LootEntryTag.KEEP_EMPTY, false);
         int min = JsonUtils.getJsonInt(jsonObject, LootEntryTag.MIN, 0);
         int max = JsonUtils.getJsonInt(jsonObject, LootEntryTag.MAX, 0);
         JsonObject entryObject = JsonUtils.getJsonObject(jsonObject, LootEntryTag.ENTRY, null);
         ILootEntry entry = LootConfig.deserializeLootEntry(entryObject);
-        return new RepeatEntry(min, max, entry);
+        return new ShuffleEntry(keepEmpty, min, max,
+                entry);
     }
 
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
-        if (min >= 0) {
-            jsonObject.addProperty(LootEntryTag.MIN, this.min);
-        }
-        if (max >= 0) {
-            jsonObject.addProperty(LootEntryTag.MAX, this.max);
-        }
+        jsonObject.addProperty(LootEntryTag.KEEP_EMPTY, keepEmpty);
+        jsonObject.addProperty(LootEntryTag.MIN, min);
+        jsonObject.addProperty(LootEntryTag.MAX, max);
         if (entry != null) {
-            jsonObject.add(LootEntryTag.ENTRY, this.entry.toJson());
+            jsonObject.add(LootEntryTag.ENTRY, entry.toJson());
         }
         return jsonObject;
     }

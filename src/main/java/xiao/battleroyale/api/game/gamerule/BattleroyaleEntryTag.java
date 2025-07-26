@@ -14,6 +14,7 @@ public class BattleroyaleEntryTag extends ConfigEntryTag {
     public static final String LOBBY_MUTEKI = "lobbyMuteki";
     public static final String RECORD_STATS = "recordGameStats";
     public static final String AUTO_JOIN = "autoJoinGame";
+    public static final String CLEAR_INVENTORY = "clearInventory";
 
     private BattleroyaleEntryTag() {};
 }

@@ -4,7 +4,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.loot.LootGenerationManager;
+import xiao.battleroyale.common.loot.CommonLootManager;
 
 public class LootGenerationEventHandler {
 
@@ -33,7 +33,7 @@ public class LootGenerationEventHandler {
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            boolean taskCompletedOrInterrupted = LootGenerationManager.get().onTick(event);
+            boolean taskCompletedOrInterrupted = CommonLootManager.get().onTick(event);
             if (taskCompletedOrInterrupted) {
                 unregister();
             }

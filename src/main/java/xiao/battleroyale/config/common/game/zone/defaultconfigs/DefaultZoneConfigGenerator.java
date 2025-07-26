@@ -12,5 +12,6 @@ public class DefaultZoneConfigGenerator {
         Pubg8000x8000Competitive.generateDefaultConfigs();
         Pubg5340x5340Casual.generateDefaultConfigs();
         Pubg881x881Casual.generateDefaultConfigs();
+        FunctionShowcase.generateDefaultConfigs();
     }
 }

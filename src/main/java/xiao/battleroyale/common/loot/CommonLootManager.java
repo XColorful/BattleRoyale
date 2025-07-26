@@ -18,17 +18,17 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 
-public class LootGenerationManager {
+public class CommonLootManager {
 
-    private static class LootGeneratonManagerHolder {
-        private static final LootGenerationManager INSTANCE = new LootGenerationManager();
+    private static class CommonLootManagerHolder {
+        private static final CommonLootManager INSTANCE = new CommonLootManager();
     }
 
-    public static LootGenerationManager get() {
-        return LootGeneratonManagerHolder.INSTANCE;
+    public static CommonLootManager get() {
+        return CommonLootManagerHolder.INSTANCE;
     }
 
-    private LootGenerationManager() {}
+    private CommonLootManager() {}
 
     private static int MAX_CHUNKS_PER_TICK = 5;
     public static void setMaxChunksPerTick(int chunks) { MAX_CHUNKS_PER_TICK = Math.min(Math.max(chunks, 5), 500); }
@@ -134,7 +134,7 @@ public class LootGenerationManager {
         int processedChunkThisTick = 0;
         while (!chunksToProcess.isEmpty() && processedChunkThisTick < MAX_CHUNKS_PER_TICK) {
             ChunkPos chunkPos = chunksToProcess.poll();
-            totalLootRefreshedInBatch += LootGenerator.refreshLootInChunk(currentGenerationLevel, chunkPos, currentGenerationGameId);
+            totalLootRefreshedInBatch += LootGenerator.refreshLootInChunk(new LootGenerator.LootContext(currentGenerationLevel, chunkPos, currentGenerationGameId));
             processedChunkThisTick++;
         }
         return false;

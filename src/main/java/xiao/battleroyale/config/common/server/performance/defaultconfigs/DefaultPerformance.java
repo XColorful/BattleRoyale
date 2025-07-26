@@ -27,7 +27,7 @@ public class DefaultPerformance {
         // 默认性能配置:
         // 玩家数量: 10人, 模拟距离: 26, BFS处理Tick: 30秒, 立即下一次BFS: false, 空间系数: 0.75
         GeneratorEntry generatorEntry = GeneratorEntry.calculateRecommendedConfig(
-                true, false,
+                true, false, false,
                 47,
                 10, 26, 20 * 30, false, 0.75);
 
@@ -40,7 +40,7 @@ public class DefaultPerformance {
         // 最大质量配置:
         // 玩家数量: 20人, 模拟距离: 32, BFS处理Tick: 30秒, 立即下一次BFS: true, 空间系数: 1.0
         GeneratorEntry generatorEntry = GeneratorEntry.calculateRecommendedConfig(
-                true, true,
+                true, false, true,
                 141,
                 20, 32, 20 * 30, true, 1.0);
 
@@ -53,7 +53,7 @@ public class DefaultPerformance {
         // 更好性能配置:
         // 玩家数量: 8人, 模拟距离: 16, BFS处理Tick: 30秒, 立即下一次BFS: false, 空间系数: 0.5
         GeneratorEntry generatorEntry = GeneratorEntry.calculateRecommendedConfig(
-                false, false,
+                false, false, false,
                 15,
                 8, 16, 20 * 30, false, 0.5);
 
@@ -110,7 +110,10 @@ public class DefaultPerformance {
         Avg tick: 7.3-9.8ms 9.0-11.2ms（这里峰值反而降了？）
         飞完待机Avg tick: 12.6-13.4ms
          */
-        GeneratorEntry generatorEntry = new GeneratorEntry(true, true,
+
+        // 后续发现该测试时模拟距离为10，渲染距离为64，待重新严谨测试
+
+        GeneratorEntry generatorEntry = new GeneratorEntry(true, false, true,
                 500,
                 500, 128, 0, 50000, 200000, 100, true, 300000, 10000);
 
