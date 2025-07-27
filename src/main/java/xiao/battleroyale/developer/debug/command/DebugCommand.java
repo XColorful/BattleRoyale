@@ -58,7 +58,7 @@ public class DebugCommand {
         dispatcher.register(get(DEBUG_MOD_SHORT, false));
     }
 
-    public static LiteralArgumentBuilder<CommandSourceStack> get(String rootName, boolean useFullName) {
+    private static LiteralArgumentBuilder<CommandSourceStack> get(String rootName, boolean useFullName) {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(rootName);
         root.requires(source -> {
             if (source.hasPermission(DEBUG_PERMISSION_LEVEL)) {
