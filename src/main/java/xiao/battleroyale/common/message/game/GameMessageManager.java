@@ -23,8 +23,8 @@ public class GameMessageManager extends AbstractMessageManager<GameMessage> {
         return GameMessageManagerHolder.INSTANCE;
     }
 
-    public static int ALIVE_CHANNEL = -1;
-    public static String ALIVE_KEY = Integer.toString(ALIVE_CHANNEL);
+    public static final int ALIVE_CHANNEL = -1;
+    public static final String ALIVE_KEY = Integer.toString(ALIVE_CHANNEL);
 
     @Override
     protected void checkExpiredMessage() {
@@ -39,6 +39,21 @@ public class GameMessageManager extends AbstractMessageManager<GameMessage> {
 
         // 待更新
         // super.checkExpiredMessage();
+    }
+
+    // TODO 以后增加更多游戏消息时把正的和负的进行区分或换个设计
+    @Override
+    protected CompoundTag buildCommonChangedMessage() {
+        CompoundTag nbtPacket = new CompoundTag();
+        for (int id : changedId) {
+            GameMessage message = messages.get(id);
+            if (message == null) {
+                nbtPacket.put(Integer.toString(id), new CompoundTag());
+            } else {
+                nbtPacket.put(Integer.toString(id), message.nbt);
+            }
+        }
+        return nbtPacket;
     }
 
     @Override
@@ -57,11 +72,18 @@ public class GameMessageManager extends AbstractMessageManager<GameMessage> {
 
     @Override
     public void notifyNbtChange(int nbtId) {
-        GameMessage message = getOrCreateMessage(nbtId);
-        message.standingPlayerCount = GameManager.get().getStandingGamePlayers().size();
-        message.nbt = message.toNBT();
-        message.updateTime = currentTime;
-        changedId.add(nbtId);
+        switch (nbtId) {
+            case ALIVE_CHANNEL -> {
+                GameMessage message = getOrCreateMessage(nbtId);
+                message.standingPlayerCount = GameManager.get().getStandingGamePlayers().size();
+                message.nbt = message.toNBT();
+                message.updateTime = currentTime;
+                changedId.add(nbtId);
+            }
+            default -> {
+                ;
+            }
+        }
     }
 
     @Override

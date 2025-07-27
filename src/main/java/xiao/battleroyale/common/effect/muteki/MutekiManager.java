@@ -27,7 +27,9 @@ public class MutekiManager implements IEffectManager {
         return MutekiManagerHolder.INSTANCE;
     }
 
-    public static final int MAX_MUTEKI_TIME = 20 * 10;
+    private static int MAX_MUTEKI_TIME = 20 * 10;
+    public static int getMaxMutekiTime() { return MAX_MUTEKI_TIME; }
+    public static void setMaxMutekiTime(int time) { MAX_MUTEKI_TIME = time; }
     private final Map<UUID, EntityMutekiTask> mutekiTasks = new HashMap<>();
 
     public void onTick() {

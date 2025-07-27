@@ -25,8 +25,10 @@ public class BoostManager implements IEffectManager {
     }
 
     private static final int SYNC_FREQUENCY = 20 * 5; // 客户端本地会递减Boost，不用频繁通知
-    private static final int HEAL_COOLDOWN = 160;
-    private static final int EFFECT_COOLDOWN = 20;
+    private static int HEAL_COOLDOWN = 160;
+    public static void setHealCooldown(int cooldown) { HEAL_COOLDOWN = cooldown; }
+    private static int EFFECT_COOLDOWN = 20;
+    public static void setEffectCooldown(int cooldown) { EFFECT_COOLDOWN = cooldown; }
 
     private final Map<UUID, BoostData> boostData = new HashMap<>();
 

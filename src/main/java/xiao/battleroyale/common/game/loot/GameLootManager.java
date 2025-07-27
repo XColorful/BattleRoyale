@@ -50,6 +50,10 @@ public class GameLootManager extends AbstractGameManager {
     public void applyConfig(GeneratorEntry entry) {
         MAX_LOOT_CHUNK_PER_TICK = Math.min(Math.max(entry.maxGameTickLootChunk, 5), 500);
         MAX_LOOT_DISTANCE = Math.min(Math.max(entry.maxGameLootDistance, 3), 128);
+        if (MAX_LOOT_DISTANCE >= cachedCenterOffset.size()) { // cachedCenterOffest第一项为0距离
+            cachedCenterOffset.clear();
+            cachedCenterOffset.addAll(BfsCalculator.calculateCenterOffset(MAX_LOOT_DISTANCE));
+        }
         TOLERANT_CENTER_DISTANCE = Math.min(Math.max(entry.tolerantCenterDistance, 0), 10);
         MAX_CACHED_CENTER = Math.min(Math.max(entry.maxCachedCenter, 0), 50000);
         MAX_QUEUED_CHUNK = Math.min(Math.max(entry.maxQueuedChunk, 100), 200000);

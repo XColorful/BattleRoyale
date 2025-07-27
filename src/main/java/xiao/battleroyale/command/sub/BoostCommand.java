@@ -21,14 +21,14 @@ import static xiao.battleroyale.command.CommandArg.*;
 
 public class BoostCommand {
 
-    private static final int DEFAULT_BOOST = BoostData.BOOST_LIMIT / 5;
+    private static final int DEFAULT_BOOST = BoostData.getBoostLimit() / 5;
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
 
         LiteralArgumentBuilder<CommandSourceStack> boostCommand = Commands.literal(BOOST);
 
         RequiredArgumentBuilder<CommandSourceStack, EntitySelector> playerBase = Commands.argument(PLAYER, EntityArgument.players());
-        RequiredArgumentBuilder<CommandSourceStack, Integer> amountArg = Commands.argument(AMOUNT, IntegerArgumentType.integer(1, BoostData.BOOST_LIMIT));
+        RequiredArgumentBuilder<CommandSourceStack, Integer> amountArg = Commands.argument(AMOUNT, IntegerArgumentType.integer(1, BoostData.getBoostLimit()));
 
         // boost <players>
         playerBase.executes(BoostCommand::executeAddBoostForPlayersDefault);

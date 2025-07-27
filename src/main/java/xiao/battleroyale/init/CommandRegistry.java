@@ -9,6 +9,7 @@ import xiao.battleroyale.command.ServerCommand;
 import xiao.battleroyale.compat.pubgmc.PubgmcCommand;
 import xiao.battleroyale.developer.debug.command.DebugCommand;
 import xiao.battleroyale.developer.debug.command.LocalDebugCommand;
+import xiao.battleroyale.developer.gm.command.GameMasterCommand;
 
 @Mod.EventBusSubscriber
 public class CommandRegistry {
@@ -17,6 +18,7 @@ public class CommandRegistry {
     public static void onServerStarting(RegisterCommandsEvent event) {
         ServerCommand.register(event.getDispatcher());
         DebugCommand.register(event.getDispatcher());
+        GameMasterCommand.register(event.getDispatcher());
         PubgmcCommand.register(event.getDispatcher());
     }
 

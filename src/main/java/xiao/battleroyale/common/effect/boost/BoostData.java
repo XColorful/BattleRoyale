@@ -10,7 +10,9 @@ public class BoostData {
     public static final int COLOR_LV3 = 0xAAd7831e;
     public static final int COLOR_LV2 = 0xAAe1a31c;
     public static final int COLOR_LV1 = 0xAAe8c625;
-    public static final int BOOST_LIMIT = 6000;
+    private static int BOOST_LIMIT = 6000;
+    public static int getBoostLimit() { return BOOST_LIMIT; }
+    public static void setBoostLimit(int boostLimit) { BOOST_LIMIT = boostLimit;}
 
     public final UUID uuid;
     public ServerLevel level;

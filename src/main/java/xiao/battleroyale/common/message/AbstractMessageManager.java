@@ -65,6 +65,17 @@ public abstract class AbstractMessageManager<K extends AbstractCommonMessage> im
     }
 
     protected void sendMessages() {
+        CompoundTag nbtPacket = buildCommonChangedMessage();
+
+        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        if (serverLevel == null) {
+            return;
+        }
+        sendMessageToGamePlayers(GameManager.get().getGamePlayers(), nbtPacket, serverLevel);
+        changedId.clear();
+    }
+
+    protected CompoundTag buildCommonChangedMessage() {
         CompoundTag nbtPacket = new CompoundTag();
         for (int id : changedId) {
             K message = messages.get(id);
@@ -74,13 +85,7 @@ public abstract class AbstractMessageManager<K extends AbstractCommonMessage> im
                 nbtPacket.put(Integer.toString(id), message.nbt);
             }
         }
-
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
-        if (serverLevel == null) {
-            return;
-        }
-        sendMessageToGamePlayers(GameManager.get().getGamePlayers(), nbtPacket, serverLevel);
-        changedId.clear();
+        return nbtPacket;
     }
 
     @Override

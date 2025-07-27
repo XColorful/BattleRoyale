@@ -26,7 +26,7 @@ public class MutekiCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         LiteralArgumentBuilder<CommandSourceStack> mutekiCommand = Commands.literal(MUTEKI);
 
-        RequiredArgumentBuilder<CommandSourceStack, Integer> timeArgument = Commands.argument(TIME, IntegerArgumentType.integer(1, MutekiManager.MAX_MUTEKI_TIME));
+        RequiredArgumentBuilder<CommandSourceStack, Integer> timeArgument = Commands.argument(TIME, IntegerArgumentType.integer(1, MutekiManager.getMaxMutekiTime()));
         RequiredArgumentBuilder<CommandSourceStack, EntitySelector> playerArgument = Commands.argument(PLAYER, EntityArgument.players());
 
         // muteki <players> <time>
