@@ -64,20 +64,20 @@ public class ParticleCommand {
         return particleCommand;
     }
 
-    private static int executeParticleDefault(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int executeParticleDefault(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         Vec3 spawnPos = source.getPosition();
 
         return spawnParticle(source, spawnPos, DEFAULT_PARTICLE_ID, DEFAULT_CHANNEL_COOLDOWN);
     }
-    private static int executeParticleWithId(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int executeParticleWithId(CommandContext<CommandSourceStack> context) {
         int particleId = IntegerArgumentType.getInteger(context, ID);
         CommandSourceStack source = context.getSource();
         Vec3 spawnPos = source.getPosition();
 
         return spawnParticle(source, spawnPos, particleId, DEFAULT_CHANNEL_COOLDOWN);
     }
-    private static int executeParticleWithIdAndCooldown(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int executeParticleWithIdAndCooldown(CommandContext<CommandSourceStack> context) {
         int particleId = IntegerArgumentType.getInteger(context, ID);
         int cooldown = IntegerArgumentType.getInteger(context, COOLDOWN);
         CommandSourceStack source = context.getSource();
@@ -85,14 +85,14 @@ public class ParticleCommand {
 
         return spawnParticle(source, spawnPos, particleId, cooldown);
     }
-    private static int executeParticleAtPosWithId(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int executeParticleAtPosWithId(CommandContext<CommandSourceStack> context) {
         Vec3 spawnPos = Vec3Argument.getVec3(context, XYZ);
         int particleId = IntegerArgumentType.getInteger(context, ID);
         CommandSourceStack source = context.getSource();
 
         return spawnParticle(source, spawnPos, particleId, DEFAULT_CHANNEL_COOLDOWN);
     }
-    private static int executeParticleAtPosWithIdAndCooldown(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int executeParticleAtPosWithIdAndCooldown(CommandContext<CommandSourceStack> context) {
         Vec3 spawnPos = Vec3Argument.getVec3(context, XYZ);
         int particleId = IntegerArgumentType.getInteger(context, ID);
         int cooldown = IntegerArgumentType.getInteger(context, COOLDOWN);
@@ -122,7 +122,7 @@ public class ParticleCommand {
         }
     }
 
-    private static int executeClearParticles(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int executeClearParticles(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         if (source.getEntity() instanceof ServerPlayer player) {
             EffectManager.get().clearParticle(player.getUUID());

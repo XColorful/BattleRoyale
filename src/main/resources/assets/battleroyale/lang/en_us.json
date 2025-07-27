@@ -236,6 +236,7 @@
   "battleroyale.message.enable_pubgmc_registry": "Enabled PUBGMC registry, restart Minecraft to take effect",
   "battleroyale.message.disable_pubgmc_registry": "Disabled PUBGMC registry, restart Minecraft to take effect",
   "battleroyale.message.clear_temp_data": "Cleared all temp data",
+  "battleroyale.message.add_debug_player": "%s has become a debug player",
 
   "battleroyale.label.alive": "Alive",
 
