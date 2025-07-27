@@ -7,10 +7,10 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import xiao.battleroyale.common.game.tempdata.TempDataManager;
+import xiao.battleroyale.data.io.TempDataManager;
 
 import static xiao.battleroyale.command.CommandArg.*;
-import static xiao.battleroyale.api.game.tempdata.TempDataTag.*;
+import static xiao.battleroyale.api.data.io.TempDataTag.*;
 
 public class TempCommand {
 

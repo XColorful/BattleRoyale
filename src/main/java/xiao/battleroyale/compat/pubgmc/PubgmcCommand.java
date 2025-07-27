@@ -22,14 +22,20 @@ import xiao.battleroyale.command.sub.ReloadCommand;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
+import xiao.battleroyale.data.io.TempDataManager;
 
+import static xiao.battleroyale.api.data.io.TempDataTag.PUBGMC_COMMAND;
+import static xiao.battleroyale.api.data.io.TempDataTag.REGISTRY;
 import static xiao.battleroyale.compat.pubgmc.CommandArg.*;
 
 public class PubgmcCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(getGame());
-        dispatcher.register(getLoot());
+        Boolean registerPubgmc = TempDataManager.get().getBool(REGISTRY, PUBGMC_COMMAND);
+        if (registerPubgmc != null && registerPubgmc) {
+            dispatcher.register(getGame());
+            dispatcher.register(getLoot());
+        }
     }
 
     public static LiteralArgumentBuilder<CommandSourceStack> getGame() {

@@ -23,7 +23,7 @@ import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
-import xiao.battleroyale.common.game.tempdata.TempDataManager;
+import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.common.message.game.GameMessageManager;
@@ -42,7 +42,7 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static xiao.battleroyale.api.game.tempdata.TempDataTag.*;
+import static xiao.battleroyale.api.data.io.TempDataTag.*;
 
 public class GameManager extends AbstractGameManager {
 

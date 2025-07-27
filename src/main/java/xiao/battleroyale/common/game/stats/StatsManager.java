@@ -26,6 +26,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static xiao.battleroyale.data.AbstractDataManager.MOD_DATA_PATH;
+
 public class StatsManager extends AbstractGameManager {
 
     private static class StatsManagerHolder {
@@ -43,7 +45,7 @@ public class StatsManager extends AbstractGameManager {
     }
 
     public static final String STATS_SUB_PATH = "stats";
-    public static final String STATS_PATH = Paths.get(AbstractGameManager.MOD_DATA_PATH).resolve(STATS_SUB_PATH).toString();
+    public static final String STATS_PATH = Paths.get(MOD_DATA_PATH).resolve(STATS_SUB_PATH).toString();
     private static final String STATS_TAG = "stats";
     private static final String GAME_TAG = "game";
     private static final String GAMERULE_TAG = "gamerule";
