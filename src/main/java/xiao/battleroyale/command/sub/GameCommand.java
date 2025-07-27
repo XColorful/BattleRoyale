@@ -205,7 +205,7 @@ public class GameCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    public static String toLobbyCommandString() {
+    public static String toLobbyCommand() {
         return buildCommandString(
                 MOD_ID,
                 GAME,

@@ -17,7 +17,7 @@ import static xiao.battleroyale.developer.debug.command.sub.GetCommand.buildDebu
 
 public class GetEffect {
 
-    public static void addEffect(LiteralArgumentBuilder<CommandSourceStack> getCommand, boolean useFullName) {
+    public static void addServer(LiteralArgumentBuilder<CommandSourceStack> getCommand, boolean useFullName) {
 
         // 获取粒子队列
         // get particles [min max / all]

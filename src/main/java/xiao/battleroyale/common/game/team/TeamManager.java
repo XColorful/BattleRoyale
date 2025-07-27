@@ -499,8 +499,8 @@ public class TeamManager extends AbstractGameManager {
 
         String senderName = sender.getName().getString();
         MutableComponent message = Component.translatable("battleroyale.message.invite_received", senderName, teamId);
-        String acceptCommand = TeamCommand.acceptInviteCommandString(senderName);
-        String declineCommand = TeamCommand.declineInviteCommandString(senderName);
+        String acceptCommand = TeamCommand.acceptInviteCommand(senderName);
+        String declineCommand = TeamCommand.declineInviteCommand(senderName);
         MutableComponent acceptButton = Component.translatable("battleroyale.message.accept")
                 .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD)
                 .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, acceptCommand))
@@ -633,8 +633,8 @@ public class TeamManager extends AbstractGameManager {
 
         String senderName = sender.getName().getString();
         MutableComponent message = Component.translatable("battleroyale.message.request_received", senderName);
-        String acceptCommand = TeamCommand.acceptRequestCommandString(senderName);
-        String declineCommand = TeamCommand.declineRequestCommandString(senderName);
+        String acceptCommand = TeamCommand.acceptRequestCommand(senderName);
+        String declineCommand = TeamCommand.declineRequestCommand(senderName);
         MutableComponent acceptButton = Component.translatable("battleroyale.message.accept")
                 .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD)
                 .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, acceptCommand))

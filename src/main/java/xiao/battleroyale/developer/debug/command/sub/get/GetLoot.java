@@ -11,7 +11,7 @@ import static xiao.battleroyale.developer.debug.command.CommandArg.*;
 
 public class GetLoot {
 
-    public static void addLoot(LiteralArgumentBuilder<CommandSourceStack> getCommand, boolean useFullName) {
+    public static void addServer(LiteralArgumentBuilder<CommandSourceStack> getCommand, boolean useFullName) {
 
         // get commonloot
         getCommand.then(Commands.literal(useFullName ? COMMON_LOOT : COMMON_LOOT_SHORT)

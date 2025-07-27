@@ -8,6 +8,7 @@ import xiao.battleroyale.command.ClientCommand;
 import xiao.battleroyale.command.ServerCommand;
 import xiao.battleroyale.compat.pubgmc.PubgmcCommand;
 import xiao.battleroyale.developer.debug.command.DebugCommand;
+import xiao.battleroyale.developer.debug.command.LocalDebugCommand;
 
 @Mod.EventBusSubscriber
 public class CommandRegistry {
@@ -22,5 +23,6 @@ public class CommandRegistry {
     @SubscribeEvent
     public static void onClientStarting(RegisterClientCommandsEvent event) {
         ClientCommand.register(event.getDispatcher());
+        LocalDebugCommand.register(event.getDispatcher());
     }
 }

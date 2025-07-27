@@ -17,7 +17,7 @@ import static xiao.battleroyale.developer.debug.command.sub.GetCommand.buildDebu
 
 public class GetGame {
 
-    public static void addGame(LiteralArgumentBuilder<CommandSourceStack> getCommand,  boolean useFullName) {
+    public static void addServer(LiteralArgumentBuilder<CommandSourceStack> getCommand, boolean useFullName) {
 
         // 获取游戏玩家
         // get gameplayers [min max / all]

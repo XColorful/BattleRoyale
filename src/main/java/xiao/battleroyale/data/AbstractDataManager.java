@@ -1,6 +1,7 @@
 package xiao.battleroyale.data;
 
 import com.google.gson.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.util.JsonUtils;
@@ -13,7 +14,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -105,6 +108,16 @@ public abstract class AbstractDataManager {
     public JsonArray getJsonArray(String fileName, String key) {
         JsonObject jsonObject = filenameToJson.get(fileName);
         return JsonUtils.getJsonArray(jsonObject, key, null);
+    }
+    @NotNull
+    public List<String> getJsonStringList(String fileName, String key) {
+        JsonObject jsonObject = filenameToJson.get(fileName);
+        return JsonUtils.getJsonStringList(jsonObject, key);
+    }
+    @NotNull
+    public Map<UUID, String> getJsonUUIDStringMap(String fileName, String key) {
+        JsonObject jsonObject = filenameToJson.get(fileName);
+        return JsonUtils.getJsonUUIDStringMap(jsonObject, key);
     }
 
     /**

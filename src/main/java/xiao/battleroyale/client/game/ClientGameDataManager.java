@@ -114,5 +114,7 @@ public class ClientGameDataManager {
 
     public void clear() {
         activeZones.clear();
+        teamData.clear();
+        gameData.clear();
     }
 }

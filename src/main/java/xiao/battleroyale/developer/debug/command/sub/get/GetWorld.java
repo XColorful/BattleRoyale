@@ -13,7 +13,7 @@ import static xiao.battleroyale.developer.debug.command.CommandArg.*;
 
 public class GetWorld {
 
-    public static void addWorld(LiteralArgumentBuilder<CommandSourceStack> getCommand, boolean useFullName) {
+    public static void addServer(LiteralArgumentBuilder<CommandSourceStack> getCommand, boolean useFullName) {
 
         // get blockentitiesnbt [xyz]
         getCommand.then(Commands.literal(useFullName ? BLOCK_ENTITIES_NBT : BLOCK_ENTITIES_NBT_SHORT)

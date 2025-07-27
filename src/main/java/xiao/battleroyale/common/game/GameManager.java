@@ -420,7 +420,7 @@ public class GameManager extends AbstractGameManager {
      * 用于向胜利玩家发送消息，传送回大厅
      */
     public void sendLobbyTeleportMessage(@NotNull ServerPlayer player, boolean isWinner) {
-        String toLobbyCommandString = GameCommand.toLobbyCommandString();
+        String toLobbyCommandString = GameCommand.toLobbyCommand();
 
         Component fullMessage = Component.translatable("battleroyale.message.back_to_lobby")
                 .append(Component.literal(" "))

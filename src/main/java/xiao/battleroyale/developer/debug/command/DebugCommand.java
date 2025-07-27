@@ -6,6 +6,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import xiao.battleroyale.api.data.io.DevDataTag;
+import xiao.battleroyale.data.io.DevDataManager;
 import xiao.battleroyale.developer.debug.command.sub.GetCommand;
 import xiao.battleroyale.util.ChatUtils;
 
@@ -22,7 +24,9 @@ public class DebugCommand {
 
     private static final Map<UUID, String> debugPlayers = new HashMap<>();
     private static void reloadDebugPlayer() {
-        ;
+        Map<UUID, String> loadedDebugPlayers = DevDataManager.get().getJsonUUIDStringMap(DevDataTag.DEBUG, DevDataTag.DEBUG_PLAYERS);
+        debugPlayers.clear();
+        debugPlayers.putAll(loadedDebugPlayers);
     }
     public static boolean addDebugPlayer(ServerLevel serverLevel, ServerPlayer serverPlayer) {
         if (serverLevel == null || serverPlayer == null) {
@@ -38,8 +42,18 @@ public class DebugCommand {
             return true;
         }
     }
+    public static boolean removeDebugPlayer(ServerLevel serverLevel, UUID playerUUID) {
+        if (debugPlayers.containsKey(playerUUID)) {
+            String playerName = debugPlayers.get(playerUUID);
+            debugPlayers.remove(playerUUID);
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.remove_debug_player", playerName);
+            return true;
+        }
+        return false;
+    }
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        reloadDebugPlayer();
         dispatcher.register(get(DEBUG_MOD, true));
         dispatcher.register(get(DEBUG_MOD_SHORT, false));
     }
@@ -56,7 +70,7 @@ public class DebugCommand {
             return false;
         });
         LiteralArgumentBuilder<CommandSourceStack> debugCommand = Commands.literal(useFullName ? DEBUG : DEBUG_SHORT);
-        debugCommand.then(GetCommand.get(useFullName));
+        debugCommand.then(GetCommand.getServer(useFullName));
         root.then(debugCommand);
         return root;
     }
