@@ -47,6 +47,7 @@ public class GameCommand {
                         .executes(GameCommand::stopGame))
                 .then(Commands.literal(OFFSET)
                         .requires(source -> source.hasPermission(2))
+                        .executes(GameCommand::getGlobalOffset)
                         .then(Commands.argument(XYZ, Vec3Argument.vec3())
                                 .executes(GameCommand::globalOffset)));
 
@@ -175,6 +176,20 @@ public class GameCommand {
             source.sendFailure(Component.translatable("battleroyale.message.game_in_progress"));
             return 0;
         }
+    }
+    private static int getGlobalOffset(CommandContext<CommandSourceStack> context) {
+        Vec3 offset = GameManager.get().getGlobalCenterOffset();
+        CommandSourceStack source = context.getSource();
+        if (source.isPlayer()) {
+            source.sendSuccess(() -> Component.translatable("battleroyale.message.check_global_offset", offset.x, offset.y, offset.z).withStyle(ChatFormatting.GREEN), false);
+            ServerPlayer player = source.getPlayer();
+            if (player != null) {
+                BattleRoyale.LOGGER.info("{} check current global offset ({}) via command", player.getName().getString(), offset);
+                return Command.SINGLE_SUCCESS;
+            }
+        }
+        BattleRoyale.LOGGER.info("Check current global offset ({}) via command", offset);
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int selectedConfigs(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
