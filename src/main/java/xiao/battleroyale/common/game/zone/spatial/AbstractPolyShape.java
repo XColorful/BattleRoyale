@@ -38,9 +38,9 @@ public abstract class AbstractPolyShape extends AbstractSimpleShape {
 
     @Override
     protected boolean additionalCalculationCheck() {
-        boolean willProduceBadShape = hasNegativeDimension()
+        hasBadShape = hasNegativeDimension()
                 || !Vec3Utils.equalXZAbs(startDimension) || !Vec3Utils.equalXZAbs(endDimension);
-        this.checkBadShape = willProduceBadShape && !allowBadShape;
+        checkBadShape = hasBadShape && !allowBadShape;
 
         startApothem = startDimension.x * Mth.cos((float) (Math.PI / (float)getSegments()));
         endApothem = endDimension.x * Mth.cos((float) (Math.PI / (float)getSegments()));

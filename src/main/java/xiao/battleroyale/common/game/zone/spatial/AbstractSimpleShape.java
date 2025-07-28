@@ -33,8 +33,9 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
     protected final StartEntry startEntry;
     protected final EndEntry endEntry;
-    protected final boolean allowBadShape;
-    protected boolean checkBadShape = false;
+    protected final boolean allowBadShape; // 配置项
+    protected boolean hasBadShape = false; // 外部调用
+    protected boolean checkBadShape = false; // 类内使用
 
     protected Vec3 startCenter = null;
     protected Vec3 startDimension = null;
@@ -329,8 +330,8 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
      * 如区域形状无特殊要求，此函数应始终返回true
      */
     protected boolean additionalCalculationCheck() {
-        boolean willProduceBadShape = hasNegativeDimension();
-        checkBadShape = willProduceBadShape && !allowBadShape; // 会生成坏形状，并且不允许出现坏形状 -> 需要在运行时检查
+        hasBadShape = hasNegativeDimension();
+        checkBadShape = hasBadShape && !allowBadShape; // 会生成坏形状，并且不允许出现坏形状 -> 需要在运行时检查
         return true;
     }
 
@@ -344,7 +345,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
     @Override
     public boolean hasBadShape() {
-        return checkBadShape;
+        return hasBadShape;
     }
 
     @Override
