@@ -855,6 +855,13 @@ public class TeamManager extends AbstractGameManager {
         }
     }
 
+    public void onBotGamePlayerChanged(GamePlayer gamePlayer, UUID newPlayerUUID) {
+        if (getGamePlayerByUUID(newPlayerUUID) != null) {
+            return;
+        }
+        teamData.changeBotGamePlayer(gamePlayer, newPlayerUUID);
+    }
+
     public List<GameTeam> getGameTeamsList() {
         return teamData.getGameTeamsList();
     }

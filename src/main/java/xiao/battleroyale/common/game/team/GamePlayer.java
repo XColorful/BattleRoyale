@@ -3,6 +3,7 @@ package xiao.battleroyale.common.game.team;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.effect.EffectManager;
 
 import java.util.UUID;
@@ -98,6 +99,14 @@ public class GamePlayer {
         if (!isBot()) {
             return;
         }
-        this.playerUUID = livingEntity.getUUID();
+        TeamManager.get().onBotGamePlayerChanged(this, livingEntity.getUUID());
+    }
+
+    /**
+     * 仅限TeamData调用
+     */
+    public void setPlayerUUID(UUID newPlayerUUID) {
+        BattleRoyale.LOGGER.info("GamePlayer {} playerUUID changed to {}", this.playerUUID, newPlayerUUID);
+        this.playerUUID = newPlayerUUID;
     }
 }

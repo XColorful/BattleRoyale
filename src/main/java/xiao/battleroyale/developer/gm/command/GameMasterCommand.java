@@ -43,21 +43,24 @@ public class GameMasterCommand {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(rootName);
         // TODO 删除测试
         root.requires(source -> source.hasPermission(4)); // root.requires(GameMasterCommand::isGameMasterCall);
-        LiteralArgumentBuilder<CommandSourceStack> gmCommand = Commands.literal(useFullName ? GAME_MASTER : GAME_MASTER_SHORT);
 
         // GM
+        LiteralArgumentBuilder<CommandSourceStack> gmCommand = Commands.literal(useFullName ? GAME_MASTER : GAME_MASTER_SHORT);
         DebugManager.addServer(gmCommand, useFullName);
         GameManager.addServer(gmCommand, useFullName);
         LootManager.addServer(gmCommand, useFullName);
         MessageManager.addServer(gmCommand, useFullName);
         EffectManager.addServer(gmCommand, useFullName);
         // Original GM
-        GmManager.addServer(gmCommand, useFullName);
-        GmProtect.addServer(gmCommand, useFullName);
-        VanillaJava.addServer(gmCommand, useFullName);
-        GmCapability.addServer(gmCommand, useFullName);
-        GmClient.addServer(gmCommand, useFullName);
+        LiteralArgumentBuilder<CommandSourceStack> ogCommand = Commands.literal(useFullName ? ORIGINAL : ORIGINAL_SHORT);
+        GmManager.addServer(ogCommand, useFullName);
+        GmProtect.addServer(ogCommand, useFullName);
+        VanillaJava.addServer(ogCommand, useFullName);
+        GmCapability.addServer(ogCommand, useFullName);
+        GmClient.addServer(ogCommand, useFullName);
+
         root.then(gmCommand);
+        root.then(ogCommand);
         return root;
     }
 }

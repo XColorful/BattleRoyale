@@ -17,26 +17,26 @@ import static xiao.battleroyale.developer.gm.command.CommandArg.*;
 
 public class GmProtect {
 
-    public static void addServer(LiteralArgumentBuilder<CommandSourceStack> gmCommand, boolean useFullName) {
+    public static void addServer(LiteralArgumentBuilder<CommandSourceStack> ogCommand, boolean useFullName) {
         // 二次无敌
         // /battleroyale original muteki2
-        gmCommand.then(Commands.literal(useFullName ? MUTEKI_2 : MUTEKI_2_SHORT)
-                .executes(GmProtect::executeMuteki2));
+        ogCommand.then(Commands.literal(useFullName ? MUTEKI_2 : MUTEKI_2_SHORT)
+                .executes(GmProtect::muteki2));
         // 无摔传送
         // /battleroyale original saveteleport [id / entity / xyz]
-        gmCommand.then(Commands.literal(useFullName ? SAVE_TELEPORT : SAVE_TELEPORT_SHORT)
+        ogCommand.then(Commands.literal(useFullName ? SAVE_TELEPORT : SAVE_TELEPORT_SHORT)
                 .then(Commands.argument(SINGLE_ID, IntegerArgumentType.integer())
-                        .executes(GmProtect::executeSaveTeleportById))
+                        .executes(GmProtect::saveTeleportById))
                 .then(Commands.argument(ENTITY, EntityArgument.entity())
-                        .executes(GmProtect::executeSaveTeleportByEntity))
+                        .executes(GmProtect::saveTeleportByEntity))
                 .then(Commands.argument(XYZ, Vec3Argument.vec3())
-                        .executes(context -> executeSaveTeleportByXYZ(context, Vec3Argument.getVec3(context, XYZ)))));
+                        .executes(context -> saveTeleportByXYZ(context, Vec3Argument.getVec3(context, XYZ)))));
     }
 
     /**
      * 二次无敌
      */
-    private static int executeMuteki2(CommandContext<CommandSourceStack> context) {
+    private static int muteki2(CommandContext<CommandSourceStack> context) {
         context.getSource().sendSuccess(() -> Component.literal("Executing muteki2"), false);
         return Command.SINGLE_SUCCESS;
     }
@@ -44,7 +44,7 @@ public class GmProtect {
     /**
      * 无摔传送
      */
-    private static int executeSaveTeleportById(CommandContext<CommandSourceStack> context) {
+    private static int saveTeleportById(CommandContext<CommandSourceStack> context) {
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         context.getSource().sendSuccess(() -> Component.literal("Executing saveteleport for ID: " + id), false);
         return Command.SINGLE_SUCCESS;
@@ -53,7 +53,7 @@ public class GmProtect {
     /**
      * 无摔传送
      */
-    private static int executeSaveTeleportByEntity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int saveTeleportByEntity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Entity entity = EntityArgument.getEntity(context, ENTITY);
         context.getSource().sendSuccess(() -> Component.literal("Executing saveteleport for entity: " + entity.getName().getString()), false);
         return Command.SINGLE_SUCCESS;
@@ -62,7 +62,7 @@ public class GmProtect {
     /**
      * 无摔传送
      */
-    private static int executeSaveTeleportByXYZ(CommandContext<CommandSourceStack> context, Vec3 pos) {
+    private static int saveTeleportByXYZ(CommandContext<CommandSourceStack> context, Vec3 pos) {
         context.getSource().sendSuccess(() -> Component.literal("Executing saveteleport to XYZ: " + pos.toString()), false);
         return Command.SINGLE_SUCCESS;
     }

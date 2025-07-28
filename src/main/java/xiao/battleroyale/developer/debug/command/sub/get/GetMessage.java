@@ -21,117 +21,117 @@ public class GetMessage {
         // 获取所有类别消息状态
         // get messages
         getCommand.then(Commands.literal(useFullName ? MESSAGES : MESSAGES_SHORT)
-                .executes(GetMessage::executeGetMessages));
+                .executes(GetMessage::getMessages));
 
         // 获取区域消息
         // get zonemessages [min max / all]
         getCommand.then(Commands.literal(useFullName ? ZONE_MESSAGES : ZONE_MESSAGES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> executeGetZoneMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getZoneMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
-                                .executes(context -> executeGetZoneMessages(context,
+                                .executes(context -> getZoneMessages(context,
                                         IntegerArgumentType.getInteger(context, ID_MIN),
                                         IntegerArgumentType.getInteger(context, ID_MAX))))));
         // get zonemessage [id / name]
         getCommand.then(Commands.literal(useFullName ? ZONE_MESSAGE : ZONE_MESSAGE_SHORT)
                 .then(Commands.argument(SINGLE_ID, IntegerArgumentType.integer())
-                        .executes(GetMessage::executeGetZoneMessage))
+                        .executes(GetMessage::getZoneMessage))
                 .then(Commands.argument(NAME, StringArgumentType.string())
-                        .executes(GetMessage::executeGetZoneMessageByName)));
+                        .executes(GetMessage::getZoneMessageByName)));
 
         // 获取队伍消息
         // get teammessages [min max / all]
         getCommand.then(Commands.literal(useFullName ? TEAM_MESSAGES : TEAM_MESSAGES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> executeGetTeamMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getTeamMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
-                                .executes(context -> executeGetTeamMessages(context,
+                                .executes(context -> getTeamMessages(context,
                                         IntegerArgumentType.getInteger(context, ID_MIN),
                                         IntegerArgumentType.getInteger(context, ID_MAX))))));
         // get teammessage [id]
         getCommand.then(Commands.literal(useFullName ? TEAM_MESSAGE : TEAM_MESSAGE_SHORT)
                 .then(Commands.argument(SINGLE_ID, IntegerArgumentType.integer())
-                        .executes(GetMessage::executeGetTeamMessage)));
+                        .executes(GetMessage::getTeamMessage)));
 
         // 获取游戏消息
         // get gamemessages [min max / all]
         getCommand.then(Commands.literal(useFullName ? GAME_MESSAGES : GAME_MESSAGES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> executeGetGameMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getGameMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
-                                .executes(context -> executeGetGameMessages(context,
+                                .executes(context -> getGameMessages(context,
                                         IntegerArgumentType.getInteger(context, ID_MIN),
                                         IntegerArgumentType.getInteger(context, ID_MAX))))));
         // get gamemessage [id]
         getCommand.then(Commands.literal(useFullName ? GAME_MESSAGE : GAME_MESSAGE_SHORT)
                 .then(Commands.argument(SINGLE_ID, IntegerArgumentType.integer())
-                        .executes(GetMessage::executeGetGameMessage)));
+                        .executes(GetMessage::getGameMessage)));
     }
 
     public static void addClient(LiteralArgumentBuilder<CommandSourceStack> getCommand, boolean useFullName) {
         // 显示消息
         getCommand.then(Commands.literal(useFullName ? MESSAGES : MESSAGES_SHORT)
-                .executes(GetMessage::executeLocalGetMessages));
+                .executes(GetMessage::localGetMessages));
 
         // 显示区域消息
         // get zonemessages [min max / all]
         getCommand.then(Commands.literal(useFullName ? ZONE_MESSAGES : ZONE_MESSAGES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> executeLocalGetZoneMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> localGetZoneMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
-                                .executes(context -> executeLocalGetZoneMessages(context,
+                                .executes(context -> localGetZoneMessages(context,
                                         IntegerArgumentType.getInteger(context, ID_MIN),
                                         IntegerArgumentType.getInteger(context, ID_MAX))))));
         // get zonemessage [id / name]
         getCommand.then(Commands.literal(useFullName ? ZONE_MESSAGE : ZONE_MESSAGE_SHORT)
                 .then(Commands.argument(SINGLE_ID, IntegerArgumentType.integer())
-                        .executes(GetMessage::executeLocalGetZoneMessage))
+                        .executes(GetMessage::localGetZoneMessage))
                 .then(Commands.argument(NAME, StringArgumentType.string())
-                        .executes(GetMessage::executeLocalGetZoneMessageByName)));
+                        .executes(GetMessage::localGetZoneMessageByName)));
 
         // 显示队伍消息
         // get teammessages [min max / all]
         getCommand.then(Commands.literal(useFullName ? TEAM_MESSAGES : TEAM_MESSAGES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> executeLocalGetTeamMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> localGetTeamMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
-                                .executes(context -> executeLocalGetTeamMessages(context,
+                                .executes(context -> localGetTeamMessages(context,
                                         IntegerArgumentType.getInteger(context, ID_MIN),
                                         IntegerArgumentType.getInteger(context, ID_MAX))))));
         // get teammessage [id]
         getCommand.then(Commands.literal(useFullName ? TEAM_MESSAGE : TEAM_MESSAGE_SHORT)
                 .then(Commands.argument(SINGLE_ID, IntegerArgumentType.integer())
-                        .executes(GetMessage::executeLocalGetTeamMessage)));
+                        .executes(GetMessage::localGetTeamMessage)));
 
         // 显示游戏消息
         // get gamemessages [min max / all]
         getCommand.then(Commands.literal(useFullName ? GAME_MESSAGES : GAME_MESSAGES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> executeLocalGetGameMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> localGetGameMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
-                                .executes(context -> executeLocalGetGameMessages(context,
+                                .executes(context -> localGetGameMessages(context,
                                         IntegerArgumentType.getInteger(context, ID_MIN),
                                         IntegerArgumentType.getInteger(context, ID_MAX))))));
         // get gamemessage [id]
         getCommand.then(Commands.literal(useFullName ? GAME_MESSAGE : GAME_MESSAGE_SHORT)
                 .then(Commands.argument(SINGLE_ID, IntegerArgumentType.integer())
-                        .executes(GetMessage::executeLocalGetGameMessage)));
+                        .executes(GetMessage::localGetGameMessage)));
     }
 
     /**
      * 获取全部消息状态
      */
-    private static int executeGetMessages(CommandContext<CommandSourceStack> context) {
+    private static int getMessages(CommandContext<CommandSourceStack> context) {
         context.getSource().sendSuccess(() -> Component.literal("Executing get messages"), false);
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeLocalGetMessages(CommandContext<CommandSourceStack> context) {
+    private static int localGetMessages(CommandContext<CommandSourceStack> context) {
         if (Minecraft.getInstance().player != null) { // 仅在玩家存在时发送
             Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get messages"));
         }
@@ -141,7 +141,7 @@ public class GetMessage {
     /**
      * 获取区域消息
      */
-    private static int executeGetZoneMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+    private static int getZoneMessages(CommandContext<CommandSourceStack> context, int min, int max) {
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get zonemessages (all)"), false);
         } else {
@@ -149,17 +149,17 @@ public class GetMessage {
         }
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeGetZoneMessage(CommandContext<CommandSourceStack> context) {
+    private static int getZoneMessage(CommandContext<CommandSourceStack> context) {
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         context.getSource().sendSuccess(() -> Component.literal("Executing get zonemessage by ID: " + id), false);
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeGetZoneMessageByName(CommandContext<CommandSourceStack> context) {
+    private static int getZoneMessageByName(CommandContext<CommandSourceStack> context) {
         final String name = StringArgumentType.getString(context, NAME);
         context.getSource().sendSuccess(() -> Component.literal("Executing get zonemessage by Name: " + name), false);
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeLocalGetZoneMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+    private static int localGetZoneMessages(CommandContext<CommandSourceStack> context, int min, int max) {
         if (Minecraft.getInstance().player != null) {
             if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
                 Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get zonemessages (all)"));
@@ -169,14 +169,14 @@ public class GetMessage {
         }
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeLocalGetZoneMessage(CommandContext<CommandSourceStack> context) {
+    private static int localGetZoneMessage(CommandContext<CommandSourceStack> context) {
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         if (Minecraft.getInstance().player != null) {
             Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get zonemessage by ID: " + id));
         }
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeLocalGetZoneMessageByName(CommandContext<CommandSourceStack> context) {
+    private static int localGetZoneMessageByName(CommandContext<CommandSourceStack> context) {
         final String name = StringArgumentType.getString(context, NAME);
         if (Minecraft.getInstance().player != null) {
             Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get zonemessage by Name: " + name));
@@ -187,7 +187,7 @@ public class GetMessage {
     /**
      * 获取队伍消息
      */
-    private static int executeGetTeamMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+    private static int getTeamMessages(CommandContext<CommandSourceStack> context, int min, int max) {
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get teammessages (all)"), false);
         } else {
@@ -195,12 +195,12 @@ public class GetMessage {
         }
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeGetTeamMessage(CommandContext<CommandSourceStack> context) {
+    private static int getTeamMessage(CommandContext<CommandSourceStack> context) {
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         context.getSource().sendSuccess(() -> Component.literal("Executing get teammessage by ID: " + id), false);
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeLocalGetTeamMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+    private static int localGetTeamMessages(CommandContext<CommandSourceStack> context, int min, int max) {
         if (Minecraft.getInstance().player != null) {
             if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
                 Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get teammessages (all)"));
@@ -210,7 +210,7 @@ public class GetMessage {
         }
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeLocalGetTeamMessage(CommandContext<CommandSourceStack> context) {
+    private static int localGetTeamMessage(CommandContext<CommandSourceStack> context) {
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         if (Minecraft.getInstance().player != null) {
             Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get teammessage by ID: " + id));
@@ -221,7 +221,7 @@ public class GetMessage {
     /**
      * 获取游戏消息
      */
-    private static int executeGetGameMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+    private static int getGameMessages(CommandContext<CommandSourceStack> context, int min, int max) {
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get gamemessages (all)"), false);
         } else {
@@ -229,12 +229,12 @@ public class GetMessage {
         }
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeGetGameMessage(CommandContext<CommandSourceStack> context) {
+    private static int getGameMessage(CommandContext<CommandSourceStack> context) {
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         context.getSource().sendSuccess(() -> Component.literal("Executing get gamemessage by ID: " + id), false);
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeLocalGetGameMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+    private static int localGetGameMessages(CommandContext<CommandSourceStack> context, int min, int max) {
         if (Minecraft.getInstance().player != null) {
             if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
                 Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get gamemessages (all)"));
@@ -244,7 +244,7 @@ public class GetMessage {
         }
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeLocalGetGameMessage(CommandContext<CommandSourceStack> context) {
+    private static int localGetGameMessage(CommandContext<CommandSourceStack> context) {
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         if (Minecraft.getInstance().player != null) {
             Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get gamemessage by ID: " + id));

@@ -31,9 +31,9 @@ public class BoostCommand {
         RequiredArgumentBuilder<CommandSourceStack, Integer> amountArg = Commands.argument(AMOUNT, IntegerArgumentType.integer(1, BoostData.getBoostLimit()));
 
         // boost <players>
-        playerBase.executes(BoostCommand::executeAddBoostForPlayersDefault);
+        playerBase.executes(BoostCommand::addBoostForPlayersDefault);
         // boost <players> <amount>
-        amountArg.executes(BoostCommand::executeAddBoostForPlayersWithAmount);
+        amountArg.executes(BoostCommand::addBoostForPlayersWithAmount);
         playerBase.then(amountArg);
 
         boostCommand.then(playerBase);
@@ -43,17 +43,17 @@ public class BoostCommand {
                 .requires(source -> source.hasPermission(3));
 
         // boost clear=
-        clearCommand.executes(BoostCommand::executeClearAllBoost);
+        clearCommand.executes(BoostCommand::clearAllBoost);
         // boost clear <players>
         clearCommand.then(Commands.argument(PLAYER, EntityArgument.players())
-                .executes(BoostCommand::executeClearPlayersBoost));
+                .executes(BoostCommand::clearPlayersBoost));
 
         boostCommand.then(clearCommand);
 
         return boostCommand;
     }
 
-    private static int executeAddBoostForPlayersDefault(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int addBoostForPlayersDefault(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Collection<ServerPlayer> players = EntityArgument.getPlayers(context, PLAYER);
         if (players.isEmpty()) {
             throw EntityArgument.NO_PLAYERS_FOUND.create();
@@ -66,7 +66,7 @@ public class BoostCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int executeAddBoostForPlayersWithAmount(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int addBoostForPlayersWithAmount(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Collection<ServerPlayer> players = EntityArgument.getPlayers(context, PLAYER);
         int amount = IntegerArgumentType.getInteger(context, AMOUNT);
         if (players.isEmpty()) {
@@ -80,13 +80,13 @@ public class BoostCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int executeClearAllBoost(CommandContext<CommandSourceStack> context) {
+    private static int clearAllBoost(CommandContext<CommandSourceStack> context) {
         EffectManager.get().clearBoost();
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.clear_all_boost"), true);
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int executeClearPlayersBoost(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int clearPlayersBoost(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Collection<ServerPlayer> players = EntityArgument.getPlayers(context, PLAYER);
         if (players.isEmpty()) {
             throw EntityArgument.NO_PLAYERS_FOUND.create();

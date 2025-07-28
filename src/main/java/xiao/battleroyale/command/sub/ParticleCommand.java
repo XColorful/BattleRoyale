@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.Coordinates;
@@ -29,10 +28,10 @@ public class ParticleCommand {
         // /battleroyale particle [~ ~ ~] [ID] [COOLDOWN]
         RequiredArgumentBuilder<CommandSourceStack, Integer> cooldownArg_pos = Commands.argument(COOLDOWN, IntegerArgumentType.integer(0));
         cooldownArg_pos.requires(source -> source.hasPermission(3))
-                .executes(ParticleCommand::executeParticleAtPosWithIdAndCooldown);
+                .executes(ParticleCommand::particleAtPosWithIdAndCooldown);
 
         RequiredArgumentBuilder<CommandSourceStack, Integer> particleIdArg_pos = Commands.argument(ID, IntegerArgumentType.integer(0));
-        particleIdArg_pos.executes(ParticleCommand::executeParticleAtPosWithId);
+        particleIdArg_pos.executes(ParticleCommand::particleAtPosWithId);
         particleIdArg_pos.then(cooldownArg_pos);
 
         RequiredArgumentBuilder<CommandSourceStack, Coordinates> coordArg = Commands.argument(XYZ, Vec3Argument.vec3());
@@ -41,15 +40,15 @@ public class ParticleCommand {
         // /battleroyale particle [ID] [COOLDOWN]
         RequiredArgumentBuilder<CommandSourceStack, Integer> cooldownArg = Commands.argument(COOLDOWN, IntegerArgumentType.integer(0));
         cooldownArg.requires(source -> source.hasPermission(3))
-                .executes(ParticleCommand::executeParticleWithIdAndCooldown);
+                .executes(ParticleCommand::particleWithIdAndCooldown);
 
         RequiredArgumentBuilder<CommandSourceStack, Integer> particleIdArg = Commands.argument(ID, IntegerArgumentType.integer(0));
-        particleIdArg.executes(ParticleCommand::executeParticleWithId);
+        particleIdArg.executes(ParticleCommand::particleWithId);
         particleIdArg.then(cooldownArg);
 
         particleCommand.then(coordArg);
         particleCommand.then(particleIdArg);
-        particleCommand.executes(ParticleCommand::executeParticleDefault);
+        particleCommand.executes(ParticleCommand::particleDefault);
 
         // /battleroyale particle clear
         LiteralArgumentBuilder<CommandSourceStack> clearCommand = Commands.literal(CLEAR);
@@ -64,20 +63,20 @@ public class ParticleCommand {
         return particleCommand;
     }
 
-    private static int executeParticleDefault(CommandContext<CommandSourceStack> context) {
+    private static int particleDefault(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         Vec3 spawnPos = source.getPosition();
 
         return spawnParticle(source, spawnPos, DEFAULT_PARTICLE_ID, DEFAULT_CHANNEL_COOLDOWN);
     }
-    private static int executeParticleWithId(CommandContext<CommandSourceStack> context) {
+    private static int particleWithId(CommandContext<CommandSourceStack> context) {
         int particleId = IntegerArgumentType.getInteger(context, ID);
         CommandSourceStack source = context.getSource();
         Vec3 spawnPos = source.getPosition();
 
         return spawnParticle(source, spawnPos, particleId, DEFAULT_CHANNEL_COOLDOWN);
     }
-    private static int executeParticleWithIdAndCooldown(CommandContext<CommandSourceStack> context) {
+    private static int particleWithIdAndCooldown(CommandContext<CommandSourceStack> context) {
         int particleId = IntegerArgumentType.getInteger(context, ID);
         int cooldown = IntegerArgumentType.getInteger(context, COOLDOWN);
         CommandSourceStack source = context.getSource();
@@ -85,14 +84,14 @@ public class ParticleCommand {
 
         return spawnParticle(source, spawnPos, particleId, cooldown);
     }
-    private static int executeParticleAtPosWithId(CommandContext<CommandSourceStack> context) {
+    private static int particleAtPosWithId(CommandContext<CommandSourceStack> context) {
         Vec3 spawnPos = Vec3Argument.getVec3(context, XYZ);
         int particleId = IntegerArgumentType.getInteger(context, ID);
         CommandSourceStack source = context.getSource();
 
         return spawnParticle(source, spawnPos, particleId, DEFAULT_CHANNEL_COOLDOWN);
     }
-    private static int executeParticleAtPosWithIdAndCooldown(CommandContext<CommandSourceStack> context) {
+    private static int particleAtPosWithIdAndCooldown(CommandContext<CommandSourceStack> context) {
         Vec3 spawnPos = Vec3Argument.getVec3(context, XYZ);
         int particleId = IntegerArgumentType.getInteger(context, ID);
         int cooldown = IntegerArgumentType.getInteger(context, COOLDOWN);

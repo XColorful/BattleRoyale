@@ -15,19 +15,19 @@ public class GetLoot {
 
         // get commonloot
         getCommand.then(Commands.literal(useFullName ? COMMON_LOOT : COMMON_LOOT_SHORT)
-                .executes(GetLoot::executeGetCommonLootManager));
+                .executes(GetLoot::getCommonLootManager));
 
         // get gameloot
         getCommand.then(Commands.literal(useFullName ? GAME_LOOT : GAME_LOOT_SHORT)
-                .executes(GetLoot::executeGetGameLootManager));
+                .executes(GetLoot::getGameLootManager));
     }
 
-    private static int executeGetCommonLootManager(CommandContext<CommandSourceStack> context) {
+    private static int getCommonLootManager(CommandContext<CommandSourceStack> context) {
         context.getSource().sendSuccess(() -> Component.literal("Executing get commonloot"), false);
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int executeGetGameLootManager(CommandContext<CommandSourceStack> context) {
+    private static int getGameLootManager(CommandContext<CommandSourceStack> context) {
         context.getSource().sendSuccess(() -> Component.literal("Executing get gameloot"), false);
         return Command.SINGLE_SUCCESS;
     }

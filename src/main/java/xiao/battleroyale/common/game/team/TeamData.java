@@ -313,4 +313,26 @@ public class TeamData extends AbstractGameManagerData {
             addGameTeam(newTeam);
         }
     }
+
+    public void changeBotGamePlayer(GamePlayer gamePlayer, UUID newPlayerUUID) {
+        if (getGamePlayerByUUID(newPlayerUUID) != null) {
+            return;
+        }
+
+        UUID oldPlayerUUID = gamePlayer.getPlayerUUID();
+        if (locked) {
+            standingGamePlayers.remove(oldPlayerUUID);
+        }
+        gamePlayers.remove(oldPlayerUUID);
+        gamePlayer.setPlayerUUID(newPlayerUUID);
+        newPlayerUUID = gamePlayer.getPlayerUUID();
+        GameTeam gameTeam = gamePlayer.getTeam();
+        if (gameTeam.getLeaderUUID().equals(oldPlayerUUID)) {
+            gameTeam.setLeader(newPlayerUUID);
+        }
+        gamePlayers.put(newPlayerUUID, gamePlayer);
+        if (locked) {
+            standingGamePlayers.put(newPlayerUUID, gamePlayer);
+        }
+    }
 }

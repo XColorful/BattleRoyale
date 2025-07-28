@@ -30,6 +30,7 @@ public class CommandArg {
     public static final String BOOL = "bool";
     public static final String TEAM_ID = "teamId";
     public static final String SINGLE_ID = "id";
+    public static final String NAME = "name";
     public static final String XYZ = "xyz";
     public static final String AMOUNT = "amount";
     public static final String ALL = "all";

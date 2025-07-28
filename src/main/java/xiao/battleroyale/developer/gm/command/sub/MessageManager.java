@@ -16,16 +16,16 @@ public class MessageManager {
         // /battleroyale gamemaster delete messages
         gmCommand.then(Commands.literal(useFullName ? DELETE : DELETE_SHORT)
                 .then(Commands.literal(useFullName ? MESSAGES : MESSAGES_SHORT)
-                        .executes(MessageManager::executeDeleteMessages)));
+                        .executes(MessageManager::deleteMessages)));
         // 删除区域消息
         // /battleroyale gamemaster delete zonemessage [min max] / [all]
         gmCommand.then(Commands.literal(useFullName ? DELETE : DELETE_SHORT)
                 .then(Commands.literal(useFullName ? ZONE_MESSAGE : ZONE_MESSAGE_SHORT)
                         .then(Commands.literal(ALL)
-                                .executes(context -> executeDeleteZoneMessage(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                                .executes(context -> deleteZoneMessage(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
                         .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                                 .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
-                                        .executes(context -> executeDeleteZoneMessage(context,
+                                        .executes(context -> deleteZoneMessage(context,
                                                 IntegerArgumentType.getInteger(context, ID_MIN),
                                                 IntegerArgumentType.getInteger(context, ID_MAX)))))));
         // 删除队伍消息
@@ -33,10 +33,10 @@ public class MessageManager {
         gmCommand.then(Commands.literal(useFullName ? DELETE : DELETE_SHORT)
                 .then(Commands.literal(useFullName ? TEAM_MESSAGE : TEAM_MESSAGE_SHORT)
                         .then(Commands.literal(ALL)
-                                .executes(context -> executeDeleteTeamMessage(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                                .executes(context -> deleteTeamMessage(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
                         .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                                 .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
-                                        .executes(context -> executeDeleteTeamMessage(context,
+                                        .executes(context -> deleteTeamMessage(context,
                                                 IntegerArgumentType.getInteger(context, ID_MIN),
                                                 IntegerArgumentType.getInteger(context, ID_MAX)))))));
         // 删除游戏消息
@@ -44,10 +44,10 @@ public class MessageManager {
         gmCommand.then(Commands.literal(useFullName ? DELETE : DELETE_SHORT)
                 .then(Commands.literal(useFullName ? GAME_MESSAGE : GAME_MESSAGE_SHORT)
                         .then(Commands.literal(ALL)
-                                .executes(context -> executeDeleteGameMessage(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                                .executes(context -> deleteGameMessage(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
                         .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                                 .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
-                                        .executes(context -> executeDeleteGameMessage(context,
+                                        .executes(context -> deleteGameMessage(context,
                                                 IntegerArgumentType.getInteger(context, ID_MIN),
                                                 IntegerArgumentType.getInteger(context, ID_MAX)))))));
     }
@@ -55,7 +55,7 @@ public class MessageManager {
     /**
      * 删除所有消息
      */
-    private static int executeDeleteMessages(CommandContext<CommandSourceStack> context) {
+    private static int deleteMessages(CommandContext<CommandSourceStack> context) {
         context.getSource().sendSuccess(() -> Component.literal("Executing delete all messages"), false);
         return Command.SINGLE_SUCCESS;
     }
@@ -63,7 +63,7 @@ public class MessageManager {
     /**
      * 删除区域消息
      */
-    private static int executeDeleteZoneMessage(CommandContext<CommandSourceStack> context, int min, int max) {
+    private static int deleteZoneMessage(CommandContext<CommandSourceStack> context, int min, int max) {
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing delete all zone messages"), false);
         } else {
@@ -75,7 +75,7 @@ public class MessageManager {
     /**
      * 删除队伍消息
      */
-    private static int executeDeleteTeamMessage(CommandContext<CommandSourceStack> context, int min, int max) {
+    private static int deleteTeamMessage(CommandContext<CommandSourceStack> context, int min, int max) {
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing delete all team messages"), false);
         } else {
@@ -87,7 +87,7 @@ public class MessageManager {
     /**
      * 删除游戏消息
      */
-    private static int executeDeleteGameMessage(CommandContext<CommandSourceStack> context, int min, int max) {
+    private static int deleteGameMessage(CommandContext<CommandSourceStack> context, int min, int max) {
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing delete all game messages"), false);
         } else {
