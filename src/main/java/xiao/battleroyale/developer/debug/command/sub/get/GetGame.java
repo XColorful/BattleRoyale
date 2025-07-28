@@ -211,28 +211,6 @@ public class GetGame {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int getCommonLootManager(CommandContext<CommandSourceStack> context) {
-        CommandSourceStack source = context.getSource();
-        if (!DebugManager.hasDebugPermission(source)) {
-            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
-            return 0;
-        }
-
-        context.getSource().sendSuccess(() -> Component.literal("Executing get commonloot"), false);
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static int getGameLootManager(CommandContext<CommandSourceStack> context) {
-        CommandSourceStack source = context.getSource();
-        if (!DebugManager.hasDebugPermission(source)) {
-            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
-            return 0;
-        }
-
-        context.getSource().sendSuccess(() -> Component.literal("Executing get gameloot"), false);
-        return Command.SINGLE_SUCCESS;
-    }
-
     /**
      * 获取备份的玩家游戏模式
      */

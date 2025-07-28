@@ -38,6 +38,23 @@ public class GameLootManager extends AbstractGameManager {
         cachedCenterOffset.addAll(BfsCalculator.calculateCenterOffset(64));
     }
 
+    public int getMaxLootChunkPerTick() { return MAX_LOOT_CHUNK_PER_TICK; }
+    public int getMaxLootDistance() { return MAX_LOOT_DISTANCE; }
+    public int getTolerantCenterDistance() { return TOLERANT_CENTER_DISTANCE; }
+    public int getMaxCachedCenter() { return MAX_CACHED_CENTER; }
+    public int getMaxQueuedChunk() { return MAX_QUEUED_CHUNK; }
+    public int getBfsFrequency() { return BFS_FREQUENCY; }
+    public boolean isInstantNextBfs() { return INSTANT_NEXT_BFS; }
+    public int getMaxCachedLootChunk() { return MAX_CACHED_LOOT_CHUNK; }
+    public int getCleanCachedChunk() { return CLEAN_CACHED_CHUNK; }
+
+    public int getLastBfsTime() { return lastBfsTime; }
+    public int getLastBfsProcessedLoot() { return lastBfsProcessedLoot; }
+    public int queuedChunksRefSize() { return queuedChunksRef.get().size(); }
+    public int processedChunkCacheSize() { return processedChunkCache.size(); }
+    public int cachedPlayerCenterChunksSize() { return cachedPlayerCenterChunks.size(); }
+    public int cachedCenterOffsetSize() { return cachedCenterOffset.size(); }
+
     private int MAX_LOOT_CHUNK_PER_TICK = 5; // 每Tick最多处理的区块数
     private int MAX_LOOT_DISTANCE = 16; // BFS广度
     private int TOLERANT_CENTER_DISTANCE = 3; // 将玩家中心周围一定距离的区块也算作中心区块

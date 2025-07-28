@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import xiao.battleroyale.developer.debug.DebugLoot;
 import xiao.battleroyale.developer.debug.DebugManager;
 
 import static xiao.battleroyale.developer.debug.command.CommandArg.*;
@@ -30,7 +31,7 @@ public class GetLoot {
             return 0;
         }
 
-        context.getSource().sendSuccess(() -> Component.literal("Executing get commonloot"), false);
+        DebugLoot.get().getCommonLoot(source);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -41,7 +42,7 @@ public class GetLoot {
             return 0;
         }
 
-        context.getSource().sendSuccess(() -> Component.literal("Executing get gameloot"), false);
+        DebugLoot.get().getGameLoot(source);
         return Command.SINGLE_SUCCESS;
     }
 }

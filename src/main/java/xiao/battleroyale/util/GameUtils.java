@@ -82,7 +82,7 @@ public class GameUtils {
         return entityGameId;
     }
 
-    public record GameTimeFormat(int tickTime, int remainTick, float remainSeconds, int seconds, int minutes, int hours) {
+    public record GameTimeFormat(int gameTime, int remainTick, float remainSeconds, int seconds, int minutes, int hours) {
         public GameTimeFormat(int gameTime) {
             this(
                     gameTime, // tickTime
@@ -118,10 +118,10 @@ public class GameUtils {
             }
         }
         public String toFullString(boolean includeRemainder) {
-            return "GameTime:" + tickTime + "(" + toFormattedString(includeRemainder) + ")";
+            return "GameTime:" + gameTime + "(" + toFormattedString(includeRemainder) + ")";
         }
         public String toSpaceFullString(boolean includeRemainder) {
-            return " GameTime:" + tickTime + "(" + toFormattedString(includeRemainder) + ")";
+            return " GameTime:" + gameTime + "(" + toFormattedString(includeRemainder) + ")";
         }
     }
 }

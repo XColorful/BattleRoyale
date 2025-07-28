@@ -27,29 +27,26 @@ public class GameText {
             return component;
         }
 
-        component.append(buildHoverableText("playerUUID", gamePlayer.getPlayerUUID().toString()));
-        component.append(Component.literal(" "));
-        component.append(buildHoverableText("playerName", gamePlayer.getPlayerName()));
-        component.append(Component.literal(" "));
-        component.append(buildHoverableText("gameSingleId", String.valueOf(gamePlayer.getGameSingleId())));
-        component.append(Component.literal(" "));
-        component.append(buildHoverableTextWithColor("gameTeamColor", gamePlayer.getGameTeamColor(), gamePlayer.getGameTeamColor()));
-        component.append(Component.literal(" "));
-        component.append(buildHoverableTextWithColor("bot", String.valueOf(gamePlayer.isBot()), gamePlayer.isBot() ? ChatFormatting.YELLOW : ChatFormatting.GRAY));
-        component.append(Component.literal(" "));
-        component.append(buildHoverableTextWithColor("isAlive", String.valueOf(gamePlayer.isAlive()), gamePlayer.isAlive() ? ChatFormatting.GREEN : ChatFormatting.GRAY));
-        component.append(Component.literal(" "));
-        component.append(buildHoverableTextWithColor("isEliminated", String.valueOf(gamePlayer.isEliminated()), gamePlayer.isEliminated() ? ChatFormatting.RED : ChatFormatting.GRAY));
-        component.append(Component.literal(" "));
-        component.append(buildHoverableTextWithColor("isActiveEntity", String.valueOf(gamePlayer.isActiveEntity()), gamePlayer.isActiveEntity() ? ChatFormatting.GRAY : ChatFormatting.DARK_GRAY));
-        component.append(Component.literal(" "));
-        component.append(buildHoverableText("invalidTime", String.valueOf(gamePlayer.getInvalidTime())));
-        component.append(Component.literal(" "));
-        component.append(buildHoverableTextWithColor("isLeader", String.valueOf(gamePlayer.isLeader()), gamePlayer.isLeader() ? ChatFormatting.AQUA : ChatFormatting.GRAY));
-        component.append(Component.literal(" "));
-        component.append(buildHoverableTextWithColor("lastHealth", String.valueOf(gamePlayer.getLastHealth()), gamePlayer.getLastHealth() > 0 ? ChatFormatting.GRAY : ChatFormatting.DARK_GRAY));
-        component.append(Component.literal(" "));
-        component.append(buildHoverableText("lastPos", gamePlayer.getLastPos().toString()));
+        component.append(buildHoverableText("playerUUID", gamePlayer.getPlayerUUID().toString()))
+                .append(Component.literal(" "))
+                .append(buildHoverableText("playerName", gamePlayer.getPlayerName())).append(Component.literal(" "))
+                .append(buildHoverableText("gameSingleId", String.valueOf(gamePlayer.getGameSingleId()))).append(Component.literal(" "))
+                .append(buildHoverableTextWithColor("gameTeamColor", gamePlayer.getGameTeamColor(), gamePlayer.getGameTeamColor()))
+                .append(Component.literal(" "))
+                .append(buildHoverableTextWithColor("bot", String.valueOf(gamePlayer.isBot()), gamePlayer.isBot() ? ChatFormatting.YELLOW : ChatFormatting.GRAY)).append(Component.literal(" "))
+                .append(buildHoverableTextWithColor("isAlive", String.valueOf(gamePlayer.isAlive()), gamePlayer.isAlive() ? ChatFormatting.GREEN : ChatFormatting.GRAY))
+                .append(Component.literal(" "))
+                .append(buildHoverableTextWithColor("isEliminated", String.valueOf(gamePlayer.isEliminated()), gamePlayer.isEliminated() ? ChatFormatting.RED : ChatFormatting.GRAY))
+                .append(Component.literal(" "))
+                .append(buildHoverableTextWithColor("isActiveEntity", String.valueOf(gamePlayer.isActiveEntity()), gamePlayer.isActiveEntity() ? ChatFormatting.GRAY : ChatFormatting.DARK_GRAY))
+                .append(Component.literal(" "))
+                .append(buildHoverableText("invalidTime", String.valueOf(gamePlayer.getInvalidTime())))
+                .append(Component.literal(" "))
+                .append(buildHoverableTextWithColor("isLeader", String.valueOf(gamePlayer.isLeader()), gamePlayer.isLeader() ? ChatFormatting.AQUA : ChatFormatting.GRAY))
+                .append(Component.literal(" "))
+                .append(buildHoverableTextWithColor("lastHealth", String.valueOf(gamePlayer.getLastHealth()), gamePlayer.getLastHealth() > 0 ? ChatFormatting.GRAY : ChatFormatting.DARK_GRAY))
+                .append(Component.literal(" "))
+                .append(buildHoverableText("lastPos", gamePlayer.getLastPos().toString()));
 
         return component;
     }
@@ -242,9 +239,11 @@ public class GameText {
         int zoneDelay = gameZone.getZoneDelay();
         double shapeProgress = gameZone.getShapeProgress(gameTime, zoneDelay);
         MutableComponent iGameZoneHover = Component.empty()
-                .append(Component.literal("preZoneDelayId:").append(Component.literal(String.valueOf(gameZone.previousZoneDelayId()))))
+                .append(Component.literal("preZoneDelayId"))
+                .append(Component.literal(":" + gameZone.previousZoneDelayId()))
                 .append(Component.literal("\n"))
-                .append(Component.literal("zoneDelay:").append(Component.literal(String.valueOf(zoneDelay))))
+                .append(Component.literal("zoneDelay"))
+                .append(Component.literal(":" + zoneDelay))
                 .append(Component.literal("\n"))
                 .append(Component.literal("isCreated").withStyle(gameZone.isCreated() ? ChatFormatting.AQUA : ChatFormatting.DARK_GRAY))
                 .append(Component.literal(":" + gameZone.isCreated()))
@@ -252,7 +251,7 @@ public class GameText {
                 .append(Component.literal("isPresent").withStyle(gameZone.isPresent() ? ChatFormatting.GREEN : ChatFormatting.DARK_GRAY))
                 .append(Component.literal(":" + gameZone.isPresent()))
                 .append(Component.literal("\n"))
-                .append(Component.literal("isFinished").withStyle(gameZone.isFinished() ? ChatFormatting.GRAY : ChatFormatting.DARK_GRAY))
+                .append(Component.literal("isFinished").withStyle(gameZone.isFinished() ? ChatFormatting.RED : ChatFormatting.DARK_GRAY))
                 .append(Component.literal(":" + gameZone.isFinished()));
         component.append(buildHoverableTextWithColor("IGameZone", iGameZoneHover, gameZone.isCreated() ? ChatFormatting.GRAY : ChatFormatting.DARK_GRAY));
         component.append(Component.literal(" "));
@@ -284,8 +283,7 @@ public class GameText {
         double endRotate = gameZone.getEndRotateDegree();
         MutableComponent iSpatialZoneHover = Component.empty()
                 .append(Component.literal("isWithinZone").withStyle(isWithinZone ? ChatFormatting.GREEN : ChatFormatting.RED))
-                .append(Component.literal(":" + testPos))
-                .append(Component.literal(String.valueOf(isWithinZone)))
+                .append(Component.literal(":" + testPos + isWithinZone))
                 .append(Component.literal("\n"))
                 .append(Component.literal("isDetermined").withStyle(gameZone.isDetermined() ? ChatFormatting.AQUA : ChatFormatting.DARK_GRAY))
                 .append(Component.literal(":" + gameZone.isDetermined()))
