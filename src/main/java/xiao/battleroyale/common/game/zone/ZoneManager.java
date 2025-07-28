@@ -31,8 +31,10 @@ public class ZoneManager extends AbstractGameManager {
     }
 
     private final ZoneData zoneData = new ZoneData();
+    private boolean shouldStopGame = false;
+    private ServerLevel stopGameServerLevel = null;
 
-    private boolean stackZoneConfig = true;
+    private boolean stackZoneConfig = true; // TODO 增加配置
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
@@ -88,7 +90,15 @@ public class ZoneManager extends AbstractGameManager {
         return true;
     }
 
+    /**
+     * 延迟处理区域清理，使游戏进行时高效遍历Zone，并防止并发问题
+     */
     public void stopGame(@Nullable ServerLevel serverLevel) {
+        shouldStopGame = true;
+        stopGameServerLevel = serverLevel;
+    }
+
+    private void delayedStopGame(@Nullable ServerLevel serverLevel) {
         List<Integer> zoneIdList = new ArrayList<>();
         for (IGameZone gameZone : this.zoneData.getCurrentTickZones(GameManager.get().getGameTime())) {
             zoneIdList.add(gameZone.getZoneId());
@@ -99,6 +109,9 @@ public class ZoneManager extends AbstractGameManager {
         this.zoneData.clear();
         this.prepared = false;
         this.ready = false;
+
+        shouldStopGame = false;
+        stopGameServerLevel = null;
     }
 
     private boolean hasEnoughZoneToStart() {
@@ -134,7 +147,7 @@ public class ZoneManager extends AbstractGameManager {
         Set<Integer> finishedZoneId = new HashSet<>();
         Map<Integer, IGameZone> gameZones = this.zoneData.getGameZones(); // 缓存引用
         // 获取当前时间应Tick的Zone列表
-        for (IGameZone gameZone : this.zoneData.getCurrentTickZones(gameTime)) {
+        for (IGameZone gameZone : this.zoneData.getCurrentTickZones(gameTime)) { // 高效遍历，当区域把玩家tick死了导致stopGame会有并发问题
             if (gameZone.isFinished()) { // 防御已经结束但未清理的Zone
                 finishedZoneId.add(gameZone.getZoneId());
                 continue;
@@ -158,6 +171,9 @@ public class ZoneManager extends AbstractGameManager {
 
         // 遍历结束后统一移除已完成的zone
         this.zoneData.finishZones(finishedZoneId);
+        if (shouldStopGame) {
+            delayedStopGame(stopGameServerLevel);
+        }
     }
 
     public List<IGameZone> getGameZones() {
