@@ -36,12 +36,12 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     protected final boolean allowBadShape;
     protected boolean checkBadShape = false;
 
-    protected Vec3 startCenter;
-    protected Vec3 startDimension;
-    protected double startRotateDegree;
-    protected Vec3 endCenter;
-    protected Vec3 endDimension;
-    protected double endRotateDegree;
+    protected Vec3 startCenter = null;
+    protected Vec3 startDimension = null;
+    protected double startRotateDegree = 0;
+    protected Vec3 endCenter = null;
+    protected Vec3 endDimension = null;
+    protected double endRotateDegree = 0;
 
     protected Vec3 cachedCenter = Vec3.ZERO;
     protected Vec3 cachedDimension = Vec3.ZERO;

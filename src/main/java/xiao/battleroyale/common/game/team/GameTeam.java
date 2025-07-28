@@ -1,7 +1,7 @@
 package xiao.battleroyale.common.game.team;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,15 +29,25 @@ public class GameTeam {
 
     public int getGameTeamId() { return gameTeamId; }
     public String getGameTeamColor() { return gameTeamColor; }
-    public UUID getLeaderUUID() { return leaderUUID; }
-    @Nullable
+    @NotNull
+    public UUID getLeaderUUID() {
+        if (leaderUUID == null) {
+            BattleRoyale.LOGGER.error("GameTeam has no leaderUUID, gameTeamId:{}, gameTeamColor:{}", gameTeamId, gameTeamColor);
+            for (GamePlayer gamePlayer : teamMembers) BattleRoyale.LOGGER.error("GamePlayer {}, playerUUID: {}", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
+            return UUID.randomUUID();
+        }
+        return leaderUUID;
+    }
+    @NotNull
     public GamePlayer getLeader() {
         for (GamePlayer member : teamMembers) {
             if (member.getPlayerUUID().equals(this.leaderUUID)) {
                 return member;
             }
         }
-        return null;
+        BattleRoyale.LOGGER.error("GameTeam has no leader, gameTeamId:{}, gameTeamColor:{}", gameTeamId, gameTeamColor);
+        for (GamePlayer gamePlayer : teamMembers) BattleRoyale.LOGGER.error("GamePlayer {}, playerUUID: {}", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
+        return new GamePlayer(UUID.randomUUID(), "", 0, false, this);
     }
 
     public List<GamePlayer> getTeamMembers() { return Collections.unmodifiableList(teamMembers); }

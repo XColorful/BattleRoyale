@@ -40,6 +40,11 @@ public interface IGameZone extends ITickableZone, ISpatialZone{
     String getZoneName();
 
     /**
+     * @return 当前圈的固定颜色
+     */
+    String getZoneColor();
+
+    /**
      * 为初始化 ITickableZone 和 ISpatialZone 传递参数
      * @param serverLevel 当前世界
      * @param standingGamePlayers 当前游戏玩家列表

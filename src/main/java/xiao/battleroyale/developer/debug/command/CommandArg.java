@@ -7,8 +7,6 @@ public class CommandArg {
 
     public static final String DEBUG_MOD = MOD_ID;
     public static final String DEBUG_MOD_SHORT = MOD_NAME_SHORT;
-    public static final String DEBUG_MOD_LOCAL = "l" + DEBUG_MOD;
-    public static final String DEBUG_MOD_LOCAL_SHORT = "l" + DEBUG_MOD_SHORT;
 
     // debug
     public static final String DEBUG = "debug";

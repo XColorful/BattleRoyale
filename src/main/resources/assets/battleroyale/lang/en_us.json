@@ -239,6 +239,9 @@
   "battleroyale.message.clear_temp_data": "Cleared all temp data",
   "battleroyale.message.add_debug_player": "%s has become a debug player",
   "battleroyale.message.remove_debug_player": "%s is not a debug player now",
+  "battleroyale.message.no_debug_permission": "No debug permission",
+  "battleroyale.message.local_debug_not_enabled": "Local debug is not enabled",
+  "battleroyale.message.debug": "[Debug]",
 
   "battleroyale.label.alive": "Alive",
 

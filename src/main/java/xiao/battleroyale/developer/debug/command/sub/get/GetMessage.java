@@ -9,10 +9,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import xiao.battleroyale.developer.debug.DebugManager;
+import xiao.battleroyale.developer.debug.LocalDebugManager;
 
 import static xiao.battleroyale.developer.debug.command.CommandArg.*;
 import static xiao.battleroyale.developer.debug.command.sub.GetCommand.buildDebugCommandString;
-import static xiao.battleroyale.developer.debug.command.sub.GetCommand.buildLocalDebugCommandString;
 
 public class GetMessage {
 
@@ -128,10 +129,24 @@ public class GetMessage {
      * 获取全部消息状态
      */
     private static int getMessages(CommandContext<CommandSourceStack> context) {
+        if (!DebugManager.hasDebugPermission(context.getSource())) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         context.getSource().sendSuccess(() -> Component.literal("Executing get messages"), false);
         return Command.SINGLE_SUCCESS;
     }
-    private static int localGetMessages(CommandContext<CommandSourceStack> context) {
+    private static int localGetMessages(CommandContext<CommandSourceStack> context) {CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+        if (!LocalDebugManager.enableLocalDebug(source)) {
+            source.sendFailure(Component.translatable("battleroyale.message.local_debug_not_enabled"));
+            return 0;
+        }
+
         if (Minecraft.getInstance().player != null) { // 仅在玩家存在时发送
             Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get messages"));
         }
@@ -142,6 +157,11 @@ public class GetMessage {
      * 获取区域消息
      */
     private static int getZoneMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+        if (!DebugManager.hasDebugPermission(context.getSource())) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get zonemessages (all)"), false);
         } else {
@@ -150,16 +170,35 @@ public class GetMessage {
         return Command.SINGLE_SUCCESS;
     }
     private static int getZoneMessage(CommandContext<CommandSourceStack> context) {
+        if (!DebugManager.hasDebugPermission(context.getSource())) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         context.getSource().sendSuccess(() -> Component.literal("Executing get zonemessage by ID: " + id), false);
         return Command.SINGLE_SUCCESS;
     }
     private static int getZoneMessageByName(CommandContext<CommandSourceStack> context) {
+        if (!DebugManager.hasDebugPermission(context.getSource())) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         final String name = StringArgumentType.getString(context, NAME);
         context.getSource().sendSuccess(() -> Component.literal("Executing get zonemessage by Name: " + name), false);
         return Command.SINGLE_SUCCESS;
     }
-    private static int localGetZoneMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+    private static int localGetZoneMessages(CommandContext<CommandSourceStack> context, int min, int max) {CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+        if (!LocalDebugManager.enableLocalDebug(source)) {
+            source.sendFailure(Component.translatable("battleroyale.message.local_debug_not_enabled"));
+            return 0;
+        }
+
         if (Minecraft.getInstance().player != null) {
             if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
                 Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get zonemessages (all)"));
@@ -169,14 +208,32 @@ public class GetMessage {
         }
         return Command.SINGLE_SUCCESS;
     }
-    private static int localGetZoneMessage(CommandContext<CommandSourceStack> context) {
+    private static int localGetZoneMessage(CommandContext<CommandSourceStack> context) {CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+        if (!LocalDebugManager.enableLocalDebug(source)) {
+            source.sendFailure(Component.translatable("battleroyale.message.local_debug_not_enabled"));
+            return 0;
+        }
+
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         if (Minecraft.getInstance().player != null) {
             Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get zonemessage by ID: " + id));
         }
         return Command.SINGLE_SUCCESS;
     }
-    private static int localGetZoneMessageByName(CommandContext<CommandSourceStack> context) {
+    private static int localGetZoneMessageByName(CommandContext<CommandSourceStack> context) {CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+        if (!LocalDebugManager.enableLocalDebug(source)) {
+            source.sendFailure(Component.translatable("battleroyale.message.local_debug_not_enabled"));
+            return 0;
+        }
+
         final String name = StringArgumentType.getString(context, NAME);
         if (Minecraft.getInstance().player != null) {
             Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get zonemessage by Name: " + name));
@@ -188,6 +245,11 @@ public class GetMessage {
      * 获取队伍消息
      */
     private static int getTeamMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+        if (!DebugManager.hasDebugPermission(context.getSource())) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get teammessages (all)"), false);
         } else {
@@ -196,11 +258,25 @@ public class GetMessage {
         return Command.SINGLE_SUCCESS;
     }
     private static int getTeamMessage(CommandContext<CommandSourceStack> context) {
+        if (!DebugManager.hasDebugPermission(context.getSource())) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         context.getSource().sendSuccess(() -> Component.literal("Executing get teammessage by ID: " + id), false);
         return Command.SINGLE_SUCCESS;
     }
-    private static int localGetTeamMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+    private static int localGetTeamMessages(CommandContext<CommandSourceStack> context, int min, int max) {CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+        if (!LocalDebugManager.enableLocalDebug(source)) {
+            source.sendFailure(Component.translatable("battleroyale.message.local_debug_not_enabled"));
+            return 0;
+        }
+
         if (Minecraft.getInstance().player != null) {
             if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
                 Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get teammessages (all)"));
@@ -210,7 +286,16 @@ public class GetMessage {
         }
         return Command.SINGLE_SUCCESS;
     }
-    private static int localGetTeamMessage(CommandContext<CommandSourceStack> context) {
+    private static int localGetTeamMessage(CommandContext<CommandSourceStack> context) {CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+        if (!LocalDebugManager.enableLocalDebug(source)) {
+            source.sendFailure(Component.translatable("battleroyale.message.local_debug_not_enabled"));
+            return 0;
+        }
+
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         if (Minecraft.getInstance().player != null) {
             Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get teammessage by ID: " + id));
@@ -222,6 +307,11 @@ public class GetMessage {
      * 获取游戏消息
      */
     private static int getGameMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+        if (!DebugManager.hasDebugPermission(context.getSource())) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get gamemessages (all)"), false);
         } else {
@@ -234,7 +324,16 @@ public class GetMessage {
         context.getSource().sendSuccess(() -> Component.literal("Executing get gamemessage by ID: " + id), false);
         return Command.SINGLE_SUCCESS;
     }
-    private static int localGetGameMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+    private static int localGetGameMessages(CommandContext<CommandSourceStack> context, int min, int max) {CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+        if (!LocalDebugManager.enableLocalDebug(source)) {
+            source.sendFailure(Component.translatable("battleroyale.message.local_debug_not_enabled"));
+            return 0;
+        }
+
         if (Minecraft.getInstance().player != null) {
             if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
                 Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get gamemessages (all)"));
@@ -244,7 +343,16 @@ public class GetMessage {
         }
         return Command.SINGLE_SUCCESS;
     }
-    private static int localGetGameMessage(CommandContext<CommandSourceStack> context) {
+    private static int localGetGameMessage(CommandContext<CommandSourceStack> context) {CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+        if (!LocalDebugManager.enableLocalDebug(source)) {
+            source.sendFailure(Component.translatable("battleroyale.message.local_debug_not_enabled"));
+            return 0;
+        }
+
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         if (Minecraft.getInstance().player != null) {
             Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Executing local get gamemessage by ID: " + id));
@@ -275,21 +383,21 @@ public class GetMessage {
     }
 
     public static String getLocalZoneMessageCommand(int zoneId) {
-        return buildLocalDebugCommandString(
+        return buildDebugCommandString(
                 GET,
                 ZONE_MESSAGE,
                 Integer.toString(zoneId)
         );
     }
     public static String getLocalTeamMessageCommand(int teamId) {
-        return buildLocalDebugCommandString(
+        return buildDebugCommandString(
                 GET,
                 TEAM_MESSAGE,
                 Integer.toString(teamId)
         );
     }
     public static String getLocalGameMessageCommand(int channel) {
-        return buildLocalDebugCommandString(
+        return buildDebugCommandString(
                 GET,
                 GAME_MESSAGE,
                 Integer.toString(channel)

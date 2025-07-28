@@ -11,6 +11,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
+import xiao.battleroyale.developer.debug.DebugManager;
 
 import static xiao.battleroyale.developer.debug.command.CommandArg.*;
 import static xiao.battleroyale.developer.debug.command.sub.GetCommand.buildDebugCommandString;
@@ -112,6 +113,12 @@ public class GetEffect {
      * 获取粒子队列
      */
     private static int getParticles(CommandContext<CommandSourceStack> context, int min, int max) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get particles (all)"), false);
         } else {
@@ -120,6 +127,12 @@ public class GetEffect {
         return Command.SINGLE_SUCCESS;
     }
     private static int getParticleByChannel(CommandContext<CommandSourceStack> context, String channel, int min, int max) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get particle (all) with channel: " + channel), false);
         } else {
@@ -127,7 +140,13 @@ public class GetEffect {
         }
         return Command.SINGLE_SUCCESS;
     }
-    private static int getParticleByEntity(CommandContext<CommandSourceStack> context, Entity entity, String channel, int min, int max) throws CommandSyntaxException {
+    private static int getParticleByEntity(CommandContext<CommandSourceStack> context, Entity entity, String channel, int min, int max) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get particle (all) for entity: " + entity.getName().getString() + " with channel: " + channel), false);
         } else {
@@ -140,6 +159,12 @@ public class GetEffect {
      * 获取烟花队列
      */
     private static int getFireworks(CommandContext<CommandSourceStack> context, int min, int max) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get fireworks (all)"), false);
         } else {
@@ -148,11 +173,23 @@ public class GetEffect {
         return Command.SINGLE_SUCCESS;
     }
     private static int getFirework(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         context.getSource().sendSuccess(() -> Component.literal("Executing get firework by ID: " + id), false);
         return Command.SINGLE_SUCCESS;
     }
     private static int getFireworkByEntity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         Entity entity = EntityArgument.getEntity(context, ENTITY);
         context.getSource().sendSuccess(() -> Component.literal("Executing get firework by Entity: " + entity.getName().getString() + " (UUID: " + entity.getUUID().toString() + ")"), false);
         return Command.SINGLE_SUCCESS;
@@ -162,6 +199,12 @@ public class GetEffect {
      * 获取无敌队列
      */
     private static int getMutekis(CommandContext<CommandSourceStack> context, int min, int max) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get mutekis (all)"), false);
         } else {
@@ -170,11 +213,23 @@ public class GetEffect {
         return Command.SINGLE_SUCCESS;
     }
     private static int getMutekiById(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         context.getSource().sendSuccess(() -> Component.literal("Executing get muteki by ID: " + id), false);
         return Command.SINGLE_SUCCESS;
     }
     private static int getMutekiByEntity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         Entity entity = EntityArgument.getEntity(context, ENTITY);
         context.getSource().sendSuccess(() -> Component.literal("Executing get muteki by Entity: " + entity.getName().getString() + " (UUID: " + entity.getUUID().toString() + ")"), false);
         return Command.SINGLE_SUCCESS;
@@ -184,6 +239,12 @@ public class GetEffect {
      * 获取能量队列
      */
     private static int getBoosts(CommandContext<CommandSourceStack> context, int min, int max) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get boosts (all)"), false);
         } else {
@@ -192,11 +253,23 @@ public class GetEffect {
         return Command.SINGLE_SUCCESS;
     }
     private static int getBoostById(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         context.getSource().sendSuccess(() -> Component.literal("Executing get boost by ID: " + id), false);
         return Command.SINGLE_SUCCESS;
     }
     private static int getBoostByEntity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         Entity entity = EntityArgument.getEntity(context, ENTITY);
         context.getSource().sendSuccess(() -> Component.literal("Executing get boost by Entity: " + entity.getName().getString() + " (UUID: " + entity.getUUID().toString() + ")"), false);
         return Command.SINGLE_SUCCESS;

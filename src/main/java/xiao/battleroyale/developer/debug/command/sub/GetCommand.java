@@ -38,13 +38,4 @@ public class GetCommand {
         System.arraycopy(parts, 0, newParts, 2, parts.length);
         return buildCommandString(newParts);
     }
-
-    public static String buildLocalDebugCommandString(String... parts) {
-        int length = 2 + parts.length;
-        String[] newParts = new String[length];
-        newParts[0] = DEBUG_MOD_LOCAL;
-        newParts[1] = DEBUG;
-        System.arraycopy(parts, 0, newParts, 2, parts.length);
-        return buildCommandString(newParts);
-    }
 }

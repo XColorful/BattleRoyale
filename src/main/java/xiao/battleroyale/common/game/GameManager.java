@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
+import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
@@ -611,6 +612,11 @@ public class GameManager extends AbstractGameManager {
         recordZoneDouble(zoneId, zoneWriter.getDoubleWriter());
         recordZoneString(zoneId, zoneWriter.getStringWriter());
     }
+    // ZoneManager
+    public List<IGameZone> getGameZones() { return ZoneManager.get().getGameZones(); }
+    public List<IGameZone> getCurrentGameZones() { return ZoneManager.get().getCurrentTickGameZones(this.gameTime); }
+    public List<IGameZone> getCurrentGameZones(int gameTime) { return ZoneManager.get().getCurrentTickGameZones(gameTime); }
+    public IGameZone getGameZone(int zoneId) { return ZoneManager.get().getZoneById(zoneId); }
 
     public Supplier<Float> getRandom() {
         return () -> this.serverLevel.getRandom().nextFloat();

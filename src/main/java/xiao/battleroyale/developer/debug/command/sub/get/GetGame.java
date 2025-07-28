@@ -11,7 +11,8 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.developer.debug.DebugGame;
+import xiao.battleroyale.developer.debug.DebugManager;
 
 import static xiao.battleroyale.developer.debug.command.CommandArg.*;
 import static xiao.battleroyale.developer.debug.command.sub.GetCommand.buildDebugCommandString;
@@ -101,11 +102,12 @@ public class GetGame {
      */
     private static int getGamePlayers(CommandContext<CommandSourceStack> context, int min, int max) {
         CommandSourceStack source = context.getSource();
-        if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get gameplayers (all)"), false);
-        } else {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get gameplayers with min: " + min + ", max: " + max), false);
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
         }
+
+        DebugGame.get().getGamePlayers(source, min, max);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -113,21 +115,33 @@ public class GetGame {
      * 获取GamePlayer详细信息
      */
     public static int getGamePlayer(CommandContext<CommandSourceStack> context) {
-        final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get gameplayer by ID: " + id), false);
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
+        DebugGame.get().getGamePlayer(source, IntegerArgumentType.getInteger(context, SINGLE_ID));
         return Command.SINGLE_SUCCESS;
     }
-    /**
-     * 获取GamePlayer详细信息
-     */
     public static int getGamePlayerByName(CommandContext<CommandSourceStack> context) {
-        final String name = StringArgumentType.getString(context, NAME);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get gameplayer by Name: " + name), false);
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
+        DebugGame.get().getGamePlayer(source, StringArgumentType.getString(context, NAME));
         return Command.SINGLE_SUCCESS;
     }
     public static int getGamePlayerByEntity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Entity entity = EntityArgument.getEntity(context, ENTITY);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get gameplayer by Entity: " + entity.getName().getString() + " (UUID: " + entity.getUUID().toString() + ")"), false);
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
+        DebugGame.get().getGamePlayer(source, EntityArgument.getEntity(context, ENTITY));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -135,11 +149,13 @@ public class GetGame {
      * 获取GameTeams列表
      */
     private static int getGameTeams(CommandContext<CommandSourceStack> context, int min, int max) {
-        if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get gameteams (all)"), false);
-        } else {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get gameteams with min: " + min + ", max: " + max), false);
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
         }
+
+        DebugGame.get().getGameTeams(source, min, max);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -147,8 +163,13 @@ public class GetGame {
      * 获取GameTeam详细信息
      */
     private static int getGameTeam(CommandContext<CommandSourceStack> context) {
-        final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get gameteam by ID: " + id), false);
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
+        DebugGame.get().getGameTeam(source, IntegerArgumentType.getInteger(context, SINGLE_ID));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -156,11 +177,13 @@ public class GetGame {
      * 获取GameZones列表
      */
     private static int getGameZones(CommandContext<CommandSourceStack> context, int min, int max) {
-        if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get gamezones (all)"), false);
-        } else {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get gamezones with min: " + min + ", max: " + max), false);
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
         }
+
+        DebugGame.get().getGameZones(source, min, max);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -168,22 +191,44 @@ public class GetGame {
      * 获取GameZone详细信息
      */
     private static int getGameZone(CommandContext<CommandSourceStack> context) {
-        final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get gamezone by ID: " + id), false);
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
+        DebugGame.get().getGameZone(source, IntegerArgumentType.getInteger(context, SINGLE_ID));
         return Command.SINGLE_SUCCESS;
     }
     private static int getGameZoneByName(CommandContext<CommandSourceStack> context) {
-        final String name = StringArgumentType.getString(context, NAME);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get gamezone by Name: " + name), false);
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
+        DebugGame.get().getGameZone(source, StringArgumentType.getString(context, NAME));
         return Command.SINGLE_SUCCESS;
     }
 
     private static int getCommonLootManager(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         context.getSource().sendSuccess(() -> Component.literal("Executing get commonloot"), false);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int getGameLootManager(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         context.getSource().sendSuccess(() -> Component.literal("Executing get gameloot"), false);
         return Command.SINGLE_SUCCESS;
     }
@@ -192,6 +237,12 @@ public class GetGame {
      * 获取备份的玩家游戏模式
      */
     private static int getBackupPlayerModes(CommandContext<CommandSourceStack> context, int min, int max) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get backupplayermodes (all)"), false);
         } else {
@@ -200,16 +251,34 @@ public class GetGame {
         return Command.SINGLE_SUCCESS;
     }
     private static int getBackupPlayerMode(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
         context.getSource().sendSuccess(() -> Component.literal("Executing get backupplayermode by ID: " + id), false);
         return Command.SINGLE_SUCCESS;
     }
     private static int getBackupPlayerModeByName(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         final String name = StringArgumentType.getString(context, NAME);
         context.getSource().sendSuccess(() -> Component.literal("Executing get backupplayermode by Name: " + name), false);
         return Command.SINGLE_SUCCESS;
     }
     private static int getBackupPlayerModeByEntity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         Entity entity = EntityArgument.getEntity(context, ENTITY);
         context.getSource().sendSuccess(() -> Component.literal("Executing get backupplayermode by Entity: " + entity.getName().getString() + " (UUID: " + entity.getUUID().toString() + ")"), false);
         return Command.SINGLE_SUCCESS;
@@ -219,6 +288,12 @@ public class GetGame {
      * 获取备份的原版gamerule
      */
     private static int getBackupGamerule(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         context.getSource().sendSuccess(() -> Component.literal("Executing get backupgamerule"), false);
         return Command.SINGLE_SUCCESS;
     }

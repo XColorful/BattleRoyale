@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import xiao.battleroyale.developer.debug.DebugManager;
 
 import static xiao.battleroyale.developer.debug.command.CommandArg.*;
 
@@ -23,11 +24,23 @@ public class GetLoot {
     }
 
     private static int getCommonLootManager(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         context.getSource().sendSuccess(() -> Component.literal("Executing get commonloot"), false);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int getGameLootManager(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         context.getSource().sendSuccess(() -> Component.literal("Executing get gameloot"), false);
         return Command.SINGLE_SUCCESS;
     }

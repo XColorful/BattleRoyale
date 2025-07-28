@@ -190,6 +190,9 @@ public class GameZone implements IGameZone {
     public String getZoneName() { return zoneName; }
 
     @Override
+    public String getZoneColor() { return zoneColor; }
+
+    @Override
     public CompoundTag toNBT(double shapeProgress) {
         return NBTUtils.serializeZoneToNBT(
                 this.zoneId,

@@ -8,6 +8,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.developer.debug.DebugManager;
 
 import static xiao.battleroyale.developer.debug.command.CommandArg.*;
 
@@ -46,10 +47,22 @@ public class GetWorld {
      * 获取方块实体的NBT
      */
     private static int getBlockEntitiesNBT(CommandContext<CommandSourceStack> context, Vec3 pos) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         context.getSource().sendSuccess(() -> Component.literal("Executing get blockentitiesnbt at: " + pos.toString()), false);
         return Command.SINGLE_SUCCESS;
     }
     private static int getBlockEntityNBT(CommandContext<CommandSourceStack> context, Vec3 pos) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         context.getSource().sendSuccess(() -> Component.literal("Executing get blockentitynbt at: " + pos.toString()), false);
         return Command.SINGLE_SUCCESS;
     }
@@ -58,11 +71,23 @@ public class GetWorld {
      * 获取群系/建筑信息（用于写物资刷新配置）
      */
     private static int getBiome(CommandContext<CommandSourceStack> context, Vec3 pos) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         context.getSource().sendSuccess(() -> Component.literal("Executing get biomes at: " + pos.toString()), false);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int getStructures(CommandContext<CommandSourceStack> context, Vec3 pos) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
         context.getSource().sendSuccess(() -> Component.literal("Executing get structures at: " + pos.toString()), false);
         return Command.SINGLE_SUCCESS;
     }

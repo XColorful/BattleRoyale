@@ -159,4 +159,12 @@ public class ZoneManager extends AbstractGameManager {
         // 遍历结束后统一移除已完成的zone
         this.zoneData.finishZones(finishedZoneId);
     }
+
+    public List<IGameZone> getGameZones() {
+        return this.zoneData.getGameZonesList();
+    }
+
+    public List<IGameZone> getCurrentTickGameZones(int gameTime) {
+        return this.zoneData.getCurrentTickZones(gameTime);
+    }
 }
