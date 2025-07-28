@@ -8,8 +8,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.data.io.DevDataTag;
+import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.data.io.DevDataManager;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.GameUtils.GameTimeFormat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,11 +83,27 @@ public class DebugManager {
             ChatUtils.sendMessageToAllPlayers(source.getLevel(), Component.literal("[Debug]" + player.getName().getString() + ":" + operation).withStyle(ChatFormatting.DARK_GRAY));
         }
     }
+    public static void broadcastDebugPlayerGameAction(CommandSourceStack source, String operation, GameTimeFormat gameTimeFormat) {
+        if (source.source instanceof ServerPlayer player) {
+            ChatUtils.sendMessageToAllPlayers(source.getLevel(),
+                    Component.literal("[Debug]" + player.getName().getString() + ":" + operation + gameTimeFormat.toSpaceFullString(true)).withStyle(ChatFormatting.DARK_GRAY));
+        }
+    }
     public static void sendDebugMessage(CommandSourceStack source, String operation, MutableComponent debugMessage) {
         broadcastDebugPlayerAction(source, operation);
         MutableComponent fullMessage = Component.translatable("battleroyale.message.debug")
                 .append(Component.literal(operation+":"))
                 .append(debugMessage);
+        source.sendSuccess(() -> fullMessage, false);
+        BattleRoyale.LOGGER.debug("[Debug]{}:{}", operation, fullMessage);
+    }
+    public static void sendDebugMessageWithGameTime(CommandSourceStack source, String operation, MutableComponent debugMessage) {
+        GameTimeFormat gameTimeFormat = new GameTimeFormat(GameManager.get().getGameTime());
+        broadcastDebugPlayerGameAction(source, operation, gameTimeFormat);
+        MutableComponent fullMessage = Component.translatable("battleroyale.message.debug")
+                .append(Component.literal(operation+":"))
+                .append(debugMessage)
+                .append(gameTimeFormat.toSpaceFullString(true));
         source.sendSuccess(() -> fullMessage, false);
         BattleRoyale.LOGGER.debug("[Debug]{}:{}", operation, fullMessage);
     }

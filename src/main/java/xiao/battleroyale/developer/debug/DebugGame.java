@@ -37,7 +37,7 @@ public class DebugGame {
                 .sorted(Comparator.comparingInt(GamePlayer::getGameSingleId))
                 .toList();
 
-        DebugManager.sendDebugMessage(source, GET_GAME_PLAYERS, GameText.buildGamePlayersSimple(gamePlayers));
+        DebugManager.sendDebugMessageWithGameTime(source, GET_GAME_PLAYERS, GameText.buildGamePlayersSimple(gamePlayers));
     }
 
     /**
@@ -61,7 +61,7 @@ public class DebugGame {
     }
     public static final String GET_GAME_PLAYER = "getGamePlayer";
     public void getGamePlayer(CommandSourceStack source, GamePlayer gamePlayer) {
-        DebugManager.sendDebugMessage(source, GET_GAME_PLAYER, GameText.buildGamePlayerDetail(gamePlayer));
+        DebugManager.sendDebugMessageWithGameTime(source, GET_GAME_PLAYER, GameText.buildGamePlayerDetail(gamePlayer));
     }
 
     /**
@@ -74,7 +74,7 @@ public class DebugGame {
                 .sorted(Comparator.comparingInt(GameTeam::getGameTeamId))
                 .toList();
 
-        DebugManager.sendDebugMessage(source, GET_GAME_TEAMS, GameText.buildGameTeamsSimple(gameTeams));
+        DebugManager.sendDebugMessageWithGameTime(source, GET_GAME_TEAMS, GameText.buildGameTeamsSimple(gameTeams));
     }
 
     /**
@@ -82,7 +82,7 @@ public class DebugGame {
      */
     public static final String GET_GAME_TEAM = "getGameTeam";
     public void getGameTeam(CommandSourceStack source, int teamId) {
-        DebugManager.sendDebugMessage(source, GET_GAME_TEAM, GameText.buildGameTeamDetail(GameManager.get().getGameTeamById(teamId)));
+        DebugManager.sendDebugMessageWithGameTime(source, GET_GAME_TEAM, GameText.buildGameTeamDetail(GameManager.get().getGameTeamById(teamId)));
     }
 
     /**
@@ -95,7 +95,7 @@ public class DebugGame {
                 .sorted(Comparator.comparingInt(IGameZone::getZoneId))
                 .toList();
 
-        DebugManager.sendDebugMessage(source, GET_GAME_ZONES, GameText.buildGameZonesSimple(gameZones));
+        DebugManager.sendDebugMessageWithGameTime(source, GET_GAME_ZONES, GameText.buildGameZonesSimple(gameZones));
     }
 
     /**
@@ -116,6 +116,6 @@ public class DebugGame {
         getGameZone(source, possibleGameZone);
     }
     public void getGameZone(CommandSourceStack source, IGameZone gameZone) {
-        DebugManager.sendDebugMessage(source, GET_GAME_ZONE, GameText.buildGameZoneDetail(gameZone, source.getPosition()));
+        DebugManager.sendDebugMessageWithGameTime(source, GET_GAME_ZONE, GameText.buildGameZoneDetail(gameZone, source.getPosition()));
     }
 }
