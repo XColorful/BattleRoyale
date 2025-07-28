@@ -7,6 +7,7 @@ import xiao.battleroyale.common.message.game.GameMessageManager;
 import xiao.battleroyale.common.message.team.TeamMessageManager;
 import xiao.battleroyale.common.message.zone.ZoneMessageManager;
 import xiao.battleroyale.event.MessageEventHandler;
+import xiao.battleroyale.util.ClassUtils;
 
 import java.util.*;
 
@@ -23,15 +24,14 @@ public class MessageManager {
     }
 
     private int currentTime = 0;
-    private final Set<IMessageManager> messageManagers = new HashSet<>(); private final List<IMessageManager> messageManagerList = new ArrayList<>();
+    private final ClassUtils.ArraySet<IMessageManager> messageManagers = new ClassUtils.ArraySet<>();
 
     public void tick() {
         currentTime++;
-        messageManagerList.removeIf(manager -> {
+        messageManagers.removeIf(manager -> {
             manager.tickMessage();
             if (manager.messageFinished()) {
                 manager.unregister();
-                messageManagers.remove(manager);
                 return true;
             }
             return false;
@@ -42,7 +42,7 @@ public class MessageManager {
     }
 
     private boolean shouldEnd() {
-        return messageManagers.isEmpty() && messageManagerList.isEmpty();
+        return messageManagers.isEmpty();
     }
 
     public void registerZoneMessage() {
@@ -51,7 +51,7 @@ public class MessageManager {
             return;
         }
         manager.register(currentTime);
-        messageManagers.add(manager); messageManagerList.add(manager);
+        messageManagers.add(manager);
         MessageEventHandler.register();
     }
     public void registerTeamMessage() {
@@ -60,7 +60,7 @@ public class MessageManager {
             return;
         }
         manager.register(currentTime);
-        messageManagers.add(manager); messageManagerList.add(manager);
+        messageManagers.add(manager);
         MessageEventHandler.register();
     }
     public void registerGameMessage() {
@@ -69,7 +69,7 @@ public class MessageManager {
             return;
         }
         manager.register(currentTime);
-        messageManagers.add(manager); messageManagerList.add(manager);
+        messageManagers.add(manager);
         MessageEventHandler.register();
     }
 

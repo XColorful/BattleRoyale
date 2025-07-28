@@ -10,6 +10,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.server.performance.type.GeneratorEntry;
+import xiao.battleroyale.util.ClassUtils;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -84,47 +85,13 @@ public class GameLootManager extends AbstractGameManager {
     private int lastBfsProcessedLoot = 0;
     // 原子地引用当前待处理队列
     private final AtomicReference<Queue<ChunkPos>> queuedChunksRef = new AtomicReference<>(new ArrayDeque<>());
-    private final ProcessedChunkCache processedChunkCache = new ProcessedChunkCache();
-    private final ProcessedChunkCache cachedPlayerCenterChunks = new ProcessedChunkCache();
+    private final ClassUtils.QueueSet<ChunkPos> processedChunkCache = new ClassUtils.QueueSet<>();
+    private final ClassUtils.QueueSet<ChunkPos> cachedPlayerCenterChunks = new ClassUtils.QueueSet<>();
     private static final List<List<Offset2D>> cachedCenterOffset = new ArrayList<>();
     public record Offset2D(int x, int z) {}
 
     private ExecutorService bfsExecutor;
     private Future<?> bfsTaskFuture;
-
-    /**
-     * 封装已处理区块的Set和Queue，确保数据一致性。
-     */
-    private static class ProcessedChunkCache {
-        private final Set<ChunkPos> set = new HashSet<>();
-        private final Queue<ChunkPos> queue = new ArrayDeque<>();
-        public boolean add(ChunkPos chunkPos) {
-            if (set.add(chunkPos)) {
-                queue.add(chunkPos);
-                return true;
-            }
-            return false;
-        }
-        public boolean contains(ChunkPos chunkPos) {
-            return set.contains(chunkPos);
-        }
-        public int size() {
-            return queue.size();
-        }
-        public void removeOldest(int count) {
-            int chunksToRemove = Math.min(count, size());
-            for (int i = 0; i < chunksToRemove; i++) {
-                ChunkPos chunkToRemove = queue.poll();
-                if (chunkToRemove != null) {
-                    set.remove(chunkToRemove);
-                }
-            }
-        }
-        public void clear() {
-            set.clear();
-            queue.clear();
-        }
-    }
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
