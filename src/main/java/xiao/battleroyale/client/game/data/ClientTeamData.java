@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.message.team.TeamTag;
+import xiao.battleroyale.api.message.team.GameTeamTag;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -39,17 +39,19 @@ public class ClientTeamData extends AbstractClientExpireData {
      */
     @Override
     public void updateFromNbt(@NotNull CompoundTag nbt) {
-        this.teamId = nbt.getInt(TeamTag.TEAM_ID);
-        this.teamColor = ColorUtils.parseColorFromString(nbt.getString(TeamTag.TEAM_COLOR));
+        this.lastMessageNbt = nbt;
+
+        this.teamId = nbt.getInt(GameTeamTag.TEAM_ID);
+        this.teamColor = ColorUtils.parseColorFromString(nbt.getString(GameTeamTag.TEAM_COLOR));
         this.teamMemberInfoList.clear();
-        CompoundTag memberTags = nbt.getCompound(TeamTag.TEAM_MEMBER);
+        CompoundTag memberTags = nbt.getCompound(GameTeamTag.TEAM_MEMBER);
         for (String key : memberTags.getAllKeys()) {
             CompoundTag memberTag = memberTags.getCompound(key);
             teamMemberInfoList.add(new TeamMemberInfo(
                     Integer.parseInt(key),
-                    memberTag.getString(TeamTag.MEMBER_NAME),
-                    memberTag.getFloat(TeamTag.MEMBER_HEALTH),
-                    memberTag.getInt(TeamTag.MEMBER_BOOST)
+                    memberTag.getString(GameTeamTag.MEMBER_NAME),
+                    memberTag.getFloat(GameTeamTag.MEMBER_HEALTH),
+                    memberTag.getInt(GameTeamTag.MEMBER_BOOST)
             ));
         }
         teamMemberInfoList.sort(Comparator.comparingInt(memberInfo -> memberInfo.playerId));
@@ -70,6 +72,7 @@ public class ClientTeamData extends AbstractClientExpireData {
         this.lastUpdateTick = 0;
     }
 
+    // 服务端调用
     @NotNull
     public static CompoundTag toNBT(@Nullable GameTeam gameTeam, @Nullable ServerLevel serverLevel) {
         int teamId = -1;

@@ -241,6 +241,7 @@
   "battleroyale.message.no_debug_permission": "没有调试权限",
   "battleroyale.message.local_debug_not_enabled": "未启用本地调试",
   "battleroyale.message.debug": "[调试]",
+  "battleroyale.message.debug_local": "[本地调试]",
 
   "battleroyale.label.alive": "生存",
 

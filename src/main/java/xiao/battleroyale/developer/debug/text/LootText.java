@@ -18,7 +18,7 @@ public class LootText {
     /**
      * 悬浮查看CommonLootManager各个状态
      */
-    public static MutableComponent buildCommonLootText(CommonLootManager commonLootManager) {
+    public static MutableComponent buildCommonLoot(CommonLootManager commonLootManager) {
         MutableComponent component = Component.empty();
         if (commonLootManager == null) {
             return component;
@@ -60,7 +60,7 @@ public class LootText {
     /**
      * 悬浮查看GameLootManager各个状态
      */
-    public static MutableComponent buildGameLootText(GameLootManager gameLootManager) {
+    public static MutableComponent buildGameLoot(GameLootManager gameLootManager) {
         MutableComponent component = Component.empty();
         if (gameLootManager == null) {
             return component;

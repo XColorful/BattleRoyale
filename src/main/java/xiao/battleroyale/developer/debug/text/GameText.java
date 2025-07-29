@@ -65,31 +65,16 @@ public class GameText {
         String teamColor = gamePlayer.getGameTeamColor();
         int colorRGB = ColorUtils.parseColorToInt(teamColor) & 0xFFFFFF;
 
-        TextColor minecraftTextColor = TextColor.fromRgb(colorRGB);
+        TextColor textColor = TextColor.fromRgb(colorRGB);
 
-        String gameTeamCommand = GetGame.getGameTeamCommandString(teamId);
-        String gamePlayerCommand = GetGame.getGamePlayerCommandString(singleId);
+        String gameTeamCommand = GetGame.getGameTeamCommand(teamId);
+        String gamePlayerCommand = GetGame.getGamePlayerCommand(singleId);
 
         // [teamId]
-        MutableComponent teamIdPrefix = Component.literal("[");
-        MutableComponent teamIdContent = Component.literal(String.valueOf(teamId));
-        teamIdContent.setStyle(Style.EMPTY
-                .withColor(minecraftTextColor)
-                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, gameTeamCommand))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(gameTeamCommand))));
-        MutableComponent teamIdSuffix = Component.literal("]");
-
-        component.append(teamIdPrefix);
-        component.append(teamIdContent);
-        component.append(teamIdSuffix);
+        component.append(buildRunnableIntBracketWithColor(teamId, gameTeamCommand, textColor));
 
         // [singleId]
-        MutableComponent singleIdComponent = Component.literal("[" + singleId + "]");
-        singleIdComponent.setStyle(Style.EMPTY
-                .withColor(minecraftTextColor)
-                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, gamePlayerCommand))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(gamePlayerCommand))));
-        component.append(singleIdComponent);
+        component.append(buildRunnableIntBracketWithFullColor(singleId, gamePlayerCommand, textColor));
 
         // 添加玩家名称
         if (gamePlayer.isLeader()) {
@@ -155,32 +140,17 @@ public class GameText {
         String teamColor = gameTeam.getGameTeamColor();
         int colorRGB = ColorUtils.parseColorToInt(teamColor) & 0xFFFFFF;
 
-        TextColor minecraftTextColor = TextColor.fromRgb(colorRGB);
+        TextColor textColor = TextColor.fromRgb(colorRGB);
 
-        String gameTeamCommand = GetGame.getGameTeamCommandString(teamId);
+        String gameTeamCommand = GetGame.getGameTeamCommand(teamId);
 
         // [teamId]
-        MutableComponent teamIdPrefix = Component.literal("[");
-        MutableComponent teamIdContent = Component.literal(String.valueOf(teamId));
-        teamIdContent.setStyle(Style.EMPTY
-                .withColor(minecraftTextColor)
-                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, gameTeamCommand))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(gameTeamCommand))));
-        MutableComponent teamIdSuffix = Component.literal("]");
-
-        component.append(teamIdPrefix);
-        component.append(teamIdContent);
-        component.append(teamIdSuffix);
+        component.append(buildRunnableIntBracketWithColor(teamId, gameTeamCommand, textColor));
 
         // [singleId]LeaderName
         GamePlayer leader = gameTeam.getLeader();
-        String gamePlayerCommand = GetGame.getGamePlayerCommandString(leader.getGameSingleId());
-        MutableComponent singleIdComponent = Component.literal("[" + leader.getGameSingleId() + "]");
-        singleIdComponent.setStyle(Style.EMPTY
-                .withColor(minecraftTextColor)
-                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, gamePlayerCommand))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(gamePlayerCommand))));
-        component.append(singleIdComponent);
+        String gamePlayerCommand = GetGame.getGamePlayerCommand(leader.getGameSingleId());
+        component.append(buildRunnableIntBracketWithFullColor(leader.getGameSingleId(), gamePlayerCommand, textColor));
 
         component.append(Component.literal(leader.getPlayerName()).withStyle(ChatFormatting.AQUA));
 
@@ -319,28 +289,19 @@ public class GameText {
      * []附带颜色
      */
     public static MutableComponent buildGameZoneSimple(@Nullable IGameZone gameZone) {
-        MutableComponent component = Component.empty();
         if (gameZone == null) {
-            return component;
+            return Component.empty();
         }
 
         int zoneId = gameZone.getZoneId();
         String zoneName = gameZone.getZoneName();
         int colorRGB = ColorUtils.parseColorToInt(gameZone.getZoneColor()) & 0xFFFFFF;
-        TextColor zoneColor = TextColor.fromRgb(colorRGB);
+        TextColor textColor = TextColor.fromRgb(colorRGB);
 
-        String zoneCommand = GetGame.getGameZoneCommandString(zoneId);
+        String zoneCommand = GetGame.getGameZoneCommand(zoneId);
 
-        component.append(Component.literal("[").withStyle(Style.EMPTY.withColor(zoneColor)))
-                .append(Component.literal(String.valueOf(zoneId))
-                                .setStyle(Style.EMPTY
-                                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, zoneCommand))
-                                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(zoneCommand)))
-                                ))
-                .append(Component.literal("]").withStyle(Style.EMPTY.withColor(zoneColor)))
+        return buildRunnableIntBracketWithColor(zoneId, zoneCommand, textColor)
                 .append(Component.literal(zoneName));
-
-        return component;
     }
 
     public static MutableComponent buildGameZonesSimple(@NotNull List<IGameZone> gameZones) {

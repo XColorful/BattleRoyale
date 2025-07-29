@@ -276,14 +276,14 @@ public class GetGame {
         return Command.SINGLE_SUCCESS;
     }
 
-    public static String getGamePlayerCommandString(int singleId) {
+    public static String getGamePlayerCommand(int singleId) {
         return buildDebugCommandString(
                 GET,
                 GAME_PLAYER,
                 Integer.toString(singleId)
         );
     }
-    public static String getGameTeamCommandString(int teamId) {
+    public static String getGameTeamCommand(int teamId) {
         return buildDebugCommandString(
                 GET,
                 GAME_TEAM,
@@ -291,7 +291,7 @@ public class GetGame {
         );
     }
 
-    public static String getGameZoneCommandString(int zoneId) {
+    public static String getGameZoneCommand(int zoneId) {
         return buildDebugCommandString(
                 GET,
                 GAME_ZONE,
@@ -299,7 +299,7 @@ public class GetGame {
         );
     }
 
-    public static String getBackupPlayerModeCommandString(int singleId) {
+    public static String getBackupPlayerModeCommand(int singleId) {
         return buildDebugCommandString(
                 GET,
                 BACKUP_PLAYER_MODE,

@@ -24,7 +24,7 @@ public class DebugLoot {
      */
     public static final String GET_COMMON_LOOT = "getCommonLoot";
     public void getCommonLoot(CommandSourceStack source) {
-        DebugManager.sendDebugMessage(source, GET_COMMON_LOOT, LootText.buildCommonLootText(CommonLootManager.get()));
+        DebugManager.sendDebugMessage(source, GET_COMMON_LOOT, LootText.buildCommonLoot(CommonLootManager.get()));
     }
 
     /**
@@ -32,6 +32,6 @@ public class DebugLoot {
      */
     public static final String GET_GAME_LOOT = "getGameLoot";
     public void getGameLoot(CommandSourceStack source) {
-        DebugManager.sendDebugMessageWithGameTime(source, GET_GAME_LOOT, LootText.buildGameLootText(GameLootManager.get()));
+        DebugManager.sendDebugMessageWithGameTime(source, GET_GAME_LOOT, LootText.buildGameLoot(GameLootManager.get()));
     }
 }

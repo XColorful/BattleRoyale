@@ -39,6 +39,8 @@ public class ClientSingleZoneData extends AbstractClientExpireData {
      */
     @Override
     public void updateFromNbt(@NotNull CompoundTag nbt) {
+        this.lastMessageNbt = nbt;
+
         this.name = nbt.getString(GameZoneTag.ZONE_NAME);
         this.color = ColorUtils.parseColorFromString(nbt.getString(GameZoneTag.ZONE_COLOR));
         if (useClientColor) {

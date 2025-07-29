@@ -242,6 +242,7 @@
   "battleroyale.message.no_debug_permission": "No debug permission",
   "battleroyale.message.local_debug_not_enabled": "Local debug is not enabled",
   "battleroyale.message.debug": "[Debug]",
+  "battleroyale.message.debug_local": "[Local Debug]",
 
   "battleroyale.label.alive": "Alive",
 

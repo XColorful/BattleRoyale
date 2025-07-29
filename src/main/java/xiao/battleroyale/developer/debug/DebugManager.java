@@ -1,6 +1,7 @@
 package xiao.battleroyale.developer.debug;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -92,7 +93,7 @@ public class DebugManager {
     public static void sendDebugMessage(CommandSourceStack source, String operation, MutableComponent debugMessage) {
         broadcastDebugPlayerAction(source, operation);
         MutableComponent fullMessage = Component.translatable("battleroyale.message.debug")
-                .append(Component.literal(operation+":"))
+                .append(Component.literal(operation + ":"))
                 .append(debugMessage);
         source.sendSuccess(() -> fullMessage, false);
         BattleRoyale.LOGGER.debug("[Debug]{}:{}", operation, fullMessage);
@@ -101,10 +102,18 @@ public class DebugManager {
         GameTimeFormat gameTimeFormat = new GameTimeFormat(GameManager.get().getGameTime());
         broadcastDebugPlayerGameAction(source, operation, gameTimeFormat);
         MutableComponent fullMessage = Component.translatable("battleroyale.message.debug")
-                .append(Component.literal(operation+":"))
+                .append(Component.literal(operation + ":"))
                 .append(debugMessage)
                 .append(gameTimeFormat.toSpaceFullString(true));
         source.sendSuccess(() -> fullMessage, false);
         BattleRoyale.LOGGER.debug("[Debug]{}:{}", operation, fullMessage);
+    }
+
+    public static void sendLocalDebugMessage(CommandSourceStack source, String operation, MutableComponent debugMessage) {
+        MutableComponent fullMessage = Component.translatable("battleroyale.message.debug_local")
+                .append(Component.literal(operation + ":"))
+                .append(debugMessage);
+        source.sendSuccess(() -> fullMessage, false);
+        BattleRoyale.LOGGER.debug("[Local Debug]{}:{}", operation, fullMessage);
     }
 }
