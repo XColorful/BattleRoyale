@@ -495,6 +495,7 @@ public class GameManager extends AbstractGameManager {
         }
 
         StatsManager.get().stopGame(serverLevel);
+        GameMessageManager.get().stopGame(serverLevel);
     }
 
     public boolean teleportToLobby(@NotNull ServerPlayer player) {
@@ -706,6 +707,7 @@ public class GameManager extends AbstractGameManager {
             BattleRoyale.LOGGER.warn("StatsManager failed to start game");
             return false;
         }
+        GameMessageManager.get().startGame(serverLevel);
         return true;
     }
     private void startGameSetup() {
@@ -716,7 +718,6 @@ public class GameManager extends AbstractGameManager {
         this.winnerGameTeams.clear(); // 游戏结束后不手动重置
         this.winnerGamePlayers.clear(); // 游戏结束后不手动重置
         registerGameEvent();
-        notifyAliveChange();
         TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(globalCenterOffset));
         TempDataManager.get().startGame(serverLevel); // 立即写入备份
     }

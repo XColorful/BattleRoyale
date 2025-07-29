@@ -45,6 +45,10 @@ public class MessageManager {
         return messageManagers.isEmpty();
     }
 
+    public boolean isRegistered(IMessageManager messageManager) {
+        return messageManagers.contains(messageManager);
+    }
+
     public void registerZoneMessage() {
         ZoneMessageManager manager = ZoneMessageManager.get();
         if (messageManagers.contains(manager)) {
@@ -113,7 +117,6 @@ public class MessageManager {
         GameMessageManager.get().extendMessageTime(channel, extendTime);
     }
     public void notifyGameChange(int channel) {
-        registerGameMessage();
         GameMessageManager.get().notifyNbtChange(channel);
     }
 }
