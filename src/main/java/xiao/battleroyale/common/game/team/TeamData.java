@@ -7,7 +7,6 @@ import xiao.battleroyale.common.game.AbstractGameManagerData;
 import xiao.battleroyale.util.ClassUtils;
 
 import java.util.*;
-import java.util.function.Function;
 
 public class TeamData extends AbstractGameManagerData {
 
@@ -212,7 +211,7 @@ public class TeamData extends AbstractGameManagerData {
      * 只允许在游戏中调用淘汰接口
      */
     public boolean eliminatePlayer(UUID playerId) {
-        GamePlayer player = gamePlayers.get(playerId);
+        GamePlayer player = gamePlayers.mapGet(playerId);
         return eliminatePlayer(player);
     }
 
@@ -254,11 +253,11 @@ public class TeamData extends AbstractGameManagerData {
     }
 
     public @Nullable GameTeam getGameTeamById(int teamId) {
-        return gameTeams.get(teamId);
+        return gameTeams.mapGet(teamId);
     }
 
     public @Nullable GamePlayer getGamePlayerByUUID(UUID playerUUI) {
-        return gamePlayers.get(playerUUI);
+        return gamePlayers.mapGet(playerUUI);
     }
 
     public @Nullable GamePlayer getGamePlayerByGameSingleId(int playerId) {

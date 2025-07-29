@@ -235,11 +235,11 @@ public class ClassUtils {
             }
         }
 
-        public V get(K key) {
+        public V mapGet(K key) {
             return map.get(key);
         }
 
-        public V get(int index) {
+        public V listGet(int index) {
             return list.get(index);
         }
 

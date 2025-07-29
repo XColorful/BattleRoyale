@@ -204,7 +204,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
         return getConfigEntry(id, getDefaultConfigId());
     }
     @Override public @Nullable T getConfigEntry(int id, int folderId) {
-        return getConfigFolderData(folderId).currentConfigs.get(id);
+        return getConfigFolderData(folderId).currentConfigs.mapGet(id);
     }
     @Override public @Nullable  List<T> getConfigEntryList() {
         return getConfigEntryList(getDefaultConfigId());

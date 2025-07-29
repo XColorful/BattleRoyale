@@ -55,7 +55,7 @@ public class ZoneData extends AbstractGameManagerData {
         // 处理区域延迟叠加
         queuedZoneInfos.sort(Comparator.comparingInt(QueuedZoneInfo::zoneId)); // 先按ID排序
         for (QueuedZoneInfo zoneInfo : queuedZoneInfos) {
-            IGameZone currentZone = gameZones.get(zoneInfo.zoneId);
+            IGameZone currentZone = gameZones.mapGet(zoneInfo.zoneId);
             int preZoneDelayId = currentZone.previousZoneDelayId();
             if (preZoneDelayId < 0 || !infoIndexMap.containsKey(preZoneDelayId)) {
                 continue;
@@ -71,7 +71,7 @@ public class ZoneData extends AbstractGameManagerData {
 
         currentZones.clear(); // 确保为新生成
         for (QueuedZoneInfo info : queuedZoneInfos) {
-            IGameZone zone = gameZones.get(info.zoneId());
+            IGameZone zone = gameZones.mapGet(info.zoneId());
             if (zone != null) { // 防御一下，没多少开销？
                 zone.setZoneDelay(info.zoneDelay);
                 currentZones.add(zone);
@@ -112,7 +112,7 @@ public class ZoneData extends AbstractGameManagerData {
 
     @Nullable
     public IGameZone getGameZoneById(int zoneId) {
-        return gameZones.get(zoneId);
+        return gameZones.mapGet(zoneId);
     }
 
     public Map<Integer, IGameZone> getGameZones() { return gameZones.asMap(); }
