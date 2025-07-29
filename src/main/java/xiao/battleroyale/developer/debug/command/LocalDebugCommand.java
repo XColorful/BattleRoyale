@@ -19,7 +19,7 @@ public class LocalDebugCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> get(String rootName, boolean useFullName) {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(rootName);
-        LiteralArgumentBuilder<CommandSourceStack> debugCommand = Commands.literal(useFullName ? DEBUG : DEBUG_SHORT);
+        LiteralArgumentBuilder<CommandSourceStack> debugCommand = Commands.literal(useFullName ? DEBUG_LOCAL : DEBUG_LOCAL_SHORT);
         debugCommand.then(GetCommand.getClient(useFullName));
         root.then(debugCommand);
         return root;

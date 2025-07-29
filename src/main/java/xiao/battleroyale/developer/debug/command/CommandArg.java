@@ -11,6 +11,8 @@ public class CommandArg {
     // debug
     public static final String DEBUG = "debug";
     public static final String DEBUG_SHORT = "db";
+    public static final String DEBUG_LOCAL = "localdebug";
+    public static final String DEBUG_LOCAL_SHORT = "ldb";
 
     // operation
     public static final String GET = "get";
