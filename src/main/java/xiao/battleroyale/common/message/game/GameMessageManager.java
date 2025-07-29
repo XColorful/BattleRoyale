@@ -111,6 +111,7 @@ public class GameMessageManager extends AbstractMessageManager<GameMessage> impl
     @Override
     public boolean startGame(ServerLevel serverLevel) {
         MessageManager.get().registerGameMessage();
+        GameManager.get().notifyAliveChange();
         return true;
     }
     @Override
