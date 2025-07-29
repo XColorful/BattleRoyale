@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Set;
 
@@ -51,6 +52,30 @@ public class CommandUtils {
         style = style.withColor(textColor);
 
         return fieldComp.setStyle(style);
+    }
+
+    /**
+     * 点击坐标传送
+     */
+    public static String buildVanillaTeleport(Vec3 pos) {
+        return  "/tp " + pos.x + " " + pos.y + " " + pos.z;
+    }
+    public static MutableComponent buildRunnableVec(Vec3 pos) {
+        String command = buildVanillaTeleport(pos);
+        return buildRunnableVec(pos, command, command);
+    }
+    public static MutableComponent buildRunnableVec(Vec3 pos, String displayName) {
+        return buildRunnableVec(pos, buildVanillaTeleport(pos), displayName);
+    }
+    public static MutableComponent buildRunnableVec(Vec3 pos, String command, String displayName) {
+        MutableComponent component = Component.empty();
+        component.append(Component.literal(pos.toString())
+                .setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(displayName))))
+        );
+
+        return component;
     }
 
     /**

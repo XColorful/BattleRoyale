@@ -11,6 +11,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
+import xiao.battleroyale.developer.debug.DebugEffect;
 import xiao.battleroyale.developer.debug.DebugManager;
 
 import static xiao.battleroyale.developer.debug.command.CommandArg.*;
@@ -119,11 +120,7 @@ public class GetEffect {
             return 0;
         }
 
-        if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get particles (all)"), false);
-        } else {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get particles with min: " + min + ", max: " + max), false);
-        }
+        DebugEffect.get().getParticles(source, min, max);
         return Command.SINGLE_SUCCESS;
     }
     private static int getParticleByChannel(CommandContext<CommandSourceStack> context, String channel, int min, int max) {
@@ -133,11 +130,7 @@ public class GetEffect {
             return 0;
         }
 
-        if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get particle (all) with channel: " + channel), false);
-        } else {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get particle with channel: " + channel + ", min: " + min + ", max: " + max), false);
-        }
+        DebugEffect.get().getParticle(source, channel, min, max);
         return Command.SINGLE_SUCCESS;
     }
     private static int getParticleByEntity(CommandContext<CommandSourceStack> context, Entity entity, String channel, int min, int max) {
@@ -147,11 +140,7 @@ public class GetEffect {
             return 0;
         }
 
-        if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get particle (all) for entity: " + entity.getName().getString() + " with channel: " + channel), false);
-        } else {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get particle for entity: " + entity.getName().getString() + ", channel: " + channel + ", min: " + min + ", max: " + max), false);
-        }
+        DebugEffect.get().getParticle(source, entity, channel, min, max);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -165,11 +154,7 @@ public class GetEffect {
             return 0;
         }
 
-        if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get fireworks (all)"), false);
-        } else {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get fireworks with min: " + min + ", max: " + max), false);
-        }
+        DebugEffect.get().getFireworks(source, min, max);
         return Command.SINGLE_SUCCESS;
     }
     private static int getFirework(CommandContext<CommandSourceStack> context) {
@@ -179,8 +164,7 @@ public class GetEffect {
             return 0;
         }
 
-        final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get firework by ID: " + id), false);
+        DebugEffect.get().getFirework(source, IntegerArgumentType.getInteger(context, SINGLE_ID));
         return Command.SINGLE_SUCCESS;
     }
     private static int getFireworkByEntity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -190,8 +174,7 @@ public class GetEffect {
             return 0;
         }
 
-        Entity entity = EntityArgument.getEntity(context, ENTITY);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get firework by Entity: " + entity.getName().getString() + " (UUID: " + entity.getUUID().toString() + ")"), false);
+        DebugEffect.get().getFirework(source, EntityArgument.getEntity(context, ENTITY));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -205,11 +188,7 @@ public class GetEffect {
             return 0;
         }
 
-        if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get mutekis (all)"), false);
-        } else {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get mutekis with min: " + min + ", max: " + max), false);
-        }
+        DebugEffect.get().getMutekis(source, min, max);
         return Command.SINGLE_SUCCESS;
     }
     private static int getMutekiById(CommandContext<CommandSourceStack> context) {
@@ -219,8 +198,7 @@ public class GetEffect {
             return 0;
         }
 
-        final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get muteki by ID: " + id), false);
+        DebugEffect.get().getMuteki(source, IntegerArgumentType.getInteger(context, SINGLE_ID));
         return Command.SINGLE_SUCCESS;
     }
     private static int getMutekiByEntity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -230,8 +208,7 @@ public class GetEffect {
             return 0;
         }
 
-        Entity entity = EntityArgument.getEntity(context, ENTITY);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get muteki by Entity: " + entity.getName().getString() + " (UUID: " + entity.getUUID().toString() + ")"), false);
+        DebugEffect.get().getMuteki(source, EntityArgument.getEntity(context, ENTITY));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -245,11 +222,7 @@ public class GetEffect {
             return 0;
         }
 
-        if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get boosts (all)"), false);
-        } else {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get boosts with min: " + min + ", max: " + max), false);
-        }
+        DebugEffect.get().getBoosts(source, min, max);
         return Command.SINGLE_SUCCESS;
     }
     private static int getBoostById(CommandContext<CommandSourceStack> context) {
@@ -259,8 +232,7 @@ public class GetEffect {
             return 0;
         }
 
-        final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get boost by ID: " + id), false);
+        DebugEffect.get().getBoost(source, IntegerArgumentType.getInteger(context, SINGLE_ID));
         return Command.SINGLE_SUCCESS;
     }
     private static int getBoostByEntity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -270,8 +242,7 @@ public class GetEffect {
             return 0;
         }
 
-        Entity entity = EntityArgument.getEntity(context, ENTITY);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get boost by Entity: " + entity.getName().getString() + " (UUID: " + entity.getUUID().toString() + ")"), false);
+        DebugEffect.get().getBoost(source, EntityArgument.getEntity(context, ENTITY));
         return Command.SINGLE_SUCCESS;
     }
 

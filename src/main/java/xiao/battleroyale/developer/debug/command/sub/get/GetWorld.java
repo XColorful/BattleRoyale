@@ -9,6 +9,7 @@ import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.developer.debug.DebugManager;
+import xiao.battleroyale.developer.debug.DebugWorld;
 
 import static xiao.battleroyale.developer.debug.command.CommandArg.*;
 
@@ -53,7 +54,7 @@ public class GetWorld {
             return 0;
         }
 
-        context.getSource().sendSuccess(() -> Component.literal("Executing get blockentitiesnbt at: " + pos.toString()), false);
+        DebugWorld.get().getBlockEntitiesNbt(source, pos);
         return Command.SINGLE_SUCCESS;
     }
     private static int getBlockEntityNBT(CommandContext<CommandSourceStack> context, Vec3 pos) {
@@ -63,7 +64,7 @@ public class GetWorld {
             return 0;
         }
 
-        context.getSource().sendSuccess(() -> Component.literal("Executing get blockentitynbt at: " + pos.toString()), false);
+        DebugWorld.get().getBLockENtityNbt(source, pos);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -77,7 +78,7 @@ public class GetWorld {
             return 0;
         }
 
-        context.getSource().sendSuccess(() -> Component.literal("Executing get biomes at: " + pos.toString()), false);
+        DebugWorld.get().getBiome(source, pos);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -88,7 +89,7 @@ public class GetWorld {
             return 0;
         }
 
-        context.getSource().sendSuccess(() -> Component.literal("Executing get structures at: " + pos.toString()), false);
+        DebugWorld.get().getStructures(source, pos);
         return Command.SINGLE_SUCCESS;
     }
 }
