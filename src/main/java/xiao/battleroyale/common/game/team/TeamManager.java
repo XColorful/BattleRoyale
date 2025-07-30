@@ -85,6 +85,7 @@ public class TeamManager extends AbstractGameManager {
 
         clearOrUpdateTeamIfLimitChanged();
         this.prepared = true;
+        BattleRoyale.LOGGER.debug("TeamManager complete initGameConfig");
     }
 
     @Override
@@ -107,14 +108,12 @@ public class TeamManager extends AbstractGameManager {
                 forceJoinTeam(player); // 初始化时先强制分配，后续调整玩家自行处理
             }
         }
-        BattleRoyale.LOGGER.info("TeamManager complete initGame, total players: {}, total teams: {}", teamData.getTotalPlayerCount(), teamData.getGameTeamsList().size());
-
-        if (hasEnoughPlayerTeamToStart()) {
-            return;
-        }
 
         GameManager.get().recordGamerule(teamConfig);
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
+        if (!hasEnoughPlayerTeamToStart()) {
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
+        }
+        BattleRoyale.LOGGER.info("TeamManager complete initGame, total players: {}, total teams: {}", teamData.getTotalPlayerCount(), teamData.getGameTeamsList().size());
     }
 
     @Override
