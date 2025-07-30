@@ -891,10 +891,10 @@ public class TeamManager extends AbstractGameManager {
      * 尝试清除队伍信息，如果新的玩家数量限制缩小则清除，扩大限制则扩大可用id池
      */
     private void clearOrUpdateTeamIfLimitChanged() {
-        if (this.teamConfig.playerLimit < teamData.getMaxPlayersLimit()) {
-            clear();
-        } else if (this.teamConfig.playerLimit > teamData.getMaxPlayersLimit()) {
-            teamData.extendLimit(this.teamConfig.playerLimit);
+        if (this.teamConfig.playerLimit < teamData.getMaxPlayersLimit() || this.teamConfig.teamSize < teamData.getTeamSizeLimit()) { // 玩家人数上限缩小/队伍规模缩小 -> 清空所有队伍
+            this.clear();
+        } else if (this.teamConfig.playerLimit > teamData.getMaxPlayersLimit() || this.teamConfig.teamSize > teamData.getTeamSizeLimit()) { // 玩家人数上限增多 -> 提示扩容
+            teamData.extendLimit(this.teamConfig.playerLimit, this.teamConfig.teamSize);
         }
     }
 
@@ -906,7 +906,7 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
 
-        teamData.clear(this.teamConfig.playerLimit);
+        teamData.clear(this.teamConfig.playerLimit, this.teamConfig.teamSize);
         pendingInvites.clear();
         pendingRequests.clear();
     }

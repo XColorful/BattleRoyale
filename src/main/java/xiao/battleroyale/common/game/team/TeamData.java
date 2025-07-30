@@ -23,7 +23,9 @@ public class TeamData extends AbstractGameManagerData {
     private final Set<Integer> availableTeamIds = new TreeSet<>();
 
     private int maxPlayersLimit = Integer.MAX_VALUE;
+    private int teamSizeLimit = Integer.MAX_VALUE;
     public int getMaxPlayersLimit() { return maxPlayersLimit; }
+    public int getTeamSizeLimit() { return teamSizeLimit; }
 
     public TeamData() {
         super(DATA_NAME);
@@ -37,9 +39,9 @@ public class TeamData extends AbstractGameManagerData {
 
     @Override
     public void clear() {
-        clear(Integer.MAX_VALUE);
+        clear(Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
-    public void clear(int maxPlayers) {
+    public void clear(int maxPlayers, int maxTeamSize) {
         if (locked) {
             BattleRoyale.LOGGER.warn("TeamData is locked, skipped clear()");
             return;
@@ -55,6 +57,7 @@ public class TeamData extends AbstractGameManagerData {
         availableTeamIds.clear();
 
         this.maxPlayersLimit = maxPlayers;
+        this.teamSizeLimit = maxTeamSize;
 
         for (int i = 1; i <= maxPlayers; i++) {
             availablePlayerIds.add(i);
@@ -62,7 +65,7 @@ public class TeamData extends AbstractGameManagerData {
         }
     }
 
-    public void extendLimit(int maxPlayers) {
+    public void extendLimit(int maxPlayers, int maxTeamSize) {
         if (locked) {
             return;
         }
@@ -70,10 +73,11 @@ public class TeamData extends AbstractGameManagerData {
         if (maxPlayers <= this.maxPlayersLimit) {
             return;
         }
+
+        this.maxPlayersLimit = maxPlayers;
         for (int i = this.maxPlayersLimit + 1; i <= maxPlayers; i++) {
             availablePlayerIds.add(i);
             availableTeamIds.add(i);
-            this.maxPlayersLimit = maxPlayers;
         }
     }
 
@@ -134,7 +138,7 @@ public class TeamData extends AbstractGameManagerData {
             return false;
         }
 
-        if (gamePlayers.containsKey(gamePlayer.getPlayerUUID())) {
+        if (gamePlayers.containsKey(gamePlayer.getPlayerUUID()) || getTotalPlayerCount() >= maxPlayersLimit) {
             return false;
         }
 
@@ -144,6 +148,9 @@ public class TeamData extends AbstractGameManagerData {
         }
 
         if (!availablePlayerIds.remove(playerId)) {
+            return false;
+        }
+        if (gameTeam.getTeamMemberCount() >= teamSizeLimit) {
             return false;
         }
         gamePlayer.setTeam(gameTeam);
@@ -301,6 +308,9 @@ public class TeamData extends AbstractGameManagerData {
             }
         }
 
+        if (newTeam.getTeamMemberCount() >= teamSizeLimit) {
+            return;
+        }
         newTeam.addPlayer(player);
         if (!gameTeams.containsKey(newTeam.getGameTeamId())) {
             addGameTeam(newTeam);
