@@ -72,7 +72,7 @@ public class GameInfoRenderer {
 
         // 生存: {人数}
         ClientGameData gameData = ClientGameDataManager.get().getGameData();
-        if (gameData.standingPlayerCount > 0) {
+        if (gameData.inGame()) {
             renderAliveTotal(posX, posY, gameData.standingPlayerCount, guiGraphics, fontRenderer);
         }
     }

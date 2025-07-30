@@ -61,8 +61,8 @@ public class CircleShape extends AbstractSimpleShape {
 
     @Override
     protected boolean additionalCalculationCheck() {
-        boolean willProduceBadShape = hasNegativeDimension();
-        checkBadShape = willProduceBadShape && !allowBadShape;
+        hasBadShape = hasNegativeDimension();
+        checkBadShape = hasBadShape && !allowBadShape;
         needEqualAbs = !hasEqualXZAbsDimension();
         return true;
     }

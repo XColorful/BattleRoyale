@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.team.GameTeam;
 
 import java.util.List;
 import java.util.UUID;
@@ -79,5 +80,48 @@ public class GameUtils {
             }
         }
         return entityGameId;
+    }
+
+    public record GameTimeFormat(int gameTime, int remainTick, float remainSeconds, int seconds, int minutes, int hours) {
+        public GameTimeFormat(int gameTime) {
+            this(
+                    gameTime, // tickTime
+                    gameTime % 20, // remainTick
+                    (float) (gameTime % 20) / 20.0f, // remainSeconds
+
+                    // 计算秒、分钟、小时
+                    (gameTime / 20) % 60, // seconds
+                    ((gameTime / 20) / 60) % 60, // minutes
+                    ((gameTime / 20) / 3600) // hours
+            );
+        }
+        public String toTimeString() {
+            if (hours > 0) {
+                return String.format("%dh %dm %ds", hours, minutes, seconds);
+            } else if (minutes > 0) {
+                return String.format("%dm %ds", minutes, seconds);
+            } else {
+                return String.format("%ds", seconds);
+            }
+        }
+        public String toFormattedString(boolean includeRemainder) {
+            if (includeRemainder && remainTick > 0) {
+                if (hours > 0) {
+                    return String.format("%dh %dm %.2fs", hours, minutes, seconds + remainSeconds);
+                } else if (minutes > 0) {
+                    return String.format("%dm %.2fs", minutes, seconds + remainSeconds);
+                } else {
+                    return String.format("%.2fs", seconds + remainSeconds);
+                }
+            } else {
+                return toTimeString();
+            }
+        }
+        public String toFullString(boolean includeRemainder) {
+            return "GameTime:" + gameTime + "(" + toFormattedString(includeRemainder) + ")";
+        }
+        public String toSpaceFullString(boolean includeRemainder) {
+            return " GameTime:" + gameTime + "(" + toFormattedString(includeRemainder) + ")";
+        }
     }
 }

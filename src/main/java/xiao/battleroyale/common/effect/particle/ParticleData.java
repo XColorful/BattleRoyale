@@ -25,7 +25,8 @@ import java.awt.*;
  */
 public class ParticleData {
 
-    public final ServerLevel level;
+    public final ServerLevel serverLevel;
+    public final long worldTime;
 
     public final ParticleDetailEntry particle;
 
@@ -33,15 +34,14 @@ public class ParticleData {
     public int finishedRepeat = 0;
 
     public ParticleData(ServerLevel serverLevel, ParticleDetailEntry detailEntry) {
-        this.level = serverLevel;
+        this.serverLevel = serverLevel;
+        this.worldTime = serverLevel.getGameTime();
         this.particle = detailEntry;
         this.delayRemain = detailEntry.initDelay();
     }
 
     public void spawnParticle(Vec3 spawnPos) {
-        BattleRoyale.LOGGER.debug("In ParticleData, attempt to spawn particle");
-        if (this.level == null || this.level.isClientSide()) {
-            BattleRoyale.LOGGER.debug("Failed: this.level == null || this.level.isClientSide()");
+        if (this.serverLevel == null || this.serverLevel.isClientSide()) {
             return;
         }
 
@@ -97,7 +97,7 @@ public class ParticleData {
         if (exactOffset) {
             for (int i = 0; i < this.particle.count(); i++) {
                 Vec3 offsetVec = Vec3Utils.randomAdjustXYZ(offset, offsetRange, BattleRoyale.COMMON_RANDOM::nextFloat);
-                this.level.sendParticles(options,
+                this.serverLevel.sendParticles(options,
                         spawnPos.x() + offsetVec.x(),
                         spawnPos.y() + offsetVec.y(),
                         spawnPos.z() + offsetVec.z(),
@@ -107,7 +107,7 @@ public class ParticleData {
             }
         } else {
             for (int i = 0; i < this.particle.count(); i++) {
-                this.level.sendParticles(options,
+                this.serverLevel.sendParticles(options,
                         spawnPos.x() + offset.x(),
                         spawnPos.y() + offset.y(),
                         spawnPos.z() + offset.z(),

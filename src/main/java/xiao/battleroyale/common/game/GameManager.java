@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
+import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
@@ -23,7 +24,7 @@ import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
-import xiao.battleroyale.common.game.tempdata.TempDataManager;
+import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.common.message.game.GameMessageManager;
@@ -42,7 +43,7 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static xiao.battleroyale.api.game.tempdata.TempDataTag.*;
+import static xiao.battleroyale.api.data.io.TempDataTag.*;
 
 public class GameManager extends AbstractGameManager {
 
@@ -149,7 +150,7 @@ public class GameManager extends AbstractGameManager {
 
     /**
      * 准备游戏，将玩家传送至大厅等
-     * @param serverLevel 当前 level
+     * @param serverLevel 当前 serverLevel
      */
     @Override
     public void initGame(ServerLevel serverLevel) {
@@ -189,6 +190,8 @@ public class GameManager extends AbstractGameManager {
         checkAndUpdateInvalidGamePlayer(this.serverLevel); // 供gameTime = 1时使用
         if (startGameSubManager()) {
             startGameSetup();
+            this.inGame = true;
+            GameMessageManager.get().startGame(serverLevel);
             return true;
         } else {
             stopGame(this.serverLevel);
@@ -221,9 +224,9 @@ public class GameManager extends AbstractGameManager {
         checkAndUpdateInvalidGamePlayer(this.serverLevel); // 为其他Manager预处理当前tick
 
         GameLootManager.get().onGameTick(gameTime);
-        ZoneManager.get().onGameTick(gameTime);
+        ZoneManager.get().onGameTick(gameTime); // Zone会提前触发stopGame，并且Zone需要延迟stopGame到tick结束
 
-        TeamManager.get().onGameTick(gameTime);
+        TeamManager.get().onGameTick(gameTime); // 将解散队伍延迟到Zone之后，并且在tick最后清理队伍
         GameruleManager.get().onGameTick(gameTime);
         SpawnManager.get().onGameTick(gameTime);
         // StatsManager.get().onGameTick(gameTime); // 基于事件主动记录，不用tick
@@ -260,7 +263,7 @@ public class GameManager extends AbstractGameManager {
     }
     private void updateInvalidServerPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers) {
         ServerPlayer serverPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-        if (serverPlayer == null) { // 不在线或者不在游戏运行的 level
+        if (serverPlayer == null) { // 不在线或者不在游戏运行的 serverLevel
             if (gamePlayer.isActiveEntity()) {
                 notifyGamePlayerIsInactive(gamePlayer);
             }
@@ -420,7 +423,7 @@ public class GameManager extends AbstractGameManager {
      * 用于向胜利玩家发送消息，传送回大厅
      */
     public void sendLobbyTeleportMessage(@NotNull ServerPlayer player, boolean isWinner) {
-        String toLobbyCommandString = GameCommand.toLobbyCommandString();
+        String toLobbyCommandString = GameCommand.toLobbyCommand();
 
         Component fullMessage = Component.translatable("battleroyale.message.back_to_lobby")
                 .append(Component.literal(" "))
@@ -482,16 +485,10 @@ public class GameManager extends AbstractGameManager {
         TeamManager.get().stopGame(serverLevel); // 最后处理TeamManager
         this.prepared = false;
         this.inGame = false;
+        GameMessageManager.get().stopGame(serverLevel); // 不在游戏中影响消息逻辑
         // this.ready = false; // 不使用ready标记，因为Team会变动
         // 取消事件监听
         unregisterGameEvent();
-
-        if (!gameEntry.keepTeamAfterGame) {
-            for (GamePlayer gamePlayer : getGamePlayers()) {
-                notifyLeavedMember(gamePlayer.getPlayerUUID(), gamePlayer.getGameTeamId());
-            }
-            TeamManager.get().clear();
-        }
 
         StatsManager.get().stopGame(serverLevel);
     }
@@ -611,6 +608,11 @@ public class GameManager extends AbstractGameManager {
         recordZoneDouble(zoneId, zoneWriter.getDoubleWriter());
         recordZoneString(zoneId, zoneWriter.getStringWriter());
     }
+    // ZoneManager
+    public List<IGameZone> getGameZones() { return ZoneManager.get().getGameZones(); }
+    public List<IGameZone> getCurrentGameZones() { return ZoneManager.get().getCurrentTickGameZones(this.gameTime); }
+    public List<IGameZone> getCurrentGameZones(int gameTime) { return ZoneManager.get().getCurrentTickGameZones(gameTime); }
+    public IGameZone getGameZone(int zoneId) { return ZoneManager.get().getZoneById(zoneId); }
 
     public Supplier<Float> getRandom() {
         return () -> this.serverLevel.getRandom().nextFloat();
@@ -704,13 +706,11 @@ public class GameManager extends AbstractGameManager {
     }
     private void startGameSetup() {
         this.gameDimensionKey = serverLevel.dimension();
-        this.inGame = true;
         // this.ready = false; // 不使用ready标记，因为Team会变动
         this.gameTime = 0; // 游戏结束后不手动重置
         this.winnerGameTeams.clear(); // 游戏结束后不手动重置
         this.winnerGamePlayers.clear(); // 游戏结束后不手动重置
         registerGameEvent();
-        notifyAliveChange();
         TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(globalCenterOffset));
         TempDataManager.get().startGame(serverLevel); // 立即写入备份
     }

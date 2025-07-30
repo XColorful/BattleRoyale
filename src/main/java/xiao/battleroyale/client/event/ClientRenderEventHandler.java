@@ -1,6 +1,5 @@
 package xiao.battleroyale.client.event;
 
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderGuiEvent;

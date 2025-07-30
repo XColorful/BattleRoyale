@@ -11,7 +11,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientGameDataManager {
 
-    private static ClientGameDataManager instance;
+    private static class ClientGameDataManagerHolder {
+        private static final ClientGameDataManager INSTANCE = new ClientGameDataManager();
+    }
+
+    public static ClientGameDataManager get() {
+        return ClientGameDataManagerHolder.INSTANCE;
+    }
+
+    private ClientGameDataManager() {
+        ;
+    }
 
     // zone
     private final Map<Integer, ClientSingleZoneData> activeZones = new ConcurrentHashMap<>(); // zoneId -> zondData
@@ -25,16 +35,6 @@ public class ClientGameDataManager {
     private final ClientGameData gameData = new ClientGameData();
     public boolean hasGameInfo() { return gameData.inGame(); }
     public ClientGameData getGameData() { return this.gameData; }
-
-
-    private ClientGameDataManager() {}
-
-    public static ClientGameDataManager get() {
-        if (instance == null) {
-            instance = new ClientGameDataManager();
-        }
-        return instance;
-    }
 
     public static final long ZONE_EXPIRE_TICK = 20 * 15;
     public static final long TEAM_EXPIRE_TICK = 20 * 30; // 初始参考值
@@ -114,5 +114,7 @@ public class ClientGameDataManager {
 
     public void clear() {
         activeZones.clear();
+        teamData.clear();
+        gameData.clear();
     }
 }

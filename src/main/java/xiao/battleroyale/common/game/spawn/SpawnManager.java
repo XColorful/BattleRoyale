@@ -89,6 +89,7 @@ public class SpawnManager extends AbstractGameManager {
             LobbyEventHandler.unregister();
         }
         this.prepared = true;
+        BattleRoyale.LOGGER.debug("SpawnManager complete initGameConfig");
     }
 
     @Override
@@ -108,6 +109,10 @@ public class SpawnManager extends AbstractGameManager {
 
         this.gameSpawner.clear();
         this.gameSpawner.init(GameManager.get().getRandom(), GameManager.get().getPlayerLimit()); // 用玩家上限作为点位数量
+        if (!isReady()) {
+            return;
+        }
+        BattleRoyale.LOGGER.debug("SpawnManager complete initGame");
     }
 
     @Override

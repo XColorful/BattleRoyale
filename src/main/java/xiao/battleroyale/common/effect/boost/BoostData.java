@@ -10,10 +10,15 @@ public class BoostData {
     public static final int COLOR_LV3 = 0xAAd7831e;
     public static final int COLOR_LV2 = 0xAAe1a31c;
     public static final int COLOR_LV1 = 0xAAe8c625;
-    public static final int BOOST_LIMIT = 6000;
+    private static int BOOST_LIMIT = 6000;
+    public static int getBoostLimit() { return BOOST_LIMIT; }
+    public static void setBoostLimit(int boostLimit) { BOOST_LIMIT = boostLimit;}
+
+    public static int boostLimitDefault() { return 6000; }
 
     public final UUID uuid;
-    public ServerLevel level;
+    public ServerLevel serverLevel;
+    public final long worldTime;
     private int boost = 0;
     public int boost() { return boost; }
 
@@ -21,9 +26,14 @@ public class BoostData {
     protected int effectCooldown = 0;
     protected int syncCooldown = 0;
 
-    public BoostData(UUID entityUUID, ServerLevel level) {
+    public int getHealCooldown() { return healCooldown; }
+    public int getEffectCooldown() { return effectCooldown; }
+    public int getSyncCooldown() { return syncCooldown; }
+
+    public BoostData(UUID entityUUID, ServerLevel serverLevel) {
         this.uuid = entityUUID;
-        this.level = level;
+        this.serverLevel = serverLevel;
+        this.worldTime = serverLevel.getGameTime();
     }
 
     protected int setBoost(int boost) {
@@ -60,5 +70,15 @@ public class BoostData {
         } else {
             return BOOST_LV0;
         }
+    }
+
+    public static int getBoostColorInt(int boostLevel) {
+        return switch (boostLevel) {
+            case BOOST_LV4 -> COLOR_LV4;
+            case BOOST_LV3 -> COLOR_LV3;
+            case BOOST_LV2 -> COLOR_LV2;
+            case BOOST_LV1 -> COLOR_LV1;
+            default -> 0;
+        };
     }
 }

@@ -21,28 +21,28 @@ import static xiao.battleroyale.command.CommandArg.*;
 
 public class MutekiCommand {
 
-    private static final int DEFAULT_TIME = 20 * 5;
+    public static final int DEFAULT_TIME = 20 * 5;
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         LiteralArgumentBuilder<CommandSourceStack> mutekiCommand = Commands.literal(MUTEKI);
 
-        RequiredArgumentBuilder<CommandSourceStack, Integer> timeArgument = Commands.argument(TIME, IntegerArgumentType.integer(1, MutekiManager.MAX_MUTEKI_TIME));
+        RequiredArgumentBuilder<CommandSourceStack, Integer> timeArgument = Commands.argument(TIME, IntegerArgumentType.integer(1, MutekiManager.getMaxMutekiTime()));
         RequiredArgumentBuilder<CommandSourceStack, EntitySelector> playerArgument = Commands.argument(PLAYER, EntityArgument.players());
 
         // muteki <players> <time>
-        timeArgument.executes(MutekiCommand::executeAddMutekiWithTimeForPlayers);
+        timeArgument.executes(MutekiCommand::addMutekiWithTimeForPlayers);
         // muteki <players>
-        playerArgument.executes(MutekiCommand::executeAddMutekiDefaultTimeForPlayers);
+        playerArgument.executes(MutekiCommand::addMutekiDefaultTimeForPlayers);
         playerArgument.then(timeArgument);
 
         // muteki clear
         LiteralArgumentBuilder<CommandSourceStack> clearCommand = Commands.literal(CLEAR)
                 .requires(source -> source.hasPermission(3));
-        clearCommand.executes(MutekiCommand::executeClearAllMuteki);
+        clearCommand.executes(MutekiCommand::clearAllMuteki);
 
         // muteki clear <players>
         clearCommand.then(Commands.argument(PLAYER, EntityArgument.players())
-                .executes(MutekiCommand::executeClearPlayersMuteki));
+                .executes(MutekiCommand::clearPlayersMuteki));
 
         mutekiCommand.then(playerArgument);
         mutekiCommand.then(clearCommand);
@@ -50,12 +50,12 @@ public class MutekiCommand {
         return mutekiCommand;
     }
 
-    private static int executeClearAllMuteki(CommandContext<CommandSourceStack> context) {
+    private static int clearAllMuteki(CommandContext<CommandSourceStack> context) {
         EffectManager.get().clearMuteki();
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.clear_all_muteki"), true);
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeClearPlayersMuteki(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int clearPlayersMuteki(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Collection<ServerPlayer> players = EntityArgument.getPlayers(context, PLAYER);
         if (players.isEmpty()) {
             throw EntityArgument.NO_PLAYERS_FOUND.create(); // 与原版相同的提示
@@ -70,7 +70,7 @@ public class MutekiCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int executeAddMutekiDefaultTimeForPlayers(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int addMutekiDefaultTimeForPlayers(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Collection<ServerPlayer> players = EntityArgument.getPlayers(context, PLAYER);
         if (players.isEmpty()) {
             throw EntityArgument.NO_PLAYERS_FOUND.create(); // 与原版相同的提示
@@ -81,7 +81,7 @@ public class MutekiCommand {
         }
         return Command.SINGLE_SUCCESS;
     }
-    private static int executeAddMutekiWithTimeForPlayers(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int addMutekiWithTimeForPlayers(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Collection<ServerPlayer> players = EntityArgument.getPlayers(context, PLAYER);
         int time = IntegerArgumentType.getInteger(context, TIME);
         if (players.isEmpty()) {

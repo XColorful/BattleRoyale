@@ -85,7 +85,7 @@ public class ZoneRenderer {
 
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) {
-            BattleRoyale.LOGGER.warn("In ZoneRender, mc.level == null || mc.player == null");
+            BattleRoyale.LOGGER.warn("In ZoneRender, mc.serverLevel == null || mc.player == null");
             return;
         }
 

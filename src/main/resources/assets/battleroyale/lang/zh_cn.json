@@ -232,9 +232,16 @@
   "battleroyale.message.clear_player_boost": "已清除玩家 %s 能量",
   "battleroyale.message.clear_all_boost": "已清除所有玩家能量",
   "battleroyale.message.set_global_offset": "将全局偏移设置为%s,%s,%s",
+  "battleroyale.message.check_global_offset": "当前全局偏移: %s,%s,%s",
   "battleroyale.message.enable_pubgmc_registry": "已启用PUBGMC注册项, 重启游戏生效",
   "battleroyale.message.disable_pubgmc_registry": "已禁用PUBGMC注册项, 重启游戏生效",
   "battleroyale.message.clear_temp_data": "已清除所有临时数据",
+  "battleroyale.message.add_debug_player": "%s已成为调试玩家",
+  "battleroyale.message.remove_debug_player": "%s已不再是调试玩家",
+  "battleroyale.message.no_debug_permission": "没有调试权限",
+  "battleroyale.message.local_debug_not_enabled": "未启用本地调试",
+  "battleroyale.message.debug": "[调试]",
+  "battleroyale.message.debug_local": "[本地调试]",
 
   "battleroyale.label.alive": "生存",
 

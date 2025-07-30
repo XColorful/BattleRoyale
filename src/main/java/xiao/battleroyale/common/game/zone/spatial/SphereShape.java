@@ -59,8 +59,8 @@ public class SphereShape extends Abstract3DShape {
 
     @Override
     protected boolean additionalCalculationCheck() {
-        boolean willProduceBadShape = hasNegativeDimension();
-        checkBadShape = willProduceBadShape && !allowBadShape;
+        hasBadShape = hasNegativeDimension();
+        checkBadShape = hasBadShape && !allowBadShape;
         needEqualAbs = !hasEqualXYZAbsDimension();
         return true;
     }

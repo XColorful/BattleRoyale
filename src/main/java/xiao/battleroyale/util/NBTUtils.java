@@ -15,7 +15,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.message.team.TeamTag;
+import xiao.battleroyale.api.message.team.GameTeamTag;
 import xiao.battleroyale.api.message.zone.GameZoneTag;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
@@ -81,19 +81,19 @@ public class NBTUtils {
 
     public static CompoundTag serializeTeamToNBT(int teamId, String teamColor, List<TeamMemberInfo> memberInfos) {
         CompoundTag tag = new CompoundTag();
-        tag.putInt(TeamTag.TEAM_ID, teamId);
-        tag.putString(TeamTag.TEAM_COLOR, teamColor);
+        tag.putInt(GameTeamTag.TEAM_ID, teamId);
+        tag.putString(GameTeamTag.TEAM_COLOR, teamColor);
 
         CompoundTag teamMemberTag = new CompoundTag();
         for (TeamMemberInfo memberInfo : memberInfos) {
             CompoundTag memberTag = new CompoundTag();
-            memberTag.putString(TeamTag.MEMBER_NAME, memberInfo.name);
-            memberTag.putFloat(TeamTag.MEMBER_HEALTH, memberInfo.health);
-            memberTag.putInt(TeamTag.MEMBER_BOOST, memberInfo.boost);
+            memberTag.putString(GameTeamTag.MEMBER_NAME, memberInfo.name);
+            memberTag.putFloat(GameTeamTag.MEMBER_HEALTH, memberInfo.health);
+            memberTag.putInt(GameTeamTag.MEMBER_BOOST, memberInfo.boost);
             teamMemberTag.put(String.valueOf(memberInfo.playerId), memberTag);
         }
 
-        tag.put(TeamTag.TEAM_MEMBER, teamMemberTag);
+        tag.put(GameTeamTag.TEAM_MEMBER, teamMemberTag);
         return tag;
     }
 

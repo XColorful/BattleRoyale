@@ -24,8 +24,8 @@ public class SquareShape extends AbstractSimpleShape {
 
     @Override
     protected boolean additionalCalculationCheck() {
-        boolean willProductBadShape = hasNegativeDimension();
-        this.checkBadShape = willProductBadShape && !allowBadShape;
+        hasBadShape = hasNegativeDimension();
+        checkBadShape = hasBadShape && !allowBadShape;
         needEqualAbs = !hasEqualXZAbsDimension();
         return true;
     }

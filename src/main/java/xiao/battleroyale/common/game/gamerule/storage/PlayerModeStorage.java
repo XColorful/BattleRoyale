@@ -40,7 +40,7 @@ public class PlayerModeStorage implements IRuleStorage {
             BattleRoyale.LOGGER.error("Expected minecraftEntry for PlayerModeStorage");
             return;
         }
-        gameMode = mcEntry.adventureMode ? GameType.ADVENTURE : GameType.SURVIVAL;
+        PlayerModeStorage.gameMode = mcEntry.adventureMode ? GameType.ADVENTURE : GameType.SURVIVAL;
 
         for (GamePlayer gamePlayer : gamePlayerList) {
             if (gamePlayer.isBot()) {
@@ -49,12 +49,9 @@ public class PlayerModeStorage implements IRuleStorage {
             UUID playerUUID = gamePlayer.getPlayerUUID();
             try {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);
-                if (player == null) {
-                    continue;
-                }
-                GameType gameMode = player.gameMode.getGameModeForPlayer();
-                playerModeBackup.put(player.getUUID(), gameMode);
-                BattleRoyale.LOGGER.info("Backup up gamemode {} for player {}", gameMode.getName(), gamePlayer.getPlayerName());
+                GameType playerGameMode = player != null ? player.gameMode.getGameModeForPlayer() : PlayerModeStorage.gameMode;
+                playerModeBackup.put(playerUUID, playerGameMode);
+                BattleRoyale.LOGGER.info("Backup up gamemode {} for player {}", playerGameMode.getName(), gamePlayer.getPlayerName());
             } catch (Exception e) {
                 BattleRoyale.LOGGER.error("Failed to backup gamemode {} for player {} (UUID: {}) , skipped", gameMode.getName(), gamePlayer.getPlayerName(), playerUUID);
             }

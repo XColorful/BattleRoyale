@@ -56,7 +56,7 @@ public class ColorUtils {
                 color = Color.decode(colorString); // 默认 Alpha 为 255
             }
         } catch (NumberFormatException e) {
-            BattleRoyale.LOGGER.warn("Failed to decode color hex: {}, reason: {}", colorString, e.getMessage());
+            BattleRoyale.LOGGER.debug("Invalid color:{}, defaulted", colorString);
         }
         return color;
     }

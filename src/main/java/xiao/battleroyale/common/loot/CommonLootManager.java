@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.event.TickEvent;
 
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.event.LootGenerationEventHandler;
@@ -39,6 +40,13 @@ public class CommonLootManager {
     private ServerLevel currentGenerationLevel = null;
     private int totalLootRefreshedInBatch = 0;
     private CommandSourceStack initiatingCommandSource = null;
+
+    public static int getMaxChunksPerTick() { return MAX_CHUNKS_PER_TICK; }
+    public int chunksToProcessSize() { return chunksToProcess.size(); }
+    public int processedChunkTrackerSize() { return processedChunkTracker.size(); }
+    public @Nullable UUID getCurrentGenerationGameId() { return currentGenerationGameId; }
+    public @Nullable ServerLevel getCurrentGenerationLevel() { return currentGenerationLevel; }
+    public int totalLootRefreshedInBatch() { return totalLootRefreshedInBatch; }
 
     /**
      * 由 LootCommand 调用，初始化并开始战利品刷新任务。

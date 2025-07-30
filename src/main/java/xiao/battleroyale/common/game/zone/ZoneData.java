@@ -1,16 +1,18 @@
 package xiao.battleroyale.common.game.zone;
 
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.AbstractGameManagerData;
+import xiao.battleroyale.util.ClassUtils;
 
 import java.util.*;
+
 public class ZoneData extends AbstractGameManagerData {
 
     private static final String DATA_NAME = "ZoneData";
 
-    private final List<IGameZone> gameZonesList = new ArrayList<>();
-    private final Map<Integer, IGameZone> gameZones = new HashMap<>();
+    private final ClassUtils.ArrayMap<Integer, IGameZone> gameZones;
     private final List<QueuedZoneInfo> queuedZoneInfos = new ArrayList<>(); // 待处理的Zone信息 (ID, Delay)
     private final List<IGameZone> currentZones = new ArrayList<>();
     private static class QueuedZoneInfo {
@@ -26,6 +28,7 @@ public class ZoneData extends AbstractGameManagerData {
 
     public ZoneData() {
         super(DATA_NAME);
+        this.gameZones = new ClassUtils.ArrayMap<>(IGameZone::getZoneId);
     }
 
     @Override
@@ -35,7 +38,6 @@ public class ZoneData extends AbstractGameManagerData {
         }
 
         gameZones.clear();
-        gameZonesList.clear();
         queuedZoneInfos.clear();
         currentZones.clear();
     }
@@ -54,7 +56,7 @@ public class ZoneData extends AbstractGameManagerData {
         // 处理区域延迟叠加
         queuedZoneInfos.sort(Comparator.comparingInt(QueuedZoneInfo::zoneId)); // 先按ID排序
         for (QueuedZoneInfo zoneInfo : queuedZoneInfos) {
-            IGameZone currentZone = gameZones.get(zoneInfo.zoneId);
+            IGameZone currentZone = gameZones.mapGet(zoneInfo.zoneId);
             int preZoneDelayId = currentZone.previousZoneDelayId();
             if (preZoneDelayId < 0 || !infoIndexMap.containsKey(preZoneDelayId)) {
                 continue;
@@ -70,7 +72,7 @@ public class ZoneData extends AbstractGameManagerData {
 
         currentZones.clear(); // 确保为新生成
         for (QueuedZoneInfo info : queuedZoneInfos) {
-            IGameZone zone = gameZones.get(info.zoneId());
+            IGameZone zone = gameZones.mapGet(info.zoneId());
             if (zone != null) { // 防御一下，没多少开销？
                 zone.setZoneDelay(info.zoneDelay);
                 currentZones.add(zone);
@@ -95,22 +97,15 @@ public class ZoneData extends AbstractGameManagerData {
         int zoneId = gameZone.getZoneId();
         int zoneDelay = gameZone.getZoneDelay();
 
-        if (gameZones.containsKey(zoneId)) { // 覆盖原先zone
-            IGameZone oldZone = gameZones.put(zoneId, gameZone);
-            gameZonesList.remove(oldZone);
-            gameZonesList.add(gameZone);
-
+        if (gameZones.containsKey(zoneId)) {
             queuedZoneInfos.removeIf(info -> info.zoneId() == zoneId); // 移除旧的待处理Zone信息
-            queuedZoneInfos.add(new QueuedZoneInfo(zoneId, zoneDelay)); // 添加新的待处理Zone信息
-        } else {
-            gameZones.put(zoneId, gameZone);
-            gameZonesList.add(gameZone);
-            queuedZoneInfos.add(new QueuedZoneInfo(zoneId, zoneDelay));
         }
+        gameZones.put(zoneId, gameZone);
+        queuedZoneInfos.add(new QueuedZoneInfo(zoneId, zoneDelay)); // 添加新的待处理Zone信息
     }
 
     public boolean hasEnoughZoneToStart() {
-        return !queuedZoneInfos.isEmpty() && !gameZonesList.isEmpty() && isZoneDataValid();
+        return !queuedZoneInfos.isEmpty() && !gameZones.isEmpty() && isZoneDataValid();
     }
 
     public boolean isZoneDataValid() {
@@ -119,13 +114,13 @@ public class ZoneData extends AbstractGameManagerData {
 
     @Nullable
     public IGameZone getGameZoneById(int zoneId) {
-        return gameZones.get(zoneId);
+        return gameZones.mapGet(zoneId);
     }
 
-    public Map<Integer, IGameZone> getGameZones() { return Collections.unmodifiableMap(this.gameZones); }
+    public Map<Integer, IGameZone> getGameZones() { return gameZones.asMap(); }
 
     public List<IGameZone> getGameZonesList() {
-        return Collections.unmodifiableList(gameZonesList);
+        return gameZones.asList();
     }
 
     /**
@@ -173,5 +168,5 @@ public class ZoneData extends AbstractGameManagerData {
         currentZones.removeIf(zone -> zoneIdsToRemove.contains(zone.getZoneId()));
     }
 
-    public int getTotalZoneCount() { return gameZonesList.size(); }
+    public int getTotalZoneCount() { return gameZones.size(); }
 }

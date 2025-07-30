@@ -25,10 +25,21 @@ public class BoostManager implements IEffectManager {
     }
 
     private static final int SYNC_FREQUENCY = 20 * 5; // 客户端本地会递减Boost，不用频繁通知
-    private static final int HEAL_COOLDOWN = 160;
-    private static final int EFFECT_COOLDOWN = 20;
+    private static int HEAL_COOLDOWN = 160;
+    public static void setHealCooldown(int cooldown) { HEAL_COOLDOWN = cooldown; }
+    private static int EFFECT_COOLDOWN = 20;
+    public static void setEffectCooldown(int cooldown) { EFFECT_COOLDOWN = cooldown; }
 
     private final Map<UUID, BoostData> boostData = new HashMap<>();
+
+    public int syncFrequency() { return SYNC_FREQUENCY; }
+    public int healCooldown() { return HEAL_COOLDOWN; }
+    public int healCooldownDefault() { return 160; }
+    public int effectCooldown() { return EFFECT_COOLDOWN; }
+    public int effectCooldownDefault() { return 20; }
+
+    public Map<UUID, BoostData> getBoostData() { return boostData; }
+    public BoostData getBoostData(UUID uuid) { return boostData.get(uuid); }
 
     /**
      * 消耗boost，给予效果
@@ -43,8 +54,8 @@ public class BoostManager implements IEffectManager {
             int boostLevel = BoostData.getBoostLevel(boost);
             // 回血
             if (--data.healCooldown <= 0) {
-                if (data.level == null
-                        || !(data.level.getEntity(data.uuid) instanceof LivingEntity livingEntity)) {
+                if (data.serverLevel == null
+                        || !(data.serverLevel.getEntity(data.uuid) instanceof LivingEntity livingEntity)) {
                     return true;
                 }
                 double healAmount = 0;
@@ -59,8 +70,8 @@ public class BoostManager implements IEffectManager {
             }
             // 加速
             if (--data.effectCooldown <= 0) {
-                if (data.level == null
-                        || !(data.level.getEntity(data.uuid) instanceof LivingEntity livingEntity)) {
+                if (data.serverLevel == null
+                        || !(data.serverLevel.getEntity(data.uuid) instanceof LivingEntity livingEntity)) {
                     return true;
                 }
                 int boostEffect = boostLevel - 3;
@@ -118,7 +129,7 @@ public class BoostManager implements IEffectManager {
     @NotNull
     private BoostData getOrCreateData(UUID entityUUID, ServerLevel serverLevel) {
         BoostData data = boostData.computeIfAbsent(entityUUID, e -> new BoostData(e, serverLevel));
-        data.level = serverLevel;
+        data.serverLevel = serverLevel;
         return data;
     }
 

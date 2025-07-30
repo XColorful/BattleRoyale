@@ -233,9 +233,16 @@
   "battleroyale.message.clear_player_boost": "Cleared %s's boost",
   "battleroyale.message.clear_all_boost": "Cleared all player's boost",
   "battleroyale.message.set_global_offset": "Set global offset to %s,%s,%s",
+  "battleroyale.message.check_global_offset": "Current global offset: %s,%s,%s",
   "battleroyale.message.enable_pubgmc_registry": "Enabled PUBGMC registry, restart Minecraft to take effect",
   "battleroyale.message.disable_pubgmc_registry": "Disabled PUBGMC registry, restart Minecraft to take effect",
   "battleroyale.message.clear_temp_data": "Cleared all temp data",
+  "battleroyale.message.add_debug_player": "%s has become a debug player",
+  "battleroyale.message.remove_debug_player": "%s is not a debug player now",
+  "battleroyale.message.no_debug_permission": "No debug permission",
+  "battleroyale.message.local_debug_not_enabled": "Local debug is not enabled",
+  "battleroyale.message.debug": "[Debug]",
+  "battleroyale.message.debug_local": "[Local Debug]",
 
   "battleroyale.label.alive": "Alive",
 

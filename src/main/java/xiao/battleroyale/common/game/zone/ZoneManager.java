@@ -7,6 +7,7 @@ import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.message.zone.ZoneMessageManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.util.ChatUtils;
@@ -32,7 +33,10 @@ public class ZoneManager extends AbstractGameManager {
 
     private final ZoneData zoneData = new ZoneData();
 
-    private boolean stackZoneConfig = true;
+    private boolean stackZoneConfig = true; // TODO 增加配置
+
+    private boolean isTicking = false;
+    protected static boolean shouldStopGame = false; // 让其对GameZone可见
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
@@ -53,10 +57,10 @@ public class ZoneManager extends AbstractGameManager {
             IGameZone gameZone = zoneconfig.generateZone();
             this.zoneData.addZone(gameZone);
         }
-        BattleRoyale.LOGGER.info("ZoneManager complete initGame, total zones: {}", this.zoneData.getTotalZoneCount());
 
         if (this.hasEnoughZoneToStart()) {
             this.prepared = true;
+            BattleRoyale.LOGGER.debug("ZoneManager complete initGameConfig, total zones: {}", this.zoneData.getTotalZoneCount());
         } else {
             this.prepared = false;
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_zone_config");
@@ -70,6 +74,7 @@ public class ZoneManager extends AbstractGameManager {
         }
 
         this.ready = true;
+        BattleRoyale.LOGGER.debug("ZoneManager complete initGame");
     }
 
     @Override
@@ -88,13 +93,42 @@ public class ZoneManager extends AbstractGameManager {
         return true;
     }
 
+    /**
+     * 延迟处理区域清理，使游戏进行时高效遍历Zone，并防止并发问题
+     */
     public void stopGame(@Nullable ServerLevel serverLevel) {
+        BattleRoyale.LOGGER.info("ZoneManager stopGame");
+
         List<Integer> zoneIdList = new ArrayList<>();
         for (IGameZone gameZone : this.zoneData.getCurrentTickZones(GameManager.get().getGameTime())) {
             zoneIdList.add(gameZone.getZoneId());
         }
         GameManager.get().notifyZoneEnd(zoneIdList);
 
+        if (isTicking) {
+            shouldStopGame = true;
+        } else {
+            clear(serverLevel);
+            shouldStopGame = false; // 防御一下
+            BattleRoyale.LOGGER.debug("ZoneManager complete stopGame");
+        }
+        // ↓这个lambda方式似乎并没有延迟处理，还是会触发onGameTick并发修改问题
+        // 应该是GameManager注册时间相关问题导致在新的onGameTick里触发的并发修改？不管了
+//        if (serverLevel != null) {
+//            serverLevel.getServer().execute(() -> {
+//                clear();
+//                BattleRoyale.LOGGER.debug("ZoneManager complete delayed stopGame");
+//            });
+//        } else { // 如果当前ZoneManager正在tick，延迟到tick结束就节约了复制列表的开销
+//            shouldStopGame = true;
+//        }
+    }
+
+    /**
+     * 仅限类内lambda调用
+     */
+    public void clear(@Nullable ServerLevel serverLevel) {
+        ZoneMessageManager.get().stopGame(serverLevel);
         this.zoneData.endGame();
         this.zoneData.clear();
         this.prepared = false;
@@ -134,7 +168,8 @@ public class ZoneManager extends AbstractGameManager {
         Set<Integer> finishedZoneId = new HashSet<>();
         Map<Integer, IGameZone> gameZones = this.zoneData.getGameZones(); // 缓存引用
         // 获取当前时间应Tick的Zone列表
-        for (IGameZone gameZone : this.zoneData.getCurrentTickZones(gameTime)) {
+        this.isTicking = true;
+        for (IGameZone gameZone : this.zoneData.getCurrentTickZones(gameTime)) { // 高效遍历，当区域把玩家tick死了导致stopGame会有并发问题
             if (gameZone.isFinished()) { // 防御已经结束但未清理的Zone
                 finishedZoneId.add(gameZone.getZoneId());
                 continue;
@@ -155,8 +190,22 @@ public class ZoneManager extends AbstractGameManager {
                 finishedZoneId.add(gameZone.getZoneId());
             }
         }
+        this.isTicking = false;
 
+        if (shouldStopGame) { // 在移除区域前执行，防止区域结束的tick没有发送消息
+            clear(serverLevel);
+            shouldStopGame = false;
+            BattleRoyale.LOGGER.debug("ZoneManager: delayed stopGame");
+        }
         // 遍历结束后统一移除已完成的zone
         this.zoneData.finishZones(finishedZoneId);
+    }
+
+    public List<IGameZone> getGameZones() {
+        return this.zoneData.getGameZonesList();
+    }
+
+    public List<IGameZone> getCurrentTickGameZones(int gameTime) {
+        return this.zoneData.getCurrentTickZones(gameTime);
     }
 }

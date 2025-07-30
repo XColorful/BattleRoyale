@@ -6,12 +6,14 @@ import xiao.battleroyale.api.message.IExpireable;
 
 public abstract class AbstractClientExpireData implements IExpireable {
 
+    public CompoundTag lastMessageNbt;
     protected long lastUpdateTick = 0;
+
     @Override
     public long getLastUpdateTick() { return lastUpdateTick; }
 
     public AbstractClientExpireData() {
-        ;
+        lastMessageNbt = new CompoundTag();
     }
 
     /*

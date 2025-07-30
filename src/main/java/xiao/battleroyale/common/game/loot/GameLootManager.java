@@ -10,6 +10,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.server.performance.type.GeneratorEntry;
+import xiao.battleroyale.util.ClassUtils;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -38,6 +39,23 @@ public class GameLootManager extends AbstractGameManager {
         cachedCenterOffset.addAll(BfsCalculator.calculateCenterOffset(64));
     }
 
+    public int getMaxLootChunkPerTick() { return MAX_LOOT_CHUNK_PER_TICK; }
+    public int getMaxLootDistance() { return MAX_LOOT_DISTANCE; }
+    public int getTolerantCenterDistance() { return TOLERANT_CENTER_DISTANCE; }
+    public int getMaxCachedCenter() { return MAX_CACHED_CENTER; }
+    public int getMaxQueuedChunk() { return MAX_QUEUED_CHUNK; }
+    public int getBfsFrequency() { return BFS_FREQUENCY; }
+    public boolean isInstantNextBfs() { return INSTANT_NEXT_BFS; }
+    public int getMaxCachedLootChunk() { return MAX_CACHED_LOOT_CHUNK; }
+    public int getCleanCachedChunk() { return CLEAN_CACHED_CHUNK; }
+
+    public int getLastBfsTime() { return lastBfsTime; }
+    public int getLastBfsProcessedLoot() { return lastBfsProcessedLoot; }
+    public int queuedChunksRefSize() { return queuedChunksRef.get().size(); }
+    public int processedChunkCacheSize() { return processedChunkCache.size(); }
+    public int cachedPlayerCenterChunksSize() { return cachedPlayerCenterChunks.size(); }
+    public int cachedCenterOffsetSize() { return cachedCenterOffset.size(); }
+
     private int MAX_LOOT_CHUNK_PER_TICK = 5; // 每Tick最多处理的区块数
     private int MAX_LOOT_DISTANCE = 16; // BFS广度
     private int TOLERANT_CENTER_DISTANCE = 3; // 将玩家中心周围一定距离的区块也算作中心区块
@@ -50,6 +68,10 @@ public class GameLootManager extends AbstractGameManager {
     public void applyConfig(GeneratorEntry entry) {
         MAX_LOOT_CHUNK_PER_TICK = Math.min(Math.max(entry.maxGameTickLootChunk, 5), 500);
         MAX_LOOT_DISTANCE = Math.min(Math.max(entry.maxGameLootDistance, 3), 128);
+        if (MAX_LOOT_DISTANCE >= cachedCenterOffset.size()) { // cachedCenterOffest第一项为0距离
+            cachedCenterOffset.clear();
+            cachedCenterOffset.addAll(BfsCalculator.calculateCenterOffset(MAX_LOOT_DISTANCE));
+        }
         TOLERANT_CENTER_DISTANCE = Math.min(Math.max(entry.tolerantCenterDistance, 0), 10);
         MAX_CACHED_CENTER = Math.min(Math.max(entry.maxCachedCenter, 0), 50000);
         MAX_QUEUED_CHUNK = Math.min(Math.max(entry.maxQueuedChunk, 100), 200000);
@@ -63,47 +85,13 @@ public class GameLootManager extends AbstractGameManager {
     private int lastBfsProcessedLoot = 0;
     // 原子地引用当前待处理队列
     private final AtomicReference<Queue<ChunkPos>> queuedChunksRef = new AtomicReference<>(new ArrayDeque<>());
-    private final ProcessedChunkCache processedChunkCache = new ProcessedChunkCache();
-    private final ProcessedChunkCache cachedPlayerCenterChunks = new ProcessedChunkCache();
+    private final ClassUtils.QueueSet<ChunkPos> processedChunkCache = new ClassUtils.QueueSet<>();
+    private final ClassUtils.QueueSet<ChunkPos> cachedPlayerCenterChunks = new ClassUtils.QueueSet<>();
     private static final List<List<Offset2D>> cachedCenterOffset = new ArrayList<>();
     public record Offset2D(int x, int z) {}
 
     private ExecutorService bfsExecutor;
     private Future<?> bfsTaskFuture;
-
-    /**
-     * 封装已处理区块的Set和Queue，确保数据一致性。
-     */
-    private static class ProcessedChunkCache {
-        private final Set<ChunkPos> set = new HashSet<>();
-        private final Queue<ChunkPos> queue = new ArrayDeque<>();
-        public boolean add(ChunkPos chunkPos) {
-            if (set.add(chunkPos)) {
-                queue.add(chunkPos);
-                return true;
-            }
-            return false;
-        }
-        public boolean contains(ChunkPos chunkPos) {
-            return set.contains(chunkPos);
-        }
-        public int size() {
-            return queue.size();
-        }
-        public void removeOldest(int count) {
-            int chunksToRemove = Math.min(count, size());
-            for (int i = 0; i < chunksToRemove; i++) {
-                ChunkPos chunkToRemove = queue.poll();
-                if (chunkToRemove != null) {
-                    set.remove(chunkToRemove);
-                }
-            }
-        }
-        public void clear() {
-            set.clear();
-            queue.clear();
-        }
-    }
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
