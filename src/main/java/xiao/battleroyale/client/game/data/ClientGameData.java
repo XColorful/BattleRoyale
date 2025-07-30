@@ -31,5 +31,6 @@ public class ClientGameData extends AbstractClientExpireData {
 
     public void clear() {
         this.standingPlayerCount = 0;
+        this.inGame = false;
     }
 }

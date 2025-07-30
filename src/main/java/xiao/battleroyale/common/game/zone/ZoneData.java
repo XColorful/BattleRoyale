@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.game.zone;
 
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.AbstractGameManagerData;
 import xiao.battleroyale.util.ClassUtils;
@@ -96,9 +97,10 @@ public class ZoneData extends AbstractGameManagerData {
         int zoneId = gameZone.getZoneId();
         int zoneDelay = gameZone.getZoneDelay();
 
+        if (gameZones.containsKey(zoneId)) {
+            queuedZoneInfos.removeIf(info -> info.zoneId() == zoneId); // 移除旧的待处理Zone信息
+        }
         gameZones.put(zoneId, gameZone);
-
-        queuedZoneInfos.removeIf(info -> info.zoneId() == zoneId); // 移除旧的待处理Zone信息
         queuedZoneInfos.add(new QueuedZoneInfo(zoneId, zoneDelay)); // 添加新的待处理Zone信息
     }
 

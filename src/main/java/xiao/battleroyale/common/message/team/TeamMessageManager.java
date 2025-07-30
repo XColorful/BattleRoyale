@@ -59,7 +59,7 @@ public class TeamMessageManager extends AbstractMessageManager<TeamMessage> {
             changedId.add(teamId); // 强制续命同步
             message.updateTime = currentTime;
 
-            GameTeam gameTeam = GameManager.get().getGameTeamById(teamId);
+            GameTeam gameTeam = GameManager.get().getGameTeamById(teamId); // TeamManager内部做了特殊处理，不应该重新build消息时会防止MessageManager获取GameTeam
             if (gameTeam == null) {
                 leavedMember.addAll(message.memberUUID);
                 return true;
@@ -90,7 +90,7 @@ public class TeamMessageManager extends AbstractMessageManager<TeamMessage> {
         ServerLevel serverLevel = GameManager.get().getServerLevel();
 
         for (int id : changedId) {
-            GameTeam gameTeam = GameManager.get().getGameTeamById(id);
+            GameTeam gameTeam = GameManager.get().getGameTeamById(id); // TeamManager内部做了特殊处理，不应该重新build消息时会防止MessageManager获取GameTeam
             if (gameTeam != null) { // 队伍存在则计算NBT并发送
                 CompoundTag nbt = ClientTeamData.toNBT(gameTeam, serverLevel);
                 // 备份NBT和成员UUID

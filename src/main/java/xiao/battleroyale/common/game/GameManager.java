@@ -190,6 +190,8 @@ public class GameManager extends AbstractGameManager {
         checkAndUpdateInvalidGamePlayer(this.serverLevel); // 供gameTime = 1时使用
         if (startGameSubManager()) {
             startGameSetup();
+            this.inGame = true;
+            GameMessageManager.get().startGame(serverLevel);
             return true;
         } else {
             stopGame(this.serverLevel);
@@ -222,9 +224,9 @@ public class GameManager extends AbstractGameManager {
         checkAndUpdateInvalidGamePlayer(this.serverLevel); // 为其他Manager预处理当前tick
 
         GameLootManager.get().onGameTick(gameTime);
-        ZoneManager.get().onGameTick(gameTime);
+        ZoneManager.get().onGameTick(gameTime); // Zone会提前触发stopGame，并且Zone需要延迟stopGame到tick结束
 
-        TeamManager.get().onGameTick(gameTime);
+        TeamManager.get().onGameTick(gameTime); // 将解散队伍延迟到Zone之后，并且在tick最后清理队伍
         GameruleManager.get().onGameTick(gameTime);
         SpawnManager.get().onGameTick(gameTime);
         // StatsManager.get().onGameTick(gameTime); // 基于事件主动记录，不用tick
@@ -483,19 +485,12 @@ public class GameManager extends AbstractGameManager {
         TeamManager.get().stopGame(serverLevel); // 最后处理TeamManager
         this.prepared = false;
         this.inGame = false;
+        GameMessageManager.get().stopGame(serverLevel); // 不在游戏中影响消息逻辑
         // this.ready = false; // 不使用ready标记，因为Team会变动
         // 取消事件监听
         unregisterGameEvent();
 
-        if (!gameEntry.keepTeamAfterGame) {
-            for (GamePlayer gamePlayer : getGamePlayers()) {
-                notifyLeavedMember(gamePlayer.getPlayerUUID(), gamePlayer.getGameTeamId());
-            }
-            TeamManager.get().clear();
-        }
-
         StatsManager.get().stopGame(serverLevel);
-        GameMessageManager.get().stopGame(serverLevel);
     }
 
     public boolean teleportToLobby(@NotNull ServerPlayer player) {
@@ -707,12 +702,10 @@ public class GameManager extends AbstractGameManager {
             BattleRoyale.LOGGER.warn("StatsManager failed to start game");
             return false;
         }
-        GameMessageManager.get().startGame(serverLevel);
         return true;
     }
     private void startGameSetup() {
         this.gameDimensionKey = serverLevel.dimension();
-        this.inGame = true;
         // this.ready = false; // 不使用ready标记，因为Team会变动
         this.gameTime = 0; // 游戏结束后不手动重置
         this.winnerGameTeams.clear(); // 游戏结束后不手动重置

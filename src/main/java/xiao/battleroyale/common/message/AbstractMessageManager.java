@@ -88,11 +88,7 @@ public abstract class AbstractMessageManager<K extends AbstractCommonMessage> im
         CompoundTag nbtPacket = new CompoundTag();
         for (int id : changedId) {
             K message = messages.get(id);
-            if (message == null) {
-                nbtPacket.put(Integer.toString(id), new CompoundTag());
-            } else {
-                nbtPacket.put(Integer.toString(id), message.nbt);
-            }
+            nbtPacket.put(Integer.toString(id), message != null ? message.nbt : new CompoundTag());
         }
         return nbtPacket;
     }

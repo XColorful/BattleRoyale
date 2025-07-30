@@ -31,34 +31,38 @@ public class GameMessageManager extends AbstractMessageManager<GameMessage> impl
 
     @Override
     protected void checkExpiredMessage() {
+        updateAliveTotal();
+
         if (!GameManager.get().isInGame()) {
             super.checkExpiredMessage();
-            return;
         }
+    }
 
-        int aliveTotal = GameManager.get().getStandingGamePlayers().size();
-        if (aliveTotal > 0) {
+    protected void updateAliveTotal() {
+        boolean inGame = GameManager.get().isInGame();
+        if (inGame) {
+            int aliveTotal = GameManager.get().getStandingGamePlayers().size();
             GameMessage message = getOrCreateMessage(ALIVE_CHANNEL);
             message.standingPlayerCount = aliveTotal;
             message.nbt = message.toNBT();
             message.updateTime = currentTime;
+        } else {
+            if (messages.containsKey(ALIVE_CHANNEL)) {
+                GameMessage message = getOrCreateMessage(ALIVE_CHANNEL);
+                message.standingPlayerCount = 0;
+                message.nbt = new CompoundTag();
+                message.updateTime = currentTime;
+            } else {
+                ;
+            }
         }
+        changedId.add(ALIVE_CHANNEL);
     }
 
     // TODO 以后增加更多游戏消息时把正的和负的进行区分或换个设计
-    // 目前跟父类方法一致
     @Override
     protected CompoundTag buildCommonChangedMessage() {
-        CompoundTag nbtPacket = new CompoundTag();
-        for (int id : changedId) {
-            GameMessage message = messages.get(id);
-            if (message == null) {
-                nbtPacket.put(Integer.toString(id), new CompoundTag());
-            } else {
-                nbtPacket.put(Integer.toString(id), message.nbt);
-            }
-        }
-        return nbtPacket;
+        return super.buildCommonChangedMessage();
     }
 
     @Override
@@ -79,11 +83,7 @@ public class GameMessageManager extends AbstractMessageManager<GameMessage> impl
     public void notifyNbtChange(int nbtId) {
         switch (nbtId) {
             case ALIVE_CHANNEL -> {
-                GameMessage message = getOrCreateMessage(nbtId);
-                message.standingPlayerCount = GameManager.get().getStandingGamePlayers().size();
-                message.nbt = message.toNBT();
-                message.updateTime = currentTime;
-                changedId.add(nbtId);
+                updateAliveTotal();
             }
             default -> {
                 ;
@@ -111,13 +111,15 @@ public class GameMessageManager extends AbstractMessageManager<GameMessage> impl
     @Override
     public boolean startGame(ServerLevel serverLevel) {
         MessageManager.get().registerGameMessage();
-        GameManager.get().notifyAliveChange();
+        updateAliveTotal();
         return true;
     }
     @Override
     public void onGameTick(int gameTime) {}
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        changedId.add(ALIVE_CHANNEL);
+        updateAliveTotal();
+        sendMessages(); // 暂时没有什么好的解决方案，至少Bug修了
+        clear();
     }
 }

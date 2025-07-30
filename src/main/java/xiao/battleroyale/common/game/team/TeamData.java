@@ -43,7 +43,6 @@ public class TeamData extends AbstractGameManagerData {
     }
     public void clear(int maxPlayers, int maxTeamSize) {
         if (locked) {
-            BattleRoyale.LOGGER.warn("TeamData is locked, skipped clear()");
             return;
         }
         unlockData();
