@@ -150,7 +150,7 @@ public class GameManager extends AbstractGameManager {
 
     /**
      * 准备游戏，将玩家传送至大厅等
-     * @param serverLevel 当前 level
+     * @param serverLevel 当前 serverLevel
      */
     @Override
     public void initGame(ServerLevel serverLevel) {
@@ -261,7 +261,7 @@ public class GameManager extends AbstractGameManager {
     }
     private void updateInvalidServerPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers) {
         ServerPlayer serverPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-        if (serverPlayer == null) { // 不在线或者不在游戏运行的 level
+        if (serverPlayer == null) { // 不在线或者不在游戏运行的 serverLevel
             if (gamePlayer.isActiveEntity()) {
                 notifyGamePlayerIsInactive(gamePlayer);
             }

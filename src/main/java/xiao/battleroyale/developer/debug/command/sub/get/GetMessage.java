@@ -30,7 +30,7 @@ public class GetMessage {
         // get zonemessages [min max / all]
         getCommand.then(Commands.literal(useFullName ? ZONE_MESSAGES : ZONE_MESSAGES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> getZoneMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getZoneMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> getZoneMessages(context,
@@ -47,7 +47,7 @@ public class GetMessage {
         // get teammessages [min max / all]
         getCommand.then(Commands.literal(useFullName ? TEAM_MESSAGES : TEAM_MESSAGES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> getTeamMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getTeamMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> getTeamMessages(context,
@@ -62,7 +62,7 @@ public class GetMessage {
         // get gamemessages [min max / all]
         getCommand.then(Commands.literal(useFullName ? GAME_MESSAGES : GAME_MESSAGES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> getGameMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getGameMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> getGameMessages(context,
@@ -83,7 +83,7 @@ public class GetMessage {
         // get zonemessages [min max / all]
         getCommand.then(Commands.literal(useFullName ? ZONE_MESSAGES : ZONE_MESSAGES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> localGetZoneMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> localGetZoneMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> localGetZoneMessages(context,
@@ -100,7 +100,7 @@ public class GetMessage {
         // get teammessages [min max / all]
         getCommand.then(Commands.literal(useFullName ? TEAM_MESSAGES : TEAM_MESSAGES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> localGetTeamMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> localGetTeamMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> localGetTeamMessages(context,
@@ -115,7 +115,7 @@ public class GetMessage {
         // get gamemessages [min max / all]
         getCommand.then(Commands.literal(useFullName ? GAME_MESSAGES : GAME_MESSAGES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> localGetGameMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> localGetGameMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> localGetGameMessages(context,

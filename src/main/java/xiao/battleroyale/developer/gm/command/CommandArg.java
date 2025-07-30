@@ -24,7 +24,7 @@ public class CommandArg {
     public static final String CHANGE = "change";
     public static final String CHANGE_SHORT = "cg";
 
-    public static final String LEVEL = "level";
+    public static final String LEVEL = "serverLevel";
     public static final String ENTITY = "entity";
     public static final String ENTITY2 = "entity2";
     public static final String BOOL = "bool";

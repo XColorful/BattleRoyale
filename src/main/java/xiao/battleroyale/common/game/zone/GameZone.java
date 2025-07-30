@@ -31,7 +31,7 @@ public class GameZone implements IGameZone {
 
     // common
     private static final String COMMON_TAG = "common";
-    private static final String CREATE_TIME = COMMON_TAG + "-createTime";
+    private static final String CREATE_TIME = COMMON_TAG + "-worldTime";
     private static final String ZONE_NAME_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_NAME;
     private static final String ZONE_COLOR_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_COLOR;
     private static final String ZONE_DELAY_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_DELAY;

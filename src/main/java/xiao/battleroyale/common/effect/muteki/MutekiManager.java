@@ -32,10 +32,13 @@ public class MutekiManager implements IEffectManager {
     public static void setMaxMutekiTime(int time) { MAX_MUTEKI_TIME = time; }
     private final Map<UUID, EntityMutekiTask> mutekiTasks = new HashMap<>();
 
+    public Map<UUID, EntityMutekiTask> getMutekiTasks() { return mutekiTasks; }
+    public static int getMaxMutekiTimeDefault() { return 20 * 10; }
+
     public void onTick() {
         mutekiTasks.entrySet().removeIf(entry -> {
             EntityMutekiTask task = entry.getValue();
-            if (--task.remainTime <= 0 || task.level == null) {
+            if (--task.remainTime <= 0 || task.serverLevel == null) {
                 notifyMutekiEnd(task);
                 return true;
             } else {
@@ -49,8 +52,8 @@ public class MutekiManager implements IEffectManager {
     }
 
     public void notifyMutekiEnd(EntityMutekiTask task) {
-        if (task.notice && task.level != null) {
-            ServerPlayer player = (ServerPlayer) task.level.getEntity(task.entityUUID);
+        if (task.notice && task.serverLevel != null) {
+            ServerPlayer player = (ServerPlayer) task.serverLevel.getEntity(task.entityUUID);
             if (player != null) {
                 ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.muteki_end").withStyle(ChatFormatting.YELLOW));
             }
@@ -77,7 +80,7 @@ public class MutekiManager implements IEffectManager {
         duration = Math.min(duration, MAX_MUTEKI_TIME);
         if (mutekiTasks.containsKey(uuid)) {
             task = mutekiTasks.get(uuid);
-            task.level = serverLevel;
+            task.serverLevel = serverLevel;
             task.entityUUID = uuid;
             if (duration > task.remainTime) {
                 task.remainTime = duration;

@@ -18,7 +18,7 @@ import static xiao.battleroyale.developer.gm.command.CommandArg.*;
 public class DebugManager {
     public static void addServer(LiteralArgumentBuilder<CommandSourceStack> gmCommand, boolean useFullName) {
         // 调整调试权限
-        // /battleroyale gamemaster debugpermission [level]
+        // /battleroyale gamemaster debugpermission [serverLevel]
         gmCommand.then(Commands.literal(useFullName ? DEBUG_PERMISSION : DEBUG_PERMISSION_SHORT)
                 .then(Commands.argument(LEVEL, IntegerArgumentType.integer())
                         .executes(DebugManager::debugPermission)));
@@ -35,7 +35,7 @@ public class DebugManager {
      */
     private static int debugPermission(CommandContext<CommandSourceStack> context) {
         final int level = IntegerArgumentType.getInteger(context, LEVEL);
-        context.getSource().sendSuccess(() -> Component.literal("Executing set debug permission level to: " + level), false);
+        context.getSource().sendSuccess(() -> Component.literal("Executing set debug permission serverLevel to: " + level), false);
         return Command.SINGLE_SUCCESS;
     }
 

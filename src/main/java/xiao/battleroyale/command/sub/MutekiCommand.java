@@ -21,7 +21,7 @@ import static xiao.battleroyale.command.CommandArg.*;
 
 public class MutekiCommand {
 
-    private static final int DEFAULT_TIME = 20 * 5;
+    public static final int DEFAULT_TIME = 20 * 5;
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         LiteralArgumentBuilder<CommandSourceStack> mutekiCommand = Commands.literal(MUTEKI);

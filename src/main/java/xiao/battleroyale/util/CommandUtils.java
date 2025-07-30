@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Set;
@@ -12,6 +13,13 @@ import static net.minecraft.nbt.Tag.TAG_BYTE;
 import static net.minecraft.nbt.Tag.TAG_INT;
 
 public class CommandUtils {
+
+    public static String buildVanillaTeleport(Vec3 pos) {
+        return  "/tp " + pos.x + " " + pos.y + " " + pos.z;
+    }
+    public static String buildNearestEntitySelect(Entity entity) {
+        return "@p[name=" + entity.getName().getString() + "]";
+    }
 
     /**
      * 悬浮文本
@@ -54,12 +62,19 @@ public class CommandUtils {
         return fieldComp.setStyle(style);
     }
 
+    public static MutableComponent buildRunnableText(String displayText, String command, ChatFormatting chatFormatting) {
+        MutableComponent component = Component.empty();
+        component.append(Component.literal(displayText)
+                .setStyle(Style.EMPTY.withColor(chatFormatting)
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command)))));
+
+        return component;
+    }
+
     /**
      * 点击坐标传送
      */
-    public static String buildVanillaTeleport(Vec3 pos) {
-        return  "/tp " + pos.x + " " + pos.y + " " + pos.z;
-    }
     public static MutableComponent buildRunnableVec(Vec3 pos) {
         String command = buildVanillaTeleport(pos);
         return buildRunnableVec(pos, command, command);

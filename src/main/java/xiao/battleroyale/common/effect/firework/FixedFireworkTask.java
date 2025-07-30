@@ -3,22 +3,14 @@ package xiao.battleroyale.common.effect.firework;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 
-public class FixedFireworkTask {
-    ServerLevel level;
-    Vec3 initialPos;
-    int remainingAmount;
-    int interval;
-    int currentDelay;
-    float vRange;
-    float hRange;
+public class FixedFireworkTask extends AbstractFireworkTask {
 
-    public FixedFireworkTask(ServerLevel level, Vec3 initialPos, int amount, int interval, float vRange, float hRange) {
-        this.level = level;
+    protected Vec3 initialPos;
+
+    public Vec3 getInitialPos() { return initialPos; }
+
+    public FixedFireworkTask(ServerLevel serverLevel, Vec3 initialPos, int amount, int interval, float vRange, float hRange) {
+        super(serverLevel, amount, interval, vRange, hRange);
         this.initialPos = initialPos;
-        this.remainingAmount = amount;
-        this.interval = interval;
-        this.currentDelay = interval;
-        this.vRange = vRange;
-        this.hRange = hRange;
     }
 }

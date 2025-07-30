@@ -25,7 +25,7 @@ public class GetGame {
         // get gameplayers [min max / all]
         getCommand.then(Commands.literal(useFullName ? GAME_PLAYERS : GAME_PLAYERS_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> getGamePlayers(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getGamePlayers(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> getGamePlayers(context,
@@ -44,7 +44,7 @@ public class GetGame {
         // get gameteams [min max / all]
         getCommand.then(Commands.literal(useFullName ? GAME_TEAMS : GAME_TEAMS_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> getGameTeams(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getGameTeams(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> getGameTeams(context,
@@ -59,7 +59,7 @@ public class GetGame {
         // get gamezones [min max / all]
         getCommand.then(Commands.literal(useFullName ? GAME_ZONES : GAME_ZONES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> getGameZones(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getGameZones(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> getGameZones(context,
@@ -76,7 +76,7 @@ public class GetGame {
         // get backupplayermodes [min max / all]
         getCommand.then(Commands.literal(useFullName ? BACKUP_PLAYER_MODES : BACKUP_PLAYER_MODES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> getBackupPlayerModes(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getBackupPlayerModes(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> getBackupPlayerModes(context,
@@ -221,7 +221,7 @@ public class GetGame {
             return 0;
         }
 
-        if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
+        if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE - 1) {
             context.getSource().sendSuccess(() -> Component.literal("Executing get backupplayermodes (all)"), false);
         } else {
             context.getSource().sendSuccess(() -> Component.literal("Executing get backupplayermodes with min: " + min + ", max: " + max), false);

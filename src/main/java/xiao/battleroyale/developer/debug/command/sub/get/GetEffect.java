@@ -16,6 +16,7 @@ import xiao.battleroyale.developer.debug.DebugManager;
 
 import static xiao.battleroyale.developer.debug.command.CommandArg.*;
 import static xiao.battleroyale.developer.debug.command.sub.GetCommand.buildDebugCommandString;
+import static xiao.battleroyale.util.CommandUtils.buildNearestEntitySelect;
 
 public class GetEffect {
 
@@ -25,7 +26,7 @@ public class GetEffect {
         // get particles [min max / all]
         getCommand.then(Commands.literal(useFullName ? PARTICLES : PARTICLES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> getParticles(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getParticles(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> getParticles(context,
@@ -35,7 +36,7 @@ public class GetEffect {
         getCommand.then(Commands.literal(useFullName ? PARTICLE : PARTICLE_SHORT)
                 .then(Commands.argument(CHANNEL, StringArgumentType.string())
                         .then(Commands.literal(ALL)
-                                .executes(context -> getParticleByChannel(context, StringArgumentType.getString(context, CHANNEL), Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                                .executes(context -> getParticleByChannel(context, StringArgumentType.getString(context, CHANNEL), Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                         .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                                 .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                         .executes(context -> getParticleByChannel(context,
@@ -48,7 +49,7 @@ public class GetEffect {
                                         .executes(context -> getParticleByEntity(context,
                                                 EntityArgument.getEntity(context, ENTITY),
                                                 StringArgumentType.getString(context, CHANNEL),
-                                                Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                                                Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                                 .executes(context -> getParticleByEntity(context,
@@ -62,7 +63,7 @@ public class GetEffect {
         // get fireworks [min max / all]
         getCommand.then(Commands.literal(useFullName ? FIREWORKS : FIREWORKS_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> getFireworks(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getFireworks(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> getFireworks(context,
@@ -79,7 +80,7 @@ public class GetEffect {
         // get mutekis [min max / all]
         getCommand.then(Commands.literal(useFullName ? MUTEKIS : MUTEKIS_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> getMutekis(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getMutekis(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> getMutekis(context,
@@ -96,7 +97,7 @@ public class GetEffect {
         // get boosts [min max / all]
         getCommand.then(Commands.literal(useFullName ? BOOSTS : BOOSTS_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> getBoosts(context, Integer.MIN_VALUE, Integer.MAX_VALUE)))
+                        .executes(context -> getBoosts(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> getBoosts(context,
@@ -246,7 +247,7 @@ public class GetEffect {
         return Command.SINGLE_SUCCESS;
     }
 
-    public static String getParticleChannelCommandString(String channel, int min, int max) {
+    public static String getParticleChannelCommand(String channel, int min, int max) {
         return buildDebugCommandString(
                 GET,
                 PARTICLE,
@@ -255,37 +256,67 @@ public class GetEffect {
                 Integer.toString(max)
         );
     }
-    public static String getParticleEntityCommandString(Entity entity, String channel, int min, int max) {
+    public static String getParticleEntityCommand(Entity entity, String channel, int min, int max) {
         return buildDebugCommandString(
                 GET,
                 PARTICLE,
-                entity.getName().getString(),
+                buildNearestEntitySelect(entity),
                 channel,
                 Integer.toString(min),
                 Integer.toString(max)
         );
     }
 
-    public static String getFireworkCommandString(int id) {
+    public static String getFireworkCommand(int id) {
         return buildDebugCommandString(
                 GET,
                 FIREWORK,
                 Integer.toString(id)
         );
     }
-    public static String getFireworkByEntityCommandString(Entity entity) {
+    public static String getFireworkByEntityCommand(Entity entity) {
         return buildDebugCommandString(
                 GET,
                 FIREWORK,
-                entity.getName().getString()
+                buildNearestEntitySelect(entity)
         );
     }
-    public static String getFireworksCommandString(int min, int max) {
+    public static String getFireworksCommand(int min, int max) {
         return buildDebugCommandString(
                 GET,
                 FIREWORKS,
                 Integer.toString(min),
                 Integer.toString(max)
+        );
+    }
+
+    public static String getMutekiCommand(int singleId) {
+        return buildDebugCommandString(
+                GET,
+                MUTEKI,
+                Integer.toString(singleId)
+        );
+    }
+    public static String getMutekiCommand(Entity entity) {
+        return buildDebugCommandString(
+                GET,
+                MUTEKI,
+                buildNearestEntitySelect(entity)
+        );
+    }
+
+    public static String getBoostCommand(int singleId) {
+        return buildDebugCommandString(
+                GET,
+                BOOST,
+                Integer.toString(singleId)
+        );
+    }
+    public static String getBoostCommand(Entity entity) {
+        return buildDebugCommandString(
+                GET,
+                BOOST,
+                buildNearestEntitySelect(entity)
         );
     }
 }
