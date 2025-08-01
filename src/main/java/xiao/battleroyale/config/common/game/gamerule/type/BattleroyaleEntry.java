@@ -3,12 +3,14 @@ package xiao.battleroyale.config.common.game.gamerule.type;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.IConfigAppliable;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
+import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.StringUtils;
 
-public class BattleroyaleEntry implements IGameruleEntry {
+public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
 
     public final int playerTotal;
     public final int teamSize;
@@ -79,5 +81,10 @@ public class BattleroyaleEntry implements IGameruleEntry {
         return new BattleroyaleEntry(playerTotal, teamSize, aiTeammate, aiEnemy, maxGameTime,
                 lobbyCenterPos, lobbyDimension, lobbyMuteki,
                 recordGameStats, autoJoinGame, clearInventory);
+    }
+
+    @Override
+    public void applyDefault() {
+        SpawnManager.get().setLobby(lobbyCenterPos, lobbyDimension, lobbyMuteki);
     }
 }

@@ -141,10 +141,10 @@ public class GameManager extends AbstractGameManager {
         initGameConfigSubManager();
 
         if (gameConfigAllReady()) {
-            this.prepared = true;
+            this.configPrepared = true;
             LogEventHandler.register(); // 后续玩家登录可根据配置直接加入队伍
         } else {
-            this.prepared = false;
+            this.configPrepared = false;
         }
     }
 
@@ -158,9 +158,11 @@ public class GameManager extends AbstractGameManager {
             return;
         }
 
-        if (!prepared || this.serverLevel != serverLevel) {
+        if (!configPrepared || this.serverLevel != serverLevel) {
+            BattleRoyale.LOGGER.info("GameManager isn't configPrepared, attempt to initGameConifg");
             initGameConfig(serverLevel);
-            if (!prepared) {
+            if (!configPrepared) {
+                BattleRoyale.LOGGER.info("GameManager failed to auto initGameConifg, cancel initGame");
                 return;
             }
         }
@@ -181,8 +183,10 @@ public class GameManager extends AbstractGameManager {
             return false;
         }
         if (!isStartReady() || this.serverLevel != serverLevel) {  // Team会变动，用isStartReady
+            BattleRoyale.LOGGER.info("GameManager isn't startReady, attempt to initGame");
             initGame(serverLevel);
             if (!isStartReady()) {
+                BattleRoyale.LOGGER.info("GameManager failed to auto initGame, cancel startGame");
                 return false;
             }
         }
@@ -483,7 +487,7 @@ public class GameManager extends AbstractGameManager {
         SpawnManager.get().stopGame(serverLevel);
         GameruleManager.get().stopGame(serverLevel);
         TeamManager.get().stopGame(serverLevel); // 最后处理TeamManager
-        this.prepared = false;
+        this.configPrepared = false;
         this.inGame = false;
         GameMessageManager.get().stopGame(serverLevel); // 不在游戏中影响消息逻辑
         // this.ready = false; // 不使用ready标记，因为Team会变动
@@ -669,6 +673,7 @@ public class GameManager extends AbstractGameManager {
     private void initGameSetup() {
         // 清除游戏效果
         EffectManager.get().forceEnd();
+        this.configPrepared = false;
     }
     private void initGameSubManager() {
         StatsManager.get().initGame(serverLevel); // 先清空stats
@@ -749,6 +754,7 @@ public class GameManager extends AbstractGameManager {
     // 用指令设置默认配置
     public boolean setGameruleConfigId(int gameId) {
         if (gameId < 0 || GameConfigManager.get().getGameruleConfig(gameId) == null) {
+            BattleRoyale.LOGGER.info("setGameruleConfigId {} failed", gameId);
             return false;
         }
         this.gameruleConfigId = gameId;

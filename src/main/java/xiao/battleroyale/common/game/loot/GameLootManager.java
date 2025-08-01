@@ -114,18 +114,21 @@ public class GameLootManager extends AbstractGameManager {
 
         bfsExecutor = Executors.newSingleThreadExecutor();
         bfsTaskFuture = null;
-        this.prepared = true;
+        this.configPrepared = true;
+        BattleRoyale.LOGGER.debug("GameLootManager complete initGameConfig");
     }
 
     @Override
     public void initGame(ServerLevel serverLevel) {
         clear();
         this.ready = true;
+        this.configPrepared = false;
+        BattleRoyale.LOGGER.debug("GameLootManager complete initGame");
     }
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame() || !prepared) {
+        if (GameManager.get().isInGame() || !configPrepared) {
             return false;
         }
         return ready;
@@ -301,7 +304,7 @@ public class GameLootManager extends AbstractGameManager {
     public void stopGame(@Nullable ServerLevel serverLevel) {
         // BattleRoyale.LOGGER.debug("GameLootManager stopped, last BFS processed loot:{}", lastBfsProcessedLoot);
         clear(); // 清理所有内部状态
-        this.prepared = false;
+        this.configPrepared = false;
         this.ready = false;
         if (bfsExecutor != null) {
             bfsExecutor.shutdown();

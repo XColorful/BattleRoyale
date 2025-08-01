@@ -58,13 +58,12 @@ public class ZoneManager extends AbstractGameManager {
             this.zoneData.addZone(gameZone);
         }
 
-        if (this.hasEnoughZoneToStart()) {
-            this.prepared = true;
-            BattleRoyale.LOGGER.debug("ZoneManager complete initGameConfig, total zones: {}", this.zoneData.getTotalZoneCount());
-        } else {
-            this.prepared = false;
+        if (!this.hasEnoughZoneToStart()) {
+            this.configPrepared = false;
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_zone_config");
         }
+        this.configPrepared = true;
+        BattleRoyale.LOGGER.debug("ZoneManager complete initGameConfig, total zones: {}", this.zoneData.getTotalZoneCount());
     }
 
     @Override
@@ -74,6 +73,7 @@ public class ZoneManager extends AbstractGameManager {
         }
 
         this.ready = true;
+        this.configPrepared = false;
         BattleRoyale.LOGGER.debug("ZoneManager complete initGame");
     }
 
@@ -131,7 +131,7 @@ public class ZoneManager extends AbstractGameManager {
         ZoneMessageManager.get().stopGame(serverLevel);
         this.zoneData.endGame();
         this.zoneData.clear();
-        this.prepared = false;
+        this.configPrepared = false;
         this.ready = false;
     }
 

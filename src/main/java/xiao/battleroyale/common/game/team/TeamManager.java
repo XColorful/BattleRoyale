@@ -86,13 +86,13 @@ public class TeamManager extends AbstractGameManager {
         }
 
         clearOrUpdateTeamIfLimitChanged();
-        this.prepared = true;
+        this.configPrepared = true;
         BattleRoyale.LOGGER.debug("TeamManager complete initGameConfig");
     }
 
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame() || !this.prepared) {
+        if (GameManager.get().isInGame() || !this.configPrepared) {
             return;
         }
 
@@ -115,6 +115,7 @@ public class TeamManager extends AbstractGameManager {
         if (!hasEnoughPlayerTeamToStart()) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
         }
+        this.configPrepared = false;
         BattleRoyale.LOGGER.info("TeamManager complete initGame, total players: {}, total teams: {}", teamData.getTotalPlayerCount(), teamData.getGameTeamsList().size());
     }
 
@@ -168,7 +169,7 @@ public class TeamManager extends AbstractGameManager {
     public void stopGame(@Nullable ServerLevel serverLevel) {
         this.teamData.endGame(); // 解锁，清除standingGamePlayer使GameMessage重置
         GameManager.get().notifyAliveChange();
-        this.prepared = false;
+        this.configPrepared = false;
         // this.ready = false; // 不使用ready标记，因为Team会变动
 
         GameManager gameManager = GameManager.get();
@@ -923,6 +924,7 @@ public class TeamManager extends AbstractGameManager {
      */
     private void clearOrUpdateTeamIfLimitChanged() {
         if (this.teamConfig.playerLimit < teamData.getMaxPlayersLimit() || this.teamConfig.teamSize < teamData.getTeamSizeLimit()) { // 玩家人数上限缩小/队伍规模缩小 -> 清空所有队伍
+            BattleRoyale.LOGGER.info("TeamManager: playerLimit or teamSize reduced and require clear team info");
             this.clear(); // 重新读取配置时的clear
         } else if (this.teamConfig.playerLimit > teamData.getMaxPlayersLimit() || this.teamConfig.teamSize > teamData.getTeamSizeLimit()) { // 玩家人数上限增多 -> 提示扩容
             teamData.extendLimit(this.teamConfig.playerLimit, this.teamConfig.teamSize);

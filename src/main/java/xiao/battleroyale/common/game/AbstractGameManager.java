@@ -5,12 +5,12 @@ import xiao.battleroyale.api.game.IGameManager;
 
 public abstract class AbstractGameManager implements IGameManager {
 
-    protected boolean prepared = false;
+    protected boolean configPrepared = false;
     protected boolean ready = false;
 
     @Override
     public boolean isPreparedForGame() {
-        return this.prepared;
+        return this.configPrepared;
     }
 
     @Override

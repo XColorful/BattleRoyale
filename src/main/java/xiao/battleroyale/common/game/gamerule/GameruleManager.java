@@ -64,7 +64,8 @@ public class GameruleManager extends AbstractGameManager {
         this.gameruleBackup.store(mcEntry, serverLevel, null);
         this.autoSaturation = mcEntry.autoSaturation;
 
-        prepared = true;
+        configPrepared = true;
+        BattleRoyale.LOGGER.debug("GameruleManager complete initGameConfig");
     }
 
     @Override
@@ -72,7 +73,7 @@ public class GameruleManager extends AbstractGameManager {
         if (GameManager.get().isInGame()) {
             return;
         }
-        if (!this.prepared) {
+        if (!this.configPrepared) {
             return;
         }
 
@@ -82,6 +83,8 @@ public class GameruleManager extends AbstractGameManager {
         this.gamemodeBackup.apply(serverLevel, gamePlayerList);
 
         this.ready = true;
+        this.configPrepared = false;
+        BattleRoyale.LOGGER.debug("GameruleManager complete initGame");
     }
 
     @Override
@@ -103,7 +106,7 @@ public class GameruleManager extends AbstractGameManager {
             gamemodeBackup.revert(serverLevel);
             gameruleBackup.revert(serverLevel);
         }
-        this.prepared = false;
+        this.configPrepared = false;
         this.ready = false;
     }
 

@@ -78,7 +78,8 @@ public class StatsManager extends AbstractGameManager {
         BattleroyaleEntry brEntry = GameConfigManager.get().getGameruleConfig(GameManager.get().getGameruleConfigId()).getBattleRoyaleEntry();
         recordStats = brEntry.recordGameStats;
 
-        this.prepared = true;
+        this.configPrepared = true;
+        BattleRoyale.LOGGER.debug("StatsManager complete initGameConfig");
     }
 
     @Override
@@ -86,6 +87,8 @@ public class StatsManager extends AbstractGameManager {
         clearStats();
 
         this.ready = true;
+        this.configPrepared = false;
+        BattleRoyale.LOGGER.debug("StatsManager complete initGame");
     }
 
     @Override
@@ -112,7 +115,7 @@ public class StatsManager extends AbstractGameManager {
 
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        this.prepared = false;
+        this.configPrepared = false;
         this.ready = false;
         if (shouldRecordStats()) {
             saveStats();
