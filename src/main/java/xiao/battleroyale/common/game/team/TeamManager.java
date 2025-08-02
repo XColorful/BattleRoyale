@@ -233,13 +233,11 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
 
-        if (getStandingTeamCount() <= 1) {
-            GameManager.get().checkIfGameShouldEnd();
-        }
+        GameManager.get().checkIfGameShouldEnd();
     }
 
     public int getStandingTeamCount() {
-        return teamData.getTotalStandingPlayerCount();
+        return teamData.getTotalStandingTeamCount();
     }
 
     /**
@@ -442,6 +440,7 @@ public class TeamManager extends AbstractGameManager {
         }
 
         if (teamData.eliminatePlayer(gamePlayer)) {
+            // 强制淘汰后传送回大厅
             ServerLevel serverLevel = GameManager.get().getServerLevel();
             if (serverLevel != null) {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
@@ -450,6 +449,7 @@ public class TeamManager extends AbstractGameManager {
                     GameManager.get().sendLobbyTeleportMessage(player, false);
                 }
             }
+            onTeamChangedInGame();
             return true;
         } else {
             return false;

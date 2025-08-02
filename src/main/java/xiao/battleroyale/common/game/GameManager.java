@@ -367,15 +367,32 @@ public class GameManager extends AbstractGameManager {
         }
 
         checkAndUpdateInvalidGamePlayer(this.serverLevel);
-        if (!gameEntry.allowRemainingBot) { // 不允许只剩人机继续打架，即提前终止游戏
-            int playerTeamCount = TeamManager.get().getStandingPlayerTeamCount();
-            if (playerTeamCount > 0) {
-                return;
-            }
-            boolean hasWinnerBotTeam = TeamManager.get().getStandingTeamCount() <= 1;
-            finishGame(hasWinnerBotTeam);
-        } else if (TeamManager.get().getStandingTeamCount() <= 1) {
+        if (TeamManager.get().getStandingTeamCount() <= 1) { // 胜利条件
+            BattleRoyale.LOGGER.debug("GameManager: standingTeam <= 1, finishGame with winner");
             finishGame(true);
+        }
+
+        if (!gameEntry.allowRemainingBot) { // 不允许只剩人机继续打架，即提前终止游戏
+            GameTeam team1 = null;
+            GameTeam team2 = null;
+            for (GameTeam gameTeam : getGameTeams()) {
+                for (GamePlayer gamePlayer : gameTeam.getStandingPlayers()) {
+                    if (!gamePlayer.isBot() && !gamePlayer.isEliminated()) {
+                        if (team1 == null) {
+                            team1 = gameTeam;
+                            continue;
+                        } else { // 有两队含有未被淘汰的真人
+                            team2 = gameTeam;
+                            return;
+                        }
+                    }
+                }
+            }
+            // 没有提前返回就是没有两队真人
+            if (team2 != null) {
+                finishGame(false);
+                BattleRoyale.LOGGER.debug("Finished game with no winner for there's no two team has non-eliminated non-bot game player");
+            }
         }
     }
 
