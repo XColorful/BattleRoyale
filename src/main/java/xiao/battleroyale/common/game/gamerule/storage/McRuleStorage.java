@@ -27,6 +27,7 @@ public class McRuleStorage implements IRuleStorage {
             boolean fallDamage,
             boolean tntExplosionDropDecay,
             boolean spectatorGenerateChunks,
+            boolean keepInventory,
             int timeSet
     ) {}
 
@@ -51,6 +52,7 @@ public class McRuleStorage implements IRuleStorage {
                 mcEntry.fallDamage,
                 mcEntry.tntExplosionDropDecay,
                 mcEntry.spectatorGenerateChunks,
+                mcEntry.keepInventory,
                 mcEntry.timeSet
         );
 
@@ -64,6 +66,7 @@ public class McRuleStorage implements IRuleStorage {
                 serverLevel.getGameRules().getRule(GameRules.RULE_FALL_DAMAGE).get(),
                 serverLevel.getGameRules().getRule(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY).get(),
                 serverLevel.getGameRules().getRule(GameRules.RULE_SPECTATORSGENERATECHUNKS).get(),
+                serverLevel.getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).get(),
                 (int) serverLevel.getDayTime()
                 );
     }
@@ -84,6 +87,7 @@ public class McRuleStorage implements IRuleStorage {
         serverLevel.getGameRules().getRule(GameRules.RULE_FALL_DAMAGE).set(this.currentRule.fallDamage(), serverLevel.getServer());
         serverLevel.getGameRules().getRule(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY).set(this.currentRule.tntExplosionDropDecay(), serverLevel.getServer());
         serverLevel.getGameRules().getRule(GameRules.RULE_SPECTATORSGENERATECHUNKS).set(this.currentRule.spectatorGenerateChunks(), serverLevel.getServer());
+        serverLevel.getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).set(this.currentRule.keepInventory(), serverLevel.getServer());
         serverLevel.setDayTime(this.currentRule.timeSet());
     }
 
@@ -102,6 +106,7 @@ public class McRuleStorage implements IRuleStorage {
         serverLevel.getGameRules().getRule(GameRules.RULE_FALL_DAMAGE).set(this.backupRule.fallDamage(), serverLevel.getServer());
         serverLevel.getGameRules().getRule(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY).set(this.backupRule.tntExplosionDropDecay(), serverLevel.getServer());
         serverLevel.getGameRules().getRule(GameRules.RULE_SPECTATORSGENERATECHUNKS).set(this.backupRule.spectatorGenerateChunks(), serverLevel.getServer());
+        serverLevel.getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).set(this.backupRule.keepInventory(), serverLevel.getServer());
         serverLevel.setDayTime(this.backupRule.timeSet());
     }
 
@@ -133,6 +138,7 @@ public class McRuleStorage implements IRuleStorage {
         boolGamerule.put(MinecraftEntryTag.FALL_DAMAGE, currentRule.fallDamage());
         boolGamerule.put(MinecraftEntryTag.TNT_EXPLOSION_DROP_DECAY, currentRule.tntExplosionDropDecay());
         boolGamerule.put(MinecraftEntryTag.SPECTATOR_GENERATE_CHUNKS, currentRule.spectatorGenerateChunks());
+        boolGamerule.put(MinecraftEntryTag.KEEP_INVENTORY, currentRule.keepInventory());
         return boolGamerule;
     }
 }

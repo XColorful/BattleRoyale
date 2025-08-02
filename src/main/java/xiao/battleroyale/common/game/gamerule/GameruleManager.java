@@ -16,6 +16,7 @@ import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.Gamer
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.GameUtils;
 
 import java.util.List;
 
@@ -97,6 +98,9 @@ public class GameruleManager extends AbstractGameManager {
         this.gamemodeBackup.store(mcEntry, serverLevel, gamePlayerList);
         this.gamemodeBackup.apply(serverLevel, gamePlayerList);
         GameManager.get().recordGamerule(this.gamemodeBackup);
+        if (mcEntry.clearInventory) {
+            GameUtils.clearGamePlayersInventory(serverLevel, gamePlayerList);
+        }
         return true;
     }
 

@@ -15,6 +15,8 @@ public class MinecraftEntryTag extends ConfigEntryTag {
     public static final String FALL_DAMAGE = "fallDamage";
     public static final String TNT_EXPLOSION_DROP_DECAY = "tntExplodes";
     public static final String SPECTATOR_GENERATE_CHUNKS = "spectatorGenerateChunks";
+    public static final String CLEAR_INVENTORY = "clearInventory";
+    public static final String KEEP_INVENTORY = "keepInventory";
     public static final String TIME_SET = "timeSet";
 
     private MinecraftEntryTag() {};
