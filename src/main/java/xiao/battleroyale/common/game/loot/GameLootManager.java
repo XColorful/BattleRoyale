@@ -97,20 +97,7 @@ public class GameLootManager extends AbstractGameManager {
     public void initGameConfig(ServerLevel serverLevel) {
         clear();
 
-        if (bfsExecutor != null) {
-            List<Runnable> unexecutedTasks = bfsExecutor.shutdownNow();
-            if (!unexecutedTasks.isEmpty()) {
-                BattleRoyale.LOGGER.warn("GameLootManager: {} BFS tasks were not executed before new game init.", unexecutedTasks.size());
-            }
-            try {
-                if (!bfsExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    BattleRoyale.LOGGER.error("GameLootManager: BFS executor did not terminate in time during new game init.");
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                BattleRoyale.LOGGER.error("GameLootManager: Interrupted while waiting for BFS executor to terminate during new game init.", e);
-            }
-        }
+        shutdownBfsExecuter("initGameConfig");
 
         bfsExecutor = Executors.newSingleThreadExecutor();
         bfsTaskFuture = null;
@@ -151,6 +138,11 @@ public class GameLootManager extends AbstractGameManager {
      * @param gameTime 当前游戏tick数
      */
     public void onGameTick(int gameTime) {
+        if (bfsExecutor == null || bfsExecutor.isShutdown()) {
+            BattleRoyale.LOGGER.warn("GameLootManager: thread pool is null or shutdown, skipped onGameTick at gameTime {}", gameTime);
+            return;
+        }
+
         // 检查是否需要强制执行新的BFS
         if (gameTime - lastBfsTime >= BFS_FREQUENCY) {
             submitNewBfsTask();
@@ -191,6 +183,10 @@ public class GameLootManager extends AbstractGameManager {
      * 解决了强制频率和立即触发的竞态问题。
      */
     private void submitNewBfsTask() {
+        if (bfsExecutor == null || bfsExecutor.isShutdown()) {
+            BattleRoyale.LOGGER.warn("GameLootManager: thread pool is null or shutdown, skipped submit new BFS task");
+        }
+
         // 检查 future 是否为空或者已经完成，确保没有正在运行的任务
         if (bfsTaskFuture == null || bfsTaskFuture.isDone()) {
             // 如果上一个任务被取消，重新记录时间
@@ -306,8 +302,32 @@ public class GameLootManager extends AbstractGameManager {
         clear(); // 清理所有内部状态
         this.configPrepared = false;
         this.ready = false;
+        shutdownBfsExecuter("stopGame");
+    }
+
+    // 这个方法只在服务器停止时调用，可以安全地阻塞
+    public void awaitTerminationOnShutdown() {
         if (bfsExecutor != null) {
-            bfsExecutor.shutdown();
+            try {
+                // 这里可以安全地等待，因为服务器主线程已停止
+                if (!bfsExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    BattleRoyale.LOGGER.error("GameLootManager: BFS executor did not terminate in time during server stopping.");
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                BattleRoyale.LOGGER.error("GameLootManager: Interrupted while waiting for BFS executor to terminate during server stopping.", e);
+            }
+            bfsExecutor = null;
+        }
+    }
+
+    private void shutdownBfsExecuter(String phaseName) {
+        if (bfsExecutor != null) {
+            List<Runnable> unexecutedTasks = bfsExecutor.shutdownNow();
+            if (!unexecutedTasks.isEmpty()) {
+                BattleRoyale.LOGGER.warn("GameLootManager: {} BFS tasks were not executed during {}", unexecutedTasks.size(), phaseName);
+            }
+            bfsExecutor = null;
         }
     }
 

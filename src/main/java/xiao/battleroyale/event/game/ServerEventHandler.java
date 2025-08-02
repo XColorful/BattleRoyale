@@ -4,6 +4,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.loot.GameLootManager;
 
 public class ServerEventHandler {
 
@@ -32,5 +33,6 @@ public class ServerEventHandler {
     @SubscribeEvent
     public void onServerStopping(ServerStoppedEvent event) {
         GameManager.get().onServerStopping();
+        GameLootManager.get().awaitTerminationOnShutdown();
     }
 }
