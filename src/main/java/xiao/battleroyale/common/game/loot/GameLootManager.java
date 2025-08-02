@@ -66,7 +66,7 @@ public class GameLootManager extends AbstractGameManager {
     private int MAX_CACHED_LOOT_CHUNK; // 最大记录的处理过区块数
     private int CLEAN_CACHED_CHUNK; // 每次清理删除多少区块
     public void applyConfig(GeneratorEntry entry) {
-        MAX_LOOT_CHUNK_PER_TICK = Math.min(Math.max(entry.maxGameTickLootChunk, 5), 500);
+        MAX_LOOT_CHUNK_PER_TICK = Math.min(Math.max(entry.maxGameTickLootChunk, 5), 100000); // 十万
         MAX_LOOT_DISTANCE = Math.min(Math.max(entry.maxGameLootDistance, 3), 128);
         if (MAX_LOOT_DISTANCE >= cachedCenterOffset.size()) { // cachedCenterOffest第一项为0距离
             cachedCenterOffset.clear();
@@ -97,35 +97,25 @@ public class GameLootManager extends AbstractGameManager {
     public void initGameConfig(ServerLevel serverLevel) {
         clear();
 
-        if (bfsExecutor != null) {
-            List<Runnable> unexecutedTasks = bfsExecutor.shutdownNow();
-            if (!unexecutedTasks.isEmpty()) {
-                BattleRoyale.LOGGER.warn("GameLootManager: {} BFS tasks were not executed before new game init.", unexecutedTasks.size());
-            }
-            try {
-                if (!bfsExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    BattleRoyale.LOGGER.error("GameLootManager: BFS executor did not terminate in time during new game init.");
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                BattleRoyale.LOGGER.error("GameLootManager: Interrupted while waiting for BFS executor to terminate during new game init.", e);
-            }
-        }
+        shutdownBfsExecuter("initGameConfig");
 
         bfsExecutor = Executors.newSingleThreadExecutor();
         bfsTaskFuture = null;
-        this.prepared = true;
+        this.configPrepared = true;
+        BattleRoyale.LOGGER.debug("GameLootManager complete initGameConfig");
     }
 
     @Override
     public void initGame(ServerLevel serverLevel) {
         clear();
         this.ready = true;
+        this.configPrepared = false;
+        BattleRoyale.LOGGER.debug("GameLootManager complete initGame");
     }
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame() || !prepared) {
+        if (GameManager.get().isInGame()) {
             return false;
         }
         return ready;
@@ -148,6 +138,11 @@ public class GameLootManager extends AbstractGameManager {
      * @param gameTime 当前游戏tick数
      */
     public void onGameTick(int gameTime) {
+        if (bfsExecutor == null || bfsExecutor.isShutdown()) {
+            BattleRoyale.LOGGER.warn("GameLootManager: thread pool is null or shutdown, skipped onGameTick at gameTime {}", gameTime);
+            return;
+        }
+
         // 检查是否需要强制执行新的BFS
         if (gameTime - lastBfsTime >= BFS_FREQUENCY) {
             submitNewBfsTask();
@@ -188,6 +183,10 @@ public class GameLootManager extends AbstractGameManager {
      * 解决了强制频率和立即触发的竞态问题。
      */
     private void submitNewBfsTask() {
+        if (bfsExecutor == null || bfsExecutor.isShutdown()) {
+            BattleRoyale.LOGGER.warn("GameLootManager: thread pool is null or shutdown, skipped submit new BFS task");
+        }
+
         // 检查 future 是否为空或者已经完成，确保没有正在运行的任务
         if (bfsTaskFuture == null || bfsTaskFuture.isDone()) {
             // 如果上一个任务被取消，重新记录时间
@@ -301,10 +300,34 @@ public class GameLootManager extends AbstractGameManager {
     public void stopGame(@Nullable ServerLevel serverLevel) {
         // BattleRoyale.LOGGER.debug("GameLootManager stopped, last BFS processed loot:{}", lastBfsProcessedLoot);
         clear(); // 清理所有内部状态
-        this.prepared = false;
+        this.configPrepared = false;
         this.ready = false;
+        shutdownBfsExecuter("stopGame");
+    }
+
+    // 这个方法只在服务器停止时调用，可以安全地阻塞
+    public void awaitTerminationOnShutdown() {
         if (bfsExecutor != null) {
-            bfsExecutor.shutdown();
+            try {
+                // 这里可以安全地等待，因为服务器主线程已停止
+                if (!bfsExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    BattleRoyale.LOGGER.error("GameLootManager: BFS executor did not terminate in time during server stopping.");
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                BattleRoyale.LOGGER.error("GameLootManager: Interrupted while waiting for BFS executor to terminate during server stopping.", e);
+            }
+            bfsExecutor = null;
+        }
+    }
+
+    private void shutdownBfsExecuter(String phaseName) {
+        if (bfsExecutor != null) {
+            List<Runnable> unexecutedTasks = bfsExecutor.shutdownNow();
+            if (!unexecutedTasks.isEmpty()) {
+                BattleRoyale.LOGGER.warn("GameLootManager: {} BFS tasks were not executed during {}", unexecutedTasks.size(), phaseName);
+            }
+            bfsExecutor = null;
         }
     }
 

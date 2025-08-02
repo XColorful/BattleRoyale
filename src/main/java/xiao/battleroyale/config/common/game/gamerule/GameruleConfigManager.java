@@ -152,6 +152,7 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
         @Override
         public void applyDefault() {
             GameManager.get().setGameruleConfigId(getConfigId());
+            this.brEntry.applyDefault();
             this.gameEntry.applyDefault();
         }
     }

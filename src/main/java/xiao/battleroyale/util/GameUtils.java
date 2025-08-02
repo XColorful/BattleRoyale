@@ -1,12 +1,15 @@
 package xiao.battleroyale.util;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
@@ -122,6 +125,28 @@ public class GameUtils {
         }
         public String toSpaceFullString(boolean includeRemainder) {
             return " GameTime:" + gameTime + "(" + toFormattedString(includeRemainder) + ")";
+        }
+    }
+
+    public static void clearGamePlayerInventory(@NotNull ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
+        ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+        if (player == null) {
+            BattleRoyale.LOGGER.debug("Failed to clear GamePlayer ({}) inventory by UUID: {}", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
+            return;
+        }
+        player.getInventory().clearContent();
+    }
+
+    public static void clearGamePlayersInventory(ServerLevel serverLevel, List<GamePlayer> gamePlayers) {
+        if (serverLevel == null) {
+            BattleRoyale.LOGGER.debug("ServerLevel is null, failed to clear GamePlayers Inventory");
+            return;
+        }
+        for (GamePlayer gamePlayer : gamePlayers) {
+            if (gamePlayer == null) {
+                continue;
+            }
+            clearGamePlayerInventory(serverLevel, gamePlayer);
         }
     }
 }

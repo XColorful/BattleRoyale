@@ -40,12 +40,13 @@ public class PubgGamerule {
                                              Vec3 lobbyCenter, Vec3 lobbyDim, String name, boolean bot) {
         BattleroyaleEntry brEntry = new BattleroyaleEntry(playerTotal, teamSize, bot, bot, GAME_TIME,
                 lobbyCenter, lobbyDim,
-                true, true, true, true);
+                true, true, true, true, true);
 
         MinecraftEntry mcEntry = new MinecraftEntry(true, false, true,
                 false, false, false,
                 false, false, true,
-                false, false, 5000);
+                false, false, true,
+                false, 5000);
 
         GameruleConfigManager.GameruleConfig gameruleConfig = new GameruleConfigManager.GameruleConfig(gameId, name + " " + playerTotal + " " + teamSize, "#FFFFFFAA",
                 brEntry, mcEntry, null);

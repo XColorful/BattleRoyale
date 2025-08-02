@@ -141,10 +141,11 @@ public class GameManager extends AbstractGameManager {
         initGameConfigSubManager();
 
         if (gameConfigAllReady()) {
-            this.prepared = true;
+            this.configPrepared = true;
             LogEventHandler.register(); // 后续玩家登录可根据配置直接加入队伍
+            ServerEventHandler.register();
         } else {
-            this.prepared = false;
+            this.configPrepared = false;
         }
     }
 
@@ -158,9 +159,11 @@ public class GameManager extends AbstractGameManager {
             return;
         }
 
-        if (!prepared || this.serverLevel != serverLevel) {
+        if (!configPrepared || this.serverLevel != serverLevel) {
+            BattleRoyale.LOGGER.info("GameManager isn't configPrepared, attempt to initGameConifg");
             initGameConfig(serverLevel);
-            if (!prepared) {
+            if (!configPrepared) {
+                BattleRoyale.LOGGER.info("GameManager failed to auto initGameConifg, cancel initGame");
                 return;
             }
         }
@@ -181,8 +184,10 @@ public class GameManager extends AbstractGameManager {
             return false;
         }
         if (!isStartReady() || this.serverLevel != serverLevel) {  // Team会变动，用isStartReady
+            BattleRoyale.LOGGER.info("GameManager isn't startReady, attempt to initGame");
             initGame(serverLevel);
             if (!isStartReady()) {
+                BattleRoyale.LOGGER.info("GameManager failed to auto initGame, cancel startGame");
                 return false;
             }
         }
@@ -362,15 +367,32 @@ public class GameManager extends AbstractGameManager {
         }
 
         checkAndUpdateInvalidGamePlayer(this.serverLevel);
-        if (!gameEntry.allowRemainingBot) { // 不允许只剩人机继续打架，即提前终止游戏
-            int playerTeamCount = TeamManager.get().getStandingPlayerTeamCount();
-            if (playerTeamCount > 0) {
-                return;
-            }
-            boolean hasWinnerBotTeam = TeamManager.get().getStandingTeamCount() <= 1;
-            finishGame(hasWinnerBotTeam);
-        } else if (TeamManager.get().getStandingTeamCount() <= 1) {
+        if (TeamManager.get().getStandingTeamCount() <= 1) { // 胜利条件
+            BattleRoyale.LOGGER.debug("GameManager: standingTeam <= 1, finishGame with winner");
             finishGame(true);
+        }
+
+        if (!gameEntry.allowRemainingBot) { // 不允许只剩人机继续打架，即提前终止游戏
+            GameTeam team1 = null;
+            GameTeam team2 = null;
+            for (GameTeam gameTeam : getGameTeams()) {
+                for (GamePlayer gamePlayer : gameTeam.getStandingPlayers()) {
+                    if (!gamePlayer.isBot() && !gamePlayer.isEliminated()) {
+                        if (team1 == null) {
+                            team1 = gameTeam;
+                            continue;
+                        } else { // 有两队含有未被淘汰的真人
+                            team2 = gameTeam;
+                            return;
+                        }
+                    }
+                }
+            }
+            // 没有提前返回就是没有两队真人
+            if (team2 != null) {
+                finishGame(false);
+                BattleRoyale.LOGGER.debug("Finished game with no winner for there's no two team has non-eliminated non-bot game player");
+            }
         }
     }
 
@@ -482,9 +504,11 @@ public class GameManager extends AbstractGameManager {
         ZoneManager.get().stopGame(serverLevel);
         SpawnManager.get().stopGame(serverLevel);
         GameruleManager.get().stopGame(serverLevel);
-        TeamManager.get().stopGame(serverLevel); // 最后处理TeamManager
-        this.prepared = false;
+        // ↑以上操作均不需要inGame判断
         this.inGame = false;
+
+        TeamManager.get().stopGame(serverLevel); // 最后处理TeamManager
+        this.configPrepared = false;
         GameMessageManager.get().stopGame(serverLevel); // 不在游戏中影响消息逻辑
         // this.ready = false; // 不使用ready标记，因为Team会变动
         // 取消事件监听
@@ -520,7 +544,9 @@ public class GameManager extends AbstractGameManager {
 
     public void onPlayerLoggedOut(ServerPlayer player) {
         if (!isInGame()) {
-            TeamManager.get().removePlayerFromTeam(player.getUUID()); // 没开始游戏就直接踢了
+            if (TeamManager.get().removePlayerFromTeam(player.getUUID())) { // 没开始游戏就等于离队
+                BattleRoyale.LOGGER.debug("Player {} logged out, remove GamePlayer", player.getName().getString());
+            }
         }
 
         GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(player.getUUID());
@@ -550,6 +576,13 @@ public class GameManager extends AbstractGameManager {
         }
         notifyTeamChange(gamePlayer.getGameTeamId());
         notifyAliveChange();
+    }
+
+    public void onServerStopping() {
+        stopGame(serverLevel);
+        this.serverLevel = null; // 手动设置为null，单人游戏重启之后也就失效了
+        BattleRoyale.LOGGER.debug("Server stopped, GameManager.serverLevel set to null");
+        ServerEventHandler.unregister();
     }
 
     /**
@@ -669,6 +702,7 @@ public class GameManager extends AbstractGameManager {
     private void initGameSetup() {
         // 清除游戏效果
         EffectManager.get().forceEnd();
+        this.configPrepared = false;
     }
     private void initGameSubManager() {
         StatsManager.get().initGame(serverLevel); // 先清空stats
@@ -724,6 +758,7 @@ public class GameManager extends AbstractGameManager {
         LoopEventHandler.unregister();
         PlayerDeathEventHandler.unregister();
         LogEventHandler.unregister();
+        // ServerEventHandler.unregister(); // 不需要解除注册
     }
 
     /**
@@ -749,6 +784,7 @@ public class GameManager extends AbstractGameManager {
     // 用指令设置默认配置
     public boolean setGameruleConfigId(int gameId) {
         if (gameId < 0 || GameConfigManager.get().getGameruleConfig(gameId) == null) {
+            BattleRoyale.LOGGER.info("setGameruleConfigId {} failed", gameId);
             return false;
         }
         this.gameruleConfigId = gameId;

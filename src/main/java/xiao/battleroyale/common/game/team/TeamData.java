@@ -289,6 +289,15 @@ public class TeamData extends AbstractGameManagerData {
     public int getTotalPlayerCount() { return gamePlayers.size(); }
     public int getTotalStandingPlayerCount() { return standingGamePlayers.size(); }
     public int getTotalTeamCount() { return gameTeams.size(); }
+    public int getTotalStandingTeamCount() { // 调用不频繁，额外维护比较复杂
+        int count = 0;
+        for (GameTeam gameTeam : gameTeams) {
+            if (!gameTeam.isTeamEliminated()) {
+                count++;
+            }
+        }
+        return count;
+    }
 
     public void switchPlayerTeam(@NotNull GamePlayer player, @NotNull GameTeam newTeam) {
         if (locked) {

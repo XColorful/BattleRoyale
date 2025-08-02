@@ -25,11 +25,11 @@ public class DefaultPerformance {
 
     private static JsonObject generateDefaultPerformanceConfig0() {
         // 默认性能配置:
-        // 玩家数量: 10人, 模拟距离: 26, BFS处理Tick: 30秒, 立即下一次BFS: false, 空间系数: 0.75
+        // 玩家数量: 10人, 模拟距离: 26, BFS处理Tick: 3秒, 立即下一次BFS: false, 空间系数: 0.75
         GeneratorEntry generatorEntry = GeneratorEntry.calculateRecommendedConfig(
-                true, false, false,
-                47,
-                10, 26, 20 * 30, false, 0.75);
+                true, true, true,
+                2000,
+                10, 26, 20 * 3, false, 0.75);
 
         PerformanceConfig performanceConfig = new PerformanceConfig(0, "Default performance", "#FFFFFF", true, generatorEntry);
 
@@ -38,11 +38,11 @@ public class DefaultPerformance {
 
     private static JsonObject generateDefaultPerformanceConfig1() {
         // 最大质量配置:
-        // 玩家数量: 20人, 模拟距离: 32, BFS处理Tick: 30秒, 立即下一次BFS: true, 空间系数: 1.0
+        // 玩家数量: 20人, 模拟距离: 64, BFS处理Tick: 2秒, 立即下一次BFS: true, 空间系数: 1.0
         GeneratorEntry generatorEntry = GeneratorEntry.calculateRecommendedConfig(
-                true, false, true,
-                141,
-                20, 32, 20 * 30, true, 1.0);
+                true, true, true,
+                20000,
+                20, 64, 20 * 2, true, 1.0);
 
         PerformanceConfig performanceConfig = new PerformanceConfig(1, "Max quality", "#FFFFFF", generatorEntry);
 
@@ -51,11 +51,11 @@ public class DefaultPerformance {
 
     private static JsonObject generateDefaultPerformanceConfig2() {
         // 更好性能配置:
-        // 玩家数量: 8人, 模拟距离: 16, BFS处理Tick: 30秒, 立即下一次BFS: false, 空间系数: 0.5
+        // 玩家数量: 8人, 模拟距离: 16, BFS处理Tick: 5秒, 立即下一次BFS: false, 空间系数: 0.5
         GeneratorEntry generatorEntry = GeneratorEntry.calculateRecommendedConfig(
-                false, false, false,
-                15,
-                8, 16, 20 * 30, false, 0.5);
+                true, true, true,
+                500,
+                8, 16, 20 * 5, false, 0.5);
 
         PerformanceConfig performanceConfig = new PerformanceConfig(2, "Better performance", "#FFFFFF", generatorEntry);
 
@@ -113,9 +113,9 @@ public class DefaultPerformance {
 
         // 后续发现该测试时模拟距离为10，渲染距离为64，待重新严谨测试
 
-        GeneratorEntry generatorEntry = new GeneratorEntry(true, false, true,
-                500,
-                500, 128, 0, 50000, 200000, 100, true, 300000, 10000);
+        GeneratorEntry generatorEntry = new GeneratorEntry(true, true, true,
+                100000,
+                100000, 128, 0, 50000, 200000, 100, true, 300000, 10000);
 
         PerformanceConfig performanceConfig = new PerformanceConfig(3, "Developer Performance Test", "#FFFFFF", generatorEntry);
 

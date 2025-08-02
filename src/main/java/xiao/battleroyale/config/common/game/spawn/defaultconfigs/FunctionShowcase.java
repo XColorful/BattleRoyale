@@ -31,7 +31,7 @@ public class FunctionShowcase {
                 new TeleportEntry.DetailInfo(Arrays.asList(
                         new Vec3(2032,53,-9060),
                         new Vec3(1954, 53, -9038)),
-                        true, true, 0)
+                        true, true, 0, 20 * 15)
         );
 
         SpawnConfigManager.SpawnConfig spawnConfig = new SpawnConfigManager.SpawnConfig(1, "Fixed ground spawn", "#FFFFFFAA",

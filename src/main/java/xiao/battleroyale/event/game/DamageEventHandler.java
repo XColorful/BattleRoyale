@@ -36,35 +36,44 @@ public class DamageEventHandler {
     /**
      * 监听实体受到伤害事件
      * 取消游戏玩家与非游戏玩家之间的伤害
+     * 对非玩家无效
      * 通知队伍更新成员信息
      * @param event 实体受到伤害事件
      */
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onLivingDamage(LivingDamageEvent event) {
 
-        LivingEntity damagedEntity = event.getEntity();
-        DamageSource damageSource = event.getSource();
+        LivingEntity damagedEntity = event.getEntity(); // 被攻击方
+        DamageSource damageSource = event.getSource(); // 攻击方
 
-        boolean isTargetGamePlayer = false;
-        boolean isAttackerGamePlayer = false;
-        if (damageSource.getEntity() instanceof LivingEntity attackerEntity) {
-            GamePlayer attackerGamePlayer = GameManager.get().getGamePlayerByUUID(attackerEntity.getUUID());
-            if (attackerGamePlayer != null) {
-                isAttackerGamePlayer = true;
-            }
-        }
         GamePlayer targetGamePlayer = GameManager.get().getGamePlayerByUUID(damagedEntity.getUUID());
-        if (targetGamePlayer != null) {
-            isTargetGamePlayer = true;
+        GamePlayer attackerGamePlayer = null;
+        if (damageSource.getEntity() instanceof LivingEntity attackerEntity) {
+            attackerGamePlayer = GameManager.get().getGamePlayerByUUID(attackerEntity.getUUID());
         }
 
-        if (isAttackerGamePlayer && !isTargetGamePlayer) { // 游戏玩家打非游戏玩家
-            event.setCanceled(true);
-        } else if (!isAttackerGamePlayer && isTargetGamePlayer) { // 非游戏玩家打游戏玩家
-            if (damageSource.getEntity() instanceof ServerPlayer) { // 需要保证是玩家
+        // 游戏玩家攻击非游戏玩家
+        if (attackerGamePlayer != null && targetGamePlayer == null) {
+            if (damagedEntity instanceof ServerPlayer) {
                 event.setCanceled(true);
             }
-        } else if (isTargetGamePlayer) {
+        }
+        // 非游戏玩家攻击游戏玩家
+        else if (attackerGamePlayer == null && targetGamePlayer != null) {
+            if (damageSource.getEntity() instanceof ServerPlayer) {
+                event.setCanceled(true);
+            }
+        }
+        // 游戏玩家之间的伤害
+        else if (attackerGamePlayer != null && targetGamePlayer != null) {
+            // 如果双方在同一队伍，且友伤关闭，则取消伤害
+            if (attackerGamePlayer.getGameTeamId() == targetGamePlayer.getGameTeamId()) {
+                if (!GameManager.get().getGameEntry().friendlyFire) {
+                    event.setCanceled(true);
+                }
+            }
+
+            // 通知队伍更新成员信息
             GameManager.get().notifyTeamChange(targetGamePlayer.getGameTeamId());
         }
     }

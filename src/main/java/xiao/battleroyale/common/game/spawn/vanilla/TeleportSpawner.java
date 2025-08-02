@@ -39,12 +39,12 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
     private final boolean teamTogether;
     private final boolean findGround;
     private final double randomRange;
+    private final int hangTime;
 
     private final List<Vec3> spawnPos = new ArrayList<>();
     private int spawnPointIndex = 0;
     private final Set<Integer> teleportedPlayerId = new HashSet<>();
     private final Set<Integer> telepotedTeamId = new HashSet<>();
-    private final int maxSpawnTime = 10 * 20; // 10秒传不完就不传了
     private final double queuedHeight = 1145.14; // findGround失败的时候临时反复传送到这个高度，直到区块能成功加载或达到最大时长
 
     public TeleportSpawner(SpawnShapeType shapeType, Vec3 center, Vec3 dimension, int zoneId,
@@ -57,6 +57,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
         this.teamTogether = detailInfo.teamTogether();
         this.findGround = detailInfo.findGround();
         this.randomRange = detailInfo.randomRange();
+        this.hangTime = detailInfo.hangTime();
     }
 
     /**
@@ -130,7 +131,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
         if (serverLevel == null) {
             return;
         }
-        if (gameTime > this.maxSpawnTime) {
+        if (gameTime > this.hangTime) {
             this.finished = true;
             BattleRoyale.LOGGER.warn("GroundSpawner reached maximum spawn attempt time, force finished");
             return;

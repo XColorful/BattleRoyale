@@ -11,7 +11,6 @@ import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.AbstractMessageManager;
-import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.network.message.ClientMessageZoneInfo;
 import xiao.battleroyale.util.SendUtils;
 
