@@ -32,7 +32,7 @@ public class CommonLootManager {
     private CommonLootManager() {}
 
     private static int MAX_CHUNKS_PER_TICK = 5;
-    public static void setMaxChunksPerTick(int chunks) { MAX_CHUNKS_PER_TICK = Math.min(Math.max(chunks, 5), 500); }
+    public static void setMaxChunksPerTick(int chunks) { MAX_CHUNKS_PER_TICK = Math.min(Math.max(chunks, 5), 100000); } // 十万
 
     private final Queue<ChunkPos> chunksToProcess = new ArrayDeque<>();
     private final Set<ChunkPos> processedChunkTracker = new HashSet<>(); // 用于去重和检查是否已在队列中
