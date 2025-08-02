@@ -87,19 +87,17 @@ public class GameCommand {
         }
 
         gameManager.initGame(serverLevel);
-        if (!gameManager.isPreparedForGame()) {
-            source.sendFailure(Component.translatable("battleroyale.message.game_not_prepared").withStyle(ChatFormatting.YELLOW));
-            return 0;
-        }
-        if (gameManager.isReady()) {
+        if (gameManager.isReady()) { // 初始化完成，不包含队伍判断
             source.sendSuccess(() -> Component.translatable("battleroyale.message.game_init").withStyle(ChatFormatting.GREEN), false);
             BattleRoyale.LOGGER.info("Game initialized via command.");
             return Command.SINGLE_SUCCESS;
+        } else if (!gameManager.isPreparedForGame()) {
+            source.sendFailure(Component.translatable("battleroyale.message.game_not_prepared").withStyle(ChatFormatting.YELLOW));
         } else {
             source.sendFailure(Component.translatable("battleroyale.message.game_init_fail").withStyle(ChatFormatting.RED));
             BattleRoyale.LOGGER.warn("Failed to initialize game via command.");
-            return 0;
         }
+        return 0;
     }
 
     public static int startGame(CommandContext<CommandSourceStack> context) {

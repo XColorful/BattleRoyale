@@ -128,7 +128,7 @@ public class GameLootManager extends AbstractGameManager {
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame() || !configPrepared) {
+        if (GameManager.get().isInGame()) {
             return false;
         }
         return ready;

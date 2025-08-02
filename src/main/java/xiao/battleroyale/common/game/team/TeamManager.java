@@ -76,6 +76,7 @@ public class TeamManager extends AbstractGameManager {
         this.teamConfig.aiTeammate = brEntry.aiTeammate;
         this.teamConfig.aiEnemy = brEntry.aiEnemy;
         this.teamConfig.autoJoinGame = brEntry.autoJoinGame;
+
         this.teamConfig.setTeamMsgExpireTimeSeconds(gameEntry.teamMsgExpireTimeSeconds);
         this.teamConfig.setTeamColors(gameEntry.teamColors);
 
@@ -85,6 +86,7 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
 
+        removeOfflineGamePlayer();
         clearOrUpdateTeamIfLimitChanged();
         this.configPrepared = true;
         BattleRoyale.LOGGER.debug("TeamManager complete initGameConfig");
@@ -147,6 +149,33 @@ public class TeamManager extends AbstractGameManager {
     }
 
     /**
+     * 清理掉离线GamePlayer，防止后续影响游戏结束的人数判定
+     */
+    private void removeOfflineGamePlayer() {
+        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        List<GamePlayer> offlineGamePlayers = new ArrayList<>();
+        for (GamePlayer gamePlayer : teamData.getGamePlayersList()) {
+            if (!gamePlayer.isActiveEntity()) {
+                offlineGamePlayers.add(gamePlayer);
+                continue;
+            }
+            if (serverLevel != null) {
+                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                if (player == null) {
+                    offlineGamePlayers.add(gamePlayer);
+                }
+            }
+        }
+
+        for (GamePlayer gamePlayer : offlineGamePlayers) {
+            String playerName = gamePlayer.getPlayerName();
+            if (teamData.removePlayer(gamePlayer)) {
+                BattleRoyale.LOGGER.debug("Removed offline gamePlayer {}", playerName);
+            }
+        }
+    }
+
+    /**
      * 防止游戏开始时有意外的无队伍GamePlayer
      */
     private void removeNoTeamPlayer() {
@@ -156,11 +185,10 @@ public class TeamManager extends AbstractGameManager {
                 noTeamPlayers.add(gamePlayer);
             }
         }
-        if (!noTeamPlayers.isEmpty()) {
-            for (GamePlayer noTeamPlayer : noTeamPlayers) {
-                if (teamData.removePlayer(noTeamPlayer)) {
-                    GameManager.get().notifyLeavedMember(noTeamPlayer.getPlayerUUID(), noTeamPlayer.getGameTeamId()); // 防止游戏开始时无队伍的GamePlayer
-                }
+
+        for (GamePlayer noTeamPlayer : noTeamPlayers) {
+            if (teamData.removePlayer(noTeamPlayer)) {
+                GameManager.get().notifyLeavedMember(noTeamPlayer.getPlayerUUID(), noTeamPlayer.getGameTeamId()); // 防止游戏开始时无队伍的GamePlayer
             }
         }
     }
@@ -185,12 +213,13 @@ public class TeamManager extends AbstractGameManager {
                 // 延迟2tick保证MessageManager获取到GamePlayer并保证在发送的tick之后再执行this.clear()
                 serverLevel.getServer().execute(() -> {
                     serverLevel.getServer().execute(() -> {
-                        clear(); // 延迟2tick的clear
+                        this.clear(); // 延迟2tick的clear
                         isStoppingGame = false;
+                        BattleRoyale.LOGGER.debug("TeamManager finished delayed clear()");
                     });
                 });
             } else {
-                clear(); // stopGame立即执行的clear
+                this.clear(); // stopGame立即执行的clear
                 isStoppingGame = false;
             }
         }
@@ -941,6 +970,7 @@ public class TeamManager extends AbstractGameManager {
         }
 
         teamData.clear(this.teamConfig.playerLimit, this.teamConfig.teamSize);
+        BattleRoyale.LOGGER.debug("TeamManager cleared teamData");
         pendingInvites.clear();
         pendingRequests.clear();
     }
