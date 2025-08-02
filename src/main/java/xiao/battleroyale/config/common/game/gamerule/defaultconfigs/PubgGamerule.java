@@ -40,7 +40,7 @@ public class PubgGamerule {
                                              Vec3 lobbyCenter, Vec3 lobbyDim, String name, boolean bot) {
         BattleroyaleEntry brEntry = new BattleroyaleEntry(playerTotal, teamSize, bot, bot, GAME_TIME,
                 lobbyCenter, lobbyDim,
-                true, true, true, true);
+                true, true, true, true, true);
 
         MinecraftEntry mcEntry = new MinecraftEntry(true, false, true,
                 false, false, false,

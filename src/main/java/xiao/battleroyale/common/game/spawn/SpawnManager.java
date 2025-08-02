@@ -46,6 +46,7 @@ public class SpawnManager extends AbstractGameManager {
     private Vec3 lobbyPos;
     private Vec3 lobbyDimension;
     private boolean lobbyMuteki = true;
+    private boolean lobbyHeal = true;
     private IGameSpawner gameSpawner;
 
     @Override
@@ -153,6 +154,9 @@ public class SpawnManager extends AbstractGameManager {
         if (!isLobbyCreated()) {
             return;
         }
+        if (lobbyHeal) {
+            player.heal(player.getMaxHealth()); // heal会触发事件
+        }
         GameManager.get().safeTeleport(player, lobbyPos);
         BattleRoyale.LOGGER.info("Teleport player {} (UUID: {}) to lobby ({}, {}, {})", player.getName(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
     }
@@ -228,7 +232,7 @@ public class SpawnManager extends AbstractGameManager {
         }
     }
 
-    public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki) {
+    public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal) {
         if (GameManager.get().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, SpawnManager skipped set lobby");
             return false;
@@ -236,6 +240,7 @@ public class SpawnManager extends AbstractGameManager {
 
         this.lobbyPos = centerPos;
         this.lobbyMuteki = shouldMuteki;
+        this.lobbyHeal = shouldHeal;
         if (Vec3Utils.hasNegative(dimension)) {
             BattleRoyale.LOGGER.warn("SpawnManager: dimension:{} has negative, reject to apply", dimension);
             return false;
