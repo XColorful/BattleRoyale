@@ -25,7 +25,8 @@ public class TeleportEntry extends AbstractCommonSpawnEntry {
     public record DetailInfo(List<Vec3> fixedPos,
                               boolean teamTogether,
                               boolean findGround,
-                              double randomRange) {}
+                              double randomRange,
+                             int hangTime) {}
 
     public TeleportEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
                          CommonDetailType detailType,
@@ -59,6 +60,7 @@ public class TeleportEntry extends AbstractCommonSpawnEntry {
         jsonObject.addProperty(SpawnDetailTag.GROUND_TEAM_TOGETHER, this.detailInfo.teamTogether);
         jsonObject.addProperty(SpawnDetailTag.GROUND_FIND_GROUND, this.detailInfo.findGround);
         jsonObject.addProperty(SpawnDetailTag.GROUND_RANDOM_RANGE, this.detailInfo.randomRange);
+        jsonObject.addProperty(SpawnDetailTag.GROUND_HANG_TIME, this.detailInfo.hangTime);
 
         return jsonObject;
     }
@@ -92,10 +94,11 @@ public class TeleportEntry extends AbstractCommonSpawnEntry {
         boolean teamTogether = JsonUtils.getJsonBool(jsonObject, SpawnDetailTag.GROUND_TEAM_TOGETHER, false);
         boolean findGround = JsonUtils.getJsonBool(jsonObject, SpawnDetailTag.GROUND_FIND_GROUND, false);
         double range = JsonUtils.getJsonDouble(jsonObject, SpawnDetailTag.GROUND_FIND_GROUND, 0);
+        int hangTime = JsonUtils.getJsonInt(jsonObject, SpawnDetailTag.GROUND_HANG_TIME, 20 * 15);
 
         return new TeleportEntry(shapeType, center, dimension,
                 detailType,
-                new DetailInfo(fixedPos, teamTogether, findGround, range)
+                new DetailInfo(fixedPos, teamTogether, findGround, range, hangTime)
         );
     }
 }
