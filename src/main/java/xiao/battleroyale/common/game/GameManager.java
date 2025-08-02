@@ -143,6 +143,7 @@ public class GameManager extends AbstractGameManager {
         if (gameConfigAllReady()) {
             this.configPrepared = true;
             LogEventHandler.register(); // 后续玩家登录可根据配置直接加入队伍
+            ServerEventHandler.register();
         } else {
             this.configPrepared = false;
         }
@@ -558,6 +559,13 @@ public class GameManager extends AbstractGameManager {
         notifyAliveChange();
     }
 
+    public void onServerStopping() {
+        stopGame(serverLevel);
+        this.serverLevel = null; // 手动设置为null，单人游戏重启之后也就失效了
+        BattleRoyale.LOGGER.debug("Server stopped, GameManager.serverLevel set to null");
+        ServerEventHandler.unregister();
+    }
+
     /**
      * 安全传送，文明掉落
      * 传送不规范，玩家两行泪
@@ -731,6 +739,7 @@ public class GameManager extends AbstractGameManager {
         LoopEventHandler.unregister();
         PlayerDeathEventHandler.unregister();
         LogEventHandler.unregister();
+        // ServerEventHandler.unregister(); // 不需要解除注册
     }
 
     /**
