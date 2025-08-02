@@ -23,6 +23,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public final int maxBotInvalidTime;
     public final boolean removeInvalidTeam;
 
+    public final boolean friendlyFire;
     public final boolean allowRemainingBot;
     public final boolean keepTeamAfterGame;
     public final boolean teleportAfterGame;
@@ -37,19 +38,20 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public GameEntry() {
         this(300, DEFAULT_TEAM_COLORS,
                 20 * 60, 20 * 10, false,
-                true, true, true, false, 0, 0,
+                false, true, true, true, false, 0, 0,
                 20 * 7, 20 * 5, 20 * 5);
     }
 
     public GameEntry(int teamMsgExpireTimeSeconds, List<String> teamColors,
                      int maxPlayerInvalidTime, int maxBotInvalidTime, boolean removeInvalidTeam,
-                     boolean allowRemainingBot, boolean keepTeamAfterGame, boolean teleportAfterGame, boolean teleportWinnerAfterGame, int winnerFireworkId, int winnerParticleId,
+                     boolean friendlyFire, boolean allowRemainingBot, boolean keepTeamAfterGame, boolean teleportAfterGame, boolean teleportWinnerAfterGame, int winnerFireworkId, int winnerParticleId,
                      int messageCleanFreq, int messageExpireTime, int messageSyncFreq) {
         this.teamMsgExpireTimeSeconds = teamMsgExpireTimeSeconds;
         this.teamColors = teamColors;
         this.maxPlayerInvalidTime = maxPlayerInvalidTime;
         this.maxBotInvalidTime = maxBotInvalidTime;
         this.removeInvalidTeam = removeInvalidTeam;
+        this.friendlyFire = friendlyFire;
         this.allowRemainingBot = allowRemainingBot;
         this.keepTeamAfterGame = keepTeamAfterGame;
         this.teleportAfterGame = teleportAfterGame;
@@ -75,6 +77,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         jsonObject.addProperty(GameEntryTag.MAX_PLAYER_INVALID_TIME, maxPlayerInvalidTime);
         jsonObject.addProperty(GameEntryTag.MAX_BOT_INVALID_TIME, maxBotInvalidTime);
         jsonObject.addProperty(GameEntryTag.REMOVE_INVALID_TEAM, removeInvalidTeam);
+        jsonObject.addProperty(GameEntryTag.FRIENDLY_FIRE, friendlyFire);
         jsonObject.addProperty(GameEntryTag.ALLOW_REMAINING_BOT, allowRemainingBot);
         jsonObject.addProperty(GameEntryTag.KEEP_TEAM_AFTER_GAME, keepTeamAfterGame);
         jsonObject.addProperty(GameEntryTag.TELEPORT_AFTER_GAME, teleportAfterGame);
@@ -96,6 +99,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         int maxInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_PLAYER_INVALID_TIME, 20 * 60);
         int maxBotInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_BOT_INVALID_TIME, 20 * 10);
         boolean removeInvalidTeam = JsonUtils.getJsonBool(jsonObject, GameEntryTag.REMOVE_INVALID_TEAM, false);
+        boolean friendlyFire = JsonUtils.getJsonBool(jsonObject, GameEntryTag.FRIENDLY_FIRE, false);
         boolean allowRemainingBot = JsonUtils.getJsonBool(jsonObject, GameEntryTag.ALLOW_REMAINING_BOT, false);
         boolean keepTeamAfterGame = JsonUtils.getJsonBool(jsonObject, GameEntryTag.KEEP_TEAM_AFTER_GAME, false);
         boolean teleportAfterGame = JsonUtils.getJsonBool(jsonObject, GameEntryTag.TELEPORT_AFTER_GAME, false);
@@ -109,7 +113,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
 
         return new GameEntry(teamMsgExpireTimeSeconds, teamColors,
                 maxInvalidTime, maxBotInvalidTime, removeInvalidTeam,
-                allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId,
+                friendlyFire, allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId,
                 messageCleanFreq, messageExpireTime, messageSyncFreq);
     }
 

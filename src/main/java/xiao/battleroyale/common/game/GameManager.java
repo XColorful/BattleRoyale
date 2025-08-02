@@ -504,9 +504,11 @@ public class GameManager extends AbstractGameManager {
         ZoneManager.get().stopGame(serverLevel);
         SpawnManager.get().stopGame(serverLevel);
         GameruleManager.get().stopGame(serverLevel);
+        // ↑以上操作均不需要inGame判断
+        this.inGame = false;
+
         TeamManager.get().stopGame(serverLevel); // 最后处理TeamManager
         this.configPrepared = false;
-        this.inGame = false;
         GameMessageManager.get().stopGame(serverLevel); // 不在游戏中影响消息逻辑
         // this.ready = false; // 不使用ready标记，因为Team会变动
         // 取消事件监听

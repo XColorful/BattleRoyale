@@ -210,6 +210,7 @@ public class TeamManager extends AbstractGameManager {
                 gameManager.notifyLeavedMember(gamePlayer.getPlayerUUID(), gamePlayer.getGameTeamId());
             }
             if (serverLevel != null) {
+                BattleRoyale.LOGGER.debug("TeamManager start delayed clear()");
                 // 延迟2tick保证MessageManager获取到GamePlayer并保证在发送的tick之后再执行this.clear()
                 serverLevel.getServer().execute(() -> {
                     serverLevel.getServer().execute(() -> {
@@ -219,6 +220,7 @@ public class TeamManager extends AbstractGameManager {
                     });
                 });
             } else {
+                BattleRoyale.LOGGER.debug("TeamManager start instant clear()");
                 this.clear(); // stopGame立即执行的clear
                 isStoppingGame = false;
             }
