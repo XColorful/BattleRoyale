@@ -56,6 +56,27 @@ public class GameLootManager extends AbstractGameManager {
     public int cachedPlayerCenterChunksSize() { return cachedPlayerCenterChunks.size(); }
     public int cachedCenterOffsetSize() { return cachedCenterOffset.size(); }
 
+    public boolean isInQueuedChunksRef(ChunkPos chunkPos) { return queuedChunksRef.get().contains(chunkPos); }
+    public boolean isInProcessedChunkCache(ChunkPos chunkPos) { return processedChunkCache.contains(chunkPos); }
+    public boolean isInCachedCenterOffset(ChunkPos chunkPos) { return cachedPlayerCenterChunks.contains(chunkPos); }
+
+    public void forceClearQueuedChunkRef() {
+        Queue<ChunkPos> oldQueue = queuedChunksRef.getAndSet(new ArrayDeque<>());
+        int oldSize = oldQueue.size();
+        oldQueue.clear();
+        BattleRoyale.LOGGER.debug("Forcibly cleared queuedChunksRef, old queue size: {}", oldSize);
+    }
+    public void forceClearProcessedChunkCache() {
+        int oldSize = processedChunkCache.size();
+        processedChunkCache.clear();
+        BattleRoyale.LOGGER.debug("Forcibly cleared processedChunkCache, old cache size: {}", oldSize);
+    }
+    public void forceClearPlayerCenterChunks() {
+        int oldSize = cachedPlayerCenterChunks.size();
+        cachedPlayerCenterChunks.clear();
+        BattleRoyale.LOGGER.debug("Forcibly cleared cachedPlayerCenterChunks, old cache size: {}", oldSize);
+    }
+
     private int MAX_LOOT_CHUNK_PER_TICK = 5; // 每Tick最多处理的区块数
     private int MAX_LOOT_DISTANCE = 16; // BFS广度
     private int TOLERANT_CENTER_DISTANCE = 3; // 将玩家中心周围一定距离的区块也算作中心区块
@@ -73,12 +94,12 @@ public class GameLootManager extends AbstractGameManager {
             cachedCenterOffset.addAll(BfsCalculator.calculateCenterOffset(MAX_LOOT_DISTANCE));
         }
         TOLERANT_CENTER_DISTANCE = Math.min(Math.max(entry.tolerantCenterDistance, 0), 10);
-        MAX_CACHED_CENTER = Math.min(Math.max(entry.maxCachedCenter, 0), 50000);
-        MAX_QUEUED_CHUNK = Math.min(Math.max(entry.maxQueuedChunk, 100), 200000);
-        BFS_FREQUENCY = Math.max(entry.bfsFrequency, 100);
+        MAX_CACHED_CENTER = Math.min(Math.max(entry.maxCachedCenter, 0), 50000); // 五万
+        MAX_QUEUED_CHUNK = Math.min(Math.max(entry.maxQueuedChunk, 100), 200000); // 二十万
+        BFS_FREQUENCY = Math.max(entry.bfsFrequency, 100); // 5秒
         INSTANT_NEXT_BFS = entry.instantNextBfs;
-        MAX_CACHED_LOOT_CHUNK = Math.min(Math.max(entry.maxCachedLootChunk, 100), 300000);
-        CLEAN_CACHED_CHUNK = Math.min(Math.max(entry.cleanCachedChunk, 10), 10000);
+        MAX_CACHED_LOOT_CHUNK = Math.min(Math.max(entry.maxCachedLootChunk, 100), 300000); // 三十万
+        CLEAN_CACHED_CHUNK = Math.min(Math.max(entry.cleanCachedChunk, 10), 10000); // 一万
     }
 
     private int lastBfsTime = Integer.MIN_VALUE / 2;
@@ -212,8 +233,10 @@ public class GameLootManager extends AbstractGameManager {
      * 遍历存活玩家最后位置，BFS计算待处理区块（异步版本）
      */
     private void bfsQueuedChunkAsync() {
-        // BattleRoyale.LOGGER.debug("Last BFS processed loot:{}", lastBfsProcessedLoot);
+        BattleRoyale.LOGGER.debug("Last BFS processed loot:{}", lastBfsProcessedLoot);
         lastBfsProcessedLoot = 0;
+
+        long startTime = System.nanoTime();
 
         // 使用一个本地队列来存储计算结果，避免线程冲突
         Queue<ChunkPos> newChunkQueue = new ArrayDeque<>();
@@ -271,10 +294,16 @@ public class GameLootManager extends AbstractGameManager {
 
         // 使用原子操作替换旧队列
         Queue<ChunkPos> oldQueue = queuedChunksRef.getAndSet(newChunkQueue);
+        int oldQueueSize = oldQueue.size();
         // 清空旧队列，方便GC
         oldQueue.clear();
 
-        // BattleRoyale.LOGGER.debug("GameLootManager finished async BFS, added {} queued chunk. Old queue size was {}.", newChunkQueue.size(), oldQueue.size());
+        // 记录任务结束时间并计算耗时
+        long endTime = System.nanoTime();
+        long durationMillis = TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
+
+        BattleRoyale.LOGGER.debug("GameLootManager finished async BFS, added {} queued chunk in {}ms. Old queue size was {}.", newChunkQueue.size(), durationMillis, oldQueueSize);
+
     }
 
     private void processLootGeneration() {
@@ -288,9 +317,12 @@ public class GameLootManager extends AbstractGameManager {
         Queue<ChunkPos> currentQueue = queuedChunksRef.get();
         while (!currentQueue.isEmpty() && processedCount < MAX_LOOT_CHUNK_PER_TICK) {
             ChunkPos chunkPos = currentQueue.poll();
-            processedChunkCache.add(chunkPos);
-            lastBfsProcessedLoot += LootGenerator.refreshLootInChunk(new LootContext(serverLevel, chunkPos, GameManager.get().getGameId()));
-            processedCount++;
+            int newlyProcessedLoot = LootGenerator.refreshLootInChunk(new LootContext(serverLevel, chunkPos, GameManager.get().getGameId()));
+            if (newlyProcessedLoot != LootGenerator.CHUNK_NOT_LOADED) {
+                processedChunkCache.add(chunkPos);
+                lastBfsProcessedLoot += newlyProcessedLoot;
+                processedCount++;
+            }
         }
         // ChatUtils.sendMessageToAllPlayers(serverLevel, "Chunk Processed this tick: " + processedCount);
         // BattleRoyale.LOGGER.info("Chunk Processed this tick: {}", processedCount);
@@ -335,7 +367,7 @@ public class GameLootManager extends AbstractGameManager {
      * 清空所有内部数据结构和状态。
      */
     private void clear() {
-        lastBfsTime = -BFS_FREQUENCY + 20; // 延迟1秒，等玩家传送到地图内开始提交BFS
+        lastBfsTime = -BFS_FREQUENCY + 20 * 3; // 延迟3秒，等玩家传送到地图内开始提交BFS
         lastBfsProcessedLoot = 0;
         queuedChunksRef.get().clear();
         processedChunkCache.clear();

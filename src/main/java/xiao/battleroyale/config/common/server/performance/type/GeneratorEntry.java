@@ -48,35 +48,6 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         this.cleanCachedChunk = cleanCachedChunk;
     }
 
-    public static GeneratorEntry calculateRecommendedConfig(boolean lootVanillaChest, boolean removeLootTable, boolean removeInnocentEntity,
-                                                            int maxNormalTickLootChunk,
-                                                            int players, int simulationDistance, int bfsProcessTick, boolean instantNextBfs, double spaceFactor) {
-        // 估算一个玩家周围距离为N的区块数：(2 * N + 1)^2
-        int chunksPerPlayer = (int) Math.pow(2 * simulationDistance + 1, 2);
-        int totalChunksToProcess = players * chunksPerPlayer;
-
-        // 重新计算每Tick需要处理的区块数，基于新的bfsProcessTick
-        int maxGameTickLootChunk = (int) Math.ceil(totalChunksToProcess / (double) bfsProcessTick);
-        maxGameTickLootChunk = Math.max(5, maxGameTickLootChunk);
-
-        // 扩大队列和缓存基数，以适应高配置和玩家数
-        int maxQueuedChunk = (int) (80000 * spaceFactor);
-        int maxCachedLootChunk = (int) (120000 * spaceFactor);
-        int cleanCachedChunk = (int) (5000 * spaceFactor);
-        int maxCachedCenter = (int) (2000 * spaceFactor);
-
-        maxQueuedChunk = Math.max(100, maxQueuedChunk);
-        maxCachedLootChunk = Math.max(100, maxCachedLootChunk);
-        cleanCachedChunk = Math.max(10, cleanCachedChunk);
-        maxCachedCenter = Math.max(players * 5, maxCachedCenter);
-
-        int tolerantCenterDistance = 3;
-
-        return new GeneratorEntry(lootVanillaChest, removeLootTable, removeInnocentEntity,
-                maxNormalTickLootChunk,
-                maxGameTickLootChunk, simulationDistance, tolerantCenterDistance, maxCachedCenter, maxQueuedChunk, bfsProcessTick, instantNextBfs, maxCachedLootChunk, cleanCachedChunk);
-    }
-
     @Override
     public String getType() {
         return "generatorEntry";

@@ -31,6 +31,8 @@ import java.util.function.Supplier;
 
 public class LootGenerator {
 
+    public static final int CHUNK_NOT_LOADED = -1;
+
     private static boolean LOOT_VANILLA_CHEST = true;
     public static void setLootVanillaChest(boolean bool) { LOOT_VANILLA_CHEST = bool; }
     private static boolean REMOVE_LOOT_TABLE = false;
@@ -188,14 +190,14 @@ public class LootGenerator {
 
     /**
      * 刷新指定区块内的所有战利品方块。
-     * @return 该区块内刷新的战利品方块数量
+     * @return 该区块内刷新的战利品方块数量，返回 CHUNK_NOT_LOADED 则为区块未加载
      */
     public static int refreshLootInChunk(LootContext lootContext) {
         int refreshedCount = 0;
         LevelChunk chunk = lootContext.serverLevel.getChunkSource().getChunkNow(lootContext.chunkPos.x, lootContext.chunkPos.z);
 
-        if (chunk == null) {
-            return refreshedCount;
+        if (chunk == null) { // 区块未加载不算作已刷新，返回特殊标记
+            return CHUNK_NOT_LOADED;
         }
 
         clearOldLoot(lootContext);
