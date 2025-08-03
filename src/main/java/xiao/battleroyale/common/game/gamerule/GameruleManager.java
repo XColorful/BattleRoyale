@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManager;
@@ -133,4 +134,6 @@ public class GameruleManager extends AbstractGameManager {
             }
         }
     }
+
+    public GameType getGameMode() { return gamemodeBackup.getGameMode(); }
 }

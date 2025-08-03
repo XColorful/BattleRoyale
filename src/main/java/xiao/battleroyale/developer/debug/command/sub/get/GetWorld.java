@@ -64,7 +64,7 @@ public class GetWorld {
             return 0;
         }
 
-        DebugWorld.get().getBLockENtityNbt(source, pos);
+        DebugWorld.get().getBLockEntityNbt(source, pos);
         return Command.SINGLE_SUCCESS;
     }
 

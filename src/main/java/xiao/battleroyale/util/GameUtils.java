@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,11 +59,22 @@ public class GameUtils {
         return Vec3Utils.lerp(startVec, playerCenter, delta);
     }
 
+    /**
+     * 添加游戏UUID
+     */
     public static void addGameId(ItemStack itemStack, UUID gameId) {
         itemStack.getOrCreateTag().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
     }
     public static void addGameId(Entity entity, UUID gameId) {
         entity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+    }
+    /**
+     * 添加游戏UUID
+     * 此方法不适用于本模组的方块
+     */
+    public static void addGameId(BlockEntity blockEntity, UUID gameId) {
+        blockEntity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+        blockEntity.setChanged();
     }
 
     /**
@@ -83,6 +95,17 @@ public class GameUtils {
             }
         }
         return entityGameId;
+    }
+    /**
+     * 获取原版BlockEntity的GameUUID
+     * 此方法不适用于本模组的方块
+     */
+    public static @Nullable UUID getGameId(BlockEntity blockEntity) {
+        CompoundTag forgeData = blockEntity.getPersistentData();
+        if (forgeData.hasUUID(LootNBTTag.GAME_ID_TAG)) {
+            return forgeData.getUUID(LootNBTTag.GAME_ID_TAG);
+        }
+        return null;
     }
 
     public record GameTimeFormat(int gameTime, int remainTick, float remainSeconds, int seconds, int minutes, int hours) {

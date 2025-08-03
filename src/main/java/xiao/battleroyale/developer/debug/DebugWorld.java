@@ -50,7 +50,7 @@ public class DebugWorld {
      * [调试]getBlockEntityNBT
      */
     public static final String GET_BLOCKENTITY_NBT = "getBlockEntityNBT";
-    public void getBLockENtityNbt(CommandSourceStack source, Vec3 pos) {
+    public void getBLockEntityNbt(CommandSourceStack source, Vec3 pos) {
         ServerLevel serverLevel = source.getLevel();
         BlockPos blockPos = BlockPos.containing(pos);
         BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);

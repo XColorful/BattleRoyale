@@ -142,8 +142,11 @@ public class CommonLootManager {
         int processedChunkThisTick = 0;
         while (!chunksToProcess.isEmpty() && processedChunkThisTick < MAX_CHUNKS_PER_TICK) {
             ChunkPos chunkPos = chunksToProcess.poll();
-            totalLootRefreshedInBatch += LootGenerator.refreshLootInChunk(new LootGenerator.LootContext(currentGenerationLevel, chunkPos, currentGenerationGameId));
-            processedChunkThisTick++;
+            int newlyProcessedLoot = LootGenerator.refreshLootInChunk(new LootGenerator.LootContext(currentGenerationLevel, chunkPos, currentGenerationGameId));
+            if (newlyProcessedLoot != LootGenerator.CHUNK_NOT_LOADED) {
+                totalLootRefreshedInBatch += newlyProcessedLoot;
+                processedChunkThisTick++;
+            }
         }
         return false;
     }
