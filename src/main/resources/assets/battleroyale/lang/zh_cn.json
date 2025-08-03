@@ -242,6 +242,8 @@
   "battleroyale.message.local_debug_not_enabled": "未启用本地调试",
   "battleroyale.message.debug": "[调试]",
   "battleroyale.message.debug_local": "[本地调试]",
+  "battleroyale.message.switch_gamemode_success": "已切换游戏模式",
+  "battleroyale.message.switch_gamemode_failed": "无法切换游戏模式",
 
   "battleroyale.label.alive": "生存",
 

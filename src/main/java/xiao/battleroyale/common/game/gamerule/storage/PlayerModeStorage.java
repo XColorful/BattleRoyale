@@ -3,6 +3,7 @@ package xiao.battleroyale.common.game.gamerule.storage;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.MinecraftEntryTag;
@@ -20,7 +21,8 @@ import java.util.UUID;
  */
 public class PlayerModeStorage implements IRuleStorage {
 
-    private static GameType gameMode;
+    private GameType gameMode = GameType.ADVENTURE;
+    public @NotNull GameType getGameMode() { return gameMode; }
     private final Map<UUID, GameType> playerModeBackup = new HashMap<>();
 
     public PlayerModeStorage() {
@@ -40,7 +42,7 @@ public class PlayerModeStorage implements IRuleStorage {
             BattleRoyale.LOGGER.error("Expected minecraftEntry for PlayerModeStorage");
             return;
         }
-        PlayerModeStorage.gameMode = mcEntry.adventureMode ? GameType.ADVENTURE : GameType.SURVIVAL;
+        this.gameMode = mcEntry.adventureMode ? GameType.ADVENTURE : GameType.SURVIVAL;
 
         for (GamePlayer gamePlayer : gamePlayerList) {
             if (gamePlayer.isBot()) {
@@ -49,7 +51,7 @@ public class PlayerModeStorage implements IRuleStorage {
             UUID playerUUID = gamePlayer.getPlayerUUID();
             try {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);
-                GameType playerGameMode = player != null ? player.gameMode.getGameModeForPlayer() : PlayerModeStorage.gameMode;
+                GameType playerGameMode = player != null ? player.gameMode.getGameModeForPlayer() : this.gameMode;
                 playerModeBackup.put(playerUUID, playerGameMode);
                 BattleRoyale.LOGGER.info("Backup up gamemode {} for player {}", playerGameMode.getName(), gamePlayer.getPlayerName());
             } catch (Exception e) {

@@ -6,8 +6,10 @@ import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -841,5 +843,31 @@ public class GameManager extends AbstractGameManager {
         ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_gamerule_config", getGameruleConfigId(), getGameruleConfigName(getGameruleConfigId())));
         ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_spawn_config", getSpawnConfigId(), getSpawnConfigName(getSpawnConfigId())));
         ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_zone_config", getZoneConfigFileName(), GameConfigManager.get().getZoneConfigList().size()));
+    }
+
+    public boolean spectateGame(ServerPlayer player) {
+        if (player == null) {
+            return false;
+        }
+
+        if (player.gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
+            if (!isInGame()) { // 不在游戏进行时，即使不为GamePlayer也可以改回来（可能被清理掉）
+                player.setGameMode(GameruleManager.get().getGameMode()); // 默认为冒险模式
+                return true;
+            } else { // 不允许在游戏中从观战模式改回去
+                return false;
+            }
+        }
+
+        GamePlayer gamePlayer = getGamePlayerByUUID(player.getUUID());
+        if (gamePlayer == null) { // 非游戏玩家
+            return false;
+        }
+        if (!gamePlayer.getTeam().isTeamEliminated()) { // 队伍未被淘汰不能观战
+            return false;
+        }
+        player.setGameMode(GameType.SPECTATOR);
+
+        return true;
     }
 }

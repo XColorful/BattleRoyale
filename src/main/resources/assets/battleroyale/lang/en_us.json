@@ -243,6 +243,8 @@
   "battleroyale.message.local_debug_not_enabled": "Local debug is not enabled",
   "battleroyale.message.debug": "[Debug]",
   "battleroyale.message.debug_local": "[Local Debug]",
+  "battleroyale.message.switch_gamemode_success": "Switched gamemode",
+  "battleroyale.message.switch_gamemode_failed": "Failed to switched gamemode",
 
   "battleroyale.label.alive": "Alive",
 
