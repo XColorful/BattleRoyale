@@ -206,27 +206,23 @@ public class GameLootManager extends AbstractGameManager {
     private void submitNewBfsTask() {
         if (bfsExecutor == null || bfsExecutor.isShutdown()) {
             BattleRoyale.LOGGER.warn("GameLootManager: thread pool is null or shutdown, skipped submit new BFS task");
+            return;
         }
 
-        // 检查 future 是否为空或者已经完成，确保没有正在运行的任务
-        if (bfsTaskFuture == null || bfsTaskFuture.isDone()) {
-            // 如果上一个任务被取消，重新记录时间
-            if (bfsTaskFuture != null && bfsTaskFuture.isCancelled()) {
-                BattleRoyale.LOGGER.debug("Previous BFS task was cancelled, submitting a new one.");
-            }
-            lastBfsTime = GameManager.get().getGameTime(); // 确保主线程下一tick能识别到
-            bfsTaskFuture = bfsExecutor.submit(this::bfsQueuedChunkAsync);
-        } else {
-            // BattleRoyale.LOGGER.info("Attempt to cancel BFS");
-            // 如果有正在运行的任务，取消它并提交新的
-            if (bfsTaskFuture.cancel(true)) {
-                BattleRoyale.LOGGER.debug("A running BFS task was cancelled. Submitting a new one.");
-                lastBfsTime = GameManager.get().getGameTime(); // 确保主线程下一tick能识别到
-                bfsTaskFuture = bfsExecutor.submit(this::bfsQueuedChunkAsync);
-            } else {
-                BattleRoyale.LOGGER.warn("Tried to cancel a running BFS task, but it failed.");
-            }
+        // 检查 future 是否为空或者已经完成
+        // 如果任务正在运行则直接返回，不提交新任务，也不中断旧任务
+        if (bfsTaskFuture != null && !bfsTaskFuture.isDone()) {
+            BattleRoyale.LOGGER.debug("An BFS task is already running. Skipping new submission.");
+            return;
         }
+
+        // 如果任务已完成或为空，则可以提交新任务
+        if (bfsTaskFuture != null && bfsTaskFuture.isCancelled()) {
+            BattleRoyale.LOGGER.debug("Previous BFS task was cancelled, submitting a new one.");
+        }
+
+        lastBfsTime = GameManager.get().getGameTime(); // 确保主线程下一tick能识别到
+        bfsTaskFuture = bfsExecutor.submit(this::bfsQueuedChunkAsync);
     }
 
     /**
