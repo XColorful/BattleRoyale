@@ -27,8 +27,8 @@ public class DefaultPerformance {
         // 默认性能配置:
         // 玩家数量: 10人, 模拟距离: 16, BFS处理Tick: 5秒
         GeneratorEntry generatorEntry = new GeneratorEntry(true, true, true,
-                1000,
-                1000, 20, 3, 1000, 50000, 100, false, 100000, 10000);
+                2000,
+                2000, 20, 3, 1500, 50000, 100, false, 100000, 10000);
 
         PerformanceConfig performanceConfig = new PerformanceConfig(0, "Default performance", "#FFFFFF", true, generatorEntry);
 
