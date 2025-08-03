@@ -40,6 +40,7 @@ public class LootGenerator {
     private static boolean REMOVE_INNOCENT_ENTITY = false;
     public static void setRemoveInnocentEntity(boolean bool) { REMOVE_INNOCENT_ENTITY = bool; }
 
+
     /**
      * 根据物资刷新配置生成
      * @param lootContext 物资刷新环境
@@ -169,20 +170,25 @@ public class LootGenerator {
             if (config == null) {
                 return false;
             }
-            ILootEntry entry = config.entry;
-            generateVanillaLoot(lootContext, blockEntity, entry);
-            return true;
+            UUID blockGameId = GameUtils.getGameId(blockEntity);
+            if (blockGameId == null || !blockGameId.equals(lootContext.gameId)) {
+                ILootEntry entry = config.entry;
+                generateVanillaLoot(lootContext, blockEntity, entry);
+                GameUtils.addGameId(blockEntity, lootContext.gameId);
+                // blockEntity.setChanged(); // addGameId内部已经标记
+                return true;
+            }
+            return false;
         }
 
         UUID blockGameId = lootObject.getGameId();
-        int configId = lootObject.getConfigId();
-        LootConfig config = LootConfigManager.get().getLootConfig(blockEntity, configId);
+        LootConfig config = LootConfigManager.get().getLootConfig(blockEntity, lootObject.getConfigId());
 
         if (config != null && (blockGameId == null || !blockGameId.equals(lootContext.gameId))) {
             ILootEntry entry = config.entry;
             generateLoot(lootContext, (AbstractLootBlockEntity) lootObject, entry);
             lootObject.setGameId(lootContext.gameId);
-            blockEntity.setChanged();
+            // blockEntity.setChanged(); // setGameId内部已经标记
             return true;
         }
         return false;
