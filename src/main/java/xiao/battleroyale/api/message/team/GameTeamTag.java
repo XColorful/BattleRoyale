@@ -11,6 +11,7 @@ public class GameTeamTag extends ConfigEntryTag {
     public static final String MEMBER_NAME = "name";
     public static final String MEMBER_HEALTH = "health";
     public static final String MEMBER_BOOST = "boost";
+    public static final String MEMBER_UUID = "uuid";
 
     private GameTeamTag() {}
 }

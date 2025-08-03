@@ -159,6 +159,8 @@ public class MessageText {
                 .append(Component.literal(" "))
                 .append(buildHoverableTextWithColor("boost", String.valueOf(memberInfo.boost), memberInfo.boost > 0 ? ChatFormatting.YELLOW : ChatFormatting.DARK_GRAY))
                 .append(Component.literal(" "))
+                .append(buildHoverableTextWithColor("uuid", String.valueOf(memberInfo.uuid), ChatFormatting.GRAY))
+                .append(Component.literal(" "))
                 .append(buildHoverableText("updateTime", String.valueOf(lastUpdateTime)));
     }
     public static MutableComponent buildGameMessageDetailLocal(CompoundTag nbt, int lastUpdateTime) {

@@ -48,7 +48,7 @@ public class ZoneRenderer {
     }
 
     private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(BattleRoyale.MOD_ID, "textures/white.png");
-    private static final RenderType CUSTOM_ZONE_RENDER_TYPE = createRenderType();
+    public static final RenderType CUSTOM_ZONE_RENDER_TYPE = createRenderType();
     public static int CIRCLE_SEGMENTS = 64;
     public static int ELLIPSE_SEGMENTS = 64;
     public static int getEllipseSegments() { return ELLIPSE_SEGMENTS; }
