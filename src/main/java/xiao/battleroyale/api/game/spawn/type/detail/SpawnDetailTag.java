@@ -12,6 +12,7 @@ public class SpawnDetailTag {
     public static final String GROUND_TEAM_TOGETHER = "teamTogether";
     public static final String GROUND_FIND_GROUND = "findGround";
     public static final String GROUND_RANDOM_RANGE = "randomRange";
+    public static final String GROUND_HANG_TIME = "hangTime";
 
     // plane
     public static final String PLANE_HEIGHT = "planeHeight";

@@ -5,15 +5,11 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.common.game.spawn.SpawnManager;
-import xiao.battleroyale.common.game.team.TeamManager;
 
 /**
  * 监听玩家登出/登入
  */
 public class LogEventHandler {
-
-    private LogEventHandler() {}
 
     private static class LogEventHandlerHolder {
         private static final LogEventHandler INSTANCE = new LogEventHandler();
@@ -22,6 +18,8 @@ public class LogEventHandler {
     public static LogEventHandler get() {
         return LogEventHandlerHolder.INSTANCE;
     }
+
+    private LogEventHandler() {}
 
     public static void register() {
         MinecraftForge.EVENT_BUS.register(get());

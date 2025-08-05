@@ -30,7 +30,10 @@ public class GameCommand {
                 .then(Commands.literal(TO_LOBBY)
                         .executes(GameCommand::toLobby))
                 .then(Commands.literal(SELECTED)
-                        .executes(GameCommand::selectedConfigs));
+                        .executes(GameCommand::selectedConfigs))
+                .then(Commands.literal(SPECTATE)
+                        .requires(CommandSourceStack::isPlayer)
+                        .executes(GameCommand::spectateGame));
 
         // 需要权限
         gameCommand.then(Commands.literal(LOAD)
@@ -47,6 +50,7 @@ public class GameCommand {
                         .executes(GameCommand::stopGame))
                 .then(Commands.literal(OFFSET)
                         .requires(source -> source.hasPermission(2))
+                        .executes(GameCommand::getGlobalOffset)
                         .then(Commands.argument(XYZ, Vec3Argument.vec3())
                                 .executes(GameCommand::globalOffset)));
 
@@ -86,19 +90,17 @@ public class GameCommand {
         }
 
         gameManager.initGame(serverLevel);
-        if (!gameManager.isPreparedForGame()) {
-            source.sendFailure(Component.translatable("battleroyale.message.game_not_prepared").withStyle(ChatFormatting.YELLOW));
-            return 0;
-        }
-        if (gameManager.isReady()) {
+        if (gameManager.isReady()) { // 初始化完成，不包含队伍判断
             source.sendSuccess(() -> Component.translatable("battleroyale.message.game_init").withStyle(ChatFormatting.GREEN), false);
             BattleRoyale.LOGGER.info("Game initialized via command.");
             return Command.SINGLE_SUCCESS;
+        } else if (!gameManager.isPreparedForGame()) {
+            source.sendFailure(Component.translatable("battleroyale.message.game_not_prepared").withStyle(ChatFormatting.YELLOW));
         } else {
             source.sendFailure(Component.translatable("battleroyale.message.game_init_fail").withStyle(ChatFormatting.RED));
             BattleRoyale.LOGGER.warn("Failed to initialize game via command.");
-            return 0;
         }
+        return 0;
     }
 
     public static int startGame(CommandContext<CommandSourceStack> context) {
@@ -176,6 +178,20 @@ public class GameCommand {
             return 0;
         }
     }
+    private static int getGlobalOffset(CommandContext<CommandSourceStack> context) {
+        Vec3 offset = GameManager.get().getGlobalCenterOffset();
+        CommandSourceStack source = context.getSource();
+        if (source.isPlayer()) {
+            source.sendSuccess(() -> Component.translatable("battleroyale.message.check_global_offset", offset.x, offset.y, offset.z).withStyle(ChatFormatting.GREEN), false);
+            ServerPlayer player = source.getPlayer();
+            if (player != null) {
+                BattleRoyale.LOGGER.info("{} check current global offset ({}) via command", player.getName().getString(), offset);
+                return Command.SINGLE_SUCCESS;
+            }
+        }
+        BattleRoyale.LOGGER.info("Check current global offset ({}) via command", offset);
+        return Command.SINGLE_SUCCESS;
+    }
 
     private static int selectedConfigs(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
@@ -190,7 +206,20 @@ public class GameCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    public static String toLobbyCommandString() {
+    private static int spectateGame(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        ServerPlayer player = source.getPlayerOrException();
+
+        if (GameManager.get().spectateGame(player)) {
+            source.sendSuccess(() -> Component.translatable("battleroyale.message.switch_gamemode_success"), false);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            source.sendFailure(Component.translatable("battleroyale.message.switch_gamemode_failed"));
+            return 0;
+        }
+    }
+
+    public static String toLobbyCommand() {
         return buildCommandString(
                 MOD_ID,
                 GAME,

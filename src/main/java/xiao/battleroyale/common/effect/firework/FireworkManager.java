@@ -35,12 +35,15 @@ public class FireworkManager implements IEffectManager {
     private final List<FixedFireworkTask> fixedTasks = new ArrayList<>();
     private final List<PlayerTrackingFireworkTask> playerTrackingTasks = new ArrayList<>();
 
+    public List<FixedFireworkTask> getFixedTasks() { return fixedTasks; }
+    public List<PlayerTrackingFireworkTask> getPlayerTrackingTasks() { return playerTrackingTasks; }
+
     public void onTick() {
         RandomSource random = null;
         if (!fixedTasks.isEmpty()) {
-            random = fixedTasks.get(0).level.getRandom();
+            random = fixedTasks.get(0).serverLevel.getRandom();
         } else if (!playerTrackingTasks.isEmpty()) {
-            random = playerTrackingTasks.get(0).level.getRandom();
+            random = playerTrackingTasks.get(0).serverLevel.getRandom();
         }
 
         if (random == null) {
@@ -54,7 +57,7 @@ public class FireworkManager implements IEffectManager {
 
             if (task.currentDelay <= 0) {
                 if (task.remainingAmount > 0) {
-                    spawnFixedFirework(task.level, task.initialPos, random, task.vRange, task.hRange);
+                    spawnFixedFirework(task.serverLevel, task.initialPos, random, task.vRange, task.hRange);
                     task.remainingAmount--;
                     task.currentDelay = task.interval;
                 } else {
@@ -70,9 +73,9 @@ public class FireworkManager implements IEffectManager {
 
             if (task.currentDelay <= 0) {
                 if (task.remainingAmount > 0) {
-                    ServerPlayer player = task.level.getServer().getPlayerList().getPlayer(task.playerUUID);
+                    ServerPlayer player = task.serverLevel.getServer().getPlayerList().getPlayer(task.playerUUID);
                     if (player != null) {
-                        spawnPlayerFirework(task.level, player.position(), random, task.vRange, task.hRange);
+                        spawnPlayerFirework(task.serverLevel, player.position(), random, task.vRange, task.hRange);
                         task.remainingAmount--;
                         task.currentDelay = task.interval;
                     } else {

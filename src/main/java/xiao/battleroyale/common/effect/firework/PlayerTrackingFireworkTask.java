@@ -4,22 +4,14 @@ import net.minecraft.server.level.ServerLevel;
 
 import java.util.UUID;
 
-public class PlayerTrackingFireworkTask {
-    ServerLevel level;
-    UUID playerUUID;
-    int remainingAmount;
-    int interval;
-    int currentDelay;
-    float vRange;
-    float hRange;
+public class PlayerTrackingFireworkTask extends AbstractFireworkTask{
 
-    public PlayerTrackingFireworkTask(ServerLevel level, UUID playerUUID, int amount, int interval, float vRange, float hRange) {
-        this.level = level;
+    protected UUID playerUUID;
+
+    public UUID getPlayerUUID() { return playerUUID; }
+
+    public PlayerTrackingFireworkTask(ServerLevel serverLevel, UUID playerUUID, int amount, int interval, float vRange, float hRange) {
+        super(serverLevel, amount, interval, vRange, hRange);
         this.playerUUID = playerUUID;
-        this.remainingAmount = amount;
-        this.interval = interval;
-        this.currentDelay = interval;
-        this.vRange = vRange;
-        this.hRange = hRange;
     }
 }

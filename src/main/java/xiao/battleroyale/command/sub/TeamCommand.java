@@ -147,7 +147,7 @@ public class TeamCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    public static String acceptInviteCommandString(String senderName) {
+    public static String acceptInviteCommand(String senderName) {
         return buildCommandString(
                 MOD_ID,
                 TEAM,
@@ -157,7 +157,7 @@ public class TeamCommand {
         );
     }
 
-    public static String declineInviteCommandString(String senderName) {
+    public static String declineInviteCommand(String senderName) {
         return buildCommandString(
                 MOD_ID,
                 TEAM,
@@ -167,7 +167,7 @@ public class TeamCommand {
         );
     }
 
-    public static String acceptRequestCommandString(String name) {
+    public static String acceptRequestCommand(String name) {
         return buildCommandString(
                 MOD_ID,
                 TEAM,
@@ -177,7 +177,7 @@ public class TeamCommand {
         );
     }
 
-    public static String declineRequestCommandString(String name) {
+    public static String declineRequestCommand(String name) {
         return buildCommandString(
                 MOD_ID,
                 TEAM,

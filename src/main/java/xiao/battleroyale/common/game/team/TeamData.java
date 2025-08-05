@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManagerData;
+import xiao.battleroyale.util.ClassUtils;
 
 import java.util.*;
 
@@ -11,47 +12,51 @@ public class TeamData extends AbstractGameManagerData {
 
     private static final String DATA_NAME = "TeamData";
 
-    private final List<GamePlayer> gamePlayersList = new ArrayList<>();
-    private final List<GamePlayer> standingGamePlayersList = new ArrayList<>();
-    private final Map<UUID, GamePlayer> standingGamePlayers = new HashMap<>();
-    private final List<GameTeam> gameTeamsList = new ArrayList<>();
-    private final Map<UUID, GamePlayer> gamePlayers = new HashMap<>();
-    private final Map<Integer, GameTeam> gameTeams = new HashMap<>();
-    private final Map<Integer, GamePlayer> gamePlayersById = new HashMap<>();
+    private final ClassUtils.ArrayMap<UUID, GamePlayer> gamePlayers;
+    private final Map<Integer, GamePlayer> gamePlayersById;
+
+    private final ClassUtils.ArrayMap<Integer, GameTeam> gameTeams;
+
+    private final ClassUtils.ArrayMap<UUID, GamePlayer> standingGamePlayers;
 
     private final Set<Integer> availablePlayerIds = new TreeSet<>();
     private final Set<Integer> availableTeamIds = new TreeSet<>();
 
     private int maxPlayersLimit = Integer.MAX_VALUE;
+    private int teamSizeLimit = Integer.MAX_VALUE;
     public int getMaxPlayersLimit() { return maxPlayersLimit; }
+    public int getTeamSizeLimit() { return teamSizeLimit; }
 
     public TeamData() {
         super(DATA_NAME);
+        this.gamePlayers = new ClassUtils.ArrayMap<>(GamePlayer::getPlayerUUID);
+        this.gamePlayersById = new HashMap<>();
+
+        this.gameTeams = new ClassUtils.ArrayMap<>(GameTeam::getGameTeamId);
+
+        this.standingGamePlayers = new ClassUtils.ArrayMap<>(GamePlayer::getPlayerUUID);
     }
 
     @Override
     public void clear() {
-        clear(Integer.MAX_VALUE);
+        clear(Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
-    public void clear(int maxPlayers) {
+    public void clear(int maxPlayers, int maxTeamSize) {
         if (locked) {
-            BattleRoyale.LOGGER.warn("TeamData is locked, skipped clear()");
             return;
         }
         unlockData();
 
-        gamePlayersList.clear();
-        standingGamePlayersList.clear();
-        standingGamePlayers.clear();
-        gameTeamsList.clear();
         gamePlayers.clear();
-        gamePlayersById.clear();
+        standingGamePlayers.clear();
         gameTeams.clear();
+        gamePlayersById.clear();
 
         availablePlayerIds.clear();
         availableTeamIds.clear();
 
         this.maxPlayersLimit = maxPlayers;
+        this.teamSizeLimit = maxTeamSize;
 
         for (int i = 1; i <= maxPlayers; i++) {
             availablePlayerIds.add(i);
@@ -59,7 +64,7 @@ public class TeamData extends AbstractGameManagerData {
         }
     }
 
-    public void extendLimit(int maxPlayers) {
+    public void extendLimit(int maxPlayers, int maxTeamSize) {
         if (locked) {
             return;
         }
@@ -67,10 +72,11 @@ public class TeamData extends AbstractGameManagerData {
         if (maxPlayers <= this.maxPlayersLimit) {
             return;
         }
+
+        this.maxPlayersLimit = maxPlayers;
         for (int i = this.maxPlayersLimit + 1; i <= maxPlayers; i++) {
             availablePlayerIds.add(i);
             availableTeamIds.add(i);
-            this.maxPlayersLimit = maxPlayers;
         }
     }
 
@@ -106,10 +112,7 @@ public class TeamData extends AbstractGameManagerData {
             return;
         }
 
-        standingGamePlayersList.addAll(gamePlayersList);
-        for (GamePlayer gamePlayer : standingGamePlayersList) {
-            standingGamePlayers.put(gamePlayer.getPlayerUUID(), gamePlayer);
-        }
+        standingGamePlayers.putAll(gamePlayers.asMap());
         lockData();
     }
 
@@ -118,7 +121,6 @@ public class TeamData extends AbstractGameManagerData {
         if (locked) {
             unlockData();
         }
-        standingGamePlayersList.clear();
         standingGamePlayers.clear();
     }
 
@@ -135,7 +137,7 @@ public class TeamData extends AbstractGameManagerData {
             return false;
         }
 
-        if (gamePlayers.containsKey(gamePlayer.getPlayerUUID())) {
+        if (gamePlayers.containsKey(gamePlayer.getPlayerUUID()) || getTotalPlayerCount() >= maxPlayersLimit) {
             return false;
         }
 
@@ -147,11 +149,13 @@ public class TeamData extends AbstractGameManagerData {
         if (!availablePlayerIds.remove(playerId)) {
             return false;
         }
+        if (gameTeam.getTeamMemberCount() >= teamSizeLimit) {
+            return false;
+        }
         gamePlayer.setTeam(gameTeam);
         gameTeam.addPlayer(gamePlayer);
         gamePlayers.put(gamePlayer.getPlayerUUID(), gamePlayer);
         gamePlayersById.put(playerId, gamePlayer);
-        gamePlayersList.add(gamePlayer);
 
         if (!gameTeams.containsKey(gameTeam.getGameTeamId())) {
             addGameTeam(gameTeam);
@@ -175,7 +179,6 @@ public class TeamData extends AbstractGameManagerData {
         if (!availableTeamIds.remove(teamId)) {
             return false;
         }
-        gameTeamsList.add(gameTeam);
         gameTeams.put(teamId, gameTeam);
         return true;
     }
@@ -199,7 +202,6 @@ public class TeamData extends AbstractGameManagerData {
         }
 
         gamePlayersById.remove(removedPlayer.getGameSingleId());
-        gamePlayersList.remove(removedPlayer);
         GameTeam team = removedPlayer.getTeam();
         if (team != null) {
             team.removePlayer(removedPlayer);
@@ -215,7 +217,7 @@ public class TeamData extends AbstractGameManagerData {
      * 只允许在游戏中调用淘汰接口
      */
     public boolean eliminatePlayer(UUID playerId) {
-        GamePlayer player = gamePlayers.get(playerId);
+        GamePlayer player = gamePlayers.mapGet(playerId);
         return eliminatePlayer(player);
     }
 
@@ -229,7 +231,6 @@ public class TeamData extends AbstractGameManagerData {
 
         if (player != null) {
             player.setEliminated(true); // GamePlayer内部自动更新alive
-            standingGamePlayersList.remove(player);
             standingGamePlayers.remove(player.getPlayerUUID());
             return true;
         }
@@ -247,11 +248,9 @@ public class TeamData extends AbstractGameManagerData {
             return;
         }
 
-        gameTeamsList.remove(removedTeam);
         for (GamePlayer player : new ArrayList<>(removedTeam.getTeamMembers())) {
             gamePlayers.remove(player.getPlayerUUID());
             gamePlayersById.remove(player.getGameSingleId());
-            gamePlayersList.remove(player);
             if (player.getGameSingleId() > 0 && player.getGameSingleId() <= maxPlayersLimit) {
                 availablePlayerIds.add(player.getGameSingleId());
             }
@@ -260,11 +259,11 @@ public class TeamData extends AbstractGameManagerData {
     }
 
     public @Nullable GameTeam getGameTeamById(int teamId) {
-        return gameTeams.get(teamId);
+        return gameTeams.mapGet(teamId);
     }
 
     public @Nullable GamePlayer getGamePlayerByUUID(UUID playerUUI) {
-        return gamePlayers.get(playerUUI);
+        return gamePlayers.mapGet(playerUUI);
     }
 
     public @Nullable GamePlayer getGamePlayerByGameSingleId(int playerId) {
@@ -272,24 +271,33 @@ public class TeamData extends AbstractGameManagerData {
     }
 
     public List<GameTeam> getGameTeamsList() {
-        return Collections.unmodifiableList(gameTeamsList);
+        return gameTeams.asList();
     }
 
     public List<GamePlayer> getGamePlayersList() {
-        return Collections.unmodifiableList(gamePlayersList);
+        return gamePlayers.asList();
     }
 
     public List<GamePlayer> getStandingGamePlayersList() {
-        return Collections.unmodifiableList(standingGamePlayersList);
+        return standingGamePlayers.asList();
     }
 
     public boolean hasStandingGamePlayer(UUID id) {
         return standingGamePlayers.containsKey(id);
     }
 
-    public int getTotalPlayerCount() { return gamePlayersList.size(); }
-    public int getTotalStandingPlayerCount() { return standingGamePlayersList.size(); }
-    public int getTotalTeamCount() { return gameTeamsList.size(); }
+    public int getTotalPlayerCount() { return gamePlayers.size(); }
+    public int getTotalStandingPlayerCount() { return standingGamePlayers.size(); }
+    public int getTotalTeamCount() { return gameTeams.size(); }
+    public int getTotalStandingTeamCount() { // 调用不频繁，额外维护比较复杂
+        int count = 0;
+        for (GameTeam gameTeam : gameTeams) {
+            if (!gameTeam.isTeamEliminated()) {
+                count++;
+            }
+        }
+        return count;
+    }
 
     public void switchPlayerTeam(@NotNull GamePlayer player, @NotNull GameTeam newTeam) {
         if (locked) {
@@ -308,9 +316,33 @@ public class TeamData extends AbstractGameManagerData {
             }
         }
 
+        if (newTeam.getTeamMemberCount() >= teamSizeLimit) {
+            return;
+        }
         newTeam.addPlayer(player);
         if (!gameTeams.containsKey(newTeam.getGameTeamId())) {
             addGameTeam(newTeam);
+        }
+    }
+
+    public void changeBotGamePlayer(GamePlayer gamePlayer, UUID newPlayerUUID) {
+        if (getGamePlayerByUUID(newPlayerUUID) != null) {
+            return;
+        }
+
+        UUID oldPlayerUUID = gamePlayer.getPlayerUUID();
+        if (locked) {
+            standingGamePlayers.remove(oldPlayerUUID);
+        }
+        gamePlayers.remove(oldPlayerUUID);
+        gamePlayer.setPlayerUUID(newPlayerUUID);
+        GameTeam gameTeam = gamePlayer.getTeam();
+        if (gameTeam.getLeaderUUID().equals(oldPlayerUUID)) {
+            gameTeam.setLeader(newPlayerUUID);
+        }
+        gamePlayers.put(newPlayerUUID, gamePlayer);
+        if (locked) {
+            standingGamePlayers.put(newPlayerUUID, gamePlayer);
         }
     }
 }

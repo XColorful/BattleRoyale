@@ -48,6 +48,8 @@ public class TeamManager extends AbstractGameManager {
     private record TeamRequest(UUID targetTeamLeaderUUID, String targetTeamLeaderName, int requestedTeamId, long expireTime) {}
     private final Map<UUID, TeamRequest> pendingRequests = new HashMap<>(); // 键是申请者的 UUID
 
+    private boolean isStoppingGame = false;
+
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
         if (GameManager.get().isInGame()) {
@@ -74,6 +76,7 @@ public class TeamManager extends AbstractGameManager {
         this.teamConfig.aiTeammate = brEntry.aiTeammate;
         this.teamConfig.aiEnemy = brEntry.aiEnemy;
         this.teamConfig.autoJoinGame = brEntry.autoJoinGame;
+
         this.teamConfig.setTeamMsgExpireTimeSeconds(gameEntry.teamMsgExpireTimeSeconds);
         this.teamConfig.setTeamColors(gameEntry.teamColors);
 
@@ -83,17 +86,19 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
 
+        removeOfflineGamePlayer();
         clearOrUpdateTeamIfLimitChanged();
-        this.prepared = true;
+        this.configPrepared = true;
+        BattleRoyale.LOGGER.debug("TeamManager complete initGameConfig");
     }
 
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame() || !this.prepared) {
+        if (GameManager.get().isInGame() || !this.configPrepared) {
             return;
         }
 
-        clearOrUpdateTeamIfLimitChanged();
+        // clearOrUpdateTeamIfLimitChanged(); // initGameConfig到这里已经处理过了
         if (!this.teamConfig.autoJoinGame) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.require_manually_join");
         } else { // 自动加入队伍
@@ -107,14 +112,13 @@ public class TeamManager extends AbstractGameManager {
                 forceJoinTeam(player); // 初始化时先强制分配，后续调整玩家自行处理
             }
         }
-        BattleRoyale.LOGGER.info("TeamManager complete initGame, total players: {}, total teams: {}", teamData.getTotalPlayerCount(), teamData.getGameTeamsList().size());
-
-        if (hasEnoughPlayerTeamToStart()) {
-            return;
-        }
 
         GameManager.get().recordGamerule(teamConfig);
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
+        if (!hasEnoughPlayerTeamToStart()) {
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
+        }
+        this.configPrepared = false;
+        BattleRoyale.LOGGER.info("TeamManager complete initGame, total players: {}, total teams: {}", teamData.getTotalPlayerCount(), teamData.getGameTeamsList().size());
     }
 
     @Override
@@ -145,6 +149,33 @@ public class TeamManager extends AbstractGameManager {
     }
 
     /**
+     * 清理掉离线GamePlayer，防止后续影响游戏结束的人数判定
+     */
+    private void removeOfflineGamePlayer() {
+        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        List<GamePlayer> offlineGamePlayers = new ArrayList<>();
+        for (GamePlayer gamePlayer : teamData.getGamePlayersList()) {
+            if (!gamePlayer.isActiveEntity()) {
+                offlineGamePlayers.add(gamePlayer);
+                continue;
+            }
+            if (serverLevel != null) {
+                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                if (player == null) {
+                    offlineGamePlayers.add(gamePlayer);
+                }
+            }
+        }
+
+        for (GamePlayer gamePlayer : offlineGamePlayers) {
+            String playerName = gamePlayer.getPlayerName();
+            if (teamData.removePlayer(gamePlayer)) {
+                BattleRoyale.LOGGER.debug("Removed offline gamePlayer {}", playerName);
+            }
+        }
+    }
+
+    /**
      * 防止游戏开始时有意外的无队伍GamePlayer
      */
     private void removeNoTeamPlayer() {
@@ -154,21 +185,46 @@ public class TeamManager extends AbstractGameManager {
                 noTeamPlayers.add(gamePlayer);
             }
         }
-        if (!noTeamPlayers.isEmpty()) {
-            for (GamePlayer noTeamPlayer : noTeamPlayers) {
-                if (teamData.removePlayer(noTeamPlayer)) {
-                    GameManager.get().notifyLeavedMember(noTeamPlayer.getPlayerUUID(), noTeamPlayer.getGameTeamId()); // 防止游戏开始时无队伍的GamePlayer
-                }
+
+        for (GamePlayer noTeamPlayer : noTeamPlayers) {
+            if (teamData.removePlayer(noTeamPlayer)) {
+                GameManager.get().notifyLeavedMember(noTeamPlayer.getPlayerUUID(), noTeamPlayer.getGameTeamId()); // 防止游戏开始时无队伍的GamePlayer
             }
         }
     }
 
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        this.teamData.endGame(); // 解锁
+        this.teamData.endGame(); // 解锁，清除standingGamePlayer使GameMessage重置
         GameManager.get().notifyAliveChange();
-        this.prepared = false;
+        this.configPrepared = false;
         // this.ready = false; // 不使用ready标记，因为Team会变动
+
+        GameManager gameManager = GameManager.get();
+        if (!gameManager.getGameEntry().keepTeamAfterGame) {
+            for (GameTeam gameTeam : getGameTeamsList()) { // 新增双重保险，照理应该要能成功发送清空队伍的消息
+                gameManager.notifyTeamChange(gameTeam.getGameTeamId());
+            }
+            isStoppingGame = true; // 这个变量会阻止获取GameTeam
+            for (GamePlayer gamePlayer : getGamePlayersList()) { // 触发频率低，问题不大。。。
+                gameManager.notifyLeavedMember(gamePlayer.getPlayerUUID(), gamePlayer.getGameTeamId());
+            }
+            if (serverLevel != null) {
+                BattleRoyale.LOGGER.debug("TeamManager start delayed clear()");
+                // 延迟2tick保证MessageManager获取到GamePlayer并保证在发送的tick之后再执行this.clear()
+                serverLevel.getServer().execute(() -> {
+                    serverLevel.getServer().execute(() -> {
+                        this.clear(); // 延迟2tick的clear
+                        isStoppingGame = false;
+                        BattleRoyale.LOGGER.debug("TeamManager finished delayed clear()");
+                    });
+                });
+            } else {
+                BattleRoyale.LOGGER.debug("TeamManager start instant clear()");
+                this.clear(); // stopGame立即执行的clear
+                isStoppingGame = false;
+            }
+        }
     }
 
     /**
@@ -179,13 +235,11 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
 
-        if (getStandingTeamCount() <= 1) {
-            GameManager.get().checkIfGameShouldEnd();
-        }
+        GameManager.get().checkIfGameShouldEnd();
     }
 
     public int getStandingTeamCount() {
-        return teamData.getTotalStandingPlayerCount();
+        return teamData.getTotalStandingTeamCount();
     }
 
     /**
@@ -388,6 +442,7 @@ public class TeamManager extends AbstractGameManager {
         }
 
         if (teamData.eliminatePlayer(gamePlayer)) {
+            // 强制淘汰后传送回大厅
             ServerLevel serverLevel = GameManager.get().getServerLevel();
             if (serverLevel != null) {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
@@ -396,6 +451,7 @@ public class TeamManager extends AbstractGameManager {
                     GameManager.get().sendLobbyTeleportMessage(player, false);
                 }
             }
+            onTeamChangedInGame();
             return true;
         } else {
             return false;
@@ -499,8 +555,8 @@ public class TeamManager extends AbstractGameManager {
 
         String senderName = sender.getName().getString();
         MutableComponent message = Component.translatable("battleroyale.message.invite_received", senderName, teamId);
-        String acceptCommand = TeamCommand.acceptInviteCommandString(senderName);
-        String declineCommand = TeamCommand.declineInviteCommandString(senderName);
+        String acceptCommand = TeamCommand.acceptInviteCommand(senderName);
+        String declineCommand = TeamCommand.declineInviteCommand(senderName);
         MutableComponent acceptButton = Component.translatable("battleroyale.message.accept")
                 .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD)
                 .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, acceptCommand))
@@ -633,8 +689,8 @@ public class TeamManager extends AbstractGameManager {
 
         String senderName = sender.getName().getString();
         MutableComponent message = Component.translatable("battleroyale.message.request_received", senderName);
-        String acceptCommand = TeamCommand.acceptRequestCommandString(senderName);
-        String declineCommand = TeamCommand.declineRequestCommandString(senderName);
+        String acceptCommand = TeamCommand.acceptRequestCommand(senderName);
+        String declineCommand = TeamCommand.declineRequestCommand(senderName);
         MutableComponent acceptButton = Component.translatable("battleroyale.message.accept")
                 .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD)
                 .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, acceptCommand))
@@ -855,12 +911,26 @@ public class TeamManager extends AbstractGameManager {
         }
     }
 
+    public void onBotGamePlayerChanged(GamePlayer gamePlayer, UUID newPlayerUUID) {
+        if (getGamePlayerByUUID(newPlayerUUID) != null) {
+            return;
+        }
+        teamData.changeBotGamePlayer(gamePlayer, newPlayerUUID);
+    }
+
     public List<GameTeam> getGameTeamsList() {
         return teamData.getGameTeamsList();
     }
 
     @Nullable
-    public GameTeam getGameTeamById(int teamId) { return teamData.getGameTeamById(teamId); }
+    public GameTeam getGameTeamById(int teamId) {
+        if (isStoppingGame) { // TeamMessageManager通过gameTeam来build消息，特殊处理
+            GameTeam gameTeam = teamData.getGameTeamById(teamId);
+            BattleRoyale.LOGGER.debug("TeamManager is stopping game, return GameTeam = null, original result:{}", gameTeam != null ? gameTeam.getGameTeamId() : "null");
+            return null;
+        }
+        return teamData.getGameTeamById(teamId);
+    }
 
     public @Nullable GamePlayer getGamePlayerByUUID(UUID playerUUID) { return teamData.getGamePlayerByUUID(playerUUID); }
 
@@ -884,10 +954,11 @@ public class TeamManager extends AbstractGameManager {
      * 尝试清除队伍信息，如果新的玩家数量限制缩小则清除，扩大限制则扩大可用id池
      */
     private void clearOrUpdateTeamIfLimitChanged() {
-        if (this.teamConfig.playerLimit < teamData.getMaxPlayersLimit()) {
-            clear();
-        } else if (this.teamConfig.playerLimit > teamData.getMaxPlayersLimit()) {
-            teamData.extendLimit(this.teamConfig.playerLimit);
+        if (this.teamConfig.playerLimit < teamData.getMaxPlayersLimit() || this.teamConfig.teamSize < teamData.getTeamSizeLimit()) { // 玩家人数上限缩小/队伍规模缩小 -> 清空所有队伍
+            BattleRoyale.LOGGER.info("TeamManager: playerLimit or teamSize reduced and require clear team info");
+            this.clear(); // 重新读取配置时的clear
+        } else if (this.teamConfig.playerLimit > teamData.getMaxPlayersLimit() || this.teamConfig.teamSize > teamData.getTeamSizeLimit()) { // 玩家人数上限增多 -> 提示扩容
+            teamData.extendLimit(this.teamConfig.playerLimit, this.teamConfig.teamSize);
         }
     }
 
@@ -896,10 +967,12 @@ public class TeamManager extends AbstractGameManager {
      */
     public void clear() {
         if (GameManager.get().isInGame()) {
+            BattleRoyale.LOGGER.info("GameManager is in game, teamData skipped clear");
             return;
         }
 
-        teamData.clear(this.teamConfig.playerLimit);
+        teamData.clear(this.teamConfig.playerLimit, this.teamConfig.teamSize);
+        BattleRoyale.LOGGER.debug("TeamManager cleared teamData");
         pendingInvites.clear();
         pendingRequests.clear();
     }

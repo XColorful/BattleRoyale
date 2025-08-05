@@ -3,12 +3,14 @@ package xiao.battleroyale.config.common.game.gamerule.type;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.IConfigAppliable;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
+import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.StringUtils;
 
-public class BattleroyaleEntry implements IGameruleEntry {
+public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
 
     public final int playerTotal;
     public final int teamSize;
@@ -18,12 +20,13 @@ public class BattleroyaleEntry implements IGameruleEntry {
     public final Vec3 lobbyCenterPos;
     public final Vec3 lobbyDimension;
     public final boolean lobbyMuteki;
+    public final boolean lobbyHeal;
     public final boolean recordGameStats;
     public final boolean autoJoinGame;
     public final boolean clearInventory;
 
     public BattleroyaleEntry(int playerTotal, int teamSize, boolean aiTeammate, boolean aiEnemy, int maxGameTime,
-                             Vec3 lobbyCenterPos, Vec3 lobbyDimension, boolean lobbyMuteki,
+                             Vec3 lobbyCenterPos, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal,
                              boolean recordGameStats, boolean autoJoinGame, boolean clearInventory) {
         this.playerTotal = playerTotal;
         this.teamSize = teamSize;
@@ -33,6 +36,7 @@ public class BattleroyaleEntry implements IGameruleEntry {
         this.lobbyCenterPos = lobbyCenterPos;
         this.lobbyDimension = lobbyDimension;
         this.lobbyMuteki = lobbyMuteki;
+        this.lobbyHeal = lobbyHeal;
         this.recordGameStats = recordGameStats;
         this.autoJoinGame = autoJoinGame;
         this.clearInventory = clearInventory;
@@ -54,6 +58,7 @@ public class BattleroyaleEntry implements IGameruleEntry {
         jsonObject.addProperty(BattleroyaleEntryTag.LOBBY_CENTER, StringUtils.vectorToString(lobbyCenterPos));
         jsonObject.addProperty(BattleroyaleEntryTag.LOBBY_DIMENSION, StringUtils.vectorToString(lobbyDimension)); // 临时使用字符串字面量
         jsonObject.addProperty(BattleroyaleEntryTag.LOBBY_MUTEKI, lobbyMuteki);
+        jsonObject.addProperty(BattleroyaleEntryTag.LOBBY_HEAL, lobbyHeal);
         jsonObject.addProperty(BattleroyaleEntryTag.RECORD_STATS, recordGameStats);
         jsonObject.addProperty(BattleroyaleEntryTag.AUTO_JOIN, autoJoinGame);
         jsonObject.addProperty(BattleroyaleEntryTag.CLEAR_INVENTORY, clearInventory);
@@ -73,11 +78,17 @@ public class BattleroyaleEntry implements IGameruleEntry {
             return null;
         }
         boolean lobbyMuteki = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.LOBBY_MUTEKI, false);
+        boolean lobbyHeal = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.LOBBY_HEAL, true);
         boolean recordGameStats = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.RECORD_STATS, false);
         boolean autoJoinGame = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.AUTO_JOIN, false);
         boolean clearInventory = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.CLEAR_INVENTORY, false);
         return new BattleroyaleEntry(playerTotal, teamSize, aiTeammate, aiEnemy, maxGameTime,
-                lobbyCenterPos, lobbyDimension, lobbyMuteki,
+                lobbyCenterPos, lobbyDimension, lobbyMuteki, lobbyHeal,
                 recordGameStats, autoJoinGame, clearInventory);
+    }
+
+    @Override
+    public void applyDefault() {
+        SpawnManager.get().setLobby(lobbyCenterPos, lobbyDimension, lobbyMuteki, lobbyHeal);
     }
 }

@@ -31,7 +31,7 @@ public class GameZone implements IGameZone {
 
     // common
     private static final String COMMON_TAG = "common";
-    private static final String CREATE_TIME = COMMON_TAG + "-createTime";
+    private static final String CREATE_TIME = COMMON_TAG + "-worldTime";
     private static final String ZONE_NAME_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_NAME;
     private static final String ZONE_COLOR_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_COLOR;
     private static final String ZONE_DELAY_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_DELAY;
@@ -125,7 +125,8 @@ public class GameZone implements IGameZone {
 
     private boolean shouldTick(int gameTime) {
         checkShouldFinish(gameTime);
-        return isCreated() && isPresent() && !isFinished(); // GameZone
+        return isCreated() && isPresent() && !isFinished() // GameZone
+                && !ZoneManager.shouldStopGame; // 每tick多一个bool检查，少一个列表对象复制（直接用视图遍历）
     }
 
     private boolean checkShouldFinish(int gameTime) {
@@ -157,7 +158,7 @@ public class GameZone implements IGameZone {
         if (Math.abs(shapeProgress - prevShapeProgress) > 0.001F) { // 圈在移动，频繁更新
             prevShapeProgress = shapeProgress;
             CompoundTag zoneInfo = toNBT(shapeProgress);
-            MessageManager.get().addZoneNbtMessage(this.zoneId, zoneInfo);
+            GameManager.get().addZoneNbtMessage(this.zoneId, zoneInfo);
         } else if (gameTime % FORCE_SYNC_FREQUENCY == 0) { // 圈不在频繁移动，延长时间
             MessageManager.get().extendZoneMessageTime(zoneId, FORCE_SYNC_FREQUENCY);
         }
@@ -188,6 +189,9 @@ public class GameZone implements IGameZone {
 
     @Override
     public String getZoneName() { return zoneName; }
+
+    @Override
+    public String getZoneColor() { return zoneColor; }
 
     @Override
     public CompoundTag toNBT(double shapeProgress) {

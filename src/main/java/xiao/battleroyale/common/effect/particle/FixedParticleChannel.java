@@ -4,4 +4,10 @@ public class FixedParticleChannel extends AbstractParticleChannel<FixedParticleD
 
     public static final String COMMAND_CHANNEL = "command"; // 非玩家输入指令使用的通道
     public static final String GAME_CHANNEL = "game"; // GameManager使用的通道
+
+    public final String channelKey;
+
+    public FixedParticleChannel(String channelKey) {
+        this.channelKey = channelKey;
+    }
 }

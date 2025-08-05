@@ -63,4 +63,11 @@ public class StringUtils {
         }
         return commandBuilder.toString().trim();
     }
+
+    /**
+     * 返回格式(1.20, 2.33, 6.66)
+     */
+    public static String vectorTo2fString(Vec3 vec3) {
+        return String.format("(%.2f, %.2f, %.2f)", vec3.x, vec3.y, vec3.z);
+    }
 }

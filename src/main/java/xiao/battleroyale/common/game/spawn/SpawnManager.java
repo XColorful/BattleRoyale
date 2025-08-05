@@ -14,17 +14,19 @@ import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
-import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
-import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.event.game.LobbyEventHandler;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.Vec3Utils;
 
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * 管理玩家出生方式、传送相关的Manager
+ */
 public class SpawnManager extends AbstractGameManager {
 
     private static class SpawnManagerHolder {
@@ -41,11 +43,10 @@ public class SpawnManager extends AbstractGameManager {
         ;
     }
 
-    private static SpawnManager instance;
-
     private Vec3 lobbyPos;
     private Vec3 lobbyDimension;
     private boolean lobbyMuteki = true;
+    private boolean lobbyHeal = true;
     private IGameSpawner gameSpawner;
 
     @Override
@@ -88,7 +89,8 @@ public class SpawnManager extends AbstractGameManager {
         } else {
             LobbyEventHandler.unregister();
         }
-        this.prepared = true;
+        this.configPrepared = true;
+        BattleRoyale.LOGGER.debug("SpawnManager complete initGameConfig");
     }
 
     @Override
@@ -96,7 +98,7 @@ public class SpawnManager extends AbstractGameManager {
         if (GameManager.get().isInGame()) {
             return;
         }
-        if (!this.prepared) {
+        if (!this.configPrepared) {
             return;
         }
 
@@ -108,6 +110,11 @@ public class SpawnManager extends AbstractGameManager {
 
         this.gameSpawner.clear();
         this.gameSpawner.init(GameManager.get().getRandom(), GameManager.get().getPlayerLimit()); // 用玩家上限作为点位数量
+        if (!isReady()) {
+            return;
+        }
+        this.configPrepared = false;
+        BattleRoyale.LOGGER.debug("SpawnManager complete initGame");
     }
 
     @Override
@@ -127,7 +134,7 @@ public class SpawnManager extends AbstractGameManager {
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
         LobbyEventHandler.unregister();
-        this.prepared = false;
+        this.configPrepared = false;
         // this.ready = false; // isReady被重载
     }
 
@@ -146,6 +153,9 @@ public class SpawnManager extends AbstractGameManager {
     public void teleportToLobby(@NotNull ServerPlayer player) {
         if (!isLobbyCreated()) {
             return;
+        }
+        if (lobbyHeal) {
+            player.heal(player.getMaxHealth()); // heal会触发事件
         }
         GameManager.get().safeTeleport(player, lobbyPos);
         BattleRoyale.LOGGER.info("Teleport player {} (UUID: {}) to lobby ({}, {}, {})", player.getName(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
@@ -190,7 +200,7 @@ public class SpawnManager extends AbstractGameManager {
     }
 
     public boolean isLobbyCreated() {
-        // return prepared || ready || GameManager.get().isInGame(); // 任意阶段均保证大厅已创建
+        // return configPrepared || ready || GameManager.get().isInGame(); // 任意阶段均保证大厅已创建
         return lobbyPos != null; // 让游戏结束后也能传送回大厅
     }
 
@@ -222,10 +232,33 @@ public class SpawnManager extends AbstractGameManager {
         }
     }
 
+    public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal) {
+        if (GameManager.get().isInGame()) {
+            BattleRoyale.LOGGER.debug("GameManager is in game, SpawnManager skipped set lobby");
+            return false;
+        }
+
+        this.lobbyPos = centerPos;
+        this.lobbyMuteki = shouldMuteki;
+        this.lobbyHeal = shouldHeal;
+        if (Vec3Utils.hasNegative(dimension)) {
+            BattleRoyale.LOGGER.warn("SpawnManager: dimension:{} has negative, reject to apply", dimension);
+            return false;
+        }
+        this.lobbyDimension = dimension;
+        BattleRoyale.LOGGER.debug("Successfully set lobby: center{}, dim{}", lobbyPos, lobbyDimension);
+        return true;
+    }
+
     /**
      * Compatibility to PUBGMC
      */
     public boolean setPubgmcLobby(Vec3 corrds, double radius) {
+        if (GameManager.get().isInGame()) {
+            BattleRoyale.LOGGER.debug("GameManager is in game, SpawnManager skipped set lobby");
+            return false;
+        }
+
         if (corrds == null || radius <= 0) {
             return false;
         }

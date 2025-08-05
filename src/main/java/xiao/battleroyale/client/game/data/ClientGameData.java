@@ -22,6 +22,8 @@ public class ClientGameData extends AbstractClientExpireData {
      */
     @Override
     public void updateFromNbt(@NotNull CompoundTag messageNbt) {
+        this.lastMessageNbt = messageNbt;
+
         this.standingPlayerCount = messageNbt.getCompound(GameMessageManager.ALIVE_KEY).getInt(GameTag.ALIVE);
         this.inGame = standingPlayerCount > 0;
         this.lastUpdateTick = ClientGameDataManager.getCurrentTick();
@@ -29,5 +31,6 @@ public class ClientGameData extends AbstractClientExpireData {
 
     public void clear() {
         this.standingPlayerCount = 0;
+        this.inGame = false;
     }
 }

@@ -1,10 +1,9 @@
-package xiao.battleroyale.common.game.tempdata;
+package xiao.battleroyale.data;
 
 import com.google.gson.*;
-import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.io.IOException;
@@ -15,39 +14,41 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-public class TempDataManager extends AbstractGameManager {
+public abstract class AbstractDataManager {
 
-    private static class TempDataManagerHolder {
-        private static final TempDataManager INSTANCE = new TempDataManager();
+    public static String MOD_DATA_PATH = "battleroyale";
+
+    protected volatile Map<String, JsonObject> filenameToJson = new ConcurrentHashMap<>();
+    protected final String subPath;
+    protected final String DATA_PATH;
+
+    public AbstractDataManager() {
+        this.subPath = getSubPath();
+        this.DATA_PATH = Paths.get(MOD_DATA_PATH).resolve(this.subPath).toString();
     }
 
-    public static TempDataManager get() {
-        return TempDataManagerHolder.INSTANCE;
-    }
+    protected abstract String getSubPath();
 
-    private TempDataManager() {
-        this.reloadTempData();
-    }
-
-    public static final String TEMP_DATA_SUB_PATH = "temp";
-    public static final String TEMP_DATA_PATH = Paths.get(AbstractGameManager.MOD_DATA_PATH).resolve(TEMP_DATA_SUB_PATH).toString();
-    private volatile Map<String, JsonObject> filenameToJson = new ConcurrentHashMap<>();
-
-    public void reloadTempData() {
-        // 不影响旧Map
+    /**
+     * 重新加载目录下所有Json
+     */
+    protected void reloadData() {
+        // 避免在加载期间影响旧 Map
         Map<String, JsonObject> newFilenameToJson = new ConcurrentHashMap<>();
-        Path dirPath = Paths.get(TEMP_DATA_PATH);
+        Path dirPath = Paths.get(DATA_PATH);
         if (!Files.exists(dirPath)) {
             try {
                 Files.createDirectories(dirPath);
-                BattleRoyale.LOGGER.info("Created temporary data directory: {}", dirPath);
+                BattleRoyale.LOGGER.info("Created {} data directory: {}", subPath, dirPath);
             } catch (IOException e) {
-                BattleRoyale.LOGGER.error("Failed to create temporary data directory: {}", e.getMessage());
+                BattleRoyale.LOGGER.error("Failed to create {} data directory: {}", subPath, dirPath);
                 return;
             }
         }
@@ -63,16 +64,16 @@ public class TempDataManager extends AbstractGameManager {
                             JsonElement element = JsonParser.parseReader(reader);
                             if (element.isJsonObject()) {
                                 newFilenameToJson.put(fileName, element.getAsJsonObject());
-                                BattleRoyale.LOGGER.debug("Loaded temporary data from file: {}", path);
+                                BattleRoyale.LOGGER.debug("Loaded {} data from file: {}", subPath, path);
                             } else {
-                                BattleRoyale.LOGGER.warn("File {} is not a valid JsonObject and will be ignored.", path);
+                                BattleRoyale.LOGGER.warn("Skipped non jsonObject file {}", path);
                             }
                         } catch (Exception e) {
                             BattleRoyale.LOGGER.error("Failed to read or parse json file {}: {}", path, e.getMessage());
                         }
                     });
         } catch (IOException e) {
-            BattleRoyale.LOGGER.error("Failed to walk temporary data directory: {}", e.getMessage());
+            BattleRoyale.LOGGER.error("Failed to walk {} data directory: {}", subPath, e.getMessage());
         }
         // 原子替换引用
         this.filenameToJson = newFilenameToJson;
@@ -108,13 +109,23 @@ public class TempDataManager extends AbstractGameManager {
         JsonObject jsonObject = filenameToJson.get(fileName);
         return JsonUtils.getJsonArray(jsonObject, key, null);
     }
+    @NotNull
+    public List<String> getJsonStringList(String fileName, String key) {
+        JsonObject jsonObject = filenameToJson.get(fileName);
+        return JsonUtils.getJsonStringList(jsonObject, key);
+    }
+    @NotNull
+    public Map<UUID, String> getJsonUUIDStringMap(String fileName, String key) {
+        JsonObject jsonObject = filenameToJson.get(fileName);
+        return JsonUtils.getJsonUUIDStringMap(jsonObject, key);
+    }
 
     /**
      * 辅助方法
      * 创建一个新的 JsonObject 并复制旧属性，然后添加新属性
      * 确保修改是针对一个新对象进行的，避免并发修改问题
      */
-    private JsonObject createNewJsonObjectWithProperty(JsonObject original, String key, JsonElement value) {
+    protected JsonObject createNewJsonObjectWithProperty(JsonObject original, String key, JsonElement value) {
         JsonObject newObject = new JsonObject();
         if (original != null) {
             for (Map.Entry<String, JsonElement> entry : original.entrySet()) {
@@ -158,37 +169,37 @@ public class TempDataManager extends AbstractGameManager {
     }
 
     /**
-     * 将临时数据异步保存到 JSON 文件。
-     * 该方法会获取当前 Map 的快照，并在后台线程中进行文件写入，
-     * 从而不阻塞主线程和任何读写操作。
+     * 将数据异步保存到 JSON 文件
+     * 获取当前 Map 的快照，并在后台线程中写入文件
+     * 从而不阻塞主线程和任何读写操作
      */
-    private CompletableFuture<Void> tempDataToJsonAsync() {
+    private CompletableFuture<Void> dataToJsonAsync() {
         // 获取当前 Map 的快照
         final Map<String, JsonObject> snapshot = new HashMap<>(this.filenameToJson);
         return CompletableFuture.runAsync(() -> {
             for (Map.Entry<String, JsonObject> entry : snapshot.entrySet()) {
                 String fileName = entry.getKey();
                 JsonObject jsonObject = entry.getValue();
-                Path filePath = Paths.get(TEMP_DATA_PATH, fileName + ".json");
+                Path filePath = Paths.get(DATA_PATH, fileName + ".json");
                 try {
                     String jsonString = JsonUtils.toJson(jsonObject);
                     if (!Files.exists(filePath.getParent())) {
                         Files.createDirectories(filePath.getParent());
                     }
                     Files.writeString(filePath, jsonString);
-                    BattleRoyale.LOGGER.debug("Wrote temporary data to file: {}", filePath);
+                    BattleRoyale.LOGGER.debug("Wrote {} data to file: {}", subPath, filePath);
                 } catch (IOException e) {
-                    BattleRoyale.LOGGER.error("Failed to write temporary data to file {}: {}", filePath, e.getMessage());
+                    BattleRoyale.LOGGER.error("Failed to write {} data to file {}: {}", subPath, filePath, e.getMessage());
                 }
             }
         });
     }
 
-    public void saveTempData() {
-        tempDataToJsonAsync()
-                .thenRun(() -> BattleRoyale.LOGGER.debug("Asynchronous temp data write completed"))
+    protected void saveData() {
+        dataToJsonAsync()
+                .thenRun(() -> BattleRoyale.LOGGER.debug("Asynchronous {} data write completed", subPath))
                 .exceptionally(ex -> {
-                    BattleRoyale.LOGGER.error("Asynchronous temp data write failed: {}", ex.getMessage());
+                    BattleRoyale.LOGGER.error("Asynchronous {} data write failed: {}", subPath, ex.getMessage());
                     return null;
                 });
     }
@@ -196,11 +207,11 @@ public class TempDataManager extends AbstractGameManager {
     /**
      * 异步删除已有json文件名并清空当前 Map
      */
-    public CompletableFuture<Void> clearTempDataToJson() {
+    protected CompletableFuture<Void> clearDataToJson() {
         return CompletableFuture.runAsync(() -> {
             // 清空内存 Map
             this.filenameToJson = new ConcurrentHashMap<>(); // 原子替换，旧 Map 变为可被 GC
-            Path dirPath = Paths.get(TEMP_DATA_PATH);
+            Path dirPath = Paths.get(DATA_PATH);
             if (Files.exists(dirPath)) {
                 try (Stream<Path> paths = Files.walk(dirPath)) {
                     paths.filter(Files::isRegularFile)
@@ -208,52 +219,30 @@ public class TempDataManager extends AbstractGameManager {
                             .forEach(path -> {
                                 try {
                                     Files.delete(path);
-                                    BattleRoyale.LOGGER.debug("Deleted temporary data file: {}", path);
+                                    BattleRoyale.LOGGER.debug("Deleted {} data file: {}", subPath, path);
                                 } catch (IOException e) {
-                                    BattleRoyale.LOGGER.error("Failed to delete temporary data file {}: {}", path, e.getMessage());
+                                    BattleRoyale.LOGGER.error("Failed to delete {} data file {}: {}", subPath, path, e.getMessage());
                                 }
                             });
                     // 尝试删除目录，如果为空的话
                     Files.deleteIfExists(dirPath);
-                    BattleRoyale.LOGGER.info("Cleared all temporary data files.");
+                    BattleRoyale.LOGGER.info("Cleared all {} data files.", subPath);
                 } catch (IOException e) {
-                    BattleRoyale.LOGGER.error("Failed to walk or delete temporary data directory: {}", e.getMessage());
+                    BattleRoyale.LOGGER.error("Failed to walk or delete {} data directory: {}", subPath, e.getMessage());
                 }
             }
         });
     }
 
-    public void clearTempData() {
-        clearTempDataToJson()
-                .thenRun(() -> BattleRoyale.LOGGER.debug("All temporary data cleared asynchronously"))
+    /**
+     * 异步清除所有数据
+     */
+    public void clearData() {
+        clearDataToJson()
+                .thenRun(() -> BattleRoyale.LOGGER.debug("All {} data cleared asynchronously", subPath))
                 .exceptionally(ex -> {
-                    BattleRoyale.LOGGER.error("Failed to clear all temporary data asynchronously: {}", ex.getMessage());
+                    BattleRoyale.LOGGER.error("Failed to clear all {} data asynchronously: {}", subPath, ex.getMessage());
                     return null;
                 });
-    }
-
-    @Override
-    public void initGameConfig(ServerLevel serverLevel) {
-        ;
-    }
-
-    /**
-     * 开始游戏时立即异步写入配置
-     * 保证上一次游戏添加的临时数据能够重新读取
-     */
-    @Override
-    public boolean startGame(ServerLevel serverLevel) {
-        saveTempData();
-        return true;
-    }
-
-    @Override
-    public void onGameTick(int gameTime) {
-        ;
-    }
-
-    @Override
-    public void stopGame(@Nullable ServerLevel serverLevel) {
-        ;
     }
 }

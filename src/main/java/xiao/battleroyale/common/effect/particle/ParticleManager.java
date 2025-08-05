@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.effect.IEffectManager;
 import xiao.battleroyale.event.effect.ParticleEventHandler;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -28,6 +29,13 @@ public class ParticleManager implements IEffectManager {
     private final Map<String, FixedParticleChannel> fixedParticles = new HashMap<>(); // channelString -> channel
     private static boolean registered = false;
 
+    public Map<UUID, EntityParticleTask> getEntityParticles() {
+        return Collections.unmodifiableMap(entityParticles);
+    }
+    public Map<String, FixedParticleChannel> getFixedParticles() {
+        return Collections.unmodifiableMap(fixedParticles);
+    }
+
     public void onTick() {
         entityParticles.entrySet().removeIf(entry -> {
             EntityParticleTask task = entry.getValue();
@@ -41,11 +49,11 @@ public class ParticleManager implements IEffectManager {
                     if (--particleData.delayRemain > 0) {
                         return false;
                     }
-                    if (serverLevel.get() != particleData.level) {
-                        if (particleData.level == null) {
+                    if (serverLevel.get() != particleData.serverLevel) {
+                        if (particleData.serverLevel == null) {
                             return true;
                         }
-                        serverLevel.set(particleData.level);
+                        serverLevel.set(particleData.serverLevel);
                         livingEntity.set((LivingEntity) serverLevel.get().getEntity(entityUUID));
                     }
                     if (livingEntity.get() == null) {
@@ -110,7 +118,7 @@ public class ParticleManager implements IEffectManager {
         return entityParticles.computeIfAbsent(entityUUID, e -> new EntityParticleTask(entityUUID));
     }
     private @NotNull FixedParticleChannel getOrCreateChannel(Map<String, FixedParticleChannel> channels, String channelKey) {
-        return channels.computeIfAbsent(channelKey, e -> new FixedParticleChannel());
+        return channels.computeIfAbsent(channelKey, e -> new FixedParticleChannel(channelKey));
     }
     private @NotNull EntityParticleChannel getOrCreateChannel(UUID entityUUID, String channelKey) {
         return getOrCreateEntityTask(entityUUID).channels.computeIfAbsent(channelKey, e -> new EntityParticleChannel());

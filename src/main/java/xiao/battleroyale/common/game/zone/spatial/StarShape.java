@@ -147,9 +147,9 @@ public class StarShape extends AbstractSimpleShape {
 
     @Override
     protected boolean additionalCalculationCheck() {
-        boolean willProduceBadShape = hasNegativeDimension()
+        hasBadShape = hasNegativeDimension()
                 || startDimension.x < startDimension.z || endDimension.x < endDimension.z;
-        checkBadShape = willProduceBadShape && !allowBadShape;
+        checkBadShape = hasBadShape && !allowBadShape;
         return true;
     }
 

@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManager;
@@ -16,6 +17,7 @@ import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.Gamer
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.GameUtils;
 
 import java.util.List;
 
@@ -64,7 +66,8 @@ public class GameruleManager extends AbstractGameManager {
         this.gameruleBackup.store(mcEntry, serverLevel, null);
         this.autoSaturation = mcEntry.autoSaturation;
 
-        prepared = true;
+        configPrepared = true;
+        BattleRoyale.LOGGER.debug("GameruleManager complete initGameConfig");
     }
 
     @Override
@@ -72,7 +75,7 @@ public class GameruleManager extends AbstractGameManager {
         if (GameManager.get().isInGame()) {
             return;
         }
-        if (!this.prepared) {
+        if (!this.configPrepared) {
             return;
         }
 
@@ -82,6 +85,8 @@ public class GameruleManager extends AbstractGameManager {
         this.gamemodeBackup.apply(serverLevel, gamePlayerList);
 
         this.ready = true;
+        this.configPrepared = false;
+        BattleRoyale.LOGGER.debug("GameruleManager complete initGame");
     }
 
     @Override
@@ -94,6 +99,9 @@ public class GameruleManager extends AbstractGameManager {
         this.gamemodeBackup.store(mcEntry, serverLevel, gamePlayerList);
         this.gamemodeBackup.apply(serverLevel, gamePlayerList);
         GameManager.get().recordGamerule(this.gamemodeBackup);
+        if (mcEntry.clearInventory) {
+            GameUtils.clearGamePlayersInventory(serverLevel, gamePlayerList);
+        }
         return true;
     }
 
@@ -103,7 +111,7 @@ public class GameruleManager extends AbstractGameManager {
             gamemodeBackup.revert(serverLevel);
             gameruleBackup.revert(serverLevel);
         }
-        this.prepared = false;
+        this.configPrepared = false;
         this.ready = false;
     }
 
@@ -126,4 +134,6 @@ public class GameruleManager extends AbstractGameManager {
             }
         }
     }
+
+    public GameType getGameMode() { return gamemodeBackup.getGameMode(); }
 }

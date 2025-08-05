@@ -26,6 +26,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static xiao.battleroyale.data.AbstractDataManager.MOD_DATA_PATH;
+
 public class StatsManager extends AbstractGameManager {
 
     private static class StatsManagerHolder {
@@ -43,7 +45,7 @@ public class StatsManager extends AbstractGameManager {
     }
 
     public static final String STATS_SUB_PATH = "stats";
-    public static final String STATS_PATH = Paths.get(AbstractGameManager.MOD_DATA_PATH).resolve(STATS_SUB_PATH).toString();
+    public static final String STATS_PATH = Paths.get(MOD_DATA_PATH).resolve(STATS_SUB_PATH).toString();
     private static final String STATS_TAG = "stats";
     private static final String GAME_TAG = "game";
     private static final String GAMERULE_TAG = "gamerule";
@@ -76,7 +78,8 @@ public class StatsManager extends AbstractGameManager {
         BattleroyaleEntry brEntry = GameConfigManager.get().getGameruleConfig(GameManager.get().getGameruleConfigId()).getBattleRoyaleEntry();
         recordStats = brEntry.recordGameStats;
 
-        this.prepared = true;
+        this.configPrepared = true;
+        BattleRoyale.LOGGER.debug("StatsManager complete initGameConfig");
     }
 
     @Override
@@ -84,6 +87,8 @@ public class StatsManager extends AbstractGameManager {
         clearStats();
 
         this.ready = true;
+        this.configPrepared = false;
+        BattleRoyale.LOGGER.debug("StatsManager complete initGame");
     }
 
     @Override
@@ -110,7 +115,7 @@ public class StatsManager extends AbstractGameManager {
 
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        this.prepared = false;
+        this.configPrepared = false;
         this.ready = false;
         if (shouldRecordStats()) {
             saveStats();

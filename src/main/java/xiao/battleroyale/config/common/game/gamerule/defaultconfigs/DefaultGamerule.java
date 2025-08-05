@@ -26,12 +26,13 @@ public class DefaultGamerule {
     private static JsonObject generateDefaultGameruleConfig0() {
         BattleroyaleEntry brEntry = new BattleroyaleEntry(100, 4, true, true, 12000,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10),
-                true, false, true, true);
+                true, true, false, true, true);
 
         MinecraftEntry mcEntry = new MinecraftEntry(true, false, false,
                 true, false, false,
                 false, false, false,
-                false, false, 5000);
+                false, false, true,
+                false, 5000);
 
         GameruleConfig gameruleConfig = new GameruleConfig(0, "Adventure battleroyale", "#FFFFFFAA", true,
                 brEntry, mcEntry, null);
@@ -42,12 +43,13 @@ public class DefaultGamerule {
     private static JsonObject generateDefaultGameruleConfig1() {
         BattleroyaleEntry brEntry = new BattleroyaleEntry(100, 4, false, false, 12000,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10),
-                true, false, true, true);
+                true, true, false, true, true);
 
         MinecraftEntry mcEntry = new MinecraftEntry(false, true, false,
                 true, true, true,
                 true, true, true,
-                true, false, 5000);
+                true, false, true,
+                false, 5000);
 
         GameruleConfig gameruleConfig = new GameruleConfig(1, "Survival battleroyale", "#FFFFFFAA",
                 brEntry, mcEntry, null);

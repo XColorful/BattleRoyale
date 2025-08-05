@@ -3,7 +3,7 @@ package xiao.battleroyale.common.effect.particle;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AbstractParticleChannel<T> {
+public class AbstractParticleChannel<T extends ParticleData> {
 
 
     public int channelCooldown = 0; // 往通道添加粒子的冷却

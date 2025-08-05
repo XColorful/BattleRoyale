@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.event.TickEvent;
 
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.event.LootGenerationEventHandler;
@@ -31,7 +32,7 @@ public class CommonLootManager {
     private CommonLootManager() {}
 
     private static int MAX_CHUNKS_PER_TICK = 5;
-    public static void setMaxChunksPerTick(int chunks) { MAX_CHUNKS_PER_TICK = Math.min(Math.max(chunks, 5), 500); }
+    public static void setMaxChunksPerTick(int chunks) { MAX_CHUNKS_PER_TICK = Math.min(Math.max(chunks, 5), 100000); } // 十万
 
     private final Queue<ChunkPos> chunksToProcess = new ArrayDeque<>();
     private final Set<ChunkPos> processedChunkTracker = new HashSet<>(); // 用于去重和检查是否已在队列中
@@ -39,6 +40,13 @@ public class CommonLootManager {
     private ServerLevel currentGenerationLevel = null;
     private int totalLootRefreshedInBatch = 0;
     private CommandSourceStack initiatingCommandSource = null;
+
+    public static int getMaxChunksPerTick() { return MAX_CHUNKS_PER_TICK; }
+    public int chunksToProcessSize() { return chunksToProcess.size(); }
+    public int processedChunkTrackerSize() { return processedChunkTracker.size(); }
+    public @Nullable UUID getCurrentGenerationGameId() { return currentGenerationGameId; }
+    public @Nullable ServerLevel getCurrentGenerationLevel() { return currentGenerationLevel; }
+    public int totalLootRefreshedInBatch() { return totalLootRefreshedInBatch; }
 
     /**
      * 由 LootCommand 调用，初始化并开始战利品刷新任务。
@@ -134,8 +142,11 @@ public class CommonLootManager {
         int processedChunkThisTick = 0;
         while (!chunksToProcess.isEmpty() && processedChunkThisTick < MAX_CHUNKS_PER_TICK) {
             ChunkPos chunkPos = chunksToProcess.poll();
-            totalLootRefreshedInBatch += LootGenerator.refreshLootInChunk(new LootGenerator.LootContext(currentGenerationLevel, chunkPos, currentGenerationGameId));
-            processedChunkThisTick++;
+            int newlyProcessedLoot = LootGenerator.refreshLootInChunk(new LootGenerator.LootContext(currentGenerationLevel, chunkPos, currentGenerationGameId));
+            if (newlyProcessedLoot != LootGenerator.CHUNK_NOT_LOADED) {
+                totalLootRefreshedInBatch += newlyProcessedLoot;
+                processedChunkThisTick++;
+            }
         }
         return false;
     }

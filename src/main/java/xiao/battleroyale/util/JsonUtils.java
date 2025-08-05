@@ -11,8 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class JsonUtils {
 
@@ -41,86 +40,115 @@ public class JsonUtils {
                 return;
             }
         }
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try {
-            Files.writeString(path, gson.toJson(jsonArray));
+            Files.writeString(path, GSON.toJson(jsonArray));
             BattleRoyale.LOGGER.debug("Write json to file: {}", path);
         } catch (IOException e) {
             BattleRoyale.LOGGER.warn("Failed to write json to file: {}", e.getMessage());
         }
     }
 
+    @NotNull
     public static List<Vec3> readVec3ListFromJson(@Nullable JsonArray jsonArray) {
         List<Vec3> vec3List = new ArrayList<>();
         if (jsonArray == null) {
             return vec3List;
         }
 
-        try {
-            for (JsonElement element : jsonArray) {
-                JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
-                if (!jsonPrimitive.isString()) {
-                    continue;
-                }
-                String vec3String = jsonPrimitive.getAsString();
-                Vec3 v = StringUtils.parseVectorString(vec3String);
-                if (v != null) {
-                    vec3List.add(v);
-                }
+        for (JsonElement element : jsonArray) {
+            if (!element.isJsonPrimitive()) {
+                continue;
             }
-        } catch (Exception e) {
-            BattleRoyale.LOGGER.warn("Failed to read Vec3 list from json");
+            JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
+            if (!jsonPrimitive.isString()) {
+                continue;
+            }
+            String vec3String = jsonPrimitive.getAsString();
+            Vec3 v = StringUtils.parseVectorString(vec3String);
+            if (v != null) {
+                vec3List.add(v);
+            }
         }
 
         return vec3List;
     }
 
+    @NotNull
     public static List<Integer> readIntListFromJson(@Nullable JsonArray jsonArray) {
         List<Integer> intList = new ArrayList<>();
         if (jsonArray == null) {
             return intList;
         }
 
-        try {
-            for (JsonElement element : jsonArray) {
-                JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
-                if (!jsonPrimitive.isNumber()) {
-                    continue;
-                }
-                int x = (int) jsonPrimitive.getAsDouble();
-                intList.add(x);
+        for (JsonElement element : jsonArray) {
+            if (!element.isJsonPrimitive()) {
+                continue;
             }
-        } catch (Exception e) {
-            BattleRoyale.LOGGER.warn("Failed to read int list from json");
+            JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
+            if (!jsonPrimitive.isNumber()) {
+                continue;
+            }
+            int x = (int) jsonPrimitive.getAsDouble();
+            intList.add(x);
         }
 
         return intList;
     }
 
+    @NotNull
     public static List<String> readStringListFromJson(@Nullable JsonArray jsonArray) {
         List<String> stringList = new ArrayList<>();
         if (jsonArray == null) {
             return stringList;
         }
 
-        try {
-            for (JsonElement element : jsonArray) {
-                JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
-                if (!jsonPrimitive.isString()) {
-                    continue;
-                }
-                String str = jsonPrimitive.getAsString();
-                if (str != null) {
-                    stringList.add(str);
-                }
+        for (JsonElement element : jsonArray) {
+            if (!element.isJsonPrimitive()) {
+                continue;
             }
-        } catch (Exception e) {
-            BattleRoyale.LOGGER.warn("Failed to read string list from json");
+            JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
+            if (!jsonPrimitive.isString()) {
+                continue;
+            }
+            String str = jsonPrimitive.getAsString();
+            stringList.add(str);
         }
 
         return stringList;
     }
 
+    @NotNull
+    public static Map<UUID, String> readUUIDStringFromJson(@Nullable JsonObject jsonObject) {
+        Map<UUID, String> UUIDString = new HashMap<>();
+        if (jsonObject == null) {
+            return UUIDString;
+        }
+
+        for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+            String key = entry.getKey();
+            JsonElement valueElement = entry.getValue();
+            UUID uuid;
+            try {
+                uuid = UUID.fromString(key);
+            } catch (IllegalArgumentException e) {
+                BattleRoyale.LOGGER.warn("Skipped invalid UUID key {}", key);
+                continue;
+            }
+            if (valueElement == null || !valueElement.isJsonPrimitive()) {
+                continue;
+            }
+            JsonPrimitive jsonPrimitive = valueElement.getAsJsonPrimitive();
+            if (!jsonPrimitive.isString()) {
+                continue;
+            }
+            String value = jsonPrimitive.getAsString();
+            UUIDString.put(uuid, value);
+        }
+
+        return UUIDString;
+    }
+
+    @NotNull
     public static JsonArray writeVec3ListToJson(List<Vec3> vec3List) {
         JsonArray jsonArray = new JsonArray();
 
@@ -131,6 +159,7 @@ public class JsonUtils {
         return jsonArray;
     }
 
+    @NotNull
     public static JsonArray writeIntListToJson(List<Integer> intList) {
         JsonArray jsonArray = new JsonArray();
 
@@ -141,6 +170,7 @@ public class JsonUtils {
         return jsonArray;
     }
 
+    @NotNull
     public static JsonArray writeStringListToJson(List<String> stringList) {
         JsonArray jsonArray = new JsonArray();
 
@@ -390,6 +420,11 @@ public class JsonUtils {
     @NotNull
     public static List<String> getJsonStringList(@Nullable JsonObject jsonObject, String key) {
         return readStringListFromJson(JsonUtils.getJsonArray(jsonObject, key, null));
+    }
+
+    @NotNull
+    public static Map<UUID, String> getJsonUUIDStringMap(@Nullable JsonObject jsonObject, String key) {
+        return readUUIDStringFromJson(JsonUtils.getJsonObject(jsonObject, key, null));
     }
 
     /**

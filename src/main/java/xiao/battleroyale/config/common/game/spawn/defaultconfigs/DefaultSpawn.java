@@ -31,7 +31,7 @@ public class DefaultSpawn {
     private static JsonObject generateDefaultSpawnConfig0() {
         TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.RANDOM,
-                new TeleportEntry.DetailInfo(new ArrayList<>(), false, true, 0)
+                new TeleportEntry.DetailInfo(new ArrayList<>(), false, true, 0, 20 * 15)
         );
 
         SpawnConfig spawnConfig = new SpawnConfig(0, "Random ground spawn", "#FFFFFFAA", -1, true,
@@ -49,7 +49,7 @@ public class DefaultSpawn {
                         new Vec3(-50, -60, 50),
                         new Vec3(50, -60, -50),
                         new Vec3(50, -60, 50)),
-                        true, true, 0)
+                        true, true, 0, 20 * 15)
         );
 
         SpawnConfig spawnConfig = new SpawnConfig(1, "Fixed ground spawn", "#FFFFFFAA",

@@ -31,12 +31,15 @@ import java.util.function.Supplier;
 
 public class LootGenerator {
 
+    public static final int CHUNK_NOT_LOADED = -1;
+
     private static boolean LOOT_VANILLA_CHEST = true;
     public static void setLootVanillaChest(boolean bool) { LOOT_VANILLA_CHEST = bool; }
     private static boolean REMOVE_LOOT_TABLE = false;
     public static void setRemoveLootTable(boolean bool) { REMOVE_LOOT_TABLE = bool; }
     private static boolean REMOVE_INNOCENT_ENTITY = false;
     public static void setRemoveInnocentEntity(boolean bool) { REMOVE_INNOCENT_ENTITY = bool; }
+
 
     /**
      * 根据物资刷新配置生成
@@ -167,20 +170,25 @@ public class LootGenerator {
             if (config == null) {
                 return false;
             }
-            ILootEntry entry = config.entry;
-            generateVanillaLoot(lootContext, blockEntity, entry);
-            return true;
+            UUID blockGameId = GameUtils.getGameId(blockEntity);
+            if (blockGameId == null || !blockGameId.equals(lootContext.gameId)) {
+                ILootEntry entry = config.entry;
+                generateVanillaLoot(lootContext, blockEntity, entry);
+                GameUtils.addGameId(blockEntity, lootContext.gameId);
+                // blockEntity.setChanged(); // addGameId内部已经标记
+                return true;
+            }
+            return false;
         }
 
         UUID blockGameId = lootObject.getGameId();
-        int configId = lootObject.getConfigId();
-        LootConfig config = LootConfigManager.get().getLootConfig(blockEntity, configId);
+        LootConfig config = LootConfigManager.get().getLootConfig(blockEntity, lootObject.getConfigId());
 
         if (config != null && (blockGameId == null || !blockGameId.equals(lootContext.gameId))) {
             ILootEntry entry = config.entry;
             generateLoot(lootContext, (AbstractLootBlockEntity) lootObject, entry);
             lootObject.setGameId(lootContext.gameId);
-            blockEntity.setChanged();
+            // blockEntity.setChanged(); // setGameId内部已经标记
             return true;
         }
         return false;
@@ -188,14 +196,14 @@ public class LootGenerator {
 
     /**
      * 刷新指定区块内的所有战利品方块。
-     * @return 该区块内刷新的战利品方块数量
+     * @return 该区块内刷新的战利品方块数量，返回 CHUNK_NOT_LOADED 则为区块未加载
      */
     public static int refreshLootInChunk(LootContext lootContext) {
         int refreshedCount = 0;
         LevelChunk chunk = lootContext.serverLevel.getChunkSource().getChunkNow(lootContext.chunkPos.x, lootContext.chunkPos.z);
 
-        if (chunk == null) {
-            return refreshedCount;
+        if (chunk == null) { // 区块未加载不算作已刷新，返回特殊标记
+            return CHUNK_NOT_LOADED;
         }
 
         clearOldLoot(lootContext);
