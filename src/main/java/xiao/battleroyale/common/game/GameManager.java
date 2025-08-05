@@ -6,7 +6,6 @@ import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.GameType;
@@ -104,6 +103,7 @@ public class GameManager extends AbstractGameManager {
     private int maxGameTime;
     private GameEntry gameEntry;
     public GameEntry getGameEntry() { return gameEntry; }
+    public boolean isStopping = false;
 
     @NotNull
     public UUID getGameId() {
@@ -581,10 +581,12 @@ public class GameManager extends AbstractGameManager {
     }
 
     public void onServerStopping() {
+        isStopping = true;
         stopGame(serverLevel);
         this.serverLevel = null; // 手动设置为null，单人游戏重启之后也就失效了
         BattleRoyale.LOGGER.debug("Server stopped, GameManager.serverLevel set to null");
         ServerEventHandler.unregister();
+        isStopping = false;
     }
 
     /**
@@ -599,6 +601,9 @@ public class GameManager extends AbstractGameManager {
      * 传送不规范，玩家两行泪
      */
     public void safeTeleport(@NotNull ServerPlayer player, double x, double y, double z) {
+        if (isStopping) {
+            return;
+        }
         player.fallDistance = 0;
         player.teleportTo(x, y, z);
     }
