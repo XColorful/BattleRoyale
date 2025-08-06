@@ -389,6 +389,7 @@ public class TeamManager extends AbstractGameManager {
                 GameManager.get().notifyTeamChange(targetTeam.getGameTeamId()); // 玩家加入队伍，通知更新队伍HUD
                 return;
             }
+            BattleRoyale.LOGGER.debug("Failed to add player {} to team {}", player.getName().getString(), targetTeamId);
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.failed_to_join_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
         } else { // 改为发送邀请
             RequestPlayer(player, (ServerPlayer) serverLevel.getPlayerByUUID(targetTeam.getLeaderUUID()));
@@ -843,6 +844,7 @@ public class TeamManager extends AbstractGameManager {
         }
         GameTeam newTeam = new GameTeam(teamId, teamConfig.getTeamColor(teamId));
         if (!teamData.addGameTeam(newTeam)) {
+            BattleRoyale.LOGGER.debug("Failed to create new team {} and let {} join", teamId, player.getName().getString());
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.failed_to_join_team", teamId).withStyle(ChatFormatting.RED));
             return false;
         }
@@ -954,12 +956,7 @@ public class TeamManager extends AbstractGameManager {
      * 尝试清除队伍信息，如果新的玩家数量限制缩小则清除，扩大限制则扩大可用id池
      */
     private void clearOrUpdateTeamIfLimitChanged() {
-        if (this.teamConfig.playerLimit < teamData.getMaxPlayersLimit() || this.teamConfig.teamSize < teamData.getTeamSizeLimit()) { // 玩家人数上限缩小/队伍规模缩小 -> 清空所有队伍
-            BattleRoyale.LOGGER.info("TeamManager: playerLimit or teamSize reduced and require clear team info");
-            this.clear(); // 重新读取配置时的clear
-        } else if (this.teamConfig.playerLimit > teamData.getMaxPlayersLimit() || this.teamConfig.teamSize > teamData.getTeamSizeLimit()) { // 玩家人数上限增多 -> 提示扩容
-            teamData.extendLimit(this.teamConfig.playerLimit, this.teamConfig.teamSize);
-        }
+        this.teamData.adjustLimit(this.teamConfig.playerLimit, this.teamConfig.teamSize);
     }
 
     /**
