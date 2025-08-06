@@ -10,12 +10,12 @@ public interface IConfigManager<T> extends IConfigSwitchable, IConfigLoadable<T>
      * 获取当前配置
      */
     @Nullable T getConfigEntry(int id);
-    @Nullable T getConfigEntry(int id, int configType);
+    @Nullable T getConfigEntry(int id, int folderId);
     List<T> getConfigEntryList();
-    List<T> getConfigEntryList(int configType);
+    List<T> getConfigEntryList(int folderId);
     String getConfigEntryFileName();
-    String getConfigEntryFileName(int configType);
+    String getConfigEntryFileName(int folderId);
 
     String getFolderType();
-    String getFolderType(int configType);
+    String getFolderType(int folderId);
 }
