@@ -221,11 +221,7 @@ public class GetGame {
             return 0;
         }
 
-        if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE - 1) {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get backupplayermodes (all)"), false);
-        } else {
-            context.getSource().sendSuccess(() -> Component.literal("Executing get backupplayermodes with min: " + min + ", max: " + max), false);
-        }
+        DebugGame.get().getGetBackupPlayermodes(source, min, max);
         return Command.SINGLE_SUCCESS;
     }
     private static int getBackupPlayerMode(CommandContext<CommandSourceStack> context) {
@@ -235,8 +231,7 @@ public class GetGame {
             return 0;
         }
 
-        final int id = IntegerArgumentType.getInteger(context, SINGLE_ID);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get backupplayermode by ID: " + id), false);
+        DebugGame.get().getBackupPlayermode(source, IntegerArgumentType.getInteger(context, SINGLE_ID));
         return Command.SINGLE_SUCCESS;
     }
     private static int getBackupPlayerModeByName(CommandContext<CommandSourceStack> context) {
@@ -246,8 +241,7 @@ public class GetGame {
             return 0;
         }
 
-        final String name = StringArgumentType.getString(context, NAME);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get backupplayermode by Name: " + name), false);
+        DebugGame.get().getBackupPlayermode(source, StringArgumentType.getString(context, NAME));
         return Command.SINGLE_SUCCESS;
     }
     private static int getBackupPlayerModeByEntity(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -257,8 +251,7 @@ public class GetGame {
             return 0;
         }
 
-        Entity entity = EntityArgument.getEntity(context, ENTITY);
-        context.getSource().sendSuccess(() -> Component.literal("Executing get backupplayermode by Entity: " + entity.getName().getString() + " (UUID: " + entity.getUUID().toString() + ")"), false);
+        DebugGame.get().getBackupPlayermode(source, EntityArgument.getEntity(context, ENTITY));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -272,7 +265,7 @@ public class GetGame {
             return 0;
         }
 
-        context.getSource().sendSuccess(() -> Component.literal("Executing get backupgamerule"), false);
+        DebugGame.get().getBackupGamerule(source);
         return Command.SINGLE_SUCCESS;
     }
 
