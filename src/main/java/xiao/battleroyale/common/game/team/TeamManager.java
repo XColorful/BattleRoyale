@@ -112,6 +112,7 @@ public class TeamManager extends AbstractGameManager {
                 GamePlayer gamePlayer = getGamePlayerByUUID(player.getUUID());
                 if (gamePlayer != null) { // 如果keepTeamAfterGame为false，这里应该不通过
                     // 到这里要么GamePlayer没清理掉，要么就是已经有队伍，那就保留
+                    gamePlayer.reset();
                     BattleRoyale.LOGGER.debug("ServerPlayer {} is already a GamePlayer (singleId:{}, teamId:{}), skipped forceJoinTeam", player.getName().getString(), gamePlayer.getGameSingleId(), gamePlayer.getGameTeamId());
                     continue;
                 }
