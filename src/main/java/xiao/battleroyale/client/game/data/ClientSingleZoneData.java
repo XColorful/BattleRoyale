@@ -22,6 +22,10 @@ public class ClientSingleZoneData extends AbstractClientExpireData {
     public final int id;
     public String name;
     public Color color;
+    public float r = 1;
+    public float g = 1;
+    public float b = 1;
+    public float a = 1;
     public ZoneFuncType funcType;
     public ZoneShapeType shapeType;
     public Vec3 center;
@@ -46,6 +50,10 @@ public class ClientSingleZoneData extends AbstractClientExpireData {
         if (useClientColor) {
             this.color = ColorUtils.changeColorExceptAlpha(this.color, clientColorString);
         }
+        this.r = this.color.getRed() / 255.0F;
+        this.g = this.color.getGreen() / 255.0F;
+        this.b = this.color.getBlue() / 255.0F;
+        this.a = this.color.getAlpha() / 255.0F;
 
         String funcTypeName = nbt.getString(GameZoneTag.FUNC);
         this.funcType = ZoneFuncType.fromName(funcTypeName);

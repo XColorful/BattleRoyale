@@ -108,10 +108,10 @@ public class ZoneRenderer {
 
                 VertexConsumer consumer = bufferSource.getBuffer(CUSTOM_ZONE_RENDER_TYPE);
 
-                float r = zoneData.color.getRed() / 255.0f;
-                float g = zoneData.color.getGreen() / 255.0f;
-                float b = zoneData.color.getBlue() / 255.0f;
-                float a = zoneData.color.getAlpha() / 255.0f;
+                float r = zoneData.r;
+                float g = zoneData.g;
+                float b = zoneData.b;
+                float a = zoneData.a;
 
                 switch (zoneData.shapeType) {
                     // 2D shape

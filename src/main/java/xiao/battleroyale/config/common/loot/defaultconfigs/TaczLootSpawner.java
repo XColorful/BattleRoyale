@@ -19,12 +19,20 @@ import static xiao.battleroyale.api.minecraft.EquipmentLevel.*;
 public class TaczLootSpawner {
 
     private static final String DEFAULT_FILE_NAME = "example_tacz_1.1.6.json";
+    private static final String EXTRA_FILE_NAME = "example_tacz_1.1.6_extra.json";
 
     public static void generateDefaultConfigs() {
         JsonArray lootSpawnerConfigsJson = new JsonArray();
         lootSpawnerConfigsJson.add(generateTaczCommonLoot());
         lootSpawnerConfigsJson.add(generateTaczRareLoot());
         writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(LOOT_SPAWNER), LootConfigManager.LOOT_SPAWNER_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), lootSpawnerConfigsJson);
+    }
+
+    public static void generateExtraConfigs() {
+        JsonArray lootSpawnerConfigsJson = new JsonArray();
+        lootSpawnerConfigsJson.add(generateTaczExtraLoot());
+        lootSpawnerConfigsJson.add(generateTaczRareLoot());
+        writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(LOOT_SPAWNER), LootConfigManager.LOOT_SPAWNER_CONFIG_SUB_PATH, EXTRA_FILE_NAME).toString(), lootSpawnerConfigsJson);
     }
 
     /**
@@ -36,12 +44,12 @@ public class TaczLootSpawner {
      */
     private static JsonObject generateTaczCommonLoot() {
         WeightEntry itemTypeWeight = new WeightEntry(Arrays.asList(
-                new WeightedEntry(32, commonWeaponEntry()),
+                new WeightedEntry(30, commonWeaponEntry()),
                 new WeightedEntry(22, commonAttachmentEntry()),
                 new WeightedEntry(8, commonAmmoEntry()),
                 new WeightedEntry(22, commomEquipmentEntry()),
                 new WeightedEntry(8, commonHealEntry()),
-                new WeightedEntry(8, commonToolEntry())
+                new WeightedEntry(10, commonToolEntry())
         ));
         RepeatEntry repeatEntry = new RepeatEntry(1, 3, itemTypeWeight);
 
@@ -57,18 +65,46 @@ public class TaczLootSpawner {
         return lootConfig.toJson();
     }
 
-    private static JsonObject generateTaczRareLoot() {
-        MultiEntry itemList = new MultiEntry(Arrays.asList(
+    private static JsonObject generateTaczExtraLoot() {
+        WeightEntry itemTypeWeight = new WeightEntry(Arrays.asList(
+                new WeightedEntry(30, commonWeaponEntry()),
+                new WeightedEntry(22, commonAttachmentEntry()),
+                new WeightedEntry(8, commonAmmoEntry()),
+                new WeightedEntry(22, commomEquipmentEntry()),
+                new WeightedEntry(8, commonHealEntry()),
+                new WeightedEntry(10, commonToolEntry())
+        ));
+        RepeatEntry repeatEntry = new RepeatEntry(3, 6, itemTypeWeight);
+
+        MultiEntry multiEntry = new MultiEntry(Arrays.asList(
+                repeatEntry,
+                minecraftItemEntry(),
+                specialItemEntry(),
+                generateExtraRareLootEntry()
+        ));
+
+        LootConfig lootConfig = new LootConfig(0, "Widespread common loot (extra rare)", "#FFFFFFAA",
+                multiEntry);
+
+        return lootConfig.toJson();
+    }
+    private static ILootEntry generateExtraRareLootEntry() {
+        return new ExtraEntry(false, true,
+                new RandomEntry(0.01, generateTaczRareLootEntry()),
+                new MessageEntry(false, true, "Rare loot generated！", "#FF0000"));
+    }
+
+    private static ILootEntry generateTaczRareLootEntry() {
+        return new MultiEntry(Arrays.asList(
                 rareWeaponEntry(),
                 rareAttachmentEntry(),
                 rareAmmoEntry(),
                 rareEquipmentEntry()
         ));
-
-        RepeatEntry repeatEntry = new RepeatEntry(2, 2, itemList);
-
+    }
+    private static JsonObject generateTaczRareLoot() {
         LootConfig lootConfig = new LootConfig(1, "Rare high-tier loots", "#FFFFFFAA",
-                repeatEntry);
+                new RepeatEntry(2, 2, generateTaczRareLootEntry()));
 
         return lootConfig.toJson();
     }
@@ -121,13 +157,13 @@ public class TaczLootSpawner {
 
     private static ILootEntry commonWeaponEntry() {
         WeightEntry weaponTypeWeight = new WeightEntry(Arrays.asList(
-                new WeightedEntry(25, commonAREntry()),
+                new WeightedEntry(23, commonAREntry()),
                 new WeightedEntry(11, commonSREntry()),
                 new WeightedEntry(12, commonDMREntry()),
                 new WeightedEntry(13, commonShotgunEntry()),
-                new WeightedEntry(25, commonSMGEntry()),
+                new WeightedEntry(22, commonSMGEntry()),
                 new WeightedEntry(8, commonPistolEntry()),
-                new WeightedEntry(6, commonMeleeEntry())
+                new WeightedEntry(11, commonMeleeEntry())
         ));
 
         return weaponTypeWeight;
@@ -145,21 +181,44 @@ public class TaczLootSpawner {
 
     // 全自动
     private static MultiEntry gunAmmoBuilder(String gunName, String ammoName, int ammoCount) {
-        return gunAmmoBuilder(gunName, ammoName, ammoCount, "AUTO");
+        return gunAmmoBuilderEmpty(gunName, ammoName, ammoCount, "AUTO");
     }
 
     private static MultiEntry gunBurstAmmoBuilder(String gunName, String ammoName, int ammoCount) {
-        return gunAmmoBuilder(gunName, ammoName, ammoCount, "BURST");
+        return gunAmmoBuilderEmpty(gunName, ammoName, ammoCount, "BURST");
     }
 
     // 单发
     private static MultiEntry gunSemiAmmoBuilder(String gunName, String ammoName, int ammoCount) {
-        return gunAmmoBuilder(gunName, ammoName, ammoCount, "SEMI");
+        return gunAmmoBuilderEmpty(gunName, ammoName, ammoCount, "SEMI");
     }
 
+    /**
+     * 枪+子弹
+     */
     private static MultiEntry gunAmmoBuilder(String gunName, String ammoName, int ammoCount, String fireMode) {
         return new MultiEntry(Arrays.asList(
                 new ItemEntry("tacz:modern_kinetic_gun", "{GunId:\"tacz:" + gunName + "\",GunFireMode:\"" + fireMode + "\"}", 1),
+                ammoBuilder(ammoName, ammoCount)
+        ));
+    }
+    // 强制写入空配件的NBT标签字符串
+    private static MultiEntry gunAmmoBuilderEmpty(String gunName, String ammoName, int ammoCount, String fireMode) {
+        String emptyAttachmentsNBT = "{" +
+                "AttachmentEXTENDED_MAG: {id: \"minecraft:air\", Count:0b, tag: {struck:0b, glide:0b}}, " +
+                "HasBulletInBarrel: 0b, " +
+                "AttachmentSCOPE: {id: \"minecraft:air\", Count: 0b, tag: {struck: 0b, glide: 0b}}, " +
+                "AttachmentMUZZLE: {id: \"minecraft:air\", Count: 0b, tag: {struck: 0b, glide: 0b}}, " +
+                "AttachmentLASER: {id: \"minecraft:air\", Count: 0b, tag: {struck: 0b, glide: 0b}}, " +
+                "GunFireMode: \"" + fireMode + "\", " +
+                "GunCurrentAmmoCount: 0, " +
+                "AttachmentGRIP: {id: \"minecraft:air\", Count: 0b, tag: {struck: 0b, glide: 0b}}, " +
+                "AttachmentSTOCK: {id: \"minecraft:air\", Count: 0b, tag: {struck:0b, glide:0b}}, " +
+                "GunId: \"tacz:" + gunName + "\"" +
+                "}";
+
+        return new MultiEntry(Arrays.asList(
+                new ItemEntry("tacz:modern_kinetic_gun", emptyAttachmentsNBT, 1),
                 ammoBuilder(ammoName, ammoCount)
         ));
     }
@@ -685,9 +744,9 @@ public class TaczLootSpawner {
      */
     private static ILootEntry commomEquipmentEntry() {
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(50, commonVestEntry()),
+                new WeightedEntry(45, commonVestEntry()),
                 new WeightedEntry(30, commonLeggingsEntry()),
-                new WeightedEntry(20, commonHelmetEntry())
+                new WeightedEntry(25, commonHelmetEntry())
         ));
     }
 
@@ -701,44 +760,44 @@ public class TaczLootSpawner {
 
     private static ILootEntry commonHelmetEntry() {
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(65, EquipmentLevel.equipment(LEATHER, HELMET, 3)),
-                new WeightedEntry(35, EquipmentLevel.equipment(CHAINMAIL, HELMET, 4))
+                new WeightedEntry(55, EquipmentLevel.equipment(CHAINMAIL, HELMET, 10, 3)),
+                new WeightedEntry(45, EquipmentLevel.equipment(IRON, HELMET, 15, 5))
         ));
     }
 
     private static ILootEntry rareHelmetEntry() {
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(80, EquipmentLevel.equipment(CHAINMAIL, HELMET, 4)),
-                new WeightedEntry(20, EquipmentLevel.equipment(DIAMOND, HELMET, 4))
+                new WeightedEntry(70, EquipmentLevel.equipment(IRON, HELMET, 15, 5)),
+                new WeightedEntry(30, EquipmentLevel.equipment(NETHERITE, HELMET, 20, 8))
         ));
     }
 
     private static ILootEntry commonVestEntry() {
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(65, EquipmentLevel.equipment(LEATHER, CHESTPLATE, 14)),
-                new WeightedEntry(30, EquipmentLevel.equipment(CHAINMAIL, CHESTPLATE, 12)),
-                new WeightedEntry(5, EquipmentLevel.equipment(DIAMOND, CHESTPLATE, 10))
+                new WeightedEntry(55, EquipmentLevel.equipment(CHAINMAIL, CHESTPLATE, 15, 1)),
+                new WeightedEntry(40, EquipmentLevel.equipment(IRON, CHESTPLATE, 20, 3)),
+                new WeightedEntry(5, EquipmentLevel.equipment(DIAMOND, CHESTPLATE, 25, 5))
         ));
     }
 
     private static ILootEntry rareVestEntry() {
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(70, EquipmentLevel.equipment(CHAINMAIL, CHESTPLATE, 12)),
-                new WeightedEntry(30, EquipmentLevel.equipment(DIAMOND, CHESTPLATE, 10))
+                new WeightedEntry(60, EquipmentLevel.equipment(IRON, CHESTPLATE, 20, 3)),
+                new WeightedEntry(40, EquipmentLevel.equipment(DIAMOND, CHESTPLATE, 25, 5))
         ));
     }
 
     private static ILootEntry commonLeggingsEntry() {
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(65, EquipmentLevel.equipment(LEATHER, LEGGINGS, 5)),
-                new WeightedEntry(35, EquipmentLevel.equipment(CHAINMAIL, LEGGINGS, 7))
+                new WeightedEntry(65, EquipmentLevel.equipment(CHAINMAIL, LEGGINGS, 13, 1)),
+                new WeightedEntry(35, EquipmentLevel.equipment(IRON, LEGGINGS, 18, 3))
         ));
     }
 
     private static ILootEntry rareLeggingsEntry() {
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(75, EquipmentLevel.equipment(CHAINMAIL, LEGGINGS, 7)),
-                new WeightedEntry(25, EquipmentLevel.equipment(DIAMOND, LEGGINGS, 9))
+                new WeightedEntry(55, EquipmentLevel.equipment(IRON, LEGGINGS, 18, 3)),
+                new WeightedEntry(45, EquipmentLevel.equipment(DIAMOND, LEGGINGS, 23, 5))
         ));
     }
 
@@ -746,10 +805,10 @@ public class TaczLootSpawner {
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(28, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"Bandage\",\"color\":\"white\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:0,Duration:100,ShowParticles:0b,Ambient:0b}]}", 1)),
                 new WeightedEntry(16, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"First Aid Kit\",\"color\":\"red\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:3,Duration:90,ShowParticles:0b,Ambient:0b}]}", 1)),
-                new WeightedEntry(2, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"Med Kit\",\"color\":\"blue\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:3,Duration:120,ShowParticles:0b,Ambient:0b}]}", 1)),
-                new WeightedEntry(27, new EmptyEntry("item")),
-                new WeightedEntry(24, new EmptyEntry("item")),
-                new WeightedEntry(3, new EmptyEntry("item"))
+                new WeightedEntry(2, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"Med Kit\",\"color\":\"blue\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:3,Duration:120,ShowParticles:0b,Ambient:0b}]}", 1))
+                // new WeightedEntry(27, new EmptyEntry("item")),
+                // new WeightedEntry(24, new EmptyEntry("item")),
+                // new WeightedEntry(3, new EmptyEntry("item"))
         ));
     }
 
@@ -759,9 +818,9 @@ public class TaczLootSpawner {
                 new WeightedEntry(26, new ItemEntry("lrtactical:throwable", "{ThrowableId:\"lrtactical:smoke_grenade\"}", 1)),
                 new WeightedEntry(18, new ItemEntry("lrtactical:throwable", "{ThrowableId:\"lrtactical:molotov\"}", 1)),
                 new WeightedEntry(22, new ItemEntry("lrtactical:throwable", "{ThrowableId:\"lrtactical:flash_grenade\"}", 1)),
-                new WeightedEntry(3, new EmptyEntry("item")),
-                new WeightedEntry(5, new ItemEntry("vc_gliders:paraglider_wood", "{Damage:25}", 1)),
-                new WeightedEntry(10, new EmptyEntry("item"))
+                // new WeightedEntry(3, new EmptyEntry("item")),
+                new WeightedEntry(5, new ItemEntry("vc_gliders:paraglider_wood", "{Damage:25}", 1))
+                // new WeightedEntry(10, new EmptyEntry("item"))
         ));
     }
 }

@@ -16,6 +16,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
+import xiao.battleroyale.util.ColorUtils;
 
 import java.awt.*;
 
@@ -47,8 +48,32 @@ public class TeamMemberRenderer {
 
     private static final RenderType TEAM_MARKER_RENDER_TYPE = ZoneRenderer.CUSTOM_ZONE_RENDER_TYPE;
 
+    private static boolean enableTeamZone = true;
+    public static void setEnableTeamZone(boolean bool) { enableTeamZone = bool; }
+    private static boolean useClientColor = false;
+    public static void setUseClientColor(boolean use) { useClientColor = use; }
+    private static String clientColorString = "#00FFFF77";
+    private static float R = 0f;
+    private static float G = 1f;
+    private static float B = 1f;
+    public static void setClientColorString(String colorString) {
+        clientColorString = colorString;
+        Color color = ColorUtils.parseColorFromString(colorString);
+        R = color.getRed() / 255.0F;
+        G = color.getGreen() / 255.0F;
+        B = color.getBlue() / 255.0F;
+        BattleRoyale.LOGGER.debug("TeamZoneRender R{} G{} B{}", R, G, B);
+    }
+    private static boolean renderBeacon = true;
+    public static void setRenderBeacon(boolean bool) { renderBeacon = bool; }
+    private static boolean renderBoundingBox = true;
+    public static void setRenderBoundingBox(boolean bool) { renderBoundingBox = bool; }
+    private static float A = 0.5f;
+    public static void setTransparency(float a) { A = a; }
+
+
     public void onRenderLevelStage(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+        if (!enableTeamZone || event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
             return;
         }
 
@@ -71,14 +96,22 @@ public class TeamMemberRenderer {
 
         int worldMaxBuildHeight = mc.level.getMaxBuildHeight();
 
-        Color teamColor = teamData.teamColor;
-        float r = teamColor.getRed() / 255.0f;
-        float g = teamColor.getGreen() / 255.0f;
-        float b = teamColor.getBlue() / 255.0f;
-        float a = teamColor.getAlpha() / 255.0f;
+        float r, g, b, a = A;
+        if (useClientColor) {
+            r = R;
+            g = G;
+            b = B;
+            // a = A;
+        } else {
+            Color teamColor = teamData.teamColor;
+            r = teamColor.getRed() / 255.0f;
+            g = teamColor.getGreen() / 255.0f;
+            b = teamColor.getBlue() / 255.0f;
+            // a = teamColor.getAlpha() / 255.0f;
+        }
 
         for (TeamMemberInfo member : teamData.teamMemberInfoList) {
-            if (member.uuid == null || member.uuid.equals(mc.player.getUUID())) {
+            if (member.uuid == null || member.uuid.equals(mc.player.getUUID())) { // 不渲染自己
                 continue;
             }
 
@@ -102,22 +135,24 @@ public class TeamMemberRenderer {
                     poseStack.translate(interpolatedPos.x - cameraPos.x,
                             interpolatedPos.y - cameraPos.y,
                             interpolatedPos.z - cameraPos.z);
-
-                    // 渲染长方体
-                    poseStack.pushPose();
-                    // 向上平移长方体高度的一半，使其中心与玩家身体中心对齐
-                    poseStack.translate(0, teammateHeight / 2.0F, 0);
-                    Shape3D.drawFilledCuboid(poseStack, consumer, r, g, b, 0.5F,
-                            baseWidth / 2.0F, teammateHeight / 2.0F, baseDepth / 2.0F);
-                    poseStack.popPose();
-
-                    // 渲染圆柱体
-                    poseStack.pushPose();
-                    // 向上平移到长方体的顶部
-                    poseStack.translate(0, teammateHeight, 0);
-                    Shape2D.drawFilledPolygonCylinder(poseStack, consumer, r, g, b, 0.5F,
-                            baseWidth / 2.0F, cylinderHeight, 16, 0);
-                    poseStack.popPose();
+                    if (renderBoundingBox) {
+                        // 渲染长方体
+                        poseStack.pushPose();
+                        // 向上平移长方体高度的一半，使其中心与玩家身体中心对齐
+                        poseStack.translate(0, teammateHeight / 2.0F, 0);
+                        Shape3D.drawFilledCuboid(poseStack, consumer, r, g, b, a,
+                                baseWidth / 2.0F, teammateHeight / 2.0F, baseDepth / 2.0F);
+                        poseStack.popPose();
+                    }
+                    if (renderBeacon) {
+                        // 渲染圆柱体
+                        poseStack.pushPose();
+                        // 向上平移到长方体的顶部
+                        poseStack.translate(0, teammateHeight, 0);
+                        Shape2D.drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
+                                baseWidth / 2.0F, cylinderHeight, 16, 0);
+                        poseStack.popPose();
+                    }
                 } finally {
                     poseStack.popPose();
                 }

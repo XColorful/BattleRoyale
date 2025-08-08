@@ -5,13 +5,12 @@ import org.jetbrains.annotations.Nullable;
 public interface IConfigDefaultable<T> {
 
     void generateDefaultConfigs();
-
-    void generateDefaultConfigs(int configType);
+    void generateDefaultConfigs(int folderId);
 
     int getDefaultConfigId();
-    int getDefaultConfigId(int configType);
+    int getDefaultConfigId(int folderId);
     void setDefaultConfigId(int id);
-    void setDefaultConfigId(int id, int configType);
+    void setDefaultConfigId(int id, int folderId);
     @Nullable T getDefaultConfig();
-    @Nullable T getDefaultConfig(int configType);
+    @Nullable T getDefaultConfig(int folderId);
 }

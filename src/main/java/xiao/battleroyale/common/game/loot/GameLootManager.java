@@ -229,7 +229,7 @@ public class GameLootManager extends AbstractGameManager {
      * 遍历存活玩家最后位置，BFS计算待处理区块（异步版本）
      */
     private void bfsQueuedChunkAsync() {
-        BattleRoyale.LOGGER.debug("Last BFS processed loot:{}", lastBfsProcessedLoot);
+        // BattleRoyale.LOGGER.debug("Last BFS processed loot:{}", lastBfsProcessedLoot);
         lastBfsProcessedLoot = 0;
 
         long startTime = System.nanoTime();
@@ -298,7 +298,7 @@ public class GameLootManager extends AbstractGameManager {
         long endTime = System.nanoTime();
         long durationMillis = TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
 
-        BattleRoyale.LOGGER.debug("GameLootManager finished async BFS, added {} queued chunk in {}ms. Old queue size was {}.", newChunkQueue.size(), durationMillis, oldQueueSize);
+        // BattleRoyale.LOGGER.debug("GameLootManager finished async BFS, added {} queued chunk in {}ms. Old queue size was {}.", newChunkQueue.size(), durationMillis, oldQueueSize);
 
     }
 

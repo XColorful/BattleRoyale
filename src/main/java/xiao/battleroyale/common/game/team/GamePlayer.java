@@ -5,6 +5,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.effect.EffectManager;
+import xiao.battleroyale.common.game.GameManager;
 
 import java.util.UUID;
 
@@ -36,6 +37,16 @@ public class GamePlayer {
         this.bot = isBot;
         this.team = team;
         this.invalidTime = 0;
+        reset();
+    }
+
+    public void reset() {
+        if (GameManager.get().isInGame()) {
+            BattleRoyale.LOGGER.debug("GameManager is in game, reject to reset GamePlayer {}, team {}", playerName, getGameTeamId());
+            return;
+        }
+        this.isAlive = true;
+        this.isEliminated = false;
     }
 
     public UUID getPlayerUUID() { return playerUUID; }
@@ -55,7 +66,7 @@ public class GamePlayer {
 
     public void setAlive(boolean alive) {
         this.isAlive = alive;
-        this.isEliminated = true; // TODO 倒地机制完成前默认淘汰
+        // TODO 倒地机制完成前默认淘汰
 
         if (team != null && team.isTeamEliminated()) { // 队伍无人则倒地
             this.isEliminated = true;
