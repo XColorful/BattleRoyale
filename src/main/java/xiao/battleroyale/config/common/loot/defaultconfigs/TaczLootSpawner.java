@@ -181,21 +181,44 @@ public class TaczLootSpawner {
 
     // 全自动
     private static MultiEntry gunAmmoBuilder(String gunName, String ammoName, int ammoCount) {
-        return gunAmmoBuilder(gunName, ammoName, ammoCount, "AUTO");
+        return gunAmmoBuilderEmpty(gunName, ammoName, ammoCount, "AUTO");
     }
 
     private static MultiEntry gunBurstAmmoBuilder(String gunName, String ammoName, int ammoCount) {
-        return gunAmmoBuilder(gunName, ammoName, ammoCount, "BURST");
+        return gunAmmoBuilderEmpty(gunName, ammoName, ammoCount, "BURST");
     }
 
     // 单发
     private static MultiEntry gunSemiAmmoBuilder(String gunName, String ammoName, int ammoCount) {
-        return gunAmmoBuilder(gunName, ammoName, ammoCount, "SEMI");
+        return gunAmmoBuilderEmpty(gunName, ammoName, ammoCount, "SEMI");
     }
 
+    /**
+     * 枪+子弹
+     */
     private static MultiEntry gunAmmoBuilder(String gunName, String ammoName, int ammoCount, String fireMode) {
         return new MultiEntry(Arrays.asList(
                 new ItemEntry("tacz:modern_kinetic_gun", "{GunId:\"tacz:" + gunName + "\",GunFireMode:\"" + fireMode + "\"}", 1),
+                ammoBuilder(ammoName, ammoCount)
+        ));
+    }
+    // 强制写入空配件的NBT标签字符串
+    private static MultiEntry gunAmmoBuilderEmpty(String gunName, String ammoName, int ammoCount, String fireMode) {
+        String emptyAttachmentsNBT = "{" +
+                "AttachmentEXTENDED_MAG: {id: \"minecraft:air\", Count:0b, tag: {struck:0b, glide:0b}}, " +
+                "HasBulletInBarrel: 0b, " +
+                "AttachmentSCOPE: {id: \"minecraft:air\", Count: 0b, tag: {struck: 0b, glide: 0b}}, " +
+                "AttachmentMUZZLE: {id: \"minecraft:air\", Count: 0b, tag: {struck: 0b, glide: 0b}}, " +
+                "AttachmentLASER: {id: \"minecraft:air\", Count: 0b, tag: {struck: 0b, glide: 0b}}, " +
+                "GunFireMode: \"" + fireMode + "\", " +
+                "GunCurrentAmmoCount: 0, " +
+                "AttachmentGRIP: {id: \"minecraft:air\", Count: 0b, tag: {struck: 0b, glide: 0b}}, " +
+                "AttachmentSTOCK: {id: \"minecraft:air\", Count: 0b, tag: {struck:0b, glide:0b}}, " +
+                "GunId: \"tacz:" + gunName + "\"" +
+                "}";
+
+        return new MultiEntry(Arrays.asList(
+                new ItemEntry("tacz:modern_kinetic_gun", emptyAttachmentsNBT, 1),
                 ammoBuilder(ammoName, ammoCount)
         ));
     }
