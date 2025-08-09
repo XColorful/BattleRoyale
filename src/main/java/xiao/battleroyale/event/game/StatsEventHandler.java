@@ -59,21 +59,28 @@ public class StatsEventHandler {
      */
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public void onLivingDeath(LivingDeathEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(serverPlayer.getUUID());
-            if (gamePlayer == null) {
-                return;
-            } else if (gamePlayer.isAlive()) { // 不死图腾等机制，取消了死亡事件，因此没有通知GameManager处理死亡逻辑，gamePlayer逻辑上仍然isAlive = true
-                BattleRoyale.LOGGER.warn("onLivingDeath, gamePlayer {} (UUID: {}) is alive", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
-                StatsManager.get().onRecordInstantRevive(gamePlayer, event);
-                return;
-            }
+        LivingEntity livingEntity = event.getEntity(); // 兼容以后生物作为人机玩家
+        if (livingEntity == null) {
+            return;
+        }
+        GameManager gameManager = GameManager.get();
+        GamePlayer gamePlayer = gameManager.getGamePlayerByUUID(livingEntity.getUUID());
+        if (gamePlayer == null) {
+            return;
+        }
 
-            if (!gamePlayer.isEliminated()) { // 未被淘汰则判定为倒地
-                StatsManager.get().onRecordDown(gamePlayer, event);
-            } else { // 淘汰
-                StatsManager.get().onRecordKill(gamePlayer, event);
-            }
+        if (!gameManager.hasStandingGamePlayer(livingEntity.getUUID())) {
+            BattleRoyale.LOGGER.debug("StatsEventHandler: GamePlayer {} is not in standing player list, canceled onLivingDeath", gamePlayer.getPlayerName());
+            return;
+        }
+
+        if (gamePlayer.isAlive()) { // GamePlayer.isAlive不代表Entity.isAlive
+            BattleRoyale.LOGGER.warn("onLivingDeath, gamePlayer {} (UUID: {}) is alive", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
+            StatsManager.get().onRecordInstantRevive(gamePlayer, event);
+        } else if (!gamePlayer.isEliminated()) { // 未被淘汰则判定为倒地
+            StatsManager.get().onRecordDown(gamePlayer, event);
+        } else { // 淘汰
+            StatsManager.get().onRecordKill(gamePlayer, event);
         }
     }
 }

@@ -1,10 +1,11 @@
 package xiao.battleroyale.event.game;
 
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
@@ -32,29 +33,33 @@ public class PlayerDeathEventHandler {
     }
 
     /**
-     * 监听实体死亡事件，会被不死图腾取消
+     * 监听实体死亡事件，会被不死图腾或PlayerRevive取消
      * 当玩家死亡时，判断是否改为击倒
      * 当玩家死亡时，通知TeamManager处理
      * @param event 实体死亡事件
      */
-    @SubscribeEvent(priority = EventPriority.LOW) // 不接收被不死图腾等取消的事件
+    @SubscribeEvent(priority = EventPriority.LOW, receiveCanceled = true) // 接收被不死图腾或PlayerRevive取消的事件
     public void onLivingDeath(LivingDeathEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            if (!GameManager.get().isInGame()) {
-                unregister();
-                return;
-            }
-            GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(serverPlayer.getUUID());
-            if (gamePlayer == null) {
-                return;
-            }
+        LivingEntity livingEntity = event.getEntity(); // 兼容以后生物作为人机玩家
+        if (livingEntity == null) {
+            return;
+        }
+        GameManager gameManager = GameManager.get();
+        GamePlayer gamePlayer = gameManager.getGamePlayerByUUID(livingEntity.getUUID());
+        if (gamePlayer == null) {
+            return;
+        }
 
-            // TODO 击倒机制判断，现在默认直接死亡
-            if (false) { // 改为倒地
-                ;
-            } else { // 死亡
-                GameManager.get().onPlayerDeath(gamePlayer);
-            }
+        if (!gameManager.hasStandingGamePlayer(livingEntity.getUUID())) {
+            BattleRoyale.LOGGER.debug("PlayerDeathEventHandler: GamePlayer {} is not in standing player list, canceled onLivingDeath", gamePlayer.getPlayerName());
+            return;
+        }
+
+        if (event.isCanceled()) { // 被不死图腾或PlayerRevive取消，GameManager内部检查是图腾还是倒地
+            BattleRoyale.LOGGER.debug("Detected a canceled LivingDeathEvent in game");
+            gameManager.onPlayerDown(gamePlayer, livingEntity);
+        } else { // 死亡
+            gameManager.onPlayerDeath(gamePlayer);
         }
     }
 }

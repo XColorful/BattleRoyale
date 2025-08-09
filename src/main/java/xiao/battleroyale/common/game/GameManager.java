@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -25,6 +26,7 @@ import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
+import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.MessageManager;
@@ -559,11 +561,56 @@ public class GameManager extends AbstractGameManager {
     }
 
     /**
+     * 检查GamePlayer是被不死图腾救了还是PlayerRevive倒地
+     * 没有队友时不允许倒地直接让PlayerRevive击杀掉
+     * PlayerRevive只允许玩家倒地，因此人机玩家无法倒地
+     */
+    public void onPlayerDown(@NotNull GamePlayer gamePlayer, LivingEntity livingEntity) {
+        // 不允许倒地的情况：队友没有Alive的
+        GameTeam gameTeam = gamePlayer.getTeam();
+        boolean hasAliveMember = false;
+        for (GamePlayer member : gameTeam.getStandingPlayers()) {
+            if (gameEntry.removeInvalidTeam && !member.isActiveEntity()) { // 队友离线算作倒地 && 队友离线
+                continue;
+            }
+            if (member.isAlive() && member != gamePlayer) {
+                hasAliveMember = true;
+                break;
+            }
+        }
+        if (!hasAliveMember) { // 没有存活队友就判定为无法救援，直接判死亡
+            BattleRoyale.LOGGER.debug("GamePlayer {} is down and has no alive member", gamePlayer.getPlayerName());
+            // PlayerRevive的kill会触发死亡事件
+            onPlayerDeath(gamePlayer); // 先将GamePlayer设为eliminated
+            if (livingEntity instanceof Player player) {
+                if (PlayerRevive.get().isBleeding(player)) {
+                    BattleRoyale.LOGGER.debug("Detected PlayerRevive.isBleeding, force kill");
+                    PlayerRevive.get().kill(player); // 之后死亡事件能检测到玩家已经是eliminated，跳过处理
+                    return;
+                }
+            }
+            return;
+        }
+
+        // PlayerRevive倒地机制：取消事件并设置为流血状态
+        if (livingEntity instanceof Player player) {
+            if (PlayerRevive.get().isBleeding(player)) {
+                gamePlayer.setAlive(false);
+                return;
+            }
+        }
+
+        // 没检测到PlayerRevive就认为是不死图腾救了
+        // 实际貌似不会触发log，不清楚不死图腾原理
+        // 只能认为不死图腾的功能不是自救，而是阻止倒地
+        gamePlayer.setAlive(true); // 其实应该不需要设置
+        BattleRoyale.LOGGER.debug("Not detected PlayerRevive, should be revived by Totem of Undying");
+    }
+    /**
      * 调用即视为gamePlayer死亡
      */
     public void onPlayerDeath(@NotNull GamePlayer gamePlayer) {
-        gamePlayer.setAlive(false); // GamePlayer内部会自动更新eliminated
-
+        gamePlayer.setAlive(false); // GamePlayer内部会自动让GameTeam更新eliminated
         if (gamePlayer.isEliminated()) {
             TeamManager.get().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer信息
         }
@@ -578,6 +625,7 @@ public class GameManager extends AbstractGameManager {
         }
         notifyTeamChange(gamePlayer.getGameTeamId());
         notifyAliveChange();
+
     }
 
     public void onServerStopping() {
@@ -612,6 +660,7 @@ public class GameManager extends AbstractGameManager {
     public int getPlayerLimit() { return TeamManager.get().getPlayerLimit(); }
     public @Nullable GamePlayer getGamePlayerByUUID(UUID uuid) { return TeamManager.get().getGamePlayerByUUID(uuid); }
     public @Nullable GamePlayer getGamePlayerBySingleId(int playerId) { return TeamManager.get().getGamePlayerBySingleId(playerId); }
+    public boolean hasStandingGamePlayer(UUID uuid) { return TeamManager.get().hasStandingGamePlayer(uuid);}
     public List<GameTeam> getGameTeams() { return TeamManager.get().getGameTeamsList(); }
     public @Nullable GameTeam getGameTeamById(int teamId) { return TeamManager.get().getGameTeamById(teamId); }
     public List<GamePlayer> getGamePlayers() { return TeamManager.get().getGamePlayersList(); }

@@ -13,6 +13,7 @@ import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.TeamManager;
+import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
@@ -155,7 +156,12 @@ public class SpawnManager extends AbstractGameManager {
             return;
         }
         if (lobbyHeal) {
+            if (PlayerRevive.get().isBleeding(player)) {
+                PlayerRevive.get().revive(player);
+            }
+            player.removeAllEffects();
             player.heal(player.getMaxHealth()); // heal会触发事件
+            player.getFoodData().setFoodLevel(20);
         }
         GameManager.get().safeTeleport(player, lobbyPos);
         BattleRoyale.LOGGER.info("Teleport player {} (UUID: {}) to lobby ({}, {}, {})", player.getName(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
@@ -174,8 +180,7 @@ public class SpawnManager extends AbstractGameManager {
     }
 
     public boolean canMuteki(ServerPlayer serverPlayer) {
-        UUID id = serverPlayer.getUUID();
-        if (TeamManager.get().hasStandingGamePlayer(id)) { // 游戏中的玩家不能无敌
+        if (GameManager.get().hasStandingGamePlayer(serverPlayer.getUUID())) { // 游戏中的玩家不能无敌
             return false;
         }
         return isInLobby(serverPlayer.position());
