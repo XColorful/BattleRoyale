@@ -665,6 +665,7 @@ public class GameManager extends AbstractGameManager {
     public @Nullable GameTeam getGameTeamById(int teamId) { return TeamManager.get().getGameTeamById(teamId); }
     public List<GamePlayer> getGamePlayers() { return TeamManager.get().getGamePlayersList(); }
     public List<GamePlayer> getStandingGamePlayers() { return TeamManager.get().getStandingGamePlayersList(); }
+    public @Nullable GamePlayer getRandomStandingGamePlayer() { return TeamManager.get().getRandomStandingGamePlayer(); }
     // StatsManager
     public boolean shouldRecordStats() { return StatsManager.get().shouldRecordStats(); }
     public void recordIntGamerule(Map<String, Integer> intGameruleWriter) { StatsManager.get().onRecordIntGamerule(intGameruleWriter); }
@@ -763,9 +764,9 @@ public class GameManager extends AbstractGameManager {
     private void initGameSubManager() {
         StatsManager.get().initGame(serverLevel); // 先清空stats
         GameLootManager.get().initGame(serverLevel);
-        TeamManager.get().initGame(serverLevel);
-        GameruleManager.get().initGame(serverLevel); // Gamerule会进行一次默认游戏模式切换
-        SpawnManager.get().initGame(serverLevel); // SpawnManager会进行一次传送，放在TeamManager之后
+        TeamManager.get().initGame(serverLevel); // TeamManager先处理组队
+        GameruleManager.get().initGame(serverLevel); // Gamerule记录游戏模式
+        SpawnManager.get().initGame(serverLevel); // SpawnManager会传送至大厅并更改游戏模式
         ZoneManager.get().initGame(serverLevel);
 
         Map<String, Integer> intGamerule = new HashMap<>();
@@ -899,14 +900,19 @@ public class GameManager extends AbstractGameManager {
         ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_zone_config", getZoneConfigFileName(), GameConfigManager.get().getZoneConfigList().size()));
     }
 
+    /**
+     * 切换旁观模式
+     */
     public boolean spectateGame(ServerPlayer player) {
         if (player == null) {
             return false;
         }
 
+        // 从观战模式改回去
         if (player.gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
             if (!isInGame()) { // 不在游戏进行时，即使不为GamePlayer也可以改回来（可能被清理掉）
                 player.setGameMode(GameruleManager.get().getGameMode()); // 默认为冒险模式
+                teleportToLobby(player);
                 return true;
             } else { // 不允许在游戏中从观战模式改回去
                 return false;
@@ -915,13 +921,32 @@ public class GameManager extends AbstractGameManager {
 
         GamePlayer gamePlayer = getGamePlayerByUUID(player.getUUID());
         if (gamePlayer == null) { // 非游戏玩家
+            if (this.gameEntry.onlyGamePlayerSpectate) {
+                return false;
+            }
+            player.setGameMode(GameType.SPECTATOR);
+            teleportToRandomStandingGamePlayer(player);
+            return true;
+        }
+
+        if (!gamePlayer.isEliminated()) { // 未被淘汰不能观战
             return false;
         }
         if (!gamePlayer.getTeam().isTeamEliminated()) { // 队伍未被淘汰不能观战
-            return false;
+            if (this.gameEntry.spectateAfterTeam) {
+                return false;
+            }
         }
         player.setGameMode(GameType.SPECTATOR);
+        teleportToRandomStandingGamePlayer(player);
 
         return true;
+    }
+
+    public void teleportToRandomStandingGamePlayer(ServerPlayer player) {
+        GamePlayer standingGamePlayer = getRandomStandingGamePlayer();
+        if (standingGamePlayer != null) {
+            safeTeleport(player, standingGamePlayer.getLastPos());
+        }
     }
 }

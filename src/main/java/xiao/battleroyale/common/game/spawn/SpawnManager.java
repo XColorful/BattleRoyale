@@ -11,6 +11,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
@@ -48,6 +49,7 @@ public class SpawnManager extends AbstractGameManager {
     private Vec3 lobbyDimension;
     private boolean lobbyMuteki = true;
     private boolean lobbyHeal = true;
+    private boolean changeGamemode = true;
     private IGameSpawner gameSpawner;
 
     @Override
@@ -163,6 +165,9 @@ public class SpawnManager extends AbstractGameManager {
             player.heal(player.getMaxHealth()); // heal会触发事件
             player.getFoodData().setFoodLevel(20);
         }
+        if (changeGamemode) {
+            player.setGameMode(GameruleManager.get().getGameMode());
+        }
         GameManager.get().safeTeleport(player, lobbyPos);
         BattleRoyale.LOGGER.info("Teleport player {} (UUID: {}) to lobby ({}, {}, {})", player.getName(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
     }
@@ -237,7 +242,7 @@ public class SpawnManager extends AbstractGameManager {
         }
     }
 
-    public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal) {
+    public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode) {
         if (GameManager.get().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, SpawnManager skipped set lobby");
             return false;
@@ -251,6 +256,7 @@ public class SpawnManager extends AbstractGameManager {
             return false;
         }
         this.lobbyDimension = dimension;
+        this.changeGamemode = changeGamemode;
         BattleRoyale.LOGGER.debug("Successfully set lobby: center{}, dim{}", lobbyPos, lobbyDimension);
         return true;
     }
