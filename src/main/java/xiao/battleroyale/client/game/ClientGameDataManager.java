@@ -6,8 +6,8 @@ import xiao.battleroyale.client.game.data.ClientGameData;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientGameDataManager {
 
@@ -24,7 +24,7 @@ public class ClientGameDataManager {
     }
 
     // zone
-    private final Map<Integer, ClientSingleZoneData> activeZones = new ConcurrentHashMap<>(); // zoneId -> zondData
+    private final Map<Integer, ClientSingleZoneData> activeZones = new HashMap<>(); // zoneId -> zondData
     public boolean hasZoneRender() { return !activeZones.isEmpty(); }
     public Map<Integer, ClientSingleZoneData> getActiveZones() { return this.activeZones; }
     // team

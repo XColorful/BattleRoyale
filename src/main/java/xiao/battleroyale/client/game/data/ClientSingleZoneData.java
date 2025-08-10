@@ -65,8 +65,13 @@ public class ClientSingleZoneData extends AbstractClientExpireData {
         this.shapeType = ZoneShapeType.fromName(shapeTypeName);
         if (this.shapeType == null) {
             BattleRoyale.LOGGER.warn("Unknown ZoneShapeType: {}", shapeTypeName);
-        } else if (this.shapeType == ZoneShapeType.POLYGON || this.shapeType == ZoneShapeType.STAR) {
-            this.segments = nbt.getInt(GameZoneTag.SEGMENTS);
+        } else {
+            switch (this.shapeType) {
+                case POLYGON, STAR:
+                    this.segments = nbt.getInt(GameZoneTag.SEGMENTS);
+                    break;
+                // case CIRCLE, ELLIPSE, SPHERE, ELLIPSOID:
+            }
         }
 
         CompoundTag centerTag = nbt.getCompound(GameZoneTag.CENTER);
