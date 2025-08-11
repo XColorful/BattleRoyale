@@ -26,6 +26,7 @@ import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
+import xiao.battleroyale.compat.playerrevive.BleedingHandler;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
@@ -609,6 +610,7 @@ public class GameManager extends AbstractGameManager {
         if (livingEntity instanceof Player player) {
             if (playerRevive.isBleeding(player)) {
                 gamePlayer.setAlive(false);
+                playerRevive.addBleedingPlayer(player);
                 return;
             }
         }
@@ -751,6 +753,8 @@ public class GameManager extends AbstractGameManager {
         }
         maxGameTime = brEntry.maxGameTime;
         this.gameEntry = gameEntry;
+        BleedingHandler.setBleedDamage(this.gameEntry.downDamageList);
+        BleedingHandler.setBleedCooldown(this.gameEntry.downDamageFrequency);
         return true;
     }
     private void initGameConfigSubManager() {

@@ -1,6 +1,7 @@
 package xiao.battleroyale.compat.playerrevive;
 
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.compat.AbstractCompatMod;
 
@@ -71,5 +72,9 @@ public class PlayerRevive extends AbstractCompatMod {
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("PlayerRevive: Failed to kill {}: {}", player.getName().getString(), e.getMessage());
         }
+    }
+
+    public void addBleedingPlayer(@NotNull Player player) {
+        BleedingHandler.get().addBleedingPlayer(player);
     }
 }
