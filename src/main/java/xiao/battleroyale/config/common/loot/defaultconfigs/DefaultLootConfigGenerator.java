@@ -26,6 +26,7 @@ public class DefaultLootConfigGenerator {
 
     public static void generateDefaultEntitySpawnerConfig() {
         DefaultEntitySpawner.generateDefaultConfigs();
+        HorseVehicleEntitySpawner.generateDefaultConfigs();
     }
 
     public static void generateDefaultSecretRoomConfig() {
