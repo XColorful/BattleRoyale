@@ -226,7 +226,7 @@ public class TaczLootSpawner {
     private static ILootEntry commonAREntry() {
         MultiEntry _811Ammo = gunAmmoBuilder("type_81", "762x39", 30);
         MultiEntry akmAmmo = gunAmmoBuilder("ak47", "762x39", 30);
-        MultiEntry m16a4Ammo = gunAmmoBuilder("m16a4", "556x45", 30);
+        MultiEntry m16a4Ammo = gunBurstAmmoBuilder("m16a4", "556x45", 30);
         MultiEntry scarlAmmo = gunAmmoBuilder("scar_l", "556x45", 30);
         MultiEntry qbzAmmo = gunAmmoBuilder("qbz_95", "58x42", 30);
         MultiEntry m416Ammo = gunAmmoBuilder("hk416d", "556x45", 30);

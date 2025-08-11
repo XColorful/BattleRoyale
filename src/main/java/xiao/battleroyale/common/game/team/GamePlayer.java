@@ -65,8 +65,8 @@ public class GamePlayer {
     public boolean isLeader() { return isLeader; }
 
     public void setAlive(boolean alive) {
+        // 倒地机制不在GamePlayer内部管理，调用即强制设置
         this.isAlive = alive;
-        // TODO 倒地机制完成前默认淘汰
 
         if (team != null && team.isTeamEliminated()) { // 队伍无人则倒地
             this.isEliminated = true;

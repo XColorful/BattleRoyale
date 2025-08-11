@@ -953,6 +953,14 @@ public class TeamManager extends AbstractGameManager {
         return teamData.getStandingGamePlayersList();
     }
 
+    public @Nullable GamePlayer getRandomStandingGamePlayer() {
+        List<GamePlayer> standingGamePlayers = getStandingGamePlayersList();
+        if (standingGamePlayers.isEmpty()) {
+            return null;
+        }
+        return standingGamePlayers.get(BattleRoyale.COMMON_RANDOM.nextInt(standingGamePlayers.size()));
+    }
+
     public boolean hasStandingGamePlayer(UUID id) { return teamData.hasStandingGamePlayer(id); }
 
     public int getTotalMembers() {

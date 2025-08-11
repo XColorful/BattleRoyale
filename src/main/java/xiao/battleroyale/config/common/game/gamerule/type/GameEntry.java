@@ -8,6 +8,7 @@ import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.common.message.AbstractMessageManager;
 import xiao.battleroyale.util.JsonUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,12 +19,18 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public static final List<String> DEFAULT_TEAM_COLORS = Arrays.asList(
             "#E9ECEC", "#F07613", "#BD44B3", "#3AAFD9", "#F8C627", "#70B919", "#ED8DAC", "#8E8E86",
             "#A0A0A0", "#158991", "#792AAC", "#35399D", "#724728", "#546D1B", "#A02722", "#141519");
+    public static final List<Float> DEFAULT_DOWN_DAMAGE = Arrays.asList(0.3333F, 0.4444F, 0.6667F, 1.3333F, 2F, 4F, 8F, 16F, 32F);
 
     public final int maxPlayerInvalidTime;
     public final int maxBotInvalidTime;
     public final boolean removeInvalidTeam;
 
     public final boolean friendlyFire;
+    public final List<Float> downDamageList;
+    public final int downDamageFrequency;
+    public final boolean onlyGamePlayerSpectate;
+    public final boolean spectateAfterTeam;
+
     public final boolean allowRemainingBot;
     public final boolean keepTeamAfterGame;
     public final boolean teleportAfterGame;
@@ -38,13 +45,15 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public GameEntry() {
         this(300, DEFAULT_TEAM_COLORS,
                 20 * 60, 20 * 10, false,
-                false, true, true, true, false, 0, 0,
+                false, DEFAULT_DOWN_DAMAGE, 20, false, true,
+                true, true, true, false, 0, 0,
                 20 * 7, 20 * 5, 20 * 5);
     }
 
     public GameEntry(int teamMsgExpireTimeSeconds, List<String> teamColors,
                      int maxPlayerInvalidTime, int maxBotInvalidTime, boolean removeInvalidTeam,
-                     boolean friendlyFire, boolean allowRemainingBot, boolean keepTeamAfterGame, boolean teleportAfterGame, boolean teleportWinnerAfterGame, int winnerFireworkId, int winnerParticleId,
+                     boolean friendlyFire, List<Float> downDamageList, int downDamageFrequency, boolean onlyGamePlayerSpectate, boolean spectateAfterTeam,
+                     boolean allowRemainingBot, boolean keepTeamAfterGame, boolean teleportAfterGame, boolean teleportWinnerAfterGame, int winnerFireworkId, int winnerParticleId,
                      int messageCleanFreq, int messageExpireTime, int messageSyncFreq) {
         this.teamMsgExpireTimeSeconds = teamMsgExpireTimeSeconds;
         this.teamColors = teamColors;
@@ -52,6 +61,10 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         this.maxBotInvalidTime = maxBotInvalidTime;
         this.removeInvalidTeam = removeInvalidTeam;
         this.friendlyFire = friendlyFire;
+        this.downDamageList = downDamageList;
+        this.downDamageFrequency = downDamageFrequency;
+        this.onlyGamePlayerSpectate = onlyGamePlayerSpectate;
+        this.spectateAfterTeam = spectateAfterTeam;
         this.allowRemainingBot = allowRemainingBot;
         this.keepTeamAfterGame = keepTeamAfterGame;
         this.teleportAfterGame = teleportAfterGame;
@@ -77,7 +90,13 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         jsonObject.addProperty(GameEntryTag.MAX_PLAYER_INVALID_TIME, maxPlayerInvalidTime);
         jsonObject.addProperty(GameEntryTag.MAX_BOT_INVALID_TIME, maxBotInvalidTime);
         jsonObject.addProperty(GameEntryTag.REMOVE_INVALID_TEAM, removeInvalidTeam);
+
         jsonObject.addProperty(GameEntryTag.FRIENDLY_FIRE, friendlyFire);
+        jsonObject.add(GameEntryTag.DOWN_DAMAGE_LIST, JsonUtils.writeFloatListToJson(downDamageList));
+        jsonObject.addProperty(GameEntryTag.DOWN_DAMAGE_FREQUENCY, downDamageFrequency);
+        jsonObject.addProperty(GameEntryTag.ONLY_GAME_PLAYER_SPECTATE, onlyGamePlayerSpectate);
+        jsonObject.addProperty(GameEntryTag.SPECTATE_AFTER_TEAM, spectateAfterTeam);
+
         jsonObject.addProperty(GameEntryTag.ALLOW_REMAINING_BOT, allowRemainingBot);
         jsonObject.addProperty(GameEntryTag.KEEP_TEAM_AFTER_GAME, keepTeamAfterGame);
         jsonObject.addProperty(GameEntryTag.TELEPORT_AFTER_GAME, teleportAfterGame);
@@ -99,7 +118,13 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         int maxInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_PLAYER_INVALID_TIME, 20 * 60);
         int maxBotInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_BOT_INVALID_TIME, 20 * 10);
         boolean removeInvalidTeam = JsonUtils.getJsonBool(jsonObject, GameEntryTag.REMOVE_INVALID_TEAM, false);
+
         boolean friendlyFire = JsonUtils.getJsonBool(jsonObject, GameEntryTag.FRIENDLY_FIRE, false);
+        List<Float> downDamageList = JsonUtils.getJsonFloatList(jsonObject, GameEntryTag.DOWN_DAMAGE_LIST);
+        int downDamageFrequency = JsonUtils.getJsonInt(jsonObject, GameEntryTag.DOWN_DAMAGE_FREQUENCY, 20);
+        boolean onlyGamePlayerSpectate = JsonUtils.getJsonBool(jsonObject, GameEntryTag.ONLY_GAME_PLAYER_SPECTATE, false);
+        boolean spectateAfterTeam = JsonUtils.getJsonBool(jsonObject, GameEntryTag.SPECTATE_AFTER_TEAM, true);
+
         boolean allowRemainingBot = JsonUtils.getJsonBool(jsonObject, GameEntryTag.ALLOW_REMAINING_BOT, false);
         boolean keepTeamAfterGame = JsonUtils.getJsonBool(jsonObject, GameEntryTag.KEEP_TEAM_AFTER_GAME, false);
         boolean teleportAfterGame = JsonUtils.getJsonBool(jsonObject, GameEntryTag.TELEPORT_AFTER_GAME, false);
@@ -113,7 +138,8 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
 
         return new GameEntry(teamMsgExpireTimeSeconds, teamColors,
                 maxInvalidTime, maxBotInvalidTime, removeInvalidTeam,
-                friendlyFire, allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId,
+                friendlyFire, downDamageList, downDamageFrequency, onlyGamePlayerSpectate, spectateAfterTeam,
+                allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId,
                 messageCleanFreq, messageExpireTime, messageSyncFreq);
     }
 
