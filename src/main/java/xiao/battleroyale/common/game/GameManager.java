@@ -579,14 +579,26 @@ public class GameManager extends AbstractGameManager {
                 break;
             }
         }
+        PlayerRevive playerRevive = PlayerRevive.get();
         if (!hasAliveMember) { // 没有存活队友就判定为无法救援，直接判死亡
             BattleRoyale.LOGGER.debug("GamePlayer {} is down and has no alive member", gamePlayer.getPlayerName());
             // PlayerRevive的kill会触发死亡事件
-            onPlayerDeath(gamePlayer); // 先将GamePlayer设为eliminated
+            onPlayerDeath(gamePlayer); // 先将GamePlayer设为eliminated，可能触发队伍全灭或者游戏结束
+            // 再逐个处理倒地的，如果当前处理的那名GamePlayer直接死亡了，队友还在倒地的就直接挂掉
+            for (GamePlayer member : gameTeam.getTeamMembers()) {
+                if (!member.isEliminated()) {
+                    continue;
+                }
+                onPlayerDeath(member);
+                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(member.getPlayerUUID());
+                if (player != null && playerRevive.isBleeding(player)) {
+                    playerRevive.kill(player);
+                }
+            }
             if (livingEntity instanceof Player player) {
-                if (PlayerRevive.get().isBleeding(player)) {
+                if (playerRevive.isBleeding(player)) {
                     BattleRoyale.LOGGER.debug("Detected PlayerRevive.isBleeding, force kill");
-                    PlayerRevive.get().kill(player); // 之后死亡事件能检测到玩家已经是eliminated，跳过处理
+                    playerRevive.kill(player); // 之后死亡事件能检测到玩家已经是eliminated，跳过处理
                     return;
                 }
             }
@@ -595,7 +607,7 @@ public class GameManager extends AbstractGameManager {
 
         // PlayerRevive倒地机制：取消事件并设置为流血状态
         if (livingEntity instanceof Player player) {
-            if (PlayerRevive.get().isBleeding(player)) {
+            if (playerRevive.isBleeding(player)) {
                 gamePlayer.setAlive(false);
                 return;
             }
