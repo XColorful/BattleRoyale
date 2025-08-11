@@ -536,6 +536,7 @@ public class GameManager extends AbstractGameManager {
             if (GameManager.get().isInGame() && gamePlayer.isEliminated()) {
                 notifyTeamChange(gamePlayer.getGameTeamId());
                 ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
+                teleportToLobby(player); // 淘汰的传送回大厅，防止干扰游戏
             }
             return;
         }
