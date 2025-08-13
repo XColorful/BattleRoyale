@@ -757,6 +757,20 @@ public class GameManager extends AbstractGameManager {
         player.teleportTo(x, y, z);
     }
 
+    /**
+     * 跨纬度版本
+     */
+    public void safeTeleport(@NotNull ServerPlayer player, ServerLevel serverLevel, @NotNull Vec3 teleportPos, float yaw, float pitch) {
+        safeTeleport(player, serverLevel, teleportPos.x, teleportPos.y, teleportPos.z, yaw, pitch);
+    }
+    public void safeTeleport(@NotNull ServerPlayer player, ServerLevel serverLevel, double x, double y, double z, float yaw, float pitch) {
+        if (isStopping) {
+            return;
+        }
+        player.fallDistance = 0;
+        player.teleportTo(serverLevel, x, y, z, yaw, pitch);
+    }
+
     // TeamManager
     public int getPlayerLimit() { return TeamManager.get().getPlayerLimit(); }
     public @Nullable GamePlayer getGamePlayerByUUID(UUID uuid) { return TeamManager.get().getGamePlayerByUUID(uuid); }
@@ -1008,7 +1022,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * 切换旁观模式
      */
-    public boolean spectateGame(ServerPlayer player) {
+    public boolean spectateGame(ServerPlayer player, ServerLevel serverLevel) {
         if (player == null) {
             return false;
         }
@@ -1017,11 +1031,12 @@ public class GameManager extends AbstractGameManager {
         if (player.gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
             if (!isInGame()) { // 不在游戏进行时，即使不为GamePlayer也可以改回来（可能被清理掉）
                 player.setGameMode(GameruleManager.get().getGameMode()); // 默认为冒险模式
+                ChatUtils.sendTranslatableMessageToPlayer(player, "battleroyale.message.switch_gamemode_success");
                 teleportToLobby(player);
-                return true;
-            } else { // 不允许在游戏中从观战模式改回去
-                return false;
+            } else { // 不允许在游戏中从观战模式改回去，但是仍然执行一次传送
+                teleportToRandomStandingGamePlayer(player, serverLevel);
             }
+            return true;
         }
 
         GamePlayer gamePlayer = getGamePlayerByUUID(player.getUUID());
@@ -1030,7 +1045,7 @@ public class GameManager extends AbstractGameManager {
                 return false;
             }
             player.setGameMode(GameType.SPECTATOR);
-            teleportToRandomStandingGamePlayer(player);
+            teleportToRandomStandingGamePlayer(player, serverLevel);
             return true;
         }
 
@@ -1043,15 +1058,25 @@ public class GameManager extends AbstractGameManager {
             }
         }
         player.setGameMode(GameType.SPECTATOR);
-        teleportToRandomStandingGamePlayer(player);
+        teleportToRandomStandingGamePlayer(player, serverLevel);
 
         return true;
     }
 
-    public void teleportToRandomStandingGamePlayer(ServerPlayer player) {
+    public void teleportToRandomStandingGamePlayer(ServerPlayer player, ServerLevel serverLevel) {
+        if (serverLevel != this.serverLevel) {
+            return;
+        }
         GamePlayer standingGamePlayer = getRandomStandingGamePlayer();
         if (standingGamePlayer != null) {
-            safeTeleport(player, standingGamePlayer.getLastPos());
+            float yaw = 0, pitch = 0;
+            ServerPlayer targetPlayer = (ServerPlayer) this.serverLevel.getPlayerByUUID(standingGamePlayer.getPlayerUUID());
+            if (targetPlayer != null) {
+                yaw = targetPlayer.getYRot();
+                pitch = targetPlayer.getXRot();
+            }
+            safeTeleport(player, serverLevel, standingGamePlayer.getLastPos(), yaw, pitch);
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_is_spectating", player.getName().getString(), standingGamePlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
         }
     }
 }

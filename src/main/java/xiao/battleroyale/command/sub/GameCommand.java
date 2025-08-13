@@ -210,8 +210,7 @@ public class GameCommand {
         CommandSourceStack source = context.getSource();
         ServerPlayer player = source.getPlayerOrException();
 
-        if (GameManager.get().spectateGame(player)) {
-            source.sendSuccess(() -> Component.translatable("battleroyale.message.switch_gamemode_success"), false);
+        if (GameManager.get().spectateGame(player, source.getLevel())) {
             return Command.SINGLE_SUCCESS;
         } else {
             source.sendFailure(Component.translatable("battleroyale.message.switch_gamemode_failed"));

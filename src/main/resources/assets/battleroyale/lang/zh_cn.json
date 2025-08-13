@@ -218,6 +218,7 @@
   "battleroyale.message.game_time": "游戏时长: %s(%s)",
   "battleroyale.message.has_game_in_progress": "当前有正在进行的大逃杀游戏：",
   "battleroyale.message.spectate": "[观战]",
+  "battleroyale.message.player_is_spectating": "玩家 %s 正在观战 %s",
 
   "battleroyale.message.add_player_firework": "为玩家 %s 添加了烟花追踪器",
   "battleroyale.message.add_fixed_firework": "在 %s, %s, %s 添加烟花追踪器",
