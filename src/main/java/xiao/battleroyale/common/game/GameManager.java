@@ -18,6 +18,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.command.sub.GameCommand;
+import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
@@ -39,15 +40,14 @@ import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.event.game.*;
-import xiao.battleroyale.util.ChatUtils;
-import xiao.battleroyale.util.ColorUtils;
-import xiao.battleroyale.util.StringUtils;
+import xiao.battleroyale.util.*;
 
 import java.util.*;
 import java.util.List;
 import java.util.function.Supplier;
 
 import static xiao.battleroyale.api.data.io.TempDataTag.*;
+import static xiao.battleroyale.util.CommandUtils.*;
 
 public class GameManager extends AbstractGameManager {
 
@@ -221,7 +221,7 @@ public class GameManager extends AbstractGameManager {
         this.gameTime++;
         if (this.gameTime > this.maxGameTime) { // 超过最大游戏时长
             stopGame(this.serverLevel);
-            ChatUtils.sendTranslatableMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.reach_max_game_time").withStyle(ChatFormatting.GRAY));
+            ChatUtils.sendComponentMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.reach_max_game_time").withStyle(ChatFormatting.GRAY));
             BattleRoyale.LOGGER.info("Reached max game time ({}) and force stopped", this.maxGameTime);
         }
         onGameTick(this.gameTime);
@@ -265,7 +265,7 @@ public class GameManager extends AbstractGameManager {
         if (!invalidPlayers.isEmpty()) {
             for (GamePlayer invalidPlayer : invalidPlayers) {
                 if (TeamManager.get().forceEliminatePlayerSilence(invalidPlayer)) { // 强制淘汰了玩家，不一定都在此处淘汰
-                    ChatUtils.sendTranslatableMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", invalidPlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
+                    ChatUtils.sendComponentMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", invalidPlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
                     BattleRoyale.LOGGER.info("Force eliminated GamePlayer {} (UUID: {})", invalidPlayer.getPlayerName(), invalidPlayer.getPlayerUUID());
                 }
             }
@@ -328,10 +328,10 @@ public class GameManager extends AbstractGameManager {
         }
     }
     private void notifyGamePlayerIsInactive(GamePlayer gamePlayer) {
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_leaved_from_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_leaved_from_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
     }
     private void notifyGamePlayerIsActive(GamePlayer gamePlayer) {
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_backed_to_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_backed_to_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
     }
 
     /**
@@ -350,7 +350,7 @@ public class GameManager extends AbstractGameManager {
         }
         for (GamePlayer teamMember : gameTeam.getTeamMembers()) {
             if (TeamManager.get().forceEliminatePlayerSilence(teamMember)) {
-                ChatUtils.sendTranslatableMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", teamMember.getPlayerName()).withStyle(ChatFormatting.GRAY));
+                ChatUtils.sendComponentMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", teamMember.getPlayerName()).withStyle(ChatFormatting.GRAY));
                 BattleRoyale.LOGGER.info("Force eliminated GamePlayer {} (UUID: {}) for inactive team", invalidPlayer.getPlayerName(), invalidPlayer.getPlayerUUID());
             }
         }
@@ -365,6 +365,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * 完整检查所有队伍情况，淘汰无在线玩家的队伍
      * 调用此方法将检查是否有胜利队伍
+     * 如果符合条件则直接结束游戏
      */
     public void checkIfGameShouldEnd() {
         if (!isInGame()) {
@@ -372,9 +373,10 @@ public class GameManager extends AbstractGameManager {
         }
 
         checkAndUpdateInvalidGamePlayer(this.serverLevel);
-        if (TeamManager.get().getStandingTeamCount() <= 1) { // 胜利条件
+        if (TeamManager.get().getStandingTeamCount() <= 1) { // 胜利条件，暂时硬编码
             BattleRoyale.LOGGER.debug("GameManager: standingTeam <= 1, finishGame with winner");
             finishGame(true);
+            return;
         }
 
         if (!gameEntry.allowRemainingBot) { // 不允许只剩人机继续打架，即提前终止游戏
@@ -402,17 +404,53 @@ public class GameManager extends AbstractGameManager {
     }
 
     /**
-     * 结束游戏，使所有未淘汰玩家均胜利
+     * 结束游戏，所有未淘汰队伍均胜利
      */
     public void finishGame(boolean hasWinner) {
         if (hasWinner) {
-            for (GamePlayer gamePlayer : getStandingGamePlayers()) {
-                winnerGamePlayers.add(gamePlayer);
-                winnerGameTeams.add(gamePlayer.getTeam());
-                notifyWinner(gamePlayer);
+            for (GameTeam team : getGameTeams()) {
+                if (!team.isTeamEliminated()) {
+                    winnerGameTeams.add(team);
+                }
+            }
+            for (GameTeam team : winnerGameTeams) {
+                for (GamePlayer member : team.getTeamMembers()) {
+                    winnerGamePlayers.add(member);
+                    notifyWinner(member);
+                }
             }
         }
         stopGame(this.serverLevel);
+        if (hasWinner) {
+            MutableComponent winnerComponent = Component.empty()
+                    .append(Component.translatable("battleroyale.message.game_time", gameTime, new GameUtils.GameTimeFormat(gameTime).toFormattedString(true)));
+            for (GameTeam team : winnerGameTeams) {
+                // 队伍ID
+                TextColor color = TextColor.fromRgb(ColorUtils.parseColorToInt(team.getGameTeamColor()));
+                MutableComponent teamComponent = Component.empty()
+                        .append(buildSuggestableIntBracketWithColor(team.getGameTeamId(), TeamCommand.requestTeamCommand(team.getGameTeamId()), color));
+                // 队长
+                GamePlayer leader = team.getLeader();
+                teamComponent.append(Component.literal(" "))
+                        .append(buildSuggestableIntBracketWithFullColor(leader.getGameSingleId(), TeamCommand.requestPlayerCommand(leader.getPlayerName()), color))
+                        .append(Component.literal(leader.getPlayerName()).withStyle(leader.isEliminated() ? ChatFormatting.GRAY : ChatFormatting.GOLD));
+                // 队员
+                for (GamePlayer member : team.getTeamMembers()) {
+                    if (member.getGameSingleId() == leader.getGameSingleId()) {
+                        continue;
+                    }
+                    teamComponent.append(Component.literal(" "))
+                            .append(buildSuggestableIntBracketWithFullColor(member.getGameSingleId(), TeamCommand.requestPlayerCommand(member.getPlayerName()), color))
+                            .append(Component.literal(member.getPlayerName()).withStyle(member.isEliminated() ? ChatFormatting.GRAY : ChatFormatting.GOLD));
+                }
+                // 添加到消息
+                winnerComponent.append(Component.literal("\n")
+                        .append(teamComponent));
+            }
+            if (serverLevel != null) {
+                ChatUtils.sendMessageToAllPlayers(serverLevel, winnerComponent);
+            }
+        }
     }
 
     /**
@@ -446,25 +484,49 @@ public class GameManager extends AbstractGameManager {
         EffectManager.get().addGameParticle(serverLevel, player.position(), gameEntry.winnerParticleId, 0);
     }
 
+    public void sendGameSpectateMessage(@NotNull ServerPlayer player) {
+        sendGameSpectateMessage(player, !gameEntry.onlyGamePlayerSpectate);
+    }
+
+    private void sendGameSpectateMessage(@NotNull ServerPlayer player, boolean allowSpectate) {
+        String spectateCommand = GameCommand.spectateCommand();
+
+        Component fullMessage = Component.translatable("battleroyale.message.has_game_in_progress")
+                .append(Component.literal("\n"))
+                // 游戏时长：int(time)
+                .append(Component.translatable("battleroyale.message.game_time", gameTime, new GameUtils.GameTimeFormat(gameTime).toFormattedString(true)))
+                .append(Component.literal(" "))
+                // 生存 int/int
+                .append(Component.translatable("battleroyale.label.alive"))
+                .append(Component.literal(" "))
+                .append(Component.literal(String.valueOf(getStandingGamePlayers().size())).withStyle(ChatFormatting.AQUA))
+                .append(Component.literal("/" + getGamePlayers().size()))
+                .append(Component.literal(" "))
+                // [观战]
+                .append(buildRunnableText(Component.translatable("battleroyale.message.spectate"), spectateCommand, allowSpectate ? ChatFormatting.GREEN : ChatFormatting.DARK_GRAY));
+
+        ChatUtils.sendComponentMessageToPlayer(player, fullMessage);
+    }
+
     /**
      * 用于向胜利玩家发送消息，传送回大厅
      */
     public void sendLobbyTeleportMessage(@NotNull ServerPlayer player, boolean isWinner) {
-        String toLobbyCommandString = GameCommand.toLobbyCommand();
+        String toLobbyCommand = GameCommand.toLobbyCommand();
 
         Component fullMessage = Component.translatable("battleroyale.message.back_to_lobby")
                 .append(Component.literal(" "))
-                .append(Component.translatable("battleroyale.message.teleport")
-                        .withStyle(isWinner ? ChatFormatting.GOLD :  ChatFormatting.WHITE)
-                        .withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, toLobbyCommandString))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(toLobbyCommandString)))
-                        )
-                );
+                .append(buildRunnableText(Component.translatable("battleroyale.message.teleport"),
+                        toLobbyCommand,
+                        isWinner ? ChatFormatting.GOLD :  ChatFormatting.WHITE));
 
-        ChatUtils.sendTranslatableMessageToPlayer(player, fullMessage);
+        ChatUtils.sendComponentMessageToPlayer(player, fullMessage);
     }
 
     private void teleportAfterGame() {
+        if (isInGame()) { // 防止在1tick里既stopGame又startGame
+            return;
+        }
         if (serverLevel != null) {
             // 胜利玩家
             for (GamePlayer winnerGamePlayer : winnerGamePlayers) {
@@ -481,18 +543,21 @@ public class GameManager extends AbstractGameManager {
             }
 
             // 非胜利玩家
-            if (gameEntry.teleportAfterGame) {
-                List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
-                for (GamePlayer gamePlayer : gamePlayerList) {
-                    if (winnerGamePlayers.contains(gamePlayer) || gamePlayer.isEliminated()) {
-                        continue;
-                    }
+            List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
+            for (GamePlayer gamePlayer : gamePlayerList) {
+                if (winnerGamePlayers.contains(gamePlayer)) {
+                    continue;
+                }
 
-                    ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-                    if (player == null) {
-                        continue;
-                    }
+                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                if (player == null) {
+                    continue;
+                }
+
+                if (gameEntry.teleportAfterGame) {
                     teleportToLobby(player); // 非胜利存活玩家直接回大厅
+                } else {
+                    sendLobbyTeleportMessage(player, false);
                 }
             }
         }
@@ -503,14 +568,13 @@ public class GameManager extends AbstractGameManager {
      */
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        this.teleportAfterGame();
-
         GameLootManager.get().stopGame(serverLevel);
         ZoneManager.get().stopGame(serverLevel);
         SpawnManager.get().stopGame(serverLevel);
         GameruleManager.get().stopGame(serverLevel);
         // ↑以上操作均不需要inGame判断
         this.inGame = false;
+        this.teleportAfterGame();
 
         TeamManager.get().stopGame(serverLevel); // 最后处理TeamManager
         this.configPrepared = false;
@@ -534,17 +598,24 @@ public class GameManager extends AbstractGameManager {
     public void onPlayerLoggedIn(ServerPlayer player) {
         GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(player.getUUID());
         if (gamePlayer != null) {
+            if (serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) != null) { // 不一定在大逃杀游戏的维度
+                gamePlayer.setActiveEntity(true);
+            }
             if (GameManager.get().isInGame() && gamePlayer.isEliminated()) {
                 notifyTeamChange(gamePlayer.getGameTeamId());
-                ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
+                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
                 teleportToLobby(player); // 淘汰的传送回大厅，防止干扰游戏
             }
             return;
         }
 
-        if (TeamManager.get().shouldAutoJoin() && !isInGame()) { // 没开游戏就加入
-            TeamManager.get().joinTeam(player);
-            teleportToLobby(player); // 登录自动传到大厅
+        if (isInGame()) {
+            sendGameSpectateMessage(player, !gameEntry.onlyGamePlayerSpectate); // 提供游戏信息及观战指令
+        } else { // 没开游戏就加入
+            if (TeamManager.get().shouldAutoJoin()) {
+                TeamManager.get().joinTeam(player);
+                teleportToLobby(player); // 登录自动传到大厅
+            }
         }
     }
 
@@ -571,48 +642,36 @@ public class GameManager extends AbstractGameManager {
         // 不允许倒地的情况：队友没有Alive的
         GameTeam gameTeam = gamePlayer.getTeam();
         boolean hasAliveMember = false;
-        for (GamePlayer member : gameTeam.getStandingPlayers()) {
+        for (GamePlayer member : gameTeam.getAlivePlayers()) { // 直接忽略被淘汰的队友
+            if (member.getGameSingleId() == gamePlayer.getGameSingleId()) {
+                continue;
+            }
             if (gameEntry.removeInvalidTeam && !member.isActiveEntity()) { // 队友离线算作倒地 && 队友离线
                 continue;
             }
-            if (member.isAlive() && member != gamePlayer) {
-                hasAliveMember = true;
-                break;
-            }
+            hasAliveMember = true;
+            break;
         }
-        PlayerRevive playerRevive = PlayerRevive.get();
         if (!hasAliveMember) { // 没有存活队友就判定为无法救援，直接判死亡
             BattleRoyale.LOGGER.debug("GamePlayer {} is down and has no alive member", gamePlayer.getPlayerName());
-            // PlayerRevive的kill会触发死亡事件
-            onPlayerDeath(gamePlayer); // 先将GamePlayer设为eliminated，可能触发队伍全灭或者游戏结束
-            // 再逐个处理倒地的，如果当前处理的那名GamePlayer直接死亡了，队友还在倒地的就直接挂掉
-            for (GamePlayer member : gameTeam.getTeamMembers()) {
-                if (!member.isEliminated()) {
-                    continue;
-                }
-                onPlayerDeath(member);
-                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(member.getPlayerUUID());
-                if (player != null && playerRevive.isBleeding(player)) {
-                    playerRevive.kill(player);
-                }
-            }
-            if (livingEntity instanceof Player player) {
-                if (playerRevive.isBleeding(player)) {
-                    BattleRoyale.LOGGER.debug("Detected PlayerRevive.isBleeding, force kill");
-                    playerRevive.kill(player); // 之后死亡事件能检测到玩家已经是eliminated，跳过处理
-                    return;
-                }
-            }
+            onPlayerDeath(gamePlayer);
             return;
         }
 
         // PlayerRevive倒地机制：取消事件并设置为流血状态
         if (livingEntity instanceof Player player) {
+            PlayerRevive playerRevive = PlayerRevive.get();
             if (playerRevive.isBleeding(player)) {
                 gamePlayer.setAlive(false);
                 playerRevive.addBleedingPlayer(player);
                 return;
             }
+        }
+
+        if (!gamePlayer.isAlive()) { // 倒地，但是不为存活状态
+            BattleRoyale.LOGGER.debug("GamePlayer {} is down but not alive, switch to onPlayerDeath", gamePlayer.getPlayerName());
+            onPlayerDeath(gamePlayer);
+            notifyTeamChange(gamePlayer.getGameTeamId());
         }
 
         // 没检测到PlayerRevive就认为是不死图腾救了
@@ -621,26 +680,57 @@ public class GameManager extends AbstractGameManager {
         gamePlayer.setAlive(true); // 其实应该不需要设置
         BattleRoyale.LOGGER.debug("Not detected PlayerRevive, should be revived by Totem of Undying");
     }
+
+    /**
+     * 调用即视为gamePlayer被救起
+     */
+    public void onPlayerRevived(@NotNull GamePlayer gamePlayer) {
+        if (!hasStandingGamePlayer(gamePlayer.getPlayerUUID()) || gamePlayer.isEliminated()) { // 该GamePlayer已经不是未被淘汰玩家
+            BattleRoyale.LOGGER.debug("GamePlayer {} is not a standing game player, skipped revive", gamePlayer.getPlayerName());
+            return;
+        }
+        gamePlayer.setAlive(true);
+        BattleRoyale.LOGGER.info("GamePlayer {} has revived, singleId:{}", gamePlayer.getPlayerName(), gamePlayer.getGameSingleId());
+    }
+
     /**
      * 调用即视为gamePlayer死亡
      */
     public void onPlayerDeath(@NotNull GamePlayer gamePlayer) {
-        gamePlayer.setAlive(false); // GamePlayer内部会自动让GameTeam更新eliminated
-        if (gamePlayer.isEliminated()) {
-            TeamManager.get().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer信息
+        boolean teamEliminatedBefore = gamePlayer.getTeam().isTeamEliminated();
+        boolean eliminatedBefore = gamePlayer.isEliminated();
+        gamePlayer.setEliminated(true); // GamePlayer内部会自动让GameTeam更新eliminated
+        TeamManager.get().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer信息
+        // 死亡事件会跳过非standingPlayer，放心kill
+        if (!eliminatedBefore) { // 第一次淘汰才尝试kill，淘汰后被打倒的不管
+            PlayerRevive playerRevive = PlayerRevive.get();
+            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+            if (player != null && playerRevive.isBleeding(player)) {
+                BattleRoyale.LOGGER.debug("Detected GamePlayer {} PlayerRevive.isBleeding, force kill", gamePlayer.getPlayerName());
+                playerRevive.kill(player);
+            }
         }
 
         GameTeam gameTeam = gamePlayer.getTeam();
         if (gameTeam.isTeamEliminated()) {
-            BattleRoyale.LOGGER.info("Team {} has been eliminated", gameTeam.getGameTeamId());
+            // 队伍淘汰则倒地队友全部kill
+            BattleRoyale.LOGGER.info("Team {} has been eliminated, updating member to eliminated", gameTeam.getGameTeamId());
+            for (GamePlayer member : gameTeam.getTeamMembers()) {
+                if (!member.isEliminated()) {
+                    onPlayerDeath(member);
+                }
+            }
             if (this.serverLevel != null) {
-                ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
+                if (!teamEliminatedBefore) {
+                    ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
+                } else {
+                    BattleRoyale.LOGGER.debug("Team has already been eliminated, GameManager skipped sending chat message");
+                }
             }
             checkIfGameShouldEnd();
         }
         notifyTeamChange(gamePlayer.getGameTeamId());
         notifyAliveChange();
-
     }
 
     public void onServerStopping() {
@@ -669,6 +759,20 @@ public class GameManager extends AbstractGameManager {
         }
         player.fallDistance = 0;
         player.teleportTo(x, y, z);
+    }
+
+    /**
+     * 跨纬度版本
+     */
+    public void safeTeleport(@NotNull ServerPlayer player, ServerLevel serverLevel, @NotNull Vec3 teleportPos, float yaw, float pitch) {
+        safeTeleport(player, serverLevel, teleportPos.x, teleportPos.y, teleportPos.z, yaw, pitch);
+    }
+    public void safeTeleport(@NotNull ServerPlayer player, ServerLevel serverLevel, double x, double y, double z, float yaw, float pitch) {
+        if (isStopping) {
+            return;
+        }
+        player.fallDistance = 0;
+        player.teleportTo(serverLevel, x, y, z, yaw, pitch);
     }
 
     // TeamManager
@@ -826,6 +930,7 @@ public class GameManager extends AbstractGameManager {
         DamageEventHandler.register();
         LoopEventHandler.register();
         PlayerDeathEventHandler.register();
+        BleedingHandler.get().clear();
     }
     private void unregisterGameEvent() {
         DamageEventHandler.unregister();
@@ -833,6 +938,7 @@ public class GameManager extends AbstractGameManager {
         PlayerDeathEventHandler.unregister();
         LogEventHandler.unregister();
         // ServerEventHandler.unregister(); // 不需要解除注册
+        BleedingHandler.unregister();
     }
 
     /**
@@ -900,10 +1006,10 @@ public class GameManager extends AbstractGameManager {
             return;
         }
 
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_bot_config", getBotConfigId(), getBotConfigName(getBotConfigId())));
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_gamerule_config", getGameruleConfigId(), getGameruleConfigName(getGameruleConfigId())));
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_spawn_config", getSpawnConfigId(), getSpawnConfigName(getSpawnConfigId())));
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_zone_config", getZoneConfigFileName(), GameConfigManager.get().getZoneConfigList().size()));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_bot_config", getBotConfigId(), getBotConfigName(getBotConfigId())));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_gamerule_config", getGameruleConfigId(), getGameruleConfigName(getGameruleConfigId())));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_spawn_config", getSpawnConfigId(), getSpawnConfigName(getSpawnConfigId())));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_zone_config", getZoneConfigFileName(), GameConfigManager.get().getZoneConfigList().size()));
     }
 
     public void sendSelectedConfigsInfo(ServerPlayer player) {
@@ -911,16 +1017,16 @@ public class GameManager extends AbstractGameManager {
             return;
         }
 
-        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_bot_config", getBotConfigId(), getBotConfigName(getBotConfigId())));
-        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_gamerule_config", getGameruleConfigId(), getGameruleConfigName(getGameruleConfigId())));
-        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_spawn_config", getSpawnConfigId(), getSpawnConfigName(getSpawnConfigId())));
-        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_zone_config", getZoneConfigFileName(), GameConfigManager.get().getZoneConfigList().size()));
+        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_bot_config", getBotConfigId(), getBotConfigName(getBotConfigId())));
+        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_gamerule_config", getGameruleConfigId(), getGameruleConfigName(getGameruleConfigId())));
+        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_spawn_config", getSpawnConfigId(), getSpawnConfigName(getSpawnConfigId())));
+        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_zone_config", getZoneConfigFileName(), GameConfigManager.get().getZoneConfigList().size()));
     }
 
     /**
      * 切换旁观模式
      */
-    public boolean spectateGame(ServerPlayer player) {
+    public boolean spectateGame(ServerPlayer player, ServerLevel serverLevel) {
         if (player == null) {
             return false;
         }
@@ -929,11 +1035,12 @@ public class GameManager extends AbstractGameManager {
         if (player.gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
             if (!isInGame()) { // 不在游戏进行时，即使不为GamePlayer也可以改回来（可能被清理掉）
                 player.setGameMode(GameruleManager.get().getGameMode()); // 默认为冒险模式
+                ChatUtils.sendTranslatableMessageToPlayer(player, "battleroyale.message.switch_gamemode_success");
                 teleportToLobby(player);
-                return true;
-            } else { // 不允许在游戏中从观战模式改回去
-                return false;
+            } else { // 不允许在游戏中从观战模式改回去，但是仍然执行一次传送
+                teleportToRandomStandingGamePlayer(player, serverLevel);
             }
+            return true;
         }
 
         GamePlayer gamePlayer = getGamePlayerByUUID(player.getUUID());
@@ -942,7 +1049,7 @@ public class GameManager extends AbstractGameManager {
                 return false;
             }
             player.setGameMode(GameType.SPECTATOR);
-            teleportToRandomStandingGamePlayer(player);
+            teleportToRandomStandingGamePlayer(player, serverLevel);
             return true;
         }
 
@@ -955,15 +1062,25 @@ public class GameManager extends AbstractGameManager {
             }
         }
         player.setGameMode(GameType.SPECTATOR);
-        teleportToRandomStandingGamePlayer(player);
+        teleportToRandomStandingGamePlayer(player, serverLevel);
 
         return true;
     }
 
-    public void teleportToRandomStandingGamePlayer(ServerPlayer player) {
+    public void teleportToRandomStandingGamePlayer(ServerPlayer player, ServerLevel serverLevel) {
+        if (serverLevel != this.serverLevel) {
+            return;
+        }
         GamePlayer standingGamePlayer = getRandomStandingGamePlayer();
         if (standingGamePlayer != null) {
-            safeTeleport(player, standingGamePlayer.getLastPos());
+            float yaw = 0, pitch = 0;
+            ServerPlayer targetPlayer = (ServerPlayer) this.serverLevel.getPlayerByUUID(standingGamePlayer.getPlayerUUID());
+            if (targetPlayer != null) {
+                yaw = targetPlayer.getYRot();
+                pitch = targetPlayer.getXRot();
+            }
+            safeTeleport(player, serverLevel, standingGamePlayer.getLastPos(), yaw, pitch);
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_is_spectating", player.getName().getString(), standingGamePlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
         }
     }
 }

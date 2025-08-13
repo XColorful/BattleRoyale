@@ -186,4 +186,22 @@ public class TeamCommand {
                 name
         );
     }
+
+    public static String requestPlayerCommand(String name) {
+        return buildCommandString(
+                MOD_ID,
+                TEAM,
+                REQUEST,
+                name
+        );
+    }
+
+    public static String requestTeamCommand(int teamId) {
+        return buildCommandString(
+                MOD_ID,
+                TEAM,
+                JOIN,
+                Integer.toString(teamId)
+        );
+    }
 }

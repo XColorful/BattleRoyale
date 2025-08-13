@@ -99,7 +99,6 @@
   "battleroyale.message.performance_config_applied": "Applied performance config %s: %s",
   "battleroyale.message.invalid_performance_config_id": "Impossible performance config id: %s",
 
-
   "battleroyale.message.missing_gamerule_config": "Missing valid gamerule config for battleroyale game",
   "battleroyale.message.missing_spawn_config": "Missing valid spawn config for battleroyale game",
   "battleroyale.message.missing_zone_config": "Missing valid zone config for battleroyale game",
@@ -216,6 +215,10 @@
   "battleroyale.message.back_to_lobby": "Back to lobby",
   "battleroyale.message.teleport": "[Teleport]",
   "battleroyale.message.has_won_the_game": "has won the game",
+  "battleroyale.message.game_time": "Game time: %s(%s)",
+  "battleroyale.message.has_game_in_progress": "There is currently a BattleRoyale game going on:",
+  "battleroyale.message.spectate": "[Spectate]",
+  "battleroyale.message.player_is_spectating": "Player %s is spectating %s",
 
   "battleroyale.message.add_player_firework": "Add firework tracker to player %s",
   "battleroyale.message.add_fixed_firework": "Add firework tracker at %s, %s, %s",
@@ -245,6 +248,7 @@
   "battleroyale.message.debug_local": "[Local Debug]",
   "battleroyale.message.switch_gamemode_success": "Switched gamemode",
   "battleroyale.message.switch_gamemode_failed": "Failed to switched gamemode",
+  "battleroyale.message.teleport_non_game_player_to_lobby": "Teleported non game player %s to lobby",
 
   "battleroyale.label.alive": "Alive",
 

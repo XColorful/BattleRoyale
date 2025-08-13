@@ -105,7 +105,7 @@ public class TeamManager extends AbstractGameManager {
             List<ServerPlayer> onlinePlayers = serverLevel.getPlayers(p -> true);
             Collections.shuffle(onlinePlayers);
             if (onlinePlayers.size() > this.teamConfig.playerLimit) {
-                ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.reached_player_limit", this.teamConfig.playerLimit).withStyle(ChatFormatting.YELLOW));
+                ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.reached_player_limit", this.teamConfig.playerLimit).withStyle(ChatFormatting.YELLOW));
                 onlinePlayers = onlinePlayers.subList(0, this.teamConfig.playerLimit);
             }
             for (ServerPlayer player : onlinePlayers) {
@@ -122,7 +122,7 @@ public class TeamManager extends AbstractGameManager {
 
         GameManager.get().recordGamerule(teamConfig);
         if (!hasEnoughPlayerTeamToStart()) {
-            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
         }
         this.configPrepared = false;
         BattleRoyale.LOGGER.info("TeamManager complete initGame, total players: {}, total teams: {}", teamData.getTotalPlayerCount(), teamData.getGameTeamsList().size());
@@ -301,12 +301,12 @@ public class TeamManager extends AbstractGameManager {
      */
     public void forceJoinTeam(ServerPlayer player) {
         if (GameManager.get().isInGame()) {
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         if (removePlayerFromTeam(player.getUUID())) { // 加入队伍前离开当前队伍
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.YELLOW));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.YELLOW));
         }
 
         int newTeamId = findNotFullTeamId();
@@ -324,12 +324,12 @@ public class TeamManager extends AbstractGameManager {
      */
     public void joinTeam(ServerPlayer player) {
         if (GameManager.get().isInGame()) {
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         if (removePlayerFromTeam(player.getUUID())) { // 加入队伍前离开当前队伍
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.YELLOW));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.YELLOW));
         }
 
         int newTeamId = teamData.generateNextTeamId();
@@ -347,12 +347,12 @@ public class TeamManager extends AbstractGameManager {
      */
     public void joinTeamSpecific(ServerPlayer player, int teamId) {
         if (GameManager.get().isInGame()) {
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         if (removePlayerFromTeam(player.getUUID())) { // 加入队伍前离开当前队伍
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.YELLOW));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.YELLOW));
         }
 
         if (createNewTeamAndJoin(player, teamId)) { // 手动加入队伍
@@ -375,10 +375,10 @@ public class TeamManager extends AbstractGameManager {
         if (targetTeam == null || serverLevel == null) { // 队伍不存在直接跳过
             return;
         } else if (teamData.getGamePlayerByUUID(playerId) != null) { // 不自动离开队伍
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.already_in_team").withStyle(ChatFormatting.YELLOW));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.already_in_team").withStyle(ChatFormatting.YELLOW));
             return;
         } else if (targetTeam.getTeamMembers().size() >= this.teamConfig.teamSize) { // 队伍满员
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.team_full", targetTeamId).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.team_full", targetTeamId).withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -386,18 +386,18 @@ public class TeamManager extends AbstractGameManager {
             // 新建 GamePlayer
             int newPlayerId = teamData.generateNextPlayerId();
             if (newPlayerId < 1) { // 达到人数上限
-                ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.reached_player_limit", this.teamConfig.playerLimit).withStyle(ChatFormatting.RED));
+                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.reached_player_limit", this.teamConfig.playerLimit).withStyle(ChatFormatting.RED));
                 return;
             }
             GamePlayer gamePlayer = new GamePlayer(player.getUUID(), player.getName().getString(), newPlayerId, false, targetTeam);
             if (teamData.addPlayerToTeam(gamePlayer, targetTeam)) {
-                ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.joined_to_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.GREEN));
+                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.joined_to_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.GREEN));
                 notifyPlayerJoinTeam(gamePlayer); // 通知队伍成员有新玩家加入
                 GameManager.get().notifyTeamChange(targetTeam.getGameTeamId()); // 玩家加入队伍，通知更新队伍HUD
                 return;
             }
             BattleRoyale.LOGGER.debug("Failed to add player {} to team {}", player.getName().getString(), targetTeamId);
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.failed_to_join_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.failed_to_join_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
         } else { // 改为发送邀请
             RequestPlayer(player, (ServerPlayer) serverLevel.getPlayerByUUID(targetTeam.getLeaderUUID()));
         }
@@ -420,7 +420,7 @@ public class TeamManager extends AbstractGameManager {
             }
             ServerPlayer teamPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(member.getPlayerUUID());
             if (teamPlayer != null) {
-                ChatUtils.sendTranslatableMessageToPlayer(teamPlayer, Component.translatable("battleroyale.message.player_joined_team", newPlayerName).withStyle(ChatFormatting.GREEN));
+                ChatUtils.sendComponentMessageToPlayer(teamPlayer, Component.translatable("battleroyale.message.player_joined_team", newPlayerName).withStyle(ChatFormatting.GREEN));
             }
         }
     }
@@ -429,23 +429,24 @@ public class TeamManager extends AbstractGameManager {
         UUID playerUUID = player.getUUID();
         GamePlayer gamePlayer = teamData.getGamePlayerByUUID(playerUUID);
         if (gamePlayer == null) {
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
             return;
         }
 
         forceEliminatePlayerFromTeam(player); // 游戏进行时生效，退出即被淘汰，不在游戏运行时则自动跳过
 
         if (removePlayerFromTeam(playerUUID)) { // 不在游戏时生效，手动离开当前队伍
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.GREEN));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.GREEN));
         }
     }
 
     /**
      * 在游戏中强制淘汰玩家，不包含发送系统消息
-     * 成功淘汰后传送回大厅
+     * 成功淘汰后发送大厅传送消息
      */
     public boolean forceEliminatePlayerSilence(GamePlayer gamePlayer) {
         if (!GameManager.get().isInGame()) {
+            BattleRoyale.LOGGER.debug("GameManager isn't in game, skipped forceEliminatePlayerSilence");
             return false;
         }
 
@@ -476,25 +477,30 @@ public class TeamManager extends AbstractGameManager {
 
         GamePlayer gamePlayer = teamData.getGamePlayerByUUID(player.getUUID());
         if (gamePlayer == null) {
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
             return;
         }
 
+        boolean teamEliminatedBefore = gamePlayer.getTeam().isTeamEliminated();
         if (teamData.eliminatePlayer(player.getUUID())) {
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
             BattleRoyale.LOGGER.info("Force eliminated player {} (UUID: {})", player.getName().getString(), player.getUUID());
         }
 
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel != null) {
-            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.forced_elimination", player.getName()).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.forced_elimination", player.getName()).withStyle(ChatFormatting.RED));
         }
         BattleRoyale.LOGGER.info("Force removed player {} (UUID: {})", player.getName().getString(), player.getUUID());
 
         GameTeam gameTeam = gamePlayer.getTeam();
         if (gameTeam.isTeamEliminated()) {
             if (serverLevel != null) {
-                ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
+                if (!teamEliminatedBefore) {
+                    ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
+                } else {
+                    BattleRoyale.LOGGER.debug("Team has already been eliminated, TeamManager skipped sending chat message");
+                }
             }
             BattleRoyale.LOGGER.info("Team {} has been eliminated for no standing player", gameTeam.getGameTeamId());
         }
@@ -503,14 +509,14 @@ public class TeamManager extends AbstractGameManager {
 
     public void kickPlayer(ServerPlayer sender, ServerPlayer targetPlayer) {
         if (GameManager.get().isInGame()) {
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         if (sender == null) {
             return;
         } else if (targetPlayer == null) {
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.player_not_found", "").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.player_not_found", "").withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -518,40 +524,40 @@ public class TeamManager extends AbstractGameManager {
         GamePlayer targetGamePlayer = teamData.getGamePlayerByUUID(targetPlayer.getUUID());
 
         if (senderGamePlayer == null) {
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
             return;
         } else if (!senderGamePlayer.isLeader()) {
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.not_team_leader").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.not_team_leader").withStyle(ChatFormatting.RED));
             return;
         } else if (targetGamePlayer == null || targetGamePlayer.getGameTeamId() != senderGamePlayer.getGameTeamId()) {
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.player_not_found", targetPlayer.getName()).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.player_not_found", targetPlayer.getName()).withStyle(ChatFormatting.RED));
             return;
         }
 
         if (removePlayerFromTeam(targetPlayer.getUUID())) { // 手动踢人
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.player_kicked_from_team", targetPlayer.getName()).withStyle(ChatFormatting.YELLOW));
-            ChatUtils.sendTranslatableMessageToPlayer(targetPlayer, Component.translatable("battleroyale.message.kicked_by_leader", sender.getName()).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.player_kicked_from_team", targetPlayer.getName()).withStyle(ChatFormatting.YELLOW));
+            ChatUtils.sendComponentMessageToPlayer(targetPlayer, Component.translatable("battleroyale.message.kicked_by_leader", sender.getName()).withStyle(ChatFormatting.RED));
         }
     }
 
     public void invitePlayer(ServerPlayer sender, ServerPlayer targetPlayer) {
         if (GameManager.get().isInGame()) {
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         GamePlayer senderGamePlayer = teamData.getGamePlayerByUUID(sender.getUUID());
         if (senderGamePlayer == null) {
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
             return;
         } else if (!senderGamePlayer.isLeader()) {
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.not_team_leader").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.not_team_leader").withStyle(ChatFormatting.RED));
             return;
         } else if (senderGamePlayer.getTeam().getTeamMemberCount() >= this.teamConfig.teamSize) {
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.team_full").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.team_full").withStyle(ChatFormatting.RED));
             return;
         } else if (teamData.getGamePlayerByUUID(targetPlayer.getUUID()) != null) {
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.player_already_in_team", targetPlayer.getName()).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.player_already_in_team", targetPlayer.getName()).withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -559,7 +565,7 @@ public class TeamManager extends AbstractGameManager {
         long expiryTime = System.currentTimeMillis() + teamConfig.teamMsgExpireTimeMillis;
         String targetName = targetPlayer.getName().getString();
         pendingInvites.put(sender.getUUID(), new TeamInvite(targetPlayer.getUUID(), targetName, teamId, expiryTime));
-        ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.invite_sent", targetName).withStyle(ChatFormatting.GREEN));
+        ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.invite_sent", targetName).withStyle(ChatFormatting.GREEN));
 
         String senderName = sender.getName().getString();
         MutableComponent message = Component.translatable("battleroyale.message.invite_received", senderName, teamId);
@@ -582,7 +588,7 @@ public class TeamManager extends AbstractGameManager {
 
     public void acceptInvite(ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
         if (GameManager.get().isInGame()) {
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -590,21 +596,21 @@ public class TeamManager extends AbstractGameManager {
         if (serverLevel == null || player == null) {
             return;
         } else if (senderPlayer == null || !isPlayerLeader(senderPlayer.getUUID())) { // 玩家未加载或不是队长
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.no_valid_invite").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_valid_invite").withStyle(ChatFormatting.RED));
             return;
         }
         UUID senderUUID = senderPlayer.getUUID();
         UUID playerUUID = player.getUUID();
         TeamInvite invite = pendingInvites.get(senderUUID);
         if (invite == null || !invite.targetPlayerUUID().equals(playerUUID)) { // 已经改为向其他人发的邀请
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.no_valid_invite").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_valid_invite").withStyle(ChatFormatting.RED));
             return;
         } else if (invite.expiryTime() < System.currentTimeMillis()) { // 邀请是否过期
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.expired_invite").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.expired_invite").withStyle(ChatFormatting.RED));
             pendingInvites.remove(senderUUID);
             return;
         } else if (teamData.getGamePlayerByUUID(playerUUID) != null) { // 检查接收者是否已在队伍中
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.already_in_team").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.already_in_team").withStyle(ChatFormatting.RED));
             pendingInvites.remove(senderUUID);
             return;
         }
@@ -612,24 +618,24 @@ public class TeamManager extends AbstractGameManager {
         GameTeam targetTeam = teamData.getGameTeamById(invite.teamId());
         String playerName = player.getName().getString();
         if (targetTeam == null) { // 目标队伍不存在
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.team_does_not_exist", invite.teamId()).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.team_does_not_exist", invite.teamId()).withStyle(ChatFormatting.RED));
             pendingInvites.remove(senderUUID);
             return;
         } else if (targetTeam.getTeamMembers().size() >= this.teamConfig.teamSize) { // 目标队伍满员
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.team_full", invite.teamId()).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.team_full", invite.teamId()).withStyle(ChatFormatting.RED));
             pendingInvites.remove(senderUUID);
             return;
         }
 
         pendingInvites.remove(senderUUID);
-        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.invite_accepted", invite.teamId()).withStyle(ChatFormatting.GREEN));
-        ChatUtils.sendTranslatableMessageToPlayer(senderPlayer, Component.translatable("battleroyale.message.player_accept_request", playerName).withStyle(ChatFormatting.GREEN));
+        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.invite_accepted", invite.teamId()).withStyle(ChatFormatting.GREEN));
+        ChatUtils.sendComponentMessageToPlayer(senderPlayer, Component.translatable("battleroyale.message.player_accept_request", playerName).withStyle(ChatFormatting.GREEN));
         addPlayerToTeamInternal(player, invite.teamId(), false); // 同意邀请，强制加入
     }
 
     public void declineInvite(ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
         if (GameManager.get().isInGame()) {
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -637,30 +643,30 @@ public class TeamManager extends AbstractGameManager {
         if (serverLevel == null || player == null) {
             return;
         } else if (senderPlayer == null || !isPlayerLeader(senderPlayer.getUUID())) { // 玩家未加载或不是队长
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.no_valid_invite").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_valid_invite").withStyle(ChatFormatting.RED));
             return;
         }
         UUID senderUUID = senderPlayer.getUUID();
         UUID playerUUID = player.getUUID();
         TeamInvite invite = pendingInvites.get(senderUUID);
         if (invite == null || !invite.targetPlayerUUID().equals(playerUUID)) {
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.no_valid_invite").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_valid_invite").withStyle(ChatFormatting.RED));
             return;
         } else if (invite.expiryTime() < System.currentTimeMillis()) { // 邀请是否过期
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.expired_invite").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.expired_invite").withStyle(ChatFormatting.RED));
             pendingInvites.remove(senderUUID);
             return;
         }
 
         pendingInvites.remove(senderUUID);
         String playerName = player.getName().getString();
-        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.invite_declined", invite.teamId()).withStyle(ChatFormatting.YELLOW));
-        ChatUtils.sendTranslatableMessageToPlayer(senderPlayer, Component.translatable("battleroyale.message.player_declined_invite", playerName).withStyle(ChatFormatting.RED));
+        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.invite_declined", invite.teamId()).withStyle(ChatFormatting.YELLOW));
+        ChatUtils.sendComponentMessageToPlayer(senderPlayer, Component.translatable("battleroyale.message.player_declined_invite", playerName).withStyle(ChatFormatting.RED));
     }
 
     public void RequestPlayer(ServerPlayer sender, ServerPlayer targetPlayer) { // 申请者，目标玩家
         if (GameManager.get().isInGame()) {
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -668,23 +674,23 @@ public class TeamManager extends AbstractGameManager {
         if (serverLevel == null || sender == null) {
             return;
         } else if (targetPlayer == null) {
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.player_not_found", "").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.player_not_found", "").withStyle(ChatFormatting.RED));
             return;
         }
 
         GamePlayer senderGamePlayer = teamData.getGamePlayerByUUID(sender.getUUID());
         GamePlayer targetGamePlayer = teamData.getGamePlayerByUUID(targetPlayer.getUUID());
         if (senderGamePlayer != null) { // 申请者已在队伍里
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.already_in_team").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.already_in_team").withStyle(ChatFormatting.RED));
             return;
         } else if (targetGamePlayer == null) { // 对方不在队伍里
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.target_not_in_a_team", targetPlayer.getName()).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.target_not_in_a_team", targetPlayer.getName()).withStyle(ChatFormatting.RED));
             return;
         } else if (targetGamePlayer.getTeam().getTeamMemberCount() >= this.teamConfig.teamSize) { // 对方队伍已满员
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.team_full", targetPlayer.getName()).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.team_full", targetPlayer.getName()).withStyle(ChatFormatting.RED));
             return;
         } else if (!targetGamePlayer.isLeader()) { // 对方不是队长
-            ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.player_not_actual_leader", targetPlayer.getName()).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.player_not_actual_leader", targetPlayer.getName()).withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -693,7 +699,7 @@ public class TeamManager extends AbstractGameManager {
         long expiryTime = System.currentTimeMillis() + teamConfig.teamMsgExpireTimeMillis;
 
         pendingRequests.put(sender.getUUID(), new TeamRequest(targetGamePlayer.getPlayerUUID(), targetGamePlayer.getPlayerName(), targetTeamId, expiryTime));
-        ChatUtils.sendTranslatableMessageToPlayer(sender, Component.translatable("battleroyale.message.request_sent", targetTeamId).withStyle(ChatFormatting.GREEN));
+        ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.request_sent", targetTeamId).withStyle(ChatFormatting.GREEN));
 
         String senderName = sender.getName().getString();
         MutableComponent message = Component.translatable("battleroyale.message.request_received", senderName);
@@ -716,7 +722,7 @@ public class TeamManager extends AbstractGameManager {
 
     public void acceptRequest(ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
         if (GameManager.get().isInGame()) {
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -724,17 +730,17 @@ public class TeamManager extends AbstractGameManager {
         if (serverLevel == null || teamLeader == null) {
             return;
         } else if (requesterPlayer == null) {
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.player_not_found", "").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.player_not_found", "").withStyle(ChatFormatting.RED));
             return;
         }
 
         GamePlayer leaderGamePlayer = teamData.getGamePlayerByUUID(teamLeader.getUUID());
 
         if (leaderGamePlayer == null) {
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
             return;
         } else if (!leaderGamePlayer.isLeader()) {
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.not_team_leader").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.not_team_leader").withStyle(ChatFormatting.RED));
             return;
         }
         UUID requesterUUID = requesterPlayer.getUUID();
@@ -743,33 +749,33 @@ public class TeamManager extends AbstractGameManager {
 
         if (request == null || request.requestedTeamId() != leaderGamePlayer.getGameTeamId() // 是否是发送给队长的
                 || !request.targetTeamLeaderUUID().equals(teamLeader.getUUID())) { // 已经改为向其他人发的邀请
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.no_valid_request").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.no_valid_request").withStyle(ChatFormatting.RED));
             return;
         } else if (request.expireTime() < System.currentTimeMillis()) { // 检查请求是否过期
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.expired_request").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.expired_request").withStyle(ChatFormatting.RED));
             pendingRequests.remove(requesterUUID);
             return;
         } else if (teamData.getGamePlayerByUUID(requesterUUID) != null) { // 检查申请者是否已在队伍中
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.player_already_in_team", requesterName).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.player_already_in_team", requesterName).withStyle(ChatFormatting.RED));
             pendingRequests.remove(requesterUUID);
             return;
         }
         GameTeam targetTeam = leaderGamePlayer.getTeam();
         if (targetTeam.getTeamMembers().size() >= this.teamConfig.teamSize) { // 检查目标队伍是否满员
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.team_full", targetTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.team_full", targetTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
             pendingRequests.remove(requesterUUID);
             return;
         }
 
         pendingRequests.remove(requesterUUID);
-        ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.request_accepted", requesterName).withStyle(ChatFormatting.GREEN));
-        ChatUtils.sendTranslatableMessageToPlayer(requesterPlayer, Component.translatable("battleroyale.message.player_accept_request", teamLeader.getName().getString()).withStyle(ChatFormatting.GREEN));
+        ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.request_accepted", requesterName).withStyle(ChatFormatting.GREEN));
+        ChatUtils.sendComponentMessageToPlayer(requesterPlayer, Component.translatable("battleroyale.message.player_accept_request", teamLeader.getName().getString()).withStyle(ChatFormatting.GREEN));
         addPlayerToTeamInternal(requesterPlayer, targetTeam.getGameTeamId(), false); // 同意申请，强制加入
     }
 
     public void declineRequest(ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
         if (GameManager.get().isInGame()) {
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -777,17 +783,17 @@ public class TeamManager extends AbstractGameManager {
         if (serverLevel == null || teamLeader == null) {
             return;
         } else if (requesterPlayer == null) {
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.player_not_found", "").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.player_not_found", "").withStyle(ChatFormatting.RED));
             return;
         }
 
         GamePlayer leaderGamePlayer = teamData.getGamePlayerByUUID(teamLeader.getUUID());
 
         if (leaderGamePlayer == null) {
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
             return;
         } else if (!leaderGamePlayer.isLeader()) {
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.not_team_leader").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.not_team_leader").withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -797,17 +803,17 @@ public class TeamManager extends AbstractGameManager {
 
         if (request == null || !request.targetTeamLeaderUUID().equals(teamLeader.getUUID())
                 || request.requestedTeamId() != leaderGamePlayer.getGameTeamId()) {
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.no_valid_request").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.no_valid_request").withStyle(ChatFormatting.RED));
             return;
         } else if (request.expireTime() < System.currentTimeMillis()) {
-            ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.expired_request").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.expired_request").withStyle(ChatFormatting.RED));
             pendingRequests.remove(requesterUUID);
             return;
         }
 
         pendingRequests.remove(requesterUUID);
-        ChatUtils.sendTranslatableMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.request_declined", requesterName).withStyle(ChatFormatting.YELLOW));
-        ChatUtils.sendTranslatableMessageToPlayer(requesterPlayer, Component.translatable("battleroyale.message.player_declined_request", teamLeader.getName().getString()).withStyle(ChatFormatting.RED));
+        ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.request_declined", requesterName).withStyle(ChatFormatting.YELLOW));
+        ChatUtils.sendComponentMessageToPlayer(requesterPlayer, Component.translatable("battleroyale.message.player_declined_request", teamLeader.getName().getString()).withStyle(ChatFormatting.RED));
     }
 
     /**
@@ -846,19 +852,19 @@ public class TeamManager extends AbstractGameManager {
         }
         int newPlayerId = teamData.generateNextPlayerId();
         if (newPlayerId < 1) {
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.reached_player_limit").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.reached_player_limit").withStyle(ChatFormatting.RED));
             return false;
         }
         GameTeam newTeam = new GameTeam(teamId, teamConfig.getTeamColor(teamId));
         if (!teamData.addGameTeam(newTeam)) {
             BattleRoyale.LOGGER.debug("Failed to create new team {} and let {} join", teamId, player.getName().getString());
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.failed_to_join_team", teamId).withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.failed_to_join_team", teamId).withStyle(ChatFormatting.RED));
             return false;
         }
         GamePlayer gamePlayer = new GamePlayer(player.getUUID(), player.getName().getString(), newPlayerId, false, newTeam);
         if (teamData.addPlayerToTeam(gamePlayer, newTeam)) {
             GameManager.get().notifyTeamChange(newTeam.getGameTeamId()); // 新建队伍并加入，通知更新队伍HUD
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.joined_to_team", teamId).withStyle(ChatFormatting.GREEN));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.joined_to_team", teamId).withStyle(ChatFormatting.GREEN));
             return true;
         }
         return false;
@@ -891,10 +897,10 @@ public class TeamManager extends AbstractGameManager {
     public void sendPlayerTeamId(ServerPlayer player) {
         GamePlayer gamePlayer = getGamePlayerByUUID(player.getUUID());
         if (gamePlayer == null) {
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
             return;
         }
-        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.your_team_id", gamePlayer.getGameTeamId()).withStyle(ChatFormatting.AQUA));
+        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.your_team_id", gamePlayer.getGameTeamId()).withStyle(ChatFormatting.AQUA));
     }
 
     /**
@@ -911,12 +917,12 @@ public class TeamManager extends AbstractGameManager {
                 forceEliminatePlayerFromTeam(player); // 强制淘汰
             } else {
                 BattleRoyale.LOGGER.error("Teleport in game player while not has lobby");
-                ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
+                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
             }
         } else if (GameManager.get().teleportToLobby(player)) { // 传送，且传送成功
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.teleported_to_lobby").withStyle(ChatFormatting.GREEN));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.teleported_to_lobby").withStyle(ChatFormatting.GREEN));
         } else {
-            ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
         }
     }
 

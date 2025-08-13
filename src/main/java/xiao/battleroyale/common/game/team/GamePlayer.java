@@ -54,7 +54,7 @@ public class GamePlayer {
     public boolean isAlive() { return isAlive; }
     public boolean isEliminated() { return isEliminated; }
     public int getGameSingleId() { return gameSingleId; }
-    public int getGameTeamId() { return team != null ? team.getGameTeamId() : -1; }
+    public int getGameTeamId() { return team.getGameTeamId(); }
     public String getGameTeamColor() { return gameTeamColor; }
     public boolean isActiveEntity() { return isActiveEntity; }
     public Vec3 getLastPos() { return lastPos; }
@@ -68,7 +68,7 @@ public class GamePlayer {
         // 倒地机制不在GamePlayer内部管理，调用即强制设置
         this.isAlive = alive;
 
-        if (team != null && team.isTeamEliminated()) { // 队伍无人则倒地
+        if (team.isTeamEliminated()) { // 队伍无人则倒地
             this.isEliminated = true;
         }
 

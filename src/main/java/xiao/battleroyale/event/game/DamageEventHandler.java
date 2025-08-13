@@ -1,5 +1,6 @@
 package xiao.battleroyale.event.game;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -7,9 +8,10 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.util.ChatUtils;
 
 /**
  * 伤害数值调整
@@ -73,14 +75,33 @@ public class DamageEventHandler {
         }
         // 游戏玩家攻击非游戏玩家
         else if (attackerGamePlayer != null) {
-            if (damagedEntity instanceof ServerPlayer) {
+            if (damagedEntity instanceof ServerPlayer interfererPlayer) {
                 event.setCanceled(true);
+                // 把不参与游戏的玩家tp回大厅
+                if (gameManager.getGameEntry().teleportInterfererToLobby
+                        && damageSource.getEntity() instanceof ServerPlayer) {
+                    SpawnManager.get().teleportToLobby(interfererPlayer);
+                    ServerLevel serverLevel = gameManager.getServerLevel();
+                    if (serverLevel != null) {
+                        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.teleport_non_game_player_to_lobby", interfererPlayer.getName().getString());
+                        gameManager.sendGameSpectateMessage(interfererPlayer); // 提供观战指令
+                    }
+                }
             }
         }
         // 非游戏玩家攻击游戏玩家
         else if (targetGamePlayer != null) {
-            if (damageSource.getEntity() instanceof ServerPlayer) {
+            if (damageSource.getEntity() instanceof ServerPlayer interfererPlayer) {
                 event.setCanceled(true);
+                // 把不参与游戏的玩家tp回大厅
+                if (gameManager.getGameEntry().teleportInterfererToLobby) {
+                    SpawnManager.get().teleportToLobby(interfererPlayer);
+                    ServerLevel serverLevel = gameManager.getServerLevel();
+                    if (serverLevel != null) {
+                        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.teleport_non_game_player_to_lobby", interfererPlayer.getName().getString());
+                        gameManager.sendGameSpectateMessage(interfererPlayer); // 提供观战指令
+                    }
+                }
             }
         }
         // 非游戏玩家打非游戏玩家

@@ -16,6 +16,7 @@ public class GameEntryTag extends ConfigEntryTag {
     public static final String DOWN_DAMAGE_FREQUENCY = "downDamageFrequency";
     public static final String ONLY_GAME_PLAYER_SPECTATE = "onlyGamePlayerSpectate";
     public static final String SPECTATE_AFTER_TEAM = "spectateAfterTeamEliminated";
+    public static final String TELEPORT_INTERFERER_TO_LOBBY = "teleportInterfererToLobby";
     public static final String ALLOW_REMAINING_BOT = "allowRemainingBot";
     public static final String KEEP_TEAM_AFTER_GAME = "keepTeamAfterGame";
     public static final String TELEPORT_AFTER_GAME = "teleportAfterGame";
