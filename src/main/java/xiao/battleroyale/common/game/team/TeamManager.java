@@ -442,10 +442,11 @@ public class TeamManager extends AbstractGameManager {
 
     /**
      * 在游戏中强制淘汰玩家，不包含发送系统消息
-     * 成功淘汰后传送回大厅
+     * 成功淘汰后发送大厅传送消息
      */
     public boolean forceEliminatePlayerSilence(GamePlayer gamePlayer) {
         if (!GameManager.get().isInGame()) {
+            BattleRoyale.LOGGER.debug("GameManager isn't in game, skipped forceEliminatePlayerSilence");
             return false;
         }
 

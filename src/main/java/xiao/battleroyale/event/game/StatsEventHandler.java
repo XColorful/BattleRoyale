@@ -32,6 +32,7 @@ public class StatsEventHandler {
 
     public static void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
+        BattleRoyale.LOGGER.debug("Unregistered StatsEventHandler");
     }
 
 
@@ -74,9 +75,9 @@ public class StatsEventHandler {
         }
 
         if (gamePlayer.isAlive()) { // GamePlayer.isAlive不代表Entity.isAlive
-            BattleRoyale.LOGGER.warn("onLivingDeath, gamePlayer {} (UUID: {}) is alive", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
+            BattleRoyale.LOGGER.debug("onLivingDeath, gamePlayer {} (UUID: {}) is alive", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
             StatsManager.get().onRecordInstantRevive(gamePlayer, event);
-        } else if (!gamePlayer.isEliminated()) { // 未被淘汰则判定为倒地
+        } else if (!gamePlayer.isEliminated()) { // 非Alive但未被淘汰则判定为倒地
             StatsManager.get().onRecordDown(gamePlayer, event);
         } else { // 淘汰
             StatsManager.get().onRecordKill(gamePlayer, event);

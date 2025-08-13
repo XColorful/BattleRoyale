@@ -366,6 +366,7 @@ public class GameManager extends AbstractGameManager {
     /**
      * 完整检查所有队伍情况，淘汰无在线玩家的队伍
      * 调用此方法将检查是否有胜利队伍
+     * 如果符合条件则直接结束游戏
      */
     public void checkIfGameShouldEnd() {
         if (!isInGame()) {
@@ -376,6 +377,7 @@ public class GameManager extends AbstractGameManager {
         if (TeamManager.get().getStandingTeamCount() <= 1) { // 胜利条件，暂时硬编码
             BattleRoyale.LOGGER.debug("GameManager: standingTeam <= 1, finishGame with winner");
             finishGame(true);
+            return;
         }
 
         if (!gameEntry.allowRemainingBot) { // 不允许只剩人机继续打架，即提前终止游戏
@@ -502,6 +504,9 @@ public class GameManager extends AbstractGameManager {
     }
 
     private void teleportAfterGame() {
+        if (isInGame()) { // 防止在1tick里既stopGame又startGame
+            return;
+        }
         if (serverLevel != null) {
             // 胜利玩家
             for (GamePlayer winnerGamePlayer : winnerGamePlayers) {
@@ -611,47 +616,25 @@ public class GameManager extends AbstractGameManager {
         // 不允许倒地的情况：队友没有Alive的
         GameTeam gameTeam = gamePlayer.getTeam();
         boolean hasAliveMember = false;
-        for (GamePlayer member : gameTeam.getStandingPlayers()) {
+        for (GamePlayer member : gameTeam.getAlivePlayers()) { // 直接忽略被淘汰的队友
+            if (member.getGameSingleId() == gamePlayer.getGameSingleId()) {
+                continue;
+            }
             if (gameEntry.removeInvalidTeam && !member.isActiveEntity()) { // 队友离线算作倒地 && 队友离线
                 continue;
             }
-            if (member.isAlive() && member != gamePlayer) {
-                hasAliveMember = true;
-                break;
-            }
+            hasAliveMember = true;
+            break;
         }
-        PlayerRevive playerRevive = PlayerRevive.get();
         if (!hasAliveMember) { // 没有存活队友就判定为无法救援，直接判死亡
             BattleRoyale.LOGGER.debug("GamePlayer {} is down and has no alive member", gamePlayer.getPlayerName());
-            // PlayerRevive的kill会触发死亡事件
-            // 先将GamePlayer设为eliminated，之后死亡事件能检测到玩家已经是eliminated，跳过处理
-            // 先淘汰队友，后淘汰自己，否则游戏提前结束，队友GamePlayer不为eliminated
-            for (GamePlayer member : gameTeam.getTeamMembers()) {
-                if (!member.isEliminated()) {
-                    continue;
-                }
-                onPlayerDeath(member);
-                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(member.getPlayerUUID());
-                if (player != null && playerRevive.isBleeding(player)) {
-                    playerRevive.kill(player);
-                    notifyTeamChange(gamePlayer.getGameTeamId());
-                }
-            }
-            // 先GamePlayer的eliminated操作再kill玩家
             onPlayerDeath(gamePlayer);
-            if (livingEntity instanceof Player player) {
-                if (playerRevive.isBleeding(player)) {
-                    BattleRoyale.LOGGER.debug("Detected PlayerRevive.isBleeding, force kill");
-                    playerRevive.kill(player);
-                    notifyTeamChange(gamePlayer.getGameTeamId());
-                    return;
-                }
-            }
             return;
         }
 
         // PlayerRevive倒地机制：取消事件并设置为流血状态
         if (livingEntity instanceof Player player) {
+            PlayerRevive playerRevive = PlayerRevive.get();
             if (playerRevive.isBleeding(player)) {
                 gamePlayer.setAlive(false);
                 playerRevive.addBleedingPlayer(player);
@@ -660,6 +643,7 @@ public class GameManager extends AbstractGameManager {
         }
 
         if (!gamePlayer.isAlive()) { // 倒地，但是不为存活状态
+            BattleRoyale.LOGGER.debug("GamePlayer {} is down but not alive, switch to onPlayerDeath", gamePlayer.getPlayerName());
             onPlayerDeath(gamePlayer);
             notifyTeamChange(gamePlayer.getGameTeamId());
         }
@@ -688,12 +672,28 @@ public class GameManager extends AbstractGameManager {
      */
     public void onPlayerDeath(@NotNull GamePlayer gamePlayer) {
         boolean teamEliminatedBefore = gamePlayer.getTeam().isTeamEliminated();
+        boolean eliminatedBefore = gamePlayer.isEliminated();
         gamePlayer.setEliminated(true); // GamePlayer内部会自动让GameTeam更新eliminated
         TeamManager.get().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer信息
+        // 死亡事件会跳过非standingPlayer，放心kill
+        if (!eliminatedBefore) { // 第一次淘汰才尝试kill，淘汰后被打倒的不管
+            PlayerRevive playerRevive = PlayerRevive.get();
+            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+            if (player != null && playerRevive.isBleeding(player)) {
+                BattleRoyale.LOGGER.debug("Detected GamePlayer {} PlayerRevive.isBleeding, force kill", gamePlayer.getPlayerName());
+                playerRevive.kill(player);
+            }
+        }
 
         GameTeam gameTeam = gamePlayer.getTeam();
         if (gameTeam.isTeamEliminated()) {
-            BattleRoyale.LOGGER.info("Team {} has been eliminated", gameTeam.getGameTeamId());
+            // 队伍淘汰则倒地队友全部kill
+            BattleRoyale.LOGGER.info("Team {} has been eliminated, updating member to eliminated", gameTeam.getGameTeamId());
+            for (GamePlayer member : gameTeam.getTeamMembers()) {
+                if (!member.isEliminated()) {
+                    onPlayerDeath(member);
+                }
+            }
             if (this.serverLevel != null) {
                 if (!teamEliminatedBefore) {
                     ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
@@ -705,7 +705,6 @@ public class GameManager extends AbstractGameManager {
         }
         notifyTeamChange(gamePlayer.getGameTeamId());
         notifyAliveChange();
-
     }
 
     public void onServerStopping() {
