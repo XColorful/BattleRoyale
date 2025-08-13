@@ -221,7 +221,7 @@ public class GameManager extends AbstractGameManager {
         this.gameTime++;
         if (this.gameTime > this.maxGameTime) { // 超过最大游戏时长
             stopGame(this.serverLevel);
-            ChatUtils.sendTranslatableMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.reach_max_game_time").withStyle(ChatFormatting.GRAY));
+            ChatUtils.sendComponentMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.reach_max_game_time").withStyle(ChatFormatting.GRAY));
             BattleRoyale.LOGGER.info("Reached max game time ({}) and force stopped", this.maxGameTime);
         }
         onGameTick(this.gameTime);
@@ -265,7 +265,7 @@ public class GameManager extends AbstractGameManager {
         if (!invalidPlayers.isEmpty()) {
             for (GamePlayer invalidPlayer : invalidPlayers) {
                 if (TeamManager.get().forceEliminatePlayerSilence(invalidPlayer)) { // 强制淘汰了玩家，不一定都在此处淘汰
-                    ChatUtils.sendTranslatableMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", invalidPlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
+                    ChatUtils.sendComponentMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", invalidPlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
                     BattleRoyale.LOGGER.info("Force eliminated GamePlayer {} (UUID: {})", invalidPlayer.getPlayerName(), invalidPlayer.getPlayerUUID());
                 }
             }
@@ -328,10 +328,10 @@ public class GameManager extends AbstractGameManager {
         }
     }
     private void notifyGamePlayerIsInactive(GamePlayer gamePlayer) {
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_leaved_from_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_leaved_from_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
     }
     private void notifyGamePlayerIsActive(GamePlayer gamePlayer) {
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_backed_to_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_backed_to_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
     }
 
     /**
@@ -350,7 +350,7 @@ public class GameManager extends AbstractGameManager {
         }
         for (GamePlayer teamMember : gameTeam.getTeamMembers()) {
             if (TeamManager.get().forceEliminatePlayerSilence(teamMember)) {
-                ChatUtils.sendTranslatableMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", teamMember.getPlayerName()).withStyle(ChatFormatting.GRAY));
+                ChatUtils.sendComponentMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", teamMember.getPlayerName()).withStyle(ChatFormatting.GRAY));
                 BattleRoyale.LOGGER.info("Force eliminated GamePlayer {} (UUID: {}) for inactive team", invalidPlayer.getPlayerName(), invalidPlayer.getPlayerUUID());
             }
         }
@@ -484,19 +484,39 @@ public class GameManager extends AbstractGameManager {
         EffectManager.get().addGameParticle(serverLevel, player.position(), gameEntry.winnerParticleId, 0);
     }
 
+    public void sendGameSpectateMessage(@NotNull ServerPlayer player, boolean allowSpectate) {
+        String spectateCommand = GameCommand.spectateCommand();
+
+        Component fullMessage = Component.translatable("battleroyale.message.has_game_in_progress")
+                .append(Component.literal("\n"))
+                // 游戏时长：int(time)
+                .append(Component.translatable("battleroyale.message.game_time", gameTime, new GameUtils.GameTimeFormat(gameTime).toFormattedString(true)))
+                .append(Component.literal(" "))
+                // 生存 int/int
+                .append(Component.translatable("battleroyale.label.alive"))
+                .append(Component.literal(" "))
+                .append(Component.literal(String.valueOf(getStandingGamePlayers().size())).withStyle(ChatFormatting.AQUA))
+                .append(Component.literal("/" + getGamePlayers().size()))
+                .append(Component.literal(" "))
+                // [观战]
+                .append(buildRunnableText(Component.translatable("battleroyale.message.spectate"), spectateCommand, allowSpectate ? ChatFormatting.GREEN : ChatFormatting.DARK_GRAY));
+
+        ChatUtils.sendComponentMessageToPlayer(player, fullMessage);
+    }
+
     /**
      * 用于向胜利玩家发送消息，传送回大厅
      */
     public void sendLobbyTeleportMessage(@NotNull ServerPlayer player, boolean isWinner) {
-        String toLobbyCommandString = GameCommand.toLobbyCommand();
+        String toLobbyCommand = GameCommand.toLobbyCommand();
 
         Component fullMessage = Component.translatable("battleroyale.message.back_to_lobby")
                 .append(Component.literal(" "))
                 .append(buildRunnableText(Component.translatable("battleroyale.message.teleport"),
-                        toLobbyCommandString,
+                        toLobbyCommand,
                         isWinner ? ChatFormatting.GOLD :  ChatFormatting.WHITE));
 
-        ChatUtils.sendTranslatableMessageToPlayer(player, fullMessage);
+        ChatUtils.sendComponentMessageToPlayer(player, fullMessage);
     }
 
     private void teleportAfterGame() {
@@ -579,15 +599,19 @@ public class GameManager extends AbstractGameManager {
             }
             if (GameManager.get().isInGame() && gamePlayer.isEliminated()) {
                 notifyTeamChange(gamePlayer.getGameTeamId());
-                ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
+                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
                 teleportToLobby(player); // 淘汰的传送回大厅，防止干扰游戏
             }
             return;
         }
 
-        if (TeamManager.get().shouldAutoJoin() && !isInGame()) { // 没开游戏就加入
-            TeamManager.get().joinTeam(player);
-            teleportToLobby(player); // 登录自动传到大厅
+        if (isInGame()) {
+            sendGameSpectateMessage(player, !gameEntry.onlyGamePlayerSpectate); // 提供游戏信息及观战指令
+        } else { // 没开游戏就加入
+            if (TeamManager.get().shouldAutoJoin()) {
+                TeamManager.get().joinTeam(player);
+                teleportToLobby(player); // 登录自动传到大厅
+            }
         }
     }
 
@@ -694,7 +718,7 @@ public class GameManager extends AbstractGameManager {
             }
             if (this.serverLevel != null) {
                 if (!teamEliminatedBefore) {
-                    ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
+                    ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
                 } else {
                     BattleRoyale.LOGGER.debug("Team has already been eliminated, GameManager skipped sending chat message");
                 }
@@ -964,10 +988,10 @@ public class GameManager extends AbstractGameManager {
             return;
         }
 
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_bot_config", getBotConfigId(), getBotConfigName(getBotConfigId())));
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_gamerule_config", getGameruleConfigId(), getGameruleConfigName(getGameruleConfigId())));
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_spawn_config", getSpawnConfigId(), getSpawnConfigName(getSpawnConfigId())));
-        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_zone_config", getZoneConfigFileName(), GameConfigManager.get().getZoneConfigList().size()));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_bot_config", getBotConfigId(), getBotConfigName(getBotConfigId())));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_gamerule_config", getGameruleConfigId(), getGameruleConfigName(getGameruleConfigId())));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_spawn_config", getSpawnConfigId(), getSpawnConfigName(getSpawnConfigId())));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_zone_config", getZoneConfigFileName(), GameConfigManager.get().getZoneConfigList().size()));
     }
 
     public void sendSelectedConfigsInfo(ServerPlayer player) {
@@ -975,10 +999,10 @@ public class GameManager extends AbstractGameManager {
             return;
         }
 
-        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_bot_config", getBotConfigId(), getBotConfigName(getBotConfigId())));
-        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_gamerule_config", getGameruleConfigId(), getGameruleConfigName(getGameruleConfigId())));
-        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_spawn_config", getSpawnConfigId(), getSpawnConfigName(getSpawnConfigId())));
-        ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.selected_zone_config", getZoneConfigFileName(), GameConfigManager.get().getZoneConfigList().size()));
+        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_bot_config", getBotConfigId(), getBotConfigName(getBotConfigId())));
+        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_gamerule_config", getGameruleConfigId(), getGameruleConfigName(getGameruleConfigId())));
+        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_spawn_config", getSpawnConfigId(), getSpawnConfigName(getSpawnConfigId())));
+        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_zone_config", getZoneConfigFileName(), GameConfigManager.get().getZoneConfigList().size()));
     }
 
     /**

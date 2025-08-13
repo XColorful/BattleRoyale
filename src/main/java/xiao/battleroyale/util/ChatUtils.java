@@ -52,11 +52,11 @@ public class ChatUtils {
     /**
      * 向所有在线玩家发送可翻译的 Minecraft 组件消息。
      * @param serverLevel 当前的 ServerLevel。
-     * @param translatableComponent 要发送的可翻译的 Minecraft Component 对象。
+     * @param component 要发送的可翻译的 Minecraft Component 对象。
      */
-    public static void sendTranslatableMessageToAllPlayers(@NotNull ServerLevel serverLevel, Component translatableComponent) {
+    public static void sendComponentMessageToAllPlayers(@NotNull ServerLevel serverLevel, Component component) {
         for (ServerPlayer player : serverLevel.getServer().getPlayerList().getPlayers()) {
-            player.sendSystemMessage(translatableComponent);
+            player.sendSystemMessage(component);
         }
     }
 
@@ -110,10 +110,10 @@ public class ChatUtils {
     /**
      * 向特定玩家发送可翻译的 Minecraft 组件消息。
      * @param player 接收消息的 ServerPlayer 对象。
-     * @param translatableComponent 要发送的可翻译的 Minecraft Component 对象。
+     * @param component 要发送的可翻译的 Minecraft Component 对象。
      */
-    public static void sendTranslatableMessageToPlayer(@NotNull ServerPlayer player, Component translatableComponent) {
-        player.sendSystemMessage(translatableComponent);
+    public static void sendComponentMessageToPlayer(@NotNull ServerPlayer player, Component component) {
+        player.sendSystemMessage(component);
     }
 
     /**
