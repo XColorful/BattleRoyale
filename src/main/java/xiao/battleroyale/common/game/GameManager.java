@@ -47,8 +47,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static xiao.battleroyale.api.data.io.TempDataTag.*;
-import static xiao.battleroyale.util.CommandUtils.buildSuggestableIntBracketWithColor;
-import static xiao.battleroyale.util.CommandUtils.buildSuggestableIntBracketWithFullColor;
+import static xiao.battleroyale.util.CommandUtils.*;
 
 public class GameManager extends AbstractGameManager {
 
@@ -493,12 +492,9 @@ public class GameManager extends AbstractGameManager {
 
         Component fullMessage = Component.translatable("battleroyale.message.back_to_lobby")
                 .append(Component.literal(" "))
-                .append(Component.translatable("battleroyale.message.teleport")
-                        .withStyle(isWinner ? ChatFormatting.GOLD :  ChatFormatting.WHITE)
-                        .withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, toLobbyCommandString))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(toLobbyCommandString)))
-                        )
-                );
+                .append(buildRunnableText(Component.translatable("battleroyale.message.teleport"),
+                        toLobbyCommandString,
+                        isWinner ? ChatFormatting.GOLD :  ChatFormatting.WHITE));
 
         ChatUtils.sendTranslatableMessageToPlayer(player, fullMessage);
     }
@@ -523,18 +519,21 @@ public class GameManager extends AbstractGameManager {
             }
 
             // 非胜利玩家
-            if (gameEntry.teleportAfterGame) {
-                List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
-                for (GamePlayer gamePlayer : gamePlayerList) {
-                    if (winnerGamePlayers.contains(gamePlayer) || gamePlayer.isEliminated()) {
-                        continue;
-                    }
+            List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
+            for (GamePlayer gamePlayer : gamePlayerList) {
+                if (winnerGamePlayers.contains(gamePlayer)) {
+                    continue;
+                }
 
-                    ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-                    if (player == null) {
-                        continue;
-                    }
+                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                if (player == null) {
+                    continue;
+                }
+
+                if (gameEntry.teleportAfterGame) {
                     teleportToLobby(player); // 非胜利存活玩家直接回大厅
+                } else {
+                    sendLobbyTeleportMessage(player, false);
                 }
             }
         }
@@ -545,14 +544,13 @@ public class GameManager extends AbstractGameManager {
      */
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        this.teleportAfterGame();
-
         GameLootManager.get().stopGame(serverLevel);
         ZoneManager.get().stopGame(serverLevel);
         SpawnManager.get().stopGame(serverLevel);
         GameruleManager.get().stopGame(serverLevel);
         // ↑以上操作均不需要inGame判断
         this.inGame = false;
+        this.teleportAfterGame();
 
         TeamManager.get().stopGame(serverLevel); // 最后处理TeamManager
         this.configPrepared = false;

@@ -63,13 +63,13 @@ public class CommandUtils {
     }
 
     public static MutableComponent buildRunnableText(String displayText, String command, ChatFormatting chatFormatting) {
-        MutableComponent component = Component.empty();
-        component.append(Component.literal(displayText)
-                .setStyle(Style.EMPTY.withColor(chatFormatting)
+        return buildRunnableText(Component.literal(displayText), command, chatFormatting);
+    }
+    public static MutableComponent buildRunnableText(MutableComponent mutableComponent, String command, ChatFormatting chatFormatting) {
+        return Component.empty()
+                .append(mutableComponent.setStyle(Style.EMPTY.withColor(chatFormatting)
                         .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
                         .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command)))));
-
-        return component;
     }
 
     /**
