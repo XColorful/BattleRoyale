@@ -484,7 +484,11 @@ public class GameManager extends AbstractGameManager {
         EffectManager.get().addGameParticle(serverLevel, player.position(), gameEntry.winnerParticleId, 0);
     }
 
-    public void sendGameSpectateMessage(@NotNull ServerPlayer player, boolean allowSpectate) {
+    public void sendGameSpectateMessage(@NotNull ServerPlayer player) {
+        sendGameSpectateMessage(player, !gameEntry.onlyGamePlayerSpectate);
+    }
+
+    private void sendGameSpectateMessage(@NotNull ServerPlayer player, boolean allowSpectate) {
         String spectateCommand = GameCommand.spectateCommand();
 
         Component fullMessage = Component.translatable("battleroyale.message.has_game_in_progress")
