@@ -93,13 +93,11 @@ public class StatsManager extends AbstractGameManager {
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (shouldRecordStats()) {
-            StatsEventHandler.register();
-            startSystemTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            totalPlayers = GameManager.get().getGamePlayers().size();
-            for (GamePlayer gamePlayer : GameManager.get().getStandingGamePlayers()) {
-                gamePlayerStats.put(gamePlayer, new GamePlayerStats(gamePlayer));
-            }
+        StatsEventHandler.register();
+        startSystemTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        totalPlayers = GameManager.get().getGamePlayers().size();
+        for (GamePlayer gamePlayer : GameManager.get().getStandingGamePlayers()) {
+            gamePlayerStats.put(gamePlayer, new GamePlayerStats(gamePlayer));
         }
 
         return isReady();
@@ -165,9 +163,6 @@ public class StatsManager extends AbstractGameManager {
         if (damageSource.getEntity() instanceof LivingEntity attackingEntity) {
             GamePlayer attackingGamePlayer = TeamManager.get().getGamePlayerByUUID(attackingEntity.getUUID());
             if (attackingGamePlayer != null) {
-//                if (damagedGamePlayer.getGameTeamId() != attackingGamePlayer.getGameTeamId()) { // 友伤不计入伤害量
-//                    attackingGamePlayer.addDamageDealt(damageAmount);
-//                }
                 return;
             }
         }
@@ -211,43 +206,29 @@ public class StatsManager extends AbstractGameManager {
 
     }
 
+    /**
+     * Gamerule
+     */
     public void onRecordIntGamerule(Map<String, Integer> intGamerule) {
-        if (!shouldRecordStats()) {
-            return;
-        }
-
         updateRecordMap(gameruleStats.intRecord, intGamerule);
     }
     public void onRecordBoolGamerule(Map<String, Boolean> boolGamerule) {
-        if (!shouldRecordStats()) {
-            return;
-        }
-
         updateBoolRecordMap(gameruleStats.boolRecord, boolGamerule);
     }
     public void onRecordDoubleGamerule(Map<String, Double> doubleGamerule) {
-        if (!shouldRecordStats()) {
-            return;
-        }
-
         updateRecordMap(gameruleStats.doubleRecord, doubleGamerule);
     }
     public void onRecordStringGamerule(Map<String, String> stringGamerule) {
-        if (!shouldRecordStats()) {
-            return;
-        }
-
         updateRecordMap(gameruleStats.stringRecord, stringGamerule);
     }
 
+    /**
+     * Spawn
+     */
     private SimpleRecord getOrCreateSpawnRecord(String key) {
         return spawnStats.computeIfAbsent(key, k -> new SimpleRecord());
     }
     public void onRecordSpawnInt(String key, Map<String, Integer> spawnInt) {
-        if (!shouldRecordStats()) {
-            return;
-        }
-
         if (spawnInt != null) {
             SimpleRecord record = getOrCreateSpawnRecord(key);
             updateRecordMap(record.intRecord, spawnInt);
@@ -256,10 +237,6 @@ public class StatsManager extends AbstractGameManager {
         }
     }
     public void onRecordSpawnBool(String key, Map<String, Boolean> spawnBool) {
-        if (!shouldRecordStats()) {
-            return;
-        }
-
         if (spawnBool != null) {
             SimpleRecord record = getOrCreateSpawnRecord(key);
             updateRecordMap(record.boolRecord, spawnBool);
@@ -268,10 +245,6 @@ public class StatsManager extends AbstractGameManager {
         }
     }
     public void onRecordSpawnDouble(String key, Map<String, Double> spawnDouble) {
-        if (!shouldRecordStats()) {
-            return;
-        }
-
         if (spawnDouble != null) {
             SimpleRecord record = getOrCreateSpawnRecord(key);
             updateRecordMap(record.doubleRecord, spawnDouble);
@@ -280,10 +253,6 @@ public class StatsManager extends AbstractGameManager {
         }
     }
     public void onRecordSpawnString(String key, Map<String, String> spawnString) {
-        if (!shouldRecordStats()) {
-            return;
-        }
-
         if (spawnString != null) {
             SimpleRecord record = getOrCreateSpawnRecord(key);
             updateRecordMap(record.stringRecord, spawnString);
@@ -292,14 +261,13 @@ public class StatsManager extends AbstractGameManager {
         }
     }
 
+    /**
+     * Zone
+     */
     private SimpleRecord getOrCreateZoneRecord(Integer key) {
         return zoneStats.computeIfAbsent(key, k -> new SimpleRecord());
     }
     public void onRecordZoneInt(int zoneId, Map<String, Integer> zoneIntWriter) {
-        if (!shouldRecordStats()) {
-            return;
-        }
-
         if (zoneIntWriter != null) {
             SimpleRecord record = getOrCreateZoneRecord(zoneId);
             updateRecordMap(record.intRecord, zoneIntWriter);
@@ -308,9 +276,6 @@ public class StatsManager extends AbstractGameManager {
         }
     }
     public void onRecordZoneBool(int zoneId, Map<String, Boolean> zoneBool) {
-        if (!shouldRecordStats()) {
-            return;
-        }
         if (zoneBool != null) {
             SimpleRecord record = getOrCreateZoneRecord(zoneId);
             updateBoolRecordMap(record.boolRecord, zoneBool);
@@ -319,10 +284,6 @@ public class StatsManager extends AbstractGameManager {
         }
     }
     public void onRecordZoneDouble(int zoneId, Map<String, Double> zoneDouble) {
-        if (!shouldRecordStats()) {
-            return;
-        }
-
         if (zoneDouble != null) {
             SimpleRecord record = getOrCreateZoneRecord(zoneId);
             updateRecordMap(record.doubleRecord, zoneDouble);
@@ -331,10 +292,6 @@ public class StatsManager extends AbstractGameManager {
         }
     }
     public void onRecordZoneString(int zoneId, Map<String, String> zoneString) {
-        if (!shouldRecordStats()) {
-            return;
-        }
-
         if (zoneString != null) {
             SimpleRecord record = getOrCreateZoneRecord(zoneId);
             updateRecordMap(record.stringRecord, zoneString);
