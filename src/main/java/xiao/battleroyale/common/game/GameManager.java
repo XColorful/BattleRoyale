@@ -18,6 +18,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.command.sub.GameCommand;
+import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
@@ -39,15 +40,15 @@ import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.event.game.*;
-import xiao.battleroyale.util.ChatUtils;
-import xiao.battleroyale.util.ColorUtils;
-import xiao.battleroyale.util.StringUtils;
+import xiao.battleroyale.util.*;
 
 import java.util.*;
 import java.util.List;
 import java.util.function.Supplier;
 
 import static xiao.battleroyale.api.data.io.TempDataTag.*;
+import static xiao.battleroyale.util.CommandUtils.buildSuggestableIntBracketWithColor;
+import static xiao.battleroyale.util.CommandUtils.buildSuggestableIntBracketWithFullColor;
 
 public class GameManager extends AbstractGameManager {
 
@@ -372,7 +373,7 @@ public class GameManager extends AbstractGameManager {
         }
 
         checkAndUpdateInvalidGamePlayer(this.serverLevel);
-        if (TeamManager.get().getStandingTeamCount() <= 1) { // 胜利条件
+        if (TeamManager.get().getStandingTeamCount() <= 1) { // 胜利条件，暂时硬编码
             BattleRoyale.LOGGER.debug("GameManager: standingTeam <= 1, finishGame with winner");
             finishGame(true);
         }
@@ -402,17 +403,53 @@ public class GameManager extends AbstractGameManager {
     }
 
     /**
-     * 结束游戏，使所有未淘汰玩家均胜利
+     * 结束游戏，所有未淘汰队伍均胜利
      */
     public void finishGame(boolean hasWinner) {
         if (hasWinner) {
-            for (GamePlayer gamePlayer : getStandingGamePlayers()) {
-                winnerGamePlayers.add(gamePlayer);
-                winnerGameTeams.add(gamePlayer.getTeam());
-                notifyWinner(gamePlayer);
+            for (GameTeam team : getGameTeams()) {
+                if (!team.isTeamEliminated()) {
+                    winnerGameTeams.add(team);
+                }
+            }
+            for (GameTeam team : winnerGameTeams) {
+                for (GamePlayer member : team.getTeamMembers()) {
+                    winnerGamePlayers.add(member);
+                    notifyWinner(member);
+                }
             }
         }
         stopGame(this.serverLevel);
+        if (hasWinner) {
+            MutableComponent winnerComponent = Component.empty()
+                    .append(Component.translatable("battleroyale.message.game_time", gameTime, new GameUtils.GameTimeFormat(gameTime).toFormattedString(true)));
+            for (GameTeam team : winnerGameTeams) {
+                // 队伍ID
+                TextColor color = TextColor.fromRgb(ColorUtils.parseColorToInt(team.getGameTeamColor()));
+                MutableComponent teamComponent = Component.empty()
+                        .append(buildSuggestableIntBracketWithColor(team.getGameTeamId(), TeamCommand.requestTeamCommand(team.getGameTeamId()), color));
+                // 队长
+                GamePlayer leader = team.getLeader();
+                teamComponent.append(Component.literal(" "))
+                        .append(buildSuggestableIntBracketWithFullColor(leader.getGameSingleId(), TeamCommand.requestPlayerCommand(leader.getPlayerName()), color))
+                        .append(Component.literal(leader.getPlayerName()).withStyle(leader.isEliminated() ? ChatFormatting.GRAY : ChatFormatting.GOLD));
+                // 队员
+                for (GamePlayer member : team.getTeamMembers()) {
+                    if (member.getGameSingleId() == leader.getGameSingleId()) {
+                        continue;
+                    }
+                    teamComponent.append(Component.literal(" "))
+                            .append(buildSuggestableIntBracketWithFullColor(member.getGameSingleId(), TeamCommand.requestPlayerCommand(member.getPlayerName()), color))
+                            .append(Component.literal(member.getPlayerName()).withStyle(member.isEliminated() ? ChatFormatting.GRAY : ChatFormatting.GOLD));
+                }
+                // 添加到消息
+                winnerComponent.append(Component.literal("\n")
+                        .append(teamComponent));
+            }
+            if (serverLevel != null) {
+                ChatUtils.sendMessageToAllPlayers(serverLevel, winnerComponent);
+            }
+        }
     }
 
     /**
@@ -587,8 +624,8 @@ public class GameManager extends AbstractGameManager {
         if (!hasAliveMember) { // 没有存活队友就判定为无法救援，直接判死亡
             BattleRoyale.LOGGER.debug("GamePlayer {} is down and has no alive member", gamePlayer.getPlayerName());
             // PlayerRevive的kill会触发死亡事件
-            onPlayerDeath(gamePlayer); // 先将GamePlayer设为eliminated，可能触发队伍全灭或者游戏结束
-            // 再逐个处理倒地的，如果当前处理的那名GamePlayer直接死亡了，队友还在倒地的就直接挂掉
+            // 先将GamePlayer设为eliminated，之后死亡事件能检测到玩家已经是eliminated，跳过处理
+            // 先淘汰队友，后淘汰自己，否则游戏提前结束，队友GamePlayer不为eliminated
             for (GamePlayer member : gameTeam.getTeamMembers()) {
                 if (!member.isEliminated()) {
                     continue;
@@ -600,10 +637,12 @@ public class GameManager extends AbstractGameManager {
                     notifyTeamChange(gamePlayer.getGameTeamId());
                 }
             }
+            // 先GamePlayer的eliminated操作再kill玩家
+            onPlayerDeath(gamePlayer);
             if (livingEntity instanceof Player player) {
                 if (playerRevive.isBleeding(player)) {
                     BattleRoyale.LOGGER.debug("Detected PlayerRevive.isBleeding, force kill");
-                    playerRevive.kill(player); // 之后死亡事件能检测到玩家已经是eliminated，跳过处理
+                    playerRevive.kill(player);
                     notifyTeamChange(gamePlayer.getGameTeamId());
                     return;
                 }

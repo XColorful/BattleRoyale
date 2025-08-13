@@ -215,6 +215,7 @@
   "battleroyale.message.back_to_lobby": "返回至大厅",
   "battleroyale.message.teleport": "[传送]",
   "battleroyale.message.has_won_the_game": "取得了胜利",
+  "battleroyale.message.game_time": "游戏时长: %s(%s)",
 
   "battleroyale.message.add_player_firework": "为玩家 %s 添加了烟花追踪器",
   "battleroyale.message.add_fixed_firework": "在 %s, %s, %s 添加烟花追踪器",

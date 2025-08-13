@@ -216,6 +216,7 @@
   "battleroyale.message.back_to_lobby": "Back to lobby",
   "battleroyale.message.teleport": "[Teleport]",
   "battleroyale.message.has_won_the_game": "has won the game",
+  "battleroyale.message.game_time": "Game time: %s(%s)",
 
   "battleroyale.message.add_player_firework": "Add firework tracker to player %s",
   "battleroyale.message.add_fixed_firework": "Add firework tracker at %s, %s, %s",
