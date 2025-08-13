@@ -18,9 +18,11 @@ public class SendUtils {
 
     public static <T extends IMessage<?>> void sendMessageToGamePlayers(List<GamePlayer> gamePlayers, T message, @NotNull ServerLevel serverLevel) {
         for (GamePlayer gamePlayer : gamePlayers) {
-            if (!gamePlayer.isActiveEntity()) {
-                continue;
-            }
+            // 只更新StandingGamePlayer，其他GamePlayer状态不会更新
+            // 发送消息不依赖GameManager的运行时标记
+//            if (!gamePlayer.isActiveEntity()) {
+//                continue;
+//            }
             ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
             if (player == null) {
                 continue;
@@ -31,9 +33,9 @@ public class SendUtils {
 
     public static <T extends IMessage<?>> void sendMessageToTeam(GameTeam gameTeam, T message, @NotNull ServerLevel serverLevel) {
         for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) {
-            if (!gamePlayer.isActiveEntity()) {
-                continue;
-            }
+//            if (!gamePlayer.isActiveEntity()) {
+//                continue;
+//            }
             ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
             if (player == null) {
                 continue;

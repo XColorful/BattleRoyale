@@ -534,6 +534,9 @@ public class GameManager extends AbstractGameManager {
     public void onPlayerLoggedIn(ServerPlayer player) {
         GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(player.getUUID());
         if (gamePlayer != null) {
+            if (serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) != null) { // 不一定在大逃杀游戏的维度
+                gamePlayer.setActiveEntity(true);
+            }
             if (GameManager.get().isInGame() && gamePlayer.isEliminated()) {
                 notifyTeamChange(gamePlayer.getGameTeamId());
                 ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
@@ -594,14 +597,14 @@ public class GameManager extends AbstractGameManager {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(member.getPlayerUUID());
                 if (player != null && playerRevive.isBleeding(player)) {
                     playerRevive.kill(player);
-                    GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
+                    notifyTeamChange(gamePlayer.getGameTeamId());
                 }
             }
             if (livingEntity instanceof Player player) {
                 if (playerRevive.isBleeding(player)) {
                     BattleRoyale.LOGGER.debug("Detected PlayerRevive.isBleeding, force kill");
                     playerRevive.kill(player); // 之后死亡事件能检测到玩家已经是eliminated，跳过处理
-                    GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
+                    notifyTeamChange(gamePlayer.getGameTeamId());
                     return;
                 }
             }
@@ -619,6 +622,7 @@ public class GameManager extends AbstractGameManager {
 
         if (!gamePlayer.isAlive()) { // 倒地，但是不为存活状态
             onPlayerDeath(gamePlayer);
+            notifyTeamChange(gamePlayer.getGameTeamId());
         }
 
         // 没检测到PlayerRevive就认为是不死图腾救了
