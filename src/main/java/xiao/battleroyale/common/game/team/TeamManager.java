@@ -480,6 +480,7 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
 
+        boolean teamEliminatedBefore = gamePlayer.getTeam().isTeamEliminated();
         if (teamData.eliminatePlayer(player.getUUID())) {
             ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
             BattleRoyale.LOGGER.info("Force eliminated player {} (UUID: {})", player.getName().getString(), player.getUUID());
@@ -494,7 +495,11 @@ public class TeamManager extends AbstractGameManager {
         GameTeam gameTeam = gamePlayer.getTeam();
         if (gameTeam.isTeamEliminated()) {
             if (serverLevel != null) {
-                ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
+                if (!teamEliminatedBefore) {
+                    ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
+                } else {
+                    BattleRoyale.LOGGER.debug("Team has already been eliminated, TeamManager skipped sending chat message");
+                }
             }
             BattleRoyale.LOGGER.info("Team {} has been eliminated for no standing player", gameTeam.getGameTeamId());
         }

@@ -594,12 +594,14 @@ public class GameManager extends AbstractGameManager {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(member.getPlayerUUID());
                 if (player != null && playerRevive.isBleeding(player)) {
                     playerRevive.kill(player);
+                    GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
                 }
             }
             if (livingEntity instanceof Player player) {
                 if (playerRevive.isBleeding(player)) {
                     BattleRoyale.LOGGER.debug("Detected PlayerRevive.isBleeding, force kill");
                     playerRevive.kill(player); // 之后死亡事件能检测到玩家已经是eliminated，跳过处理
+                    GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
                     return;
                 }
             }
@@ -615,26 +617,46 @@ public class GameManager extends AbstractGameManager {
             }
         }
 
+        if (!gamePlayer.isAlive()) { // 倒地，但是不为存活状态
+            onPlayerDeath(gamePlayer);
+        }
+
         // 没检测到PlayerRevive就认为是不死图腾救了
         // 实际貌似不会触发log，不清楚不死图腾原理
         // 只能认为不死图腾的功能不是自救，而是阻止倒地
         gamePlayer.setAlive(true); // 其实应该不需要设置
         BattleRoyale.LOGGER.debug("Not detected PlayerRevive, should be revived by Totem of Undying");
     }
+
+    /**
+     * 调用即视为gamePlayer被救起
+     */
+    public void onPlayerRevived(@NotNull GamePlayer gamePlayer) {
+        if (!hasStandingGamePlayer(gamePlayer.getPlayerUUID()) || gamePlayer.isEliminated()) { // 该GamePlayer已经不是未被淘汰玩家
+            BattleRoyale.LOGGER.debug("GamePlayer {} is not a standing game player, skipped revive", gamePlayer.getPlayerName());
+            return;
+        }
+        gamePlayer.setAlive(true);
+        BattleRoyale.LOGGER.info("GamePlayer {} has revived, singleId:{}", gamePlayer.getPlayerName(), gamePlayer.getGameSingleId());
+    }
+
     /**
      * 调用即视为gamePlayer死亡
      */
     public void onPlayerDeath(@NotNull GamePlayer gamePlayer) {
-        gamePlayer.setAlive(false); // GamePlayer内部会自动让GameTeam更新eliminated
-        if (gamePlayer.isEliminated()) {
-            TeamManager.get().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer信息
-        }
+        boolean teamEliminatedBefore = gamePlayer.getTeam().isTeamEliminated();
+        gamePlayer.setEliminated(true); // GamePlayer内部会自动让GameTeam更新eliminated
+        TeamManager.get().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer信息
 
         GameTeam gameTeam = gamePlayer.getTeam();
         if (gameTeam.isTeamEliminated()) {
             BattleRoyale.LOGGER.info("Team {} has been eliminated", gameTeam.getGameTeamId());
             if (this.serverLevel != null) {
-                ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
+                if (!teamEliminatedBefore) {
+                    ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
+                } else {
+                    BattleRoyale.LOGGER.debug("Team has already been eliminated, GameManager skipped sending chat message");
+                }
             }
             checkIfGameShouldEnd();
         }
@@ -826,6 +848,7 @@ public class GameManager extends AbstractGameManager {
         DamageEventHandler.register();
         LoopEventHandler.register();
         PlayerDeathEventHandler.register();
+        BleedingHandler.get().clear();
     }
     private void unregisterGameEvent() {
         DamageEventHandler.unregister();
@@ -833,6 +856,7 @@ public class GameManager extends AbstractGameManager {
         PlayerDeathEventHandler.unregister();
         LogEventHandler.unregister();
         // ServerEventHandler.unregister(); // 不需要解除注册
+        BleedingHandler.unregister();
     }
 
     /**
