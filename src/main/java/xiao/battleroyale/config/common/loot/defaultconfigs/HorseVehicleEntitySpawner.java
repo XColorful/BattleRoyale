@@ -36,7 +36,7 @@ public class HorseVehicleEntitySpawner {
         RandomEntry randomEntry = new RandomEntry(0.8,
                 horseTypeWeight);
 
-        LootConfig lootConfig = new LootConfig(0, "", "#FFFFFFAA",
+        LootConfig lootConfig = new LootConfig(0, "Horse Vehicle", "#FFFFFFAA",
                 randomEntry);
 
         return lootConfig.toJson();
