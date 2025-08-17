@@ -42,7 +42,8 @@ public class ZoneRenderer {
         registered = false;
     }
 
-    public static final RenderType ZONE_RENDER_TYPE = CustomRenderType.SolidColorZone;
+    public static final RenderType TRANSLUCENT_ZONE = CustomRenderType.SolidTranslucentColor;
+    public static final RenderType OPAQUE_ZONE = CustomRenderType.SolidOpaqueColor;
     private static int CIRCLE_SEGMENTS = 64;
     private static int ELLIPSE_SEGMENTS = 64;
     public static final float POINTING_POLYGON_ANGLE = (float) (Math.PI / 2.0);
@@ -87,12 +88,13 @@ public class ZoneRenderer {
                 // 正角度为顺时针旋转区域
                 poseStack.mulPose(Axis.YP.rotationDegrees((float) -zoneData.rotateDegree));
 
-                VertexConsumer consumer = bufferSource.getBuffer(ZONE_RENDER_TYPE);
-
                 float r = zoneData.r;
                 float g = zoneData.g;
                 float b = zoneData.b;
                 float a = zoneData.a;
+
+                // 对光影没用，对原版云有用
+                VertexConsumer consumer = bufferSource.getBuffer(a < 0.999F ? TRANSLUCENT_ZONE : OPAQUE_ZONE);
 
                 switch (zoneData.shapeType) {
                     // 2D shape

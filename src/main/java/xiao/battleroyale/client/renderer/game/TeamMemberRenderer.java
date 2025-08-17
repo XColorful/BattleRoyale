@@ -47,7 +47,7 @@ public class TeamMemberRenderer {
         registered = false;
     }
 
-    private static final RenderType TEAM_MARKER_RENDER_TYPE = CustomRenderType.SolidColorZone;
+    private static final RenderType TEAM_MARKER_RENDER_TYPE = CustomRenderType.SolidTranslucentColor;
 
     private static boolean enableTeamZone = true;
     public static void setEnableTeamZone(boolean bool) { enableTeamZone = bool; }
