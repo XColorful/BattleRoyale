@@ -149,6 +149,15 @@ public class SpawnManager extends AbstractGameManager {
         gameSpawner.tick(gameTime, GameManager.get().getGameTeams());
     }
 
+    public void healPlayer(@NotNull ServerPlayer player) {
+        if (PlayerRevive.get().isBleeding(player)) {
+            PlayerRevive.get().revive(player);
+        }
+        player.removeAllEffects();
+        player.heal(player.getMaxHealth()); // heal会触发事件
+        player.getFoodData().setFoodLevel(20);
+    }
+
     /**
      * 只负责帮 GameManager 传送至大厅，不负责检查
      */
@@ -157,12 +166,7 @@ public class SpawnManager extends AbstractGameManager {
             return;
         }
         if (lobbyHeal) {
-            if (PlayerRevive.get().isBleeding(player)) {
-                PlayerRevive.get().revive(player);
-            }
-            player.removeAllEffects();
-            player.heal(player.getMaxHealth()); // heal会触发事件
-            player.getFoodData().setFoodLevel(20);
+            healPlayer(player);
         }
         if (changeGamemode) {
             player.setGameMode(GameruleManager.get().getGameMode());

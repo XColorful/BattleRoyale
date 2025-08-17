@@ -91,6 +91,7 @@ public class NBTUtils {
             memberTag.putFloat(GameTeamTag.MEMBER_HEALTH, memberInfo.health);
             memberTag.putInt(GameTeamTag.MEMBER_BOOST, memberInfo.boost);
             memberTag.putUUID(GameTeamTag.MEMBER_UUID, memberInfo.uuid);
+            memberTag.putBoolean(GameTeamTag.MEMBER_ALIVE, memberInfo.alive);
             teamMemberTag.put(String.valueOf(memberInfo.playerId), memberTag);
         }
 

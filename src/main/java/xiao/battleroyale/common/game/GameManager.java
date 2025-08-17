@@ -48,6 +48,7 @@ import java.util.function.Supplier;
 
 import static xiao.battleroyale.api.data.io.TempDataTag.*;
 import static xiao.battleroyale.util.CommandUtils.*;
+import static xiao.battleroyale.util.GameUtils.buildGamePlayerText;
 
 public class GameManager extends AbstractGameManager {
 
@@ -464,8 +465,7 @@ public class GameManager extends AbstractGameManager {
             return;
         }
         int teamId = gamePlayer.getGameTeamId();
-        String colorString = gamePlayer.getGameTeamColor();
-        int colorRGB = ColorUtils.parseColorFromString(colorString).getRGB();
+        int colorRGB = ColorUtils.parseColorToInt(gamePlayer.getGameTeamColor()) & 0xFFFFFF;
         TextColor textColor = TextColor.fromRgb(colorRGB);
 
         Component winnerTitle = Component.translatable("battleroyale.message.winner_message")
@@ -664,6 +664,7 @@ public class GameManager extends AbstractGameManager {
             if (playerRevive.isBleeding(player)) {
                 gamePlayer.setAlive(false);
                 playerRevive.addBleedingPlayer(player);
+                sendDownMessage(gamePlayer);
                 return;
             }
         }
@@ -690,6 +691,7 @@ public class GameManager extends AbstractGameManager {
             return;
         }
         gamePlayer.setAlive(true);
+        sendReviveMessage(gamePlayer);
         BattleRoyale.LOGGER.info("GamePlayer {} has revived, singleId:{}", gamePlayer.getPlayerName(), gamePlayer.getGameSingleId());
     }
 
@@ -698,11 +700,12 @@ public class GameManager extends AbstractGameManager {
      */
     public void onPlayerDeath(@NotNull GamePlayer gamePlayer) {
         boolean teamEliminatedBefore = gamePlayer.getTeam().isTeamEliminated();
-        boolean eliminatedBefore = gamePlayer.isEliminated();
+        boolean playerEliminatedBefore = gamePlayer.isEliminated();
         gamePlayer.setEliminated(true); // GamePlayer内部会自动让GameTeam更新eliminated
         TeamManager.get().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer信息
         // 死亡事件会跳过非standingPlayer，放心kill
-        if (!eliminatedBefore) { // 第一次淘汰才尝试kill，淘汰后被打倒的不管
+        if (!playerEliminatedBefore) { // 第一次淘汰才尝试kill，淘汰后被打倒的不管
+            sendEliminateMessage(gamePlayer);
             PlayerRevive playerRevive = PlayerRevive.get();
             ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
             if (player != null && playerRevive.isBleeding(player)) {
@@ -724,13 +727,44 @@ public class GameManager extends AbstractGameManager {
                 if (!teamEliminatedBefore) {
                     ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
                 } else {
-                    BattleRoyale.LOGGER.debug("Team has already been eliminated, GameManager skipped sending chat message");
+                    BattleRoyale.LOGGER.debug("Team {} has already been eliminated, GameManager skipped sending chat message", gameTeam.getGameTeamId());
                 }
             }
             checkIfGameShouldEnd();
         }
         notifyTeamChange(gamePlayer.getGameTeamId());
         notifyAliveChange();
+    }
+
+    public void sendDownMessage(@NotNull GamePlayer gamePlayer) {
+        if (serverLevel != null) {
+            MutableComponent component = buildGamePlayerText(gamePlayer, ChatFormatting.GRAY)
+                    .append(Component.literal(" "))
+                    .append(Component.translatable("battleroyale.message.is_downed"));
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, component);
+        } else {
+            BattleRoyale.LOGGER.warn("GameManager.serverLevel is null, failed to send GamePlayer {} down", gamePlayer.getPlayerName());
+        }
+    }
+    public void sendReviveMessage(@NotNull GamePlayer gamePlayer) {
+        if (serverLevel != null) {
+            MutableComponent component = buildGamePlayerText(gamePlayer, ChatFormatting.GREEN)
+                    .append(Component.literal(" "))
+                    .append(Component.translatable("battleroyale.message.is_revived"));
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, component);
+        } else {
+            BattleRoyale.LOGGER.warn("GameManager.serverLevel is null, failed to send GamePlayer {} revive", gamePlayer.getPlayerName());
+        }
+    }
+    public void sendEliminateMessage(@NotNull GamePlayer gamePlayer) {
+        if (serverLevel != null) {
+            MutableComponent component = buildGamePlayerText(gamePlayer, ChatFormatting.RED)
+                    .append(Component.literal(" "))
+                    .append(Component.translatable("battleroyale.message.is_eliminated"));
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, component);
+        } else {
+            BattleRoyale.LOGGER.warn("GameManager.serverLevel is null, failed to send GamePlayer {} eliminate", gamePlayer.getPlayerName());
+        }
     }
 
     public void onServerStopping() {
@@ -925,6 +959,24 @@ public class GameManager extends AbstractGameManager {
         registerGameEvent();
         TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(globalCenterOffset));
         TempDataManager.get().startGame(serverLevel); // 立即写入备份
+        if (this.gameEntry.healAllAtStart) {
+            healGamePlayers();
+        }
+    }
+    private void healGamePlayers() {
+        if (serverLevel == null) {
+            BattleRoyale.LOGGER.debug("GameManager.serverLevel is null, failed to heal GamePlayers");
+            return;
+        }
+        SpawnManager spawnManager = SpawnManager.get();
+        List<GamePlayer> gamePlayers = new ArrayList<>(getGamePlayers());
+        for (GamePlayer gamePlayer : gamePlayers) {
+            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+            if (player != null) {
+                spawnManager.healPlayer(player);
+                notifyTeamChange(gamePlayer.getGameTeamId());
+            }
+        }
     }
     private void registerGameEvent() {
         DamageEventHandler.register();

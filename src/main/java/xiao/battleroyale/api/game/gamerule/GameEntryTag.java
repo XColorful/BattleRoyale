@@ -11,6 +11,7 @@ public class GameEntryTag extends ConfigEntryTag {
     public static final String MAX_PLAYER_INVALID_TIME = "maxPlayerInvalidTime";
     public static final String MAX_BOT_INVALID_TIME = "maxBotInvalidTime";
     public static final String REMOVE_INVALID_TEAM = "removeInvalidTeam";
+    public static final String HEAL_ALL_AT_START = "healAllAtStart";
     public static final String FRIENDLY_FIRE = "friendlyFire";
     public static final String DOWN_DAMAGE_LIST = "downDamage";
     public static final String DOWN_DAMAGE_FREQUENCY = "downDamageFrequency";

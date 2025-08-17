@@ -49,6 +49,7 @@ public class TeamInfoRenderer {
     private static long OFFLINE_TIME_LIMIT = ClientGameDataManager.TEAM_EXPIRE_TICK / 2;
     public static void setOfflineTimeLimit(int time) { OFFLINE_TIME_LIMIT = time; }
     public static int OFFLINE_COLOR = ColorUtils.parseColorToInt("#585858FF");
+    public static int BLEEDING_COLOR = ColorUtils.parseColorToInt("#FF0000FF");
     public static int HEALTH_BACKGROUND_COLOR = ColorUtils.parseColorToInt("#777777FF");
 
     private static double xRatio = -0.9;
@@ -106,8 +107,10 @@ public class TeamInfoRenderer {
              */
             guiGraphics.drawString(fontRenderer, playerId, posX, currentY, idColor, false); // false表示不带阴影
             guiGraphics.drawString(fontRenderer, playerName, posX + fontRenderer.width(playerId) + 1, currentY, nameColor, true);
+            boolean alive = memberInfo.alive;
             int healthStartY = currentY + HEALTH_OFFSET; // 血条左上角
-            renderHealthBar(health, posX, healthStartY, guiGraphics, offline ? OFFLINE_COLOR : getHealthColor(health));
+            renderHealthBar(health, posX, healthStartY, guiGraphics,
+                    offline ? OFFLINE_COLOR : (alive ? getHealthColor(health) : BLEEDING_COLOR) );
             int boostStartY = currentY + BOOST_OFFSET;
             renderBoostBar(boost, posX, boostStartY, guiGraphics);
             currentY += LINE_OFFSET;
@@ -117,7 +120,7 @@ public class TeamInfoRenderer {
     private void renderHealthBar(double health, int posX, int posY, GuiGraphics guiGraphics, int healthColor) {
         int healthEndX = posX + HEALTH_BAR_LENGTH;
         guiGraphics.fill(posX, posY, healthEndX, posY + HEALTH_BAR_HEIGHT, HEALTH_BACKGROUND_COLOR);
-        if (health > 0) {
+        if (health > 0) { // 小于0为特殊标记，不用渲染血条
             healthEndX = (int) (posX + HEALTH_BAR_LENGTH * (health / 20F));
             guiGraphics.fill(posX, posY, healthEndX, posY + HEALTH_BAR_HEIGHT, healthColor);
         }
