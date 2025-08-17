@@ -137,7 +137,8 @@ public class TeamManager extends AbstractGameManager {
     @Override
     public boolean startGame(ServerLevel serverLevel) {
         BattleRoyale.LOGGER.info("Attempt to start Game");
-        if (GameManager.get().isInGame() || !isReady()) {
+        GameManager gameManager = GameManager.get();
+        if (gameManager.isInGame() || !isReady()) {
             return false;
         }
 
@@ -147,6 +148,9 @@ public class TeamManager extends AbstractGameManager {
         }
         // TODO 处理人机填充，创建MC原版队伍
         teamData.startGame();
+        for (GameTeam gameTeam : getGameTeamsList()) {
+            gameManager.notifyTeamChange(gameTeam.getGameTeamId());
+        }
         return true;
     }
 
