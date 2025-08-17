@@ -481,6 +481,7 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
 
+        boolean playerEliminatedBefore = gamePlayer.isEliminated();
         boolean teamEliminatedBefore = gamePlayer.getTeam().isTeamEliminated();
         if (teamData.eliminatePlayer(player.getUUID())) {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
@@ -489,7 +490,11 @@ public class TeamManager extends AbstractGameManager {
 
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel != null) {
-            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.forced_elimination", player.getName()).withStyle(ChatFormatting.RED));
+            if (!playerEliminatedBefore) {
+                ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.forced_elimination", player.getName()).withStyle(ChatFormatting.RED));
+            } else {
+                BattleRoyale.LOGGER.debug("GamePlayer {} has already been eliminated, TeamManager skipped sending chat message", gamePlayer.getPlayerName());
+            }
         }
         BattleRoyale.LOGGER.info("Force removed player {} (UUID: {})", player.getName().getString(), player.getUUID());
 
@@ -499,7 +504,7 @@ public class TeamManager extends AbstractGameManager {
                 if (!teamEliminatedBefore) {
                     ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
                 } else {
-                    BattleRoyale.LOGGER.debug("Team has already been eliminated, TeamManager skipped sending chat message");
+                    BattleRoyale.LOGGER.debug("Team {} has already been eliminated, TeamManager skipped sending chat message", gameTeam.getGameTeamId());
                 }
             }
             BattleRoyale.LOGGER.info("Team {} has been eliminated for no standing player", gameTeam.getGameTeamId());

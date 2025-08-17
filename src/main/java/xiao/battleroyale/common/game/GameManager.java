@@ -724,7 +724,7 @@ public class GameManager extends AbstractGameManager {
                 if (!teamEliminatedBefore) {
                     ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.team_eliminated", gameTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
                 } else {
-                    BattleRoyale.LOGGER.debug("Team has already been eliminated, GameManager skipped sending chat message");
+                    BattleRoyale.LOGGER.debug("Team {} has already been eliminated, GameManager skipped sending chat message", gameTeam.getGameTeamId());
                 }
             }
             checkIfGameShouldEnd();
