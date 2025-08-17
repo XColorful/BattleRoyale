@@ -50,7 +50,7 @@ public class PlayerModeStorage implements IRuleStorage {
             }
             UUID playerUUID = gamePlayer.getPlayerUUID();
             try {
-                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);
+                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID); // 自动忽略非玩家GamePlayer（不需要切换模式）
                 GameType playerGameMode = player != null ? player.gameMode.getGameModeForPlayer() : this.gameMode;
                 playerModeBackup.put(playerUUID, playerGameMode);
                 BattleRoyale.LOGGER.info("Backup up gamemode {} for player {}", playerGameMode.getName(), gamePlayer.getPlayerName());
