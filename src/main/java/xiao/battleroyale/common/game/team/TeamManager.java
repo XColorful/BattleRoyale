@@ -491,6 +491,7 @@ public class TeamManager extends AbstractGameManager {
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel != null) {
             if (!playerEliminatedBefore) {
+                GameManager.get().sendEliminateMessage(gamePlayer);
                 ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.forced_elimination", player.getName()).withStyle(ChatFormatting.RED));
             } else {
                 BattleRoyale.LOGGER.debug("GamePlayer {} has already been eliminated, TeamManager skipped sending chat message", gamePlayer.getPlayerName());

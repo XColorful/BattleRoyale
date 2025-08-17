@@ -219,6 +219,9 @@
   "battleroyale.message.has_game_in_progress": "There is currently a BattleRoyale game going on:",
   "battleroyale.message.spectate": "[Spectate]",
   "battleroyale.message.player_is_spectating": "Player %s is spectating %s",
+  "battleroyale.message.is_downed": "is down",
+  "battleroyale.message.is_revived": "is revived",
+  "battleroyale.message.is_eliminated": "was eliminated",
 
   "battleroyale.message.add_player_firework": "Add firework tracker to player %s",
   "battleroyale.message.add_fixed_firework": "Add firework tracker at %s, %s, %s",

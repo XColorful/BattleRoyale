@@ -177,6 +177,20 @@ public class CommandUtils {
                                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command)))));
     }
 
+    public static MutableComponent buildIntBracketWithColor(int number, TextColor textColor) {
+        return Component.empty()
+                .append(Component.literal("["))
+                .append(Component.literal(String.valueOf(number))
+                        .setStyle(Style.EMPTY.withColor(textColor)))
+                .append(Component.literal("]"));
+    }
+    public static MutableComponent buildIntBracketWithFullColor(int number, TextColor textColor) {
+        return Component.empty()
+                .append(Component.literal(String.format("[%d]", number)))
+                .setStyle(Style.EMPTY
+                        .withColor(textColor));
+    }
+
     /**
      * Total:int
      * key1:value1
