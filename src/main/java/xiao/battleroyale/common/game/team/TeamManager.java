@@ -148,9 +148,6 @@ public class TeamManager extends AbstractGameManager {
         }
         // TODO 处理人机填充，创建MC原版队伍
         teamData.startGame();
-        for (GameTeam gameTeam : getGameTeamsList()) {
-            gameManager.notifyTeamChange(gameTeam.getGameTeamId());
-        }
         return true;
     }
 

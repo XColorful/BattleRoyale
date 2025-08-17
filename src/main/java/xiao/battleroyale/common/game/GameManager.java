@@ -959,6 +959,24 @@ public class GameManager extends AbstractGameManager {
         registerGameEvent();
         TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(globalCenterOffset));
         TempDataManager.get().startGame(serverLevel); // 立即写入备份
+        if (this.gameEntry.healAllAtStart) {
+            healGamePlayers();
+        }
+    }
+    private void healGamePlayers() {
+        if (serverLevel == null) {
+            BattleRoyale.LOGGER.debug("GameManager.serverLevel is null, failed to heal GamePlayers");
+            return;
+        }
+        SpawnManager spawnManager = SpawnManager.get();
+        List<GamePlayer> gamePlayers = new ArrayList<>(getGamePlayers());
+        for (GamePlayer gamePlayer : gamePlayers) {
+            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+            if (player != null) {
+                spawnManager.healPlayer(player);
+                notifyTeamChange(gamePlayer.getGameTeamId());
+            }
+        }
     }
     private void registerGameEvent() {
         DamageEventHandler.register();
