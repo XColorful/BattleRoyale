@@ -464,8 +464,7 @@ public class GameManager extends AbstractGameManager {
             return;
         }
         int teamId = gamePlayer.getGameTeamId();
-        String colorString = gamePlayer.getGameTeamColor();
-        int colorRGB = ColorUtils.parseColorFromString(colorString).getRGB();
+        int colorRGB = ColorUtils.parseColorToInt(gamePlayer.getGameTeamColor()) & 0xFFFFFF;
         TextColor textColor = TextColor.fromRgb(colorRGB);
 
         Component winnerTitle = Component.translatable("battleroyale.message.winner_message")
