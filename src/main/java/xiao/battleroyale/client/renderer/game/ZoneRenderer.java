@@ -2,16 +2,10 @@ package xiao.battleroyale.client.renderer.game;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -20,6 +14,7 @@ import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
+import xiao.battleroyale.client.renderer.CustomRenderType;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT, modid = BattleRoyale.MOD_ID)
 public class ZoneRenderer {
@@ -47,8 +42,7 @@ public class ZoneRenderer {
         registered = false;
     }
 
-    private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(BattleRoyale.MOD_ID, "textures/white.png");
-    public static final RenderType CUSTOM_ZONE_RENDER_TYPE = createRenderType();
+    public static final RenderType ZONE_RENDER_TYPE = CustomRenderType.SolidColorZone;
     private static int CIRCLE_SEGMENTS = 64;
     private static int ELLIPSE_SEGMENTS = 64;
     public static final float POINTING_POLYGON_ANGLE = (float) (Math.PI / 2.0);
@@ -63,26 +57,6 @@ public class ZoneRenderer {
     public static void setSphereSegments(int segments) { SPHERE_SEGMENTS = segments; }
     public static int getEllipsoidSegments() { return ELLIPSOID_SEGMENTS; }
     public static void setEllipsoidSegments(int segments) { ELLIPSOID_SEGMENTS = segments; }
-
-    private static RenderType createRenderType() {
-        RenderType.CompositeState compositeState = RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionColorTexShader))
-                .setTextureState(new RenderStateShard.TextureStateShard(WHITE_TEXTURE, false, false))
-                .setTransparencyState(new RenderStateShard.TransparencyStateShard("translucent_transparency", () -> {
-                    RenderSystem.enableBlend();
-                    RenderSystem.defaultBlendFunc();
-                }, RenderSystem::disableBlend))
-                .setDepthTestState(new RenderStateShard.DepthTestStateShard("always", 519))
-                .setCullState(new RenderStateShard.CullStateShard(false))
-                .setLightmapState(new RenderStateShard.LightmapStateShard(false))
-                .setOverlayState(new RenderStateShard.OverlayStateShard(false))
-                .createCompositeState(true);
-
-        return RenderType.create("zone_render_type",
-                DefaultVertexFormat.NEW_ENTITY,
-                VertexFormat.Mode.QUADS, 256, true, false,
-                compositeState);
-    }
 
     public void onRenderLevelStage(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS
@@ -113,7 +87,7 @@ public class ZoneRenderer {
                 // 正角度为顺时针旋转区域
                 poseStack.mulPose(Axis.YP.rotationDegrees((float) -zoneData.rotateDegree));
 
-                VertexConsumer consumer = bufferSource.getBuffer(CUSTOM_ZONE_RENDER_TYPE);
+                VertexConsumer consumer = bufferSource.getBuffer(ZONE_RENDER_TYPE);
 
                 float r = zoneData.r;
                 float g = zoneData.g;

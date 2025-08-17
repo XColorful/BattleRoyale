@@ -16,6 +16,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
+import xiao.battleroyale.client.renderer.CustomRenderType;
 import xiao.battleroyale.util.ColorUtils;
 
 import java.awt.*;
@@ -46,7 +47,7 @@ public class TeamMemberRenderer {
         registered = false;
     }
 
-    private static final RenderType TEAM_MARKER_RENDER_TYPE = ZoneRenderer.CUSTOM_ZONE_RENDER_TYPE;
+    private static final RenderType TEAM_MARKER_RENDER_TYPE = CustomRenderType.SolidColorZone;
 
     private static boolean enableTeamZone = true;
     public static void setEnableTeamZone(boolean bool) { enableTeamZone = bool; }
