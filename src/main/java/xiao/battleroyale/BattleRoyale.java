@@ -27,9 +27,11 @@ public class BattleRoyale {
     public BattleRoyale(FMLJavaModLoadingContext context)
     {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.init());
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.init());
-
         Dist side = FMLLoader.getDist();
+        if (side == Dist.CLIENT) {
+            ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.init());
+        }
+
         ResourceLoader.INSTANCE.packType = side.isClient() ? PackType.CLIENT_RESOURCES : PackType.SERVER_DATA;
 
         IEventBus bus = context.getModEventBus();

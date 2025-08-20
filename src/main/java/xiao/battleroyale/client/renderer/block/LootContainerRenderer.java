@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
 
 public abstract class LootContainerRenderer<T extends AbstractLootContainerBlockEntity> implements BlockEntityRenderer<T> {
