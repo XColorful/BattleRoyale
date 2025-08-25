@@ -542,13 +542,13 @@ public class CbrgLootSpawner {
         ItemEntry _3x_scope = attachmentBuilder("cbrg", "3x_scope");
         ItemEntry _4x_scope = attachmentBuilder("cbrg", "4x_scope");
         ItemEntry _6x_scope = attachmentBuilder("cbrg", "6x_scope");
-        ItemEntry scope10x = attachmentBuilder("scope_standard_8x");
+        ItemEntry _8x_scope = attachmentBuilder("cbrg", "8x_scope");
 
         ItemEntry scope6xs = attachmentBuilder("scope_1873_6x");
 
         return new WeightEntry(Arrays.asList(
                 // 5 8倍镜+
-                new WeightedEntry(5, scope10x),
+                new WeightedEntry(5, _8x_scope),
                 // 15 6倍镜+
                 new WeightedEntry(15, _6x_scope),
                 // 30 3倍镜+
@@ -566,11 +566,11 @@ public class CbrgLootSpawner {
     }
 
     private static ILootEntry rareScopeEntry() {
-        ItemEntry scope10x = attachmentBuilder("scope_standard_8x");
+        ItemEntry _8x_scope = attachmentBuilder("cbrg", "8x_scope");
         ItemEntry _6x_scope = attachmentBuilder("cbrg", "6x_scope");
         ItemEntry _4x_scope = attachmentBuilder("cbrg", "4x_scope");
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(30, scope10x),
+                new WeightedEntry(30, _8x_scope),
                 new WeightedEntry(40, _6x_scope),
                 new WeightedEntry(30, _4x_scope)
         ));
