@@ -566,13 +566,15 @@ public class CbrgLootSpawner {
     }
 
     private static ILootEntry rareScopeEntry() {
+        ItemEntry _15x_scope = attachmentBuilder("cbrg", "15x_scope");
         ItemEntry _8x_scope = attachmentBuilder("cbrg", "8x_scope");
         ItemEntry _6x_scope = attachmentBuilder("cbrg", "6x_scope");
         ItemEntry _4x_scope = attachmentBuilder("cbrg", "4x_scope");
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(30, _8x_scope),
-                new WeightedEntry(40, _6x_scope),
-                new WeightedEntry(30, _4x_scope)
+                new WeightedEntry(10, _15x_scope),
+                new WeightedEntry(40, _8x_scope),
+                new WeightedEntry(30, _6x_scope),
+                new WeightedEntry(20, _4x_scope)
         ));
     }
 
