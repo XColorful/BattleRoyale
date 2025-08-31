@@ -21,13 +21,14 @@ public class MinecraftEntry implements IGameruleEntry {
     public final boolean spectatorGenerateChunks;
     public final boolean clearInventory;
     public final boolean keepInventory;
+    public final boolean doTimeSet;
     public final int timeSet;
 
     public MinecraftEntry(boolean adventureMode, boolean mobGriefing, boolean autoSaturation,
                           boolean naturalRegeneration, boolean doMobSpawning, boolean doFireTick,
                           boolean doDaylightCycle, boolean doWeatherCycle, boolean fallDamage,
                           boolean tntExplosionDropDecay, boolean spectatorGenerateChunks, boolean clearInventory,
-                          boolean keepInventory, int timeSet) {
+                          boolean keepInventory, boolean doTimeSet, int timeSet) {
         this.adventureMode = adventureMode;
         this.mobGriefing = mobGriefing;
         this.autoSaturation = autoSaturation;
@@ -41,6 +42,7 @@ public class MinecraftEntry implements IGameruleEntry {
         this.spectatorGenerateChunks = spectatorGenerateChunks;
         this.clearInventory = clearInventory;
         this.keepInventory = keepInventory;
+        this.doTimeSet = doTimeSet;
         this.timeSet = timeSet;
     }
 
@@ -65,6 +67,7 @@ public class MinecraftEntry implements IGameruleEntry {
         jsonObject.addProperty(MinecraftEntryTag.SPECTATOR_GENERATE_CHUNKS, spectatorGenerateChunks);
         jsonObject.addProperty(MinecraftEntryTag.CLEAR_INVENTORY, clearInventory);
         jsonObject.addProperty(MinecraftEntryTag.KEEP_INVENTORY, keepInventory);
+        jsonObject.addProperty(MinecraftEntryTag.DO_TIME_SET, doTimeSet);
         jsonObject.addProperty(MinecraftEntryTag.TIME_SET, timeSet);
         return jsonObject;
     }
@@ -84,12 +87,13 @@ public class MinecraftEntry implements IGameruleEntry {
         boolean spectatorGenerateChunks = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.SPECTATOR_GENERATE_CHUNKS, false);
         boolean clearInventory = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.CLEAR_INVENTORY, true);
         boolean keepInventory = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.KEEP_INVENTORY, false);
+        boolean doTimeSet = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.DO_TIME_SET, true);
         int timeSet = JsonUtils.getJsonInt(jsonObject, MinecraftEntryTag.TIME_SET, 5000);
 
         return new MinecraftEntry(adventureMode, mobGriefing, autoSaturation,
                 naturalRegeneration, mobSpawning, doFireTick,
                 doDaylightCycle, doWeatherCycle, fallDamage,
                 tntExplodes, spectatorGenerateChunks, clearInventory,
-                keepInventory, timeSet);
+                keepInventory, doTimeSet, timeSet);
     }
 }

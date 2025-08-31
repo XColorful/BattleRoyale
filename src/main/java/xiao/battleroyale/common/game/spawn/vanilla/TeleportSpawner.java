@@ -128,12 +128,12 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
     @Override
     public void tick(int gameTime, List<GameTeam> gameTeams) {
         ServerLevel serverLevel = GameManager.get().getServerLevel();
-        if (serverLevel == null) {
-            return;
-        }
         if (gameTime > this.hangTime) {
             this.finished = true;
             BattleRoyale.LOGGER.warn("GroundSpawner reached maximum spawn attempt time, force finished");
+            return;
+        }
+        if (serverLevel == null) {
             return;
         }
 
@@ -191,7 +191,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
                         spawnPointIndex++;
                         indexAdded = true;
                     }
-                    GameManager.get().safeTeleport(player, targetSpawnPos);
+                    GameManager.get().safeTeleport(player, serverLevel, targetSpawnPos, 0, 0);
                     addSpawnStats(gamePlayer, targetSpawnPos);
                     gamePlayer.setLastPos(targetSpawnPos); // 立即更新，防止下一tick找不到又躲了逻辑位置
                     teleportedPlayerId.add(gamePlayer.getGameSingleId());
