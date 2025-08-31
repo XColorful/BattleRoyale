@@ -140,6 +140,7 @@ public class GameManager extends AbstractGameManager {
             return;
         }
         this.serverLevel = serverLevel;
+        this.gameDimensionKey = serverLevel.dimension();
 
         if (!initGameConfigSetup()) {
             return;
@@ -361,6 +362,10 @@ public class GameManager extends AbstractGameManager {
     @Nullable
     public ServerLevel getServerLevel() {
         return this.serverLevel;
+    }
+    @Nullable
+    public ResourceKey<Level> getGameDimensionKey() {
+        return this.gameDimensionKey;
     }
 
     /**
@@ -771,6 +776,7 @@ public class GameManager extends AbstractGameManager {
         isStopping = true;
         stopGame(serverLevel);
         this.serverLevel = null; // 手动设置为null，单人游戏重启之后也就失效了
+        this.gameDimensionKey = null;
         BattleRoyale.LOGGER.debug("Server stopped, GameManager.serverLevel set to null");
         ServerEventHandler.unregister();
         isStopping = false;
@@ -798,10 +804,10 @@ public class GameManager extends AbstractGameManager {
     /**
      * 跨纬度版本
      */
-    public void safeTeleport(@NotNull ServerPlayer player, ServerLevel serverLevel, @NotNull Vec3 teleportPos, float yaw, float pitch) {
+    public void safeTeleport(@NotNull ServerPlayer player, @NotNull ServerLevel serverLevel, @NotNull Vec3 teleportPos, float yaw, float pitch) {
         safeTeleport(player, serverLevel, teleportPos.x, teleportPos.y, teleportPos.z, yaw, pitch);
     }
-    public void safeTeleport(@NotNull ServerPlayer player, ServerLevel serverLevel, double x, double y, double z, float yaw, float pitch) {
+    public void safeTeleport(@NotNull ServerPlayer player, @NotNull ServerLevel serverLevel, double x, double y, double z, float yaw, float pitch) {
         if (isStopping) {
             return;
         }
@@ -951,7 +957,6 @@ public class GameManager extends AbstractGameManager {
         return true;
     }
     private void startGameSetup() {
-        this.gameDimensionKey = serverLevel.dimension();
         // this.ready = false; // 不使用ready标记，因为Team会变动
         this.gameTime = 0; // 游戏结束后不手动重置
         this.winnerGameTeams.clear(); // 游戏结束后不手动重置

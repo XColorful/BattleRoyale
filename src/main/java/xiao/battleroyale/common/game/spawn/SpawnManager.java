@@ -2,8 +2,10 @@ package xiao.battleroyale.common.game.spawn;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -163,6 +165,7 @@ public class SpawnManager extends AbstractGameManager {
      */
     public void teleportToLobby(@NotNull ServerPlayer player) {
         if (!isLobbyCreated()) {
+            BattleRoyale.LOGGER.debug("Lobby is not created, failed to teleport player {} (UUID:{}) to lobby", player.getName().getString(), player.getUUID());
             return;
         }
         if (lobbyHeal) {
@@ -171,8 +174,15 @@ public class SpawnManager extends AbstractGameManager {
         if (changeGamemode) {
             player.setGameMode(GameruleManager.get().getGameMode());
         }
-        GameManager.get().safeTeleport(player, lobbyPos);
-        BattleRoyale.LOGGER.info("Teleport player {} (UUID: {}) to lobby ({}, {}, {})", player.getName(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
+        GameManager gameManager = GameManager.get();
+        ServerLevel serverLevel = gameManager.getServerLevel();
+        if (serverLevel != null) {
+            gameManager.safeTeleport(player, serverLevel, lobbyPos, 0, 0);
+        } else {
+            BattleRoyale.LOGGER.debug("GameManager.serverLevel is null, teleport to literal position");
+            gameManager.safeTeleport(player, lobbyPos);
+        }
+        BattleRoyale.LOGGER.info("Teleport player {} (UUID: {}) to lobby ({}, {}, {})", player.getName().getString(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
     }
 
     /**
@@ -191,7 +201,9 @@ public class SpawnManager extends AbstractGameManager {
         if (GameManager.get().hasStandingGamePlayer(serverPlayer.getUUID())) { // 游戏中的玩家不能无敌
             return false;
         }
-        return isInLobby(serverPlayer.position());
+
+        return serverPlayer.level().dimension() == GameManager.get().getGameDimensionKey()
+                && isInLobbyRange(serverPlayer.position());
     }
 
     /**
@@ -199,7 +211,7 @@ public class SpawnManager extends AbstractGameManager {
      * @param pos 需要判断的位置
      * @return 判定结果
      */
-    private boolean isInLobby(Vec3 pos) {
+    private boolean isInLobbyRange(Vec3 pos) {
         double minX = lobbyPos.x - lobbyDimension.x;
         double maxX = lobbyPos.x + lobbyDimension.x;
         double minY = lobbyPos.y - lobbyDimension.y;
