@@ -90,7 +90,7 @@ public class PlayerModeStorage implements IRuleStorage {
      * 恢复之前存储的玩家游戏模式。
      */
     @Override
-    public void revert(ServerLevel serverLevel) {
+    public void revert(@NotNull ServerLevel serverLevel) {
         for (Map.Entry<UUID, GameType> entry : playerModeBackup.entrySet()) {
             UUID playerUUID = entry.getKey();
             GameType prevGameMode = entry.getValue();

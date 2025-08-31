@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -69,7 +70,11 @@ public class ReloadCommand {
         LootConfigManager.get().reloadAllLootConfigs();
         GameConfigManager.get().reloadAllConfigs();
         EffectConfigManager.get().reloadAllConfigs();
-        ClientConfigManager.get().reloadAllConfigs();
+        if (FMLEnvironment.dist.isClient()) {
+            ClientConfigManager.get().reloadAllConfigs();
+        } else {
+            BattleRoyale.LOGGER.info("Skipped client config reload");
+        }
         ServerConfigManager.get().reloadAllConfigs();
 
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.all_config_reloaded"), true);
