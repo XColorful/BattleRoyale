@@ -348,8 +348,8 @@ public class CbrgLootSpawner {
 
     private static ILootEntry commonPistolEntry() {
         MultiEntry sawedAmmo = gunSemiAmmoBuilder("db_short", "12g", 2); // 默认不用连发
-        MultiEntry deagleAmmo = gunSemiAmmoBuilder("deagle", "50ae", 7);
-        MultiEntry deagleGAmmo = gunSemiAmmoBuilder("deagle_golden", "357mag", 9);
+        MultiEntry deagleAmmo = gunSemiAmmoBuilder("deagle", "cbrg", "ammo_45acp", 7);
+        MultiEntry deagleGAmmo = gunSemiAmmoBuilder("deagle_golden", "cbrg", "ammo_45acp", 9);
         MultiEntry m1911Ammo = gunSemiAmmoBuilder("m1911", "cbrg", "ammo_45acp", 7);
         MultiEntry p320Ammo = gunSemiAmmoBuilder("p320", "cbrg", "ammo_45acp", 12);
         MultiEntry b93rAmmo = gunBurstAmmoBuilder("b93r", "cbrg", "ammo_45acp", 20);
@@ -624,8 +624,6 @@ public class CbrgLootSpawner {
         // 冲锋枪
         ItemEntry _9mm = ammoBuilder("cbrg", "ammo_9mm", 30);
         // 手枪
-        ItemEntry deagle = ammoBuilder("50ae", 14);
-        ItemEntry deagleG = ammoBuilder("357mag", 18);
         ItemEntry _45acp = ammoBuilder("cbrg", "ammo_45acp", 12);
         ItemEntry sawedOff = ammoBuilder("12g", 5);
         return new WeightEntry(Arrays.asList(
@@ -646,11 +644,9 @@ public class CbrgLootSpawner {
                 new WeightedEntry(10, _762),
                 new WeightedEntry(13, _556),
                 // 40 冲锋枪，手枪
-                new WeightedEntry(4, deagle),
-                new WeightedEntry(4, deagleG),
-                new WeightedEntry(4, sawedOff),
                 new WeightedEntry(12, _9mm),
-                new WeightedEntry(20, _45acp)
+                new WeightedEntry(28, _45acp),
+                new WeightedEntry(4, sawedOff)
         ));
     }
 
