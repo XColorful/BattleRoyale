@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.server;
 import xiao.battleroyale.config.AbstractConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager.PerformanceConfig;
+import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
 
 import java.nio.file.Paths;
 import java.util.List;
@@ -49,6 +50,9 @@ public class ServerConfigManager {
      */
     public String getPerformanceConfigPath() {
         return String.valueOf(PerformanceConfigManager.get().getConfigDirPath());
+    }
+    public String getUtilityConfigPath() {
+        return String.valueOf(UtilityConfigManager.get().getConfigDirPath());
     }
 
     /**
