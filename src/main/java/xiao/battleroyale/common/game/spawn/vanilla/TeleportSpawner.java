@@ -230,13 +230,14 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
 
     @Nullable
     public Vec3 findSpawnPos(int index, ServerLevel serverLevel, Vec3 globalOffset) {
-        Vec3 basePos = spawnPos.get(index).add(globalOffset);
-        if (!findGround) {
-            return basePos;
-        }
         if (index >= spawnPos.size()) {
             BattleRoyale.LOGGER.warn("GroundSpawner: Not enough spawn point for all players");
             return null;
+        }
+
+        Vec3 basePos = spawnPos.get(index).add(globalOffset);
+        if (!findGround) {
+            return basePos;
         }
 
         BlockPos lookupPos = new BlockPos((int) basePos.x(), 320, (int) basePos.z()); // 最大建筑高度320
