@@ -1,7 +1,6 @@
 package xiao.battleroyale.config.common.server.utility;
 
 import com.google.gson.JsonObject;
-import jdk.jshell.execution.Util;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.server.utility.IUtilitySingleEntry;
@@ -9,6 +8,7 @@ import xiao.battleroyale.api.server.utility.UtilityConfigTag;
 import xiao.battleroyale.config.AbstractConfigManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
+import xiao.battleroyale.config.common.server.utility.defaultconfigs.DefaultUtilityConfigGenerator;
 import xiao.battleroyale.config.common.server.utility.type.SurvivalEntry;
 import xiao.battleroyale.util.JsonUtils;
 

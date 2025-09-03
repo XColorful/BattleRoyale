@@ -14,6 +14,7 @@ import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
+import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
 
 import javax.annotation.Nullable;
 
@@ -53,7 +54,9 @@ public class ReloadCommand {
                 .then(Commands.literal(SERVER)
                         .executes(context -> reloadServerConfigs(context, null))
                         .then(Commands.literal(PERFORMANCE)
-                                .executes(context -> reloadServerConfigs(context, PERFORMANCE))));
+                                .executes(context -> reloadServerConfigs(context, PERFORMANCE)))
+                        .then(Commands.literal(UTILITY)
+                                .executes(context -> reloadServerConfigs(context, UTILITY))));
     }
 
     public static LiteralArgumentBuilder<CommandSourceStack> getClient() {
@@ -212,6 +215,10 @@ public class ReloadCommand {
                 case PERFORMANCE:
                     PerformanceConfigManager.get().reloadPerformanceConfigs();
                     messageKey = "battleroyale.message.performance_config_reloaded";
+                    break;
+                case UTILITY:
+                    UtilityConfigManager.get().reloadUtilityConfigs();
+                    messageKey = "battleroyale.message.utility_config_reloaded";
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_server_sub_type", subType));

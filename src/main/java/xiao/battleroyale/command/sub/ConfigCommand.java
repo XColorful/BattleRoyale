@@ -126,6 +126,16 @@ public class ConfigCommand {
                                         )
                                 )
                         )
+                        .then(Commands.literal(UTILITY)
+                                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                                        .executes(ConfigCommand::applyUtilityConfig))
+                                .then(Commands.literal(SWITCH)
+                                        .executes(ConfigCommand::switchNextUtilityConfig)
+                                        .then(Commands.argument(FILE, StringArgumentType.string())
+                                                .executes(ConfigCommand::switchUtilityConfig)
+                                        )
+                                )
+                        )
                 );
     }
 
@@ -363,6 +373,39 @@ public class ConfigCommand {
             return Command.SINGLE_SUCCESS;
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.no_performance_config_file", currentFileName));
+            return 0;
+        }
+    }
+    private static int applyUtilityConfig(CommandContext<CommandSourceStack> context) {
+        int id = IntegerArgumentType.getInteger(context, ID);
+        if (ServerConfigManager.get().applyUtilityConfig(id)) {
+            BattleRoyale.LOGGER.info("Applied utility config {} via command", id);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.utility_config_applied", id, ServerConfigManager.get().getUtilityConfigName(id)), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.invalid_utility_config_id", id));
+            return 0;
+        }
+    }
+    private static int switchNextUtilityConfig(CommandContext<CommandSourceStack> context) {
+        if (ServerConfigManager.get().switchNextUtilityConfig()) {
+            String currentFileName = ServerConfigManager.get().getUtilityConfigEntryFileName();
+            BattleRoyale.LOGGER.info("Switch utility config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_utility_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_utility_config_available"));
+            return 0;
+        }
+    }
+    private static int switchUtilityConfig(CommandContext<CommandSourceStack> context) {
+        String currentFileName = StringArgumentType.getString(context, FILE);
+        if (ServerConfigManager.get().switchUtilityConfig(currentFileName)) {
+            BattleRoyale.LOGGER.info("Switch utility config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_utility_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_utility_config_file", currentFileName));
             return 0;
         }
     }
