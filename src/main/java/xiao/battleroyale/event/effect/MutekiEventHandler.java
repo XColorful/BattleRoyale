@@ -5,6 +5,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.effect.muteki.MutekiManager;
 
 public class MutekiEventHandler {
@@ -21,10 +22,12 @@ public class MutekiEventHandler {
 
     public static void register() {
         MinecraftForge.EVENT_BUS.register(get());
+        BattleRoyale.LOGGER.debug("MutekiEventHandler registered");
     }
 
     public static void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
+        BattleRoyale.LOGGER.debug("MutekiEventHandler unregistered");
     }
 
     @SubscribeEvent

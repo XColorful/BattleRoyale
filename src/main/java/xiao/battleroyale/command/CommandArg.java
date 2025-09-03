@@ -76,5 +76,8 @@ public class CommandArg {
     public static final String SELECTED = "selected";
     public static final String SPECTATE = "spectate";
 
+    public static final String SURVIVAL_LOBBY = "survivallobby";
+    public static final String TO_SURVIVAL_LOBBY = "tosurvivallobby";
+
     public static final String BOOL = "boolean";
 }

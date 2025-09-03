@@ -8,6 +8,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -30,10 +31,12 @@ public class DamageEventHandler {
 
     public static void register() {
         MinecraftForge.EVENT_BUS.register(get());
+        BattleRoyale.LOGGER.debug("DamageEventHandler registered");
     }
 
     public static void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
+        BattleRoyale.LOGGER.debug("DamageEventHandler unregistered");
     }
 
     /**
