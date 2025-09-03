@@ -5,6 +5,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 
 /**
@@ -14,8 +15,6 @@ import xiao.battleroyale.common.game.spawn.SpawnManager;
  */
 public class LobbyEventHandler {
 
-    private LobbyEventHandler() {}
-
     private static class LobbyEventHandlerHolder {
         private static final LobbyEventHandler INSTANCE = new LobbyEventHandler();
     }
@@ -24,18 +23,22 @@ public class LobbyEventHandler {
         return LobbyEventHandlerHolder.INSTANCE;
     }
 
+    private LobbyEventHandler() {}
+
     public static void register() {
         MinecraftForge.EVENT_BUS.register(get());
+        BattleRoyale.LOGGER.debug("LobbyEventHandler registered");
     }
 
     public static void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
+        BattleRoyale.LOGGER.debug("LobbyEventHandler unregistered");
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onLivingDamage(LivingDamageEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            if (SpawnManager.get().canMuteki(serverPlayer)) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            if (SpawnManager.get().canMuteki(player)) {
                 event.setCanceled(true);
             }
         }

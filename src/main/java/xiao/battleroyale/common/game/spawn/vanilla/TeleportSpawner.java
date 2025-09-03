@@ -18,6 +18,7 @@ import xiao.battleroyale.config.common.game.spawn.type.TeleportEntry;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
+import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.StringUtils;
 
 import static xiao.battleroyale.util.Vec3Utils.randomAdjustXZExpandY;
@@ -35,7 +36,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
 
     // detail
     private final CommonDetailType detailType;
-    private final List<Vec3> fixedPos; // 如果detailType为FIXED，列表又为空，则不传送
+    private final List<Vec3> fixedPos = new ArrayList<>(); // 如果detailType为FIXED，列表又为空，则不传送
     private final boolean teamTogether;
     private final boolean findGround;
     private final double randomRange;
@@ -53,7 +54,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
         super(shapeType, center, dimension, zoneId);
 
         this.detailType = detailType;
-        this.fixedPos = detailInfo.fixedPos();
+        this.fixedPos.addAll(detailInfo.fixedPos());
         this.teamTogether = detailInfo.teamTogether();
         this.findGround = detailInfo.findGround();
         this.randomRange = detailInfo.randomRange();
@@ -66,6 +67,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
     @Override
     public void init(Supplier<Float> random, int spawnPointsTotal) {
         super.init(random, spawnPointsTotal);
+        BattleRoyale.LOGGER.debug("TeleportSpawner::init spawnPointsTotal: {}", spawnPointsTotal);
         this.prepared = false;
 
         switch (detailType) {
@@ -77,7 +79,13 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
                         spawnPos.add(randomAdjustXZExpandY(basePos, randomRange, random)); // 简单的二次偏移会导致落概率不均匀
                     }
                 } else {
+                    ServerLevel serverLevel = GameManager.get().getServerLevel();
+                    if (serverLevel != null) {
+                        ChatUtils.sendMessageToAllPlayers(serverLevel, "TeleportSpawner config error: no fixed position");
+                    }
                     BattleRoyale.LOGGER.warn("GroundSpawner detailType is '{}', but has no fixedPos", CommonDetailType.FIXED.getName());
+                    this.prepared = false;
+                    return;
                 }
             }
             case RANDOM -> {
@@ -94,10 +102,28 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
                             spawnPos.add(randomAdjustXZExpandY(basePos, randomRange, random));
                         }
                     }
+                    default -> {
+                        ServerLevel serverLevel = GameManager.get().getServerLevel();
+                        if (serverLevel != null) {
+                            ChatUtils.sendMessageToAllPlayers(serverLevel, "TeleportSpawner config error: unsupported shapeType");
+                        }
+                        BattleRoyale.LOGGER.warn("Unsupported SpawnShapeType in TeleportSpawner");
+                    }
                 }
+            }
+            default -> {
+                ServerLevel serverLevel = GameManager.get().getServerLevel();
+                if (serverLevel != null) {
+                    ChatUtils.sendMessageToAllPlayers(serverLevel, "TeleportSpawner config error: unsupported detailType");
+                }
+                BattleRoyale.LOGGER.warn("Unsupported CommonDetailType in TeleportSpawner");
             }
         }
 
+        BattleRoyale.LOGGER.debug("TeleportSpawner::init complete, spawnPos.size() = {}", spawnPos.size());
+        if (spawnPos.size() < spawnPointsTotal) {
+            BattleRoyale.LOGGER.warn("Unexpected spawnPos.size() ({}) not match spawnPointsTotal ({})", spawnPos.size(), spawnPointsTotal);
+        }
         this.prepared = true;
     }
 
@@ -159,8 +185,10 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
 
             Vec3 targetSpawnPos = findSpawnPos(spawnPointIndex, serverLevel, globalOffest);
             if (targetSpawnPos == null) {
-                allTeleported = false;
-                break;
+                BattleRoyale.LOGGER.warn("TeleportSpawner can't find a targetSpawnPos, this is unexpected");
+                ChatUtils.sendMessageToAllPlayers(serverLevel, "Unexpected error in TeleportSpawner");
+                this.finished = true;
+                return;
             } else if (targetSpawnPos.y == queuedHeight) {
                 teamAllTeleported = false;
                 allTeleported = false;
@@ -174,9 +202,10 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
                 if (!teamTogether && i > 0) {
                     targetSpawnPos = findSpawnPos(spawnPointIndex, serverLevel, globalOffest);
                     if (targetSpawnPos == null) {
-                        teamAllTeleported = false;
-                        allTeleported = false;
-                        break;
+                        BattleRoyale.LOGGER.warn("TeleportSpawner can't find a targetSpawnPos, this is unexpected");
+                        ChatUtils.sendMessageToAllPlayers(serverLevel, "Unexpected error in TeleportSpawner");
+                        this.finished = true;
+                        return;
                     } else if (targetSpawnPos.y == queuedHeight) {
                         teamAllTeleported = false;
                         allTeleported = false;
@@ -230,13 +259,14 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
 
     @Nullable
     public Vec3 findSpawnPos(int index, ServerLevel serverLevel, Vec3 globalOffset) {
-        Vec3 basePos = spawnPos.get(index).add(globalOffset);
-        if (!findGround) {
-            return basePos;
-        }
         if (index >= spawnPos.size()) {
             BattleRoyale.LOGGER.warn("GroundSpawner: Not enough spawn point for all players");
             return null;
+        }
+
+        Vec3 basePos = spawnPos.get(index).add(globalOffset);
+        if (!findGround) {
+            return basePos;
         }
 
         BlockPos lookupPos = new BlockPos((int) basePos.x(), 320, (int) basePos.z()); // 最大建筑高度320

@@ -2,10 +2,8 @@ package xiao.battleroyale.common.game.spawn;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -197,13 +195,13 @@ public class SpawnManager extends AbstractGameManager {
         teleportToLobby(player);
     }
 
-    public boolean canMuteki(ServerPlayer serverPlayer) {
-        if (GameManager.get().hasStandingGamePlayer(serverPlayer.getUUID())) { // 游戏中的玩家不能无敌
+    public boolean canMuteki(ServerPlayer player) {
+        if (!isLobbyCreated() || GameManager.get().hasStandingGamePlayer(player.getUUID())) { // 游戏中的玩家不能无敌
             return false;
         }
 
-        return serverPlayer.level().dimension() == GameManager.get().getGameDimensionKey()
-                && isInLobbyRange(serverPlayer.position());
+        return player.level().dimension() == GameManager.get().getGameDimensionKey()
+                && isInLobbyRange(player.position());
     }
 
     /**
@@ -226,7 +224,7 @@ public class SpawnManager extends AbstractGameManager {
 
     public boolean isLobbyCreated() {
         // return configPrepared || ready || GameManager.get().isInGame(); // 任意阶段均保证大厅已创建
-        return lobbyPos != null; // 让游戏结束后也能传送回大厅
+        return lobbyPos != null && lobbyDimension != null; // 让游戏结束后也能传送回大厅
     }
 
     public void sendLobbyInfo(ServerPlayer player) {
@@ -238,6 +236,7 @@ public class SpawnManager extends AbstractGameManager {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_pos", lobbyPos.x, lobbyPos.y, lobbyPos.z).withStyle(ChatFormatting.AQUA));
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_dimension", lobbyDimension.x, lobbyDimension.y, lobbyDimension.z).withStyle(ChatFormatting.AQUA));
             if (lobbyMuteki) ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_muteki").withStyle(ChatFormatting.GOLD));
+            if (lobbyHeal) ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_heal").withStyle(ChatFormatting.GREEN));
         } else { // 没有创建大厅
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
         }
@@ -252,6 +251,7 @@ public class SpawnManager extends AbstractGameManager {
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_pos", lobbyPos.x, lobbyPos.y, lobbyPos.z).withStyle(ChatFormatting.AQUA));
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_dimension", lobbyDimension.x, lobbyDimension.y, lobbyDimension.z).withStyle(ChatFormatting.AQUA));
             if (lobbyMuteki) ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_muteki").withStyle(ChatFormatting.GOLD));
+            if (lobbyHeal) ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_heal").withStyle(ChatFormatting.GREEN));
         } else { // 没有创建大厅
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
         }
@@ -262,14 +262,13 @@ public class SpawnManager extends AbstractGameManager {
             BattleRoyale.LOGGER.debug("GameManager is in game, SpawnManager skipped set lobby");
             return false;
         }
-
-        this.lobbyPos = centerPos;
-        this.lobbyMuteki = shouldMuteki;
-        this.lobbyHeal = shouldHeal;
         if (Vec3Utils.hasNegative(dimension)) {
             BattleRoyale.LOGGER.warn("SpawnManager: dimension:{} has negative, reject to apply", dimension);
             return false;
         }
+        this.lobbyPos = centerPos;
+        this.lobbyMuteki = shouldMuteki;
+        this.lobbyHeal = shouldHeal;
         this.lobbyDimension = dimension;
         this.changeGamemode = changeGamemode;
         BattleRoyale.LOGGER.debug("Successfully set lobby: center{}, dim{}", lobbyPos, lobbyDimension);
@@ -279,16 +278,16 @@ public class SpawnManager extends AbstractGameManager {
     /**
      * Compatibility to PUBGMC
      */
-    public boolean setPubgmcLobby(Vec3 corrds, double radius) {
+    public boolean setPubgmcLobby(Vec3 centerPos, double radius) {
         if (GameManager.get().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, SpawnManager skipped set lobby");
             return false;
         }
-
-        if (corrds == null || radius <= 0) {
+        if (radius < 0) {
+            BattleRoyale.LOGGER.warn("SpawnManager: radius:{} has negative, reject to apply", radius);
             return false;
         }
-        this.lobbyPos = corrds;
+        this.lobbyPos = centerPos;
         this.lobbyDimension = new Vec3(radius, radius, radius);
         return true;
     }

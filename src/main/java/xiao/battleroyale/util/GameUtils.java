@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.common.game.team.GameTeam;
 
 import java.util.List;
 import java.util.UUID;
@@ -111,6 +110,18 @@ public class GameUtils {
         CompoundTag forgeData = blockEntity.getPersistentData();
         if (forgeData.hasUUID(LootNBTTag.GAME_ID_TAG)) {
             return forgeData.getUUID(LootNBTTag.GAME_ID_TAG);
+        }
+        return null;
+    }
+    /**
+     * 获取 ItemStack 的GameUUID
+     */
+    public static @Nullable UUID getGameId(ItemStack itemStack) {
+        if (itemStack.hasTag()) {
+            CompoundTag tag = itemStack.getTag();
+            if (tag != null && tag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
+                return tag.getUUID(LootNBTTag.GAME_ID_TAG);
+            }
         }
         return null;
     }
