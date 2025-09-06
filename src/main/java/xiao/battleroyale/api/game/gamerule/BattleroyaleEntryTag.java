@@ -9,7 +9,9 @@ public class BattleroyaleEntryTag extends ConfigEntryTag {
     public static final String TEAM_SIZE = "teamSize";
     public static final String AI_TEAMMATE = "aiTeammate";
     public static final String AI_ENEMY = "aiEnemy";
+    public static final String REQUIRED_TEAM_TO_START = "requiredTeamToStart";
     public static final String MAX_GAME_TIME = "maxGameTime";
+    public static final String WINNER_TEAM_TOTAL = "winnerTeamTotal";
     public static final String LOBBY_CENTER = "lobbyCenter";
     public static final String LOBBY_DIMENSION = "lobbyDimension";
     public static final String LOBBY_MUTEKI = "lobbyMuteki";

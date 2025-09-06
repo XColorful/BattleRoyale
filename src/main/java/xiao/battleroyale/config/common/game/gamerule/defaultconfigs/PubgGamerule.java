@@ -39,7 +39,8 @@ public class PubgGamerule {
 
     public static JsonObject addBattleRoyale(int gameId, int playerTotal, int teamSize, int GAME_TIME,
                                              Vec3 lobbyCenter, Vec3 lobbyDim, String name, boolean bot) {
-        BattleroyaleEntry brEntry = new BattleroyaleEntry(OVERWORLD_LEVEL_KEY, playerTotal, teamSize, bot, bot, GAME_TIME,
+        BattleroyaleEntry brEntry = new BattleroyaleEntry(OVERWORLD_LEVEL_KEY, playerTotal, teamSize, bot, bot,
+                2, GAME_TIME, 1,
                 lobbyCenter, lobbyDim,
                 true, true, true, true, true, true);
 

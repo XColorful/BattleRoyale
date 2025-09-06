@@ -121,7 +121,7 @@ public class TeamManager extends AbstractGameManager {
         }
 
         GameManager.get().recordGamerule(teamConfig);
-        if (!hasEnoughPlayerTeamToStart()) {
+        if (!hasEnoughPlayerTeamToStart()) { // 初始化游戏时检查并提示
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
         }
         this.configPrepared = false;
@@ -131,7 +131,7 @@ public class TeamManager extends AbstractGameManager {
     @Override
     public boolean isReady() {
         // return this.ready // 不用ready标记，因为Team会变动
-        return hasEnoughPlayerTeamToStart();
+        return hasEnoughPlayerTeamToStart(); // 用实时的检查判断是否准备好
     }
 
     @Override
@@ -143,7 +143,7 @@ public class TeamManager extends AbstractGameManager {
         }
 
         removeNoTeamPlayer(); // 确保玩家均有队伍
-        if (!hasEnoughPlayerTeamToStart()) { // init之后可能都退出了队伍
+        if (!hasEnoughPlayerTeamToStart()) { // init之后可能都退出了队伍，开始游戏前再次检查
             return false;
         }
         // TODO 处理人机填充，创建MC原版队伍
@@ -1008,22 +1008,26 @@ public class TeamManager extends AbstractGameManager {
     private boolean hasEnoughPlayerTeamToStart() {
         return hasEnoughPlayerToStart() && hasEnoughTeamToStart();
     }
-    // 至少要有2人
     private boolean hasEnoughPlayerToStart() {
         int totalPlayerAndBots = getTotalMembers();
-        return totalPlayerAndBots > 1
-                || (totalPlayerAndBots == 1 && this.teamConfig.aiEnemy);
+        int minTeam = GameManager.get().getRequiredGameTeam();
+        return totalPlayerAndBots >= minTeam // 真人玩家满足最小单人队限制
+                || this.teamConfig.aiEnemy; // TODO 人机填充
     }
-    // 至少要有2队
     private boolean hasEnoughTeamToStart() {
-        if (!GameManager.get().getGameEntry().allowRemainingBot) { // 不允许剩余人机打架 -> 开局不能直接只有剩余人机
-            int totalTeamCount = teamData.getTotalTeamCount();
-            return totalTeamCount > 1
-                    || (totalTeamCount == 1 && this.teamConfig.aiEnemy);
-        } else {
+        if (!GameManager.get().getGameEntry().allowRemainingBot) { // 不允许剩余人机打架 -> 开局不能直接只剩人机队
+            List<GameTeam> gameTeams = getGameTeamsList();
+            for (GameTeam gameTeam : gameTeams) {
+                if (!gameTeam.onlyRemainBot()) {
+                    return true;
+                }
+            }
+            return false;
+        } else { // 允许人机打架
             int totalPlayerTeam = getPlayerTeamCount();
-            return totalPlayerTeam > 1
-                    || totalPlayerTeam == 0 && this.teamConfig.aiEnemy;
+            int minTeam = GameManager.get().getRequiredGameTeam();
+            return totalPlayerTeam >= minTeam // 满足最小队伍限制
+                    || this.teamConfig.aiEnemy; // TODO 人机填充
         }
     }
 }
