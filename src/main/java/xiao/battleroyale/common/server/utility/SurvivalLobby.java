@@ -168,15 +168,15 @@ public class SurvivalLobby {
         }
     }
 
-    public boolean setLobby(String levelDimension, boolean allowGamePlayerTeleport,
+    public boolean setLobby(String levelKeyString, boolean allowGamePlayerTeleport,
                             Vec3 lobbyPos, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal,
                             boolean clearInventory, boolean clearGameItemOnly) {
         if (Vec3Utils.hasNegative(lobbyDimension)) {
             BattleRoyale.LOGGER.warn("SurvivalLobby: dimension:{} has negative, reject to apply", lobbyDimension);
             return false;
         }
-        this.levelKeyString = levelDimension;
-        levelKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(levelDimension));
+        this.levelKeyString = levelKeyString;
+        this.levelKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(levelKeyString));
         this.allowGamePlayerTeleport = allowGamePlayerTeleport;
 
         this.lobbyPos = lobbyPos;

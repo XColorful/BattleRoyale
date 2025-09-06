@@ -9,6 +9,7 @@ import xiao.battleroyale.config.common.server.utility.type.SurvivalEntry;
 
 import java.nio.file.Paths;
 
+import static xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry.OVERWORLD_LEVEL_KEY;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultUtility {
@@ -22,7 +23,7 @@ public class DefaultUtility {
     }
 
     private static JsonObject generateDefaultUtilityConfig0() {
-        SurvivalEntry survivalEntry = new SurvivalEntry("minecraft:overworld", false,
+        SurvivalEntry survivalEntry = new SurvivalEntry(OVERWORLD_LEVEL_KEY, false,
                 new Vec3(0, 70, 0), new Vec3(8, 160, 8), false, false,
                 true, true);
 

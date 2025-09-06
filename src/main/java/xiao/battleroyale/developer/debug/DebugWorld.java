@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.developer.debug.text.WorldText;
 
 import java.util.*;
@@ -97,5 +99,23 @@ public class DebugWorld {
         }
 
         DebugManager.sendDebugMessage(source, GET_STRUCTURES, WorldText.buildStructures(blockPos, structures));
+    }
+
+    public static final String GET_SERVER_LEVEL = "getServerLevel";
+    public void getServerLevel(CommandSourceStack source, String levelKeyString) {
+        ResourceKey<Level> levelKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(levelKeyString));
+        ServerLevel serverLevel = BattleRoyale.getMinecraftServer().getLevel(levelKey);
+
+        DebugManager.sendDebugMessage(source, GET_SERVER_LEVEL, WorldText.buildServerLevel(serverLevel, levelKey, levelKeyString));
+    }
+
+    /**
+     * [调试]getLevelKey
+     */
+    public static final String GET_LEVEL_KEY = "getLevelKey";
+    public void getLevelKey(CommandSourceStack source) {
+        ServerLevel serverLevel = source.getLevel();
+
+        DebugManager.sendDebugMessage(source, GET_LEVEL_KEY, WorldText.buildLevelKey(serverLevel));
     }
 }

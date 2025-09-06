@@ -139,4 +139,9 @@ public class GameTeam {
                 .filter(gamePlayer -> !gamePlayer.isEliminated())
                 .collect(Collectors.toList());
     }
+
+    public boolean onlyRemainBot() {
+        return teamMembers.stream()
+                .allMatch(gamePlayer -> gamePlayer.isBot() || (!gamePlayer.isBot() && gamePlayer.isEliminated()));
+    }
 }

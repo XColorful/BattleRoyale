@@ -27,6 +27,7 @@ public class ServerConfigManager {
     public static void init() {
         get();
         PerformanceConfigManager.init();
+        UtilityConfigManager.init();
     }
 
     /**
