@@ -9,12 +9,16 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import java.util.Arrays;
 import java.util.List;
@@ -109,5 +113,43 @@ public class WorldText {
         }
 
         return component;
+    }
+
+    public static MutableComponent buildServerLevel(@Nullable ServerLevel serverLevel, ResourceKey<Level> levelKey, String levelKeyString) {
+        MutableComponent component = Component.empty();
+
+        component.append(Component.literal(levelKeyString))
+                .append(Component.literal("\n"))
+                .append(Component.literal("ServerLevel:"))
+                .append(serverLevel != null ?
+                        Component.literal(serverLevel.toString()).withStyle(ChatFormatting.AQUA)
+                        : Component.literal("null").withStyle(ChatFormatting.DARK_GRAY))
+                .append(Component.literal("\n"))
+                .append(Component.literal("LevelKey:"))
+                .append(serverLevel != null ?
+                        buildHoverableText(levelKey.location().toString(), buildLevelKeyHover(levelKey)).withStyle(ChatFormatting.GREEN)
+                        : Component.literal("null").withStyle(ChatFormatting.DARK_GRAY));
+
+        return component;
+    }
+
+    public static MutableComponent buildLevelKey(@NotNull ServerLevel serverLevel) {
+        MutableComponent component = Component.empty();
+
+        ResourceKey<Level> levelKey = serverLevel.dimension();
+        component.append(serverLevel.toString())
+                .append(Component.literal(" "))
+                .append(buildHoverableText(levelKey.toString(), buildLevelKeyHover(serverLevel.dimension())).withStyle(ChatFormatting.AQUA));
+
+        return component;
+    }
+
+    private static MutableComponent buildLevelKeyHover(ResourceKey<Level> levelKey) {
+        return Component.empty()
+                .append(Component.literal("RegistryName:").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(levelKey.registry().toString()))
+                .append(Component.literal("\n"))
+                .append(Component.literal("Location:").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(levelKey.location().toString()).withStyle(ChatFormatting.GREEN));
     }
 }
