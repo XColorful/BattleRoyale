@@ -70,15 +70,18 @@ public class ReloadCommand {
     }
 
     public static int reloadAllConfigs(CommandContext<CommandSourceStack> context) {
+        // 服务端配置
         LootConfigManager.get().reloadAllLootConfigs();
         GameConfigManager.get().reloadAllConfigs();
         EffectConfigManager.get().reloadAllConfigs();
+        ServerConfigManager.get().reloadAllConfigs();
+
+        // 客户端配置
         if (FMLEnvironment.dist.isClient()) {
             ClientConfigManager.get().reloadAllConfigs();
         } else {
             BattleRoyale.LOGGER.info("Skipped client config reload");
         }
-        ServerConfigManager.get().reloadAllConfigs();
 
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.all_config_reloaded"), true);
         BattleRoyale.LOGGER.info("Reloaded all {} configs", BattleRoyale.MOD_ID);
@@ -213,11 +216,11 @@ public class ReloadCommand {
         } else {
             switch (subType) {
                 case PERFORMANCE:
-                    PerformanceConfigManager.get().reloadPerformanceConfigs();
+                    ServerConfigManager.get().reloadPerformanceConfigs();
                     messageKey = "battleroyale.message.performance_config_reloaded";
                     break;
                 case UTILITY:
-                    UtilityConfigManager.get().reloadUtilityConfigs();
+                    ServerConfigManager.get().reloadUtilityConfigs();
                     messageKey = "battleroyale.message.utility_config_reloaded";
                     break;
                 default:
