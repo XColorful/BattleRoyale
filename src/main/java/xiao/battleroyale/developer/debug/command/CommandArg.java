@@ -57,11 +57,15 @@ public class CommandArg {
     public static final String BLOCK_ENTITIES_NBT_SHORT = "besnbt";
     public static final String BLOCK_ENTITY_NBT = "blockentitynbt";
     public static final String BLOCK_ENTITY_NBT_SHORT = "benbt";
-    // Biome & Structure
+    // World
     public static final String BIOME = "biome";
     public static final String BIOME_SHORT = "bi";
     public static final String STRUCTURES = "structures";
     public static final String STRUCTURES_SHORT = "ss";
+    public static final String SERVER_LEVEL = "serverlevel";
+    public static final String SERVER_LEVEL_SHORT = "sl";
+    public static final String LEVEL_KEY = "levelkey";
+    public static final String LEVEL_KEY_SHORT = "lk";
     // Messages
     public static final String MESSAGES = "messages";
     public static final String MESSAGES_SHORT = "msgs";
