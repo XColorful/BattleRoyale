@@ -10,6 +10,7 @@ import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
 
 import java.nio.file.Paths;
 
+import static xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry.OVERWORLD_LEVEL_KEY;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultGamerule {
@@ -24,7 +25,7 @@ public class DefaultGamerule {
     }
 
     private static JsonObject generateDefaultGameruleConfig0() {
-        BattleroyaleEntry brEntry = new BattleroyaleEntry(100, 4, true, true, 12000,
+        BattleroyaleEntry brEntry = new BattleroyaleEntry(OVERWORLD_LEVEL_KEY, 100, 4, true, true, 12000,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10),
                 true, true, true, false, true, true);
 
@@ -41,7 +42,7 @@ public class DefaultGamerule {
     }
 
     private static JsonObject generateDefaultGameruleConfig1() {
-        BattleroyaleEntry brEntry = new BattleroyaleEntry(100, 4, false, false, 12000,
+        BattleroyaleEntry brEntry = new BattleroyaleEntry(OVERWORLD_LEVEL_KEY, 100, 4, false, false, 12000,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10),
                 true, true, true, false, true, true);
 

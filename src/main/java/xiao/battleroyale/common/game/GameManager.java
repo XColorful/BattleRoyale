@@ -1,9 +1,11 @@
 package xiao.battleroyale.common.game;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -84,8 +86,9 @@ public class GameManager extends AbstractGameManager {
     public int getGameTime() { return this.gameTime; }
     private UUID gameId;
     private boolean inGame;
-    private ResourceKey<Level> gameDimensionKey;
-    private ServerLevel serverLevel;
+    private String gameLevelKeyString = "";
+    private @Nullable ResourceKey<Level> gameLevelKey;
+    private @Nullable ServerLevel serverLevel;
     private final Set<GameTeam> winnerGameTeams = new HashSet<>();
     private final Set<GamePlayer> winnerGamePlayers = new HashSet<>();
 
@@ -139,8 +142,9 @@ public class GameManager extends AbstractGameManager {
         if (isInGame()) {
             return;
         }
-        this.serverLevel = serverLevel;
-        this.gameDimensionKey = serverLevel.dimension();
+        // 初始化时绑定ServerLevel及其LevelKey
+        setServerLevel(serverLevel);
+        setGameLevelKey(serverLevel.dimension());
 
         if (!initGameConfigSetup()) {
             return;
@@ -359,13 +363,52 @@ public class GameManager extends AbstractGameManager {
         return true;
     }
 
+    /**
+     * 获取大逃杀游戏ServerLevel
+     */
     @Nullable
     public ServerLevel getServerLevel() {
-        return this.serverLevel;
+        if (this.serverLevel != null) {
+            return this.serverLevel;
+        } else if (this.gameLevelKey != null) {
+            return BattleRoyale.getMinecraftServer().getLevel(this.gameLevelKey);
+        } else {
+            BattleRoyale.LOGGER.debug("GameManager.serverLevel && GameManager.gameLevelKey are null");
+            return null;
+        }
     }
+
+    /**
+     * 获取大逃杀游戏维度Key
+     */
     @Nullable
-    public ResourceKey<Level> getGameDimensionKey() {
-        return this.gameDimensionKey;
+    public ResourceKey<Level> getGameLevelKey() {
+        return this.gameLevelKey;
+    }
+
+    private void setServerLevel(@Nullable ServerLevel serverLevel) {
+        this.serverLevel = serverLevel;
+        BattleRoyale.LOGGER.debug("GameManager.serverLevel set to {}", this.serverLevel);
+    }
+    private void setGameLevelKey(@Nullable ResourceKey<Level> levelKey) {
+        this.gameLevelKey = levelKey;
+        BattleRoyale.LOGGER.debug("GameManager.gameLevelKey set to {}", this.gameLevelKey);
+    }
+    public void setDefaultLevel(@NotNull String levelKeyString) {
+        this.gameLevelKeyString = levelKeyString;
+        BattleRoyale.LOGGER.debug("GameManager.gameLevelKeyString set to {}", this.gameLevelKeyString);
+
+        if (isInGame()) {
+            BattleRoyale.LOGGER.warn("GameManager is in game, reject to set default level ({})", levelKeyString);
+            return;
+        }
+
+        if (this.serverLevel == null) {
+            setGameLevelKey(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(levelKeyString)));
+            BattleRoyale.LOGGER.debug("Set GameManager.gameLevelKey to {}", this.gameLevelKey);
+        } else {
+            BattleRoyale.LOGGER.debug("GameManager.serverLevel != null ({}), skipped setDefaultLevel", this.serverLevel);
+        }
     }
 
     /**
@@ -589,6 +632,9 @@ public class GameManager extends AbstractGameManager {
         unregisterGameEvent();
 
         StatsManager.get().stopGame(serverLevel);
+
+        // 游戏中途若修改配置，在游戏结束后生效
+        setGameLevelKey(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(this.gameLevelKeyString)));
     }
 
     public boolean teleportToLobby(@NotNull ServerPlayer player) {
@@ -775,8 +821,7 @@ public class GameManager extends AbstractGameManager {
     public void onServerStopping() {
         isStopping = true;
         stopGame(serverLevel);
-        this.serverLevel = null; // 手动设置为null，单人游戏重启之后也就失效了
-        this.gameDimensionKey = null;
+        setServerLevel(null); // 手动设置为null，单人游戏重启之后也就失效了
         BattleRoyale.LOGGER.debug("Server stopped, GameManager.serverLevel set to null");
         ServerEventHandler.unregister();
         isStopping = false;

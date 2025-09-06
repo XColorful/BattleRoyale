@@ -200,7 +200,7 @@ public class SpawnManager extends AbstractGameManager {
             return false;
         }
 
-        return player.level().dimension() == GameManager.get().getGameDimensionKey()
+        return player.level().dimension() == GameManager.get().getGameLevelKey()
                 && isInLobbyRange(player.position());
     }
 
