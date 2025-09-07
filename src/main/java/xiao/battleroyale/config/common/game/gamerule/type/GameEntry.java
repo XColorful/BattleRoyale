@@ -13,6 +13,7 @@ import java.util.List;
 
 public class GameEntry implements IGameruleEntry, IConfigAppliable {
 
+    public final boolean teleportWhenInitGame;
     public final int teamMsgExpireTimeSeconds;
     public final List<String> teamColors;
     public static final List<String> DEFAULT_TEAM_COLORS = Arrays.asList(
@@ -45,18 +46,19 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public final int messageSyncFreq;
 
     public GameEntry() {
-        this(300, DEFAULT_TEAM_COLORS,
+        this(true, 300, DEFAULT_TEAM_COLORS,
                 20 * 60, 20 * 10, false,
                 true, false, false, DEFAULT_DOWN_DAMAGE, 20, false, true, true,
                 true, true, true, false, 0, 0,
                 20 * 7, 20 * 5, 20 * 5);
     }
 
-    public GameEntry(int teamMsgExpireTimeSeconds, List<String> teamColors,
+    public GameEntry(boolean teleportWhenInitGame, int teamMsgExpireTimeSeconds, List<String> teamColors,
                      int maxPlayerInvalidTime, int maxBotInvalidTime, boolean removeInvalidTeam,
                      boolean healAllAtStart, boolean friendlyFire, boolean downFire, List<Float> downDamageList, int downDamageFrequency, boolean onlyGamePlayerSpectate, boolean spectateAfterTeam, boolean teleportInterfererToLobby,
                      boolean allowRemainingBot, boolean keepTeamAfterGame, boolean teleportAfterGame, boolean teleportWinnerAfterGame, int winnerFireworkId, int winnerParticleId,
                      int messageCleanFreq, int messageExpireTime, int messageSyncFreq) {
+        this.teleportWhenInitGame = teleportWhenInitGame;
         this.teamMsgExpireTimeSeconds = teamMsgExpireTimeSeconds;
         this.teamColors = teamColors;
         this.maxPlayerInvalidTime = maxPlayerInvalidTime;
@@ -89,6 +91,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     @Override
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(GameEntryTag.TELEPORT_WHEN_INIT_GAME, teleportWhenInitGame);
         jsonObject.addProperty(GameEntryTag.TEAM_MSG_EXPIRE_SECONDS, teamMsgExpireTimeSeconds);
         jsonObject.add(GameEntryTag.TEAM_COLORS, JsonUtils.writeStringListToJson(teamColors));
 
@@ -120,6 +123,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
 
     @NotNull
     public static GameEntry fromJson(JsonObject jsonObject) {
+        boolean teleportWhenInitGame = JsonUtils.getJsonBool(jsonObject, GameEntryTag.TELEPORT_WHEN_INIT_GAME, true);
         int teamMsgExpireTimeSeconds = JsonUtils.getJsonInt(jsonObject, GameEntryTag.TEAM_MSG_EXPIRE_SECONDS, 300);
         List<String> teamColors = JsonUtils.getJsonStringList(jsonObject, GameEntryTag.TEAM_COLORS);
 
@@ -147,7 +151,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         int messageExpireTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_EXPIRE_TIME, 20 * 5);
         int messageSyncFreq = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_FORCE_SYNC_FREQUENCY, 20 * 5);
 
-        return new GameEntry(teamMsgExpireTimeSeconds, teamColors,
+        return new GameEntry(teleportWhenInitGame, teamMsgExpireTimeSeconds, teamColors,
                 maxInvalidTime, maxBotInvalidTime, removeInvalidTeam,
                 healAllAtStart, friendlyFire, downFire, downDamageList, downDamageFrequency, onlyGamePlayerSpectate, spectateAfterTeam, teleportInterfererToLobby,
                 allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId,

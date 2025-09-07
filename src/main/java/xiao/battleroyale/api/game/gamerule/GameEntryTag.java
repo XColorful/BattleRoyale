@@ -4,6 +4,7 @@ import xiao.battleroyale.api.ConfigEntryTag;
 
 public class GameEntryTag extends ConfigEntryTag {
 
+    public static final String TELEPORT_WHEN_INIT_GAME = "teleportWhenInitGame";
     // team
     public static final String TEAM_MSG_EXPIRE_SECONDS = "teamMessageExpireSeconds";
     public static final String TEAM_COLORS = "teamColors";

@@ -17,6 +17,7 @@ import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
+import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.event.game.LobbyEventHandler;
 import xiao.battleroyale.util.ChatUtils;
@@ -44,6 +45,7 @@ public class SpawnManager extends AbstractGameManager {
         ;
     }
 
+    private boolean initGameTeleport = true;
     private Vec3 lobbyPos;
     private Vec3 lobbyDimension;
     private boolean lobbyMuteki = true;
@@ -88,6 +90,15 @@ public class SpawnManager extends AbstractGameManager {
             return;
         }
 
+        GameEntry gameEntry = gameruleConfig.getGameEntry();
+        if (gameEntry == null) {
+            BattleRoyale.LOGGER.debug("Gamerule config missing gameEntry");
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            return;
+        }
+        this.initGameTeleport = gameEntry.teleportWhenInitGame;
+
+
         this.configPrepared = true;
         BattleRoyale.LOGGER.debug("SpawnManager complete initGameConfig");
     }
@@ -102,9 +113,12 @@ public class SpawnManager extends AbstractGameManager {
         }
 
         // 传送至大厅
-        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
-        for (GamePlayer gamePlayer : gamePlayerList) {
-            teleportGamePlayerToLobby(gamePlayer, serverLevel);
+        if (this.initGameTeleport) {
+            List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
+            for (GamePlayer gamePlayer : gamePlayerList) {
+                teleportGamePlayerToLobby(gamePlayer, serverLevel);
+            }
+            BattleRoyale.LOGGER.debug("SpawnManager::initGame teleported all game player to lobby");
         }
 
         this.gameSpawner.clear();
