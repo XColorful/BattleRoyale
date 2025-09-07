@@ -6,10 +6,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
@@ -42,11 +44,13 @@ import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.Gamer
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
+import xiao.battleroyale.event.DelayedEvent;
 import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.util.*;
 
 import java.util.*;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static xiao.battleroyale.api.data.io.TempDataTag.*;
@@ -145,6 +149,10 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
      */
     public void initGameConfig(ServerLevel serverLevel) {
         if (isInGame()) {
+            return;
+        }
+        if (serverLevel == null) {
+            BattleRoyale.LOGGER.warn("Passed ServerLevel in GameManager::initGameConfig is null");
             return;
         }
         // 初始化时绑定ServerLevel及其LevelKey
@@ -464,6 +472,11 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
      * 结束游戏，所有未淘汰队伍均胜利
      */
     public void finishGame(boolean hasWinner) {
+        if (!isInGame()) {
+            BattleRoyale.LOGGER.debug("GameManager is not in game, skipped finishGame({})", hasWinner);
+            return;
+        }
+
         if (hasWinner) {
             for (GameTeam team : getGameTeams()) {
                 if (!team.isTeamEliminated()) {
@@ -479,39 +492,52 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
         }
         stopGame(this.serverLevel);
         if (hasWinner) {
-            MutableComponent winnerComponent = Component.empty()
-                    .append(Component.translatable("battleroyale.message.game_time", gameTime, new GameUtils.GameTimeFormat(gameTime).toFormattedString(true)));
-            for (GameTeam team : winnerGameTeams) {
-                // 队伍ID
-                TextColor color = TextColor.fromRgb(ColorUtils.parseColorToInt(team.getGameTeamColor()));
-                MutableComponent teamComponent = Component.empty()
-                        .append(buildSuggestableIntBracketWithColor(team.getGameTeamId(), TeamCommand.requestTeamCommand(team.getGameTeamId()), color));
-                // 队长
-                GamePlayer leader = team.getLeader();
-                teamComponent.append(Component.literal(" "))
-                        .append(buildSuggestableIntBracketWithFullColor(leader.getGameSingleId(), TeamCommand.requestPlayerCommand(leader.getPlayerName()), color))
-                        .append(Component.literal(leader.getPlayerName()).withStyle(leader.isEliminated() ? ChatFormatting.GRAY : ChatFormatting.GOLD));
-                // 队员
-                for (GamePlayer member : team.getTeamMembers()) {
-                    if (member.getGameSingleId() == leader.getGameSingleId()) {
-                        continue;
-                    }
-                    teamComponent.append(Component.literal(" "))
-                            .append(buildSuggestableIntBracketWithFullColor(member.getGameSingleId(), TeamCommand.requestPlayerCommand(member.getPlayerName()), color))
-                            .append(Component.literal(member.getPlayerName()).withStyle(member.isEliminated() ? ChatFormatting.GRAY : ChatFormatting.GOLD));
+            // 延迟2tick发送胜利队伍消息
+            if (this.serverLevel != null) {
+                ResourceKey<Level> cachedGameLevelKey = this.serverLevel.dimension();
+                Consumer<ResourceKey<Level>> delayedTask = levelKey -> {
+                    ServerLevel currentServerLevel = BattleRoyale.getMinecraftServer().getLevel(levelKey);
+                    this.sendWinnerResult(currentServerLevel);
+                };
+                new DelayedEvent<>(delayedTask, cachedGameLevelKey, 1, "GameManager::sendWinnerResult");
+            }
+        }
+    }
+    // 发送胜利队伍消息
+    public void sendWinnerResult(@Nullable ServerLevel serverLevel) {
+        MutableComponent winnerComponent = Component.empty()
+                .append(Component.translatable("battleroyale.message.game_time", gameTime, new GameUtils.GameTimeFormat(gameTime).toFormattedString(true)));
+        for (GameTeam team : winnerGameTeams) {
+            // 队伍ID
+            TextColor color = TextColor.fromRgb(ColorUtils.parseColorToInt(team.getGameTeamColor()));
+            MutableComponent teamComponent = Component.empty()
+                    .append(buildSuggestableIntBracketWithColor(team.getGameTeamId(), TeamCommand.requestTeamCommand(team.getGameTeamId()), color));
+            // 队长
+            GamePlayer leader = team.getLeader();
+            teamComponent.append(Component.literal(" "))
+                    .append(buildSuggestableIntBracketWithFullColor(leader.getGameSingleId(), TeamCommand.requestPlayerCommand(leader.getPlayerName()), color))
+                    .append(Component.literal(leader.getPlayerName()).withStyle(leader.isEliminated() ? ChatFormatting.GRAY : ChatFormatting.GOLD));
+            // 队员
+            for (GamePlayer member : team.getTeamMembers()) {
+                if (member.getGameSingleId() == leader.getGameSingleId()) {
+                    continue;
                 }
-                // 添加到消息
-                winnerComponent.append(Component.literal("\n")
-                        .append(teamComponent));
+                teamComponent.append(Component.literal(" "))
+                        .append(buildSuggestableIntBracketWithFullColor(member.getGameSingleId(), TeamCommand.requestPlayerCommand(member.getPlayerName()), color))
+                        .append(Component.literal(member.getPlayerName()).withStyle(member.isEliminated() ? ChatFormatting.GRAY : ChatFormatting.GOLD));
             }
-            if (serverLevel != null) {
-                ChatUtils.sendMessageToAllPlayers(serverLevel, winnerComponent);
-            }
-
+            // 添加到消息
+            winnerComponent.append(Component.literal("\n")
+                    .append(teamComponent));
+        }
+        if (serverLevel != null) {
+            ChatUtils.sendMessageToAllPlayers(serverLevel, winnerComponent);
             // 游戏正常结束后自动初始化游戏
             if (this.gameEntry.initGameAfterGame) {
-                initGame(this.serverLevel);
+                initGame(serverLevel);
             }
+        } else {
+            BattleRoyale.LOGGER.debug("GameManager.serverLevel is null, winner result: {}", winnerComponent);
         }
     }
 
