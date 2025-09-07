@@ -146,7 +146,6 @@ public class SpawnManager extends AbstractGameManager {
 
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        LobbyEventHandler.unregister();
         this.configPrepared = false;
         // this.ready = false; // isReady被重载
     }
