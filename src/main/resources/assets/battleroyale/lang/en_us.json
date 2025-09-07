@@ -262,6 +262,7 @@
   "battleroyale.message.switch_gamemode_success": "Switched gamemode",
   "battleroyale.message.switch_gamemode_failed": "Failed to switched gamemode",
   "battleroyale.message.teleport_non_game_player_to_lobby": "Teleported non game player %s to lobby",
+  "battleroyale.message.down_fire_not_enabled": "Downed player damage is not enabled in BattleRoyale gamerule",
 
   "battleroyale.label.alive": "Alive",
 

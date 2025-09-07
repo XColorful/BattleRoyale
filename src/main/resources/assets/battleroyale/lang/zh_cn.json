@@ -262,6 +262,7 @@
   "battleroyale.message.switch_gamemode_success": "已切换游戏模式",
   "battleroyale.message.switch_gamemode_failed": "无法切换游戏模式",
   "battleroyale.message.teleport_non_game_player_to_lobby": "已将非游戏玩家 %s 传送至大厅",
+  "battleroyale.message.down_fire_not_enabled": "大逃杀规则未启用倒地玩家伤害",
 
   "battleroyale.label.alive": "生存",
 
