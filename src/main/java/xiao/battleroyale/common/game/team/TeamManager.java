@@ -5,6 +5,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -217,21 +218,11 @@ public class TeamManager extends AbstractGameManager {
             for (GamePlayer gamePlayer : getGamePlayersList()) { // 触发频率低，问题不大。。。
                 gameManager.notifyLeavedMember(gamePlayer.getPlayerUUID(), gamePlayer.getGameTeamId());
             }
-            if (serverLevel != null) {
-                BattleRoyale.LOGGER.debug("TeamManager start delayed clear()");
-                // 延迟2tick保证MessageManager获取到GamePlayer并保证在发送的tick之后再执行this.clear()
-                serverLevel.getServer().execute(() -> {
-                    serverLevel.getServer().execute(() -> {
-                        this.clear(); // 延迟2tick的clear
-                        isStoppingGame = false;
-                        BattleRoyale.LOGGER.debug("TeamManager finished delayed clear()");
-                    });
-                });
-            } else {
-                BattleRoyale.LOGGER.debug("TeamManager start instant clear()");
-                this.clear(); // stopGame立即执行的clear
-                isStoppingGame = false;
-            }
+            isStoppingGame = false;
+
+            // TeamMessageManager的消息中有保留旧队伍信息，不需要延迟清理
+            this.clear();
+            BattleRoyale.LOGGER.debug("TeamManager finished clear()");
         }
     }
 
