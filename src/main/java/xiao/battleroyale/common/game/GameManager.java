@@ -252,7 +252,7 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
         SpawnManager.get().onGameTick(gameTime);
         // StatsManager.get().onGameTick(gameTime); // 基于事件主动记录，不用tick
         if (gameTime % 200 == 0) {
-            finishGameIfShouldEnd();
+            finishGameIfShouldEnd(); // 每10秒保底检查游戏结束
         }
     }
 
@@ -342,10 +342,18 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
         }
     }
     private void notifyGamePlayerIsInactive(GamePlayer gamePlayer) {
-        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_leaved_from_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
+        if (this.serverLevel != null) {
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_leaved_from_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
+        } else {
+            BattleRoyale.LOGGER.warn("GameManager.serverLevel is null in notifyGamePlayerIsInactive(GamePlayer {})", gamePlayer.getPlayerName());
+        }
     }
     private void notifyGamePlayerIsActive(GamePlayer gamePlayer) {
-        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_backed_to_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
+        if (this.serverLevel != null) {
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_backed_to_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
+        } else {
+            BattleRoyale.LOGGER.warn("GameManager.serverLevel is null in notifyGamePlayerIsActive(GamePlayer {})", gamePlayer.getPlayerName());
+        }
     }
 
     /**
@@ -430,7 +438,7 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
         }
 
         checkAndUpdateInvalidGamePlayer(this.serverLevel);
-        finishGameIfShouldEnd();
+        finishGameIfShouldEnd(); // 外部调用的检查
     }
 
     private void finishGameIfShouldEnd() {
@@ -498,6 +506,11 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
             }
             if (serverLevel != null) {
                 ChatUtils.sendMessageToAllPlayers(serverLevel, winnerComponent);
+            }
+
+            // 游戏正常结束后自动初始化游戏
+            if (this.gameEntry.initGameAfterGame) {
+                initGame(this.serverLevel);
             }
         }
     }
@@ -680,7 +693,7 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
         GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(player.getUUID());
         if (gamePlayer != null) {
             gamePlayer.setActiveEntity(false);
-            finishGameIfShouldEnd();
+            finishGameIfShouldEnd(); // 玩家登出服务器时的防御检查
         }
     }
 
@@ -781,7 +794,7 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
                     BattleRoyale.LOGGER.debug("Team {} has already been eliminated, GameManager skipped sending chat message", gameTeam.getGameTeamId());
                 }
             }
-            finishGameIfShouldEnd();
+            finishGameIfShouldEnd(); // 游戏队伍被淘汰时的检查
         }
         notifyTeamChange(gamePlayer.getGameTeamId());
         notifyAliveChange();
