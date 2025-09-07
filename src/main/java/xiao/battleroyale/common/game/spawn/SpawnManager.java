@@ -77,20 +77,17 @@ public class SpawnManager extends AbstractGameManager {
         }
 
         BattleroyaleEntry brEntry = gameruleConfig.getBattleRoyaleEntry();
-        this.lobbyPos = brEntry.lobbyCenterPos;
-        this.lobbyDimension = brEntry.lobbyDimension;
-        this.lobbyMuteki = brEntry.lobbyMuteki;
-        if (lobbyPos == null || lobbyDimension == null) {
+        if (brEntry == null) {
+            BattleRoyale.LOGGER.debug("Gamerule config missing brEntry");
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            return;
+        }
+        setLobby(brEntry.lobbyCenterPos, brEntry.lobbyDimension, brEntry.lobbyMuteki, brEntry.lobbyHeal, brEntry.lobbyChangeGamemode);
+        if (!isLobbyCreated()) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;
         }
 
-        // Hyper Muteki的大厅
-        if (this.lobbyMuteki) {
-            LobbyEventHandler.register();
-        } else {
-            LobbyEventHandler.unregister();
-        }
         this.configPrepared = true;
         BattleRoyale.LOGGER.debug("SpawnManager complete initGameConfig");
     }
@@ -268,6 +265,12 @@ public class SpawnManager extends AbstractGameManager {
         }
         this.lobbyPos = centerPos;
         this.lobbyMuteki = shouldMuteki;
+        // 大厅无敌（监听伤害事件）
+        if (this.lobbyMuteki) {
+            LobbyEventHandler.register();
+        } else {
+            LobbyEventHandler.unregister();
+        }
         this.lobbyHeal = shouldHeal;
         this.lobbyDimension = dimension;
         this.changeGamemode = changeGamemode;
@@ -287,8 +290,7 @@ public class SpawnManager extends AbstractGameManager {
             BattleRoyale.LOGGER.warn("SpawnManager: radius:{} has negative, reject to apply", radius);
             return false;
         }
-        this.lobbyPos = centerPos;
-        this.lobbyDimension = new Vec3(radius, radius, radius);
+        setLobby(centerPos, new Vec3(radius, radius, radius), this.lobbyMuteki, this.lobbyHeal, this.changeGamemode);
         return true;
     }
 }
