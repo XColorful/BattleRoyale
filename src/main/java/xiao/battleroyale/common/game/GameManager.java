@@ -6,12 +6,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
@@ -1170,49 +1168,50 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
     /**
      * 切换旁观模式
      */
-    public boolean spectateGame(ServerPlayer player, ServerLevel serverLevel) {
+    public boolean spectateGame(ServerPlayer player) {
         if (player == null) {
             return false;
         }
 
-        // 从观战模式改回去
-        if (player.gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
-            if (!isInGame()) { // 不在游戏进行时，即使不为GamePlayer也可以改回来（可能被清理掉）
+        if (!isInGame()) { // 不在游戏中：从观战模式改回去
+            if (player.gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
                 player.setGameMode(GameruleManager.get().getGameMode()); // 默认为冒险模式
-                ChatUtils.sendTranslatableMessageToPlayer(player, "battleroyale.message.switch_gamemode_success");
                 teleportToLobby(player);
-            } else { // 不允许在游戏中从观战模式改回去，但是仍然执行一次传送
-                teleportToRandomStandingGamePlayer(player, serverLevel);
+            } else {
+                player.setGameMode(GameruleManager.get().getGameMode());
             }
             return true;
-        }
-
-        GamePlayer gamePlayer = getGamePlayerByUUID(player.getUUID());
-        if (gamePlayer == null) { // 非游戏玩家
-            if (this.gameEntry.onlyGamePlayerSpectate) {
+        } else { // 在游戏中：观战随机游戏玩家
+            GamePlayer gamePlayer = getGamePlayerByUUID(player.getUUID());
+            if (gamePlayer != null) { // 游戏玩家观战
+                // 自己未被淘汰不能观战
+                if (!gamePlayer.isEliminated()) {
+                    ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_allow_standing_gameplayer_spectate").withStyle(ChatFormatting.YELLOW));
+                    return false;
+                }
+                // 队伍未被淘汰不能观战
+                if (this.gameEntry.spectateAfterTeam && !gamePlayer.getTeam().isTeamEliminated()) {
+                    ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_allow_standing_gameteam_spectate").withStyle(ChatFormatting.YELLOW));
+                    return false;
+                }
+                player.setGameMode(GameType.SPECTATOR);
+                teleportToRandomStandingGamePlayer(player);
+                MessageManager.get().notifySpectateChange(gamePlayer.getGameSingleId());
+                return true;
+            } else if (!this.gameEntry.onlyGamePlayerSpectate){ // 非游戏玩家能观战
+                player.setGameMode(GameType.SPECTATOR);
+                teleportToRandomStandingGamePlayer(player);
+                return true;
+            } else { // 非游戏玩家不能观战
+                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.only_game_player_spectate").withStyle(ChatFormatting.YELLOW));
                 return false;
             }
-            player.setGameMode(GameType.SPECTATOR);
-            teleportToRandomStandingGamePlayer(player, serverLevel);
-            return true;
         }
-
-        if (!gamePlayer.isEliminated()) { // 未被淘汰不能观战
-            return false;
-        }
-        if (!gamePlayer.getTeam().isTeamEliminated()) { // 队伍未被淘汰不能观战
-            if (this.gameEntry.spectateAfterTeam) {
-                return false;
-            }
-        }
-        player.setGameMode(GameType.SPECTATOR);
-        teleportToRandomStandingGamePlayer(player, serverLevel);
-
-        return true;
     }
 
-    public void teleportToRandomStandingGamePlayer(ServerPlayer player, ServerLevel serverLevel) {
-        if (serverLevel != this.serverLevel) {
+    public void teleportToRandomStandingGamePlayer(ServerPlayer player) {
+        if (this.serverLevel == null) {
+            BattleRoyale.LOGGER.debug("GameManager.serverLevel is null while teleportToRandomStandingGamePlayer(ServerPlayer {})", player.getName().getString());
             return;
         }
         GamePlayer standingGamePlayer = getRandomStandingGamePlayer();
@@ -1223,8 +1222,8 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
                 yaw = targetPlayer.getYRot();
                 pitch = targetPlayer.getXRot();
             }
-            safeTeleport(player, serverLevel, standingGamePlayer.getLastPos(), yaw, pitch);
-            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_is_spectating", player.getName().getString(), standingGamePlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
+            safeTeleport(player, this.serverLevel, standingGamePlayer.getLastPos(), yaw, pitch);
+            ChatUtils.sendComponentMessageToAllPlayers(this.serverLevel, Component.translatable("battleroyale.message.player_is_spectating", player.getName().getString(), standingGamePlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
         }
     }
 

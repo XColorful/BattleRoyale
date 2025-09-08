@@ -166,7 +166,8 @@
   "battleroyale.message.lobby_heal": "Lobby heal",
   "battleroyale.message.teleported_to_lobby": "Teleported to lobby",
   "battleroyale.message.failed_lobby_teleport": "Failed to teleport to lobby",
-  "battleroyale.message.not_allow_standing_gameplayer_teleport": "Teleporting is not allowed for standing game players",
+  "battleroyale.message.not_allow_standing_gameplayer_spectate": "Spectating is not allowed for standing game players",
+  "battleroyale.message.not_allow_standing_gameteam_spectate": "Spectating is not allowed for standing game teams",
   "battleroyale.message.selected_bot_config": "Bot config %s: %s",
   "battleroyale.message.selected_gamerule_config": "Gamerule config %s: %s",
   "battleroyale.message.selected_spawn_config": "Spawn config %s: %s",
@@ -262,7 +263,8 @@
   "battleroyale.message.switch_gamemode_success": "Switched gamemode",
   "battleroyale.message.switch_gamemode_failed": "Failed to switched gamemode",
   "battleroyale.message.teleport_non_game_player_to_lobby": "Teleported non game player %s to lobby",
-  "battleroyale.message.down_fire_not_enabled": "Downed player damage is not enabled in BattleRoyale gamerule",
+  "battleroyale.message.down_fire_not_enabled": "Downed player damage is not enabled in BattleRoyale gamerule config",
+  "battleroyale.message.only_game_player_spectate": "Non game player spectate is not enabled in Game config",
 
   "battleroyale.label.alive": "Alive",
 
