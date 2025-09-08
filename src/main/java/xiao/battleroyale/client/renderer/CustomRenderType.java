@@ -13,10 +13,10 @@ import xiao.battleroyale.BattleRoyale;
 public class CustomRenderType {
 
     private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(BattleRoyale.MOD_ID, "textures/white.png");
-    public static final RenderType SolidTranslucentColor = createZoneTranslucent();
-    public static final RenderType SolidOpaqueColor = createZoneOpaque();
+    public static final RenderType SolidTranslucentColor = createSolidTranslucent();
+    public static final RenderType SolidOpaqueColor = createSolidOpaque();
 
-    private static RenderType createZoneTranslucent() {
+    private static RenderType createSolidTranslucent() {
         RenderStateShard.TransparencyStateShard translucent = new RenderStateShard.TransparencyStateShard(
                 "zone_translucent",
                 () -> {
@@ -61,7 +61,7 @@ public class CustomRenderType {
         );
     }
 
-    private static RenderType createZoneOpaque() {
+    private static RenderType createSolidOpaque() {
         RenderStateShard.TransparencyStateShard noBlend = new RenderStateShard.TransparencyStateShard(
                 "zone_opaque",
                 RenderSystem::disableBlend,

@@ -112,6 +112,14 @@ public class ClientGameDataManager {
         }
     }
 
+    public void updateGameSpectateInfo(@NotNull CompoundTag syncPacketNbt) {
+        if (syncPacketNbt.isEmpty()) {
+            gameData.getSpectateData().clear();
+        } else {
+            gameData.getSpectateData().updateFromNbt(syncPacketNbt);
+        }
+    }
+
     public void clear() {
         activeZones.clear();
         teamData.clear();

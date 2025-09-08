@@ -9,6 +9,8 @@ import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
 import xiao.battleroyale.common.message.game.GameMessageManager;
+import xiao.battleroyale.common.message.game.SpectateMessage;
+import xiao.battleroyale.common.message.game.SpectateMessageManager;
 import xiao.battleroyale.common.message.team.TeamMessageManager;
 import xiao.battleroyale.common.message.zone.ZoneMessage;
 import xiao.battleroyale.common.message.zone.ZoneMessageManager;
@@ -100,6 +102,29 @@ public class DebugMessage {
                 .toList();
         DebugManager.sendLocalDebugMessage(source, GET_GAME_MESSAGES, MessageText.buildGameMessagesDetailLocal(keyList));
     }
+    public static final String GET_SPECTATE_MESSAGES = "getSpectateMessages";
+    public void getSpectateMessages(CommandSourceStack source, int min, int max) {
+        List<Integer> idList = SpectateMessageManager.get().getMessagesIdList().stream()
+                .filter(id -> id >= min && id <= max)
+                .sorted()
+                .toList();
+        DebugManager.sendDebugMessage(source, GET_SPECTATE_MESSAGES, MessageText.buildSpectateMessagesDetail(SpectateMessageManager.get(), idList));
+    }
+    public void getSpectateMessagesLocal(CommandSourceStack source, int min, int max) {
+        CompoundTag messageNbt = ClientGameDataManager.get().getGameData().getSpectateData().lastMessageNbt;
+        List<String> keyList = messageNbt.getAllKeys().stream()
+                .filter(keyString -> {
+                    try {
+                        int keyInt = Integer.parseInt(keyString);
+                        return keyInt >= min && keyInt <= max;
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                })
+                .sorted()
+                .toList();
+        DebugManager.sendLocalDebugMessage(source, GET_SPECTATE_MESSAGES, MessageText.buildSpectateMessagesDetailLocal(keyList));
+    }
 
     /**
      * [调试]getZoneMessage:
@@ -171,5 +196,21 @@ public class DebugMessage {
             }
         }
         DebugManager.sendLocalDebugMessage(source, GET_GAME_MESSAGE, MessageText.buildGameMessageDetailLocal(nbt, (int) gameData.getLastUpdateTick()));
+    }
+    public static final String GET_SPECTATE_MESSAGE = "getSpectateMessage";
+    public void getSpectateMessage(CommandSourceStack source, int nbtId) {
+        DebugManager.sendDebugMessage(source, GET_SPECTATE_MESSAGE, MessageText.buildSpectateMessageDetail(SpectateMessageManager.get().getMessage(nbtId), nbtId));
+    }
+    public void getSpectateMessageLocal(CommandSourceStack source, int nbtId) {
+        ClientGameData.ClientSpectateData spectateData = ClientGameDataManager.get().getGameData().getSpectateData();
+        CompoundTag messageNbt = spectateData.lastMessageNbt;
+        CompoundTag nbt = null;
+        String nbtIdString = Integer.toString(nbtId);
+        for (String key : messageNbt.getAllKeys()) {
+            if (key.equals(nbtIdString)) {
+                nbt = messageNbt.getCompound(key);
+            }
+        }
+        DebugManager.sendLocalDebugMessage(source, GET_SPECTATE_MESSAGE, MessageText.buildSpectateMessageDetailLocal(nbt, (int) spectateData.getLastUpdateTick()));
     }
 }

@@ -11,15 +11,15 @@ import java.util.function.Supplier;
 
 public class ClientMessageGameInfo implements IMessage<ClientMessageGameInfo> {
 
-    private final @NotNull CompoundTag gameZoneNbt;
+    private final @NotNull CompoundTag gameSyncNbt;
 
-    public ClientMessageGameInfo(CompoundTag gameZoneNbt) {
-        this.gameZoneNbt = gameZoneNbt != null ? gameZoneNbt : new CompoundTag();
+    public ClientMessageGameInfo(CompoundTag gameSyncNbt) {
+        this.gameSyncNbt = gameSyncNbt != null ? gameSyncNbt : new CompoundTag();
     }
 
     @Override
     public void encode(ClientMessageGameInfo message, FriendlyByteBuf buffer) {
-        buffer.writeNbt(message.gameZoneNbt);
+        buffer.writeNbt(message.gameSyncNbt);
     }
 
     public static ClientMessageGameInfo decode(FriendlyByteBuf buffer) {
@@ -31,7 +31,7 @@ public class ClientMessageGameInfo implements IMessage<ClientMessageGameInfo> {
     public void handle(ClientMessageGameInfo message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
-            ClientGameDataManager.get().updateGameInfo(message.gameZoneNbt);
+            ClientGameDataManager.get().updateGameInfo(message.gameSyncNbt);
         });
         context.setPacketHandled(true);
     }

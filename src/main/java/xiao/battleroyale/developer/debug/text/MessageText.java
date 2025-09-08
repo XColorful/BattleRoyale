@@ -7,6 +7,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.message.team.GameTeamTag;
 import xiao.battleroyale.api.message.zone.GameZoneTag;
 import xiao.battleroyale.client.game.ClientGameDataManager;
+import xiao.battleroyale.client.game.data.ClientGameData;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
@@ -15,6 +16,8 @@ import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.message.AbstractMessageManager;
 import xiao.battleroyale.common.message.game.GameMessage;
 import xiao.battleroyale.common.message.game.GameMessageManager;
+import xiao.battleroyale.common.message.game.SpectateMessage;
+import xiao.battleroyale.common.message.game.SpectateMessageManager;
 import xiao.battleroyale.common.message.team.TeamMessage;
 import xiao.battleroyale.common.message.team.TeamMessageManager;
 import xiao.battleroyale.common.message.zone.ZoneMessage;
@@ -40,7 +43,9 @@ public class MessageText {
                 .append(Component.literal(" "))
                 .append(buildTeamMessagesSimple(TeamMessageManager.get()))
                 .append(Component.literal(" "))
-                .append(buildGameMessagesSimple(GameMessageManager.get()));
+                .append(buildGameMessagesSimple(GameMessageManager.get()))
+                .append(Component.literal(" "))
+                .append(buildSpectateMessagesSimple(SpectateMessageManager.get()));
 
         return component;
     }
@@ -51,7 +56,9 @@ public class MessageText {
                 .append(Component.literal(" "))
                 .append(buildTeamMessagesSimpleLocal(clientGameDataManager))
                 .append(Component.literal(" "))
-                .append(buildGameMessagesSimpleLocal(clientGameDataManager));
+                .append(buildGameMessagesSimpleLocal(clientGameDataManager))
+                .append(Component.literal(" "))
+                .append(buildSpectateMessageSimpleLocal(clientGameDataManager));
 
         return component;
     }
@@ -64,10 +71,13 @@ public class MessageText {
         return buildMessagesCommonSimple(zoneMessageManager.messagesSize(), GetMessage.getZoneMessagesCommand(0, 10), "ZoneMessages");
     }
     public static MutableComponent buildTeamMessagesSimple(TeamMessageManager teamMessageManager) {
-        return buildMessagesCommonSimple(teamMessageManager.messagesSize(), GetMessage.getTeamMessagesCommand(0, 10), "TeamMessages");
+        return buildMessagesCommonSimple(teamMessageManager.messagesSize(), GetMessage.getTeamMessagesCommand(1, 10), "TeamMessages");
     }
     public static MutableComponent buildGameMessagesSimple(GameMessageManager gameMessageManager) {
         return buildMessagesCommonSimple(gameMessageManager.messagesSize(), GetMessage.getGameMessagesCommand(-10, 0), "GameMessages");
+    }
+    public static MutableComponent buildSpectateMessagesSimple(SpectateMessageManager spectateMessageManager) {
+        return buildMessagesCommonSimple(spectateMessageManager.messagesSize(), GetMessage.getSpectateMessagesCommand(1, 20), "SpectateMessages");
     }
     public static MutableComponent buildMessagesCommonSimple(int messageSize, String command, String displayName) {
         return Component.empty()
@@ -88,6 +98,11 @@ public class MessageText {
         int size = clientGameDataManager.getGameData().lastMessageNbt.getAllKeys().size();
         String command = GetMessage.getLocalGameMessagesCommand(-10, 0);
         return buildMessagesCommonSimpleLocal(size, command, "GameMessages");
+    }
+    public static MutableComponent buildSpectateMessageSimpleLocal(ClientGameDataManager clientGameDataManager) {
+        int size = clientGameDataManager.getGameData().getSpectateData().lastMessageNbt.getAllKeys().size();
+        String command = GetMessage.getLocalSpectateMessagesCommand(-10, 0);
+        return buildMessagesCommonSimpleLocal(size, command, "SpectateMessages");
     }
     public static MutableComponent buildMessagesCommonSimpleLocal(int messageSize, String command, String displayName) {
         return Component.empty()
@@ -124,6 +139,15 @@ public class MessageText {
         return component.append(buildGameMessageSimple(gameMessage, displayId))
                 .append(Component.literal(" "))
                 .append(buildMessageCommonDetail(gameMessage.nbt, gameMessage.updateTime));
+    }
+    public static MutableComponent buildSpectateMessageDetail(SpectateMessage spectateMessage, int displayId) {
+        MutableComponent component = Component.empty();
+        if (spectateMessage == null) {
+            return component;
+        }
+        return component.append(buildSpectateMessageSimple(spectateMessage, displayId))
+                .append(Component.literal(" "))
+                .append(buildMessageCommonDetail(spectateMessage.nbt, spectateMessage.updateTime));
     }
     public static MutableComponent buildMessageCommonDetail(CompoundTag nbt, int updateTime) {
         MutableComponent component = Component.empty();
@@ -164,6 +188,9 @@ public class MessageText {
                 .append(buildHoverableText("updateTime", String.valueOf(lastUpdateTime)));
     }
     public static MutableComponent buildGameMessageDetailLocal(CompoundTag nbt, int lastUpdateTime) {
+        return buildMessageCommonDetail(nbt, lastUpdateTime);
+    }
+    public static MutableComponent buildSpectateMessageDetailLocal(CompoundTag nbt, int lastUpdateTime) {
         return buildMessageCommonDetail(nbt, lastUpdateTime);
     }
 
@@ -236,6 +263,19 @@ public class MessageText {
         }
 
         String messageCommand = GetMessage.getGameMessageCommand(displayId);
+
+        return buildRunnableIntBracket(displayId, messageCommand);
+    }
+
+    /**
+     *
+     */
+    public static MutableComponent buildSpectateMessageSimple(SpectateMessage spectateMessage, int displayId) {
+        if (spectateMessage == null) {
+            return Component.empty();
+        }
+
+        String messageCommand = GetMessage.getSpectateMessageCommand(displayId);
 
         return buildRunnableIntBracket(displayId, messageCommand);
     }
@@ -369,6 +409,40 @@ public class MessageText {
                     .append(buildSuggestableIntBracket(nbtId, messageCommand));
         }
 
+        return component;
+    }
+
+    /**
+     * config progress [id] [id] ...
+     * 点击任意ID查看具体消息
+     */
+    public static MutableComponent buildSpectateMessagesDetail(SpectateMessageManager spectateMessageManager, List<Integer> idList) {
+        MutableComponent component = Component.empty();
+
+        component.append(buildMessagesCommonDetail(spectateMessageManager));
+        for (int id : idList) {
+            component.append(Component.literal(" "))
+                    .append(buildSpectateMessageSimple(spectateMessageManager.getMessage(id), id));
+        }
+
+        return component;
+    }
+    public static MutableComponent buildSpectateMessagesDetailLocal(List<String> keyList) { // 输入keyList已经保证key均能转换整数
+        MutableComponent component = Component.empty();
+
+        component.append(buildHoverableText("gameExpireTick", String.valueOf(ClientGameDataManager.GAME_EXPIRE_TICK)));
+        for (String key : keyList) {
+            int nbtId;
+            try {
+                nbtId = Integer.parseInt(key);
+            } catch (Exception e) {
+                BattleRoyale.LOGGER.error("Unexpected Integer parse error:{}", key);
+                continue;
+            }
+            String messageCommand = GetMessage.getLocalSpectateMessageCommand(nbtId);
+            component.append(Component.literal(" "))
+                    .append(buildSuggestableIntBracket(nbtId, messageCommand));
+        }
         return component;
     }
 }
