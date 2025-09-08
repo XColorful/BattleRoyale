@@ -1196,7 +1196,9 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
                 }
                 player.setGameMode(GameType.SPECTATOR);
                 teleportToRandomStandingGamePlayer(player);
-                MessageManager.get().notifySpectateChange(gamePlayer.getGameSingleId());
+                if (this.gameEntry.spectatorSeeAllTeams) {
+                    MessageManager.get().notifySpectateChange(gamePlayer.getGameSingleId());
+                }
                 return true;
             } else if (!this.gameEntry.onlyGamePlayerSpectate){ // 非游戏玩家能观战
                 player.setGameMode(GameType.SPECTATOR);
