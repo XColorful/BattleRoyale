@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -116,14 +117,13 @@ public class TeamMemberRenderer {
                 continue;
             }
 
-            Entity teammateEntity = mc.level.getPlayerByUUID(member.uuid);
-            if (teammateEntity != null) {
-                AABB boundingBox = teammateEntity.getBoundingBox();
-
-                Vec3 lastTickPos = new Vec3(teammateEntity.xOld, teammateEntity.yOld, teammateEntity.zOld);
-                Vec3 currentTickPos = teammateEntity.position();
+            Player teammatePlayer = mc.level.getPlayerByUUID(member.uuid);
+            if (teammatePlayer != null) {
+                // 渲染
+                Vec3 lastTickPos = new Vec3(teammatePlayer.xOld, teammatePlayer.yOld, teammatePlayer.zOld);
+                Vec3 currentTickPos = teammatePlayer.position();
                 Vec3 interpolatedPos = lastTickPos.lerp(currentTickPos, partialTicks);
-
+                AABB boundingBox = teammatePlayer.getBoundingBox();
                 float teammateHeight = (float) (boundingBox.maxY - boundingBox.minY);
                 float baseWidth = (float) (boundingBox.maxX - boundingBox.minX);
                 float baseDepth = (float) (boundingBox.maxZ - boundingBox.minZ);

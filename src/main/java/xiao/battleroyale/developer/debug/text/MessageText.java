@@ -58,7 +58,7 @@ public class MessageText {
                 .append(Component.literal(" "))
                 .append(buildGameMessagesSimpleLocal(clientGameDataManager))
                 .append(Component.literal(" "))
-                .append(buildSpectateMessageSimpleLocal(clientGameDataManager));
+                .append(buildSpectateMessagesSimpleLocal(clientGameDataManager));
 
         return component;
     }
@@ -99,7 +99,7 @@ public class MessageText {
         String command = GetMessage.getLocalGameMessagesCommand(-10, 0);
         return buildMessagesCommonSimpleLocal(size, command, "GameMessages");
     }
-    public static MutableComponent buildSpectateMessageSimpleLocal(ClientGameDataManager clientGameDataManager) {
+    public static MutableComponent buildSpectateMessagesSimpleLocal(ClientGameDataManager clientGameDataManager) {
         int size = clientGameDataManager.getGameData().getSpectateData().lastMessageNbt.getAllKeys().size();
         String command = GetMessage.getLocalSpectateMessagesCommand(-10, 0);
         return buildMessagesCommonSimpleLocal(size, command, "SpectateMessages");
@@ -268,7 +268,7 @@ public class MessageText {
     }
 
     /**
-     *
+     * [id]
      */
     public static MutableComponent buildSpectateMessageSimple(SpectateMessage spectateMessage, int displayId) {
         if (spectateMessage == null) {

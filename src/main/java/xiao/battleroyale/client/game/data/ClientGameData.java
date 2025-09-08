@@ -2,15 +2,14 @@ package xiao.battleroyale.client.game.data;
 
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.message.game.GameTag;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.common.message.game.GameMessageManager;
 import xiao.battleroyale.common.message.game.SpectateMessageManager;
+import xiao.battleroyale.util.ClassUtils;
 import xiao.battleroyale.util.ColorUtils;
 
 import java.awt.*;
-import java.util.HashMap;
 import java.util.UUID;
 
 public class ClientGameData extends AbstractClientExpireData {
@@ -41,7 +40,7 @@ public class ClientGameData extends AbstractClientExpireData {
         if (this.inGame) {
             if (messageNbt.contains(GameMessageManager.GAMEID_KEY)) {
                 UUID newGameId = messageNbt.getUUID(GameMessageManager.GAMEID_KEY);
-                if (!newGameId.equals(this.gameId)) {
+                if (!newGameId.equals(this.gameId)) { // 检查是否是下一局游戏，防止瞬间开游戏的一些极端情况
                     this.spectateData.clear();
                 }
                 this.gameId = newGameId;
@@ -61,29 +60,29 @@ public class ClientGameData extends AbstractClientExpireData {
 
     public static class ClientSpectateData extends AbstractClientExpireData {
 
-        HashMap<UUID, Color> uuidToColor = new HashMap<>();
+        public final ClassUtils.ArrayMap<UUID, UUIDrgb> uuidToColor = new ClassUtils.ArrayMap<>(UUIDrgb::getUUID);
+        public record UUIDrgb(UUID uuid, float r, float g, float b) {
+            public UUID getUUID() { return uuid; }
+        }
 
         @Override
         public void updateFromNbt(@NotNull CompoundTag messageNbt) {
             this.lastMessageNbt = messageNbt;
-            BattleRoyale.LOGGER.debug("Received spectate message nbt:{}", messageNbt);
 
             // 不自动清理，由GameData的消息状况处理清理
             CompoundTag spectateTags = messageNbt.getCompound(SpectateMessageManager.SPECTATE_KEY);
             for (String key : spectateTags.getAllKeys()) {
                 UUID playerUUID = UUID.fromString(key);
                 Color color = ColorUtils.parseColorFromString(spectateTags.getString(key));
-                uuidToColor.put(playerUUID, color);
-            }
-
-            for (UUID key : uuidToColor.keySet()) {
-                BattleRoyale.LOGGER.debug("key:{}, value:{}", key, uuidToColor.get(key));
+                float r = color.getRed() / 255.0F;
+                float g = color.getGreen() / 255.0F;
+                float b = color.getBlue() / 255.0F;
+                uuidToColor.put(playerUUID, new UUIDrgb(playerUUID, r, g, b));
             }
         }
 
         public void clear() {
             uuidToColor.clear();
-            BattleRoyale.LOGGER.debug("uuidToColor.clear()");
         }
     }
 }

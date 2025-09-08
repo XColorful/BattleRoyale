@@ -18,7 +18,7 @@ public class CustomRenderType {
 
     private static RenderType createSolidTranslucent() {
         RenderStateShard.TransparencyStateShard translucent = new RenderStateShard.TransparencyStateShard(
-                "zone_translucent",
+                "solid_translucent",
                 () -> {
                     RenderSystem.enableBlend();
                     GlStateManager._blendFuncSeparate(
@@ -51,7 +51,7 @@ public class CustomRenderType {
                 .createCompositeState(true);
 
         return RenderType.create(
-                "zone_translucent",
+                "solid_translucent",
                 DefaultVertexFormat.POSITION_COLOR,
                 VertexFormat.Mode.QUADS,
                 256,
@@ -63,7 +63,7 @@ public class CustomRenderType {
 
     private static RenderType createSolidOpaque() {
         RenderStateShard.TransparencyStateShard noBlend = new RenderStateShard.TransparencyStateShard(
-                "zone_opaque",
+                "solid_opaque",
                 RenderSystem::disableBlend,
                 () -> {}
         );
@@ -84,7 +84,7 @@ public class CustomRenderType {
                 .createCompositeState(true);
 
         return RenderType.create(
-                "zone_opaque",
+                "solid_opaque",
                 DefaultVertexFormat.POSITION_COLOR,
                 VertexFormat.Mode.QUADS,
                 256,

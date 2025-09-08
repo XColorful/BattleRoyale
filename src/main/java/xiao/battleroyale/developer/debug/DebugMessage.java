@@ -2,6 +2,7 @@ package xiao.battleroyale.developer.debug;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.nbt.CompoundTag;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.message.zone.GameZoneTag;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientGameData;

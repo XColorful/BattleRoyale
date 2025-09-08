@@ -146,7 +146,7 @@ public class GetMessage {
         // get spectatemessages [min max / all]
         getCommand.then(Commands.literal(useFullName ? SPECTATE_MESSAGES : SPECTATE_MESSAGES_SHORT)
                 .then(Commands.literal(ALL)
-                        .executes(context -> localGetSpectateMessages(context, Integer.MAX_VALUE, Integer.MAX_VALUE - 1)))
+                        .executes(context -> localGetSpectateMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
                 .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
                         .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
                                 .executes(context -> localGetSpectateMessages(context,
