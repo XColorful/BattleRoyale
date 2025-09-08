@@ -980,13 +980,21 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
     private boolean initGameConfigSetup() {
         GameruleConfig gameruleConfig = GameConfigManager.get().getGameruleConfig(gameruleConfigId);
         if (gameruleConfig == null) {
-            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            if (this.serverLevel != null) {
+                ChatUtils.sendTranslatableMessageToAllPlayers(this.serverLevel, "battleroyale.message.missing_gamerule_config");
+            } else {
+                BattleRoyale.LOGGER.error("GameManager.serverLevel is null in initGameConfigSetup: gameruleConfig == null");
+            }
             return false;
         }
         BattleroyaleEntry brEntry = gameruleConfig.getBattleRoyaleEntry();
         GameEntry gameEntry = gameruleConfig.getGameEntry();
         if (brEntry == null || gameEntry == null) {
-            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            if (this.serverLevel != null) {
+                ChatUtils.sendTranslatableMessageToAllPlayers(this.serverLevel, "battleroyale.message.missing_gamerule_config");
+            } else {
+                BattleRoyale.LOGGER.error("GameManager.serverLevel is null in initGameConfigSetup: brEntry == null || gameEntry == null");
+            }
             return false;
         }
         this.maxGameTime = brEntry.maxGameTime;

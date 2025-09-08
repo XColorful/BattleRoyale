@@ -8,6 +8,9 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -20,6 +23,7 @@ import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.event.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.ColorUtils;
 
 import java.util.*;
 import java.util.List;
@@ -122,8 +126,12 @@ public class TeamManager extends AbstractGameManager {
                 forceJoinTeam(player); // 初始化时先强制分配，后续调整玩家自行处理
             }
         }
+        GameManager gameManager = GameManager.get();
+        if (gameManager.getGameEntry().buildVanillaTeam) {
+            buildVanillaTeam(serverLevel, gameManager.getGameEntry().hideVanillaTeamName);
+        }
 
-        GameManager.get().recordGamerule(teamConfig);
+        gameManager.recordGamerule(teamConfig);
         if (!hasEnoughPlayerTeamToStart()) { // 初始化游戏时检查并提示
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
         }
@@ -149,7 +157,13 @@ public class TeamManager extends AbstractGameManager {
         if (!hasEnoughPlayerTeamToStart()) { // init之后可能都退出了队伍，开始游戏前再次检查
             return false;
         }
-        // TODO 处理人机填充，创建MC原版队伍
+
+        // TODO 处理人机填充
+
+        if (gameManager.getGameEntry().buildVanillaTeam) {
+            buildVanillaTeam(serverLevel, gameManager.getGameEntry().hideVanillaTeamName);
+        }
+
         teamData.startGame();
         return true;
     }
@@ -213,6 +227,9 @@ public class TeamManager extends AbstractGameManager {
 
         GameManager gameManager = GameManager.get();
         if (!gameManager.getGameEntry().keepTeamAfterGame) {
+            // 移除原版队伍
+            clearVanillaTeam(serverLevel);
+
             for (GameTeam gameTeam : getGameTeamsList()) { // 新增双重保险，照理应该要能成功发送清空队伍的消息
                 gameManager.notifyTeamChange(gameTeam.getGameTeamId());
             }
@@ -926,6 +943,88 @@ public class TeamManager extends AbstractGameManager {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.teleported_to_lobby").withStyle(ChatFormatting.GREEN));
         } else {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
+        }
+    }
+
+    /**
+     * 在传入的 ServerLevel 下为全体 GamePlayer 构建原版队伍
+     * @param serverLevel 用于从 GamePlayer 获取 ServerPlayer 的维度
+     * @param hideName 是否向其他队伍隐藏名称
+     */
+    public void buildVanillaTeam(@Nullable ServerLevel serverLevel, boolean hideName) {
+        GameManager gameManager = GameManager.get();
+        if (gameManager.isInGame()) {
+            BattleRoyale.LOGGER.debug("GameManager is in game, reject to build vanilla team");
+            return;
+        }
+        if (serverLevel == null) {
+            BattleRoyale.LOGGER.error("TeamManager::buildVanillaTeam received a null ServerLevel, skipped build vanilla team");
+            return;
+        }
+
+        Scoreboard scoreboard = serverLevel.getScoreboard();
+        for (GameTeam gameTeam : getGameTeamsList()) {
+            int teamId = gameTeam.getGameTeamId();
+            String vanillaTeamName = String.format("CBR Team %s", teamId);
+
+            // 移除同名Vanilla队伍
+            PlayerTeam existingTeam = scoreboard.getPlayerTeam(vanillaTeamName);
+            if (existingTeam != null) {
+                scoreboard.removePlayerTeam(existingTeam);
+                BattleRoyale.LOGGER.debug("Removed vanilla team {}", vanillaTeamName);
+            }
+
+            // 创建Vanilla队伍
+            PlayerTeam vanillaTeam = scoreboard.getPlayerTeam(vanillaTeamName);
+            if (vanillaTeam == null) {
+                vanillaTeam = scoreboard.addPlayerTeam(vanillaTeamName);
+            }
+
+            // 友伤由模组监听的事件处理免伤
+            vanillaTeam.setAllowFriendlyFire(true);
+            if (hideName) { // 对其他队伍隐藏名称
+                vanillaTeam.setNameTagVisibility(Team.Visibility.HIDE_FOR_OTHER_TEAMS);
+            } else {
+                vanillaTeam.setNameTagVisibility(Team.Visibility.ALWAYS);
+            }
+
+            // 队伍颜色取与GameTeam最近的（原版api限制）
+            vanillaTeam.setColor(ColorUtils.getClosestChatFormatting(gameTeam.getGameTeamColor()));
+            for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) { // 原版队伍没有队长，直接遍历
+                ServerPlayer memberPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                if (memberPlayer == null) {
+                    BattleRoyale.LOGGER.warn("Failed to get GamePlayer[{}][{}]{}, skipped build vanilla team", gamePlayer.getGameTeamId(), gamePlayer.getGameSingleId(), gamePlayer.getPlayerName());
+                    continue;
+                }
+                String playerName = memberPlayer.getName().getString();
+//                // 离开队伍
+//                scoreboard.removePlayerFromTeam(playerName);
+                // 加入队伍（原版已经处理了离开队伍）
+                scoreboard.addPlayerToTeam(playerName, vanillaTeam);
+            }
+        }
+        BattleRoyale.LOGGER.debug("TeamManager finished build vanilla team");
+    }
+
+    /**
+     * 在传入的 ServerLevel 下为全体 GamePlayer 退出原版队伍
+     * @param serverLevel 用于从 GamePlayer 获取 ServerPlayer 的维度
+     */
+    public void clearVanillaTeam(@Nullable ServerLevel serverLevel) {
+        if (serverLevel == null) {
+            BattleRoyale.LOGGER.debug("TeamManager::clearVanillaTeam received a null ServerLevel, skipped clear vanilla team");
+            return;
+        }
+
+        Scoreboard scoreboard = serverLevel.getScoreboard();
+        for (GamePlayer gamePlayer : getGamePlayersList()) {
+            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+            if (player == null) {
+                BattleRoyale.LOGGER.warn("Failed to get GamePlayer[{}][{}]{}, skipped clear vanilla team", gamePlayer.getGameTeamId(), gamePlayer.getGameSingleId(), gamePlayer.getPlayerName());
+                continue;
+            }
+            String playerName = player.getName().getString();
+            scoreboard.removePlayerFromTeam(playerName);
         }
     }
 

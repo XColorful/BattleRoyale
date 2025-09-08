@@ -8,6 +8,8 @@ public class GameEntryTag extends ConfigEntryTag {
     // team
     public static final String TEAM_MSG_EXPIRE_SECONDS = "teamMessageExpireSeconds";
     public static final String TEAM_COLORS = "teamColors";
+    public static final String BUILD_VANILLA_TEAM = "buildVanillaTeam";
+    public static final String HIDE_VANILLA_TEAM_NAME = "hideVanillaTeamName";
     // game
     public static final String MAX_PLAYER_INVALID_TIME = "maxPlayerInvalidTime";
     public static final String MAX_BOT_INVALID_TIME = "maxBotInvalidTime";

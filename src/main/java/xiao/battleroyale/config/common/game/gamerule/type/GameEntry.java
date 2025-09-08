@@ -20,6 +20,8 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
             "#E9ECEC", "#F07613", "#BD44B3", "#3AAFD9", "#F8C627", "#70B919", "#ED8DAC", "#8E8E86",
             "#A0A0A0", "#158991", "#792AAC", "#35399D", "#724728", "#546D1B", "#A02722", "#141519");
     public static final List<Float> DEFAULT_DOWN_DAMAGE = Arrays.asList(0.3333F, 0.4444F, 0.6667F, 1.3333F, 2F, 4F, 8F, 16F, 32F);
+    public final boolean buildVanillaTeam;
+    public final boolean hideVanillaTeamName;
 
     public final int maxPlayerInvalidTime;
     public final int maxBotInvalidTime;
@@ -48,14 +50,14 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public final int messageSyncFreq;
 
     public GameEntry() {
-        this(true, 300, DEFAULT_TEAM_COLORS,
+        this(true, 300, DEFAULT_TEAM_COLORS, true, true,
                 20 * 60, 20 * 10, false,
                 true, false, false, DEFAULT_DOWN_DAMAGE, 20, false, true, true, true,
                 true, true, true, false, 0, 0, false,
                 20 * 7, 20 * 5, 20 * 5);
     }
 
-    public GameEntry(boolean teleportWhenInitGame, int teamMsgExpireTimeSeconds, List<String> teamColors,
+    public GameEntry(boolean teleportWhenInitGame, int teamMsgExpireTimeSeconds, List<String> teamColors, boolean buildVanillaTeam, boolean hideVanillaTeamName,
                      int maxPlayerInvalidTime, int maxBotInvalidTime, boolean removeInvalidTeam,
                      boolean healAllAtStart, boolean friendlyFire, boolean downFire, List<Float> downDamageList, int downDamageFrequency,
                      boolean onlyGamePlayerSpectate, boolean spectateAfterTeam, boolean spectatorSeeAllTeams, boolean teleportInterfererToLobby,
@@ -64,6 +66,8 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         this.teleportWhenInitGame = teleportWhenInitGame;
         this.teamMsgExpireTimeSeconds = teamMsgExpireTimeSeconds;
         this.teamColors = teamColors;
+        this.buildVanillaTeam = buildVanillaTeam;
+        this.hideVanillaTeamName = hideVanillaTeamName;
         this.maxPlayerInvalidTime = maxPlayerInvalidTime;
         this.maxBotInvalidTime = maxBotInvalidTime;
         this.removeInvalidTeam = removeInvalidTeam;
@@ -99,6 +103,8 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         jsonObject.addProperty(GameEntryTag.TELEPORT_WHEN_INIT_GAME, teleportWhenInitGame);
         jsonObject.addProperty(GameEntryTag.TEAM_MSG_EXPIRE_SECONDS, teamMsgExpireTimeSeconds);
         jsonObject.add(GameEntryTag.TEAM_COLORS, JsonUtils.writeStringListToJson(teamColors));
+        jsonObject.addProperty(GameEntryTag.BUILD_VANILLA_TEAM, buildVanillaTeam);
+        jsonObject.addProperty(GameEntryTag.HIDE_VANILLA_TEAM_NAME, hideVanillaTeamName);
 
         jsonObject.addProperty(GameEntryTag.MAX_PLAYER_INVALID_TIME, maxPlayerInvalidTime);
         jsonObject.addProperty(GameEntryTag.MAX_BOT_INVALID_TIME, maxBotInvalidTime);
@@ -133,6 +139,8 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         boolean teleportWhenInitGame = JsonUtils.getJsonBool(jsonObject, GameEntryTag.TELEPORT_WHEN_INIT_GAME, true);
         int teamMsgExpireTimeSeconds = JsonUtils.getJsonInt(jsonObject, GameEntryTag.TEAM_MSG_EXPIRE_SECONDS, 300);
         List<String> teamColors = JsonUtils.getJsonStringList(jsonObject, GameEntryTag.TEAM_COLORS);
+        boolean buildVanillaTeam = JsonUtils.getJsonBool(jsonObject, GameEntryTag.BUILD_VANILLA_TEAM, true);
+        boolean hideVanillaTeamName = JsonUtils.getJsonBool(jsonObject, GameEntryTag.HIDE_VANILLA_TEAM_NAME, true);
 
         int maxInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_PLAYER_INVALID_TIME, 20 * 60);
         int maxBotInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_BOT_INVALID_TIME, 20 * 10);
@@ -160,7 +168,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         int messageExpireTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_EXPIRE_TIME, 20 * 5);
         int messageSyncFreq = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_FORCE_SYNC_FREQUENCY, 20 * 5);
 
-        return new GameEntry(teleportWhenInitGame, teamMsgExpireTimeSeconds, teamColors,
+        return new GameEntry(teleportWhenInitGame, teamMsgExpireTimeSeconds, teamColors, buildVanillaTeam, hideVanillaTeamName,
                 maxInvalidTime, maxBotInvalidTime, removeInvalidTeam,
                 healAllAtStart, friendlyFire, downFire, downDamageList, downDamageFrequency,
                 onlyGamePlayerSpectate, spectateAfterTeam, spectatorSeeAllTeams, teleportInterfererToLobby,
