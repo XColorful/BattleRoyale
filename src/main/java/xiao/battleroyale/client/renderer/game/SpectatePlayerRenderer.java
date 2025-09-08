@@ -47,7 +47,7 @@ public class SpectatePlayerRenderer {
         registered = false;
     }
 
-    private static final RenderType SPECTATE_BEAM_RENDER_TYPE = CustomRenderType.SolidTranslucentColor;
+    private static final RenderType SPECTATE_PLAYER_RENDER_TYPE = CustomRenderType.SolidTranslucentColor;
     private static boolean enableSpectateRender = true;
     public static void setEnableSpectateRender(boolean bool) { enableSpectateRender = bool; }
     private static boolean useClientColor = false;
@@ -98,15 +98,7 @@ public class SpectatePlayerRenderer {
     }
 
     public void onRenderLevelStage(RenderLevelStageEvent event) {
-        if (!enableSpectateRender ) {
-            return;
-        }
-        boolean renderNoDepth;
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
-            renderNoDepth = false;
-        } else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_LEVEL) {
-            renderNoDepth = true;
-        } else {
+        if (!enableSpectateRender || event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
             return;
         }
 
@@ -125,7 +117,7 @@ public class SpectatePlayerRenderer {
         Vec3 cameraPos = event.getCamera().getPosition();
         float partialTicks = event.getPartialTick();
 
-        VertexConsumer consumer = bufferSource.getBuffer(SPECTATE_BEAM_RENDER_TYPE);
+        VertexConsumer consumer = bufferSource.getBuffer(SPECTATE_PLAYER_RENDER_TYPE);
 
         int worldMaxBuildHeight = mc.level.getMaxBuildHeight();
 
