@@ -599,11 +599,11 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
     public void sendLobbyTeleportMessage(@NotNull ServerPlayer player, boolean isWinner) {
         String toLobbyCommand = GameCommand.toLobbyCommand();
 
-        Component fullMessage = Component.translatable("battleroyale.message.back_to_lobby")
+        Component fullMessage = Component.translatable("battleroyale.message.back_to_lobby").withStyle(ChatFormatting.AQUA)
                 .append(Component.literal(" "))
                 .append(buildRunnableText(Component.translatable("battleroyale.message.teleport"),
                         toLobbyCommand,
-                        isWinner ? ChatFormatting.GOLD :  ChatFormatting.WHITE));
+                        isWinner ? ChatFormatting.GOLD :  ChatFormatting.GREEN));
 
         ChatUtils.sendComponentMessageToPlayer(player, fullMessage);
     }
@@ -623,7 +623,10 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
                 if (gameEntry.teleportWinnerAfterGame) { // 传送
                     teleportToLobby(player); // 传送胜利玩家回大厅
                 } else { // 不传送，改为发送传送消息
-                    sendLobbyTeleportMessage(player, true);
+                    Consumer<ServerPlayer> delayedTask = isWinner -> {
+                        sendLobbyTeleportMessage(player, true);
+                    };
+                    new DelayedEvent<>(delayedTask, player, 2, "GameManager::sendLobbyTeleportMessage");
                 }
             }
 
@@ -642,7 +645,10 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
                 if (gameEntry.teleportAfterGame) {
                     teleportToLobby(player); // 非胜利存活玩家直接回大厅
                 } else {
-                    sendLobbyTeleportMessage(player, false);
+                    Consumer<ServerPlayer> delayedTask = isWinner -> {
+                        sendLobbyTeleportMessage(player, false);
+                    };
+                    new DelayedEvent<>(delayedTask, player, 2, "GameManager::sendLobbyTeleportMessage");
                 }
             }
         }
@@ -795,10 +801,14 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
         if (!playerEliminatedBefore) { // 第一次淘汰才尝试kill，淘汰后被打倒的不管
             sendEliminateMessage(gamePlayer);
             PlayerRevive playerRevive = PlayerRevive.get();
-            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-            if (player != null && playerRevive.isBleeding(player)) {
-                BattleRoyale.LOGGER.debug("Detected GamePlayer {} PlayerRevive.isBleeding, force kill", gamePlayer.getPlayerName());
-                playerRevive.kill(player);
+            if (this.serverLevel != null) {
+                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                if (player != null && playerRevive.isBleeding(player)) {
+                    BattleRoyale.LOGGER.debug("Detected GamePlayer {} PlayerRevive.isBleeding, force kill", gamePlayer.getPlayerName());
+                    playerRevive.kill(player);
+                }
+            } else {
+                BattleRoyale.LOGGER.error("GameManager.serverLevel is null in onPlayerDeath, skipped PlayerRevive check");
             }
         }
 
@@ -817,6 +827,8 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
                 } else {
                     BattleRoyale.LOGGER.debug("Team {} has already been eliminated, GameManager skipped sending chat message", gameTeam.getGameTeamId());
                 }
+            } else {
+                BattleRoyale.LOGGER.error("GameManager.serverLevel is null in onPlayerDeath, skipped sending chat message");
             }
             finishGameIfShouldEnd(); // 游戏队伍被淘汰时的检查
         }

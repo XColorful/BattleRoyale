@@ -18,10 +18,12 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
+import xiao.battleroyale.event.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.*;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class TeamManager extends AbstractGameManager {
 
@@ -449,7 +451,10 @@ public class TeamManager extends AbstractGameManager {
                 ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
                 if (player != null) {
                     // TODO 生成战利品盒子
-                    GameManager.get().sendLobbyTeleportMessage(player, false);
+                    Consumer<ServerPlayer> delayedTask = isWinner -> {
+                        GameManager.get().sendLobbyTeleportMessage(player, false);
+                    };
+                    new DelayedEvent<>(delayedTask, player, 2, "TeamManager::GameManager.get().sendLobbyTeleportMessage");
                 }
             }
             onTeamChangedInGame();
