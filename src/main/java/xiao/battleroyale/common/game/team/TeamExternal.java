@@ -7,6 +7,8 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.scores.Scoreboard;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.GameManager;
@@ -27,11 +29,11 @@ public class TeamExternal {
         }
 
         int newTeamId = teamManager.teamData.generateNextTeamId();
-        if (teamManager.createNewTeamAndJoin(player, newTeamId)) { // 默认尝试创建队伍
+        if (TeamManagement.createNewTeamAndJoin(player, newTeamId)) { // 默认尝试创建队伍
             return;
         }
 
-        teamManager.addPlayerToTeamInternal(player, teamManager.findNotFullTeamId(), true); // 尝试申请加入
+        TeamManagement.addPlayerToTeamInternal(player, teamManager.findNotFullTeamId(), true); // 尝试申请加入
     }
 
     /**
@@ -46,11 +48,11 @@ public class TeamExternal {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.YELLOW));
         }
 
-        if (teamManager.createNewTeamAndJoin(player, teamId)) { // 手动加入队伍
+        if (TeamManagement.createNewTeamAndJoin(player, teamId)) { // 手动加入队伍
             return;
         }
 
-        teamManager.addPlayerToTeamInternal(player, teamId, true); // 无法创建则尝试申请加入
+        TeamManagement.addPlayerToTeamInternal(player, teamId, true); // 无法创建则尝试申请加入
     }
 
     protected static void kickPlayer(ServerPlayer sender, ServerPlayer targetPlayer) {
@@ -132,7 +134,7 @@ public class TeamExternal {
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel == null || player == null) {
             return;
-        } else if (senderPlayer == null || !teamManager.isPlayerLeader(senderPlayer.getUUID())) { // 玩家未加载或不是队长
+        } else if (senderPlayer == null || !TeamUtils.isPlayerLeader(senderPlayer.getUUID())) { // 玩家未加载或不是队长
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_valid_invite").withStyle(ChatFormatting.RED));
             return;
         }
@@ -167,7 +169,7 @@ public class TeamExternal {
         teamManager.pendingInvites.remove(senderUUID);
         ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.invite_accepted", invite.teamId()).withStyle(ChatFormatting.GREEN));
         ChatUtils.sendComponentMessageToPlayer(senderPlayer, Component.translatable("battleroyale.message.player_accept_request", playerName).withStyle(ChatFormatting.GREEN));
-        teamManager.addPlayerToTeamInternal(player, invite.teamId(), false); // 同意邀请，强制加入
+        TeamManagement.addPlayerToTeamInternal(player, invite.teamId(), false); // 同意邀请，强制加入
     }
 
     public static void declineInvite(ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
@@ -176,7 +178,7 @@ public class TeamExternal {
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel == null || player == null) {
             return;
-        } else if (senderPlayer == null || !teamManager.isPlayerLeader(senderPlayer.getUUID())) { // 玩家未加载或不是队长
+        } else if (senderPlayer == null || !TeamUtils.isPlayerLeader(senderPlayer.getUUID())) { // 玩家未加载或不是队长
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_valid_invite").withStyle(ChatFormatting.RED));
             return;
         }
@@ -298,7 +300,7 @@ public class TeamExternal {
         teamManager.pendingRequests.remove(requesterUUID);
         ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.request_accepted", requesterName).withStyle(ChatFormatting.GREEN));
         ChatUtils.sendComponentMessageToPlayer(requesterPlayer, Component.translatable("battleroyale.message.player_accept_request", teamLeader.getName().getString()).withStyle(ChatFormatting.GREEN));
-        teamManager.addPlayerToTeamInternal(requesterPlayer, targetTeam.getGameTeamId(), false); // 同意申请，强制加入
+        TeamManagement.addPlayerToTeamInternal(requesterPlayer, targetTeam.getGameTeamId(), false); // 同意申请，强制加入
     }
 
     public static void declineRequest(ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
@@ -341,21 +343,34 @@ public class TeamExternal {
         ChatUtils.sendComponentMessageToPlayer(requesterPlayer, Component.translatable("battleroyale.message.player_declined_request", teamLeader.getName().getString()).withStyle(ChatFormatting.RED));
     }
 
-    public static void leaveTeam(ServerPlayer player) {
+    public static boolean leaveTeam(@NotNull ServerPlayer player) {
         TeamManager teamManager = TeamManager.get();
 
         UUID playerUUID = player.getUUID();
         GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(playerUUID);
         if (gamePlayer == null) {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
-            return;
+            return false;
         }
 
         teamManager.forceEliminatePlayerFromTeam(player); // 游戏进行时生效，退出即被淘汰，不在游戏运行时则自动跳过
 
         if (teamManager.removePlayerFromTeam(playerUUID)) { // 不在游戏时生效，手动离开当前队伍
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.GREEN));
+
+            // 移除原版Team
+            ServerLevel serverLevel = GameManager.get().getServerLevel();
+            if (serverLevel != null) {
+                Scoreboard scoreboard = serverLevel.getScoreboard();
+                if (GameManager.get().getGameEntry().buildVanillaTeam) {
+                    String playerName = player.getName().getString();
+                    scoreboard.removePlayerFromTeam(playerName);
+                }
+            } else {
+                BattleRoyale.LOGGER.debug("GameManager.serverLevel is null in TeamExternal::leaveTeam, skipped leave vanilal team");
+            }
         }
+        return teamManager.getGamePlayerByUUID(playerUUID) == null;
     }
 
     /**

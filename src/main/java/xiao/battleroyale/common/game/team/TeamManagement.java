@@ -33,10 +33,10 @@ public class TeamManagement {
 
         int newTeamId = teamManager.findNotFullTeamId();
         if (newTeamId > 0) { // 有未满员队伍
-            teamManager.addPlayerToTeamInternal(player, teamManager.findNotFullTeamId(), false); // 直接强制加入
+            TeamManagement.addPlayerToTeamInternal(player, teamManager.findNotFullTeamId(), false); // 直接强制加入
         } else {
             newTeamId = teamManager.teamData.generateNextTeamId();
-            teamManager.createNewTeamAndJoin(player, newTeamId); // 无未满员队伍则创建队伍
+            TeamManagement.createNewTeamAndJoin(player, newTeamId); // 无未满员队伍则创建队伍
         }
     }
 

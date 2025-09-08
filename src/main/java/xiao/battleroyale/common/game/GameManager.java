@@ -715,8 +715,8 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
 
     public void onPlayerLoggedOut(ServerPlayer player) {
         if (!isInGame()) {
-            if (TeamManager.get().removePlayerFromTeam(player.getUUID())) { // 没开始游戏就等于离队
-                BattleRoyale.LOGGER.debug("Player {} logged out, remove GamePlayer", player.getName().getString());
+            if (TeamManager.get().leaveTeam(player)) { // 没开始游戏就等于离队
+                BattleRoyale.LOGGER.debug("Player {} logged out, leave GamePlayer", player.getName().getString());
             }
         }
 

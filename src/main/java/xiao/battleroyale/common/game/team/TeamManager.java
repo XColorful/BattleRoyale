@@ -1,32 +1,22 @@
 package xiao.battleroyale.common.game.team;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.scores.PlayerTeam;
-import net.minecraft.world.scores.Scoreboard;
-import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
-import xiao.battleroyale.event.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
-import xiao.battleroyale.util.ColorUtils;
 
 import java.util.*;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class TeamManager extends AbstractGameManager {
 
@@ -383,8 +373,8 @@ public class TeamManager extends AbstractGameManager {
         TeamExternal.declineRequest(teamLeader, requesterPlayer);
     }
     // 离开队伍
-    public void leaveTeam(ServerPlayer player) {
-        TeamExternal.leaveTeam(player);
+    public boolean leaveTeam(@NotNull ServerPlayer player) {
+        return TeamExternal.leaveTeam(player);
     }
     /**
      * 传送玩家至大厅，如果正在游戏中则淘汰
@@ -408,15 +398,6 @@ public class TeamManager extends AbstractGameManager {
         }
 
         TeamManagement.forceJoinTeam(player);
-    }
-    /**
-     * 指定加入的队伍，不自动将申请的玩家离开队伍
-     * @param player 需要加入队伍的玩家
-     * @param targetTeamId 目标队伍的 ID
-     * @param request 如果为 true，则尝试直接加入（跳过队长确认）；如果为 false，则当队伍有在线成员时发送申请。
-     */
-    protected void addPlayerToTeamInternal(ServerPlayer player, int targetTeamId, boolean request) {
-        TeamManagement.addPlayerToTeamInternal(player, targetTeamId, request);
     }
     /**
      * 清理掉离线GamePlayer，防止后续影响游戏结束的人数判定
@@ -465,15 +446,6 @@ public class TeamManager extends AbstractGameManager {
 
         return TeamManagement.removePlayerFromTeam(playerId);
     }
-    /**
-     * 创建并加入队伍
-     * @param player 需要加入队伍的 ServerPlayer
-     * @param teamId 队伍id
-     * @return 是否加入队伍
-     */
-    protected boolean createNewTeamAndJoin(ServerPlayer player, int teamId) {
-        return TeamManagement.createNewTeamAndJoin(player, teamId);
-    }
 
     // -------TeamUtils-------
 
@@ -491,9 +463,6 @@ public class TeamManager extends AbstractGameManager {
     }
     public int getStandingTeamCount() {
         return TeamUtils.getStandingTeamCount();
-    }
-    public boolean isPlayerLeader(UUID playerUUID) {
-        return TeamUtils.isPlayerLeader(playerUUID);
     }
     /**
      * 找到第一个未满员队伍
