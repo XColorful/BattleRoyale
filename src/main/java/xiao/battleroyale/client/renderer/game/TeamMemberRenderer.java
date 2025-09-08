@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -54,17 +53,15 @@ public class TeamMemberRenderer {
     public static void setEnableTeamZone(boolean bool) { enableTeamZone = bool; }
     private static boolean useClientColor = false;
     public static void setUseClientColor(boolean use) { useClientColor = use; }
-    private static String clientColorString = "#00FFFF77";
     private static float R = 0f;
     private static float G = 1f;
     private static float B = 1f;
     public static void setClientColorString(String colorString) {
-        clientColorString = colorString;
         Color color = ColorUtils.parseColorFromString(colorString);
         R = color.getRed() / 255.0F;
         G = color.getGreen() / 255.0F;
         B = color.getBlue() / 255.0F;
-        BattleRoyale.LOGGER.debug("TeamZoneRender R{} G{} B{}", R, G, B);
+        BattleRoyale.LOGGER.debug("TeamZoneRender {} R{} G{} B{}", colorString, R, G, B);
     }
     private static boolean renderBeacon = true;
     public static void setRenderBeacon(boolean bool) { renderBeacon = bool; }

@@ -52,28 +52,26 @@ public class SpectatePlayerRenderer {
     public static void setEnableSpectateRender(boolean bool) { enableSpectateRender = bool; }
     private static boolean useClientColor = false;
     public static void setUseClientColor(boolean use) { useClientColor = use; }
-    private static String clientColorString = "#00FFFF77";
     private static float R = 0f;
     private static float G = 1f;
     private static float B = 1f;
     public static void setClientColorString(String colorString) {
-        clientColorString = colorString;
         Color color = ColorUtils.parseColorFromString(colorString);
         R = color.getRed() / 255.0F;
         G = color.getGreen() / 255.0F;
         B = color.getBlue() / 255.0F;
-        BattleRoyale.LOGGER.debug("SpectatePlayerRenderer R{} G{} B{}", R, G, B);
+        BattleRoyale.LOGGER.debug("SpectatePlayerRenderer {} R{} G{} B{}", colorString, R, G, B);
     }
     private static boolean renderBeacon = true;
     public static void setRenderBeacon(boolean bool) { renderBeacon = bool; }
     private static boolean renderBoundingBox = true;
     public static void setRenderBoundingBox(boolean bool) { renderBoundingBox = bool; }
     private static float A = 0.5F;
-    public static void setTransparency(float a) { A = a; }
+    public static void setTransparency(float a) { A = Math.min(Math.max(0, a), 1); }
 
-    private static ClassUtils.ArraySet<UUID> cachedSpectatePlayerUUID = new ClassUtils.ArraySet<>();
+    private static final ClassUtils.ArraySet<UUID> cachedSpectatePlayerUUID = new ClassUtils.ArraySet<>();
     private static int scanFrequency = 20 * 3; // 3秒扫一次
-    public static void setScanFrequency(int frequency) { scanFrequency = frequency; }
+    public static void setScanFrequency(int frequency) { scanFrequency = Math.max(frequency, 1); }
     public static int getScanFrequency() { return scanFrequency; }
 
     public void scanSpectatePlayers() {
