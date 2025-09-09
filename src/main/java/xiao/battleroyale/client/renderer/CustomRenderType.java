@@ -13,12 +13,12 @@ import xiao.battleroyale.BattleRoyale;
 public class CustomRenderType {
 
     private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(BattleRoyale.MOD_ID, "textures/white.png");
-    public static final RenderType SolidTranslucentColor = createZoneTranslucent();
-    public static final RenderType SolidOpaqueColor = createZoneOpaque();
+    public static final RenderType SolidTranslucentColor = createSolidTranslucent();
+    public static final RenderType SolidOpaqueColor = createSolidOpaque();
 
-    private static RenderType createZoneTranslucent() {
+    private static RenderType createSolidTranslucent() {
         RenderStateShard.TransparencyStateShard translucent = new RenderStateShard.TransparencyStateShard(
-                "zone_translucent",
+                "solid_translucent",
                 () -> {
                     RenderSystem.enableBlend();
                     GlStateManager._blendFuncSeparate(
@@ -51,7 +51,7 @@ public class CustomRenderType {
                 .createCompositeState(true);
 
         return RenderType.create(
-                "zone_translucent",
+                "solid_translucent",
                 DefaultVertexFormat.POSITION_COLOR,
                 VertexFormat.Mode.QUADS,
                 256,
@@ -61,9 +61,9 @@ public class CustomRenderType {
         );
     }
 
-    private static RenderType createZoneOpaque() {
+    private static RenderType createSolidOpaque() {
         RenderStateShard.TransparencyStateShard noBlend = new RenderStateShard.TransparencyStateShard(
-                "zone_opaque",
+                "solid_opaque",
                 RenderSystem::disableBlend,
                 () -> {}
         );
@@ -84,7 +84,7 @@ public class CustomRenderType {
                 .createCompositeState(true);
 
         return RenderType.create(
-                "zone_opaque",
+                "solid_opaque",
                 DefaultVertexFormat.POSITION_COLOR,
                 VertexFormat.Mode.QUADS,
                 256,

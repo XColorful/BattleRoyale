@@ -22,6 +22,7 @@ public class CommandArg {
     public static final String DISPLAY = "display";
     public static final String SERVER = "server";
     public static final String PERFORMANCE = "performance";
+    public static final String UTILITY = "utility";
     public static final String EXAMPLE = "example";
     public static final String TEMP = "temp";
     public static final String PUBGMC = "pubgmc";
@@ -74,6 +75,9 @@ public class CommandArg {
     public static final String OFFSET = "offset";
     public static final String SELECTED = "selected";
     public static final String SPECTATE = "spectate";
+
+    public static final String SURVIVAL_LOBBY = "survivallobby";
+    public static final String TO_SURVIVAL_LOBBY = "tosurvivallobby";
 
     public static final String BOOL = "boolean";
 }

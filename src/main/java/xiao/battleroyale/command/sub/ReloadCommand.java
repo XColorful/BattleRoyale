@@ -14,6 +14,7 @@ import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
+import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
 
 import javax.annotation.Nullable;
 
@@ -53,7 +54,9 @@ public class ReloadCommand {
                 .then(Commands.literal(SERVER)
                         .executes(context -> reloadServerConfigs(context, null))
                         .then(Commands.literal(PERFORMANCE)
-                                .executes(context -> reloadServerConfigs(context, PERFORMANCE))));
+                                .executes(context -> reloadServerConfigs(context, PERFORMANCE)))
+                        .then(Commands.literal(UTILITY)
+                                .executes(context -> reloadServerConfigs(context, UTILITY))));
     }
 
     public static LiteralArgumentBuilder<CommandSourceStack> getClient() {
@@ -67,15 +70,18 @@ public class ReloadCommand {
     }
 
     public static int reloadAllConfigs(CommandContext<CommandSourceStack> context) {
+        // 服务端配置
         LootConfigManager.get().reloadAllLootConfigs();
         GameConfigManager.get().reloadAllConfigs();
         EffectConfigManager.get().reloadAllConfigs();
+        ServerConfigManager.get().reloadAllConfigs();
+
+        // 客户端配置
         if (FMLEnvironment.dist.isClient()) {
             ClientConfigManager.get().reloadAllConfigs();
         } else {
             BattleRoyale.LOGGER.info("Skipped client config reload");
         }
-        ServerConfigManager.get().reloadAllConfigs();
 
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.all_config_reloaded"), true);
         BattleRoyale.LOGGER.info("Reloaded all {} configs", BattleRoyale.MOD_ID);
@@ -210,8 +216,12 @@ public class ReloadCommand {
         } else {
             switch (subType) {
                 case PERFORMANCE:
-                    PerformanceConfigManager.get().reloadPerformanceConfigs();
+                    ServerConfigManager.get().reloadPerformanceConfigs();
                     messageKey = "battleroyale.message.performance_config_reloaded";
+                    break;
+                case UTILITY:
+                    ServerConfigManager.get().reloadUtilityConfigs();
+                    messageKey = "battleroyale.message.utility_config_reloaded";
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_server_sub_type", subType));

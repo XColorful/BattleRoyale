@@ -52,7 +52,9 @@ public class ExampleCommand {
                 .then(Commands.literal(SERVER)
                         .executes(context -> generateServerConfigs(context, null))
                         .then(Commands.literal(PERFORMANCE)
-                                .executes(context -> generateServerConfigs(context, PERFORMANCE))));
+                                .executes(context -> generateServerConfigs(context, PERFORMANCE)))
+                        .then(Commands.literal(UTILITY)
+                                .executes(context -> generateServerConfigs(context, UTILITY))));
     }
 
     public static LiteralArgumentBuilder<CommandSourceStack> getClient() {
@@ -206,6 +208,10 @@ public class ExampleCommand {
                 case PERFORMANCE:
                     ServerConfigManager.get().generateDefaultPerformanceConfigs();
                     messageKey = "battleroyale.message.default_performance_config_generated";
+                    break;
+                case UTILITY:
+                    ServerConfigManager.get().generateDefaultUtilityConfigs();
+                    messageKey = "battleroyale.message.default_utility_config_generated";
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_server_sub_type", subType));

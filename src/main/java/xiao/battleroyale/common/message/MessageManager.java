@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.message.IMessageManager;
 import xiao.battleroyale.common.message.game.GameMessageManager;
+import xiao.battleroyale.common.message.game.SpectateMessageManager;
 import xiao.battleroyale.common.message.team.TeamMessageManager;
 import xiao.battleroyale.common.message.zone.ZoneMessageManager;
 import xiao.battleroyale.event.MessageEventHandler;
@@ -76,6 +77,15 @@ public class MessageManager {
         messageManagers.add(manager);
         MessageEventHandler.register();
     }
+    public void registerSpectateMessage() {
+        SpectateMessageManager manager = SpectateMessageManager.get();
+        if (messageManagers.contains(manager)) {
+            return;
+        }
+        manager.register(currentTime);
+        messageManagers.add(manager);
+        MessageEventHandler.register();
+    }
 
     public void addZoneNbtMessage(int zoneId, @Nullable CompoundTag nbtMessage) {
         registerZoneMessage();
@@ -118,5 +128,10 @@ public class MessageManager {
     }
     public void notifyGameChange(int channel) {
         GameMessageManager.get().notifyNbtChange(channel);
+    }
+
+    public void notifySpectateChange(int singleId) {
+        registerSpectateMessage();
+        SpectateMessageManager.get().notifyNbtChange(singleId);
     }
 }

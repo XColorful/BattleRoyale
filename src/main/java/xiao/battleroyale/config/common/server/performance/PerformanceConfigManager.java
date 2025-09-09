@@ -79,7 +79,7 @@ public class PerformanceConfigManager extends AbstractConfigManager<PerformanceC
             return jsonObject;
         }
 
-        public static GeneratorEntry deserializeLootEntry(JsonObject jsonObject) {
+        public static GeneratorEntry deserializeGeneratorEntry(JsonObject jsonObject) {
             try {
                 GeneratorEntry generatorEntry = GeneratorEntry.fromJson(jsonObject);
                 if (generatorEntry != null) {
@@ -133,15 +133,15 @@ public class PerformanceConfigManager extends AbstractConfigManager<PerformanceC
     public PerformanceConfig parseConfigEntry(JsonObject configObject, Path filePath, int folderId) {
         try {
             int id = JsonUtils.getJsonInt(configObject, PerformanceConfigTag.ID, -1);
-            JsonObject lootEntryObject = JsonUtils.getJsonObject(configObject, PerformanceConfigTag.GENERATOR_ENTRY, null);
-            if (id < 0 || lootEntryObject == null) {
+            JsonObject generatorEntryObject = JsonUtils.getJsonObject(configObject, PerformanceConfigTag.GENERATOR_ENTRY, null);
+            if (id < 0 || generatorEntryObject == null) {
                 BattleRoyale.LOGGER.warn("Skipped invalid performance config in {}", filePath);
                 return null;
             }
             boolean isDefault = JsonUtils.getJsonBool(configObject, PerformanceConfigTag.DEFAULT, false);
             String name = JsonUtils.getJsonString(configObject, PerformanceConfigTag.NAME, "");
             String color = JsonUtils.getJsonString(configObject, PerformanceConfigTag.COLOR, "#FFFFFF");
-            GeneratorEntry generatorEntry = PerformanceConfig.deserializeLootEntry(lootEntryObject);
+            GeneratorEntry generatorEntry = PerformanceConfig.deserializeGeneratorEntry(generatorEntryObject);
             if (generatorEntry == null) {
                 BattleRoyale.LOGGER.error("Failed to deserialize performance entry for id: {}, in {}", id, filePath);
                 return null;

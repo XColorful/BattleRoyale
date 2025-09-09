@@ -71,7 +71,7 @@ public class McRuleStorage implements IRuleStorage {
                 serverLevel.getGameRules().getRule(GameRules.RULE_SPECTATORSGENERATECHUNKS).get(),
                 serverLevel.getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).get(),
                 mcEntry.doTimeSet,
-                serverLevel.getGameTime() // 当前总游戏刻
+                serverLevel.getDayTime()
                 );
     }
 

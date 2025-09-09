@@ -270,7 +270,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
                     continue;
                 }
                 fileNameString = entry.getKey();
-                if (switchConfigFile(fileNameString, folderId)) { // 先切换到配置再应用默认
+                if (switchConfigFile(fileNameString, folderId)) { // 先切换到配置再覆盖应用默认
                     configEntry.applyDefault();
                     BattleRoyale.LOGGER.info("Applied default config, fileName:{}, configId:{}, type:{}", fileNameString, configEntry.getConfigId(), configEntry.getType());
                     return true;
@@ -350,6 +350,11 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
             getConfigFileName(folderId).string = fileName;
             getConfigFolderData(folderId).currentConfigs.putAll(selectedFileConfigs.asMap());
             BattleRoyale.LOGGER.debug("Switched to config file '{}' for type: {}", fileName, getFolderType(folderId));
+            if (!selectedFileConfigs.isEmpty()) {
+                T configEntry = selectedFileConfigs.listGet(0);
+                configEntry.applyDefault();
+                BattleRoyale.LOGGER.debug("Applied first config while switching config file, fileName:{}, configId:{}, type:{}", fileName, configEntry.getConfigId(), configEntry.getType());
+            }
             return true;
         } else {
             BattleRoyale.LOGGER.warn("Config file '{}' not found for type {}", fileName, getFolderType(folderId));

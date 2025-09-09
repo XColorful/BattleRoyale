@@ -1,5 +1,7 @@
 package xiao.battleroyale.event.game;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -8,9 +10,11 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.util.ChatUtils;
 
 /**
@@ -30,10 +34,12 @@ public class DamageEventHandler {
 
     public static void register() {
         MinecraftForge.EVENT_BUS.register(get());
+        BattleRoyale.LOGGER.debug("DamageEventHandler registered");
     }
 
     public static void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
+        BattleRoyale.LOGGER.debug("DamageEventHandler unregistered");
     }
 
     /**
@@ -67,6 +73,13 @@ public class DamageEventHandler {
             // 如果双方在同一队伍，且友伤关闭，则取消伤害
             if (attackerGamePlayer.getGameTeamId() == targetGamePlayer.getGameTeamId()) {
                 if (!gameManager.getGameEntry().friendlyFire) {
+                    event.setCanceled(true);
+                }
+            }
+            if (!gameManager.getGameEntry().downFire) {
+                if (damageSource.getEntity() instanceof ServerPlayer attackPlayer
+                        && PlayerRevive.get().isBleeding(attackPlayer)) {
+                    ChatUtils.sendComponentMessageToPlayer(attackPlayer, Component.translatable("battleroyale.message.down_fire_not_enabled").withStyle(ChatFormatting.RED));
                     event.setCanceled(true);
                 }
             }

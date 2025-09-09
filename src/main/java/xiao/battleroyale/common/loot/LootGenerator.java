@@ -14,6 +14,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.*;
 import xiao.battleroyale.api.loot.entity.IEntityLootData;
@@ -28,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class LootGenerator {
 
@@ -37,8 +41,16 @@ public class LootGenerator {
     public static void setLootVanillaChest(boolean bool) { LOOT_VANILLA_CHEST = bool; }
     private static boolean REMOVE_LOOT_TABLE = false;
     public static void setRemoveLootTable(boolean bool) { REMOVE_LOOT_TABLE = bool; }
+    private static boolean CLEAR_PREVIOUS_CONTENT = true;
+    public static void setClearPreviousContent(boolean bool) { CLEAR_PREVIOUS_CONTENT = bool; }
     private static boolean REMOVE_INNOCENT_ENTITY = false;
     public static void setRemoveInnocentEntity(boolean bool) { REMOVE_INNOCENT_ENTITY = bool; }
+    private static boolean HAS_BLOCK_FILTER = false;
+    private static final LootBlockFilter blockFilter = new LootBlockFilter();
+    public static void setLootBlockFilter(@NotNull List<String> whiteListRegex, @NotNull List<String> blackListRegex) {
+        blockFilter.updateFilter(whiteListRegex, blackListRegex);
+        HAS_BLOCK_FILTER = blockFilter.hasFilter();
+    }
 
 
     /**
@@ -58,7 +70,9 @@ public class LootGenerator {
         }
 
         if (target instanceof AbstractLootContainerBlockEntity container) { // 物资容器方块
-            container.clearContent();
+            if (CLEAR_PREVIOUS_CONTENT) {
+                container.clearContent();
+            }
             for (int i = 0; i < lootData.size() && i < container.getContainerSize(); i++) {
                 ILootData data = lootData.get(i);
                 if (data.getDataType() == LootDataType.ITEM) {
@@ -114,7 +128,9 @@ public class LootGenerator {
             return;
         }
 
-        container.clearContent();
+        if (CLEAR_PREVIOUS_CONTENT) {
+            container.clearContent();
+        }
 
         for (int i = 0; i < lootData.size() && i < container.getContainerSize(); i++) {
             ILootData data = lootData.get(i);
@@ -159,15 +175,24 @@ public class LootGenerator {
      * @return 是否成功刷新
      */
     public static boolean refreshLootObject(LootContext lootContext, BlockEntity blockEntity) {
-        if (!(blockEntity instanceof ILootObject lootObject)) {
-            if (!LOOT_VANILLA_CHEST) {
-                return false;
+        if (blockEntity instanceof ILootObject lootObject) { // 本模组方块
+            UUID blockGameId = lootObject.getGameId();
+            LootConfig config = LootConfigManager.get().getLootConfig(blockEntity, lootObject.getConfigId());
+
+            if (config != null && (blockGameId == null || !blockGameId.equals(lootContext.gameId))) {
+                ILootEntry entry = config.entry;
+                generateLoot(lootContext, (AbstractLootBlockEntity) lootObject, entry);
+                lootObject.setGameId(lootContext.gameId);
+                // blockEntity.setChanged(); // setGameId内部已经标记
+                return true;
             }
+        } else if (LOOT_VANILLA_CHEST) { // 原版方块
             if (!(blockEntity instanceof Container)) {
                 return false;
             }
             LootConfig config = LootConfigManager.get().getDefaultConfig();
-            if (config == null) {
+            if (config == null ||
+                    (HAS_BLOCK_FILTER && !blockFilter.shouldLoot(blockEntity))) {
                 return false;
             }
             UUID blockGameId = GameUtils.getGameId(blockEntity);
@@ -178,18 +203,6 @@ public class LootGenerator {
                 // blockEntity.setChanged(); // addGameId内部已经标记
                 return true;
             }
-            return false;
-        }
-
-        UUID blockGameId = lootObject.getGameId();
-        LootConfig config = LootConfigManager.get().getLootConfig(blockEntity, lootObject.getConfigId());
-
-        if (config != null && (blockGameId == null || !blockGameId.equals(lootContext.gameId))) {
-            ILootEntry entry = config.entry;
-            generateLoot(lootContext, (AbstractLootBlockEntity) lootObject, entry);
-            lootObject.setGameId(lootContext.gameId);
-            // blockEntity.setChanged(); // setGameId内部已经标记
-            return true;
         }
         return false;
     }
@@ -289,4 +302,36 @@ public class LootGenerator {
             this.random = () -> serverLevel.getRandom().nextFloat();
         }
     }
-}
+
+    public static class LootBlockFilter {
+        private List<Pattern> whiteListPatterns = new ArrayList<>();
+        private List<Pattern> blackListPatterns = new ArrayList<>();
+        public boolean shouldLoot(BlockEntity blockEntity) {
+            String blockId = ForgeRegistries.BLOCKS.getKey(blockEntity.getBlockState().getBlock()).toString();
+
+            // 如果白名单不为空，则必须匹配至少一个白名单项
+            if (!whiteListPatterns.isEmpty()) {
+                boolean matchesWhiteList = whiteListPatterns.stream()
+                        .anyMatch(pattern -> pattern.matcher(blockId).matches());
+                if (!matchesWhiteList) {
+                    return false;
+                }
+            }
+
+            // 如果匹配到任何一个黑名单项，则不刷新
+            boolean matchesBlackList = blackListPatterns.stream()
+                    .anyMatch(pattern -> pattern.matcher(blockId).matches());
+            return !matchesBlackList;
+        }
+        public boolean hasFilter() {
+            return !whiteListPatterns.isEmpty() || !blackListPatterns.isEmpty();
+        }
+        public void updateFilter(@NotNull List<String> whiteListRegex, @NotNull List<String> blackListRegex) {
+            this.whiteListPatterns = whiteListRegex.stream()
+                    .map(Pattern::compile)
+                    .collect(Collectors.toList());
+            this.blackListPatterns = blackListRegex.stream()
+                    .map(Pattern::compile)
+                    .collect(Collectors.toList());
+        }
+    }}
