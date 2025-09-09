@@ -818,7 +818,7 @@ public class TaczLootSpawner {
                 new WeightedEntry(26, new ItemEntry("lrtactical:throwable", "{ThrowableId:\"lrtactical:smoke_grenade\"}", 1)),
                 new WeightedEntry(18, new ItemEntry("lrtactical:throwable", "{ThrowableId:\"lrtactical:molotov\"}", 1)),
                 new WeightedEntry(22, new ItemEntry("lrtactical:throwable", "{ThrowableId:\"lrtactical:flash_grenade\"}", 1)),
-                // new WeightedEntry(3, new EmptyEntry("item")),
+                new WeightedEntry(3, new ItemEntry("grapplemod:grapplinghook", "{Damage:495,custom:{motor:1b,throwspeed:3d,maxlen:4}}", 1)),
                 new WeightedEntry(5, new ItemEntry("vc_gliders:paraglider_wood", "{Damage:25}", 1))
                 // new WeightedEntry(10, new EmptyEntry("item"))
         ));
