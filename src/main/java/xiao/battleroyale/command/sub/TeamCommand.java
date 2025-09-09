@@ -123,7 +123,7 @@ public class TeamCommand {
     private static int requestPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer sender = context.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = EntityArgument.getPlayer(context, PLAYER);
-        TeamManager.get().RequestPlayer(sender, targetPlayer);
+        TeamManager.get().requestPlayer(sender, targetPlayer);
         return Command.SINGLE_SUCCESS;
     }
 

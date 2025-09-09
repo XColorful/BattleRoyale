@@ -81,6 +81,10 @@ public class CommandArg {
     public static final String GAME_MESSAGES_SHORT = "gmsgs";
     public static final String GAME_MESSAGE = "gamemessage";
     public static final String GAME_MESSAGE_SHORT = "gmsg";
+    public static final String SPECTATE_MESSAGES = "spectatemessages";
+    public static final String SPECTATE_MESSAGES_SHORT = "smsgs";
+    public static final String SPECTATE_MESSAGE = "spectatemessage";
+    public static final String SPECTATE_MESSAGE_SHORT = "smsg";
     // Effect
     public static final String CHANNEL = "channel";
     public static final String PARTICLES = "particles";

@@ -105,7 +105,7 @@ public class TeamInfoRenderer {
             [id] playerName
             ---------------（血条）
              */
-            guiGraphics.drawString(fontRenderer, playerId, posX, currentY, idColor, false); // false表示不带阴影
+            guiGraphics.drawString(fontRenderer, playerId, posX, currentY, idColor, true); // 个别颜色不带阴影看不见
             guiGraphics.drawString(fontRenderer, playerName, posX + fontRenderer.width(playerId) + 1, currentY, nameColor, true);
             boolean alive = memberInfo.alive;
             int healthStartY = currentY + HEALTH_OFFSET; // 血条左上角

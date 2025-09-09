@@ -1,5 +1,6 @@
 package xiao.battleroyale.util;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.DyeColor;
 import org.jetbrains.annotations.NotNull;
@@ -76,6 +77,25 @@ public class ColorUtils {
     }
 
     /**
+     * 获取颜色#RRGGBB
+     */
+    public static String parseIntToStringRGB(int colorInt) {
+        return String.format("#%06X", colorInt & 0xFFFFFF);
+    }
+
+    /**
+     * 获取颜色#RRGGBBAA
+     */
+    public static String parseIntToStringRGBA(int colorInt) {
+        // AWT的Color.getRGB()返回0xAARRGGBB，需要重新排列
+        int a = (colorInt >> 24) & 0xFF;
+        int r = (colorInt >> 16) & 0xFF;
+        int g = (colorInt >> 8) & 0xFF;
+        int b = colorInt & 0xFF;
+        return String.format("#%02X%02X%02X%02X", r, g, b, a);
+    }
+
+    /**
      * 将字符串表示的颜色的RGB应用到输入颜色
      */
     public static Color changeColorExceptAlpha(Color baseColor, String colorString) {
@@ -143,5 +163,45 @@ public class ColorUtils {
         }
 
         return generateRandomColors(random, count);
+    }
+
+    /**
+     * 找到与给定RGB颜色最接近的ChatFormatting颜色。
+     * @param rgbColor 24位的RGB颜色值 (0xRRGGBB)。
+     * @return 匹配的ChatFormatting。如果没有合适的，返回ChatFormatting.RESET。
+     */
+    public static ChatFormatting getClosestChatFormatting(int rgbColor) {
+        int minDistance = Integer.MAX_VALUE;
+        ChatFormatting closest = ChatFormatting.RESET;
+
+        for (ChatFormatting formatting : ChatFormatting.values()) {
+            if (formatting.isColor() && formatting.getColor() != null) {
+                int chatColor = formatting.getColor();
+                int distance = getColorDistance(rgbColor, chatColor);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closest = formatting;
+                }
+            }
+        }
+        return closest;
+    }
+    public static ChatFormatting getClosestChatFormatting(String colorString) {
+        return getClosestChatFormatting(parseColorToInt(colorString));
+    }
+
+    /**
+     * 计算两个RGB颜色之间的欧几里得距离。
+     */
+    private static int getColorDistance(int color1, int color2) {
+        int r1 = (color1 >> 16) & 0xFF;
+        int g1 = (color1 >> 8) & 0xFF;
+        int b1 = color1 & 0xFF;
+
+        int r2 = (color2 >> 16) & 0xFF;
+        int g2 = (color2 >> 8) & 0xFF;
+        int b2 = color2 & 0xFF;
+
+        return (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
     }
 }

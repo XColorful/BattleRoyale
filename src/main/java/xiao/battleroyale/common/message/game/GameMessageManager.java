@@ -28,6 +28,8 @@ public class GameMessageManager extends AbstractMessageManager<GameMessage> impl
 
     public static final int ALIVE_CHANNEL = -1;
     public static final String ALIVE_KEY = Integer.toString(ALIVE_CHANNEL);
+    public static final int GAMEID_CHANNEL = -2;
+    public static final String GAMEID_KEY = Integer.toString(GAMEID_CHANNEL);
 
     @Override
     protected void checkExpiredMessage() {
@@ -39,17 +41,18 @@ public class GameMessageManager extends AbstractMessageManager<GameMessage> impl
     }
 
     protected void updateAliveTotal() {
-        boolean inGame = GameManager.get().isInGame();
+        GameManager gameManager = GameManager.get();
+        boolean inGame = gameManager.isInGame();
         if (inGame) {
-            int aliveTotal = GameManager.get().getStandingGamePlayers().size();
+            int aliveTotal = gameManager.getStandingGamePlayers().size();
             GameMessage message = getOrCreateMessage(ALIVE_CHANNEL);
-            message.standingPlayerCount = aliveTotal;
+            message.updateMessage(aliveTotal, gameManager.getGameId());
             message.nbt = message.toNBT();
             message.updateTime = currentTime;
         } else {
             if (messages.containsKey(ALIVE_CHANNEL)) {
                 GameMessage message = getOrCreateMessage(ALIVE_CHANNEL);
-                message.standingPlayerCount = 0;
+                message.updateMessage(0, gameManager.getGameId());
                 message.nbt = new CompoundTag();
                 message.updateTime = currentTime;
             } else {

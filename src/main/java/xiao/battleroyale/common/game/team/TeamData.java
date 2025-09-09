@@ -197,6 +197,9 @@ public class TeamData extends AbstractGameManagerData {
         return true;
     }
 
+    /**
+     * 使GamePlayer失效，调用后应不再使用传入的GamePlayer
+     */
     public boolean removePlayer(GamePlayer player) {
         if (locked) {
             return false;
@@ -205,6 +208,9 @@ public class TeamData extends AbstractGameManagerData {
         return removePlayer(player.getPlayerUUID());
     }
 
+    /**
+     * 使UUID对应的GamePlayer失效，调用后应不再使用对应的GamePlayer
+     */
     public boolean removePlayer(UUID playerId) {
         if (locked) {
             return false;

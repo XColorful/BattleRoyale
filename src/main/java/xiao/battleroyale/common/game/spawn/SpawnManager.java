@@ -17,6 +17,7 @@ import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
+import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.event.game.LobbyEventHandler;
 import xiao.battleroyale.util.ChatUtils;
@@ -44,6 +45,7 @@ public class SpawnManager extends AbstractGameManager {
         ;
     }
 
+    private boolean initGameTeleport = true;
     private Vec3 lobbyPos;
     private Vec3 lobbyDimension;
     private boolean lobbyMuteki = true;
@@ -77,20 +79,26 @@ public class SpawnManager extends AbstractGameManager {
         }
 
         BattleroyaleEntry brEntry = gameruleConfig.getBattleRoyaleEntry();
-        this.lobbyPos = brEntry.lobbyCenterPos;
-        this.lobbyDimension = brEntry.lobbyDimension;
-        this.lobbyMuteki = brEntry.lobbyMuteki;
-        if (lobbyPos == null || lobbyDimension == null) {
+        if (brEntry == null) {
+            BattleRoyale.LOGGER.debug("Gamerule config missing brEntry");
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            return;
+        }
+        setLobby(brEntry.lobbyCenterPos, brEntry.lobbyDimension, brEntry.lobbyMuteki, brEntry.lobbyHeal, brEntry.lobbyChangeGamemode);
+        if (!isLobbyCreated()) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;
         }
 
-        // Hyper Muteki的大厅
-        if (this.lobbyMuteki) {
-            LobbyEventHandler.register();
-        } else {
-            LobbyEventHandler.unregister();
+        GameEntry gameEntry = gameruleConfig.getGameEntry();
+        if (gameEntry == null) {
+            BattleRoyale.LOGGER.debug("Gamerule config missing gameEntry");
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            return;
         }
+        this.initGameTeleport = gameEntry.teleportWhenInitGame;
+
+
         this.configPrepared = true;
         BattleRoyale.LOGGER.debug("SpawnManager complete initGameConfig");
     }
@@ -105,9 +113,12 @@ public class SpawnManager extends AbstractGameManager {
         }
 
         // 传送至大厅
-        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
-        for (GamePlayer gamePlayer : gamePlayerList) {
-            teleportGamePlayerToLobby(gamePlayer, serverLevel);
+        if (this.initGameTeleport) {
+            List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
+            for (GamePlayer gamePlayer : gamePlayerList) {
+                teleportGamePlayerToLobby(gamePlayer, serverLevel);
+            }
+            BattleRoyale.LOGGER.debug("SpawnManager::initGame teleported all game player to lobby");
         }
 
         this.gameSpawner.clear();
@@ -135,7 +146,6 @@ public class SpawnManager extends AbstractGameManager {
 
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        LobbyEventHandler.unregister();
         this.configPrepared = false;
         // this.ready = false; // isReady被重载
     }
@@ -268,6 +278,12 @@ public class SpawnManager extends AbstractGameManager {
         }
         this.lobbyPos = centerPos;
         this.lobbyMuteki = shouldMuteki;
+        // 大厅无敌（监听伤害事件）
+        if (this.lobbyMuteki) {
+            LobbyEventHandler.register();
+        } else {
+            LobbyEventHandler.unregister();
+        }
         this.lobbyHeal = shouldHeal;
         this.lobbyDimension = dimension;
         this.changeGamemode = changeGamemode;
@@ -287,8 +303,7 @@ public class SpawnManager extends AbstractGameManager {
             BattleRoyale.LOGGER.warn("SpawnManager: radius:{} has negative, reject to apply", radius);
             return false;
         }
-        this.lobbyPos = centerPos;
-        this.lobbyDimension = new Vec3(radius, radius, radius);
+        setLobby(centerPos, new Vec3(radius, radius, radius), this.lobbyMuteki, this.lobbyHeal, this.changeGamemode);
         return true;
     }
 }

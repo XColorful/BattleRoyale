@@ -166,7 +166,8 @@
   "battleroyale.message.lobby_heal": "大厅治疗",
   "battleroyale.message.teleported_to_lobby": "已传送至大厅",
   "battleroyale.message.failed_lobby_teleport": "无法传送至大厅",
-  "battleroyale.message.not_allow_standing_gameplayer_teleport": "当前不允许未被淘汰的游戏玩家传送",
+  "battleroyale.message.not_allow_standing_gameplayer_spectate": "当前不允许未被淘汰的游戏玩家观战",
+  "battleroyale.message.not_allow_standing_gameteam_spectate": "当前不允许未被淘汰的游戏队伍观战",
   "battleroyale.message.selected_bot_config": "人机配置%s: %s",
   "battleroyale.message.selected_gamerule_config": "大逃杀规则配置%s: %s",
   "battleroyale.message.selected_spawn_config": "出生配置%s: %s",
@@ -262,6 +263,8 @@
   "battleroyale.message.switch_gamemode_success": "已切换游戏模式",
   "battleroyale.message.switch_gamemode_failed": "无法切换游戏模式",
   "battleroyale.message.teleport_non_game_player_to_lobby": "已将非游戏玩家 %s 传送至大厅",
+  "battleroyale.message.down_fire_not_enabled": "大逃杀规则配置未启用倒地玩家伤害",
+  "battleroyale.message.only_game_player_spectate": "游戏配置未启用非游戏玩家观战",
 
   "battleroyale.label.alive": "生存",
 
