@@ -10,6 +10,8 @@ import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.render.defaultconfigs.DefaultRenderConfigGenerator;
 import xiao.battleroyale.config.client.render.type.BlockEntry;
+import xiao.battleroyale.config.client.render.type.SpectateEntry;
+import xiao.battleroyale.config.client.render.type.TeamEntry;
 import xiao.battleroyale.config.client.render.type.ZoneEntry;
 import xiao.battleroyale.util.JsonUtils;
 
@@ -45,15 +47,21 @@ public class RenderConfigManager extends AbstractConfigManager<RenderConfigManag
 
         public final BlockEntry blockEntry;
         public final ZoneEntry zoneEntry;
+        public final TeamEntry teamEntry;
+        public final SpectateEntry spectateEntry;
 
-        public RenderConfig(int id, String name, String color, BlockEntry blockEntry, ZoneEntry zoneEntry) {
-            this(id, name, color, false, blockEntry, zoneEntry);
+        public RenderConfig(int id, String name, String color,
+                            BlockEntry blockEntry, ZoneEntry zoneEntry, TeamEntry teamEntry, SpectateEntry spectateEntry) {
+            this(id, name, color, false, blockEntry, zoneEntry, teamEntry, spectateEntry);
         }
 
-        public RenderConfig(int id, String name, String color, boolean isDefault, BlockEntry blockEntry, ZoneEntry zoneEntry) {
+        public RenderConfig(int id, String name, String color, boolean isDefault,
+                            BlockEntry blockEntry, ZoneEntry zoneEntry, TeamEntry teamEntry, SpectateEntry spectateEntry) {
             super(id, name, color, isDefault);
             this.blockEntry = blockEntry;
             this.zoneEntry = zoneEntry;
+            this.teamEntry = teamEntry;
+            this.spectateEntry = spectateEntry;
         }
 
         @Override
@@ -75,6 +83,12 @@ public class RenderConfigManager extends AbstractConfigManager<RenderConfigManag
             }
             if (zoneEntry != null) {
                 jsonObject.add(RenderConfigTag.ZONE_ENTRY, zoneEntry.toJson());
+            }
+            if (teamEntry != null) {
+                jsonObject.add(RenderConfigTag.TEAM_ENTRY, teamEntry.toJson());
+            }
+            if (spectateEntry != null) {
+                jsonObject.add(RenderConfigTag.SPECTATE_ENTRY, spectateEntry.toJson());
             }
 
             return jsonObject;
@@ -110,10 +124,42 @@ public class RenderConfigManager extends AbstractConfigManager<RenderConfigManag
             }
         }
 
+        public static TeamEntry deserializeTeamEntry(JsonObject jsonObject) {
+            try {
+                TeamEntry teamEntry = TeamEntry.fromJson(jsonObject);
+                if (teamEntry != null) {
+                    return teamEntry;
+                } else {
+                    BattleRoyale.LOGGER.warn("Skipped invalid TeamEntry");
+                    return null;
+                }
+            } catch (Exception e) {
+                BattleRoyale.LOGGER.error("Failed to deserialize TeamEntry: {}", e.getMessage());
+                return null;
+            }
+        }
+
+        public static SpectateEntry deserializeSpectateEntry(JsonObject jsonObject) {
+            try {
+                SpectateEntry spectateEntry = SpectateEntry.fromJson(jsonObject);
+                if (spectateEntry != null) {
+                    return spectateEntry;
+                } else {
+                    BattleRoyale.LOGGER.warn("Skipped invalid SpectateEntry");
+                    return null;
+                }
+            } catch (Exception e) {
+                BattleRoyale.LOGGER.error("Failed to deserialize SpectateEntry: {}", e.getMessage());
+                return null;
+            }
+        }
+
         @Override
         public void applyDefault() {
             blockEntry.applyDefault();
             zoneEntry.applyDefault();
+            teamEntry.applyDefault();
+            spectateEntry.applyDefault();
         }
     }
 
@@ -152,6 +198,8 @@ public class RenderConfigManager extends AbstractConfigManager<RenderConfigManag
             int id = JsonUtils.getJsonInt(configObject, RenderConfigTag.ID, -1);
             JsonObject blockEntryObject = JsonUtils.getJsonObject(configObject, RenderConfigTag.BLOCK_ENTRY, null);
             JsonObject zoneEntryObject = JsonUtils.getJsonObject(configObject, RenderConfigTag.ZONE_ENTRY, null);
+            JsonObject teamEntryObject = JsonUtils.getJsonObject(configObject, RenderConfigTag.TEAM_ENTRY, null);
+            JsonObject spectateEntryObject = JsonUtils.getJsonObject(configObject, RenderConfigTag.SPECTATE_ENTRY, null);
             if (id < 0 || blockEntryObject == null || zoneEntryObject == null) {
                 BattleRoyale.LOGGER.warn("Skipped invalid render config in {}", filePath);
                 return null;
@@ -161,12 +209,14 @@ public class RenderConfigManager extends AbstractConfigManager<RenderConfigManag
             String color = JsonUtils.getJsonString(configObject, RenderConfigTag.COLOR, "#FFFFFF");
             BlockEntry blockEntry = RenderConfig.deserializeBlockEntry(blockEntryObject);
             ZoneEntry zoneEntry = RenderConfig.deserializeZoneEntry(zoneEntryObject);
-            if (blockEntry == null || zoneEntry == null) {
+            TeamEntry teamEntry = RenderConfig.deserializeTeamEntry(teamEntryObject);
+            SpectateEntry spectateEntry = RenderConfig.deserializeSpectateEntry(spectateEntryObject);
+            if (blockEntry == null || zoneEntry == null || teamEntry == null || spectateEntry == null) {
                 BattleRoyale.LOGGER.error("Failed to deserialize render entry for id: {} in {}", id, filePath);
                 return null;
             }
 
-            return new RenderConfig(id, name, color, isDefault, blockEntry, zoneEntry);
+            return new RenderConfig(id, name, color, isDefault, blockEntry, zoneEntry, teamEntry, spectateEntry);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(), filePath, e.getMessage());
             return null;

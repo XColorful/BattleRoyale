@@ -97,8 +97,6 @@ public class ZoneManager extends AbstractGameManager {
      * 延迟处理区域清理，使游戏进行时高效遍历Zone，并防止并发问题
      */
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        BattleRoyale.LOGGER.info("ZoneManager stopGame");
-
         List<Integer> zoneIdList = new ArrayList<>();
         for (IGameZone gameZone : this.zoneData.getCurrentTickZones(GameManager.get().getGameTime())) {
             zoneIdList.add(gameZone.getZoneId());

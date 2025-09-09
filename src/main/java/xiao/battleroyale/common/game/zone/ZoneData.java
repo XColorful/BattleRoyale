@@ -13,9 +13,9 @@ public class ZoneData extends AbstractGameManagerData {
     private static final String DATA_NAME = "ZoneData";
 
     private final ClassUtils.ArrayMap<Integer, IGameZone> gameZones;
-    private final List<QueuedZoneInfo> queuedZoneInfos = new ArrayList<>(); // 待处理的Zone信息 (ID, Delay)
     private final List<IGameZone> currentZones = new ArrayList<>();
-    private static class QueuedZoneInfo {
+    private final List<QueuedZoneInfo> queuedZoneInfos = new ArrayList<>(); // 待处理的Zone信息 (ID, Delay)，用于快速选取List<GameZone>视图
+    private static class QueuedZoneInfo { // 不写成record，变量需要更新
         public int zoneId;
         public int zoneDelay;
         public QueuedZoneInfo(int zoneId, int zoneDelay) {
@@ -48,13 +48,13 @@ public class ZoneData extends AbstractGameManagerData {
             return;
         }
 
-        Map<Integer, Integer> infoIndexMap = new HashMap<>();
+        queuedZoneInfos.sort(Comparator.comparingInt(QueuedZoneInfo::zoneId)); // 先按ID排序
+        Map<Integer, Integer> infoIndexMap = new HashMap<>(); // zoneId -> index
         for (int i = 0; i < queuedZoneInfos.size(); i++) {
             infoIndexMap.put(queuedZoneInfos.get(i).zoneId, i);
         }
 
         // 处理区域延迟叠加
-        queuedZoneInfos.sort(Comparator.comparingInt(QueuedZoneInfo::zoneId)); // 先按ID排序
         for (QueuedZoneInfo zoneInfo : queuedZoneInfos) {
             IGameZone currentZone = gameZones.mapGet(zoneInfo.zoneId);
             int preZoneDelayId = currentZone.previousZoneDelayId();
@@ -63,7 +63,7 @@ public class ZoneData extends AbstractGameManagerData {
             }
             QueuedZoneInfo info = queuedZoneInfos.get(infoIndexMap.get(preZoneDelayId));
             if (info != null) {
-                zoneInfo.zoneDelay += info.zoneDelay;
+                zoneInfo.zoneDelay += info.zoneDelay; // 只叠加已有延迟，不涉及zoneTime
             }
         }
         // 准备用于游戏的排序

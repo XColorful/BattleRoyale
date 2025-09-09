@@ -96,6 +96,28 @@ public class JsonUtils {
     }
 
     @NotNull
+    public static List<Float> readFloatListFromJson(@Nullable JsonArray jsonArray) {
+        List<Float> floatList = new ArrayList<>();
+        if (jsonArray == null) {
+            return floatList;
+        }
+
+        for (JsonElement element : jsonArray) {
+            if (!element.isJsonPrimitive()) {
+                continue;
+            }
+            JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
+            if (!jsonPrimitive.isNumber()) {
+                continue;
+            }
+            float x = jsonPrimitive.getAsFloat();
+            floatList.add(x);
+        }
+
+        return floatList;
+    }
+
+    @NotNull
     public static List<String> readStringListFromJson(@Nullable JsonArray jsonArray) {
         List<String> stringList = new ArrayList<>();
         if (jsonArray == null) {
@@ -164,6 +186,17 @@ public class JsonUtils {
         JsonArray jsonArray = new JsonArray();
 
         for (Integer x : intList) {
+            jsonArray.add(x);
+        }
+
+        return jsonArray;
+    }
+
+    @NotNull
+    public static JsonArray writeFloatListToJson(List<Float> floatList) {
+        JsonArray jsonArray = new JsonArray();
+
+        for (Float x : floatList) {
             jsonArray.add(x);
         }
 
@@ -415,6 +448,11 @@ public class JsonUtils {
     @NotNull
     public static List<Integer> getJsonIntList(@Nullable JsonObject jsonObject, String key) {
         return readIntListFromJson(JsonUtils.getJsonArray(jsonObject, key, null));
+    }
+
+    @NotNull
+    public static List<Float> getJsonFloatList(@Nullable JsonObject jsonObject, String key) {
+        return readFloatListFromJson(JsonUtils.getJsonArray(jsonObject, key, null));
     }
 
     @NotNull

@@ -75,12 +75,12 @@ public class ZoneEntry implements IRenderEntry {
             ClientSingleZoneData.setClientColorString(this.fixedColor);
         }
         CircleShape.setCircleSegments(circleSegments);
-        ZoneRenderer.CIRCLE_SEGMENTS = CircleShape.getCircleSegments();
+        ZoneRenderer.setCircleSegments(CircleShape.getCircleSegments());
         EllipseShape.setEllipseSegments(ellipsoidSegments);
-        ZoneRenderer.ELLIPSE_SEGMENTS = EllipseShape.getEllipseSegments();
+        ZoneRenderer.setEllipseSegments(EllipseShape.getEllipseSegments());
         SphereShape.setSphereSegments(sphereSegments);
-        ZoneRenderer.SPHERE_SEGMENTS = SphereShape.getSphereSegments();
+        ZoneRenderer.setSphereSegments(SphereShape.getSphereSegments());
         EllipsoidShape.setEllipsoidSegments(ellipsoidSegments);
-        ZoneRenderer.ELLIPSOID_SEGMENTS = EllipsoidShape.getEllipsoidSegments();
+        ZoneRenderer.setEllipsoidSegments(EllipsoidShape.getEllipsoidSegments());
     }
 }

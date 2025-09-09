@@ -28,7 +28,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
     public static String MOD_CONFIG_PATH = "config/battleroyale";
 
     protected final int DEFAULT_CONFIG_FOLDER = 0;
-    protected final Map<Integer, FolderConfigData<T>> allFolderConfigData = new HashMap<>();
+    protected final Map<Integer, FolderConfigData<T>> allFolderConfigData = new HashMap<>(); // folderId -> 文件夹下配置
 
     /**
      * 获取特定子文件夹的数据
@@ -41,7 +41,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
         if (allFolderConfigData.containsKey(folderId)) {
             return allFolderConfigData.get(folderId);
         } else { // 默认不会触发，触发了也别崩溃
-            BattleRoyale.LOGGER.error("Unexpected ConfigManager folderId {}, default config dir: {}", folderId, getConfigDirPath());
+            BattleRoyale.LOGGER.error("Unexpected ConfigManager folderId {}, default config dir: {}, default folderId: {}", folderId, getConfigDirPath(), DEFAULT_CONFIG_FOLDER);
             return allFolderConfigData.get(DEFAULT_CONFIG_FOLDER);
         }
     }
@@ -56,7 +56,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
     protected static class FolderConfigData<T extends IConfigSingleEntry> {
         public int DEFAULT_CONFIG_ID = 0;
         public final Map<String, ClassUtils.ArrayMap<Integer, T>> fileConfigsByFileName; // fileName -> .json
-        public ClassUtils.ArrayMap<Integer, T> currentConfigs; // 当前json文件数据
+        public ClassUtils.ArrayMap<Integer, T> currentConfigs; // 当前json文件数据，id -> 单个配置
         public final ConfigFileName configFileName = new ConfigFileName();
 
         public FolderConfigData() {
@@ -92,22 +92,24 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
         }
         return externalView;
     }
+
     // 获取指定文件夹下当前选中的json文件数据
     protected Map<Integer, T> getConfigs() { return getConfigs(DEFAULT_CONFIG_FOLDER); }
     protected Map<Integer, T> getConfigs(int folderId) { return getConfigFolderData(folderId).currentConfigs.asMap(); }
     protected List<T> getConfigsList() { return getConfigsList(DEFAULT_CONFIG_FOLDER); }
     protected List<T> getConfigsList(int folderId) { return getConfigFolderData(folderId).currentConfigs.asList(); }
+
     // 获取指定文件夹下当前选中的json文件名
     protected ConfigFileName getConfigFileName() { return getConfigFileName(DEFAULT_CONFIG_FOLDER); }
     protected ConfigFileName getConfigFileName(int folderId) { return getConfigFolderData(folderId).configFileName; }
 
     protected Comparator<T> getConfigIdComparator() {
-        return getConfigIdComparator(getDefaultConfigId());
+        return getConfigIdComparator(DEFAULT_CONFIG_FOLDER);
     }
     protected abstract Comparator<T> getConfigIdComparator(int folderId);
 
     protected void clear() {
-        this.clear(getDefaultConfigId());
+        this.clear(DEFAULT_CONFIG_FOLDER);
     }
     protected void clear(int folderId) {
         getConfigFolderData(folderId).fileConfigsByFileName.clear();
@@ -201,37 +203,37 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
      * IConfigManager
      */
     @Override public @Nullable T getConfigEntry(int id) {
-        return getConfigEntry(id, getDefaultConfigId());
+        return getConfigEntry(id, DEFAULT_CONFIG_FOLDER);
     }
     @Override public @Nullable T getConfigEntry(int id, int folderId) {
         return getConfigFolderData(folderId).currentConfigs.mapGet(id);
     }
     @Override public @Nullable  List<T> getConfigEntryList() {
-        return getConfigEntryList(getDefaultConfigId());
+        return getConfigEntryList(DEFAULT_CONFIG_FOLDER);
     }
     @Override public @Nullable List<T> getConfigEntryList(int folderId) {
         return getConfigFolderData(folderId).currentConfigs.asList();
     }
     @Override public String getConfigEntryFileName() {
-        return getConfigEntryFileName(getDefaultConfigId());
+        return getConfigEntryFileName(DEFAULT_CONFIG_FOLDER);
     }
     @Override public String getConfigEntryFileName(int folderId) {
         return getConfigFileName(folderId).string;
     }
     @Override public String getFolderType() {
-        return getFolderType(getDefaultConfigId());
+        return getFolderType(DEFAULT_CONFIG_FOLDER);
     }
     /**
      * IConfigLoadable
      */
     @Override public Set<String> getAvailableConfigFileNames() {
-        return getAvailableConfigFileNames(getDefaultConfigId());
+        return getAvailableConfigFileNames(DEFAULT_CONFIG_FOLDER);
     }
     @Override public Set<String> getAvailableConfigFileNames(int folderId) {
         return getConfigFolderData(folderId).fileConfigsByFileName.keySet();
     }
     @Override public boolean reloadConfigs() {
-        return reloadConfigs(getDefaultConfigId());
+        return reloadConfigs(DEFAULT_CONFIG_FOLDER);
     }
     @Override public boolean reloadConfigs(int folderId) { // 读取子文件夹下所有文件数据
         String fileNameString = getConfigFileName(folderId).string; // 在清除前获取当前使用的配置文件名称
@@ -260,7 +262,6 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
             fileNameString = getConfigFolderData(folderId).fileConfigsByFileName.keySet().iterator().next();
         }
 
-        boolean defaultSelected = false;
         // 遍历每个配置文件
         for (Map.Entry<String, ClassUtils.ArrayMap<Integer, T>> entry : getConfigFolderData(folderId).fileConfigsByFileName.entrySet()) {
             // 遍历文件内每个配置
@@ -269,31 +270,30 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
                     continue;
                 }
                 fileNameString = entry.getKey();
-                if (switchConfigFile(fileNameString, folderId)) { // 先切换到配置再应用默认
+                if (switchConfigFile(fileNameString, folderId)) { // 先切换到配置再覆盖应用默认
                     configEntry.applyDefault();
                     BattleRoyale.LOGGER.info("Applied default config, fileName:{}, configId:{}, type:{}", fileNameString, configEntry.getConfigId(), configEntry.getType());
-                    defaultSelected = true;
-                    break;
+                    return true;
                 } else {
                     BattleRoyale.LOGGER.error("Unexpected config file switch, fileNameString:{}, configEntryId:{}, type:{}", fileNameString, configEntry.getConfigId(), configEntry.getType());
                 }
             }
-            if (defaultSelected) break;
         }
+        BattleRoyale.LOGGER.info("No default {} applied", getFolderType(folderId));
         return switchConfigFile(fileNameString, folderId);
     }
     @Override public @Nullable T parseConfigEntry(JsonObject jsonObject, Path filePath) {
-        return parseConfigEntry(jsonObject, filePath, getDefaultConfigId());
+        return parseConfigEntry(jsonObject, filePath, DEFAULT_CONFIG_FOLDER);
     }
     @Override public boolean hasConfigLoaded() {
-        return hasConfigLoaded(getDefaultConfigId());
+        return hasConfigLoaded(DEFAULT_CONFIG_FOLDER);
     }
     @Override public boolean hasConfigLoaded(int folderId) { // 仅判断是否已经读取到数据，不代表已经选中
         Map<String, ClassUtils.ArrayMap<Integer, T>> fileConfigs = getConfigFolderData(folderId).fileConfigsByFileName;
         return !fileConfigs.isEmpty() && fileConfigs.values().stream().anyMatch(arrayMap -> !arrayMap.isEmpty());
     }
     @Override public void initializeDefaultConfigsIfEmpty() {
-        initializeDefaultConfigsIfEmpty(getDefaultConfigId());
+        initializeDefaultConfigsIfEmpty(DEFAULT_CONFIG_FOLDER);
     }
     @Override public void initializeDefaultConfigsIfEmpty(int folderId) {
         if (hasConfigLoaded(folderId)) { // 防御一下
@@ -303,16 +303,16 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
         BattleRoyale.LOGGER.info("Generated default configs in {}", getConfigDirPath(folderId));
     }
     @Override  public String getConfigPath() {
-        return getConfigPath(getDefaultConfigId());
+        return getConfigPath(DEFAULT_CONFIG_FOLDER);
     }
     @Override public String getConfigPath(int folderId) {
         return MOD_CONFIG_PATH;
     }
     @Override public String getConfigSubPath() {
-        return getConfigSubPath(getDefaultConfigId());
+        return getConfigSubPath(DEFAULT_CONFIG_FOLDER);
     }
     @Override public Path getConfigDirPath() {
-        return getConfigDirPath(getDefaultConfigId());
+        return getConfigDirPath(DEFAULT_CONFIG_FOLDER);
     }
     @Override public Path getConfigDirPath(int folderId) {
         return Paths.get(getConfigPath(folderId)).resolve(getConfigSubPath(folderId));
@@ -323,10 +323,10 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
      */
     @Override
     public boolean switchConfigFile() {
-        return switchConfigFile(getDefaultConfigId());
+        return switchConfigFile(DEFAULT_CONFIG_FOLDER);
     }
     @Override
-    public boolean switchConfigFile(int folderId) {
+    public boolean switchConfigFile(int folderId) { // 切换下一个配置
         List<String> fileNames = new ArrayList<>(getConfigFolderData(folderId).fileConfigsByFileName.keySet());
         if (fileNames.isEmpty()) {
             return false;
@@ -340,16 +340,21 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
     }
     @Override
     public boolean switchConfigFile(String fileName) {
-        return switchConfigFile(fileName, getDefaultConfigId());
+        return switchConfigFile(fileName, DEFAULT_CONFIG_FOLDER);
     }
     @Override
-    public boolean switchConfigFile(@NotNull String fileName, int folderId) {
+    public boolean switchConfigFile(@NotNull String fileName, int folderId) { // 指定文件名切换配置
         ClassUtils.ArrayMap<Integer, T> selectedFileConfigs = getConfigFolderData(folderId).fileConfigsByFileName.get(fileName);
 
         if (selectedFileConfigs != null) {
             getConfigFileName(folderId).string = fileName;
             getConfigFolderData(folderId).currentConfigs.putAll(selectedFileConfigs.asMap());
             BattleRoyale.LOGGER.debug("Switched to config file '{}' for type: {}", fileName, getFolderType(folderId));
+            if (!selectedFileConfigs.isEmpty()) {
+                T configEntry = selectedFileConfigs.listGet(0);
+                configEntry.applyDefault();
+                BattleRoyale.LOGGER.debug("Applied first config while switching config file, fileName:{}, configId:{}, type:{}", fileName, configEntry.getConfigId(), configEntry.getType());
+            }
             return true;
         } else {
             BattleRoyale.LOGGER.warn("Config file '{}' not found for type {}", fileName, getFolderType(folderId));
@@ -361,7 +366,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
      * IConfigDefaultable
      */
     @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(getDefaultConfigId());
+        generateDefaultConfigs(DEFAULT_CONFIG_FOLDER);
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_CONFIG_FOLDER);
@@ -370,13 +375,13 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
         return getConfigFolderData(folderId).DEFAULT_CONFIG_ID;
     }
     @Override public void setDefaultConfigId(int id) {
-        setDefaultConfigId(id, getDefaultConfigId());
+        setDefaultConfigId(id, DEFAULT_CONFIG_FOLDER);
     }
     @Override public void setDefaultConfigId(int id, int folderId) {
         getConfigFolderData(folderId).DEFAULT_CONFIG_ID = id;
     }
     @Override public @Nullable T getDefaultConfig() {
-        return getDefaultConfig(getDefaultConfigId());
+        return getDefaultConfig(DEFAULT_CONFIG_FOLDER);
     }
     @Override public @Nullable T getDefaultConfig(int folderId) {
         return getConfigEntry(getDefaultConfigId(folderId));

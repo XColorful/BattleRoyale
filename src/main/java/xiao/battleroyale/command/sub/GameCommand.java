@@ -226,4 +226,12 @@ public class GameCommand {
                 TO_LOBBY
         );
     }
+
+    public static String spectateCommand() {
+        return buildCommandString(
+                MOD_ID,
+                GAME,
+                SPECTATE
+        );
+    }
 }

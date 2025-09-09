@@ -10,6 +10,7 @@ import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
 
 import java.nio.file.Paths;
 
+import static xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry.OVERWORLD_LEVEL_KEY;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultGamerule {
@@ -24,15 +25,16 @@ public class DefaultGamerule {
     }
 
     private static JsonObject generateDefaultGameruleConfig0() {
-        BattleroyaleEntry brEntry = new BattleroyaleEntry(100, 4, true, true, 12000,
+        BattleroyaleEntry brEntry = new BattleroyaleEntry(OVERWORLD_LEVEL_KEY, 100, 4, true, true,
+                2, 12000, 1,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10),
-                true, true, false, true, true);
+                true, true, true, false, true, true);
 
         MinecraftEntry mcEntry = new MinecraftEntry(true, false, false,
                 true, false, false,
                 false, false, false,
                 false, false, true,
-                false, 5000);
+                false, true, 5000);
 
         GameruleConfig gameruleConfig = new GameruleConfig(0, "Adventure battleroyale", "#FFFFFFAA", true,
                 brEntry, mcEntry, null);
@@ -41,15 +43,16 @@ public class DefaultGamerule {
     }
 
     private static JsonObject generateDefaultGameruleConfig1() {
-        BattleroyaleEntry brEntry = new BattleroyaleEntry(100, 4, false, false, 12000,
+        BattleroyaleEntry brEntry = new BattleroyaleEntry(OVERWORLD_LEVEL_KEY, 100, 4, false, false,
+                2, 12000, 1,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10),
-                true, true, false, true, true);
+                true, true, true, false, true, true);
 
         MinecraftEntry mcEntry = new MinecraftEntry(false, true, false,
                 true, true, true,
                 true, true, true,
                 true, false, true,
-                false, 5000);
+                false, true, 5000);
 
         GameruleConfig gameruleConfig = new GameruleConfig(1, "Survival battleroyale", "#FFFFFFAA",
                 brEntry, mcEntry, null);

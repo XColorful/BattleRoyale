@@ -52,7 +52,8 @@ public class ClientTeamData extends AbstractClientExpireData {
                     memberTag.getString(GameTeamTag.MEMBER_NAME),
                     memberTag.getFloat(GameTeamTag.MEMBER_HEALTH),
                     memberTag.getInt(GameTeamTag.MEMBER_BOOST),
-                    memberTag.getUUID(GameTeamTag.MEMBER_UUID)
+                    memberTag.getUUID(GameTeamTag.MEMBER_UUID),
+                    memberTag.getBoolean(GameTeamTag.MEMBER_ALIVE)
             ));
         }
         teamMemberInfoList.sort(Comparator.comparingInt(memberInfo -> memberInfo.playerId));
@@ -98,7 +99,8 @@ public class ClientTeamData extends AbstractClientExpireData {
                         gamePlayer.getPlayerName(),
                         playerHealth,
                         EffectManager.get().getBoost(gamePlayer.getPlayerUUID()),
-                        gamePlayer.getPlayerUUID())
+                        gamePlayer.getPlayerUUID(),
+                        gamePlayer.isAlive())
                 );
             }
         }

@@ -139,4 +139,14 @@ public class GameTeam {
                 .filter(gamePlayer -> !gamePlayer.isEliminated())
                 .collect(Collectors.toList());
     }
+
+    public boolean onlyRemainBot() {
+        return teamMembers.stream()
+                .allMatch(gamePlayer -> gamePlayer.isBot() || (!gamePlayer.isBot() && gamePlayer.isEliminated()));
+    }
+
+    public String getVanillaTeamName() {
+        // 不合法的队伍名（无法解析字符串，空格会导致后面的部分视为参数），天然避免了对原版队伍内规则的修改
+        return String.format("CBR Team %s", this.gameTeamId);
+    }
 }

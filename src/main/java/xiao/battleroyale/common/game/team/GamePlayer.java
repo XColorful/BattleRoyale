@@ -5,6 +5,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.effect.EffectManager;
+import xiao.battleroyale.common.game.GameManager;
 
 import java.util.UUID;
 
@@ -36,6 +37,16 @@ public class GamePlayer {
         this.bot = isBot;
         this.team = team;
         this.invalidTime = 0;
+        reset();
+    }
+
+    public void reset() {
+        if (GameManager.get().isInGame()) {
+            BattleRoyale.LOGGER.debug("GameManager is in game, reject to reset GamePlayer {}, team {}", playerName, getGameTeamId());
+            return;
+        }
+        this.isAlive = true;
+        this.isEliminated = false;
     }
 
     public UUID getPlayerUUID() { return playerUUID; }
@@ -43,7 +54,7 @@ public class GamePlayer {
     public boolean isAlive() { return isAlive; }
     public boolean isEliminated() { return isEliminated; }
     public int getGameSingleId() { return gameSingleId; }
-    public int getGameTeamId() { return team != null ? team.getGameTeamId() : -1; }
+    public int getGameTeamId() { return team.getGameTeamId(); }
     public String getGameTeamColor() { return gameTeamColor; }
     public boolean isActiveEntity() { return isActiveEntity; }
     public Vec3 getLastPos() { return lastPos; }
@@ -54,10 +65,10 @@ public class GamePlayer {
     public boolean isLeader() { return isLeader; }
 
     public void setAlive(boolean alive) {
+        // 倒地机制不在GamePlayer内部管理，调用即强制设置
         this.isAlive = alive;
-        this.isEliminated = true; // TODO 倒地机制完成前默认淘汰
 
-        if (team != null && team.isTeamEliminated()) { // 队伍无人则倒地
+        if (team.isTeamEliminated()) { // 队伍无人则倒地
             this.isEliminated = true;
         }
 

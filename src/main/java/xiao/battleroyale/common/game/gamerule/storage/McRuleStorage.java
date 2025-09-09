@@ -2,6 +2,7 @@ package xiao.battleroyale.common.game.gamerule.storage;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.storage.IRuleStorage;
@@ -28,7 +29,8 @@ public class McRuleStorage implements IRuleStorage {
             boolean tntExplosionDropDecay,
             boolean spectatorGenerateChunks,
             boolean keepInventory,
-            int timeSet
+            boolean doTimeSet,
+            long timeSet
     ) {}
 
     public McRuleStorage() {
@@ -53,6 +55,7 @@ public class McRuleStorage implements IRuleStorage {
                 mcEntry.tntExplosionDropDecay,
                 mcEntry.spectatorGenerateChunks,
                 mcEntry.keepInventory,
+                mcEntry.doTimeSet,
                 mcEntry.timeSet
         );
 
@@ -67,7 +70,8 @@ public class McRuleStorage implements IRuleStorage {
                 serverLevel.getGameRules().getRule(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY).get(),
                 serverLevel.getGameRules().getRule(GameRules.RULE_SPECTATORSGENERATECHUNKS).get(),
                 serverLevel.getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).get(),
-                (int) serverLevel.getDayTime()
+                mcEntry.doTimeSet,
+                serverLevel.getDayTime()
                 );
     }
 
@@ -88,11 +92,17 @@ public class McRuleStorage implements IRuleStorage {
         serverLevel.getGameRules().getRule(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY).set(this.currentRule.tntExplosionDropDecay(), serverLevel.getServer());
         serverLevel.getGameRules().getRule(GameRules.RULE_SPECTATORSGENERATECHUNKS).set(this.currentRule.spectatorGenerateChunks(), serverLevel.getServer());
         serverLevel.getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).set(this.currentRule.keepInventory(), serverLevel.getServer());
-        serverLevel.setDayTime(this.currentRule.timeSet());
+        if (this.currentRule.doTimeSet()) {
+            BattleRoyale.LOGGER.info("Set {} game time from {} to {}", serverLevel, serverLevel.getGameTime(), this.currentRule.timeSet());
+            serverLevel.setDayTime(this.currentRule.timeSet());
+            BattleRoyale.LOGGER.info("{} current game time: {}", serverLevel, serverLevel.getGameTime());
+        } else {
+            BattleRoyale.LOGGER.info("Skipped game time apply, {} current game time: {}", serverLevel, serverLevel.getGameTime());
+        }
     }
 
     @Override
-    public void revert(ServerLevel serverLevel) {
+    public void revert(@NotNull ServerLevel serverLevel) {
         if (this.backupRule == null) {
             BattleRoyale.LOGGER.warn("Skipped invalid backupRule to revert in McRuleStorage");
             return;
@@ -107,7 +117,13 @@ public class McRuleStorage implements IRuleStorage {
         serverLevel.getGameRules().getRule(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY).set(this.backupRule.tntExplosionDropDecay(), serverLevel.getServer());
         serverLevel.getGameRules().getRule(GameRules.RULE_SPECTATORSGENERATECHUNKS).set(this.backupRule.spectatorGenerateChunks(), serverLevel.getServer());
         serverLevel.getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).set(this.backupRule.keepInventory(), serverLevel.getServer());
-        serverLevel.setDayTime(this.backupRule.timeSet());
+        if (this.backupRule.doTimeSet()) {
+            BattleRoyale.LOGGER.info("Revert {} game time from {} to {}", serverLevel, serverLevel.getGameTime(), this.backupRule.timeSet());
+            serverLevel.setDayTime(this.backupRule.timeSet());
+            BattleRoyale.LOGGER.info("{} current game time: {}", serverLevel, serverLevel.getGameTime());
+        } else {
+            BattleRoyale.LOGGER.info("Skipped game time revert, {} current game time: {}", serverLevel, serverLevel.getGameTime());
+        }
     }
 
     @Override
@@ -121,7 +137,10 @@ public class McRuleStorage implements IRuleStorage {
             return new HashMap<>();
         }
         Map<String, Integer> intGamerule = new HashMap<>();
-        intGamerule.put(MinecraftEntryTag.TIME_SET, currentRule.timeSet);
+        if (currentRule.timeSet > Integer.MAX_VALUE) {
+            BattleRoyale.LOGGER.info("McRuleStorage.currentRule.timeSet {} > Integer.MAX_VALUE ({}), cast to int", currentRule.timeSet, Integer.MAX_VALUE);
+        }
+        intGamerule.put(MinecraftEntryTag.TIME_SET, (int) currentRule.timeSet);
         return intGamerule;
     }
     public Map<String, Boolean> getBoolWriter() {

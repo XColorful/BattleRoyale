@@ -7,7 +7,10 @@ public class GeneratorEntryTag extends ConfigEntryTag {
     public static final String COMMON = "common";
     public static final String LOOT_VANILLA_CHEST = "lootVanillaChest";
     public static final String REMOVE_LOOT_TABLE = "removeLootTable";
+    public static final String CLEAR_PREVIOUS_CONTENT = "clearPreviousContent";
     public static final String REMOVE_INNOCENT_ENTITY = "removeNoGameidEntity";
+    public static final String VANILLA_WHITE_LIST = "vanillaWhiteList";
+    public static final String VANILLA_BLACK_LIST = "vanillaBlackList";
 
     public static final String NORMAL = "normal";
     public static final String MAX_NORMAL_TICK_LOOT_CHUNK = "maxNormalTickLootChunk";

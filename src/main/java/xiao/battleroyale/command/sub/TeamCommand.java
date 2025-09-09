@@ -123,7 +123,7 @@ public class TeamCommand {
     private static int requestPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer sender = context.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = EntityArgument.getPlayer(context, PLAYER);
-        TeamManager.get().RequestPlayer(sender, targetPlayer);
+        TeamManager.get().requestPlayer(sender, targetPlayer);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -184,6 +184,24 @@ public class TeamCommand {
                 DECLINE,
                 REQUEST,
                 name
+        );
+    }
+
+    public static String requestPlayerCommand(String name) {
+        return buildCommandString(
+                MOD_ID,
+                TEAM,
+                REQUEST,
+                name
+        );
+    }
+
+    public static String requestTeamCommand(int teamId) {
+        return buildCommandString(
+                MOD_ID,
+                TEAM,
+                JOIN,
+                Integer.toString(teamId)
         );
     }
 }

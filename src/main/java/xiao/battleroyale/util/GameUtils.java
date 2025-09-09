@@ -1,6 +1,10 @@
 package xiao.battleroyale.util;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -13,10 +17,12 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.common.game.team.GameTeam;
 
 import java.util.List;
 import java.util.UUID;
+
+import static xiao.battleroyale.util.CommandUtils.buildIntBracketWithColor;
+import static xiao.battleroyale.util.CommandUtils.buildIntBracketWithFullColor;
 
 public class GameUtils {
 
@@ -107,6 +113,18 @@ public class GameUtils {
         }
         return null;
     }
+    /**
+     * 获取 ItemStack 的GameUUID
+     */
+    public static @Nullable UUID getGameId(ItemStack itemStack) {
+        if (itemStack.hasTag()) {
+            CompoundTag tag = itemStack.getTag();
+            if (tag != null && tag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
+                return tag.getUUID(LootNBTTag.GAME_ID_TAG);
+            }
+        }
+        return null;
+    }
 
     public record GameTimeFormat(int gameTime, int remainTick, float remainSeconds, int seconds, int minutes, int hours) {
         public GameTimeFormat(int gameTime) {
@@ -171,5 +189,14 @@ public class GameUtils {
             }
             clearGamePlayerInventory(serverLevel, gamePlayer);
         }
+    }
+
+    public static MutableComponent buildGamePlayerText(@NotNull GamePlayer gamePlayer, ChatFormatting nameColor) {
+        TextColor color = TextColor.fromRgb(ColorUtils.parseColorToInt(gamePlayer.getGameTeamColor()) & 0xFFFFFF);
+
+        return Component.empty()
+                .append(buildIntBracketWithColor(gamePlayer.getGameTeamId(), color))
+                .append(buildIntBracketWithFullColor(gamePlayer.getGameSingleId(), color))
+                .append(Component.literal(gamePlayer.getPlayerName()).withStyle(nameColor));
     }
 }

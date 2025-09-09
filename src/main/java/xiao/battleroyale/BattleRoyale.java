@@ -1,6 +1,7 @@
 package xiao.battleroyale;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -24,12 +25,15 @@ public class BattleRoyale {
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final Random COMMON_RANDOM = new Random();
 
-    public BattleRoyale(FMLJavaModLoadingContext context)
-    {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.init());
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.init());
+    private static MinecraftServer minecraftServer;
 
+    public BattleRoyale(FMLJavaModLoadingContext context) {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.init());
         Dist side = FMLLoader.getDist();
+        if (side == Dist.CLIENT) {
+            ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.init());
+        }
+
         ResourceLoader.INSTANCE.packType = side.isClient() ? PackType.CLIENT_RESOURCES : PackType.SERVER_DATA;
 
         IEventBus bus = context.getModEventBus();
@@ -40,5 +44,12 @@ public class BattleRoyale {
         ModEntities.ENTITY_TYPES.register(bus);
         ModMenuTypes.MENU_TYPES.register(bus);
         ModSounds.SOUNDS.register(bus);
+    }
+
+    public static void setMinecraftServer(MinecraftServer server) {
+        minecraftServer = server;
+    }
+    public static MinecraftServer getMinecraftServer() {
+        return minecraftServer;
     }
 }

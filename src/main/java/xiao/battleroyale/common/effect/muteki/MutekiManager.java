@@ -55,7 +55,7 @@ public class MutekiManager implements IEffectManager {
         if (task.notice && task.serverLevel != null) {
             ServerPlayer player = (ServerPlayer) task.serverLevel.getEntity(task.entityUUID);
             if (player != null) {
-                ChatUtils.sendTranslatableMessageToPlayer(player, Component.translatable("battleroyale.message.muteki_end").withStyle(ChatFormatting.YELLOW));
+                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.muteki_end").withStyle(ChatFormatting.YELLOW));
             }
         }
         BattleRoyale.LOGGER.info("LivingEntity {} (UUID:{}) muteki time finished", task.name, task.entityUUID);

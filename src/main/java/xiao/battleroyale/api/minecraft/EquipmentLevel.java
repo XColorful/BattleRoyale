@@ -87,4 +87,10 @@ public class EquipmentLevel {
         int damage = Math.max(getDamage(material, part) - 2 * shootTaken, 0);
         return new ItemEntry(equipName, "{Damage:" + damage + "}", 1);
     }
+
+    public static ItemEntry equipment(int material, int part, int shootTaken, int enchantment) {
+        String equipName = getName(material, part);
+        int damage = Math.max(getDamage(material, part) - 2 * shootTaken, 0);
+        return new ItemEntry(equipName, String.format("{Damage:%d,Enchantments:[{id:\"minecraft:protection\",lvl:%d}]}", damage, enchantment), 1);
+    }
 }

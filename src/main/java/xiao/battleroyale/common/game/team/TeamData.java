@@ -69,15 +69,27 @@ public class TeamData extends AbstractGameManagerData {
             return;
         }
 
-        if (maxPlayers <= this.maxPlayersLimit) {
-            return;
-        }
-
         this.maxPlayersLimit = maxPlayers;
         for (int i = this.maxPlayersLimit + 1; i <= maxPlayers; i++) {
             availablePlayerIds.add(i);
             availableTeamIds.add(i);
         }
+        this.teamSizeLimit = maxTeamSize;
+    }
+
+    public void adjustLimit(int maxPlayers, int maxTeamSize) {
+        if (locked) {
+            return;
+        }
+
+        if (maxPlayers == this.maxPlayersLimit && maxTeamSize == this.teamSizeLimit) {
+            return;
+        }
+        if (maxPlayers < this.maxPlayersLimit || maxTeamSize < this.teamSizeLimit) { // 简单起见，不检查清理的必要性
+            clear(maxPlayers, maxTeamSize);
+            return;
+        }
+        extendLimit(maxPlayers, maxTeamSize);
     }
 
     /**
@@ -147,9 +159,11 @@ public class TeamData extends AbstractGameManagerData {
         }
 
         if (!availablePlayerIds.remove(playerId)) {
+            BattleRoyale.LOGGER.warn("Can't add GamePlayer {} to team {} as playerId {} not available", gamePlayer.getPlayerName(), gameTeam.getGameTeamId(), playerId);
             return false;
         }
         if (gameTeam.getTeamMemberCount() >= teamSizeLimit) {
+            BattleRoyale.LOGGER.debug("Can't add GamePlayer {} to team {} as team size {} >= teamSizeLimit {}", gamePlayer.getPlayerName(), gameTeam.getGameTeamId(), gameTeam.getTeamMemberCount(), teamSizeLimit);
             return false;
         }
         gamePlayer.setTeam(gameTeam);
@@ -183,6 +197,9 @@ public class TeamData extends AbstractGameManagerData {
         return true;
     }
 
+    /**
+     * 使GamePlayer失效，调用后应不再使用传入的GamePlayer
+     */
     public boolean removePlayer(GamePlayer player) {
         if (locked) {
             return false;
@@ -191,6 +208,9 @@ public class TeamData extends AbstractGameManagerData {
         return removePlayer(player.getPlayerUUID());
     }
 
+    /**
+     * 使UUID对应的GamePlayer失效，调用后应不再使用对应的GamePlayer
+     */
     public boolean removePlayer(UUID playerId) {
         if (locked) {
             return false;

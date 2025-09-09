@@ -116,4 +116,34 @@ public class DebugGame {
     public void getGameZone(CommandSourceStack source, IGameZone gameZone) {
         DebugManager.sendDebugMessageWithGameTime(source, GET_GAME_ZONE, GameText.buildGameZoneDetail(gameZone, source.getPosition()));
     }
+
+    /**
+     * [调试]getBackupPlayermodes
+     */
+    public static final String GET_BACKUP_PLAYERMODES = "getBackupPlayermodes";
+    public void getGetBackupPlayermodes(CommandSourceStack source, int min, int max) {
+        ;
+    }
+
+    /**
+     * [调试]getBackupPlayermode
+     */
+    public static final String GET_BACKUP_PLAYERMODE = "getBackupPlayermode";
+    public void getBackupPlayermode(CommandSourceStack source, int singleId) {
+        ;
+    }
+    public void getBackupPlayermode(CommandSourceStack source, String name) {
+        ;
+    }
+    public void getBackupPlayermode(CommandSourceStack source, Entity entity) {
+        ;
+    }
+
+    /**
+     * [调试]getBackupGamerule
+     */
+    public static final String GET_BACKUP_GAMERULE = "getBackupGamerule";
+    public void getBackupGamerule(CommandSourceStack source) {
+        ;
+    }
 }

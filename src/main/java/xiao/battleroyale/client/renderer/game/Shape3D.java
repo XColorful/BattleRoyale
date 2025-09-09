@@ -2,7 +2,6 @@ package xiao.battleroyale.client.renderer.game;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -73,10 +72,10 @@ public class Shape3D {
                 // 渲染四边形面，避免在极点附近渲染重复面
                 // 顶点顺序: (x1,y1,z1) -> (x2,y2,z2) -> (x3,y3,z3) -> (x4,y4,z4)
                 if (i < stacks) {
-                    consumer.vertex(currentPoseMatrix, x1, y1, z1).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normal1.x(), normal1.y(), normal1.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x2, y2, z2).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normal2.x(), normal2.y(), normal2.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x3, y3, z3).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normal3.x(), normal3.y(), normal3.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x4, y4, z4).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normal4.x(), normal4.y(), normal4.z()).endVertex();
+                    consumer.vertex(currentPoseMatrix, x1, y1, z1).color(r, g, b, a).normal(normal1.x(), normal1.y(), normal1.z()).endVertex();
+                    consumer.vertex(currentPoseMatrix, x2, y2, z2).color(r, g, b, a).normal(normal2.x(), normal2.y(), normal2.z()).endVertex();
+                    consumer.vertex(currentPoseMatrix, x3, y3, z3).color(r, g, b, a).normal(normal3.x(), normal3.y(), normal3.z()).endVertex();
+                    consumer.vertex(currentPoseMatrix, x4, y4, z4).color(r, g, b, a).normal(normal4.x(), normal4.y(), normal4.z()).endVertex();
                 }
             }
         }
@@ -102,40 +101,40 @@ public class Shape3D {
         float z_pos = halfDepth;
 
         // 前面 (负Z轴方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, -1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
 
         // 后面 (正Z轴方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 0, 1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
 
         // 左侧 (负X轴方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(-1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(-1, 0, 0).endVertex();
 
         // 右侧 (正X轴方向)
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(1, 0, 0).endVertex();
 
         // 顶面 (正Y方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, 1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(0, 1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(0, 1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(0, 1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(0, 1, 0).endVertex();
 
         // 底面 (负Y方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, -1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, -1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, -1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(0, -1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(0, -1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(0, -1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(0, -1, 0).endVertex();
+        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(0, -1, 0).endVertex();
     }
 
     /**
@@ -207,10 +206,10 @@ public class Shape3D {
 
                 // 渲染四边形面
                 if (i < stacks) { // 避免在极点渲染重复面
-                    consumer.vertex(currentPoseMatrix, x1, y1, z1).color(r, g, b, a).uv(0, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normal1.x(), normal1.y(), normal1.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x2, y2, z2).color(r, g, b, a).uv(1, 0).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normal2.x(), normal2.y(), normal2.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x3, y3, z3).color(r, g, b, a).uv(1, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normal3.x(), normal3.y(), normal3.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x4, y4, z4).color(r, g, b, a).uv(0, 1).overlayCoords(OverlayTexture.WHITE_OVERLAY_V).uv2(7864440).normal(normal4.x(), normal4.y(), normal4.z()).endVertex();
+                    consumer.vertex(currentPoseMatrix, x1, y1, z1).color(r, g, b, a).normal(normal1.x(), normal1.y(), normal1.z()).endVertex();
+                    consumer.vertex(currentPoseMatrix, x2, y2, z2).color(r, g, b, a).normal(normal2.x(), normal2.y(), normal2.z()).endVertex();
+                    consumer.vertex(currentPoseMatrix, x3, y3, z3).color(r, g, b, a).normal(normal3.x(), normal3.y(), normal3.z()).endVertex();
+                    consumer.vertex(currentPoseMatrix, x4, y4, z4).color(r, g, b, a).normal(normal4.x(), normal4.y(), normal4.z()).endVertex();
                 }
             }
         }

@@ -6,6 +6,8 @@ public class RenderConfigTag extends ConfigEntryTag {
 
     public static String BLOCK_ENTRY = "block";
     public static String ZONE_ENTRY = "zone";
+    public static String TEAM_ENTRY = "teamEntry";
+    public static String SPECTATE_ENTRY = "spectateEntry";
 
     public static String ITEM_RENDER_DISTANCE = "itemRenderDistance";
 
@@ -15,6 +17,13 @@ public class RenderConfigTag extends ConfigEntryTag {
     public static String ELLIPSE_SEGMENTS = "ellipseSegments";
     public static String SPHERE_SEGMENTS = "sphereSegments";
     public static String ELLIPSOID_SEGMENTS = "ellispoidSegments";
+
+    public static String ENABLE_TEAM_ZONE = "enableTeamZone";
+    public static String ENABLE_SPECTATE_ZONE = "enableSpectateZone";
+    public static String RENDER_BEACON = "renderBeacon";
+    public static String RENDER_BOUNDING_BOX = "renderBoundingBox";
+    public static String TRANSPARENCY = "transparency";
+    public static String SCAN_FREQUENCY = "scanFrequency";
     
     private RenderConfigTag() {}
 }

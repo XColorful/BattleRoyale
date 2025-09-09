@@ -5,9 +5,10 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.client.game.data.ClientGameData;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
+import xiao.battleroyale.client.renderer.game.SpectatePlayerRenderer;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientGameDataManager {
 
@@ -24,7 +25,7 @@ public class ClientGameDataManager {
     }
 
     // zone
-    private final Map<Integer, ClientSingleZoneData> activeZones = new ConcurrentHashMap<>(); // zoneId -> zondData
+    private final Map<Integer, ClientSingleZoneData> activeZones = new HashMap<>(); // zoneId -> zondData
     public boolean hasZoneRender() { return !activeZones.isEmpty(); }
     public Map<Integer, ClientSingleZoneData> getActiveZones() { return this.activeZones; }
     // team
@@ -64,7 +65,9 @@ public class ClientGameDataManager {
             if (currentTick - gameData.getLastUpdateTick() > GAME_EXPIRE_TICK) {
                 gameData.clear();
             } else {
-                ;
+                if (currentTick % SpectatePlayerRenderer.getScanFrequency() == 0) {
+                    SpectatePlayerRenderer.get().scanSpectatePlayers();
+                }
             }
         }
         // 下一tick一开始获取bool就会重置
@@ -109,6 +112,14 @@ public class ClientGameDataManager {
             gameData.clear();
         } else {
             gameData.updateFromNbt(syncPacketNbt);
+        }
+    }
+
+    public void updateGameSpectateInfo(@NotNull CompoundTag syncPacketNbt) {
+        if (syncPacketNbt.isEmpty()) {
+            gameData.getSpectateData().clear();
+        } else {
+            gameData.getSpectateData().updateFromNbt(syncPacketNbt);
         }
     }
 

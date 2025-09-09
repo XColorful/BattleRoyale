@@ -90,7 +90,7 @@ public class TeamMessageManager extends AbstractMessageManager<TeamMessage> {
         ServerLevel serverLevel = GameManager.get().getServerLevel();
 
         for (int id : changedId) {
-            GameTeam gameTeam = GameManager.get().getGameTeamById(id); // TeamManager内部做了特殊处理，不应该重新build消息时会防止MessageManager获取GameTeam
+            GameTeam gameTeam = GameManager.get().getGameTeamById(id); // TeamManager内部stopGame做了特殊处理，不应该重新build消息时会防止MessageManager获取GameTeam
             if (gameTeam != null) { // 队伍存在则计算NBT并发送
                 CompoundTag nbt = ClientTeamData.toNBT(gameTeam, serverLevel);
                 // 备份NBT和成员UUID
@@ -117,14 +117,12 @@ public class TeamMessageManager extends AbstractMessageManager<TeamMessage> {
         if (!leavedMember.isEmpty() && serverLevel != null) {
             List<ServerPlayer> players = new ArrayList<>();
             for (UUID playerUUID : leavedMember) {
-                GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(playerUUID);
-                if (gamePlayer == null) {
-                    ServerPlayer serverPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);
-                    if (serverPlayer != null) {
-                        players.add(serverPlayer);
-                    }
-                } else {
-                    // 属于离队玩家，但是仍然是游戏玩家，则是加入了其他队伍，不需要通知取消渲染
+                if (GameManager.get().getGamePlayerByUUID(playerUUID) != null) { // 属于离队玩家，但是仍然是游戏玩家，则是加入了其他队伍，不需要通知取消渲染
+                    continue;
+                }
+                ServerPlayer serverPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);
+                if (serverPlayer != null) {
+                    players.add(serverPlayer);
                 }
             }
             sendMessageToPlayers(players, new CompoundTag(), serverLevel);

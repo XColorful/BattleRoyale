@@ -1,6 +1,7 @@
 package xiao.battleroyale.developer.debug.command.sub.get;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -41,6 +42,15 @@ public class GetWorld {
                 .executes(context -> getStructures(context, context.getSource().getPosition()))
                 .then(Commands.argument(XYZ, Vec3Argument.vec3())
                         .executes(context -> getStructures(context, Vec3Argument.getVec3(context, XYZ)))));
+
+        // get serverlevel [name]
+        getCommand.then(Commands.literal(useFullName ? SERVER_LEVEL : SERVER_LEVEL_SHORT)
+                .then(Commands.argument(NAME, StringArgumentType.greedyString())
+                        .executes(context -> getServerLevel(context, StringArgumentType.getString(context, NAME)))));
+
+        // get levelkey
+        getCommand.then(Commands.literal(useFullName ? LEVEL_KEY : LEVEL_KEY_SHORT)
+                .executes(GetWorld::getLevelKey));
 
     }
 
@@ -90,6 +100,28 @@ public class GetWorld {
         }
 
         DebugWorld.get().getStructures(source, pos);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int getServerLevel(CommandContext<CommandSourceStack> context, String levelKeyString) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
+        DebugWorld.get().getServerLevel(source, levelKeyString);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int getLevelKey(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
+        DebugWorld.get().getLevelKey(source);
         return Command.SINGLE_SUCCESS;
     }
 }

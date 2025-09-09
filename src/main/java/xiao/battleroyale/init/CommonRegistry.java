@@ -3,9 +3,10 @@ package xiao.battleroyale.init;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.network.GameInfoHandler;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = BattleRoyale.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CommonRegistry {
 
     @SubscribeEvent

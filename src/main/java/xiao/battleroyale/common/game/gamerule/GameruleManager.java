@@ -82,7 +82,6 @@ public class GameruleManager extends AbstractGameManager {
         List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
         this.gameruleBackup.apply(serverLevel, gamePlayerList);
         GameManager.get().recordGamerule(this.gameruleBackup);
-        this.gamemodeBackup.apply(serverLevel, gamePlayerList);
 
         this.ready = true;
         this.configPrepared = false;
@@ -96,6 +95,7 @@ public class GameruleManager extends AbstractGameManager {
         }
 
         List<GamePlayer> gamePlayerList = GameManager.get().getStandingGamePlayers();
+        this.gamemodeBackup.clear();
         this.gamemodeBackup.store(mcEntry, serverLevel, gamePlayerList);
         this.gamemodeBackup.apply(serverLevel, gamePlayerList);
         GameManager.get().recordGamerule(this.gamemodeBackup);

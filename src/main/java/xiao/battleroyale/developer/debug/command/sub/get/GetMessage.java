@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import xiao.battleroyale.common.message.game.SpectateMessage;
 import xiao.battleroyale.developer.debug.DebugManager;
 import xiao.battleroyale.developer.debug.DebugMessage;
 import xiao.battleroyale.developer.debug.LocalDebugManager;
@@ -72,6 +73,21 @@ public class GetMessage {
         getCommand.then(Commands.literal(useFullName ? GAME_MESSAGE : GAME_MESSAGE_SHORT)
                 .then(Commands.argument(SINGLE_ID, IntegerArgumentType.integer())
                         .executes(GetMessage::getGameMessage)));
+
+        // 获取观战消息
+        // get spectatemessages [min max / all]
+        getCommand.then(Commands.literal(useFullName ? SPECTATE_MESSAGES : SPECTATE_MESSAGES_SHORT)
+                .then(Commands.literal(ALL)
+                        .executes(context -> getSpectateMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
+                .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
+                        .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
+                                .executes(context -> getSpectateMessages(context,
+                                        IntegerArgumentType.getInteger(context, ID_MIN),
+                                        IntegerArgumentType.getInteger(context, ID_MAX))))));
+        // get spectatemessage [id]
+        getCommand.then(Commands.literal(useFullName ? SPECTATE_MESSAGE : SPECTATE_MESSAGE_SHORT)
+                .then(Commands.argument(SINGLE_ID, IntegerArgumentType.integer())
+                        .executes(GetMessage::getSpectateMessage)));
     }
 
     public static void addClient(LiteralArgumentBuilder<CommandSourceStack> getCommand, boolean useFullName) {
@@ -125,6 +141,21 @@ public class GetMessage {
         getCommand.then(Commands.literal(useFullName ? GAME_MESSAGE : GAME_MESSAGE_SHORT)
                 .then(Commands.argument(SINGLE_ID, IntegerArgumentType.integer())
                         .executes(GetMessage::localGetGameMessage)));
+
+        // 显示观战消息
+        // get spectatemessages [min max / all]
+        getCommand.then(Commands.literal(useFullName ? SPECTATE_MESSAGES : SPECTATE_MESSAGES_SHORT)
+                .then(Commands.literal(ALL)
+                        .executes(context -> localGetSpectateMessages(context, Integer.MIN_VALUE, Integer.MAX_VALUE - 1)))
+                .then(Commands.argument(ID_MIN, IntegerArgumentType.integer())
+                        .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
+                                .executes(context -> localGetSpectateMessages(context,
+                                        IntegerArgumentType.getInteger(context, ID_MIN),
+                                        IntegerArgumentType.getInteger(context, ID_MAX))))));
+        // get spectatemessage [id]
+        getCommand.then(Commands.literal(useFullName ? SPECTATE_MESSAGE : SPECTATE_MESSAGE_SHORT)
+                .then(Commands.argument(SINGLE_ID, IntegerArgumentType.integer())
+                        .executes(GetMessage::localGetSpectateMessage)));
     }
 
     /**
@@ -319,6 +350,54 @@ public class GetMessage {
         return Command.SINGLE_SUCCESS;
     }
 
+    /**
+     * 获取观战消息
+     */
+    private static int getSpectateMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
+        DebugMessage.get().getSpectateMessages(source, min, max);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int getSpectateMessage(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
+        DebugMessage.get().getSpectateMessage(source, IntegerArgumentType.getInteger(context, SINGLE_ID));
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int localGetSpectateMessages(CommandContext<CommandSourceStack> context, int min, int max) {
+        CommandSourceStack source = context.getSource();
+        if (!LocalDebugManager.enableLocalDebug(source)) {
+            source.sendFailure(Component.translatable("battleroyale.message.local_debug_not_enabled"));
+            return 0;
+        }
+
+        if (Minecraft.getInstance().player != null) {
+            DebugMessage.get().getSpectateMessagesLocal(source, min, max);
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int localGetSpectateMessage(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!LocalDebugManager.enableLocalDebug(source)) {
+            source.sendFailure(Component.translatable("battleroyale.message.local_debug_not_enabled"));
+            return 0;
+        }
+
+        if (Minecraft.getInstance().player != null) {
+            DebugMessage.get().getSpectateMessageLocal(source, IntegerArgumentType.getInteger(context, SINGLE_ID));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
     public static String getZoneMessagesCommand(int min, int max) {
         return buildDebugCommandString(
                 GET,
@@ -364,6 +443,21 @@ public class GetMessage {
                 Integer.toString(channel)
         );
     }
+    public static String getSpectateMessagesCommand(int min, int max) {
+        return buildDebugCommandString(
+                GET,
+                SPECTATE_MESSAGE,
+                Integer.toString(min),
+                Integer.toString(max)
+        );
+    }
+    public static String getSpectateMessageCommand(int singleId) {
+        return buildDebugCommandString(
+                GET,
+                SPECTATE_MESSAGE,
+                Integer.toString(singleId)
+        );
+    }
 
     public static String getLocalZoneMessagesCommand(int min, int max) {
         return buildLocalDebugCommandString(
@@ -407,6 +501,21 @@ public class GetMessage {
         return buildLocalDebugCommandString(
                 GET,
                 GAME_MESSAGE,
+                Integer.toString(channel)
+        );
+    }
+    public static String getLocalSpectateMessagesCommand(int min, int max) {
+        return buildLocalDebugCommandString(
+                GET,
+                SPECTATE_MESSAGES,
+                Integer.toString(min),
+                Integer.toString(max)
+        );
+    }
+    public static String getLocalSpectateMessageCommand(int channel) {
+        return buildLocalDebugCommandString(
+                GET,
+                SPECTATE_MESSAGE,
                 Integer.toString(channel)
         );
     }

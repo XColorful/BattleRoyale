@@ -57,11 +57,15 @@ public class CommandArg {
     public static final String BLOCK_ENTITIES_NBT_SHORT = "besnbt";
     public static final String BLOCK_ENTITY_NBT = "blockentitynbt";
     public static final String BLOCK_ENTITY_NBT_SHORT = "benbt";
-    // Biome & Structure
+    // World
     public static final String BIOME = "biome";
     public static final String BIOME_SHORT = "bi";
     public static final String STRUCTURES = "structures";
     public static final String STRUCTURES_SHORT = "ss";
+    public static final String SERVER_LEVEL = "serverlevel";
+    public static final String SERVER_LEVEL_SHORT = "sl";
+    public static final String LEVEL_KEY = "levelkey";
+    public static final String LEVEL_KEY_SHORT = "lk";
     // Messages
     public static final String MESSAGES = "messages";
     public static final String MESSAGES_SHORT = "msgs";
@@ -77,6 +81,10 @@ public class CommandArg {
     public static final String GAME_MESSAGES_SHORT = "gmsgs";
     public static final String GAME_MESSAGE = "gamemessage";
     public static final String GAME_MESSAGE_SHORT = "gmsg";
+    public static final String SPECTATE_MESSAGES = "spectatemessages";
+    public static final String SPECTATE_MESSAGES_SHORT = "smsgs";
+    public static final String SPECTATE_MESSAGE = "spectatemessage";
+    public static final String SPECTATE_MESSAGE_SHORT = "smsg";
     // Effect
     public static final String CHANNEL = "channel";
     public static final String PARTICLES = "particles";
