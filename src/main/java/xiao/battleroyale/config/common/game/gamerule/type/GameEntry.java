@@ -1,11 +1,13 @@
 package xiao.battleroyale.config.common.game.gamerule.type;
 
 import com.google.gson.JsonObject;
+import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.IConfigAppliable;
 import xiao.battleroyale.api.game.gamerule.GameEntryTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.common.message.AbstractMessageManager;
+import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.Arrays;
@@ -17,8 +19,27 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public final int teamMsgExpireTimeSeconds;
     public final List<String> teamColors;
     public static final List<String> DEFAULT_TEAM_COLORS = Arrays.asList(
-            "#E9ECEC", "#F07613", "#BD44B3", "#3AAFD9", "#F8C627", "#70B919", "#ED8DAC", "#8E8E86",
-            "#A0A0A0", "#158991", "#792AAC", "#35399D", "#724728", "#546D1B", "#A02722", "#141519");
+            // 彩色（深），红蓝开头
+            ColorUtils.parseIntToStringRGB(ChatFormatting.DARK_RED.getColor()), // §4
+            ColorUtils.parseIntToStringRGB(ChatFormatting.DARK_BLUE.getColor()), // §1
+            ColorUtils.parseIntToStringRGB(ChatFormatting.GOLD.getColor()), // §6
+            ColorUtils.parseIntToStringRGB(ChatFormatting.DARK_PURPLE.getColor()), // §5
+            ColorUtils.parseIntToStringRGB(ChatFormatting.DARK_GREEN.getColor()), // §2
+            ColorUtils.parseIntToStringRGB(ChatFormatting.DARK_AQUA.getColor()), // §3
+            // 彩色（浅），红蓝开头
+            ColorUtils.parseIntToStringRGB(ChatFormatting.RED.getColor()), // §12
+            ColorUtils.parseIntToStringRGB(ChatFormatting.BLUE.getColor()), // §9
+            ColorUtils.parseIntToStringRGB(ChatFormatting.YELLOW.getColor()), // §14
+            ColorUtils.parseIntToStringRGB(ChatFormatting.LIGHT_PURPLE.getColor()), // §13
+            ColorUtils.parseIntToStringRGB(ChatFormatting.GREEN.getColor()), // §10
+            ColorUtils.parseIntToStringRGB(ChatFormatting.AQUA.getColor()), // §11
+            // 黑白
+            ColorUtils.parseIntToStringRGB(ChatFormatting.BLACK.getColor()), // §0
+            ColorUtils.parseIntToStringRGB(ChatFormatting.GRAY.getColor()), // §7
+            // 黑白
+            ColorUtils.parseIntToStringRGB(ChatFormatting.DARK_GRAY.getColor()), // §8
+            ColorUtils.parseIntToStringRGB(ChatFormatting.WHITE.getColor()) // §15
+    );
     public static final List<Float> DEFAULT_DOWN_DAMAGE = Arrays.asList(0.3333F, 0.4444F, 0.6667F, 1.3333F, 2F, 4F, 8F, 16F, 32F);
     public final boolean buildVanillaTeam;
     public final boolean hideVanillaTeamName;

@@ -41,7 +41,7 @@ public class TeamConfig implements IStatsWriter {
         if (teamColors.isEmpty()) {
             return "#FFFFFFFF";
         } else {
-            return teamColors.get(teamId % teamColors.size());
+            return teamColors.get((teamId - 1) % teamColors.size()); // teamId从1开始
         }
     }
 

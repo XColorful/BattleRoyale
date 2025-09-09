@@ -77,6 +77,25 @@ public class ColorUtils {
     }
 
     /**
+     * 获取颜色#RRGGBB
+     */
+    public static String parseIntToStringRGB(int colorInt) {
+        return String.format("#%06X", colorInt & 0xFFFFFF);
+    }
+
+    /**
+     * 获取颜色#RRGGBBAA
+     */
+    public static String parseIntToStringRGBA(int colorInt) {
+        // AWT的Color.getRGB()返回0xAARRGGBB，需要重新排列
+        int a = (colorInt >> 24) & 0xFF;
+        int r = (colorInt >> 16) & 0xFF;
+        int g = (colorInt >> 8) & 0xFF;
+        int b = colorInt & 0xFF;
+        return String.format("#%02X%02X%02X%02X", r, g, b, a);
+    }
+
+    /**
      * 将字符串表示的颜色的RGB应用到输入颜色
      */
     public static Color changeColorExceptAlpha(Color baseColor, String colorString) {
