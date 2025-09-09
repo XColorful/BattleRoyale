@@ -489,11 +489,11 @@ public class TeamManager extends AbstractGameManager {
             return;
         }
         if (serverLevel == null) {
-            BattleRoyale.LOGGER.error("TeamManager::buildVanillaTeam received a null ServerLevel, skipped build vanilla team");
+            BattleRoyale.LOGGER.error("TeamManager::buildVanillaTeamForAllGameTeams received a null ServerLevel, skipped build vanilla team");
             return;
         }
 
-        TeamUtils.buildVanillaTeam(serverLevel, hideName);
+        TeamUtils.buildVanillaTeamForAllGameTeams(serverLevel, hideName);
     }
     /**
      * 在传入的 ServerLevel 下为全体 GamePlayer 退出原版队伍

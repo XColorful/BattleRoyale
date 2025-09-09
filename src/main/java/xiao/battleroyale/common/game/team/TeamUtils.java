@@ -130,51 +130,30 @@ public class TeamUtils {
      * @param serverLevel 用于从 GamePlayer 获取 ServerPlayer 的维度
      * @param hideName 是否向其他队伍隐藏名称
      */
-    public static void buildVanillaTeam(@NotNull ServerLevel serverLevel, boolean hideName) {
+    public static void buildVanillaTeamForAllGameTeams(@NotNull ServerLevel serverLevel, boolean hideName) {
         TeamManager teamManager = TeamManager.get();
 
-        Scoreboard scoreboard = serverLevel.getScoreboard();
-        for (GameTeam gameTeam : teamManager.getGameTeamsList()) {
-            int teamId = gameTeam.getGameTeamId();
-            String vanillaTeamName = String.format("CBR Team %s", teamId);
-
-            // 移除同名Vanilla队伍
-            PlayerTeam existingTeam = scoreboard.getPlayerTeam(vanillaTeamName);
-            if (existingTeam != null) {
-                scoreboard.removePlayerTeam(existingTeam);
-                BattleRoyale.LOGGER.debug("Removed vanilla team {}", vanillaTeamName);
-            }
-
-            // 创建Vanilla队伍
-            PlayerTeam vanillaTeam = scoreboard.getPlayerTeam(vanillaTeamName);
-            if (vanillaTeam == null) {
-                vanillaTeam = scoreboard.addPlayerTeam(vanillaTeamName);
-            }
-
-            // 友伤由模组监听的事件处理免伤
-            vanillaTeam.setAllowFriendlyFire(true);
-            if (hideName) { // 对其他队伍隐藏名称
-                vanillaTeam.setNameTagVisibility(Team.Visibility.HIDE_FOR_OTHER_TEAMS);
-            } else {
-                vanillaTeam.setNameTagVisibility(Team.Visibility.ALWAYS);
-            }
-
-            // 队伍颜色取与GameTeam最近的（原版api限制）
-            vanillaTeam.setColor(ColorUtils.getClosestChatFormatting(gameTeam.getGameTeamColor()));
-            for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) { // 原版队伍没有队长，直接遍历
-                ServerPlayer memberPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-                if (memberPlayer == null) {
-                    BattleRoyale.LOGGER.warn("Failed to get GamePlayer[{}][{}]{}, skipped build vanilla team", gamePlayer.getGameTeamId(), gamePlayer.getGameSingleId(), gamePlayer.getPlayerName());
-                    continue;
+        try {
+            Scoreboard scoreboard = serverLevel.getScoreboard();
+            for (GameTeam gameTeam : teamManager.getGameTeamsList()) {
+                PlayerTeam vanillaTeam = getClearedVanillaTeam(scoreboard, hideName, gameTeam);
+                for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) { // 原版队伍没有队长，直接遍历
+                    ServerPlayer memberPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                    if (memberPlayer == null) {
+                        BattleRoyale.LOGGER.warn("Failed to get GamePlayer[{}][{}]{}, skipped build vanilla team", gamePlayer.getGameTeamId(), gamePlayer.getGameSingleId(), gamePlayer.getPlayerName());
+                        continue;
+                    }
+                    String playerName = memberPlayer.getName().getString();
+//                    // 离开队伍
+//                    scoreboard.removePlayerFromTeam(playerName);
+                    // 加入队伍（原版已经处理了离开队伍）
+                    scoreboard.addPlayerToTeam(playerName, vanillaTeam);
                 }
-                String playerName = memberPlayer.getName().getString();
-//                // 离开队伍
-//                scoreboard.removePlayerFromTeam(playerName);
-                // 加入队伍（原版已经处理了离开队伍）
-                scoreboard.addPlayerToTeam(playerName, vanillaTeam);
             }
+            BattleRoyale.LOGGER.debug("TeamManager finished build vanilla team");
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.error("Error in TeamUtils::buildVanillaTeamForAllGameTeams, in build vanilla team: {}", e.getMessage());
         }
-        BattleRoyale.LOGGER.debug("TeamManager finished build vanilla team");
     }
 
     /**
@@ -193,5 +172,41 @@ public class TeamUtils {
             String playerName = player.getName().getString();
             scoreboard.removePlayerFromTeam(playerName);
         }
+    }
+
+    public static @NotNull PlayerTeam getOrCreateVanillaTeam(Scoreboard scoreboard, boolean hideName, GameTeam gameTeam) {
+        String vanillaTeamName = gameTeam.getVanillaTeamName();
+
+        PlayerTeam existingTeam = scoreboard.getPlayerTeam(vanillaTeamName);
+        return Objects.requireNonNullElseGet(existingTeam, () -> getClearedVanillaTeam(scoreboard, hideName, gameTeam));
+    }
+
+    public static @NotNull PlayerTeam getClearedVanillaTeam(Scoreboard scoreboard, boolean hideName, GameTeam gameTeam) {
+        String vanillaTeamName = gameTeam.getVanillaTeamName();
+
+        // 移除同名Vanilla队伍
+        PlayerTeam existingTeam = scoreboard.getPlayerTeam(vanillaTeamName);
+        if (existingTeam != null) {
+            scoreboard.removePlayerTeam(existingTeam);
+            BattleRoyale.LOGGER.debug("Removed vanilla team {}", vanillaTeamName);
+        }
+
+        // 创建Vanilla队伍
+        PlayerTeam vanillaTeam = scoreboard.getPlayerTeam(vanillaTeamName);
+        if (vanillaTeam == null) {
+            vanillaTeam = scoreboard.addPlayerTeam(vanillaTeamName);
+        }
+
+        // 友伤由模组监听的事件处理免伤
+        vanillaTeam.setAllowFriendlyFire(true);
+        if (hideName) { // 对其他队伍隐藏名称
+            vanillaTeam.setNameTagVisibility(Team.Visibility.HIDE_FOR_OTHER_TEAMS);
+        } else {
+            vanillaTeam.setNameTagVisibility(Team.Visibility.ALWAYS);
+        }
+
+        // 队伍颜色取与GameTeam最近的（原版api限制）
+        vanillaTeam.setColor(ColorUtils.getClosestChatFormatting(gameTeam.getGameTeamColor()));
+        return vanillaTeam;
     }
 }

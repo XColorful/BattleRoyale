@@ -144,4 +144,8 @@ public class GameTeam {
         return teamMembers.stream()
                 .allMatch(gamePlayer -> gamePlayer.isBot() || (!gamePlayer.isBot() && gamePlayer.isEliminated()));
     }
+
+    public String getVanillaTeamName() {
+        return String.format("CBR Team %s", this.gameTeamId);
+    }
 }

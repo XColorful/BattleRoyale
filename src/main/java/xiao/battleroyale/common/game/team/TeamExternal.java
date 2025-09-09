@@ -7,7 +7,6 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.scores.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.command.sub.TeamCommand;
@@ -357,18 +356,6 @@ public class TeamExternal {
 
         if (teamManager.removePlayerFromTeam(playerUUID)) { // 不在游戏时生效，手动离开当前队伍
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.GREEN));
-
-            // 移除原版Team
-            ServerLevel serverLevel = GameManager.get().getServerLevel();
-            if (serverLevel != null) {
-                Scoreboard scoreboard = serverLevel.getScoreboard();
-                if (GameManager.get().getGameEntry().buildVanillaTeam) {
-                    String playerName = player.getName().getString();
-                    scoreboard.removePlayerFromTeam(playerName);
-                }
-            } else {
-                BattleRoyale.LOGGER.debug("GameManager.serverLevel is null in TeamExternal::leaveTeam, skipped leave vanilal team");
-            }
         }
         return teamManager.getGamePlayerByUUID(playerUUID) == null;
     }
