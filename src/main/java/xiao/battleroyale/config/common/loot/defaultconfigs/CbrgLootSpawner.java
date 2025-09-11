@@ -141,7 +141,7 @@ public class CbrgLootSpawner {
 
     private static ILootEntry specialItemEntry() {
         // 机枪
-        MultiEntry minigun = gunSemiAmmoBuilder("minigun", "308", 48);
+        MultiEntry minigun = gunSemiAmmoBuilder("minigun", "cbrg", "ammo_762", 48);
         // 火箭筒
         MultiEntry rpg = gunSemiAmmoBuilder("rpg7", "rpg_rocker", 1);
         // MC稀有物品
@@ -263,8 +263,8 @@ public class CbrgLootSpawner {
     }
 
     private static ILootEntry rareAREntry() {
-        MultiEntry scarhAmmo = gunAmmoBuilder("scar_h", "308", 20);
-        MultiEntry g3Ammo = gunAmmoBuilder("hk_g3", "308", 20);
+        MultiEntry scarhAmmo = gunAmmoBuilder("scar_h", "cbrg", "ammo_762", 20);
+        MultiEntry g3Ammo = gunAmmoBuilder("hk_g3", "cbrg", "ammo_762", 20);
         MultiEntry _811Ammo = gunAmmoBuilder("type_81", "cbrg", "ammo_762", 30);
         MultiEntry akmAmmo = gunAmmoBuilder("ak47", "cbrg", "ammo_762", 30);
         return new WeightEntry(Arrays.asList(
@@ -605,7 +605,7 @@ public class CbrgLootSpawner {
 
     private static ILootEntry commonAmmoEntry() {
         // 栓狙
-        ItemEntry m24 = ammoBuilder("30_06", 15);
+        ItemEntry m24 = ammoBuilder("cbrg", "ammo_762", 15);
         ItemEntry spring = ammoBuilder("45_70", 5);
         // 连狙
         ItemEntry mk14 = ammoBuilder("cbrg", "ammo_762", 20);
@@ -614,7 +614,7 @@ public class CbrgLootSpawner {
         // 喷子
         ItemEntry _12g = ammoBuilder("12g", 10);
         // 步枪
-        ItemEntry t1Rifle = ammoBuilder("308", 30);
+        ItemEntry t1Rifle = ammoBuilder("cbrg", "ammo_762", 30);
         ItemEntry _762 = ammoBuilder("cbrg", "ammo_762", 30);
         ItemEntry _556 = ammoBuilder("cbrg", "ammo_556", 30);
         ItemEntry qbz = ammoBuilder("cbrg", "ammo_556", 30);
@@ -657,9 +657,9 @@ public class CbrgLootSpawner {
         // 连狙
         ItemEntry mk14 = ammoBuilder("cbrg", "ammo_762", 20);
         // 机枪
-        ItemEntry minigun = ammoBuilder("308", 40);
+        ItemEntry minigun = ammoBuilder("cbrg", "ammo_762", 40);
         // 步枪
-        ItemEntry t1Rifle = ammoBuilder("308", 30);
+        ItemEntry t1Rifle = ammoBuilder("cbrg", "ammo_762", 30);
         // 冲锋枪
         ItemEntry p90 = ammoBuilder("57x28", 50);
         return new WeightEntry(Arrays.asList(
