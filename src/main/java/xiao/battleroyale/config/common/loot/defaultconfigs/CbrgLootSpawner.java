@@ -340,7 +340,7 @@ public class CbrgLootSpawner {
     }
 
     private static ILootEntry rareSMGEntry() {
-        MultiEntry p90Ammo = gunAmmoBuilder("p90", "57x28", 50);
+        MultiEntry p90Ammo = gunAmmoBuilder("p90", "cbrg", "ammo_57mm", 50);
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(5, p90Ammo)
         ));
@@ -661,7 +661,7 @@ public class CbrgLootSpawner {
         // 步枪
         ItemEntry t1Rifle = ammoBuilder("cbrg", "ammo_762", 30);
         // 冲锋枪
-        ItemEntry p90 = ammoBuilder("57x28", 50);
+        ItemEntry p90 = ammoBuilder("cbrg", "ammo_57mm", 50);
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(5, t1SR),
                 new WeightedEntry(10, awm),
