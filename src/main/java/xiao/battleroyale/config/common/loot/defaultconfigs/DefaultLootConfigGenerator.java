@@ -14,6 +14,8 @@ public class DefaultLootConfigGenerator {
         DefaultLootSpawner.generateDefaultConfigs();
         TaczLootSpawner.generateDefaultConfigs();
         TaczLootSpawner.generateExtraConfigs();
+        CbrgLootSpawner.generateDefaultConfigs();
+        CbrgLootSpawner.generateExtraConfigs();
     }
 
     public static void generateDefaultAirdropConfig() {
