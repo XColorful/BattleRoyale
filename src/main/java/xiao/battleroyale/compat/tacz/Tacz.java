@@ -5,7 +5,6 @@ import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.compat.AbstractCompatMod;
 import xiao.battleroyale.compat.playerrevive.BleedingHandler;
-import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 
 public class Tacz extends AbstractCompatMod {
 
