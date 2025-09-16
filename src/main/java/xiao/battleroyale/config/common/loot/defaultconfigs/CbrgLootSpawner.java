@@ -140,14 +140,11 @@ public class CbrgLootSpawner {
     }
 
     private static ILootEntry specialItemEntry() {
-        // 机枪
-        MultiEntry minigun = gunSemiAmmoBuilder("minigun", "cbrg", "ammo_762", 48);
         // 火箭筒
         MultiEntry rpg = gunSemiAmmoBuilder("rpg7", "rpg_rocker", 1);
         // MC稀有物品
         ItemEntry gApplePlus = new ItemEntry("minecraft:enchanted_golden_apple", "{}", 1);
         WeightEntry itemTypeWeight = new WeightEntry(Arrays.asList(
-                new WeightedEntry(5, minigun),
                 new WeightedEntry(5, rpg),
                 new WeightedEntry(5, gApplePlus)
         ));
@@ -250,8 +247,8 @@ public class CbrgLootSpawner {
 
         MultiEntry g36cAmmo = gunAmmoBuilder("g36k", "cbrg", "ammo_556", 30);
         MultiEntry m416Ammo = gunAmmoBuilder("hk416d", "cbrg", "ammo_556", 30);
+        MultiEntry mk47_mutantAmmo = gunBurstAmmoBuilder("classicr", "mk47", "cbrg", "ammo_762", 30);
         MultiEntry m16a4Ammo = gunBurstAmmoBuilder("m16a4", "cbrg", "ammo_556", 30);
-        // Mk47 Mutant
 
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(2, m249Ammo),
@@ -265,6 +262,7 @@ public class CbrgLootSpawner {
                 new WeightedEntry(25, scarlAmmo),
                 new WeightedEntry(25, g36cAmmo),
                 new WeightedEntry(30, m416Ammo),
+                new WeightedEntry(30, mk47_mutantAmmo),
                 new WeightedEntry(35, m16a4Ammo)
         ));
     }
@@ -280,9 +278,14 @@ public class CbrgLootSpawner {
     private static ILootEntry commonSREntry() {
         MultiEntry m24Ammo = gunSemiAmmoBuilder("m700", "cbrg", "ammo_762", 15);
         MultiEntry mosin_nagantAmmo = gunSemiAmmoBuilder("bf1", "man_m95", "cbrg", "ammo_762", 15);
+        MultiEntry kar98kAmmo = gunSemiAmmoBuilder("hamster", "mosin9130", "cbrg", "ammo_762", 15);
+        MultiEntry win94Ammo = gunSemiAmmoBuilder("hamster", "win1894", "cbrg", "ammo_762", 15);
+
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(30, m24Ammo),
-                new WeightedEntry(40, mosin_nagantAmmo)
+                new WeightedEntry(15, m24Ammo),
+                new WeightedEntry(10, mosin_nagantAmmo),
+                new WeightedEntry(25, kar98kAmmo),
+                new WeightedEntry(35, win94Ammo)
         ));
     }
 
@@ -292,7 +295,7 @@ public class CbrgLootSpawner {
                 "AttachmentSCOPE: {id: \"tacz:attachment\", Count: 1b, tag: {AttachmentId:\"cbrg:6x_scope\"}}, " +
                 "GunFireMode: \"" + "SEMI" + "\", " +
                 "GunCurrentAmmoCount: 10, " +
-                "GunId: \"tacz:" + "m107" + "\"" +
+                "GunId: \"suffuse:" + "gm6" + "\"" +
                 "}";
         MultiEntry lynx_amrAmmo = new MultiEntry(Arrays.asList(
                 new ItemEntry("tacz:modern_kinetic_gun", lynx_amrNBT, 1)
@@ -315,7 +318,7 @@ public class CbrgLootSpawner {
     }
 
     private static ILootEntry commonDMREntry() {
-        MultiEntry dragunovAmmo = gunSemiAmmoBuilder("cib","svd", "cbrg", "ammo_762", 10);
+        MultiEntry dragunovAmmo = gunSemiAmmoBuilder("suffuse","svd", "cbrg", "ammo_762", 10);
         MultiEntry slrAmmo = gunSemiAmmoBuilder("cbrg","slr", "cbrg", "ammo_762", 10);
         
         MultiEntry sksAmmo = gunSemiAmmoBuilder("sks_tactical", "cbrg", "ammo_762", 10);
@@ -348,6 +351,7 @@ public class CbrgLootSpawner {
         MultiEntry s1897Ammo = gunSemiAmmoBuilder("m870", "cbrg", "ammo_12g", 5);
         
         MultiEntry s686Ammo = gunSemiAmmoBuilder("cib", "686", "cbrg", "ammo_12g", 2);
+
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(5, o12Ammo),
                 new WeightedEntry(25, s12kAmmo),
@@ -366,22 +370,24 @@ public class CbrgLootSpawner {
 
     private static ILootEntry commonSMGEntry() {
         MultiEntry pp19_bizonAmmo = gunAmmoBuilder("cib", "pp19", "cbrg", "ammo_9mm", 25);
-        // Tommy Gun
+        MultiEntry tommy_gunAmmo = gunAmmoBuilder("classicr", "m1a1_smg", "cbrg", "ammo_45acp", 25);
         // JS9
 
         MultiEntry ump45Ammo = gunAmmoBuilder("ump45", "cbrg", "ammo_9mm", 25);
         MultiEntry vectorAmmo = gunAmmoBuilder("vector45", "cbrg", "ammo_9mm", 20);
 
         MultiEntry mp5kAmmo = gunAmmoBuilder("hk_mp5a5", "cbrg", "ammo_9mm", 30);
-        // MP9
+        MultiEntry mp9Ammo = gunAmmoBuilder("classicr", "mp9", "cbrg", "ammo_9mm", 30);
 
         MultiEntry uziAmmo = gunAmmoBuilder("uzi", "cbrg", "ammo_9mm", 20);
 
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(15, pp19_bizonAmmo),
+                new WeightedEntry(15, tommy_gunAmmo),
                 new WeightedEntry(20, ump45Ammo),
                 new WeightedEntry(20, vectorAmmo),
                 new WeightedEntry(25, mp5kAmmo),
+                new WeightedEntry(25, mp9Ammo),
                 new WeightedEntry(25, uziAmmo)
         ));
     }
@@ -400,7 +406,7 @@ public class CbrgLootSpawner {
         MultiEntry deagleAmmo = gunSemiAmmoBuilder("deagle", "cbrg", "ammo_45acp", 7);
         MultiEntry sawedAmmo = gunSemiAmmoBuilder("db_short", "cbrg", "ammo_12g", 2); // 默认不用连发
 
-        // R1895
+        MultiEntry r1895Ammo = gunSemiAmmoBuilder("hamster", "nagantm1895", "cbrg", "ammo_762", 15);
         // R45
 
         MultiEntry p1911Ammo = gunSemiAmmoBuilder("m1911", "cbrg", "ammo_45acp", 7);
@@ -411,6 +417,7 @@ public class CbrgLootSpawner {
                 new WeightedEntry(5, skorpionAmmo),
                 new WeightedEntry(20, deagleAmmo),
                 new WeightedEntry(25, sawedAmmo),
+                new WeightedEntry(25, r1895Ammo),
                 new WeightedEntry(30, p1911Ammo),
                 new WeightedEntry(35, p92Ammo)
         ));
