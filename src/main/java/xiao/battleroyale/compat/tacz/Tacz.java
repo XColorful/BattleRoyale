@@ -84,7 +84,7 @@ public class Tacz extends AbstractCompatMod {
         allowDownReload = downReload;
         allowDownFireSelect = downFireSelect;
         allowDownMelee = downMelee;
-        enableBleedingHandler = allowDownShoot && allowDownReload && allowDownFireSelect && allowDownMelee;
+        enableBleedingHandler = !(allowDownShoot && allowDownReload && allowDownFireSelect && allowDownMelee);
         if (BleedingHandler.isIsRegistered()) { // 游戏中切换配置立即生效
             registerBleedingEvent();
         }
