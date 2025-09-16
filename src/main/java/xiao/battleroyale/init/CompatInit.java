@@ -5,6 +5,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
+import xiao.battleroyale.compat.tacz.Tacz;
 
 @Mod.EventBusSubscriber(modid = BattleRoyale.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CompatInit {
@@ -12,6 +13,7 @@ public class CompatInit {
     @SubscribeEvent
     public static void onLoadComplete(FMLLoadCompleteEvent event) {
         PlayerRevive.get().checkLoaded();
+        Tacz.get().checkLoaded();
     }
 
 }

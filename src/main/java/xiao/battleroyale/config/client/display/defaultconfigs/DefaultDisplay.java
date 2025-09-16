@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.display.DisplayConfigManager.DisplayConfig;
 import xiao.battleroyale.config.client.display.type.GameEntry;
+import xiao.battleroyale.config.client.display.type.MapEntry;
 import xiao.battleroyale.config.client.display.type.TeamEntry;
 
 import java.nio.file.Paths;
@@ -26,8 +27,9 @@ public class DefaultDisplay {
     private static JsonObject generateDefaultDisplayConfig0() {
         TeamEntry teamEntry = new TeamEntry(true, -0.9, -0.9, 20 * 8);
         GameEntry gameEntry = new GameEntry(true, 0.85, 0.9, "#FFFFFFFF", "#00FFFFFF");
+        MapEntry mapEntry = new MapEntry();
 
-        DisplayConfig displayConfig = new DisplayConfig(0, "All display", "#FFFFFFAA", teamEntry, gameEntry);
+        DisplayConfig displayConfig = new DisplayConfig(0, "All display", "#FFFFFFAA", teamEntry, gameEntry, mapEntry);
 
         return displayConfig.toJson();
     }
@@ -35,8 +37,9 @@ public class DefaultDisplay {
     private static JsonObject generateDefaultDisplayConfig1() {
         TeamEntry teamEntry = new TeamEntry(false);
         GameEntry gameEntry = new GameEntry(false);
+        MapEntry mapEntry = new MapEntry(false);
 
-        DisplayConfig displayConfig = new DisplayConfig(1, "Display nothing", "#FFFFFFAA", teamEntry, gameEntry);
+        DisplayConfig displayConfig = new DisplayConfig(1, "Display nothing", "#FFFFFFAA", teamEntry, gameEntry, mapEntry);
 
         return displayConfig.toJson();
     }
@@ -44,8 +47,9 @@ public class DefaultDisplay {
     private static JsonObject generateDefaultDisplayConfig2() {
         TeamEntry teamEntry = new TeamEntry(false);
         GameEntry gameEntry = new GameEntry(true, 0.85, 0.9, "#FFFFFFFF", "#00FFFFFF");
+        MapEntry mapEntry = new MapEntry();
 
-        DisplayConfig displayConfig = new DisplayConfig(2, "Hide team", "#FFFFFFAA", teamEntry, gameEntry);
+        DisplayConfig displayConfig = new DisplayConfig(2, "Hide team", "#FFFFFFAA", teamEntry, gameEntry, mapEntry);
 
         return displayConfig.toJson();
     }

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.compat.tacz.Tacz;
 
 import java.util.*;
 
@@ -24,17 +25,20 @@ public class BleedingHandler {
     private BleedingHandler() {}
 
     private static boolean isRegistered = false;
+    public static boolean isIsRegistered() { return isRegistered; }
 
     public static void register() {
         MinecraftForge.EVENT_BUS.register(get());
         isRegistered = true;
         BattleRoyale.LOGGER.debug("Registered BleedingHandler");
+        Tacz.registerBleedingEvent();
     }
 
     public static void unregister() {
         MinecraftForge.EVENT_BUS.unregister(get());
         isRegistered = false;
         BattleRoyale.LOGGER.debug("Unregistered BleedingHandler");
+        Tacz.unregisterBleedingEvent();
     }
 
     private static final List<Float> bleedDamage = new ArrayList<>();
@@ -70,6 +74,7 @@ public class BleedingHandler {
         float damage = bleedDamage.get(currentDownTime - 1);
         bleedingPlayerData.put(playerUUID, new BleedData(player, gamePlayer, damage, BLEED_COOLDOWN));
         BattleRoyale.LOGGER.debug("Player {} (UUID:{}) has downed {} time, damage:{}, cooldown:{}", player.getName().getString(), player.getUUID(), currentDownTime, damage, BLEED_COOLDOWN);
+        Tacz.onAddingBleedingPlayer(player);
     }
 
     @SubscribeEvent

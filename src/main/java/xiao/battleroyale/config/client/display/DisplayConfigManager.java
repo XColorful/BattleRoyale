@@ -10,6 +10,7 @@ import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.display.defaultconfigs.DefaultDisplayConfigGenerator;
 import xiao.battleroyale.config.client.display.type.GameEntry;
+import xiao.battleroyale.config.client.display.type.MapEntry;
 import xiao.battleroyale.config.client.display.type.TeamEntry;
 import xiao.battleroyale.util.JsonUtils;
 
@@ -45,15 +46,17 @@ public class DisplayConfigManager extends AbstractConfigManager<DisplayConfigMan
 
         public final TeamEntry teamEntry;
         public final GameEntry gameEntry;
+        public final MapEntry mapEntry;
 
-        public DisplayConfig(int id, String name, String color, TeamEntry teamEntry, GameEntry gameEntry) {
-            this(id, name, color, false, teamEntry, gameEntry);
+        public DisplayConfig(int id, String name, String color, TeamEntry teamEntry, GameEntry gameEntry, MapEntry mapEntry) {
+            this(id, name, color, false, teamEntry, gameEntry, mapEntry);
         }
 
-        public DisplayConfig(int id, String name, String color, boolean isDefault, TeamEntry teamEntry, GameEntry gameEntry) {
+        public DisplayConfig(int id, String name, String color, boolean isDefault, TeamEntry teamEntry, GameEntry gameEntry, MapEntry mapEntry) {
             super(id, name, color, isDefault);
             this.teamEntry = teamEntry;
             this.gameEntry = gameEntry;
+            this.mapEntry = mapEntry;
         }
 
         @Override
@@ -76,6 +79,9 @@ public class DisplayConfigManager extends AbstractConfigManager<DisplayConfigMan
             if (gameEntry != null) {
                 jsonObject.add(DisplayConfigTag.GAME_ENTRY, gameEntry.toJson());
             }
+            if (mapEntry != null) {
+                jsonObject.add(DisplayConfigTag.MAP_ENTRY, mapEntry.toJson());
+            }
             return jsonObject;
         }
 
@@ -83,6 +89,7 @@ public class DisplayConfigManager extends AbstractConfigManager<DisplayConfigMan
         public void applyDefault() {
             teamEntry.applyDefault();
             gameEntry.applyDefault();
+            mapEntry.applyDefault();
         }
     }
 
@@ -116,6 +123,21 @@ public class DisplayConfigManager extends AbstractConfigManager<DisplayConfigMan
         }
     }
 
+    public static MapEntry deserializeMapEntry(JsonObject jsonObject) {
+        try {
+            MapEntry mapEntry = MapEntry.fromJson(jsonObject);
+            if (mapEntry != null) {
+                return mapEntry;
+            } else {
+                BattleRoyale.LOGGER.warn("Skipped invalid MapEntry");
+                return null;
+            }
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.error("Failed to deserialize MapEntry: {}", e.getMessage());
+            return null;
+        }
+    }
+
     @Override protected Comparator<DisplayConfig> getConfigIdComparator(int configType) {
         return Comparator.comparingInt(DisplayConfig::getConfigId);
     }
@@ -142,6 +164,7 @@ public class DisplayConfigManager extends AbstractConfigManager<DisplayConfigMan
             int id = JsonUtils.getJsonInt(configObject, DisplayConfigTag.ID, -1);
             JsonObject teamEntryObject = JsonUtils.getJsonObject(configObject, DisplayConfigTag.TEAM_ENTRY, null);
             JsonObject gameEntryObject = JsonUtils.getJsonObject(configObject, DisplayConfigTag.GAME_ENTRY, null);
+            JsonObject mapEntryObject = JsonUtils.getJsonObject(configObject, DisplayConfigTag.MAP_ENTRY, null);
             if (id < 0 || teamEntryObject == null || gameEntryObject == null) {
                 BattleRoyale.LOGGER.warn("Skipped invalid display config in {}", filePath);
                 return null;
@@ -151,7 +174,8 @@ public class DisplayConfigManager extends AbstractConfigManager<DisplayConfigMan
             String color = JsonUtils.getJsonString(configObject, DisplayConfigTag.COLOR, "");
             TeamEntry teamEntry = DisplayConfigManager.deserializeTeamEntry(teamEntryObject);
             GameEntry gameEntry = DisplayConfigManager.deserializeGameEntry(gameEntryObject);
-            return new DisplayConfig(id, name, color, isDefault, teamEntry, gameEntry);
+            MapEntry mapEntry = DisplayConfigManager.deserializeMapEntry(mapEntryObject);
+            return new DisplayConfig(id, name, color, isDefault, teamEntry, gameEntry, mapEntry);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(), filePath, e.getMessage());
             return null;

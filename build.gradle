@@ -76,6 +76,7 @@ dependencies {
 
     compileOnly fg.deobf("info.journeymap:journeymap-api:${journeymap_api_version}")
     runtimeOnly fg.deobf("curse.maven:journeymap-32274:5789363")
+    compileOnly fg.deobf("curse.maven:timeless-and-classics-zero-1028108:6654541")
 }
 
 tasks.named('jar', Jar).configure {
