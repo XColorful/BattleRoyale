@@ -18,7 +18,7 @@ public class JourneyMapPlugin implements IClientPlugin {
     // API reference
     private IClientAPI jmAPI = null;
     // Forge listener reference
-    private ForgeEventListener forgeEventListener;
+    private static ForgeEventListener forgeEventListener;
 
     public static final String MOD_ID = BattleRoyale.MOD_ID;
 
@@ -29,11 +29,26 @@ public class JourneyMapPlugin implements IClientPlugin {
         INSTANCE = this;
     }
 
-    public static JourneyMapPlugin getInstance()
-    {
+    public static JourneyMapPlugin getInstance() {
         return INSTANCE;
     }
 
+    protected static boolean registered = false;
+
+    public static void register() {
+        if (!registered && forgeEventListener != null) {
+            MinecraftForge.EVENT_BUS.register(forgeEventListener);
+            BattleRoyale.LOGGER.debug("Registered JourneyMapPlugin");
+        }
+    }
+
+    public static void unregister() {
+        if (forgeEventListener != null) {
+            MinecraftForge.EVENT_BUS.unregister(forgeEventListener);
+            forgeEventListener.jmAPI.removeAll(JourneyMapPlugin.MOD_ID);
+            BattleRoyale.LOGGER.debug("Unregistered JourneyMapPlugin");
+        }
+    }
 
     /**
      * Called by JourneyMap during the init phase of mod loading.  The IClientAPI reference is how the mod
@@ -46,7 +61,7 @@ public class JourneyMapPlugin implements IClientPlugin {
         BattleRoyale.LOGGER.debug("initialize JourneyMapPlugin");
         this.jmAPI = jmAPI;
         forgeEventListener = new ForgeEventListener(jmAPI);
-        MinecraftForge.EVENT_BUS.register(forgeEventListener);
+        register();
 
         this.jmAPI.subscribe(getModId(), EnumSet.of(DISPLAY_UPDATE, MAPPING_STARTED, MAPPING_STOPPED));
 
