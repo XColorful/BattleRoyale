@@ -19,6 +19,10 @@ public class GameEntryTag extends ConfigEntryTag {
     public static final String DOWN_FIRE = "downFire";
     public static final String DOWN_DAMAGE_LIST = "downDamage";
     public static final String DOWN_DAMAGE_FREQUENCY = "downDamageFrequency";
+    public static final String DOWN_SHOOT = "downShoot";
+    public static final String DOWN_RELOAD = "downReload";
+    public static final String DOWN_FIRE_SELECT = "downFireSelect";
+    public static final String DOWN_MELEE = "downMelee";
     public static final String ONLY_GAME_PLAYER_SPECTATE = "onlyGamePlayerSpectate";
     public static final String SPECTATE_AFTER_TEAM = "spectateAfterTeamEliminated";
     public static final String SPECTATOR_SEE_ALL_TEAMS = "spectatorSeeAllTeams";

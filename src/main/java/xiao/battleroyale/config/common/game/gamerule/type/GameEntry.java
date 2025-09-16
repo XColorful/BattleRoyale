@@ -7,6 +7,7 @@ import xiao.battleroyale.api.IConfigAppliable;
 import xiao.battleroyale.api.game.gamerule.GameEntryTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.common.message.AbstractMessageManager;
+import xiao.battleroyale.compat.tacz.Tacz;
 import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.JsonUtils;
 
@@ -53,6 +54,12 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public final boolean downFire;
     public final List<Float> downDamageList;
     public final int downDamageFrequency;
+
+    public final boolean downShoot;
+    public final boolean downReload;
+    public final boolean downFireSelect;
+    public final boolean downMelee;
+
     public final boolean onlyGamePlayerSpectate;
     public final boolean spectateAfterTeam;
     public final boolean spectatorSeeAllTeams;
@@ -73,7 +80,9 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public GameEntry() {
         this(true, 300, DEFAULT_TEAM_COLORS, true, true,
                 20 * 60, 20 * 10, false,
-                true, false, false, DEFAULT_DOWN_DAMAGE, 20, false, true, true, true,
+                true, false, false, DEFAULT_DOWN_DAMAGE, 20,
+                false, false, false, false,
+                false, true, true, true,
                 true, true, true, false, 0, 0, false,
                 20 * 7, 20 * 5, 20 * 5);
     }
@@ -81,6 +90,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public GameEntry(boolean teleportWhenInitGame, int teamMsgExpireTimeSeconds, List<String> teamColors, boolean buildVanillaTeam, boolean hideVanillaTeamName,
                      int maxPlayerInvalidTime, int maxBotInvalidTime, boolean removeInvalidTeam,
                      boolean healAllAtStart, boolean friendlyFire, boolean downFire, List<Float> downDamageList, int downDamageFrequency,
+                     boolean downShoot, boolean downReload, boolean downFireSelect, boolean downMelee,
                      boolean onlyGamePlayerSpectate, boolean spectateAfterTeam, boolean spectatorSeeAllTeams, boolean teleportInterfererToLobby,
                      boolean allowRemainingBot, boolean keepTeamAfterGame, boolean teleportAfterGame, boolean teleportWinnerAfterGame, int winnerFireworkId, int winnerParticleId, boolean initGameAfterGame,
                      int messageCleanFreq, int messageExpireTime, int messageSyncFreq) {
@@ -97,6 +107,10 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         this.downFire = downFire;
         this.downDamageList = downDamageList;
         this.downDamageFrequency = downDamageFrequency;
+        this.downShoot = downShoot;
+        this.downReload = downReload;
+        this.downFireSelect = downFireSelect;
+        this.downMelee = downMelee;
         this.onlyGamePlayerSpectate = onlyGamePlayerSpectate;
         this.spectateAfterTeam = spectateAfterTeam;
         this.spectatorSeeAllTeams = spectatorSeeAllTeams;
@@ -136,6 +150,12 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         jsonObject.addProperty(GameEntryTag.DOWN_FIRE, downFire);
         jsonObject.add(GameEntryTag.DOWN_DAMAGE_LIST, JsonUtils.writeFloatListToJson(downDamageList));
         jsonObject.addProperty(GameEntryTag.DOWN_DAMAGE_FREQUENCY, downDamageFrequency);
+
+        jsonObject.addProperty(GameEntryTag.DOWN_SHOOT, downShoot);
+        jsonObject.addProperty(GameEntryTag.DOWN_RELOAD, downReload);
+        jsonObject.addProperty(GameEntryTag.DOWN_FIRE_SELECT, downFireSelect);
+        jsonObject.addProperty(GameEntryTag.DOWN_MELEE, downMelee);
+
         jsonObject.addProperty(GameEntryTag.ONLY_GAME_PLAYER_SPECTATE, onlyGamePlayerSpectate);
         jsonObject.addProperty(GameEntryTag.SPECTATE_AFTER_TEAM, spectateAfterTeam);
         jsonObject.addProperty(GameEntryTag.SPECTATOR_SEE_ALL_TEAMS, spectatorSeeAllTeams);
@@ -172,6 +192,12 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         boolean downFire = JsonUtils.getJsonBool(jsonObject, GameEntryTag.DOWN_FIRE, false);
         List<Float> downDamageList = JsonUtils.getJsonFloatList(jsonObject, GameEntryTag.DOWN_DAMAGE_LIST);
         int downDamageFrequency = JsonUtils.getJsonInt(jsonObject, GameEntryTag.DOWN_DAMAGE_FREQUENCY, 20);
+
+        boolean downShoot = JsonUtils.getJsonBool(jsonObject, GameEntryTag.DOWN_SHOOT, false);
+        boolean downReload = JsonUtils.getJsonBool(jsonObject, GameEntryTag.DOWN_RELOAD, false);
+        boolean downFireSelect = JsonUtils.getJsonBool(jsonObject, GameEntryTag.DOWN_FIRE_SELECT, false);
+        boolean downMelee = JsonUtils.getJsonBool(jsonObject, GameEntryTag.DOWN_MELEE, false);
+
         boolean onlyGamePlayerSpectate = JsonUtils.getJsonBool(jsonObject, GameEntryTag.ONLY_GAME_PLAYER_SPECTATE, false);
         boolean spectateAfterTeam = JsonUtils.getJsonBool(jsonObject, GameEntryTag.SPECTATE_AFTER_TEAM, true);
         boolean spectatorSeeAllTeams = JsonUtils.getJsonBool(jsonObject, GameEntryTag.SPECTATOR_SEE_ALL_TEAMS, true);
@@ -192,6 +218,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         return new GameEntry(teleportWhenInitGame, teamMsgExpireTimeSeconds, teamColors, buildVanillaTeam, hideVanillaTeamName,
                 maxInvalidTime, maxBotInvalidTime, removeInvalidTeam,
                 healAllAtStart, friendlyFire, downFire, downDamageList, downDamageFrequency,
+                downShoot, downReload, downFireSelect, downMelee,
                 onlyGamePlayerSpectate, spectateAfterTeam, spectatorSeeAllTeams, teleportInterfererToLobby,
                 allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId, initGameAfterGame,
                 messageCleanFreq, messageExpireTime, messageSyncFreq);
@@ -202,5 +229,6 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         AbstractMessageManager.setCleanFrequency(messageCleanFreq);
         AbstractMessageManager.setExpireTime(messageExpireTime);
         AbstractMessageManager.setForceSyncFrequency(messageSyncFreq);
+        Tacz.setGameConfig(downShoot, downReload, downFireSelect, downMelee);
     }
 }
