@@ -42,7 +42,8 @@ public class PubgGamerule {
         BattleroyaleEntry brEntry = new BattleroyaleEntry(OVERWORLD_LEVEL_KEY, playerTotal, teamSize, bot, bot,
                 2, GAME_TIME, 1,
                 lobbyCenter, lobbyDim,
-                true, true, true, true, true, true);
+                true, true, true, true,
+                true, true);
 
         MinecraftEntry mcEntry = new MinecraftEntry(true, false, true,
                 false, false, false,
