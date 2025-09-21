@@ -21,16 +21,21 @@ public class SurvivalEntry implements IUtilityEntry, IConfigAppliable {
     public final Vec3 lobbyDimension;
     public final boolean lobbyMuteki;
     public final boolean lobbyHeal;
+    public final boolean dropInventory;
+    public final boolean dropGameItemOnly;
     public final boolean clearInventory;
     public final boolean clearGameItemOnly;
 
-    public SurvivalEntry(String levelKey, boolean allowGamePlayerTeleport, Vec3 lobbyCenter, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal, boolean clearInventory, boolean clearGameItemOnly) {
+    public SurvivalEntry(String levelKey, boolean allowGamePlayerTeleport, Vec3 lobbyCenter, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal,
+                         boolean dropInventory, boolean dropGameItemOnly, boolean clearInventory, boolean clearGameItemOnly) {
         this.levelKey = levelKey;
         this.allowGamePlayerTeleport = allowGamePlayerTeleport;
         this.lobbyCenter = lobbyCenter;
         this.lobbyDimension = lobbyDimension;
         this.lobbyMuteki = lobbyMuteki;
         this.lobbyHeal = lobbyHeal;
+        this.dropInventory = dropInventory;
+        this.dropGameItemOnly = dropGameItemOnly;
         this.clearInventory = clearInventory;
         this.clearGameItemOnly = clearGameItemOnly;
     }
@@ -64,17 +69,20 @@ public class SurvivalEntry implements IUtilityEntry, IConfigAppliable {
         }
         boolean lobbyMuteki = JsonUtils.getJsonBool(survivalLobbyObject, SurvivalEntryTag.LOBBY_MUTEKI, false);
         boolean lobbyHeal = JsonUtils.getJsonBool(survivalLobbyObject, SurvivalEntryTag.LOBBY_HEAL, false);
+        boolean dropInventory = JsonUtils.getJsonBool(survivalLobbyObject, SurvivalEntryTag.DROP_INVENTORY, true);
+        boolean dropGameItemOnly = JsonUtils.getJsonBool(survivalLobbyObject, SurvivalEntryTag.DROP_GAME_ITEM_ONLY, true);
         boolean clearInventory = JsonUtils.getJsonBool(survivalLobbyObject, SurvivalEntryTag.CLEAR_INVENTORY, true);
         boolean clearGameItemOnly = JsonUtils.getJsonBool(survivalLobbyObject, SurvivalEntryTag.CLEAR_GAME_ITEM_ONLY, true);
 
-        return new SurvivalEntry(levelDimension, allowGamePlayerTeleport, lobbyCenter, lobbyDimension, lobbyMuteki, lobbyHeal, clearInventory, clearGameItemOnly);
+        return new SurvivalEntry(levelDimension, allowGamePlayerTeleport, lobbyCenter, lobbyDimension, lobbyMuteki, lobbyHeal,
+                dropInventory, dropGameItemOnly, clearInventory, clearGameItemOnly);
     }
 
     @Override
     public void applyDefault() {
         SurvivalLobby.get().setLobby(levelKey, allowGamePlayerTeleport,
                 lobbyCenter, lobbyDimension, lobbyMuteki, lobbyHeal,
-                clearInventory, clearGameItemOnly);
+                dropInventory, dropGameItemOnly, clearInventory, clearGameItemOnly);
     }
 
     @NotNull
@@ -86,6 +94,8 @@ public class SurvivalEntry implements IUtilityEntry, IConfigAppliable {
         jsonObject.addProperty(SurvivalEntryTag.LOBBY_DIMENSION, StringUtils.vectorToString(lobbyDimension));
         jsonObject.addProperty(SurvivalEntryTag.LOBBY_MUTEKI, lobbyMuteki);
         jsonObject.addProperty(SurvivalEntryTag.LOBBY_HEAL, lobbyHeal);
+        jsonObject.addProperty(SurvivalEntryTag.DROP_INVENTORY, dropInventory);
+        jsonObject.addProperty(SurvivalEntryTag.DROP_GAME_ITEM_ONLY, dropGameItemOnly);
         jsonObject.addProperty(SurvivalEntryTag.CLEAR_INVENTORY, clearInventory);
         jsonObject.addProperty(SurvivalEntryTag.CLEAR_GAME_ITEM_ONLY, clearGameItemOnly);
         return jsonObject;

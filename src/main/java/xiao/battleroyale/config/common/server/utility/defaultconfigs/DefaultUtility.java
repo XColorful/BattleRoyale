@@ -25,7 +25,7 @@ public class DefaultUtility {
     private static JsonObject generateDefaultUtilityConfig0() {
         SurvivalEntry survivalEntry = new SurvivalEntry(OVERWORLD_LEVEL_KEY, false,
                 new Vec3(0, 70, 0), new Vec3(8, 160, 8), false, false,
-                true, true);
+                true, true, true, true);
 
         UtilityConfig utilityConfig = new UtilityConfig(0, "Overworld Survival", "#FFFFFF", true, survivalEntry);
         return utilityConfig.toJson();
