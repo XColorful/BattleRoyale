@@ -347,7 +347,7 @@ public class CbrgLootSpawner {
     private static ILootEntry commonShotgunEntry() {
         MultiEntry o12Ammo = gunSemiAmmoBuilder("cib", "origin12", "cbrg", "ammo_12g", 5);
         
-        MultiEntry s12kAmmo = gunAmmoBuilder("aa12", "cbrg", "ammo_12g", 7);
+        MultiEntry s12kAmmo = gunAmmoBuilder("gz", "tactical_sasg_12k", "cbrg", "ammo_12g", 5);
         MultiEntry s1897Ammo = gunSemiAmmoBuilder("m870", "cbrg", "ammo_12g", 5);
         
         MultiEntry s686Ammo = gunSemiAmmoBuilder("cib", "686", "cbrg", "ammo_12g", 2);
@@ -369,9 +369,10 @@ public class CbrgLootSpawner {
     }
 
     private static ILootEntry commonSMGEntry() {
+        MultiEntry js9Ammo = gunAmmoBuilder("gz", "t5smg", "cbrg", "ammo_9mm", 25);
+
         MultiEntry pp19_bizonAmmo = gunAmmoBuilder("cib", "pp19", "cbrg", "ammo_9mm", 25);
-        MultiEntry tommy_gunAmmo = gunAmmoBuilder("classicr", "m1a1_smg", "cbrg", "ammo_45acp", 25);
-        // JS9
+        MultiEntry tommy_gunAmmo = gunAmmoBuilder("classicr", "m1a1_smg", "cbrg", "ammo_9mm", 25);
 
         MultiEntry ump45Ammo = gunAmmoBuilder("ump45", "cbrg", "ammo_9mm", 25);
         MultiEntry vectorAmmo = gunAmmoBuilder("vector45", "cbrg", "ammo_9mm", 20);
@@ -382,6 +383,7 @@ public class CbrgLootSpawner {
         MultiEntry uziAmmo = gunAmmoBuilder("uzi", "cbrg", "ammo_9mm", 20);
 
         return new WeightEntry(Arrays.asList(
+                new WeightedEntry(10, js9Ammo),
                 new WeightedEntry(15, pp19_bizonAmmo),
                 new WeightedEntry(15, tommy_gunAmmo),
                 new WeightedEntry(20, ump45Ammo),
