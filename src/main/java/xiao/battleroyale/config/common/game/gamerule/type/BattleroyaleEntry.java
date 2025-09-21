@@ -28,13 +28,14 @@ public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
     public final boolean lobbyMuteki;
     public final boolean lobbyHeal;
     public final boolean lobbyChangeGamemode;
+    public final boolean lobbyTeleportDropInventory;
     public final boolean lobbyTeleportClearInventory;
     public final boolean recordGameStats;
     public final boolean autoJoinGame;
 
     public BattleroyaleEntry(String defaultLevelKey, int playerTotal, int teamSize, boolean aiTeammate, boolean aiEnemy,
                              int requiredTeamToStart, int maxGameTime, int winnerTeamTotal,
-                             Vec3 lobbyCenterPos, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal, boolean lobbyChangeGamemode, boolean lobbyTeleportClearInventory,
+                             Vec3 lobbyCenterPos, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal, boolean lobbyChangeGamemode, boolean lobbyTeleportDropInventory, boolean lobbyTeleportClearInventory,
                              boolean recordGameStats, boolean autoJoinGame) {
         this.defaultLevelKey = defaultLevelKey;
         this.playerTotal = playerTotal;
@@ -49,6 +50,7 @@ public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
         this.lobbyMuteki = lobbyMuteki;
         this.lobbyHeal = lobbyHeal;
         this.lobbyChangeGamemode = lobbyChangeGamemode;
+        this.lobbyTeleportDropInventory = lobbyTeleportDropInventory;
         this.lobbyTeleportClearInventory = lobbyTeleportClearInventory;
         this.recordGameStats = recordGameStats;
         this.autoJoinGame = autoJoinGame;
@@ -75,6 +77,7 @@ public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
         jsonObject.addProperty(BattleroyaleEntryTag.LOBBY_MUTEKI, lobbyMuteki);
         jsonObject.addProperty(BattleroyaleEntryTag.LOBBY_HEAL, lobbyHeal);
         jsonObject.addProperty(BattleroyaleEntryTag.LOBBY_CHANGE_GAMEMODE, lobbyChangeGamemode);
+        jsonObject.addProperty(BattleroyaleEntryTag.LOBBY_TELEPORT_DROP_INVENTORY, lobbyTeleportDropInventory);
         jsonObject.addProperty(BattleroyaleEntryTag.LOBBY_TELEPORT_CLEAR_INVENTORY, lobbyTeleportClearInventory);
         jsonObject.addProperty(BattleroyaleEntryTag.RECORD_STATS, recordGameStats);
         jsonObject.addProperty(BattleroyaleEntryTag.AUTO_JOIN, autoJoinGame);
@@ -99,18 +102,19 @@ public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
         boolean lobbyMuteki = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.LOBBY_MUTEKI, false);
         boolean lobbyHeal = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.LOBBY_HEAL, true);
         boolean lobbyChangeGamemode = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.LOBBY_CHANGE_GAMEMODE, true);
+        boolean lobbyTeleportDropInventory = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.LOBBY_TELEPORT_DROP_INVENTORY, false);
         boolean lobbyTeleportClearInventory = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.LOBBY_TELEPORT_CLEAR_INVENTORY, false);
         boolean recordGameStats = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.RECORD_STATS, true);
         boolean autoJoinGame = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.AUTO_JOIN, false);
         return new BattleroyaleEntry(defaultLevelKey, playerTotal, teamSize, aiTeammate, aiEnemy,
                 requiredTeamToStart, maxGameTime, winnerTeamTotal,
-                lobbyCenterPos, lobbyDimension, lobbyMuteki, lobbyHeal, lobbyChangeGamemode, lobbyTeleportClearInventory,
+                lobbyCenterPos, lobbyDimension, lobbyMuteki, lobbyHeal, lobbyChangeGamemode, lobbyTeleportDropInventory, lobbyTeleportClearInventory,
                 recordGameStats, autoJoinGame);
     }
 
     @Override
     public void applyDefault() {
         GameManager.get().setDefaultLevel(defaultLevelKey);
-        SpawnManager.get().setLobby(lobbyCenterPos, lobbyDimension, lobbyMuteki, lobbyHeal, lobbyChangeGamemode, lobbyTeleportClearInventory);
+        SpawnManager.get().setLobby(lobbyCenterPos, lobbyDimension, lobbyMuteki, lobbyHeal, lobbyChangeGamemode, lobbyTeleportDropInventory, lobbyTeleportClearInventory);
     }
 }
