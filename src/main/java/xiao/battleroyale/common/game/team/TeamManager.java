@@ -373,6 +373,10 @@ public class TeamManager extends AbstractGameManager {
         TeamExternal.declineRequest(teamLeader, requesterPlayer);
     }
     // 离开队伍
+    /**
+     * 返回玩家是否还在队伍里
+     * 在游戏中调用该函数只淘汰不离队
+     */
     public boolean leaveTeam(@NotNull ServerPlayer player) {
         return TeamExternal.leaveTeam(player);
     }

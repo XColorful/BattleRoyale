@@ -342,6 +342,10 @@ public class TeamExternal {
         ChatUtils.sendComponentMessageToPlayer(requesterPlayer, Component.translatable("battleroyale.message.player_declined_request", teamLeader.getName().getString()).withStyle(ChatFormatting.RED));
     }
 
+    /**
+     * 返回玩家是否还在队伍里
+     * 在游戏中调用该函数只淘汰不离队
+     */
     public static boolean leaveTeam(@NotNull ServerPlayer player) {
         TeamManager teamManager = TeamManager.get();
 
@@ -354,6 +358,7 @@ public class TeamExternal {
 
         teamManager.forceEliminatePlayerFromTeam(player); // 游戏进行时生效，退出即被淘汰，不在游戏运行时则自动跳过
 
+        // ↑在因为forceEliminatePlayerFromTeam而结束游戏后，就不在游戏中
         if (teamManager.removePlayerFromTeam(playerUUID)) { // 不在游戏时生效，手动离开当前队伍
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.GREEN));
         }
@@ -372,7 +377,7 @@ public class TeamExternal {
         TeamManager teamManager = TeamManager.get();
 
         if (teamManager.teamData.hasStandingGamePlayer(player.getUUID())) { // 游戏进行中，且未被淘汰
-            if (GameManager.get().teleportToLobby(player)) { // 若游戏中传送成功才淘汰
+            if (GameManager.get().teleportToLobby(player)) { // 若成功传送，则淘汰该玩家
                 teamManager.forceEliminatePlayerFromTeam(player); // 强制淘汰
             } else {
                 BattleRoyale.LOGGER.error("Teleport in game player while not has lobby");

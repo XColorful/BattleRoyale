@@ -45,6 +45,8 @@ public class SurvivalLobby {
     private Vec3 lobbyDimension;
     private boolean lobbyMuteki = false;
     private boolean lobbyHeal = false;
+    private boolean dropInventory = true;
+    private boolean dropGameItemOnly = true;
     private boolean clearInventory = true;
     private boolean clearGameItemOnly = true;
 
@@ -82,16 +84,39 @@ public class SurvivalLobby {
             return;
         }
 
+        if (dropInventory) {
+            if (dropGameItemOnly) {
+                Inventory inventory = player.getInventory();
+                int keepCount = 0;
+                for (int i = 0; i < inventory.getContainerSize(); i++) {
+                    ItemStack itemStack = inventory.getItem(i);
+                    if (itemStack.isEmpty()) {
+                        continue;
+                    }
+                    if (GameUtils.getGameId(itemStack) != null) {
+                        player.drop(itemStack, true, false);
+                        inventory.setItem(i, ItemStack.EMPTY);
+                    } else {
+                        keepCount++;
+                    }
+                }
+                BattleRoyale.LOGGER.info("DropGameItemOnly: {} has {} without gameId", player.getName().getString(), keepCount);
+            } else {
+                player.getInventory().dropAll();
+            }
+            BattleRoyale.LOGGER.debug("Droped {}'s inventory", player.getName().getString());
+        }
+
         if (clearInventory) {
             if (clearGameItemOnly) { // 仅清理带GameId的物品
                 Inventory inventory = player.getInventory();
                 int keepCount = 0;
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
-                    ItemStack stack = inventory.getItem(i);
-                    if (stack.isEmpty()) {
+                    ItemStack itemStack = inventory.getItem(i);
+                    if (itemStack.isEmpty()) {
                         continue;
                     }
-                    if (GameUtils.getGameId(stack) != null) {
+                    if (GameUtils.getGameId(itemStack) != null) {
                         inventory.setItem(i, ItemStack.EMPTY);
                     } else {
                         keepCount++;
@@ -170,7 +195,7 @@ public class SurvivalLobby {
 
     public boolean setLobby(String levelKeyString, boolean allowGamePlayerTeleport,
                             Vec3 lobbyPos, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal,
-                            boolean clearInventory, boolean clearGameItemOnly) {
+                            boolean dropInventory, boolean dropGameItemOnly, boolean clearInventory, boolean clearGameItemOnly) {
         if (Vec3Utils.hasNegative(lobbyDimension)) {
             BattleRoyale.LOGGER.warn("SurvivalLobby: dimension:{} has negative, reject to apply", lobbyDimension);
             return false;
@@ -188,6 +213,8 @@ public class SurvivalLobby {
         }
         this.lobbyHeal = lobbyHeal;
         this.lobbyDimension = lobbyDimension;
+        this.dropInventory = dropInventory;
+        this.dropGameItemOnly = dropGameItemOnly;
         this.clearInventory = clearInventory;
         this.clearGameItemOnly = clearGameItemOnly;
         BattleRoyale.LOGGER.debug("Successfully set survival lobby: levelKey:{}, center{}, dim{}", levelKey, lobbyPos, lobbyDimension);

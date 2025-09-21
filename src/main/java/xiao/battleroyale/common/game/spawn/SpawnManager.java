@@ -51,6 +51,8 @@ public class SpawnManager extends AbstractGameManager {
     private boolean lobbyMuteki = true;
     private boolean lobbyHeal = true;
     private boolean changeGamemode = true;
+    private boolean teleportDropInventory = false;
+    private boolean teleportClearInventory = false;
     private IGameSpawner gameSpawner;
 
     @Override
@@ -84,7 +86,7 @@ public class SpawnManager extends AbstractGameManager {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;
         }
-        setLobby(brEntry.lobbyCenterPos, brEntry.lobbyDimension, brEntry.lobbyMuteki, brEntry.lobbyHeal, brEntry.lobbyChangeGamemode);
+        setLobby(brEntry.lobbyCenterPos, brEntry.lobbyDimension, brEntry.lobbyMuteki, brEntry.lobbyHeal, brEntry.lobbyChangeGamemode, brEntry.lobbyTeleportDropInventory, brEntry.lobbyTeleportClearInventory);
         if (!isLobbyCreated()) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;
@@ -182,6 +184,12 @@ public class SpawnManager extends AbstractGameManager {
         if (changeGamemode) {
             player.setGameMode(GameruleManager.get().getGameMode());
         }
+        if (teleportDropInventory) {
+            player.getInventory().dropAll();
+        }
+        if (teleportClearInventory) {
+            player.getInventory().clearContent();
+        }
         GameManager gameManager = GameManager.get();
         ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel != null) {
@@ -267,7 +275,7 @@ public class SpawnManager extends AbstractGameManager {
         }
     }
 
-    public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode) {
+    public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode, boolean teleportDropInventory, boolean teleportClearInventory) {
         if (GameManager.get().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, SpawnManager skipped set lobby");
             return false;
@@ -287,6 +295,8 @@ public class SpawnManager extends AbstractGameManager {
         this.lobbyHeal = shouldHeal;
         this.lobbyDimension = dimension;
         this.changeGamemode = changeGamemode;
+        this.teleportDropInventory = teleportDropInventory;
+        this.teleportClearInventory = teleportClearInventory;
         BattleRoyale.LOGGER.debug("Successfully set lobby: center{}, dim{}", lobbyPos, lobbyDimension);
         return true;
     }
@@ -303,7 +313,7 @@ public class SpawnManager extends AbstractGameManager {
             BattleRoyale.LOGGER.warn("SpawnManager: radius:{} has negative, reject to apply", radius);
             return false;
         }
-        setLobby(centerPos, new Vec3(radius, radius, radius), this.lobbyMuteki, this.lobbyHeal, this.changeGamemode);
+        setLobby(centerPos, new Vec3(radius, radius, radius), this.lobbyMuteki, this.lobbyHeal, this.changeGamemode, this.teleportDropInventory, this.teleportClearInventory);
         return true;
     }
 }

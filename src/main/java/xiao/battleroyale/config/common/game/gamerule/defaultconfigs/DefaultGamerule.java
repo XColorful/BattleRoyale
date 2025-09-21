@@ -28,7 +28,8 @@ public class DefaultGamerule {
         BattleroyaleEntry brEntry = new BattleroyaleEntry(OVERWORLD_LEVEL_KEY, 100, 4, true, true,
                 2, 12000, 1,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10),
-                true, true, true, false, true, true);
+                true, true, true, false, false,
+                true, true);
 
         MinecraftEntry mcEntry = new MinecraftEntry(true, false, false,
                 true, false, false,
@@ -46,7 +47,8 @@ public class DefaultGamerule {
         BattleroyaleEntry brEntry = new BattleroyaleEntry(OVERWORLD_LEVEL_KEY, 100, 4, false, false,
                 2, 12000, 1,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10),
-                true, true, true, false, true, true);
+                true, true, true, false, false,
+                true, true);
 
         MinecraftEntry mcEntry = new MinecraftEntry(false, true, false,
                 true, true, true,

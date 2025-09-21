@@ -196,11 +196,15 @@ public class TeamManagement {
             BattleRoyale.LOGGER.info("Force eliminated player {} (UUID: {})", player.getName().getString(), player.getUUID());
         }
 
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        GameManager gameManager = GameManager.get();
+        ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel != null) {
-            if (!playerEliminatedBefore) {
-                GameManager.get().sendEliminateMessage(gamePlayer);
+            if (!playerEliminatedBefore) { // 从未被淘汰到被淘汰
+                gameManager.sendEliminateMessage(gamePlayer);
                 ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.forced_elimination", player.getName()).withStyle(ChatFormatting.RED));
+                if (gameManager.getGameEntry().forceEliminationTeleportToLobby) {
+                    gameManager.teleportToLobby(player); // 不用TeamManager的teleportToLobby
+                }
             } else {
                 BattleRoyale.LOGGER.debug("GamePlayer {} has already been eliminated, TeamManager skipped sending chat message", gamePlayer.getPlayerName());
             }

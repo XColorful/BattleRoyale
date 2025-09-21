@@ -27,6 +27,7 @@ public class GameEntryTag extends ConfigEntryTag {
     public static final String SPECTATE_AFTER_TEAM = "spectateAfterTeamEliminated";
     public static final String SPECTATOR_SEE_ALL_TEAMS = "spectatorSeeAllTeams";
     public static final String TELEPORT_INTERFERER_TO_LOBBY = "teleportInterfererToLobby";
+    public static final String FORCE_ELIMINATION_TELEPORT_TO_LOBBY = "forceEliminationTeleportToLobby";
     public static final String ALLOW_REMAINING_BOT = "allowRemainingBot";
     public static final String KEEP_TEAM_AFTER_GAME = "keepTeamAfterGame";
     public static final String TELEPORT_AFTER_GAME = "teleportAfterGame";
