@@ -1,22 +1,30 @@
 package xiao.battleroyale.api.game;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import java.util.UUID;
 
-public interface IGameManager {
+public interface IGameManager extends IGameSubManager, IGameConfigGetter, IGameApiGetter {
 
-    void initGameConfig(ServerLevel serverLevel);
+    int getGameTime();
+    UUID getGameId();
+    boolean isInGame();
+    Vec3 getGlobalCenterOffset();
+    int getWinnerTeamTotal();
+    int getRequiredGameTeam();
+    ServerLevel getServerLevel();
+    ResourceKey<Level> getGameLevelKey();
 
-    boolean isPreparedForGame();
+    boolean setGlobalCenterOffset(Vec3 offset);
 
-    void initGame(ServerLevel serverLevel);
-
-    boolean isReady();
-
-    boolean startGame(ServerLevel serverLevel);
-
-    void onGameTick(int gameTime);
-
-    void stopGame(@Nullable ServerLevel serverLevel);
+    void finishGame(boolean hasWinner);
+    void sendGameSpectateMessage(@NotNull ServerPlayer player);
+    void sendLobbyTeleportMessage(@NotNull ServerPlayer player, boolean isWinner);
+    boolean teleportToLobby(@NotNull ServerPlayer player);
+    boolean spectateGame(ServerPlayer player);
 }

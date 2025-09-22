@@ -27,15 +27,14 @@ import static xiao.battleroyale.util.GameUtils.buildGamePlayerText;
 
 public class GameNotification {
 
-
-    public static void notifyGamePlayerIsInactive(ServerLevel serverLevel, GamePlayer gamePlayer) {
+    protected static void notifyGamePlayerIsInactive(ServerLevel serverLevel, GamePlayer gamePlayer) {
         if (serverLevel != null) {
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_leaved_from_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
         } else {
             BattleRoyale.LOGGER.warn("GameManager.serverLevel is null in notifyGamePlayerIsInactive(GamePlayer {})", gamePlayer.getPlayerName());
         }
     }
-    public static void notifyGamePlayerIsActive(ServerLevel serverLevel, GamePlayer gamePlayer) {
+    protected static void notifyGamePlayerIsActive(ServerLevel serverLevel, GamePlayer gamePlayer) {
         if (serverLevel != null) {
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_backed_to_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
         } else {
@@ -44,7 +43,7 @@ public class GameNotification {
     }
 
     // 发送胜利队伍消息
-    public static void sendWinnerResult(@Nullable ServerLevel serverLevel, Set<GameTeam> winnerGameTeams, int gameTime, boolean initGameAfterGame) {
+    protected static void sendWinnerResult(@Nullable ServerLevel serverLevel, Set<GameTeam> winnerGameTeams, int gameTime, boolean initGameAfterGame) {
         MutableComponent winnerComponent = Component.empty()
                 .append(Component.translatable("battleroyale.message.game_time", gameTime, new GameUtils.GameTimeFormat(gameTime).toFormattedString(true)));
         for (GameTeam team : winnerGameTeams) {
@@ -85,7 +84,7 @@ public class GameNotification {
      * 大吉大利！今晚吃鸡！
      * 附加烟花，粒子效果（人机不触发）
      */
-    public static void notifyWinner(@NotNull ServerLevel serverLevel, @NotNull GamePlayer gamePlayer, @NotNull ServerPlayer notifiedPlayer, int winnerParticleId) {
+    protected static void notifyWinner(@NotNull ServerLevel serverLevel, @NotNull GamePlayer gamePlayer, @NotNull ServerPlayer notifiedPlayer, int winnerParticleId) {
         int teamId = gamePlayer.getGameTeamId();
         int colorRGB = ColorUtils.parseColorToInt(gamePlayer.getGameTeamColor()) & 0xFFFFFF;
         TextColor textColor = TextColor.fromRgb(colorRGB);

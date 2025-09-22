@@ -13,9 +13,11 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.team.IGameTeamReadApi;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
-import xiao.battleroyale.common.effect.EffectManager;
+import xiao.battleroyale.api.game.zone.IGameZoneReadApi;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
@@ -23,14 +25,12 @@ import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
-import xiao.battleroyale.compat.playerrevive.BleedingHandler;
 import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.game.GameInfoMessageManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
-import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.event.DelayedEvent;
@@ -43,7 +43,7 @@ import java.util.function.Supplier;
 
 import static xiao.battleroyale.api.data.io.TempDataTag.*;
 
-public class GameManager extends AbstractGameManager implements IStatsWriter {
+public class GameManager extends AbstractGameManager implements IGameManager, IStatsWriter {
 
     private static class GameManagerHolder {
         private static final GameManager INSTANCE = new GameManager();
@@ -74,7 +74,6 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
     }
 
     protected int gameTime = 0; // 游戏运行时维护当前游戏时间
-    public int getGameTime() { return this.gameTime; }
     private UUID gameId;
     private boolean inGame;
     private String gameLevelKeyString = "";
@@ -89,29 +88,40 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
     private int spawnConfigId = 0;
     private int botConfigId = 0;
     protected Vec3 globalCenterOffset = Vec3.ZERO;
-    public Vec3 getGlobalCenterOffset() { return globalCenterOffset; }
-    public boolean setGlobalCenterOffset(Vec3 offset) {
+    protected int maxGameTime = -1;
+    protected int winnerTeamTotal = 1;
+    protected int requiredGameTeam = 2;
+    protected GameEntry gameEntry;
+
+    @Override public int getGameTime() {
+        return this.gameTime;
+    }
+    @Override public @NotNull UUID getGameId() {
+        if (this.gameId == null) {
+            generateGameId();
+        }
+        return this.gameId;
+    }
+    @Override public boolean isInGame() {
+        return inGame;
+    }
+    @Override public Vec3 getGlobalCenterOffset() { return globalCenterOffset; }
+    @Override public int getWinnerTeamTotal() {
+        return winnerTeamTotal;
+    }
+    @Override public int getRequiredGameTeam() {
+        return requiredGameTeam;
+    }
+    @Override public GameEntry getGameEntry() {
+        return gameEntry;
+    }
+    @Override public boolean setGlobalCenterOffset(Vec3 offset) {
         if (isInGame()) {
             return false;
         }
         globalCenterOffset = offset;
         TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(globalCenterOffset));
         return true;
-    }
-    protected int maxGameTime = -1;
-    protected int winnerTeamTotal = 1;
-    protected int requiredGameTeam = 2;
-    public int getWinnerTeamTotal() { return winnerTeamTotal; }
-    public int getRequiredGameTeam() { return requiredGameTeam; }
-    protected GameEntry gameEntry;
-    public GameEntry getGameEntry() { return gameEntry; }
-
-    @NotNull
-    public UUID getGameId() {
-        if (this.gameId == null) {
-            generateGameId();
-        }
-        return this.gameId;
     }
 
     private void generateGameId() {
@@ -123,10 +133,6 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
             return;
         }
         this.gameId = gameId;
-    }
-
-    public boolean isInGame() {
-        return inGame;
     }
 
     /**
@@ -235,6 +241,7 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
      * 游戏主逻辑，调度各 Manager，向客户端通信
      */
     public void onGameTick(int gameTime) {
+        this.gameTime = gameTime;
         checkAndUpdateInvalidGamePlayer(this.serverLevel); // 为其他Manager预处理当前tick
 
         GameLootManager.get().onGameTick(gameTime);
@@ -285,6 +292,7 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
     /**
      * 结束游戏，所有未淘汰队伍均胜利
      */
+    @Override
     public void finishGame(boolean hasWinner) {
         if (!isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is not in game, skipped finishGame({})", hasWinner);
@@ -354,7 +362,7 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
     }
 
     // 获取大逃杀游戏ServerLevel
-    public @Nullable ServerLevel getServerLevel() {
+    @Override public @Nullable ServerLevel getServerLevel() {
         if (this.serverLevel != null) {
             return this.serverLevel;
         } else if (this.gameLevelKey != null) {
@@ -365,15 +373,15 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
         }
     }
     // 获取大逃杀游戏维度Key
-    public @Nullable ResourceKey<Level> getGameLevelKey() {
+    @Override public @Nullable ResourceKey<Level> getGameLevelKey() {
         return this.gameLevelKey;
     }
     public Supplier<Float> getRandom() {
         return BattleRoyale.COMMON_RANDOM::nextFloat;
     }
-    public int getGameruleConfigId() { return gameruleConfigId; }
-    public int getSpawnConfigId() { return spawnConfigId; }
-    public int getBotConfigId() { return botConfigId; }
+    @Override public int getGameruleConfigId() { return gameruleConfigId; }
+    @Override public int getSpawnConfigId() { return spawnConfigId; }
+    @Override public int getBotConfigId() { return botConfigId; }
 
     // 用指令设置默认配置
     public boolean setGameruleConfigId(int gameId) {
@@ -384,7 +392,7 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
         this.gameruleConfigId = gameId;
         return true;
     }
-    public String getGameruleConfigName(int gameId) {
+    @Override public String getGameruleConfigName(int gameId) {
         GameruleConfig config = GameConfigManager.get().getGameruleConfig(gameId);
         return config != null ? config.getGameName() : "";
     }
@@ -395,7 +403,7 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
         this.spawnConfigId = id;
         return true;
     }
-    public String getSpawnConfigName(int id) {
+    @Override public String getSpawnConfigName(int id) {
         SpawnConfigManager.SpawnConfig config = SpawnConfigManager.get().getSpawnConfig(id);
         return config != null ? config.name : "";
     }
@@ -406,11 +414,11 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
         this.botConfigId = id;
         return true;
     }
-    public String getBotConfigName(int id) {
+    @Override public String getBotConfigName(int id) {
         BotConfigManager.BotConfig config = BotConfigManager.get().getBotConfig(id);
         return config != null ? config.name : "";
     }
-    public String getZoneConfigFileName() {
+    @Override public String getZoneConfigFileName() {
         return GameConfigManager.get().getZoneConfigEntryFileName();
     }
 
@@ -456,6 +464,15 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
         return intGamerule;
     }
 
+    // --------GameApi--------
+
+    @Override public IGameTeamReadApi getGameTeamReadApi() {
+        return GameTeamManager.getApi();
+    }
+    @Override public IGameZoneReadApi getGameZoneReadApi() {
+        return GameZoneManager.getApi();
+    }
+
     // --------GameManagement--------
 
     /**
@@ -499,13 +516,13 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
         GameNotification.notifyWinner(this.serverLevel, gamePlayer, player, this.gameEntry.winnerParticleId);
     }
     // 发送观战消息
-    public void sendGameSpectateMessage(@NotNull ServerPlayer player) {
+    @Override public void sendGameSpectateMessage(@NotNull ServerPlayer player) {
         GameNotification.sendGameSpectateMessage(player, !gameEntry.onlyGamePlayerSpectate);
     }
     /**
      * 用于向胜利玩家发送消息，传送回大厅
      */
-    public void sendLobbyTeleportMessage(@NotNull ServerPlayer player, boolean isWinner) {
+    @Override public void sendLobbyTeleportMessage(@NotNull ServerPlayer player, boolean isWinner) {
         GameNotification.sendLobbyTeleportMessage(player, isWinner);
     }
     // 玩家倒地消息
@@ -547,11 +564,11 @@ public class GameManager extends AbstractGameManager implements IStatsWriter {
         }
     }
     // 传送至大厅
-    public boolean teleportToLobby(@NotNull ServerPlayer player) {
+    @Override public boolean teleportToLobby(@NotNull ServerPlayer player) {
         return GameUtilsFunction.teleportToLobby(player);
     }
     // 观战游戏
-    public boolean spectateGame(ServerPlayer player) {
+    @Override public boolean spectateGame(ServerPlayer player) {
         if (player == null) {
             return false;
         }

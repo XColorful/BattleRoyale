@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.IGameSubManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -17,7 +17,7 @@ import xiao.battleroyale.util.SendUtils;
 import java.util.List;
 import java.util.function.Function;
 
-public class GameInfoMessageManager extends AbstractMessageManager<GameInfoMessage> implements IGameManager {
+public class GameInfoMessageManager extends AbstractMessageManager<GameInfoMessage> implements IGameSubManager {
 
     private static class GameMessageManagerHolder {
         private static final GameInfoMessageManager INSTANCE = new GameInfoMessageManager();

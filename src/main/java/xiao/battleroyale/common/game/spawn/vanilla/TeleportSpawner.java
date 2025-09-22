@@ -167,7 +167,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
 
         // 由于所有点位在init()预计算，因此全部可视作 Fixed/提前确定 类型，全都需要应用偏移
         Vec3 globalOffest = GameManager.get().getGlobalCenterOffset();
-        IGameZone gameZone = ZoneManager.get().getZoneById(preZoneCenterId);
+        IGameZone gameZone = ZoneManager.get().getGameZone(preZoneCenterId);
         if (gameZone != null && gameZone.isDetermined()) {
             globalOffest = gameZone.getStartCenterPos();
         }

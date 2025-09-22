@@ -1,9 +1,9 @@
 package xiao.battleroyale.common.game;
 
 import net.minecraft.server.level.ServerLevel;
-import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.IGameSubManager;
 
-public abstract class AbstractGameManager implements IGameManager {
+public abstract class AbstractGameManager implements IGameSubManager {
 
     protected boolean configPrepared = false;
     protected boolean ready = false;

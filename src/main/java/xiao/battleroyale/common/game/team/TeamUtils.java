@@ -25,7 +25,7 @@ public class TeamUtils {
         TeamManager teamManager = TeamManager.get();
         int count = 0;
         Set<Integer> playerTeamId = new HashSet<>();
-        for (GamePlayer gamePlayer : teamManager.getGamePlayersList()) {
+        for (GamePlayer gamePlayer : teamManager.getGamePlayers()) {
             if (!gamePlayer.isBot()) {
                 int teamId = gamePlayer.getGameTeamId();
                 if (!playerTeamId.contains(teamId)) {
@@ -44,7 +44,7 @@ public class TeamUtils {
         TeamManager teamManager = TeamManager.get();
         int count = 0;
         Set<Integer> playerTeamId = new HashSet<>();
-        for (GamePlayer gamePlayer : teamManager.getStandingGamePlayersList()) {
+        for (GamePlayer gamePlayer : teamManager.getStandingGamePlayers()) {
             if (!gamePlayer.isBot()) {
                 int teamId = gamePlayer.getGameTeamId();
                 if (!playerTeamId.contains(teamId)) {
@@ -110,7 +110,7 @@ public class TeamUtils {
     public static boolean hasEnoughTeamToStart() {
         TeamManager teamManager = TeamManager.get();
         if (!GameManager.get().getGameEntry().allowRemainingBot) { // 不允许剩余人机打架 -> 开局不能直接只剩人机队
-            List<GameTeam> gameTeams = teamManager.getGameTeamsList();
+            List<GameTeam> gameTeams = teamManager.getGameTeams();
             for (GameTeam gameTeam : gameTeams) {
                 if (!gameTeam.onlyRemainBot()) {
                     return true;
@@ -135,7 +135,7 @@ public class TeamUtils {
 
         try {
             Scoreboard scoreboard = serverLevel.getScoreboard();
-            for (GameTeam gameTeam : teamManager.getGameTeamsList()) {
+            for (GameTeam gameTeam : teamManager.getGameTeams()) {
                 PlayerTeam vanillaTeam = getClearedVanillaTeam(scoreboard, hideName, gameTeam);
                 for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) { // 原版队伍没有队长，直接遍历
                     ServerPlayer memberPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
@@ -163,7 +163,7 @@ public class TeamUtils {
     public static void clearVanillaTeam(@NotNull ServerLevel serverLevel) {
         TeamManager teamManager = TeamManager.get();
         Scoreboard scoreboard = serverLevel.getScoreboard();
-        for (GamePlayer gamePlayer : teamManager.getGamePlayersList()) {
+        for (GamePlayer gamePlayer : teamManager.getGamePlayers()) {
             ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
             if (player == null) {
                 BattleRoyale.LOGGER.warn("Failed to get GamePlayer[{}][{}]{}, skipped clear vanilla team", gamePlayer.getGameTeamId(), gamePlayer.getGameSingleId(), gamePlayer.getPlayerName());

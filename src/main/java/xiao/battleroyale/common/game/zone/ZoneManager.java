@@ -3,6 +3,7 @@ package xiao.battleroyale.common.game.zone;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.zone.IGameZoneReadApi;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
@@ -17,7 +18,7 @@ import xiao.battleroyale.util.ChatUtils;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class ZoneManager extends AbstractGameManager {
+public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi {
 
     private static class ZoneManagerHolder {
         private static final ZoneManager INSTANCE = new ZoneManager();
@@ -33,7 +34,7 @@ public class ZoneManager extends AbstractGameManager {
         ;
     }
 
-    private final ZoneData zoneData = new ZoneData();
+    protected final ZoneData zoneData = new ZoneData();
 
     private boolean stackZoneConfig = true; // TODO 增加配置
 
@@ -135,24 +136,6 @@ public class ZoneManager extends AbstractGameManager {
         this.ready = false;
     }
 
-    private boolean hasEnoughZoneToStart() {
-        return zoneData.hasEnoughZoneToStart();
-    }
-
-    private void randomizeZoneTickOffset() {
-        Supplier<Float> random = GameManager.get().getRandom();
-        for (IGameZone gameZone : this.zoneData.getGameZonesList()) {
-            if (gameZone.getTickOffset() < 0) {
-                gameZone.setTickOffset((int) (random.get() * gameZone.getTickFrequency()));
-            }
-        }
-    }
-
-    @Nullable
-    public IGameZone getZoneById(int zoneId) {
-        return this.zoneData.getGameZoneById(zoneId);
-    }
-
     /**
      * ZoneManager 暂时不做空间分区优化
      */
@@ -201,11 +184,28 @@ public class ZoneManager extends AbstractGameManager {
         this.zoneData.finishZones(finishedZoneId);
     }
 
-    public List<IGameZone> getGameZones() {
+    // --------IGameZoneReadApi--------
+
+    @Override public List<IGameZone> getGameZones() {
         return this.zoneData.getGameZonesList();
     }
-
-    public List<IGameZone> getCurrentTickGameZones(int gameTime) {
+    @Override public List<IGameZone> getCurrentGameZones() {
+        return getCurrentGameZones(GameManager.get().getGameTime());
+    }
+    @Override public List<IGameZone> getCurrentGameZones(int gameTime) {
         return this.zoneData.getCurrentTickZones(gameTime);
+    }
+    @Override public @Nullable IGameZone getGameZone(int zoneId) {
+        return this.zoneData.getGameZoneById(zoneId);
+    }
+
+    // --------ZoneUtils--------
+
+    public boolean hasEnoughZoneToStart() {
+        return ZoneUtils.hasEnoughZoneToStart();
+    }
+
+    public void randomizeZoneTickOffset() {
+        ZoneUtils.randomizeZoneTickOffset(this);
     }
 }

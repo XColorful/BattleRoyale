@@ -15,6 +15,9 @@ import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.util.ChatUtils;
 
+/**
+ * 该类仅用于抽离GameManager的功能实现，简化GameManager
+ */
 public class GameEventHandler {
 
     protected static void onPlayerLoggedIn(@NotNull ServerLevel serverLevel, ServerPlayer player, boolean onlyGamePlayerSpectate) {

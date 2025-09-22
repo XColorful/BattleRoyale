@@ -9,9 +9,6 @@ import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class GameSubManager {
 
     private static final GameLootManager gameLootManagerInstance = GameLootManager.get();

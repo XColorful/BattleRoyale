@@ -19,7 +19,6 @@ import java.util.List;
 
 /**
  * 该类仅用于抽离GameManager的功能实现，简化GameManager
- * 类似.h和.cpp的设计
  */
 public class GameManagement {
 
@@ -49,7 +48,7 @@ public class GameManagement {
             }
         }
     }
-    public static void updateInvalidServerPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {
+    private static void updateInvalidServerPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {
         ServerPlayer serverPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
         if (serverPlayer == null) { // 不在线或者不在游戏运行的 serverLevel
             if (gamePlayer.isActiveEntity()) {
@@ -78,7 +77,7 @@ public class GameManagement {
             gamePlayer.setLastPos(serverPlayer.position());
         }
     }
-    public static void updateInvalidBotPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {
+    private static void updateInvalidBotPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {
         Entity entity = serverLevel.getEntity(gamePlayer.getPlayerUUID());
         if (!(entity instanceof LivingEntity livingEntity)) {
             if (gamePlayer.isActiveEntity()) {

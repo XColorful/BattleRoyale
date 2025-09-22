@@ -12,20 +12,20 @@ public class GameMessageManager {
 
     private static final MessageManager messageManagerInstance = MessageManager.get();
 
-    public static  void addZoneNbtMessage(int zoneId, @Nullable CompoundTag nbtMessage) {
-        MessageManager.get().addZoneNbtMessage(zoneId, nbtMessage);
+    public static void addZoneNbtMessage(int zoneId, @Nullable CompoundTag nbtMessage) {
+        messageManagerInstance.addZoneNbtMessage(zoneId, nbtMessage);
     }
     public static void notifyZoneEnd(List<Integer> zoneIdList) {
-        MessageManager.get().notifyZoneEnd(zoneIdList);
+        messageManagerInstance.notifyZoneEnd(zoneIdList);
     }
     public static void notifyTeamChange(int teamId) {
-        MessageManager.get().notifyTeamChange(teamId);
+        messageManagerInstance.notifyTeamChange(teamId);
     }
     public static void notifyLeavedMember(UUID playerUUID, int teamId) {
-        MessageManager.get().notifyLeavedMember(playerUUID, teamId);
+        messageManagerInstance.notifyLeavedMember(playerUUID, teamId);
     }
     public static void notifyAliveChange() {
-        MessageManager.get().notifyGameChange(GameInfoMessageManager.ALIVE_CHANNEL);
+        messageManagerInstance.notifyGameChange(GameInfoMessageManager.ALIVE_CHANNEL);
     }
 
 }
