@@ -5,6 +5,7 @@ import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.api.game.spawn.type.shape.SpawnShapeTag;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.util.StringUtils;
 
@@ -39,7 +40,7 @@ public abstract class AbstractSimpleSpawner implements IGameSpawner {
         stringWriter.put(SpawnShapeTag.CENTER, StringUtils.vectorToString(centerPos));
         stringWriter.put(SpawnShapeTag.DIMENSION, StringUtils.vectorToString(dimension));
         addSpawnDetailProperty();
-        GameManager.get().recordSpawnString(SPAWNER_KEY_TAG, stringWriter);
+        GameStatsManager.recordSpawnString(SPAWNER_KEY_TAG, stringWriter);
     }
 
     protected abstract String getSpawnerTypeString();

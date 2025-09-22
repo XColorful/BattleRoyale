@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameMessageManager;
+import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
@@ -120,7 +122,7 @@ public class TeamManager extends AbstractGameManager {
             buildVanillaTeam(serverLevel, gameManager.getGameEntry().hideVanillaTeamName);
         }
 
-        gameManager.recordGamerule(teamConfig);
+        GameStatsManager.recordGamerule(teamConfig);
         if (!hasEnoughPlayerTeamToStart()) { // 初始化游戏时检查并提示
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
         }
@@ -176,7 +178,7 @@ public class TeamManager extends AbstractGameManager {
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
         this.teamData.endGame(); // 解锁，清除standingGamePlayer使GameMessage重置
-        GameManager.get().notifyAliveChange();
+        GameMessageManager.notifyAliveChange();
         this.configPrepared = false;
         // this.ready = false; // 不使用ready标记，因为Team会变动
 
@@ -186,11 +188,11 @@ public class TeamManager extends AbstractGameManager {
             clearVanillaTeam(serverLevel);
 
             for (GameTeam gameTeam : getGameTeamsList()) { // 新增双重保险，照理应该要能成功发送清空队伍的消息
-                gameManager.notifyTeamChange(gameTeam.getGameTeamId());
+                GameMessageManager.notifyTeamChange(gameTeam.getGameTeamId());
             }
             isStoppingGame = true; // 这个变量会阻止获取GameTeam
             for (GamePlayer gamePlayer : getGamePlayersList()) { // 触发频率低，问题不大。。。
-                gameManager.notifyLeavedMember(gamePlayer.getPlayerUUID(), gamePlayer.getGameTeamId());
+                GameMessageManager.notifyLeavedMember(gamePlayer.getPlayerUUID(), gamePlayer.getGameTeamId());
             }
             isStoppingGame = false;
 

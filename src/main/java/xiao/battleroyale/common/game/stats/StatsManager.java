@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.stats.game.SimpleRecord;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.TeamManager;
@@ -95,8 +96,8 @@ public class StatsManager extends AbstractGameManager {
     public boolean startGame(ServerLevel serverLevel) {
         StatsEventHandler.register();
         startSystemTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        totalPlayers = GameManager.get().getGamePlayers().size();
-        for (GamePlayer gamePlayer : GameManager.get().getStandingGamePlayers()) {
+        totalPlayers = GameTeamManager.getGamePlayers().size();
+        for (GamePlayer gamePlayer : GameTeamManager.getStandingGamePlayers()) {
             gamePlayerStats.put(gamePlayer, new GamePlayerStats(gamePlayer));
         }
 

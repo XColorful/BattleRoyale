@@ -6,6 +6,7 @@ import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.LootGenerator.LootContext;
@@ -238,7 +239,7 @@ public class GameLootManager extends AbstractGameManager {
         Queue<ChunkPos> newChunkQueue = new ArrayDeque<>();
         Set<ChunkPos> visitedInBfs = new HashSet<>();
 
-        List<GamePlayer> gamePlayers = GameManager.get().getStandingGamePlayers();
+        List<GamePlayer> gamePlayers = GameTeamManager.getStandingGamePlayers();
 
         // 如果玩家中心区块已在缓存中，则跳过对该玩家的BFS
         List<GamePlayer> playersToBFS = new ArrayList<>();

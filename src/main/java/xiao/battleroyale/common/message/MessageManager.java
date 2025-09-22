@@ -3,7 +3,7 @@ package xiao.battleroyale.common.message;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.message.IMessageManager;
-import xiao.battleroyale.common.message.game.GameMessageManager;
+import xiao.battleroyale.common.message.game.GameInfoMessageManager;
 import xiao.battleroyale.common.message.game.SpectateMessageManager;
 import xiao.battleroyale.common.message.team.TeamMessageManager;
 import xiao.battleroyale.common.message.zone.ZoneMessageManager;
@@ -69,7 +69,7 @@ public class MessageManager {
         MessageEventHandler.register();
     }
     public void registerGameMessage() {
-        GameMessageManager manager = GameMessageManager.get();
+        GameInfoMessageManager manager = GameInfoMessageManager.get();
         if (messageManagers.contains(manager)) {
             return;
         }
@@ -121,13 +121,13 @@ public class MessageManager {
 
     public void addGameNbtMessage(int channel, @Nullable CompoundTag nbtMessage) {
         registerGameMessage();
-        GameMessageManager.get().notifyNbtChange(channel);
+        GameInfoMessageManager.get().notifyNbtChange(channel);
     }
     public void extendGameMessageTime(int channel, int extendTime) {
-        GameMessageManager.get().extendMessageTime(channel, extendTime);
+        GameInfoMessageManager.get().extendMessageTime(channel, extendTime);
     }
     public void notifyGameChange(int channel) {
-        GameMessageManager.get().notifyNbtChange(channel);
+        GameInfoMessageManager.get().notifyNbtChange(channel);
     }
 
     public void notifySpectateChange(int singleId) {

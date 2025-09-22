@@ -12,6 +12,8 @@ import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameMessageManager;
+import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
@@ -149,7 +151,7 @@ public class GameZone implements IGameZone {
     @Override
     public void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
         if (!shouldTick(gameTime)) {
-            GameManager.get().addZoneNbtMessage(this.zoneId, null); // 传入null视为提醒置空NBT
+            GameMessageManager.addZoneNbtMessage(this.zoneId, null); // 传入null视为提醒置空NBT
             return;
         }
 
@@ -158,7 +160,7 @@ public class GameZone implements IGameZone {
         if (Math.abs(shapeProgress - prevShapeProgress) > 0.001F) { // 圈在移动，频繁更新
             prevShapeProgress = shapeProgress;
             CompoundTag zoneInfo = toNBT(shapeProgress);
-            GameManager.get().addZoneNbtMessage(this.zoneId, zoneInfo);
+            GameMessageManager.addZoneNbtMessage(this.zoneId, zoneInfo);
         } else if (gameTime % FORCE_SYNC_FREQUENCY == 0) { // 圈不在频繁移动，延长时间
             MessageManager.get().extendZoneMessageTime(zoneId, FORCE_SYNC_FREQUENCY);
         }
@@ -249,10 +251,10 @@ public class GameZone implements IGameZone {
         boolWriter.put(SHAPE_HAS_BAD_SHAPE, hasBadShape());
         intWriter.put(SHAPE_SEGMENTS, getSegments());
 
-        GameManager.get().recordZoneInt(this.zoneId, intWriter);
-        GameManager.get().recordZoneBool(this.zoneId, boolWriter);
-        GameManager.get().recordZoneDouble(this.zoneId, doubleWriter);
-        GameManager.get().recordZoneString(this.zoneId, stringWriter);
+        GameStatsManager.recordZoneInt(this.zoneId, intWriter);
+        GameStatsManager.recordZoneBool(this.zoneId, boolWriter);
+        GameStatsManager.recordZoneDouble(this.zoneId, doubleWriter);
+        GameStatsManager.recordZoneString(this.zoneId, stringWriter);
     }
     private void addFailedZoneProperty() {
         Map<String, Integer> intWriter = new HashMap<>();
@@ -262,8 +264,8 @@ public class GameZone implements IGameZone {
         intWriter.put(CREATE_TIME, GameManager.get().getGameTime());
         stringWriter.put(ZONE_NAME_TAG, zoneName);
 
-        GameManager.get().recordZoneInt(this.zoneId, intWriter);
-        GameManager.get().recordZoneString(this.zoneId, stringWriter);
+        GameStatsManager.recordZoneInt(this.zoneId, intWriter);
+        GameStatsManager.recordZoneString(this.zoneId, stringWriter);
     }
 
     public static double allowedProgress(double progress) {

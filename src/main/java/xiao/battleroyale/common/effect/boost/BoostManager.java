@@ -7,6 +7,8 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.effect.IEffectManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameMessageManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.event.effect.BoostEventHandler;
 
@@ -82,9 +84,9 @@ public class BoostManager implements IEffectManager {
             }
             // 同步消息
             if (--data.syncCooldown <= 0) {
-                GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(data.uuid);
+                GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(data.uuid);
                 if (gamePlayer != null) {
-                    GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
+                    GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
                 }
                 data.syncCooldown = SYNC_FREQUENCY;
             }
@@ -110,9 +112,9 @@ public class BoostManager implements IEffectManager {
             data.effectCooldown = 0;
         }
         // 通知立即更新
-        GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(entityUUID);
+        GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(entityUUID);
         if (gamePlayer != null) {
-            GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
+            GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
         }
         BoostEventHandler.register();
     }
@@ -141,9 +143,9 @@ public class BoostManager implements IEffectManager {
     public void clear(UUID entityUUID) {
         BoostData data = boostData.remove(entityUUID);
         if (data != null) {
-            GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(data.uuid);
+            GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(data.uuid);
             if (gamePlayer != null) {
-                GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
+                GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
             }
         }
     }
@@ -153,9 +155,9 @@ public class BoostManager implements IEffectManager {
         // 通知所有队伍立即更新
         boostData.entrySet().removeIf(entry -> {
             BoostData data = entry.getValue();
-            GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(data.uuid);
+            GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(data.uuid);
             if (gamePlayer != null) {
-                GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
+                GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
             }
             return true;
         });

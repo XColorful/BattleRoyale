@@ -13,6 +13,7 @@ import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.util.ChatUtils;
@@ -63,7 +64,7 @@ public class MessageEntry implements ILootEntry {
         }
 
         if (onlyGamePlayer) {
-            List<GamePlayer> gamePlayers = GameManager.get().getGamePlayers();
+            List<GamePlayer> gamePlayers = GameTeamManager.getGamePlayers();
             for (GamePlayer gamePlayer : gamePlayers) {
                 if (gamePlayer == null) {
                     continue;

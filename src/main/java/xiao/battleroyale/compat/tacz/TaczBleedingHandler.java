@@ -7,6 +7,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 
@@ -130,7 +131,7 @@ public class TaczBleedingHandler {
     }
 
     private static String getPlayerDebugName(Player player) {
-        GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(player.getUUID());
+        GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(player.getUUID());
         if (gamePlayer != null) {
             return String.format("GamePlayer [%s][%s]%s", gamePlayer.getGameTeamId(), gamePlayer.getGameSingleId(), gamePlayer.getPlayerName());
         } else {

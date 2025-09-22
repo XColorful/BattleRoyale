@@ -7,6 +7,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameMessageManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.tacz.Tacz;
 
@@ -57,7 +59,7 @@ public class BleedingHandler {
         }
         BattleRoyale.LOGGER.debug("GameTime:{} addBleedingPlayer", GameManager.get().getGameTime());
         UUID playerUUID = player.getUUID();
-        GamePlayer gamePlayer = GameManager.get().getGamePlayerByUUID(playerUUID);
+        GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(playerUUID);
         if (gamePlayer == null) {
             BattleRoyale.LOGGER.warn("Attempt to add a non GamePlayer {} (UUID:{}) to bleeding player, skipped", player.getName().getString(), playerUUID);
             return;
@@ -68,7 +70,7 @@ public class BleedingHandler {
             BattleRoyale.LOGGER.debug("Player {} has downed {} time, can't bleed and kill", player.getName().getString(), currentDownTime);
             GameManager.get().onPlayerDeath(gamePlayer);
             PlayerRevive.get().kill(player);
-            GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
+            GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
             return;
         }
         float damage = bleedDamage.get(currentDownTime - 1);
@@ -127,12 +129,12 @@ public class BleedingHandler {
                     BattleRoyale.LOGGER.debug("Bleed damage will kill game player {}", gamePlayer.getPlayerName());
                     GameManager.get().onPlayerDeath(gamePlayer);
                     PlayerRevive.get().kill(bleedPlayer);
-                    GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
+                    GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
                     return;
                 } else {
                     if (bleedPlayer != null) {
                         bleedPlayer.setHealth(currentHealth - damage); // 不触发受击音效和事件，绝对地扣血
-                        GameManager.get().notifyTeamChange(gamePlayer.getGameTeamId());
+                        GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
                     } else {
                         BattleRoyale.LOGGER.debug("bleedPlayer is null, GamePlayer {} (UUID:{}) skipped bleed damage", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
                     }
@@ -144,7 +146,7 @@ public class BleedingHandler {
             return bleedPlayer != null
                     && !PlayerRevive.get().isBleeding(bleedPlayer) // 没有该流血玩家
                     && bleedPlayer.getHealth() > 0
-                    && GameManager.get().hasStandingGamePlayer(bleedPlayer.getUUID());
+                    && GameTeamManager.hasStandingGamePlayer(bleedPlayer.getUUID());
         }
         public boolean isBleeding() {
             return bleedPlayer != null

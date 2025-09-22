@@ -6,6 +6,8 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameMessageManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.message.zone.ZoneMessageManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -101,7 +103,7 @@ public class ZoneManager extends AbstractGameManager {
         for (IGameZone gameZone : this.zoneData.getCurrentTickZones(GameManager.get().getGameTime())) {
             zoneIdList.add(gameZone.getZoneId());
         }
-        GameManager.get().notifyZoneEnd(zoneIdList);
+        GameMessageManager.notifyZoneEnd(zoneIdList);
 
         if (isTicking) {
             shouldStopGame = true;
@@ -161,7 +163,7 @@ public class ZoneManager extends AbstractGameManager {
             return;
         }
         Supplier<Float> random = GameManager.get().getRandom();
-        List<GamePlayer> standingGamePlayers = GameManager.get().getStandingGamePlayers();
+        List<GamePlayer> standingGamePlayers = GameTeamManager.getStandingGamePlayers();
 
         Set<Integer> finishedZoneId = new HashSet<>();
         Map<Integer, IGameZone> gameZones = this.zoneData.getGameZones(); // 缓存引用

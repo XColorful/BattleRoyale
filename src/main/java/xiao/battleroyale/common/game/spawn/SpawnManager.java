@@ -11,6 +11,8 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
@@ -116,7 +118,7 @@ public class SpawnManager extends AbstractGameManager {
 
         // 传送至大厅
         if (this.initGameTeleport) {
-            List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
+            List<GamePlayer> gamePlayerList = GameTeamManager.getGamePlayers();
             for (GamePlayer gamePlayer : gamePlayerList) {
                 teleportGamePlayerToLobby(gamePlayer, serverLevel);
             }
@@ -124,7 +126,7 @@ public class SpawnManager extends AbstractGameManager {
         }
 
         this.gameSpawner.clear();
-        this.gameSpawner.init(GameManager.get().getRandom(), GameManager.get().getPlayerLimit()); // 用玩家上限作为点位数量
+        this.gameSpawner.init(GameManager.get().getRandom(), GameTeamManager.getPlayerLimit()); // 用玩家上限作为点位数量
         if (!isReady()) {
             return;
         }
@@ -158,7 +160,7 @@ public class SpawnManager extends AbstractGameManager {
             return;
         }
 
-        gameSpawner.tick(gameTime, GameManager.get().getGameTeams());
+        gameSpawner.tick(gameTime, GameTeamManager.getGameTeams());
     }
 
     public void healPlayer(@NotNull ServerPlayer player) {
@@ -193,10 +195,10 @@ public class SpawnManager extends AbstractGameManager {
         GameManager gameManager = GameManager.get();
         ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel != null) {
-            gameManager.safeTeleport(player, serverLevel, lobbyPos, 0, 0);
+            GameUtilsFunction.safeTeleport(player, serverLevel, lobbyPos, 0, 0);
         } else {
             BattleRoyale.LOGGER.debug("GameManager.serverLevel is null, teleport to literal position");
-            gameManager.safeTeleport(player, lobbyPos);
+            GameUtilsFunction.safeTeleport(player, lobbyPos);
         }
         BattleRoyale.LOGGER.info("Teleport player {} (UUID: {}) to lobby ({}, {}, {})", player.getName().getString(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
     }
@@ -214,7 +216,7 @@ public class SpawnManager extends AbstractGameManager {
     }
 
     public boolean canMuteki(ServerPlayer player) {
-        if (!isLobbyCreated() || GameManager.get().hasStandingGamePlayer(player.getUUID())) { // 游戏中的玩家不能无敌
+        if (!isLobbyCreated() || GameTeamManager.hasStandingGamePlayer(player.getUUID())) { // 游戏中的玩家不能无敌
             return false;
         }
 

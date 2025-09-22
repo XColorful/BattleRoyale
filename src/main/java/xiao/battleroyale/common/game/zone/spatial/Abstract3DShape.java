@@ -12,6 +12,7 @@ import xiao.battleroyale.api.game.zone.shape.start.StartCenterType;
 import xiao.battleroyale.api.game.zone.shape.start.StartDimensionType;
 import xiao.battleroyale.api.game.zone.shape.start.StartRotationType;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
@@ -126,11 +127,11 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                         if (startEntry.selectStanding) {
                             playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
                         } else {
-                            List<GamePlayer> gamePlayers = GameManager.get().getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
+                            List<GamePlayer> gamePlayers = GameTeamManager.getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
                             playerId = gamePlayers.get((int) (random.get() * gamePlayers.size())).getGameSingleId();
                         }
                     }
-                    GamePlayer gamePlayer = GameManager.get().getGamePlayerBySingleId(playerId);
+                    GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
                     if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
                         BattleRoyale.LOGGER.error("Failed to generate shape center: failed to get game player by id: {}", playerId);
                         return;
@@ -180,7 +181,7 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                         }
                         playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
                     }
-                    GamePlayer gamePlayer = GameManager.get().getGamePlayerBySingleId(playerId);
+                    GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
                     if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
                         BattleRoyale.LOGGER.error("Failed to generate shape rotation: failed to get game player by id: {}", playerId);
                         return;
@@ -214,11 +215,11 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                         if (endEntry.selectStanding) {
                             playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
                         } else {
-                            List<GamePlayer> gamePlayers = GameManager.get().getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
+                            List<GamePlayer> gamePlayers = GameTeamManager.getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
                             playerId = gamePlayers.get((int) (random.get() * gamePlayers.size())).getGameSingleId();
                         }
                     }
-                    GamePlayer gamePlayer = GameManager.get().getGamePlayerBySingleId(playerId);
+                    GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
                     if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
                         BattleRoyale.LOGGER.error("Failed to generate end center: failed to get game player by id: {}", playerId);
                         return;
@@ -275,7 +276,7 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                         }
                         playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
                     }
-                    GamePlayer gamePlayer = GameManager.get().getGamePlayerBySingleId(playerId);
+                    GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
                     if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
                         BattleRoyale.LOGGER.error("Failed to generate end rotation: failed to get game player by id: {}", playerId);
                         return;

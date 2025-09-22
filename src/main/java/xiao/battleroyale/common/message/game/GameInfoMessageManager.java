@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.message.AbstractMessageManager;
 import xiao.battleroyale.common.message.MessageManager;
@@ -16,13 +17,13 @@ import xiao.battleroyale.util.SendUtils;
 import java.util.List;
 import java.util.function.Function;
 
-public class GameMessageManager extends AbstractMessageManager<GameMessage> implements IGameManager {
+public class GameInfoMessageManager extends AbstractMessageManager<GameInfoMessage> implements IGameManager {
 
     private static class GameMessageManagerHolder {
-        private static final GameMessageManager INSTANCE = new GameMessageManager();
+        private static final GameInfoMessageManager INSTANCE = new GameInfoMessageManager();
     }
 
-    public static GameMessageManager get() {
+    public static GameInfoMessageManager get() {
         return GameMessageManagerHolder.INSTANCE;
     }
 
@@ -44,14 +45,14 @@ public class GameMessageManager extends AbstractMessageManager<GameMessage> impl
         GameManager gameManager = GameManager.get();
         boolean inGame = gameManager.isInGame();
         if (inGame) {
-            int aliveTotal = gameManager.getStandingGamePlayers().size();
-            GameMessage message = getOrCreateMessage(ALIVE_CHANNEL);
+            int aliveTotal = GameTeamManager.getStandingGamePlayers().size();
+            GameInfoMessage message = getOrCreateMessage(ALIVE_CHANNEL);
             message.updateMessage(aliveTotal, gameManager.getGameId());
             message.nbt = message.toNBT();
             message.updateTime = currentTime;
         } else {
             if (messages.containsKey(ALIVE_CHANNEL)) {
-                GameMessage message = getOrCreateMessage(ALIVE_CHANNEL);
+                GameInfoMessage message = getOrCreateMessage(ALIVE_CHANNEL);
                 message.updateMessage(0, gameManager.getGameId());
                 message.nbt = new CompoundTag();
                 message.updateTime = currentTime;
@@ -95,8 +96,8 @@ public class GameMessageManager extends AbstractMessageManager<GameMessage> impl
     }
 
     @Override
-    protected Function<Integer, GameMessage> createMessage() {
-        return (nbtId) -> new GameMessage(new CompoundTag(), currentTime);
+    protected Function<Integer, GameInfoMessage> createMessage() {
+        return (nbtId) -> new GameInfoMessage(new CompoundTag(), currentTime);
     }
 
     /**
