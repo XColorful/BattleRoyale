@@ -1,14 +1,10 @@
 package xiao.battleroyale.api.game.zone.gamezone;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public interface ISpatialZone {
 
@@ -28,11 +24,8 @@ public interface ISpatialZone {
 
     /**
      * 用于初始化起止状态
-     * @param serverLevel 当前世界
-     * @param standingGamePlayers 当前存活玩家列表
-     * @param random 随机数生产者
      */
-    void calculateShape(ServerLevel serverLevel, List<GamePlayer> standingGamePlayers, Supplier<Float> random);
+    void calculateShape(ZoneContext zoneContext);
 
     /**
      * 判断起止状态是否已经确定

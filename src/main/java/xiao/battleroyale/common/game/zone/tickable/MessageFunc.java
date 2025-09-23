@@ -1,20 +1,14 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
-import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.util.ChatUtils;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public class MessageFunc extends AbstractSimpleFunc {
 
@@ -49,12 +43,10 @@ public class MessageFunc extends AbstractSimpleFunc {
     }
 
     @Override
-    public void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
-                     int gameTime, double progress, ISpatialZone spatialZone) {
-
-        for (GamePlayer gamePlayer : gamePlayerList) {
-            if (!gamePlayer.isBot() && spatialZone.isWithinZone(gamePlayer.getLastPos(), progress)) {
-                LivingEntity livingEntity = (LivingEntity) serverLevel.getEntity(gamePlayer.getPlayerUUID());
+    public void funcTick(ZoneTickContext zoneTickContext) {
+        for (GamePlayer gamePlayer : zoneTickContext.gamePlayers) {
+            if (!gamePlayer.isBot() && zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
+                LivingEntity livingEntity = (LivingEntity) zoneTickContext.serverLevel.getEntity(gamePlayer.getPlayerUUID());
                 if (livingEntity instanceof ServerPlayer player) {
                     if (this.setTitleAnimation) {
                         ChatUtils.sendTitleAnimationToPlayer(player, fadeInTicks, stayTicks, fadeOutTicks);

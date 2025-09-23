@@ -1,14 +1,8 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
-import net.minecraft.server.level.ServerLevel;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
-import xiao.battleroyale.common.game.team.GamePlayer;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
+import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 
 public abstract class AbstractSimpleFunc implements ITickableZone {
 
@@ -31,7 +25,7 @@ public abstract class AbstractSimpleFunc implements ITickableZone {
     }
 
     @Override
-    public void initFunc(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
+    public void initFunc(ZoneContext zoneContext) {
         this.ready = true;
     }
 

@@ -1,18 +1,13 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
-import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public class FireworkFunc extends AbstractSimpleFunc {
 
@@ -35,19 +30,18 @@ public class FireworkFunc extends AbstractSimpleFunc {
     }
 
     @Override
-    public void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
-                     int gameTime, double progress, ISpatialZone spatialZone) {
-        List<GamePlayer> playersToProcess = new ArrayList<>(gamePlayerList); // 遍历副本，不然烟花碰到玩家玩家挂了就 ConcurrentModificationException
+    public void funcTick(ZoneTickContext zoneTickContext) {
+        List<GamePlayer> playersToProcess = new ArrayList<>(zoneTickContext.gamePlayers); // 遍历副本，不然烟花碰到玩家玩家挂了就 ConcurrentModificationException
         for (GamePlayer gamePlayer : playersToProcess) {
-            boolean isWithinZone = spatialZone.isWithinZone(gamePlayer.getLastPos(), progress);
+            boolean isWithinZone = zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress);
             if (isWithinZone != outside) {
                 if (trackPlayer) {
-                    ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                    ServerPlayer player = (ServerPlayer) zoneTickContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
                     if (player != null) {
                         EffectManager.get().spawnPlayerFirework(player, amount, interval, vRange, hRange);
                     }
                 } else {
-                    EffectManager.get().spawnFirework(serverLevel, gamePlayer.getLastPos(), amount, interval, vRange, hRange);
+                    EffectManager.get().spawnFirework(zoneTickContext.serverLevel, gamePlayer.getLastPos(), amount, interval, vRange, hRange);
                 }
             }
         }

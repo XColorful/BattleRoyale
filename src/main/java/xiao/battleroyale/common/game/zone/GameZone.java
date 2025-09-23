@@ -1,10 +1,8 @@
 package xiao.battleroyale.common.game.zone;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.game.zone.ZoneCompleteEvent;
 import xiao.battleroyale.api.event.game.zone.ZoneCreatedEvent;
@@ -17,7 +15,8 @@ import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameStatsManager;
-import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
+import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
@@ -25,9 +24,7 @@ import xiao.battleroyale.util.NBTUtils;
 import xiao.battleroyale.util.StringUtils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * 各功能圈通用的部分
@@ -97,10 +94,10 @@ public class GameZone implements IGameZone {
     }
 
     @Override
-    public void createZone(ServerLevel serverLevel, List<GamePlayer> standingGamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
+    public void createZone(ZoneContext zoneContext) {
         if (!created) {
-            tickableZone.initFunc(serverLevel, standingGamePlayers, gameZones, random);
-            spatialZone.calculateShape(serverLevel, standingGamePlayers, random);
+            tickableZone.initFunc(zoneContext);
+            spatialZone.calculateShape(zoneContext);
         }
         if (tickableZone.isReady() && spatialZone.isDetermined()) {
             addZoneDetailProperty();
@@ -146,32 +143,25 @@ public class GameZone implements IGameZone {
         }
     }
 
-    /**
-     * @param serverLevel 当前世界
-     * @param gamePlayerList 当前游戏玩家列表
-     * @param gameZones 当前游戏所有圈实例，但通常圈自身逻辑与其他圈无关
-     * @param random 随机数生产者
-     * @param gameTime 游戏进行时间
-     */
     @Override
-    public void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
-        if (!shouldTick(gameTime)) {
+    public void gameTick(ZoneContext zoneContext) {
+        if (!shouldTick(zoneContext.gameTime)) {
             GameMessageManager.addZoneNbtMessage(this.zoneId, null); // 传入null视为提醒置空NBT
             MinecraftForge.EVENT_BUS.post(new ZoneCompleteEvent(GameManager.get(), this));
             return;
         }
 
-        double shapeProgress = tickableZone.getShapeProgress(gameTime, zoneDelay);
+        double shapeProgress = tickableZone.getShapeProgress(zoneContext.gameTime, zoneDelay);
         // 同步客户端
         if (Math.abs(shapeProgress - prevShapeProgress) > 0.001F) { // 圈在移动，频繁更新
             prevShapeProgress = shapeProgress;
             CompoundTag zoneInfo = toNBT(shapeProgress);
             GameMessageManager.addZoneNbtMessage(this.zoneId, zoneInfo);
-        } else if (gameTime % FORCE_SYNC_FREQUENCY == 0) { // 圈不在频繁移动，延长时间
+        } else if (zoneContext.gameTime % FORCE_SYNC_FREQUENCY == 0) { // 圈不在频繁移动，延长时间
             MessageManager.get().extendZoneMessageTime(zoneId, FORCE_SYNC_FREQUENCY);
         }
-        if ((gameTime + getTickOffset()) % getTickFrequency() == 0) {
-            tick(serverLevel, gamePlayerList, gameZones, random, gameTime, shapeProgress, spatialZone);
+        if ((zoneContext.gameTime + getTickOffset()) % getTickFrequency() == 0) {
+            funcTick(new ZoneTickContext(zoneContext, shapeProgress, spatialZone));
         }
     }
 
@@ -214,9 +204,8 @@ public class GameZone implements IGameZone {
     }
 
     @Override
-    public void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
-                     int gameTime, double shapeProgress, ISpatialZone spatialZone) {
-        tickableZone.tick(serverLevel, gamePlayerList, gameZones, random, gameTime, shapeProgress, spatialZone);
+    public void funcTick(ZoneTickContext zoneTickContext) {
+        tickableZone.funcTick(zoneTickContext);
     }
 
     @Override
@@ -286,8 +275,8 @@ public class GameZone implements IGameZone {
     @Override
     public ZoneShapeType getShapeType() { return spatialZone.getShapeType(); }
     @Override
-    public void calculateShape(ServerLevel serverLevel, List<GamePlayer> standingGamePlayers, Supplier<Float> random) {
-        spatialZone.calculateShape(serverLevel, standingGamePlayers, random);
+    public void calculateShape(ZoneContext zoneContext) {
+        spatialZone.calculateShape(zoneContext);
     }
     @Override
     public boolean isDetermined() { return spatialZone.isDetermined(); }
@@ -322,8 +311,8 @@ public class GameZone implements IGameZone {
 
     // ITickableZone
     @Override
-    public void initFunc(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
-        tickableZone.initFunc(serverLevel, gamePlayerList, gameZones, random);
+    public void initFunc(ZoneContext zoneContext) {
+        tickableZone.initFunc(zoneContext);
     }
     @Override
     public boolean isReady() { return tickableZone.isReady(); }

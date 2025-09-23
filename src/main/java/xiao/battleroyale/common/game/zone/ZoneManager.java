@@ -2,12 +2,14 @@ package xiao.battleroyale.common.game.zone;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.MinecraftForge;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.game.tick.ZoneTickEvent;
 import xiao.battleroyale.api.event.game.tick.ZoneTickFinishEvent;
 import xiao.battleroyale.api.game.zone.IGameZoneReadApi;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
+import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
@@ -153,13 +155,12 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
         if (serverLevel == null) {
             return;
         }
-        Supplier<Float> random = gameManager.getRandom();
-        List<GamePlayer> standingGamePlayers = GameTeamManager.getStandingGamePlayers();
+
+        ZoneContext zoneContext = new ZoneContext(serverLevel, GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), gameManager.getRandom(), gameTime);
+        this.isTicking = true;
 
         Set<Integer> finishedZoneId = new HashSet<>();
-        Map<Integer, IGameZone> gameZones = this.zoneData.getGameZones(); // 缓存引用
         // 获取当前时间应Tick的Zone列表
-        this.isTicking = true;
         for (IGameZone gameZone : this.zoneData.getCurrentTickZones(gameTime)) { // 高效遍历，当区域把玩家tick死了导致stopGame会有并发问题
             if (gameZone.isFinished()) { // 防御已经结束但未清理的Zone
                 finishedZoneId.add(gameZone.getZoneId());
@@ -167,7 +168,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
             }
 
             if (!gameZone.isCreated()) { // 没创建就创建，等价于额外维护一个isPresent
-                gameZone.createZone(serverLevel, standingGamePlayers, gameZones, random);
+                gameZone.createZone(zoneContext);
                 if (!gameZone.isCreated()) { // 创建失败，内部自动维护finished，这里还是用isCreated防御一下
                     finishedZoneId.add(gameZone.getZoneId());
                     BattleRoyale.LOGGER.warn("Failed to create zone (id: {}, name: {}), skipped", gameZone.getZoneId(), gameZone.getZoneName());
@@ -175,7 +176,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
                 }
             }
 
-            gameZone.tick(serverLevel, standingGamePlayers, gameZones, random, gameTime);
+            gameZone.gameTick(zoneContext);
 
             if (gameZone.isFinished()) { // 在tick过程中遇到最后一tick并执行后，标记为finished
                 finishedZoneId.add(gameZone.getZoneId());
@@ -191,6 +192,43 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
         }
         // 遍历结束后统一移除已完成的zone
         this.zoneData.finishZones(finishedZoneId);
+    }
+
+
+    public static class ZoneContext {
+        public @NotNull final ServerLevel serverLevel;
+        public final List<GamePlayer> gamePlayers;
+        public final Map<Integer, IGameZone> gameZones;
+        public final Supplier<Float> random;
+        public final int gameTime;
+        /**
+         * tick当前圈的功能
+         * @param serverLevel 当前世界
+         * @param gamePlayers 当前游戏玩家列表
+         * @param gameZones 当前游戏所有圈实例，但通常圈自身逻辑与其他圈无关
+         * @param random 随机数生产者
+         * @param gameTime 游戏进行时间
+         */
+        public ZoneContext(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
+            this.serverLevel = serverLevel;
+            this.gamePlayers = gamePlayers;
+            this.gameZones = gameZones;
+            this.random = random;
+            this.gameTime = gameTime;
+        }
+    }
+    public static class ZoneTickContext extends ZoneContext {
+        public final double progress;
+        public final ISpatialZone spatialZone;
+        /**
+         * @param progress 圈进度
+         * @param spatialZone 提供圈的状态，计算与玩家相关的逻辑
+         */
+        public ZoneTickContext(ZoneContext zoneContext, double progress, ISpatialZone spatialZone) {
+            super(zoneContext.serverLevel, zoneContext.gamePlayers, zoneContext.gameZones, zoneContext.random, zoneContext.gameTime);
+            this.progress = progress;
+            this.spatialZone = spatialZone;
+        }
     }
 
     // --------IGameZoneReadApi--------

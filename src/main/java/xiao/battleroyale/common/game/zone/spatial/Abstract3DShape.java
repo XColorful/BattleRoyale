@@ -1,6 +1,5 @@
 package xiao.battleroyale.common.game.zone.spatial;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -15,13 +14,13 @@ import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.GameZone;
+import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.Vec3Utils;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import static xiao.battleroyale.util.Vec3Utils.randomAdjustXYZ;
 
@@ -103,7 +102,7 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
     }
 
     @Override
-    public void calculateShape(ServerLevel serverLevel, List<GamePlayer> standingGamePlayers, Supplier<Float> random) {
+    public void calculateShape(ZoneContext zoneContext) {
         if (!determined) {
             // GameManager全局修改，仅用在Fixed类型
             Vec3 globalCenterOffset = GameManager.get().getGlobalCenterOffset();
@@ -120,15 +119,15 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                 case LOCK_PLAYER -> {
                     int playerId = startEntry.centerPlayerId;
                     if (playerId <= 0) {
-                        if (standingGamePlayers.isEmpty()) {
+                        if (zoneContext.gamePlayers.isEmpty()) {
                             BattleRoyale.LOGGER.error("StandingGamePlayers is empty, but still calculate shape, may should end game instantly");
                             return;
                         }
                         if (startEntry.selectStanding) {
-                            playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
+                            playerId = zoneContext.gamePlayers.get((int) (zoneContext.random.get() * zoneContext.gamePlayers.size())).getGameSingleId();
                         } else {
                             List<GamePlayer> gamePlayers = GameTeamManager.getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
-                            playerId = gamePlayers.get((int) (random.get() * gamePlayers.size())).getGameSingleId();
+                            playerId = gamePlayers.get((int) (zoneContext.random.get() * gamePlayers.size())).getGameSingleId();
                         }
                     }
                     GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
@@ -143,9 +142,9 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                 BattleRoyale.LOGGER.warn("Failed to calculate start center, type: {}", startEntry.startCenterType.getValue());
                 return;
             }
-            startCenter = randomAdjustXYZ(startCenter, startEntry.startCenterRange, random);
+            startCenter = randomAdjustXYZ(startCenter, startEntry.startCenterRange, zoneContext.random);
             if (startEntry.playerCenterLerp != 0) {
-                startCenter = GameUtils.calculateCenterAndLerp(startCenter, standingGamePlayers, startEntry.playerCenterLerp);
+                startCenter = GameUtils.calculateCenterAndLerp(startCenter, zoneContext.gamePlayers, startEntry.playerCenterLerp);
             }
             // start dimension
             switch (startEntry.startDimensionType) {
@@ -161,7 +160,7 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                 BattleRoyale.LOGGER.warn("Failed to calculate start dimension, type: {}", startEntry.startDimensionType.getValue());
                 return;
             }
-            startDimension = randomAdjustXYZ(startDimension, startEntry.startDimensionRange, random);
+            startDimension = randomAdjustXYZ(startDimension, startEntry.startDimensionRange, zoneContext.random);
             startDimension = Vec3Utils.scaleXYZ(startDimension, startEntry.startDimensionScale);
             // start rotation
             switch (startEntry.startRotationType) {
@@ -175,18 +174,18 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                 case LOCK_PLAYER -> {
                     int playerId = startEntry.rotatePlayerId;
                     if (playerId <= 0) {
-                        if (standingGamePlayers.isEmpty()) {
+                        if (zoneContext.gamePlayers.isEmpty()) {
                             BattleRoyale.LOGGER.error("StandingGamePlayers is empty, but still calculate shape, may should end game instantly");
                             return;
                         }
-                        playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
+                        playerId = zoneContext.gamePlayers.get((int) (zoneContext.random.get() * zoneContext.gamePlayers.size())).getGameSingleId();
                     }
                     GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
                     if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
                         BattleRoyale.LOGGER.error("Failed to generate shape rotation: failed to get game player by id: {}", playerId);
                         return;
                     }
-                    ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                    ServerPlayer player = (ServerPlayer) zoneContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
                     if (player == null) {
                         BattleRoyale.LOGGER.info("Failed to generate shape rotation: can't find ServerPlayer {} (UUID:{})", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
                         return;
@@ -194,7 +193,7 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                     startRotateDegree = player.getYRot();
                 }
             }
-            startRotateDegree += random.get() * startEntry.startRotateRange;
+            startRotateDegree += zoneContext.random.get() * startEntry.startRotateRange;
             startRotateDegree *= startEntry.startRotateScale;
             // end center
             switch (endEntry.endCenterType) {
@@ -208,15 +207,15 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                 case LOCK_PLAYER -> {
                     int playerId = endEntry.centerPlayerId;
                     if (playerId <= 0) {
-                        if (standingGamePlayers.isEmpty()) {
+                        if (zoneContext.gamePlayers.isEmpty()) {
                             BattleRoyale.LOGGER.error("StandingGamePlayers is empty, but still calculate shape, may should end game instantly");
                             return;
                         }
                         if (endEntry.selectStanding) {
-                            playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
+                            playerId = zoneContext.gamePlayers.get((int) (zoneContext.random.get() * zoneContext.gamePlayers.size())).getGameSingleId();
                         } else {
                             List<GamePlayer> gamePlayers = GameTeamManager.getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
-                            playerId = gamePlayers.get((int) (random.get() * gamePlayers.size())).getGameSingleId();
+                            playerId = gamePlayers.get((int) (zoneContext.random.get() * gamePlayers.size())).getGameSingleId();
                         }
                     }
                     GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
@@ -234,14 +233,14 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
             if (endEntry.useRangeAsStartDimScale) {
                 Vec3 endRangeVec = Vec3Utils.scaleXYZ(startDimension, endEntry.endCenterRange);
                 if (endEntry.useCircleRange) {
-                    endCenter = Vec3Utils.randomSphereXYZ(endCenter, endRangeVec, random);
+                    endCenter = Vec3Utils.randomSphereXYZ(endCenter, endRangeVec, zoneContext.random);
                 } else {
-                    endCenter = randomAdjustXYZ(endCenter, endRangeVec, random);
+                    endCenter = randomAdjustXYZ(endCenter, endRangeVec, zoneContext.random);
                 }
             } else {
-                endCenter = randomAdjustXYZ(endCenter, endEntry.endCenterRange, random);
+                endCenter = randomAdjustXYZ(endCenter, endEntry.endCenterRange, zoneContext.random);
             }
-            endCenter = GameUtils.calculateCenterAndLerp(endCenter, standingGamePlayers, endEntry.playerCenterLerp);
+            endCenter = GameUtils.calculateCenterAndLerp(endCenter, zoneContext.gamePlayers, endEntry.playerCenterLerp);
             // end dimension
             switch (endEntry.endDimensionType) {
                 case FIXED -> endDimension = endEntry.endDimension;
@@ -256,7 +255,7 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                 BattleRoyale.LOGGER.warn("Failed to calculate end dimension, type: {}", endEntry.endDimensionType.getValue());
                 return;
             }
-            endDimension = randomAdjustXYZ(endDimension, endEntry.endDimensionRange, random);
+            endDimension = randomAdjustXYZ(endDimension, endEntry.endDimensionRange, zoneContext.random);
             endDimension = Vec3Utils.scaleXYZ(endDimension, endEntry.endDimensionScale);
             // end rotation
             switch (endEntry.endRotationType) {
@@ -270,18 +269,18 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                 case LOCK_PLAYER -> {
                     int playerId = endEntry.rotatePlayerId;
                     if (playerId <= 0) {
-                        if (standingGamePlayers.isEmpty()) {
+                        if (zoneContext.gamePlayers.isEmpty()) {
                             BattleRoyale.LOGGER.error("StandingGamePlayers is empty, but still calculate shape, may should end game instantly");
                             return;
                         }
-                        playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
+                        playerId = zoneContext.gamePlayers.get((int) (zoneContext.random.get() * zoneContext.gamePlayers.size())).getGameSingleId();
                     }
                     GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
                     if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
                         BattleRoyale.LOGGER.error("Failed to generate end rotation: failed to get game player by id: {}", playerId);
                         return;
                     }
-                    ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                    ServerPlayer player = (ServerPlayer) zoneContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
                     if (player == null) {
                         BattleRoyale.LOGGER.info("Failed to generate end rotation: can't find ServerPlayer {} (UUID:{})", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
                         return;
@@ -289,7 +288,7 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
                     endRotateDegree = player.getYRot();
                 }
             }
-            endRotateDegree += random.get() * endEntry.endRotateRange;
+            endRotateDegree += zoneContext.random.get() * endEntry.endRotateRange;
             endRotateDegree *= endEntry.endRotateScale;
         }
         if (additionalCalculationCheck()

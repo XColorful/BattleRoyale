@@ -1,6 +1,5 @@
 package xiao.battleroyale.common.game.zone.spatial;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +17,7 @@ import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.common.game.zone.ZoneManager;
+import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.util.GameUtils;
@@ -27,7 +27,6 @@ import static xiao.battleroyale.util.Vec3Utils.randomAdjustXZ;
 import static xiao.battleroyale.util.Vec3Utils.randomCircleXZ;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 
 public abstract class AbstractSimpleShape implements ISpatialZone {
@@ -123,7 +122,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     }
 
     @Override
-    public void calculateShape(ServerLevel serverLevel, List<GamePlayer> standingGamePlayers, Supplier<Float> random) {
+    public void calculateShape(ZoneContext zoneContext) {
         if (!determined) {
             // GameManager全局修改，仅用在Fixed类型
             Vec3 globalCenterOffset = GameManager.get().getGlobalCenterOffset();
@@ -140,15 +139,15 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 case LOCK_PLAYER -> {
                     int playerId = startEntry.centerPlayerId;
                     if (playerId <= 0) {
-                        if (standingGamePlayers.isEmpty()) {
+                        if (zoneContext.gamePlayers.isEmpty()) {
                             BattleRoyale.LOGGER.error("StandingGamePlayers is empty, but still calculate shape, may should end game instantly");
                             return;
                         }
                         if (startEntry.selectStanding) {
-                            playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
+                            playerId = zoneContext.gamePlayers.get((int) (zoneContext.random.get() * zoneContext.gamePlayers.size())).getGameSingleId();
                         } else {
                             List<GamePlayer> gamePlayers = GameTeamManager.getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
-                            playerId = gamePlayers.get((int) (random.get() * gamePlayers.size())).getGameSingleId();
+                            playerId = gamePlayers.get((int) (zoneContext.random.get() * gamePlayers.size())).getGameSingleId();
                         }
                     }
                     GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
@@ -163,8 +162,8 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 BattleRoyale.LOGGER.warn("Failed to calculate start center, type: {}", startEntry.startCenterType.getValue());
                 return;
             }
-            startCenter = randomAdjustXZ(startCenter, startEntry.startCenterRange, random);
-            startCenter = GameUtils.calculateCenterAndLerp(startCenter, standingGamePlayers, startEntry.playerCenterLerp);
+            startCenter = randomAdjustXZ(startCenter, startEntry.startCenterRange, zoneContext.random);
+            startCenter = GameUtils.calculateCenterAndLerp(startCenter, zoneContext.gamePlayers, startEntry.playerCenterLerp);
             // start dimension
             switch (startEntry.startDimensionType) {
                 case FIXED -> startDimension = startEntry.startDimension;
@@ -179,7 +178,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 BattleRoyale.LOGGER.warn("Failed to calculate start dimension, type: {}", startEntry.startDimensionType.getValue());
                 return;
             }
-            startDimension = randomAdjustXZ(startDimension, startEntry.startDimensionRange, random);
+            startDimension = randomAdjustXZ(startDimension, startEntry.startDimensionRange, zoneContext.random);
             startDimension = Vec3Utils.scaleXZ(startDimension, startEntry.startDimensionScale);
             // start rotation
             switch (startEntry.startRotationType) {
@@ -193,18 +192,18 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 case LOCK_PLAYER -> {
                     int playerId = startEntry.rotatePlayerId;
                     if (playerId <= 0) {
-                        if (standingGamePlayers.isEmpty()) {
+                        if (zoneContext.gamePlayers.isEmpty()) {
                             BattleRoyale.LOGGER.error("StandingGamePlayers is empty, but still calculate shape, may should end game instantly");
                             return;
                         }
-                        playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
+                        playerId = zoneContext.gamePlayers.get((int) (zoneContext.random.get() * zoneContext.gamePlayers.size())).getGameSingleId();
                     }
                     GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
                     if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
                         BattleRoyale.LOGGER.error("Failed to generate shape rotation: failed to get game player by id: {}", playerId);
                         return;
                     }
-                    ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                    ServerPlayer player = (ServerPlayer) zoneContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
                     if (player == null) {
                         BattleRoyale.LOGGER.info("Failed to generate shape rotation: can't find ServerPlayer {} (UUID:{})", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
                         return;
@@ -212,7 +211,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                     startRotateDegree = player.getYRot();
                 }
             }
-            startRotateDegree += random.get() * startEntry.startRotateRange;
+            startRotateDegree += zoneContext.random.get() * startEntry.startRotateRange;
             startRotateDegree *= startEntry.startRotateScale;
             // end center
             switch (endEntry.endCenterType) {
@@ -226,15 +225,15 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 case LOCK_PLAYER -> {
                     int playerId = endEntry.centerPlayerId;
                     if (playerId <= 0) {
-                        if (standingGamePlayers.isEmpty()) {
+                        if (zoneContext.gamePlayers.isEmpty()) {
                             BattleRoyale.LOGGER.error("StandingGamePlayers is empty, but still calculate shape, may should end game instantly");
                             return;
                         }
                         if (endEntry.selectStanding) {
-                            playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
+                            playerId = zoneContext.gamePlayers.get((int) (zoneContext.random.get() * zoneContext.gamePlayers.size())).getGameSingleId();
                         } else {
                             List<GamePlayer> gamePlayers = GameTeamManager.getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
-                            playerId = gamePlayers.get((int) (random.get() * gamePlayers.size())).getGameSingleId();
+                            playerId = gamePlayers.get((int) (zoneContext.random.get() * gamePlayers.size())).getGameSingleId();
                         }
                     }
                     GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
@@ -252,14 +251,14 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             if (endEntry.useRangeAsStartDimScale) {
                 Vec3 endRangeVec = Vec3Utils.scaleXZ(startDimension, endEntry.endCenterRange);
                 if (endEntry.useCircleRange) {
-                    endCenter = randomCircleXZ(endCenter, endRangeVec, random);
+                    endCenter = randomCircleXZ(endCenter, endRangeVec, zoneContext.random);
                 } else {
-                    endCenter = randomAdjustXZ(endCenter, endRangeVec, random);
+                    endCenter = randomAdjustXZ(endCenter, endRangeVec, zoneContext.random);
                 }
             } else {
-                endCenter = randomAdjustXZ(endCenter, endEntry.endCenterRange, random);
+                endCenter = randomAdjustXZ(endCenter, endEntry.endCenterRange, zoneContext.random);
             }
-            endCenter = GameUtils.calculateCenterAndLerp(endCenter, standingGamePlayers, endEntry.playerCenterLerp);
+            endCenter = GameUtils.calculateCenterAndLerp(endCenter, zoneContext.gamePlayers, endEntry.playerCenterLerp);
             // end dimension
             switch (endEntry.endDimensionType) {
                 case FIXED -> endDimension = endEntry.endDimension;
@@ -274,7 +273,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 BattleRoyale.LOGGER.warn("Failed to calculate end dimension, type: {}", endEntry.endDimensionType.getValue());
                 return;
             }
-            endDimension = randomAdjustXZ(endDimension, endEntry.endDimensionRange, random);
+            endDimension = randomAdjustXZ(endDimension, endEntry.endDimensionRange, zoneContext.random);
             endDimension = Vec3Utils.scaleXZ(endDimension, endEntry.endDimensionScale);
             // end rotation
             switch (endEntry.endRotationType) {
@@ -288,18 +287,18 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                 case LOCK_PLAYER -> {
                     int playerId = endEntry.rotatePlayerId;
                     if (playerId <= 0) {
-                        if (standingGamePlayers.isEmpty()) {
+                        if (zoneContext.gamePlayers.isEmpty()) {
                             BattleRoyale.LOGGER.error("StandingGamePlayers is empty, but still calculate shape, may should end game instantly");
                             return;
                         }
-                        playerId = standingGamePlayers.get((int) (random.get() * standingGamePlayers.size())).getGameSingleId();
+                        playerId = zoneContext.gamePlayers.get((int) (zoneContext.random.get() * zoneContext.gamePlayers.size())).getGameSingleId();
                     }
                     GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
                     if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
                         BattleRoyale.LOGGER.error("Failed to generate end rotation: failed to get game player by id: {}", playerId);
                         return;
                     }
-                    ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                    ServerPlayer player = (ServerPlayer) zoneContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
                     if (player == null) {
                         BattleRoyale.LOGGER.info("Failed to generate end rotation: can't find ServerPlayer {} (UUID:{})", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
                         return;
@@ -307,7 +306,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                     endRotateDegree = player.getYRot();
                 }
             }
-            endRotateDegree += random.get() * endEntry.endRotateRange;
+            endRotateDegree += zoneContext.random.get() * endEntry.endRotateRange;
             endRotateDegree *= endEntry.endRotateScale;
         }
         if (additionalCalculationCheck()

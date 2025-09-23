@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class DangerFunc extends AbstractSimpleFunc {
     }
 
     @Override
-    public void initFunc(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random) {
+    public void initFunc(ZoneContext zoneContext) {
         // TODO 预处理
         this.ready = true;
     }

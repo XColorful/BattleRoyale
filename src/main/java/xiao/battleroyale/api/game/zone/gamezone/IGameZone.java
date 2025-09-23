@@ -1,17 +1,12 @@
 package xiao.battleroyale.api.game.zone.gamezone;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import xiao.battleroyale.common.game.team.GamePlayer;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
+import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 
 /**
  * 游戏进行时实际用于计算的对象
  */
-public interface IGameZone extends ITickableZone, ISpatialZone{
+public interface IGameZone extends ITickableZone, ISpatialZone {
 
     /**
      * 用 List<ZoneConfig> 创建 <Integer, IGameZone> 时保留获取正确id的方式
@@ -30,7 +25,7 @@ public interface IGameZone extends ITickableZone, ISpatialZone{
     /**
      * 用于与当前游戏进行时间比较
      * 游戏运行时长小于 zoneDelay 则不tick其功能
-     * @return 当前圈生成的延迟 (tick)
+     * @return 当前圈生成的延迟 (funcTick)
      */
     int getZoneDelay();
 
@@ -46,22 +41,13 @@ public interface IGameZone extends ITickableZone, ISpatialZone{
 
     /**
      * 为初始化 ITickableZone 和 ISpatialZone 传递参数
-     * @param serverLevel 当前世界
-     * @param standingGamePlayers 当前游戏玩家列表
-     * @param gameZones 当前游戏所有圈实例
-     * @param random 随机数生产者
      */
-    void createZone(ServerLevel serverLevel, List<GamePlayer> standingGamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random);
+    void createZone(ZoneContext zoneContext);
 
     /**
      * tick当前圈的功能
-     * @param serverLevel 当前世界
-     * @param gamePlayerList 当前游戏玩家列表
-     * @param gameZones 当前游戏所有圈实例，但通常圈自身逻辑与其他圈无关
-     * @param random 随机数生产者
-     * @param gameTime 游戏进行时间
      */
-    void tick(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime);
+    void gameTick(ZoneContext zoneContext);
 
 
     /**

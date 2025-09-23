@@ -1,24 +1,15 @@
 package xiao.battleroyale.api.game.zone.gamezone;
 
-import net.minecraft.server.level.ServerLevel;
-import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
+import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public interface ITickableZone {
 
     /**
      * 用于初始化起止状态
-     * @param serverLevel 当前世界
-     * @param gamePlayerList 当前游戏玩家列表
-     * @param gameZones 当前游戏所有圈实例
-     * @param random 随机数生产者
      */
-    void initFunc(ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random);
+    void initFunc(ZoneContext zoneContext);
 
     /**
      * 判断是否可以执行tick
@@ -28,15 +19,15 @@ public interface ITickableZone {
 
     /**
      * 用于节约不必要的开销
-     * @return tick 功能的频率
+     * @return funcTick 功能的频率
      */
     int getTickFrequency();
 
     void setTickFrequency(int tickFreq);
 
     /**
-     * 支持错峰 tick 实现分摊
-     * @return tick 的时间偏移
+     * 支持错峰 funcTick 实现分摊
+     * @return funcTick 的时间偏移
      */
     int getTickOffset();
 
@@ -44,16 +35,8 @@ public interface ITickableZone {
 
     /**
      * tick当前圈的功能
-     * @param serverLevel 当前世界
-     * @param gamePlayerList 当前游戏玩家列表
-     * @param gameZones 当前游戏所有圈实例，但通常圈自身逻辑与其他圈无关
-     * @param random 随机数生产者
-     * @param gameTime 游戏进行时间
-     * @param progress 圈进度
-     * @param spatialZone 提供圈的状态，计算与玩家相关的逻辑
      */
-    void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
-              int gameTime, double progress, ISpatialZone spatialZone);
+    void funcTick(ZoneTickContext zoneTickContext);
 
     /**
      * @return 当前圈功能类型
