@@ -2,6 +2,8 @@ package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
@@ -32,6 +34,7 @@ public class DefaultZone {
         zoneConfigJson.add(generateDefaultZoneConfig11());
         zoneConfigJson.add(generateDefaultZoneConfig12());
         zoneConfigJson.add(generateDefaultZoneConfig13());
+        zoneConfigJson.add(generateDefaultZoneConfig14());
         writeJsonToFile(Paths.get(GameConfigManager.get().getZoneConfigPath(), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
@@ -320,6 +323,30 @@ public class DefaultZone {
         ZoneConfig zoneConfig = new ZoneConfig(13, "Harmonious ellipsoid spectator", "#FF000066",
                 600, 1800,
                 noFuncEntry, ellipsoidEntry);
+
+        return zoneConfig.toJson();
+    }
+
+    private static JsonObject generateDefaultZoneConfig14() {
+        MessageFuncEntry messageFuncEntry = new MessageFuncEntry(0, 40, 25, 10,
+                true, 10, 80, 20,
+                true, Component.literal("§6Game Start").withStyle(ChatFormatting.BOLD),
+                true, Component.literal(""),
+                true, Component.literal("Zone 0").withStyle(ChatFormatting.BLUE));
+
+        StartEntry startEntry = new StartEntry();
+        startEntry.addPreviousCenter(0, 0);
+        startEntry.addFixedDimension(new Vec3(0, 255, 0));
+        EndEntry endEntry = new EndEntry();
+        endEntry.addPreviousCenter(0, 0);
+        endEntry.addPreviousDimension(0, 1);
+        endEntry.addDimensionScale(0.99);
+
+        SquareEntry squareEntry = new SquareEntry(startEntry, endEntry, false);
+
+        ZoneConfig zoneConfig = new ZoneConfig(14, "Triple zone notification", "#FFAA00AA",
+                0, 80,
+                messageFuncEntry, squareEntry);
 
         return zoneConfig.toJson();
     }

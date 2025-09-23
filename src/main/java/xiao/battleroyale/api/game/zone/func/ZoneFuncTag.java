@@ -13,6 +13,7 @@ public final class ZoneFuncTag {
     public static final String BOOST = "boost";
     public static final String PARTICLE = "particle";
     public static final String EFFECT = "effect";
+    public static final String MESSAGE = "message";
     public static final String ENTITY = "entity";
 
     public static final String DAMAGE = "damage";
@@ -43,6 +44,18 @@ public final class ZoneFuncTag {
     public static final String EFFECT_TYPE = "type";
     public static final String EFFECT_DURATION = "duration";
     public static final String EFFECT_LEVEL = "serverLevel";
+
+    // message
+    public static final String SET_TITLE_ANIMATION = "setTitleAnimation";
+    public static final String FADE_IN_TICKS = "fadeInTicks";
+    public static final String STAY_TICKS = "stayTicks";
+    public static final String FADE_OUT_TICKS = "fadeOutTicks";
+    public static final String SEND_TITLE = "sendTitle";
+    public static final String TITLE = "title";
+    public static final String SEND_SUBTITLE = "sendSubtitle";
+    public static final String SUBTITLE = "subtitle";
+    public static final String SEND_ACTION_BAR = "sendActionBar";
+    public static final String ACTION_BAR = "actionBar";
 
     // entity
 

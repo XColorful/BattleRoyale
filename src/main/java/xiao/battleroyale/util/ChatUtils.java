@@ -1,6 +1,7 @@
 package xiao.battleroyale.util;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
@@ -134,9 +135,21 @@ public class ChatUtils {
      * @param stayTicks 标题显示时间 (ticks)。
      * @param fadeOutTicks 标题淡出时间 (ticks)。
      */
-    public static void sendTitleToPlayer(@NotNull ServerPlayer player, Component title, Component subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+    public static void sendTitlesToPlayer(@NotNull ServerPlayer player, Component title, Component subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        sendTitleAnimationToPlayer(player, fadeInTicks, stayTicks, fadeOutTicks);
+        sendTitleToPlayer(player, title);
+        sendSubtitleToPlayer(player, subtitle);
+    }
+    public static void sendTitleAnimationToPlayer(@NotNull ServerPlayer player, int fadeInTicks, int stayTicks, int fadeOutTicks) {
         player.connection.send(new ClientboundSetTitlesAnimationPacket(fadeInTicks, stayTicks, fadeOutTicks)); // 动画时间设置包
+    }
+    public static void sendTitleToPlayer(@NotNull ServerPlayer player, Component title) {
         player.connection.send(new ClientboundSetTitleTextPacket(title)); // 标题内容包
+    }
+    public static void sendSubtitleToPlayer(@NotNull ServerPlayer player, Component subtitle) {
         player.connection.send(new ClientboundSetSubtitleTextPacket(subtitle)); // 副标题内容包
+    }
+    public static void sendActionBarToPlayer(@NotNull ServerPlayer player, Component actionBar) {
+        player.connection.send(new ClientboundSetActionBarTextPacket(actionBar)); // 动作条消息包
     }
 }

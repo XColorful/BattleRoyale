@@ -98,7 +98,7 @@ public class GameNotification {
                 .append(Component.translatable("battleroyale.message.has_won_the_game")
                         .withStyle(ChatFormatting.WHITE));
 
-        ChatUtils.sendTitleToPlayer(notifiedPlayer, winnerTitle, teamWinMessage, 10, 80, 20);
+        ChatUtils.sendTitlesToPlayer(notifiedPlayer, winnerTitle, teamWinMessage, 10, 80, 20);
 
         // 暂时硬编码
         EffectManager.get().spawnPlayerFirework(notifiedPlayer, 16, 4, 1.0F, 16.0F);

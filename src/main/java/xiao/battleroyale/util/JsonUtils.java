@@ -2,6 +2,7 @@ package xiao.battleroyale.util;
 
 import com.google.gson.*;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
@@ -438,6 +439,12 @@ public class JsonUtils {
         String vecString = getJsonString(jsonObject, key, null);
         Vec3 vec = StringUtils.parseVectorString(vecString);
         return vec != null ? vec : defaultValue;
+    }
+
+    public static Component getJsonComponent(@Nullable JsonObject jsonObject, String key, Component defaultValue) {
+        String componentString = getJsonString(jsonObject, key, null);
+        Component component = StringUtils.parseComponentString(componentString);
+        return component != null ? component : defaultValue;
     }
 
     @NotNull

@@ -18,7 +18,8 @@ public enum ZoneFuncType {
     BOOST(ZoneFuncTag.BOOST, BoostFuncEntry::fromJson),
     NO_FUNC(ZoneFuncTag.NO_FUNC, NoFuncEntry::fromJson),
     PARTICLE(ZoneFuncTag.PARTICLE, ParticleFuncEntry::fromJson),
-    EFFECT(ZoneFuncTag.EFFECT, EffectFuncEntry::fromJson);
+    EFFECT(ZoneFuncTag.EFFECT, EffectFuncEntry::fromJson),
+    MESSAGE(ZoneFuncTag.MESSAGE, MessageFuncEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends IZoneFuncEntry> deserializer;
