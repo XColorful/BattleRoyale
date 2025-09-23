@@ -58,9 +58,9 @@ public class PlayerDeathEventHandler {
 
         if (event.isCanceled()) { // 被不死图腾或PlayerRevive取消，GameManager内部检查是图腾还是倒地
             BattleRoyale.LOGGER.debug("Detected a canceled LivingDeathEvent in game");
-            gameManager.onPlayerDown(gamePlayer, livingEntity);
+            gameManager.onPlayerDown(gamePlayer, livingEntity, event);
         } else { // 死亡
-            gameManager.onPlayerDeath(gamePlayer);
+            gameManager.onPlayerDeath(gamePlayer, event);
         }
     }
 }

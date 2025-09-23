@@ -22,9 +22,10 @@ public interface IGameManager extends IGameSubManager, IGameConfigGetter, IGameA
 
     boolean setGlobalCenterOffset(Vec3 offset);
 
-    void finishGame(boolean hasWinner);
     void sendGameSpectateMessage(@NotNull ServerPlayer player);
     void sendLobbyTeleportMessage(@NotNull ServerPlayer player, boolean isWinner);
     boolean teleportToLobby(@NotNull ServerPlayer player);
     boolean spectateGame(ServerPlayer player);
+
+    void finishGame(boolean hasWinner);
 }

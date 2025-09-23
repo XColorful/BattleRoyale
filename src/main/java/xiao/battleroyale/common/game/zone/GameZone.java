@@ -3,8 +3,11 @@ package xiao.battleroyale.common.game.zone;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.api.event.game.zone.ZoneCompleteEvent;
+import xiao.battleroyale.api.event.game.zone.ZoneCreatedEvent;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
@@ -103,10 +106,12 @@ public class GameZone implements IGameZone {
             addZoneDetailProperty();
             created = true;
             present = true;
+            MinecraftForge.EVENT_BUS.post(new ZoneCreatedEvent(GameManager.get(), this, true));
         } else {
             addFailedZoneProperty();
             present = false;
             finished = true;
+            MinecraftForge.EVENT_BUS.post(new ZoneCreatedEvent(GameManager.get(), this, false));
         }
     }
 
@@ -152,6 +157,7 @@ public class GameZone implements IGameZone {
     public void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
         if (!shouldTick(gameTime)) {
             GameMessageManager.addZoneNbtMessage(this.zoneId, null); // 传入null视为提醒置空NBT
+            MinecraftForge.EVENT_BUS.post(new ZoneCompleteEvent(GameManager.get(), this));
             return;
         }
 

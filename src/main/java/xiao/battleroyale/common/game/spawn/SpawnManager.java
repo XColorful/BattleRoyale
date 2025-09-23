@@ -5,9 +5,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportEvent;
+import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishEvent;
+import xiao.battleroyale.api.game.spawn.IGameLobbyReadApi;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
@@ -31,7 +35,7 @@ import java.util.UUID;
 /**
  * 管理玩家出生方式、传送相关的Manager
  */
-public class SpawnManager extends AbstractGameManager {
+public class SpawnManager extends AbstractGameManager implements IGameLobbyReadApi {
 
     private static class SpawnManagerHolder {
         private static final SpawnManager INSTANCE = new SpawnManager();
@@ -176,6 +180,12 @@ public class SpawnManager extends AbstractGameManager {
      * 只负责帮 GameManager 传送至大厅，不负责检查
      */
     public void teleportToLobby(@NotNull ServerPlayer player) {
+        GameManager gameManager = GameManager.get();
+        if (MinecraftForge.EVENT_BUS.post(new GameLobbyTeleportEvent(gameManager, player))) {
+            BattleRoyale.LOGGER.debug("LobbyTeleportEvent canceled, skipped teleportToLobby (ServerPlayer {})", player.getName().getString());
+            return;
+        }
+
         if (!isLobbyCreated()) {
             BattleRoyale.LOGGER.debug("Lobby is not created, failed to teleport player {} (UUID:{}) to lobby", player.getName().getString(), player.getUUID());
             return;
@@ -192,7 +202,6 @@ public class SpawnManager extends AbstractGameManager {
         if (teleportClearInventory) {
             player.getInventory().clearContent();
         }
-        GameManager gameManager = GameManager.get();
         ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel != null) {
             GameUtilsFunction.safeTeleport(player, serverLevel, lobbyPos, 0, 0);
@@ -201,6 +210,7 @@ public class SpawnManager extends AbstractGameManager {
             GameUtilsFunction.safeTeleport(player, lobbyPos);
         }
         BattleRoyale.LOGGER.info("Teleport player {} (UUID: {}) to lobby ({}, {}, {})", player.getName().getString(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
+        MinecraftForge.EVENT_BUS.post(new GameLobbyTeleportFinishEvent(gameManager, player));
     }
 
     /**
@@ -222,29 +232,6 @@ public class SpawnManager extends AbstractGameManager {
 
         return player.level().dimension() == GameManager.get().getGameLevelKey()
                 && isInLobbyRange(player.position());
-    }
-
-    /**
-     * 调用时保证 lobbyPos 和 lobbyDimension 非空
-     * @param pos 需要判断的位置
-     * @return 判定结果
-     */
-    private boolean isInLobbyRange(Vec3 pos) {
-        double minX = lobbyPos.x - lobbyDimension.x;
-        double maxX = lobbyPos.x + lobbyDimension.x;
-        double minY = lobbyPos.y - lobbyDimension.y;
-        double maxY = lobbyPos.y + lobbyDimension.y;
-        double minZ = lobbyPos.z - lobbyDimension.z;
-        double maxZ = lobbyPos.z + lobbyDimension.z;
-
-        return pos.x >= minX && pos.x <= maxX &&
-                pos.y >= minY && pos.y <= maxY &&
-                pos.z >= minZ && pos.z <= maxZ;
-    }
-
-    public boolean isLobbyCreated() {
-        // return configPrepared || ready || GameManager.get().isInGame(); // 任意阶段均保证大厅已创建
-        return lobbyPos != null && lobbyDimension != null; // 让游戏结束后也能传送回大厅
     }
 
     public void sendLobbyInfo(ServerPlayer player) {
@@ -317,5 +304,50 @@ public class SpawnManager extends AbstractGameManager {
         }
         setLobby(centerPos, new Vec3(radius, radius, radius), this.lobbyMuteki, this.lobbyHeal, this.changeGamemode, this.teleportDropInventory, this.teleportClearInventory);
         return true;
+    }
+
+    // --------GameApi--------
+
+    @Override public boolean isLobbyCreated() {
+        // return configPrepared || ready || GameManager.get().isInGame(); // 任意阶段均保证大厅已创建
+        return lobbyPos != null && lobbyDimension != null; // 让游戏结束后也能传送回大厅
+    }
+    @Override public Vec3 lobbyPos() {
+        return this.lobbyPos;
+    }
+    @Override public Vec3 lobbyDimension() {
+        return this.lobbyDimension;
+    }
+    @Override public boolean lobbyMuteki() {
+        return this.lobbyMuteki;
+    }
+    @Override public boolean lobbyHeal() {
+        return this.lobbyHeal;
+    }
+    @Override public boolean lobbyChangeGamemode() {
+        return this.changeGamemode;
+    }
+    @Override public boolean teleportDropInventory() {
+        return this.teleportDropInventory;
+    }
+    @Override public boolean teleportClearInventory() {
+        return this.teleportClearInventory;
+    }
+    /**
+     * 调用时保证 lobbyPos 和 lobbyDimension 非空
+     * @param pos 需要判断的位置
+     * @return 判定结果
+     */
+    @Override public boolean isInLobbyRange(Vec3 pos) {
+        double minX = lobbyPos.x - lobbyDimension.x;
+        double maxX = lobbyPos.x + lobbyDimension.x;
+        double minY = lobbyPos.y - lobbyDimension.y;
+        double maxY = lobbyPos.y + lobbyDimension.y;
+        double minZ = lobbyPos.z - lobbyDimension.z;
+        double maxZ = lobbyPos.z + lobbyDimension.z;
+
+        return pos.x >= minX && pos.x <= maxX &&
+                pos.y >= minY && pos.y <= maxY &&
+                pos.z >= minZ && pos.z <= maxZ;
     }
 }

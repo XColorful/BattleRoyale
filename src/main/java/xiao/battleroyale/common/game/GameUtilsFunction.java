@@ -6,8 +6,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.game.game.GameSpectateEvent;
+import xiao.battleroyale.api.event.game.game.GameSpectateResult;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -68,43 +72,65 @@ public class GameUtilsFunction {
     /**
      * 切换旁观模式
      */
-    protected static boolean spectateGame(@NotNull ServerPlayer player, boolean isInGame) {
+    protected static GameSpectateResult spectateGame(@NotNull ServerPlayer player, boolean isInGame) {
         GameManager gameManager = GameManager.get();
-        if (!isInGame) { // 不在游戏中：从观战模式改回去
-            if (player.gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
-                player.setGameMode(GameruleManager.get().getGameMode()); // 默认为冒险模式
-                gameManager.teleportToLobby(player);
-            } else {
-                player.setGameMode(GameruleManager.get().getGameMode());
-            }
-            return true;
-        } else { // 在游戏中：观战随机游戏玩家
-            GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(player.getUUID());
-            if (gamePlayer != null) { // 游戏玩家观战
-                // 自己未被淘汰不能观战
-                if (!gamePlayer.isEliminated()) {
-                    ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_allow_standing_gameplayer_spectate").withStyle(ChatFormatting.YELLOW));
-                    return false;
-                }
-                // 队伍未被淘汰不能观战
-                if (gameManager.getGameEntry().spectateAfterTeam && !gamePlayer.getTeam().isTeamEliminated()) {
-                    ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_allow_standing_gameteam_spectate").withStyle(ChatFormatting.YELLOW));
-                    return false;
-                }
+        GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(player.getUUID());
+        GameSpectateResult result = getSpectateGameResult(gameManager, player, gamePlayer, isInGame);
+
+        if (MinecraftForge.EVENT_BUS.post(new GameSpectateEvent(gameManager, player, result))) {
+            return GameSpectateResult.EVENT_CANCELED;
+        }
+
+        switch (result) {
+            case CHANGE_FROM_SPECTATOR -> changeFromSpectator(gameManager, player);
+            case GAME_PLAYER_SPECTATE, NON_GAME_PLAYER_SPECTATE -> {
                 player.setGameMode(GameType.SPECTATOR);
                 teleportToRandomStandingGamePlayer(gameManager.getServerLevel(), player);
-                if (gameManager.getGameEntry().spectatorSeeAllTeams) {
+                if (gamePlayer != null && gameManager.getGameEntry().spectatorSeeAllTeams) {
                     MessageManager.get().notifySpectateChange(gamePlayer.getGameSingleId());
                 }
-                return true;
-            } else if (!gameManager.getGameEntry().onlyGamePlayerSpectate){ // 非游戏玩家能观战
-                player.setGameMode(GameType.SPECTATOR);
-                teleportToRandomStandingGamePlayer(gameManager.getServerLevel(), player);
-                return true;
-            } else { // 非游戏玩家不能观战
-                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.only_game_player_spectate").withStyle(ChatFormatting.YELLOW));
-                return false;
             }
+            case SELF_NOT_ELIMINATED -> ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_allow_standing_gameplayer_spectate").withStyle(ChatFormatting.YELLOW));
+            case TEAM_NOT_ELIMINATED -> ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_allow_standing_gameteam_spectate").withStyle(ChatFormatting.YELLOW));
+            case NOT_ALLOW_SPECTATE -> ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.only_game_player_spectate").withStyle(ChatFormatting.YELLOW));
+            default -> {
+                BattleRoyale.LOGGER.debug("Unhandled GameSpectateResult");
+            }
+        }
+
+        return result;
+    }
+    private static GameSpectateResult getSpectateGameResult(GameManager gameManager, @NotNull ServerPlayer player, @Nullable GamePlayer gamePlayer, boolean isInGame) {
+        if (!isInGame) { // 不在游戏中：从观战模式改回去
+            return GameSpectateResult.CHANGE_FROM_SPECTATOR;
+        }
+
+        if (gamePlayer == null) {
+            if (gameManager.getGameEntry().onlyGamePlayerSpectate) { // 非游戏玩家不能观战
+                return GameSpectateResult.NOT_ALLOW_SPECTATE;
+            } else { // 非游戏玩家能观战
+                return GameSpectateResult.NON_GAME_PLAYER_SPECTATE;
+            }
+        }
+
+        // 自己未被淘汰不能观战
+        if (!gamePlayer.isEliminated()) {
+            return GameSpectateResult.SELF_NOT_ELIMINATED;
+        }
+
+        // 队伍未被淘汰不能观战
+        if (gameManager.getGameEntry().spectateAfterTeam && !gamePlayer.getTeam().isTeamEliminated()) {
+            return GameSpectateResult.TEAM_NOT_ELIMINATED;
+        }
+
+        return GameSpectateResult.GAME_PLAYER_SPECTATE;
+    }
+    private static void changeFromSpectator(GameManager gameManager, @NotNull ServerPlayer player) {
+        if (player.gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
+            player.setGameMode(GameruleManager.get().getGameMode()); // 默认为冒险模式
+            gameManager.teleportToLobby(player);
+        } else {
+            player.setGameMode(GameruleManager.get().getGameMode());
         }
     }
 
