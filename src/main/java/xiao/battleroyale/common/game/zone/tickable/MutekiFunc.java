@@ -21,7 +21,7 @@ public class MutekiFunc extends AbstractSimpleFunc {
             if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
                 LivingEntity livingEntity = (LivingEntity) zoneTickContext.serverLevel.getEntity(gamePlayer.getPlayerUUID());
                 if (livingEntity != null) {
-                    EffectManager.get().addMutekiEntity(zoneTickContext.serverLevel, livingEntity, zoneTickContext.gameTime);
+                    EffectManager.get().addMutekiEntity(zoneTickContext.serverLevel, livingEntity, mutekiTime);
                 }
             }
         }
