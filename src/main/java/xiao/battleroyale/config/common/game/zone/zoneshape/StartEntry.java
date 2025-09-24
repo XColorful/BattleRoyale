@@ -44,73 +44,90 @@ public class StartEntry {
         ;
     }
     // build center
-    public void addFixedCenter(Vec3 startCenterPos) {
+    public StartEntry addFixedCenter(Vec3 startCenterPos) {
         this.startCenterType = StartCenterType.FIXED;
         this.startCenterPos = startCenterPos;
+        return this;
     }
-    public void addPreviousCenter(int prevZoneId, double progress) {
+    public StartEntry addPreviousCenter(int prevZoneId, double progress) {
         this.startCenterType = StartCenterType.PREVIOUS;
         this.startCenterZoneId = prevZoneId;
         this.startCenterProgress = GameZone.allowedProgress(progress);
+        return this;
     }
-    public void addRelativeCenter(Vec3 relativeAdd) {
+    public StartEntry addRelativeCenter(Vec3 relativeAdd) {
         this.startCenterType = StartCenterType.RELATIVE;
         this.startCenterPos = relativeAdd;
+        return this;
     }
-    public void addLockCenter(int playerId, boolean selectStanding) {
+    public StartEntry addLockCenter(int playerId, boolean selectStanding) {
         this.startCenterType = StartCenterType.LOCK_PLAYER;
         this.centerPlayerId = playerId;
         this.selectStanding = selectStanding;
+        return this;
     }
-    public void addCenterRange(double range) {
+    public StartEntry addCenterRange(double range) {
         this.startCenterRange = range;
+        return this;
     }
-    public void addPlayerCenterLerp(double lerp) {
+    public StartEntry addPlayerCenterLerp(double lerp) {
         this.playerCenterLerp = lerp;
+        return this;
     }
     // build dimension
-    public void addFixedDimension(Vec3 startDimension) {
+    public StartEntry addFixedDimension(Vec3 startDimension) {
         this.startDimensionType = StartDimensionType.FIXED;
         this.startDimension = startDimension;
+        return this;
     }
-    public void addPreviousDimension(int prevZoneId, double progress) {
+    public StartEntry addPreviousDimension(int prevZoneId, double progress) {
         this.startDimensionType = StartDimensionType.PREVIOUS;
         this.startDimensionZoneId = prevZoneId;
         this.startDimensionProgress = GameZone.allowedProgress(progress);
+        return this;
     }
-    public void addRelativeDimension(Vec3 relativeAdd) {
+    public StartEntry addRelativeDimension(Vec3 relativeAdd) {
         this.startDimensionType = StartDimensionType.RELATIVE;
         this.startDimension = relativeAdd;
+        return this;
     }
-    public void addDimensionScale(double scale) {
+    public StartEntry addDimensionScale(double scale) {
         this.startDimensionScale = scale;
+        return this;
     }
-    public void addDimensionRange(double range) {
+    public StartEntry addDimensionRange(double range) {
         this.startDimensionRange = range;
+        return this;
     }
     // build rotation
-    public void addFixedRotate(double degree) {
+    public StartEntry addFixedRotate(double degree) {
         this.startRotationType = StartRotationType.FIXED;
         this.startRotateDegree = degree;
+        return this;
     }
-    public void addPreviousRotate(int prevZoneId, double progress) {
+    public StartEntry addPreviousRotate(int prevZoneId, double progress) {
         this.startRotationType = StartRotationType.PREVIOUS;
         this.startRotateZoneId = prevZoneId;
         this.startRotateProgress = GameZone.allowedProgress(progress);
+        return this;
     }
-    public void addRelativeRotate(double degree) {
+    public StartEntry addRelativeRotate(double degree) {
         this.startRotationType = StartRotationType.RELATIVE;
         this.startRotateDegree = degree;
+        return this;
     }
-    public void addRotateScale(double scale) {
+    public StartEntry addRotateScale(double scale) {
         this.startRotateScale = scale;
+        return this;
     }
-    public void addRotateRange(double range) {
+    public StartEntry addRotateRange(double range) {
         this.startRotateRange = range;
+        return this;
     }
-    public void addLockRotate(int playerId) {
+    public StartEntry addLockRotate(int playerId) {
         this.startRotationType = StartRotationType.LOCK_PLAYER;
         this.rotatePlayerId = playerId;
+        return this;
     }
 
     @Nullable

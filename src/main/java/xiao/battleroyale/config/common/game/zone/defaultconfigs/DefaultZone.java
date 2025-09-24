@@ -334,8 +334,7 @@ public class DefaultZone {
     private static JsonObject generateDefaultZoneConfig14() {
         MessageFuncEntry messageFuncEntry = new MessageFuncEntry(0, 40, 25, 10,
                 true, 10, 80, 20,
-                true, Component.literal("§6Game Start").withStyle(ChatFormatting.BOLD),
-                true, Component.literal(""),
+                true, Component.literal("§6Game Start").withStyle(ChatFormatting.BOLD), Component.literal(""),
                 true, Component.literal("Zone 0").withStyle(ChatFormatting.BLUE));
 
         StartEntry startEntry = new StartEntry();

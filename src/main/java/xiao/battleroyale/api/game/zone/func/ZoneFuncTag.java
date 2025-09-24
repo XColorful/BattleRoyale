@@ -51,9 +51,8 @@ public final class ZoneFuncTag {
     public static final String FADE_IN_TICKS = "fadeInTicks";
     public static final String STAY_TICKS = "stayTicks";
     public static final String FADE_OUT_TICKS = "fadeOutTicks";
-    public static final String SEND_TITLE = "sendTitle";
+    public static final String SEND_TITLES = "sendTitles";
     public static final String TITLE = "title";
-    public static final String SEND_SUBTITLE = "sendSubtitle";
     public static final String SUBTITLE = "subtitle";
     public static final String SEND_ACTION_BAR = "sendActionBar";
     public static final String ACTION_BAR = "actionBar";

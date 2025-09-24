@@ -15,25 +15,23 @@ public class MessageFuncEntry extends AbstractFuncEntry {
     private final int fadeInTicks;
     private final int stayTicks;
     private final int fadeOutTicks;
-    private final boolean sendTitle;
+    private final boolean sendTitles;
     private @NotNull final Component title;
-    private final boolean sendSubtitle;
     private @NotNull final Component subTitle;
     private final boolean sendActionBar;
     private @NotNull final Component actionBar;
 
     public MessageFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset,
                             boolean setTitleAnimation, int fadeInTicks, int stayTicks, int fadeOutTicks,
-                            boolean sendTitle, Component title, boolean sendSubtitle, Component subTitle,
+                            boolean sendTitles, Component title, Component subTitle,
                             boolean sendActionBar, Component actionBar) {
         super(moveDelay, moveTime, tickFreq, tickOffset);
         this.setTitleAnimation = setTitleAnimation;
         this.fadeInTicks = fadeInTicks;
         this.stayTicks = stayTicks;
         this.fadeOutTicks = fadeOutTicks;
-        this.sendTitle = sendTitle;
+        this.sendTitles = sendTitles;
         this.title = title != null ? title : Component.empty();
-        this.sendSubtitle = sendSubtitle;
         this.subTitle = subTitle != null ? subTitle : Component.empty();
         this.sendActionBar = sendActionBar;
         this.actionBar = actionBar != null ? actionBar : Component.empty();
@@ -49,7 +47,7 @@ public class MessageFuncEntry extends AbstractFuncEntry {
         return new MessageFunc(
                 moveDelay, moveTime, tickFreq, tickOffset,
                 setTitleAnimation, fadeInTicks, stayTicks, fadeOutTicks,
-                sendTitle, title, sendSubtitle, subTitle, sendActionBar, actionBar
+                sendTitles, title, subTitle, sendActionBar, actionBar
         );
     }
 
@@ -68,12 +66,9 @@ public class MessageFuncEntry extends AbstractFuncEntry {
             jsonObject.addProperty(ZoneFuncTag.STAY_TICKS, stayTicks);
             jsonObject.addProperty(ZoneFuncTag.FADE_OUT_TICKS, fadeOutTicks);
         }
-        jsonObject.addProperty(ZoneFuncTag.SEND_TITLE, sendTitle);
-        if (sendTitle) {
+        jsonObject.addProperty(ZoneFuncTag.SEND_TITLES, sendTitles);
+        if (sendTitles) {
             jsonObject.addProperty(ZoneFuncTag.TITLE, StringUtils.componentToString(title));
-        }
-        jsonObject.addProperty(ZoneFuncTag.SEND_SUBTITLE, sendSubtitle);
-        if (sendSubtitle) {
             jsonObject.addProperty(ZoneFuncTag.SUBTITLE, StringUtils.componentToString(subTitle));
         }
         jsonObject.addProperty(ZoneFuncTag.SEND_ACTION_BAR, sendActionBar);
@@ -94,10 +89,8 @@ public class MessageFuncEntry extends AbstractFuncEntry {
         int stayTicks = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.STAY_TICKS, 80);
         int fadeOutTicks = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.FADE_OUT_TICKS, 20);
 
-        boolean sendTitle = JsonUtils.getJsonBool(jsonObject, ZoneFuncTag.SEND_TITLE, false);
+        boolean sendTitle = JsonUtils.getJsonBool(jsonObject, ZoneFuncTag.SEND_TITLES, false);
         Component title = JsonUtils.getJsonComponent(jsonObject, ZoneFuncTag.TITLE, Component.empty());
-
-        boolean sendSubtitle = JsonUtils.getJsonBool(jsonObject, ZoneFuncTag.SEND_SUBTITLE, false);
         Component subTitle = JsonUtils.getJsonComponent(jsonObject, ZoneFuncTag.SUBTITLE, Component.empty());
 
         boolean sendActionBar = JsonUtils.getJsonBool(jsonObject, ZoneFuncTag.SEND_ACTION_BAR, false);
@@ -105,7 +98,7 @@ public class MessageFuncEntry extends AbstractFuncEntry {
 
         return new MessageFuncEntry(moveDelay, moveTime, tickFreq, tickOffset,
                 setTitleAnimation, fadeInTicks, stayTicks, fadeOutTicks,
-                sendTitle, title, sendSubtitle, subTitle, sendActionBar, actionBar
+                sendTitle, title, subTitle, sendActionBar, actionBar
         );
     }
 }

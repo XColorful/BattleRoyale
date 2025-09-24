@@ -137,16 +137,13 @@ public class ChatUtils {
      */
     public static void sendTitlesToPlayer(@NotNull ServerPlayer player, Component title, Component subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
         sendTitleAnimationToPlayer(player, fadeInTicks, stayTicks, fadeOutTicks);
-        sendTitleToPlayer(player, title);
-        sendSubtitleToPlayer(player, subtitle);
+        sendTitlesToPlayer(player, title, subtitle);
     }
     public static void sendTitleAnimationToPlayer(@NotNull ServerPlayer player, int fadeInTicks, int stayTicks, int fadeOutTicks) {
         player.connection.send(new ClientboundSetTitlesAnimationPacket(fadeInTicks, stayTicks, fadeOutTicks)); // 动画时间设置包
     }
-    public static void sendTitleToPlayer(@NotNull ServerPlayer player, Component title) {
-        player.connection.send(new ClientboundSetTitleTextPacket(title)); // 标题内容包
-    }
-    public static void sendSubtitleToPlayer(@NotNull ServerPlayer player, Component subtitle) {
+    public static void sendTitlesToPlayer(@NotNull ServerPlayer player, Component title, Component subtitle) {
+        player.connection.send(new ClientboundSetTitleTextPacket(title)); // 先发送标题内容包
         player.connection.send(new ClientboundSetSubtitleTextPacket(subtitle)); // 副标题内容包
     }
     public static void sendActionBarToPlayer(@NotNull ServerPlayer player, Component actionBar) {

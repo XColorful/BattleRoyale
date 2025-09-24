@@ -1,10 +1,12 @@
 package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.GameConfigManager;
-import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
+import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
+import xiao.battleroyale.config.common.game.zone.zonefunc.MessageFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.CircleEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
@@ -93,7 +95,7 @@ public class Pubg5340x5340Casual {
         writeJsonToFile(Paths.get(GameConfigManager.get().getZoneConfigPath(), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
-    public static JsonObject generateBorderCircle(float halfWidth, int GAME_TIME) {
+    public static void generateBorderCircle(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME) {
         SafeFuncEntry safeFuncEntry = new SafeFuncEntry(0, 0, 200, 0, 666); // 固定边界的检查频率低一些
 
         StartEntry startEntry = new StartEntry();
@@ -106,15 +108,32 @@ public class Pubg5340x5340Casual {
 
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry, false);
 
-        ZoneConfigManager.ZoneConfig zoneConfig = new ZoneConfigManager.ZoneConfig(0, "Blue border", "#0000FFFF",
+        ZoneConfig zoneConfig = new ZoneConfig(0, "Blue border", "#0000FFFF",
                 -1, 0, GAME_TIME,
                 safeFuncEntry, circleEntry);
 
-        return zoneConfig.toJson();
+        zoneConfigJson.add(zoneConfig.toJson());
+
+        MessageFuncEntry messageFuncEntry = new MessageFuncEntry(0, 0, 25, 10,
+                true, 10, 80, 20,
+                true, Component.literal("§6Game Start").withStyle(ChatFormatting.BOLD), Component.literal(""),
+                false, Component.literal(""));
+        startEntry = new StartEntry()
+                .addPreviousCenter(0, 0)
+                .addPreviousDimension(0, 0)
+                .addDimensionScale(0.99);
+        endEntry = new EndEntry().addPreviousCenter(0, 1)
+                .addPreviousDimension(0, 1)
+                .addDimensionScale(0.99);
+        circleEntry = new CircleEntry(startEntry, endEntry, false);
+        zoneConfig = new ZoneConfig(1, "Game Start Message", "FFAA00AA",
+                0, 80,
+                messageFuncEntry, circleEntry);
+        zoneConfigJson.add(zoneConfig.toJson());
     }
 
     private static void add5340x5340Zone(JsonArray zoneConfigJson) {
-        zoneConfigJson.add(generateBorderCircle(5340 / 2F, GAME_TIME));
+        generateBorderCircle(zoneConfigJson, 5340 / 2F, GAME_TIME);
     }
 
     private static void addPhase2(JsonArray zoneConfigJson) {

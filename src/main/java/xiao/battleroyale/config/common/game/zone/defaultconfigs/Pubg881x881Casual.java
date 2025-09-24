@@ -72,7 +72,7 @@ public class Pubg881x881Casual {
     }
 
     private static void add881x881Zone(JsonArray zoneConfigJson) {
-        zoneConfigJson.add(generateBorderCircle(881 / 2F, GAME_TIME));
+        generateBorderCircle(zoneConfigJson, 881 / 2F, GAME_TIME);
     }
 
     private static void addPhase4(JsonArray zoneConfigJson) {

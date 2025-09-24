@@ -46,78 +46,96 @@ public class EndEntry {
         ;
     }
     // build center
-    public void addFixedCenter(Vec3 endCenterPos) {
+    public EndEntry addFixedCenter(Vec3 endCenterPos) {
         this.endCenterType = EndCenterType.FIXED;
         this.endCenterPos = endCenterPos;
+        return this;
     }
-    public void addPreviousCenter(int prevZoneId, double progress) {
+    public EndEntry addPreviousCenter(int prevZoneId, double progress) {
         this.endCenterType = EndCenterType.PREVIOUS;
         this.endCenterZoneId = prevZoneId;
         this.endCenterProgress = GameZone.allowedProgress(progress);
+        return this;
     }
-    public void addRelativeCenter(Vec3 relativeAdd) {
+    public EndEntry addRelativeCenter(Vec3 relativeAdd) {
         this.endCenterType = EndCenterType.RELATIVE;
         this.endCenterPos = relativeAdd;
+        return this;
     }
-    public void addLockCenter(int playerId, boolean selectStanding) {
+    public EndEntry addLockCenter(int playerId, boolean selectStanding) {
         this.endCenterType = EndCenterType.LOCK_PLAYER;
         this.centerPlayerId = playerId;
         this.selectStanding = selectStanding;
+        return this;
     }
-    public void addCenterRange(double range) {
+    public EndEntry addCenterRange(double range) {
         addCenterRange(range, false, false);
+        return this;
     }
-    public void addCenterRange(double range, boolean asStartDimScale, boolean useCircleRange) {
+    public EndEntry addCenterRange(double range, boolean asStartDimScale, boolean useCircleRange) {
         this.endCenterRange = range;
         this.useCircleRange = useCircleRange;
         this.useRangeAsStartDimScale = asStartDimScale;
+        return this;
     }
-    public void addPlayerCenterLerp(double lerp) {
+    public EndEntry addPlayerCenterLerp(double lerp) {
         this.playerCenterLerp = lerp;
+        return this;
     }
     // build dimension
-    public void addFixedDimension(Vec3 endDimension) {
+    public EndEntry addFixedDimension(Vec3 endDimension) {
         this.endDimensionType = EndDimensionType.FIXED;
         this.endDimension = endDimension;
+        return this;
     }
-    public void addPreviousDimension(int prevZoneId, double progress) {
+    public EndEntry addPreviousDimension(int prevZoneId, double progress) {
         this.endDimensionType = EndDimensionType.PREVIOUS;
         this.endDimensionZoneId = prevZoneId;
         this.endDimensionProgress = GameZone.allowedProgress(progress);
+        return this;
     }
-    public void addRelativeDimension(Vec3 relativeAdd) {
+    public EndEntry addRelativeDimension(Vec3 relativeAdd) {
         this.endDimensionType = EndDimensionType.RELATIVE;
         this.endDimension = relativeAdd;
+        return this;
     }
-    public void addDimensionScale(double scale) {
+    public EndEntry addDimensionScale(double scale) {
         this.endDimensionScale = scale;
+        return this;
     }
-    public void addDimensionRange(double range) {
+    public EndEntry addDimensionRange(double range) {
         this.endDimensionRange = range;
+        return this;
     }
     // build rotation
-    public void addFixedRotate(double degree) {
+    public EndEntry addFixedRotate(double degree) {
         this.endRotationType = EndRotationType.FIXED;
         this.endRotateDegree = degree;
+        return this;
     }
-    public void addPreviousRotate(int prevZoneId, double progress) {
+    public EndEntry addPreviousRotate(int prevZoneId, double progress) {
         this.endRotationType = EndRotationType.PREVIOUS;
         this.endRotateZoneId = prevZoneId;
         this.endRotateProgress = GameZone.allowedProgress(progress);
+        return this;
     }
-    public void addRelativeRotate(double degree) {
+    public EndEntry addRelativeRotate(double degree) {
         this.endRotationType = EndRotationType.RELATIVE;
         this.endRotateDegree = degree;
+        return this;
     }
-    public void addRotateScale(double scale) {
+    public EndEntry addRotateScale(double scale) {
         this.endRotateScale = scale;
+        return this;
     }
-    public void addRotateRange(double range) {
+    public EndEntry addRotateRange(double range) {
         this.endRotateRange = range;
+        return this;
     }
-    public void addLockRotate(int playerId) {
+    public EndEntry addLockRotate(int playerId) {
         this.endRotationType = EndRotationType.LOCK_PLAYER;
         this.rotatePlayerId = playerId;
+        return this;
     }
 
     @Nullable
