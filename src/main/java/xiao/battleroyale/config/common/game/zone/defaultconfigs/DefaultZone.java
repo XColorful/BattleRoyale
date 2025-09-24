@@ -335,7 +335,7 @@ public class DefaultZone {
         MessageFuncEntry messageFuncEntry = new MessageFuncEntry(0, 40, 25, 10,
                 true, 10, 80, 20,
                 true, Component.literal("§6Game Start").withStyle(ChatFormatting.BOLD), Component.literal(""),
-                true, Component.literal("Zone 0").withStyle(ChatFormatting.BLUE));
+                true, Component.literal("Good luck").withStyle(ChatFormatting.BLUE));
 
         StartEntry startEntry = new StartEntry();
         startEntry.addPreviousCenter(0, 0);
