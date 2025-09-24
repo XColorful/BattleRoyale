@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.message.game.GameTag;
 import xiao.battleroyale.client.game.ClientGameDataManager;
-import xiao.battleroyale.common.message.game.GameMessageManager;
+import xiao.battleroyale.common.message.game.GameInfoMessageManager;
 import xiao.battleroyale.common.message.game.SpectateMessageManager;
 import xiao.battleroyale.util.ClassUtils;
 import xiao.battleroyale.util.ColorUtils;
@@ -35,11 +35,11 @@ public class ClientGameData extends AbstractClientExpireData {
     public void updateFromNbt(@NotNull CompoundTag messageNbt) {
         this.lastMessageNbt = messageNbt;
 
-        this.standingPlayerCount = messageNbt.getCompound(GameMessageManager.ALIVE_KEY).getInt(GameTag.ALIVE);
+        this.standingPlayerCount = messageNbt.getCompound(GameInfoMessageManager.ALIVE_KEY).getInt(GameTag.ALIVE);
         this.inGame = standingPlayerCount > 0;
         if (this.inGame) {
-            if (messageNbt.contains(GameMessageManager.GAMEID_KEY)) {
-                UUID newGameId = messageNbt.getUUID(GameMessageManager.GAMEID_KEY);
+            if (messageNbt.contains(GameInfoMessageManager.GAMEID_KEY)) {
+                UUID newGameId = messageNbt.getUUID(GameInfoMessageManager.GAMEID_KEY);
                 if (!newGameId.equals(this.gameId)) { // 检查是否是下一局游戏，防止瞬间开游戏的一些极端情况
                     this.spectateData.clear();
                 }

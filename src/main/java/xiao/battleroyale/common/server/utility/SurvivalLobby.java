@@ -16,6 +16,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.event.server.SurvivalLobbyEventHandler;
 import xiao.battleroyale.util.ChatUtils;
@@ -65,7 +67,7 @@ public class SurvivalLobby {
             ChatUtils.sendTranslatableMessageToPlayer(player, "battleroyale.message.no_lobby");
             return;
         }
-        if (!allowGamePlayerTeleport && GameManager.get().hasStandingGamePlayer(player.getUUID())) {
+        if (!allowGamePlayerTeleport && GameTeamManager.hasStandingGamePlayer(player.getUUID())) {
             ChatUtils.sendTranslatableMessageToPlayer(player, "battleroyale.message.not_allow_standing_gameplayer_teleport");
             return;
         }
@@ -133,12 +135,12 @@ public class SurvivalLobby {
             healPlayer(player);
         }
         player.setGameMode(GameType.SURVIVAL);
-        GameManager.get().safeTeleport(player, serverLevel, lobbyPos, 0, 0);
+        GameUtilsFunction.safeTeleport(player, serverLevel, lobbyPos, 0, 0);
         BattleRoyale.LOGGER.info("Teleport player {} (UUID:{}) to lobby ({}, {}, {})", player.getName().getString(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
     }
 
     public boolean canMuteki(ServerPlayer player) {
-        if (!isLobbyCreated() || GameManager.get().hasStandingGamePlayer(player.getUUID())) {
+        if (!isLobbyCreated() || GameTeamManager.hasStandingGamePlayer(player.getUUID())) {
             return false;
         }
 

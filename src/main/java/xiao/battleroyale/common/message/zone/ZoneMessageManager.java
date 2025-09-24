@@ -5,9 +5,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.IGameSubManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameZoneManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.AbstractMessageManager;
@@ -17,7 +18,7 @@ import xiao.battleroyale.util.SendUtils;
 import java.util.*;
 import java.util.function.Function;
 
-public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> implements IGameManager {
+public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> implements IGameSubManager {
 
     private static class ZoneMessageManagerHolder {
         private static final ZoneMessageManager INSTANCE = new ZoneMessageManager();
@@ -43,7 +44,7 @@ public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> impl
 
     @Override
     public void notifyNbtChange(int nbtId) {
-        IGameZone gameZone = ZoneManager.get().getZoneById(nbtId);
+        IGameZone gameZone = ZoneManager.get().getGameZone(nbtId);
         if (gameZone == null) {
             addNbtMessage(nbtId, null);
         } else {
@@ -83,7 +84,7 @@ public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> impl
     public void onGameTick(int gameTime) {}
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        List<IGameZone> gameZones = GameManager.get().getCurrentGameZones();
+        List<IGameZone> gameZones = GameZoneManager.getCurrentGameZones();
         for (IGameZone gameZone : gameZones) {
             ZoneMessage zoneMessage = getOrCreateMessage(gameZone.getZoneId());
             zoneMessage.nbt = new CompoundTag();

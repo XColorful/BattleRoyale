@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.game.zone.zonefunc;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.game.zone.func.IZoneFuncEntry;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
+import xiao.battleroyale.config.common.game.zone.zonefunc.event.EventFuncEntry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,9 @@ public enum ZoneFuncType {
     BOOST(ZoneFuncTag.BOOST, BoostFuncEntry::fromJson),
     NO_FUNC(ZoneFuncTag.NO_FUNC, NoFuncEntry::fromJson),
     PARTICLE(ZoneFuncTag.PARTICLE, ParticleFuncEntry::fromJson),
-    EFFECT(ZoneFuncTag.EFFECT, EffectFuncEntry::fromJson);
+    EFFECT(ZoneFuncTag.EFFECT, EffectFuncEntry::fromJson),
+    MESSAGE(ZoneFuncTag.MESSAGE, MessageFuncEntry::fromJson),
+    EVENT(ZoneFuncTag.EVENT, EventFuncEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends IZoneFuncEntry> deserializer;

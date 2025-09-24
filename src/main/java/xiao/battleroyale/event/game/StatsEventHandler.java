@@ -8,6 +8,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
@@ -44,7 +45,7 @@ public class StatsEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onRecordDamage(LivingDamageEvent event) {
         LivingEntity damagedEntity = event.getEntity();
-        GamePlayer damagedGamePlayer = GameManager.get().getGamePlayerByUUID(damagedEntity.getUUID());
+        GamePlayer damagedGamePlayer = GameTeamManager.getGamePlayerByUUID(damagedEntity.getUUID());
         if (damagedGamePlayer == null) {
             return;
         }
@@ -64,12 +65,12 @@ public class StatsEventHandler {
             return;
         }
         GameManager gameManager = GameManager.get();
-        GamePlayer gamePlayer = gameManager.getGamePlayerByUUID(livingEntity.getUUID());
+        GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(livingEntity.getUUID());
         if (gamePlayer == null) {
             return;
         }
 
-        if (!gameManager.hasStandingGamePlayer(livingEntity.getUUID())) {
+        if (!GameTeamManager.hasStandingGamePlayer(livingEntity.getUUID())) {
             BattleRoyale.LOGGER.debug("StatsEventHandler: GamePlayer {} is not in standing player list, canceled onLivingDeath", gamePlayer.getPlayerName());
             return;
         }

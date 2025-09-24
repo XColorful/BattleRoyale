@@ -1,16 +1,11 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
-import net.minecraft.server.level.ServerLevel;
-import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
-import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public class ParticleFunc extends AbstractSimpleFunc {
 
@@ -30,34 +25,34 @@ public class ParticleFunc extends AbstractSimpleFunc {
     }
 
     @Override
-    public void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
-                     int gameTime, double progress, ISpatialZone spatialZone) {
+    public void funcTick(ZoneTickContext zoneTickContext) {
         if (particleIdList.isEmpty()) {
             return;
         }
+
         int size = particleIdList.size();
         if (skipRandom) { // 只生成一个唯一粒子
-            for (GamePlayer gamePlayer : gamePlayerList) {
-                if (spatialZone.isWithinZone(gamePlayer.getLastPos(), progress)) {
-                    EffectManager.get().addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, particleIdList.get(0), cooldown);
+            for (GamePlayer gamePlayer : zoneTickContext.gamePlayers) {
+                if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
+                    EffectManager.get().addParticle(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID(), channel, particleIdList.get(0), cooldown);
                 }
             }
         } else { // 多个粒子，最后一个粒子添加通道冷却
-            for (GamePlayer gamePlayer : gamePlayerList) {
-                if (spatialZone.isWithinZone(gamePlayer.getLastPos(), progress)) {
+            for (GamePlayer gamePlayer : zoneTickContext.gamePlayers) {
+                if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
                     // 第一个粒子检测是否在冷却
-                    int selected = (int) (size * random.get());
-                    if (!EffectManager.get().addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, 0)) {
+                    int selected = (int) (size * zoneTickContext.random.get());
+                    if (!EffectManager.get().addParticle(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID(), channel, selected, 0)) {
                         continue;
                     }
 
                     for (int i = 1; i < this.select - 1; i++) {
-                        selected = (int) (size * random.get());
-                        EffectManager.get().addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, 0);
+                        selected = (int) (size * zoneTickContext.random.get());
+                        EffectManager.get().addParticle(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID(), channel, selected, 0);
                     }
                     // 最后一个粒子添加冷却
-                    selected = (int) (size * random.get());
-                    EffectManager.get().addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, cooldown);
+                    selected = (int) (size * zoneTickContext.random.get());
+                    EffectManager.get().addParticle(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID(), channel, selected, cooldown);
                 }
             }
         }

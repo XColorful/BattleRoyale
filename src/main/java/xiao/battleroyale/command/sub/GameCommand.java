@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameNotification;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.TeamManager;
 
@@ -197,10 +198,10 @@ public class GameCommand {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) { // 向调用的玩家发送消息
             ServerPlayer player = context.getSource().getPlayerOrException();
-            GameManager.get().sendSelectedConfigsInfo(player);
+            GameNotification.sendSelectedConfigsInfo(player);
         } else { // 向全体玩家发送消息
             ServerLevel serverLevel = source.getLevel();
-            GameManager.get().sendSelectedConfigsInfo(serverLevel);
+            GameNotification.sendSelectedConfigsInfo(serverLevel);
         }
 
         return Command.SINGLE_SUCCESS;

@@ -1,6 +1,8 @@
 package xiao.battleroyale.util;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 
 import javax.annotation.Nullable;
@@ -17,7 +19,7 @@ public class StringUtils {
      * @param inputString 要解析的字符串。
      * @return 对应的 Vec3 对象。如果格式不匹配或解析失败，则返回 null。
      */
-    public static Vec3 parseVectorString(@Nullable String inputString) {
+    public @Nullable static Vec3 parseVectorString(@Nullable String inputString) {
         if (inputString == null || inputString.trim().isEmpty()) {
             return null;
         }
@@ -49,7 +51,7 @@ public class StringUtils {
      * @param vec3 要转换的 Vec3 对象。
      * @return 对应的字符串。
      */
-    public static String vectorToString(Vec3 vec3) {
+    public @NotNull static String vectorToString(@Nullable Vec3 vec3) {
         if (vec3 == null) {
             return "";
         }
@@ -69,5 +71,31 @@ public class StringUtils {
      */
     public static String vectorTo2fString(Vec3 vec3) {
         return String.format("(%.2f, %.2f, %.2f)", vec3.x, vec3.y, vec3.z);
+    }
+
+    /**
+     * 解析一个表示文本组件的 JSON 字符串，并返回一个 Component 对象。
+     * 字符串格式必须符合 Minecraft 的 Component JSON 规范。
+     * @param inputString 要解析的字符串。
+     * @return 对应的 Component 对象。如果输入为 null 或解析失败，则返回 null。
+     */
+    public @Nullable static Component parseComponentString(@Nullable String inputString) {
+        return inputString != null ? Component.Serializer.fromJson(inputString) : null;
+    }
+
+    /**
+     * 将一个 Component 对象转换为稳定的 JSON 字符串格式。
+     * “稳定”意味着 JSON 对象中的键（key）将始终按字母顺序排序，
+     * 这确保了对于相同的 Component 对象，生成的 JSON 字符串总是一致的。
+     * 这对于哈希（hashing）和版本控制（如 Git）非常有用。
+     *
+     * @param component 要转换的 Component 对象。
+     * @return 对应的稳定 JSON 字符串。如果输入为 null，则返回空字符串。
+     */
+    public @NotNull static String componentToString(@Nullable Component component) {
+        if (component == null) {
+            return "";
+        }
+        return Component.Serializer.toStableJson(component);
     }
 }

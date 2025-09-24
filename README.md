@@ -1,4 +1,4 @@
-# BattleRoyale
+# 自定义大逃杀
 [![1:1艾伦格](pic/Erangle%20Pochinki%2016：9.png)](https://space.bilibili.com/300364311)
 
 本模组旨在打造拥有**高度自定义且极致兼容**的**区域、物资刷新和游戏规则**，与多种玩法混合打造数量丰富的游戏模式，包括但不限于大逃杀玩法。同时本模组也可用作 PUBGMC mod 的高版本增强版。
@@ -37,4 +37,4 @@
 - JourneyMap：在地图上绘制游戏区域
 - PlayerRevive：对未被淘汰的游戏玩家设置倒地次数，添加倒地持续扣血
 - 可开启PUBGMC指令兼容，使用PUBGMC指令的命令方块无需修改
-- TaCZ：提供开箱即用的TaCZ默认枪包物资刷新配置示例
+- TaCZ：提供开箱即用的物资刷新配置示例，可在PlayerRevive倒地状态下禁用枪械

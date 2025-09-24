@@ -1,14 +1,7 @@
 package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.GameConfigManager;
-import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
-import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
-import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
-import xiao.battleroyale.config.common.game.zone.zoneshape.SquareEntry;
-import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 
 import java.nio.file.Paths;
 
@@ -103,7 +96,7 @@ public class Pubg8000x8000Competitive {
 
 
     private static void add8000x8000Zone(JsonArray zoneConfigJson) {
-        zoneConfigJson.add(generateBorder(8000 / 2F, GAME_TIME));
+        generateBorder(zoneConfigJson, 8000 / 2F, GAME_TIME);
     }
 
     private static void addPhase1(JsonArray zoneConfigJson) {

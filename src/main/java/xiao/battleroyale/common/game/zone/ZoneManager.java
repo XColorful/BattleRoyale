@@ -1,11 +1,19 @@
 package xiao.battleroyale.common.game.zone;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.common.MinecraftForge;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.game.tick.ZoneTickEvent;
+import xiao.battleroyale.api.event.game.tick.ZoneTickFinishEvent;
+import xiao.battleroyale.api.game.zone.IGameZoneReadApi;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
+import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameMessageManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.message.zone.ZoneMessageManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -15,7 +23,7 @@ import xiao.battleroyale.util.ChatUtils;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class ZoneManager extends AbstractGameManager {
+public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi {
 
     private static class ZoneManagerHolder {
         private static final ZoneManager INSTANCE = new ZoneManager();
@@ -31,7 +39,7 @@ public class ZoneManager extends AbstractGameManager {
         ;
     }
 
-    private final ZoneData zoneData = new ZoneData();
+    protected final ZoneData zoneData = new ZoneData();
 
     private boolean stackZoneConfig = true; // TODO 增加配置
 
@@ -101,7 +109,7 @@ public class ZoneManager extends AbstractGameManager {
         for (IGameZone gameZone : this.zoneData.getCurrentTickZones(GameManager.get().getGameTime())) {
             zoneIdList.add(gameZone.getZoneId());
         }
-        GameManager.get().notifyZoneEnd(zoneIdList);
+        GameMessageManager.notifyZoneEnd(zoneIdList);
 
         if (isTicking) {
             shouldStopGame = true;
@@ -133,40 +141,26 @@ public class ZoneManager extends AbstractGameManager {
         this.ready = false;
     }
 
-    private boolean hasEnoughZoneToStart() {
-        return zoneData.hasEnoughZoneToStart();
-    }
-
-    private void randomizeZoneTickOffset() {
-        Supplier<Float> random = GameManager.get().getRandom();
-        for (IGameZone gameZone : this.zoneData.getGameZonesList()) {
-            if (gameZone.getTickOffset() < 0) {
-                gameZone.setTickOffset((int) (random.get() * gameZone.getTickFrequency()));
-            }
-        }
-    }
-
-    @Nullable
-    public IGameZone getZoneById(int zoneId) {
-        return this.zoneData.getGameZoneById(zoneId);
-    }
-
     /**
      * ZoneManager 暂时不做空间分区优化
      */
     @Override
     public void onGameTick(int gameTime) {
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        GameManager gameManager = GameManager.get();
+        if (MinecraftForge.EVENT_BUS.post(new ZoneTickEvent(gameManager, gameTime))) {
+            return;
+        }
+
+        ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null) {
             return;
         }
-        Supplier<Float> random = GameManager.get().getRandom();
-        List<GamePlayer> standingGamePlayers = GameManager.get().getStandingGamePlayers();
+
+        ZoneContext zoneContext = new ZoneContext(serverLevel, GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), gameManager.getRandom(), gameTime);
+        this.isTicking = true;
 
         Set<Integer> finishedZoneId = new HashSet<>();
-        Map<Integer, IGameZone> gameZones = this.zoneData.getGameZones(); // 缓存引用
         // 获取当前时间应Tick的Zone列表
-        this.isTicking = true;
         for (IGameZone gameZone : this.zoneData.getCurrentTickZones(gameTime)) { // 高效遍历，当区域把玩家tick死了导致stopGame会有并发问题
             if (gameZone.isFinished()) { // 防御已经结束但未清理的Zone
                 finishedZoneId.add(gameZone.getZoneId());
@@ -174,7 +168,7 @@ public class ZoneManager extends AbstractGameManager {
             }
 
             if (!gameZone.isCreated()) { // 没创建就创建，等价于额外维护一个isPresent
-                gameZone.createZone(serverLevel, standingGamePlayers, gameZones, random);
+                gameZone.createZone(zoneContext);
                 if (!gameZone.isCreated()) { // 创建失败，内部自动维护finished，这里还是用isCreated防御一下
                     finishedZoneId.add(gameZone.getZoneId());
                     BattleRoyale.LOGGER.warn("Failed to create zone (id: {}, name: {}), skipped", gameZone.getZoneId(), gameZone.getZoneName());
@@ -182,13 +176,14 @@ public class ZoneManager extends AbstractGameManager {
                 }
             }
 
-            gameZone.tick(serverLevel, standingGamePlayers, gameZones, random, gameTime);
+            gameZone.gameTick(zoneContext);
 
             if (gameZone.isFinished()) { // 在tick过程中遇到最后一tick并执行后，标记为finished
                 finishedZoneId.add(gameZone.getZoneId());
             }
         }
         this.isTicking = false;
+        MinecraftForge.EVENT_BUS.post(new ZoneTickFinishEvent(gameManager, gameTime));
 
         if (shouldStopGame) { // 在移除区域前执行，防止区域结束的tick没有发送消息
             clear(serverLevel);
@@ -199,11 +194,65 @@ public class ZoneManager extends AbstractGameManager {
         this.zoneData.finishZones(finishedZoneId);
     }
 
-    public List<IGameZone> getGameZones() {
-        return this.zoneData.getGameZonesList();
+
+    public static class ZoneContext {
+        public @NotNull final ServerLevel serverLevel;
+        public final List<GamePlayer> gamePlayers;
+        public final Map<Integer, IGameZone> gameZones;
+        public final Supplier<Float> random;
+        public final int gameTime;
+        /**
+         * tick当前圈的功能
+         * @param serverLevel 当前世界
+         * @param gamePlayers 当前游戏玩家列表
+         * @param gameZones 当前游戏所有圈实例，但通常圈自身逻辑与其他圈无关
+         * @param random 随机数生产者
+         * @param gameTime 游戏进行时间
+         */
+        public ZoneContext(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
+            this.serverLevel = serverLevel;
+            this.gamePlayers = gamePlayers;
+            this.gameZones = gameZones;
+            this.random = random;
+            this.gameTime = gameTime;
+        }
+    }
+    public static class ZoneTickContext extends ZoneContext {
+        public final double progress;
+        public final ISpatialZone spatialZone;
+        /**
+         * @param progress 圈进度
+         * @param spatialZone 提供圈的状态，计算与玩家相关的逻辑
+         */
+        public ZoneTickContext(ZoneContext zoneContext, double progress, ISpatialZone spatialZone) {
+            super(zoneContext.serverLevel, zoneContext.gamePlayers, zoneContext.gameZones, zoneContext.random, zoneContext.gameTime);
+            this.progress = progress;
+            this.spatialZone = spatialZone;
+        }
     }
 
-    public List<IGameZone> getCurrentTickGameZones(int gameTime) {
+    // --------IGameZoneReadApi--------
+
+    @Override public List<IGameZone> getGameZones() {
+        return this.zoneData.getGameZonesList();
+    }
+    @Override public List<IGameZone> getCurrentGameZones() {
+        return getCurrentGameZones(GameManager.get().getGameTime());
+    }
+    @Override public List<IGameZone> getCurrentGameZones(int gameTime) {
         return this.zoneData.getCurrentTickZones(gameTime);
+    }
+    @Override public @Nullable IGameZone getGameZone(int zoneId) {
+        return this.zoneData.getGameZoneById(zoneId);
+    }
+
+    // --------ZoneUtils--------
+
+    public boolean hasEnoughZoneToStart() {
+        return ZoneUtils.hasEnoughZoneToStart();
+    }
+
+    public void randomizeZoneTickOffset() {
+        ZoneUtils.randomizeZoneTickOffset(this);
     }
 }

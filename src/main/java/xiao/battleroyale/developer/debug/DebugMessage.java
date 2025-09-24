@@ -2,15 +2,13 @@ package xiao.battleroyale.developer.debug;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.nbt.CompoundTag;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.message.zone.GameZoneTag;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientGameData;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
-import xiao.battleroyale.common.message.game.GameMessageManager;
-import xiao.battleroyale.common.message.game.SpectateMessage;
+import xiao.battleroyale.common.message.game.GameInfoMessageManager;
 import xiao.battleroyale.common.message.game.SpectateMessageManager;
 import xiao.battleroyale.common.message.team.TeamMessageManager;
 import xiao.battleroyale.common.message.zone.ZoneMessage;
@@ -82,11 +80,11 @@ public class DebugMessage {
     }
     public static final String GET_GAME_MESSAGES = "getGameMessages";
     public void getGameMessages(CommandSourceStack source, int min, int max) {
-        List<Integer> idList = GameMessageManager.get().getMessagesIdList().stream()
+        List<Integer> idList = GameInfoMessageManager.get().getMessagesIdList().stream()
                 .filter(id -> id >= min && id <= max)
                 .sorted()
                 .toList();
-        DebugManager.sendDebugMessage(source, GET_GAME_MESSAGES, MessageText.buildGameMessagesDetail(GameMessageManager.get(), idList));
+        DebugManager.sendDebugMessage(source, GET_GAME_MESSAGES, MessageText.buildGameMessagesDetail(GameInfoMessageManager.get(), idList));
     }
     public void getGameMessagesLocal(CommandSourceStack source, int min, int max) {
         CompoundTag messageNbt = ClientGameDataManager.get().getGameData().lastMessageNbt;
@@ -184,7 +182,7 @@ public class DebugMessage {
     }
     public static final String GET_GAME_MESSAGE = "getGameMessage";
     public void getGameMessage(CommandSourceStack source, int nbtId) {
-        DebugManager.sendDebugMessage(source, GET_GAME_MESSAGE, MessageText.buildGameMessageDetail(GameMessageManager.get().getMessage(nbtId), nbtId));
+        DebugManager.sendDebugMessage(source, GET_GAME_MESSAGE, MessageText.buildGameMessageDetail(GameInfoMessageManager.get().getMessage(nbtId), nbtId));
     }
     public void getGameMessageLocal(CommandSourceStack source, int nbtId) {
         ClientGameData gameData = ClientGameDataManager.get().getGameData();

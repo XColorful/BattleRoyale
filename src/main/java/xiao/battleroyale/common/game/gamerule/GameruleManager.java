@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameStatsManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.gamerule.storage.McRuleStorage;
 import xiao.battleroyale.common.game.gamerule.storage.PlayerModeStorage;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -79,9 +81,9 @@ public class GameruleManager extends AbstractGameManager {
             return;
         }
 
-        List<GamePlayer> gamePlayerList = GameManager.get().getGamePlayers();
+        List<GamePlayer> gamePlayerList = GameTeamManager.getGamePlayers();
         this.gameruleBackup.apply(serverLevel, gamePlayerList);
-        GameManager.get().recordGamerule(this.gameruleBackup);
+        GameStatsManager.recordGamerule(this.gameruleBackup);
 
         this.ready = true;
         this.configPrepared = false;
@@ -94,11 +96,11 @@ public class GameruleManager extends AbstractGameManager {
             return false;
         }
 
-        List<GamePlayer> gamePlayerList = GameManager.get().getStandingGamePlayers();
+        List<GamePlayer> gamePlayerList = GameTeamManager.getStandingGamePlayers();
         this.gamemodeBackup.clear();
         this.gamemodeBackup.store(mcEntry, serverLevel, gamePlayerList);
         this.gamemodeBackup.apply(serverLevel, gamePlayerList);
-        GameManager.get().recordGamerule(this.gamemodeBackup);
+        GameStatsManager.recordGamerule(this.gamemodeBackup);
         if (mcEntry.clearInventory) {
             GameUtils.clearGamePlayersInventory(serverLevel, gamePlayerList);
         }
@@ -122,7 +124,7 @@ public class GameruleManager extends AbstractGameManager {
             if (serverLevel == null) {
                 return;
             }
-            for (GamePlayer gamePlayer : GameManager.get().getStandingGamePlayers()) {
+            for (GamePlayer gamePlayer : GameTeamManager.getStandingGamePlayers()) {
                 if (!gamePlayer.isActiveEntity()) {
                     continue;
                 }

@@ -3,9 +3,13 @@ package xiao.battleroyale.common.game.loot;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.game.tick.GameLootEvent;
+import xiao.battleroyale.api.event.game.tick.GameLootFinishEvent;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.LootGenerator.LootContext;
@@ -159,6 +163,10 @@ public class GameLootManager extends AbstractGameManager {
      * @param gameTime 当前游戏tick数
      */
     public void onGameTick(int gameTime) {
+        if (MinecraftForge.EVENT_BUS.post(new GameLootEvent(GameManager.get(),gameTime))) {
+            return;
+        }
+
         if (bfsExecutor == null || bfsExecutor.isShutdown()) {
             BattleRoyale.LOGGER.warn("GameLootManager: thread pool is null or shutdown, skipped onGameTick at gameTime {}", gameTime);
             return;
@@ -197,6 +205,7 @@ public class GameLootManager extends AbstractGameManager {
             cachedPlayerCenterChunks.removeOldest(chunksToRemove);
             BattleRoyale.LOGGER.debug("Cleaned {} cached center chunks. Remaining: {}", chunksToRemove, cachedPlayerCenterChunks.size());
         }
+        MinecraftForge.EVENT_BUS.post(new GameLootFinishEvent(GameManager.get(), gameTime));
     }
 
     /**
@@ -238,7 +247,7 @@ public class GameLootManager extends AbstractGameManager {
         Queue<ChunkPos> newChunkQueue = new ArrayDeque<>();
         Set<ChunkPos> visitedInBfs = new HashSet<>();
 
-        List<GamePlayer> gamePlayers = GameManager.get().getStandingGamePlayers();
+        List<GamePlayer> gamePlayers = GameTeamManager.getStandingGamePlayers();
 
         // 如果玩家中心区块已在缓存中，则跳过对该玩家的BFS
         List<GamePlayer> playersToBFS = new ArrayList<>();

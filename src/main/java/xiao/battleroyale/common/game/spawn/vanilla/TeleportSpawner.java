@@ -10,6 +10,8 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameStatsManager;
+import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.common.game.spawn.AbstractSimpleSpawner;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
@@ -136,16 +138,16 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
     public void addSpawnDetailProperty() {
         Map<String, String> stringWriter = new HashMap<>();
         stringWriter.put(SpawnDetailTag.TYPE_NAME, detailType.getName());
-        GameManager.get().recordSpawnString(SPAWNER_KEY_TAG, stringWriter);
+        GameStatsManager.recordSpawnString(SPAWNER_KEY_TAG, stringWriter);
 
         Map<String, Boolean> boolWriter = new HashMap<>();
         boolWriter.put(SpawnDetailTag.GROUND_TEAM_TOGETHER, teamTogether);
         boolWriter.put(SpawnDetailTag.GROUND_FIND_GROUND, findGround);
-        GameManager.get().recordSpawnBool(SPAWNER_KEY_TAG, boolWriter);
+        GameStatsManager.recordSpawnBool(SPAWNER_KEY_TAG, boolWriter);
 
         Map<String, Double> doubleWriter = new HashMap<>();
         doubleWriter.put(SpawnDetailTag.GROUND_RANDOM_RANGE, randomRange);
-        GameManager.get().recordSpawnDouble(SPAWNER_KEY_TAG, doubleWriter);
+        GameStatsManager.recordSpawnDouble(SPAWNER_KEY_TAG, doubleWriter);
     }
 
     /**
@@ -165,7 +167,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
 
         // 由于所有点位在init()预计算，因此全部可视作 Fixed/提前确定 类型，全都需要应用偏移
         Vec3 globalOffest = GameManager.get().getGlobalCenterOffset();
-        IGameZone gameZone = ZoneManager.get().getZoneById(preZoneCenterId);
+        IGameZone gameZone = ZoneManager.get().getGameZone(preZoneCenterId);
         if (gameZone != null && gameZone.isDetermined()) {
             globalOffest = gameZone.getStartCenterPos();
         }
@@ -220,7 +222,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
                         spawnPointIndex++;
                         indexAdded = true;
                     }
-                    GameManager.get().safeTeleport(player, serverLevel, targetSpawnPos, 0, 0);
+                    GameUtilsFunction.safeTeleport(player, serverLevel, targetSpawnPos, 0, 0);
                     addSpawnStats(gamePlayer, targetSpawnPos);
                     gamePlayer.setLastPos(targetSpawnPos); // 立即更新，防止下一tick找不到又躲了逻辑位置
                     teleportedPlayerId.add(gamePlayer.getGameSingleId());
@@ -254,7 +256,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
         Map<String, String> stringWriter = new HashMap<>();
         stringWriter.put(gamePlayer.isBot() ? "bot" : "player", gamePlayer.getPlayerName());
         stringWriter.put("spawnPos", StringUtils.vectorToString(teleportPos));
-        GameManager.get().recordSpawnString(Integer.toString(gamePlayer.getGameSingleId()), stringWriter);
+        GameStatsManager.recordSpawnString(Integer.toString(gamePlayer.getGameSingleId()), stringWriter);
     }
 
     @Nullable

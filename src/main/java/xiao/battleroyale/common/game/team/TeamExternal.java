@@ -7,8 +7,13 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.game.team.InvitePlayerCompleteEvent;
+import xiao.battleroyale.api.event.game.team.InvitePlayerEvent;
+import xiao.battleroyale.api.event.game.team.RequestPlayerCompleteEvent;
+import xiao.battleroyale.api.event.game.team.RequestPlayerEvent;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.util.ChatUtils;
@@ -102,6 +107,11 @@ public class TeamExternal {
             return;
         }
 
+        if (MinecraftForge.EVENT_BUS.post(new InvitePlayerEvent(GameManager.get(), senderGamePlayer, sender, targetPlayer))) {
+            BattleRoyale.LOGGER.debug("InvitePlayerEvent canceled, skipped invitePlayer ({} to {})", senderGamePlayer.getNameWithId(), targetPlayer.getName().getString());
+            return;
+        }
+
         int teamId = senderGamePlayer.getGameTeamId();
         long expiryTime = System.currentTimeMillis() + teamManager.teamConfig.teamMsgExpireTimeMillis;
         String targetName = targetPlayer.getName().getString();
@@ -153,6 +163,11 @@ public class TeamExternal {
             return;
         }
 
+        if (MinecraftForge.EVENT_BUS.post(new InvitePlayerCompleteEvent(GameManager.get(), senderPlayer, player, true))) {
+            BattleRoyale.LOGGER.debug("InvitePlayerCompleteEvent canceled, skipped acceptInvite ({} to {})", senderPlayer.getName().getString(), player.getName().getString());
+            return;
+        }
+
         GameTeam targetTeam = teamManager.teamData.getGameTeamById(invite.teamId());
         String playerName = player.getName().getString();
         if (targetTeam == null) { // 目标队伍不存在
@@ -193,6 +208,11 @@ public class TeamExternal {
             return;
         }
 
+        if (MinecraftForge.EVENT_BUS.post(new InvitePlayerCompleteEvent(GameManager.get(), senderPlayer, player, false))) {
+            BattleRoyale.LOGGER.debug("InvitePlayerCompleteEvent canceled, skipped declineInvite ({} to {})", senderPlayer.getName().getString(), player.getName().getString());
+            return;
+        }
+
         teamManager.pendingInvites.remove(senderUUID);
         String playerName = player.getName().getString();
         ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.invite_declined", invite.teamId()).withStyle(ChatFormatting.YELLOW));
@@ -223,6 +243,11 @@ public class TeamExternal {
             return;
         } else if (!targetGamePlayer.isLeader()) { // 对方不是队长
             ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.player_not_actual_leader", targetPlayer.getName()).withStyle(ChatFormatting.RED));
+            return;
+        }
+
+        if (MinecraftForge.EVENT_BUS.post(new RequestPlayerEvent(GameManager.get(), sender, targetGamePlayer, targetPlayer))) {
+            BattleRoyale.LOGGER.debug("RequestPlayerEvent canceled, skipped requestPlayer ({} to {})", sender.getName().getString(), targetGamePlayer.getNameWithId());
             return;
         }
 
@@ -296,6 +321,11 @@ public class TeamExternal {
             return;
         }
 
+        if (MinecraftForge.EVENT_BUS.post(new RequestPlayerCompleteEvent(GameManager.get(), requesterPlayer, teamLeader, true))) {
+            BattleRoyale.LOGGER.debug("RequestPlayerCompleteEvent canceled, skipped acceptRequest ({} to {})", requesterPlayer, teamLeader);
+            return;
+        }
+
         teamManager.pendingRequests.remove(requesterUUID);
         ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.request_accepted", requesterName).withStyle(ChatFormatting.GREEN));
         ChatUtils.sendComponentMessageToPlayer(requesterPlayer, Component.translatable("battleroyale.message.player_accept_request", teamLeader.getName().getString()).withStyle(ChatFormatting.GREEN));
@@ -334,6 +364,11 @@ public class TeamExternal {
         } else if (request.expireTime() < System.currentTimeMillis()) {
             ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.expired_request").withStyle(ChatFormatting.RED));
             teamManager.pendingRequests.remove(requesterUUID);
+            return;
+        }
+
+        if (MinecraftForge.EVENT_BUS.post(new RequestPlayerCompleteEvent(GameManager.get(), requesterPlayer, teamLeader, false))) {
+            BattleRoyale.LOGGER.debug("RequestPlayerCompleteEvent canceled, skipped declineRequest ({} to {})", requesterPlayer, teamLeader);
             return;
         }
 

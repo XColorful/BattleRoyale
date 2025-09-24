@@ -7,15 +7,14 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.message.team.GameTeamTag;
 import xiao.battleroyale.api.message.zone.GameZoneTag;
 import xiao.battleroyale.client.game.ClientGameDataManager;
-import xiao.battleroyale.client.game.data.ClientGameData;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
-import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.message.AbstractMessageManager;
-import xiao.battleroyale.common.message.game.GameMessage;
-import xiao.battleroyale.common.message.game.GameMessageManager;
+import xiao.battleroyale.common.message.game.GameInfoMessage;
+import xiao.battleroyale.common.message.game.GameInfoMessageManager;
 import xiao.battleroyale.common.message.game.SpectateMessage;
 import xiao.battleroyale.common.message.game.SpectateMessageManager;
 import xiao.battleroyale.common.message.team.TeamMessage;
@@ -43,7 +42,7 @@ public class MessageText {
                 .append(Component.literal(" "))
                 .append(buildTeamMessagesSimple(TeamMessageManager.get()))
                 .append(Component.literal(" "))
-                .append(buildGameMessagesSimple(GameMessageManager.get()))
+                .append(buildGameMessagesSimple(GameInfoMessageManager.get()))
                 .append(Component.literal(" "))
                 .append(buildSpectateMessagesSimple(SpectateMessageManager.get()));
 
@@ -73,8 +72,8 @@ public class MessageText {
     public static MutableComponent buildTeamMessagesSimple(TeamMessageManager teamMessageManager) {
         return buildMessagesCommonSimple(teamMessageManager.messagesSize(), GetMessage.getTeamMessagesCommand(1, 10), "TeamMessages");
     }
-    public static MutableComponent buildGameMessagesSimple(GameMessageManager gameMessageManager) {
-        return buildMessagesCommonSimple(gameMessageManager.messagesSize(), GetMessage.getGameMessagesCommand(-10, 0), "GameMessages");
+    public static MutableComponent buildGameMessagesSimple(GameInfoMessageManager gameInfoMessageManager) {
+        return buildMessagesCommonSimple(gameInfoMessageManager.messagesSize(), GetMessage.getGameMessagesCommand(-10, 0), "GameMessages");
     }
     public static MutableComponent buildSpectateMessagesSimple(SpectateMessageManager spectateMessageManager) {
         return buildMessagesCommonSimple(spectateMessageManager.messagesSize(), GetMessage.getSpectateMessagesCommand(1, 20), "SpectateMessages");
@@ -131,14 +130,14 @@ public class MessageText {
                 .append(Component.literal(" "))
                 .append(buildMessageCommonDetail(teamMessage.nbt, teamMessage.updateTime));
     }
-    public static MutableComponent buildGameMessageDetail(GameMessage gameMessage, int displayId) {
+    public static MutableComponent buildGameMessageDetail(GameInfoMessage gameInfoMessage, int displayId) {
         MutableComponent component = Component.empty();
-        if (gameMessage == null) {
+        if (gameInfoMessage == null) {
             return component;
         }
-        return component.append(buildGameMessageSimple(gameMessage, displayId))
+        return component.append(buildGameMessageSimple(gameInfoMessage, displayId))
                 .append(Component.literal(" "))
-                .append(buildMessageCommonDetail(gameMessage.nbt, gameMessage.updateTime));
+                .append(buildMessageCommonDetail(gameInfoMessage.nbt, gameInfoMessage.updateTime));
     }
     public static MutableComponent buildSpectateMessageDetail(SpectateMessage spectateMessage, int displayId) {
         MutableComponent component = Component.empty();
@@ -244,7 +243,7 @@ public class MessageText {
 
         String messageCommand = GetMessage.getTeamMessageCommand(displayId);
         String gameTeamCommand = GetGame.getGameTeamCommand(displayId);
-        GameTeam gameTeam = GameManager.get().getGameTeamById(displayId);
+        GameTeam gameTeam = GameTeamManager.getGameTeamById(displayId);
         String gameTeamColor = gameTeam != null ? gameTeam.getGameTeamColor() : "";
         TextColor gameTeamTextColor = TextColor.fromRgb(ColorUtils.parseColorToInt(gameTeamColor));
 
@@ -257,8 +256,8 @@ public class MessageText {
     /**
      * [id]
      */
-    public static MutableComponent buildGameMessageSimple(GameMessage gameMessage, int displayId) {
-        if (gameMessage == null) {
+    public static MutableComponent buildGameMessageSimple(GameInfoMessage gameInfoMessage, int displayId) {
+        if (gameInfoMessage == null) {
             return Component.empty();
         }
 
@@ -381,13 +380,13 @@ public class MessageText {
      * config progress [id] [id] ...
      * 点击任意ID查看具体消息
      */
-    public static MutableComponent buildGameMessagesDetail(GameMessageManager gameMessageManager, List<Integer> idList) {
+    public static MutableComponent buildGameMessagesDetail(GameInfoMessageManager gameInfoMessageManager, List<Integer> idList) {
         MutableComponent component = Component.empty();
 
-        component.append(buildMessagesCommonDetail(gameMessageManager));
+        component.append(buildMessagesCommonDetail(gameInfoMessageManager));
         for (int id : idList) {
             component.append(Component.literal(" "))
-                    .append(buildGameMessageSimple(gameMessageManager.getMessage(id), id));
+                    .append(buildGameMessageSimple(gameInfoMessageManager.getMessage(id), id));
         }
 
         return component;

@@ -120,4 +120,8 @@ public class GamePlayer {
         BattleRoyale.LOGGER.info("GamePlayer {} playerUUID changed to {}", this.playerUUID, newPlayerUUID);
         this.playerUUID = newPlayerUUID;
     }
+
+    public String getNameWithId() {
+        return String.format("[%s][%s]%s", getGameTeamId(), getGameSingleId(), getPlayerName());
+    }
 }

@@ -12,6 +12,7 @@ import xiao.battleroyale.common.effect.muteki.EntityMutekiTask;
 import xiao.battleroyale.common.effect.muteki.MutekiManager;
 import xiao.battleroyale.common.effect.particle.*;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.developer.debug.text.EffectText;
 
@@ -91,7 +92,7 @@ public class DebugEffect {
      */
     public static final String GET_FIREWORK = "getFirework";
     public void getFirework(CommandSourceStack source, int singleId) {
-        GamePlayer gamePlayer = GameManager.get().getGamePlayerBySingleId(singleId);
+        GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(singleId);
         List<PlayerTrackingFireworkTask> playerTasks = new ArrayList<>();
         if (gamePlayer != null) {
             UUID targetUUID = gamePlayer.getPlayerUUID();
@@ -133,7 +134,7 @@ public class DebugEffect {
      */
     public static final String GET_MUTEKI = "getMuteki";
     public void getMuteki(CommandSourceStack source, int singleId) {
-        GamePlayer gamePlayer = GameManager.get().getGamePlayerBySingleId(singleId);
+        GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(singleId);
         EntityMutekiTask mutekiTask = gamePlayer != null ? MutekiManager.get().getMutekiTasks().get(gamePlayer.getPlayerUUID()) : null;
 
         DebugManager.sendDebugMessage(source, GET_MUTEKI, EffectText.buildMutekiTask(source.getLevel(), mutekiTask));
@@ -161,7 +162,7 @@ public class DebugEffect {
      */
     public static final String GET_BOOST = "getBoost";
     public void getBoost(CommandSourceStack source, int singleId) {
-        GamePlayer gamePlayer = GameManager.get().getGamePlayerBySingleId(singleId);
+        GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(singleId);
         BoostData data = gamePlayer != null ? BoostManager.get().getBoostData(gamePlayer.getPlayerUUID()) : null;
 
         DebugManager.sendDebugMessage(source, GET_BOOST, EffectText.buildBoost(source.getLevel(), data));

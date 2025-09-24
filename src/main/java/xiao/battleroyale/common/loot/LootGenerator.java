@@ -291,10 +291,10 @@ public class LootGenerator {
     }
 
     public static class LootContext {
-        public ServerLevel serverLevel;
-        public ChunkPos chunkPos;
-        public UUID gameId;
-        public Supplier<Float> random;
+        public final ServerLevel serverLevel;
+        public final ChunkPos chunkPos;
+        public final UUID gameId;
+        public final Supplier<Float> random;
         public LootContext(ServerLevel serverLevel, ChunkPos chunkPos, UUID gameId) {
             this.serverLevel = serverLevel;
             this.chunkPos = chunkPos;

@@ -1,19 +1,14 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
-import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.init.ModDamageTypes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public class UnsafeFunc extends AbstractDamageFunc {
 
@@ -22,18 +17,17 @@ public class UnsafeFunc extends AbstractDamageFunc {
     }
 
     @Override
-    public void tick(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayerList, Map<Integer, IGameZone> gameZones, Supplier<Float> random,
-                     int gameTime, double progress, ISpatialZone spatialZone) {
-        List<GamePlayer> playersToProcess = new ArrayList<>(gamePlayerList); // 遍历副本，不然玩家挂了就 ConcurrentModificationException
+    public void funcTick(ZoneManager.ZoneTickContext zoneTickContext) {
+        List<GamePlayer> playersToProcess = new ArrayList<>(zoneTickContext.gamePlayers); // 遍历副本，不然玩家挂了就 ConcurrentModificationException
         for (GamePlayer gamePlayer : playersToProcess) {
-            if (spatialZone.isWithinZone(gamePlayer.getLastPos(), progress)) {
+            if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
                 if (gamePlayer.isActiveEntity()) { // 造成一次毒圈伤害
-                    LivingEntity entity = (LivingEntity) serverLevel.getEntity(gamePlayer.getPlayerUUID());
+                    LivingEntity entity = (LivingEntity) zoneTickContext.serverLevel.getEntity(gamePlayer.getPlayerUUID());
                     if (entity != null && entity.isAlive()) {
-                        entity.hurt(ModDamageTypes.unsafeZone(serverLevel), this.damage);
+                        entity.hurt(ModDamageTypes.safeZone(zoneTickContext.serverLevel), this.damage);
                     }
                 } else {
-                    StatsManager.get().onRecordDamage(gamePlayer, ModDamageTypes.unsafeZone(serverLevel), (float) this.damage);
+                    StatsManager.get().onRecordDamage(gamePlayer, ModDamageTypes.safeZone(zoneTickContext.serverLevel), (float) this.damage);
                 }
             }
         }

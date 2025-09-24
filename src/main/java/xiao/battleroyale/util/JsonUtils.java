@@ -2,6 +2,7 @@ package xiao.battleroyale.util;
 
 import com.google.gson.*;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
@@ -168,6 +169,25 @@ public class JsonUtils {
         }
 
         return UUIDString;
+    }
+
+    @NotNull
+    public static JsonObject writeTagToJson(CompoundTag tag) {
+        JsonObject jsonObject = new JsonObject();
+        if (tag == null) {
+            return jsonObject;
+        }
+
+        String nbtString = NBTUtils.nbtToString(tag);
+        try {
+            JsonElement element = JsonParser.parseString(nbtString);
+            if (element.isJsonObject()) {
+                return element.getAsJsonObject();
+            }
+        } catch (Exception ignored) {
+            ;
+        }
+        return jsonObject;
     }
 
     @NotNull
@@ -438,6 +458,31 @@ public class JsonUtils {
         String vecString = getJsonString(jsonObject, key, null);
         Vec3 vec = StringUtils.parseVectorString(vecString);
         return vec != null ? vec : defaultValue;
+    }
+
+    public static Component getJsonComponent(@Nullable JsonObject jsonObject, String key, Component defaultValue) {
+        String componentString = getJsonString(jsonObject, key, null);
+        Component component = StringUtils.parseComponentString(componentString);
+        return component != null ? component : defaultValue;
+    }
+
+    public static CompoundTag getJsonTag(@Nullable JsonObject jsonObject, String key, CompoundTag defaultValue) {
+        if (jsonObject == null || key == null || key.isEmpty()) {
+            return defaultValue;
+        }
+
+        JsonElement element = jsonObject.get(key);
+
+        if (element == null || element.isJsonNull() || !element.isJsonObject()) {
+            return defaultValue;
+        }
+
+        try {
+            String jsonString = GSON.toJson(element.getAsJsonObject());
+            return NBTUtils.stringToNBT(jsonString);
+        } catch (Exception e) {
+            return defaultValue;
+        }
     }
 
     @NotNull

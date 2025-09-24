@@ -2,10 +2,10 @@ package xiao.battleroyale.data.io;
 
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.IGameSubManager;
 import xiao.battleroyale.data.AbstractDataManager;
 
-public class TempDataManager extends AbstractDataManager implements IGameManager {
+public class TempDataManager extends AbstractDataManager implements IGameSubManager {
 
     public static final String TEMP_DATA_SUB_PATH = "temp";
 

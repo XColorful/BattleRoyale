@@ -2,9 +2,12 @@ package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
+import xiao.battleroyale.config.common.game.zone.zonefunc.MessageFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.NoFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.CircleEntry;
@@ -102,7 +105,7 @@ public class Pubg8000x8000Casual {
     }
 
     // 游戏边界
-    public static JsonObject generateBorder(float halfWidth, int GAME_TIME) {
+    public static void generateBorder(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME) {
         SafeFuncEntry safeFuncEntry = new SafeFuncEntry(0, 0, 200, 0, 666); // 固定边界的检查频率低一些
 
         StartEntry startEntry = new StartEntry();
@@ -119,11 +122,45 @@ public class Pubg8000x8000Casual {
                 -1, 0, GAME_TIME,
                 safeFuncEntry, squareEntry);
 
-        return zoneConfig.toJson();
+        zoneConfigJson.add(zoneConfig.toJson());
+
+        MessageFuncEntry messageFuncEntry = new MessageFuncEntry(0, 0, 25, 10,
+                true, 10, 80, 20,
+                true, Component.literal("§6Game Start").withStyle(ChatFormatting.BOLD), Component.literal(""),
+                false, Component.literal(""));
+        startEntry = new StartEntry()
+                .addPreviousCenter(0, 0)
+                .addPreviousDimension(0, 0)
+                .addDimensionScale(0.99);
+        endEntry = new EndEntry().addPreviousCenter(0, 1)
+                .addPreviousDimension(0, 1)
+                .addDimensionScale(0.99);
+        squareEntry = new SquareEntry(startEntry, endEntry, false);
+        zoneConfig = new ZoneConfig(1, "Game Start Message", "#FFAA00AA",
+                0, 80,
+                messageFuncEntry, squareEntry);
+        zoneConfigJson.add(zoneConfig.toJson());
     }
 
     private static void add8000x8000Zone(JsonArray zoneConfigJson) {
-        zoneConfigJson.add(generateBorder(8000 / 2F, GAME_TIME));
+        generateBorder(zoneConfigJson, 8000 / 2F, GAME_TIME);
+
+        MessageFuncEntry messageFuncEntry = new MessageFuncEntry(0, 0, 25, 10,
+                true, 10, 80, 20,
+                true, Component.literal("§6Game Start").withStyle(ChatFormatting.BOLD), Component.literal(""),
+                false, Component.literal(""));
+        StartEntry startEntry = new StartEntry()
+                .addPreviousCenter(0, 0)
+                .addPreviousDimension(0, 0)
+                .addDimensionScale(0.99);
+        EndEntry endEntry = new EndEntry().addPreviousCenter(0, 1)
+                .addPreviousDimension(0, 1)
+                .addDimensionScale(0.99);
+        SquareEntry squareEntry = new SquareEntry(startEntry, endEntry, false);
+        ZoneConfig zoneConfig = new ZoneConfig(1, "Game Start Message", "#FFAA00AA",
+                0, 80,
+                messageFuncEntry, squareEntry);
+        zoneConfigJson.add(zoneConfig.toJson());
     }
 
     public static void addPhase(JsonArray zoneConfigJson, int phase, double SHRINK_RANGE, double SHRINK_SCALE, int PRE_ZONE_TIME, int ZONE_TIME,
@@ -138,20 +175,16 @@ public class Pubg8000x8000Casual {
         // Forecast zone
         int forecastPhase = phase * 10;
         NoFuncEntry noFuncEntry = new NoFuncEntry(0, 20);
-
-        StartEntry startEntry = new StartEntry();
-        startEntry.addPreviousCenter(forecastPhase - prePhaseMinus * 10, 1);
-        startEntry.addPreviousDimension(forecastPhase - prePhaseMinus * 10, 1);
-        startEntry.addDimensionScale(phase == 1 ? Math.sqrt(2) : 1); // 正方形半边长 * sqrt(2) = 圆半径
-
-        EndEntry endEntry = new EndEntry();
-        endEntry.addPreviousCenter(forecastPhase, 0);
-        endEntry.addCenterRange(SHRINK_RANGE, true, phase > 1 ? true : false); // 扩散，第一个圈用方形随机
-        endEntry.addPreviousDimension(forecastPhase, 0);
-        endEntry.addDimensionScale(SHRINK_SCALE); // 缩小
-
+        StartEntry startEntry = new StartEntry()
+                .addPreviousCenter(forecastPhase - prePhaseMinus * 10, 1)
+                .addPreviousDimension(forecastPhase - prePhaseMinus * 10, 1)
+                .addDimensionScale(phase == 1 ? Math.sqrt(2) : 1); // 边界正方形半边长 * sqrt(2) = 边界正方形外接圆半径
+        EndEntry endEntry = new EndEntry()
+                .addPreviousCenter(forecastPhase, 0)
+                .addCenterRange(SHRINK_RANGE, true, phase > 1) // 扩散，第一个圈用方形随机
+                .addPreviousDimension(forecastPhase, 0)
+                .addDimensionScale(SHRINK_SCALE); // 缩小
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry, false);
-
         ZoneConfig zoneConfig = new ZoneConfig(forecastPhase, "Phase" + phase + "Forecast", "#00FF0033",
                 forecastPhase - prePhaseMinus * 10, PRE_ZONE_TIME, ZONE_TIME,
                 noFuncEntry, circleEntry);
@@ -160,21 +193,57 @@ public class Pubg8000x8000Casual {
         // Shrink zone
         int shrinkPhase = forecastPhase + 1;
         SafeFuncEntry safeFuncEntry = new SafeFuncEntry(MOVE_DELAY, MOVE_TIME, 20, -1, DAMAGE);
-
-        startEntry = new StartEntry();
-        startEntry.addPreviousCenter(forecastPhase, 0);
-        startEntry.addPreviousDimension(forecastPhase, 0);
-
-        endEntry = new EndEntry();
-        endEntry.addPreviousCenter(forecastPhase, 1);
-        endEntry.addPreviousCenter(forecastPhase, 1);
-        endEntry.addPreviousDimension(forecastPhase, 1);
-
+        startEntry = new StartEntry()
+                .addPreviousCenter(forecastPhase, 0)
+                .addPreviousDimension(forecastPhase, 0);
+        endEntry = new EndEntry()
+                .addPreviousCenter(forecastPhase, 1)
+                .addPreviousCenter(forecastPhase, 1)
+                .addPreviousDimension(forecastPhase, 1);
         circleEntry = new CircleEntry(startEntry, endEntry, false);
-
         zoneConfig = new ZoneConfig(shrinkPhase, "Phase" + phase + "Shrink", "#0000FFAA",
                 forecastPhase, 0, ZONE_TIME,
                 safeFuncEntry, circleEntry);
+        zoneConfigJson.add(zoneConfig.toJson());
+
+        // Zone create message
+        int createPhase = shrinkPhase + 1;
+        MessageFuncEntry messageFuncEntry = new MessageFuncEntry(0, 0, 25, 10,
+                true, 10, 80, 20,
+                true, Component.literal(""), Component.literal(String.format("§9Phase§b %s", phase)),
+                false, Component.literal(""));
+        startEntry = new StartEntry()
+                .addPreviousCenter(0, 0)
+                .addPreviousDimension(0, 0)
+                .addDimensionScale(0.99);
+        endEntry = new EndEntry()
+                .addPreviousCenter(0, 1)
+                .addPreviousDimension(0, 1)
+                .addDimensionScale(0.99);
+        SquareEntry squareEntry = new SquareEntry(startEntry, endEntry, false);
+        zoneConfig = new ZoneConfig(createPhase, String.format("Phase %s create message", phase), "#5555FFFF",
+                forecastPhase, 0, 80,
+                messageFuncEntry, squareEntry);
+        zoneConfigJson.add(zoneConfig.toJson());
+
+        // Zone shrink message
+        int warnPhase = createPhase + 1;
+        messageFuncEntry = new MessageFuncEntry(0, 0, 25, 10,
+                true, 10, 80, 20,
+                true, Component.literal(""), Component.literal(String.format("§9Phase§b %s §cShrinking", phase)),
+                false, Component.literal(""));
+        startEntry = new StartEntry()
+                .addPreviousCenter(0, 0)
+                .addPreviousDimension(0, 0)
+                .addDimensionScale(0.99);
+        endEntry = new EndEntry()
+                .addPreviousCenter(0, 1)
+                .addPreviousDimension(0, 1)
+                .addDimensionScale(0.99);
+        squareEntry = new SquareEntry(startEntry, endEntry, false);
+        zoneConfig = new ZoneConfig(warnPhase, String.format("Phase %s shrink message", phase), "#FF5555FF",
+                forecastPhase, MOVE_DELAY, 80,
+                messageFuncEntry, squareEntry);
         zoneConfigJson.add(zoneConfig.toJson());
     }
 

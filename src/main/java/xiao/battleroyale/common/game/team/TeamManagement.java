@@ -9,6 +9,7 @@ import net.minecraft.world.scores.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.event.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 
@@ -81,7 +82,7 @@ public class TeamManagement {
             }
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.joined_to_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.GREEN));
             TeamNotification.notifyPlayerJoinTeam(gamePlayer, serverLevel); // 通知队伍成员有新玩家加入
-            gameManager.notifyTeamChange(targetTeam.getGameTeamId()); // 玩家加入队伍，通知更新队伍HUD
+            GameMessageManager.notifyTeamChange(targetTeam.getGameTeamId()); // 玩家加入队伍，通知更新队伍HUD
 
             // 加入原版Team
             if (gameManager.getGameEntry().buildVanillaTeam) {
@@ -145,7 +146,7 @@ public class TeamManagement {
 
         for (GamePlayer noTeamPlayer : noTeamPlayers) {
             if (teamManager.teamData.removePlayer(noTeamPlayer)) {
-                GameManager.get().notifyLeavedMember(noTeamPlayer.getPlayerUUID(), noTeamPlayer.getGameTeamId()); // 防止游戏开始时无队伍的GamePlayer
+                GameMessageManager.notifyLeavedMember(noTeamPlayer.getPlayerUUID(), noTeamPlayer.getGameTeamId()); // 防止游戏开始时无队伍的GamePlayer
             }
         }
     }
@@ -242,8 +243,8 @@ public class TeamManagement {
         }
 
         GameManager gameManager = GameManager.get();
-        gameManager.notifyLeavedMember(playerId, teamId); // 离队后通知不渲染队伍HUD
-        gameManager.notifyTeamChange(teamId); // 离队后通知队伍成员更新队伍HUD
+        GameMessageManager.notifyLeavedMember(playerId, teamId); // 离队后通知不渲染队伍HUD
+        GameMessageManager.notifyTeamChange(teamId); // 离队后通知队伍成员更新队伍HUD
 
         // 移除原版Team
         if (gameManager.getGameEntry().buildVanillaTeam) {
@@ -298,7 +299,7 @@ public class TeamManagement {
         }
 
         GameManager gameManager = GameManager.get();
-        gameManager.notifyTeamChange(newTeam.getGameTeamId()); // 新建队伍并加入，通知更新队伍HUD
+        GameMessageManager.notifyTeamChange(newTeam.getGameTeamId()); // 新建队伍并加入，通知更新队伍HUD
         ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.joined_to_team", teamId).withStyle(ChatFormatting.GREEN));
 
         // 加入原版Team

@@ -40,6 +40,19 @@ public class NBTUtils {
         }
     }
 
+    /**
+     * 将 CompoundTag 转换为其 MoJangson 字符串表示。
+     * @param nbt 要转换的 CompoundTag。
+     * @return MoJangson 格式的字符串。
+     */
+    @NotNull
+    public static String nbtToString(CompoundTag nbt) {
+        if (nbt == null) {
+            return "";
+        }
+        return nbt.toString();
+    }
+
     public static CompoundTag serializeZoneToNBT(int zoneId, String zoneName, String zoneColor,
                                                  ITickableZone tickableZone, ISpatialZone spatialZone,
                                                  double shapeProgress) {
@@ -136,6 +149,9 @@ public class NBTUtils {
         }
     }
 
+    /**
+     * 解析MoJangson
+     */
     @NotNull
     public static CompoundTag JsonToNBT(@Nullable JsonObject jsonObject) {
         CompoundTag nbt = new CompoundTag();

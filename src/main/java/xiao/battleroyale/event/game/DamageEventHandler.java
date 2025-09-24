@@ -12,6 +12,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameMessageManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
@@ -56,13 +58,13 @@ public class DamageEventHandler {
 
         GameManager gameManager = GameManager.get();
 
-        GamePlayer targetGamePlayer = gameManager.hasStandingGamePlayer(damagedEntity.getUUID()) ? gameManager.getGamePlayerByUUID(damagedEntity.getUUID()) : null;
+        GamePlayer targetGamePlayer = GameTeamManager.hasStandingGamePlayer(damagedEntity.getUUID()) ? GameTeamManager.getGamePlayerByUUID(damagedEntity.getUUID()) : null;
         if (targetGamePlayer != null && targetGamePlayer.isEliminated()) {
             targetGamePlayer = null;
         }
         GamePlayer attackerGamePlayer = null;
         if (damageSource.getEntity() instanceof LivingEntity attackerEntity) {
-            attackerGamePlayer = gameManager.hasStandingGamePlayer(attackerEntity.getUUID()) ? gameManager.getGamePlayerByUUID(attackerEntity.getUUID()) : null;
+            attackerGamePlayer = GameTeamManager.hasStandingGamePlayer(attackerEntity.getUUID()) ? GameTeamManager.getGamePlayerByUUID(attackerEntity.getUUID()) : null;
             if (attackerGamePlayer != null && attackerGamePlayer.isEliminated()) {
                 attackerGamePlayer = null;
             }
@@ -84,7 +86,7 @@ public class DamageEventHandler {
                 }
             }
             // 通知队伍更新成员信息
-            gameManager.notifyTeamChange(targetGamePlayer.getGameTeamId());
+            GameMessageManager.notifyTeamChange(targetGamePlayer.getGameTeamId());
         }
         // 游戏玩家攻击非游戏玩家
         else if (attackerGamePlayer != null) {

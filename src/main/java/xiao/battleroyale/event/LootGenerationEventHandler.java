@@ -21,13 +21,13 @@ public class LootGenerationEventHandler {
     public static void register() {
         LootGenerationEventHandler handler = get();
         MinecraftForge.EVENT_BUS.register(handler);
-        BattleRoyale.LOGGER.info("LootGenerationEventHandler registered for tick events.");
+        BattleRoyale.LOGGER.info("LootGenerationEventHandler registered for funcTick events.");
     }
 
     public static void unregister() {
         LootGenerationEventHandler handler = get();
         MinecraftForge.EVENT_BUS.unregister(handler);
-        BattleRoyale.LOGGER.info("LootGenerationEventHandler unregistered from tick events.");
+        BattleRoyale.LOGGER.info("LootGenerationEventHandler unregistered from funcTick events.");
     }
 
     @SubscribeEvent

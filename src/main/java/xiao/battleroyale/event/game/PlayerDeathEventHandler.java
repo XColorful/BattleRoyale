@@ -7,6 +7,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
 /**
@@ -45,21 +46,21 @@ public class PlayerDeathEventHandler {
             return;
         }
         GameManager gameManager = GameManager.get();
-        GamePlayer gamePlayer = gameManager.getGamePlayerByUUID(livingEntity.getUUID());
+        GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(livingEntity.getUUID());
         if (gamePlayer == null) {
             return;
         }
 
-        if (!gameManager.hasStandingGamePlayer(livingEntity.getUUID())) {
+        if (!GameTeamManager.hasStandingGamePlayer(livingEntity.getUUID())) {
             BattleRoyale.LOGGER.debug("PlayerDeathEventHandler: GamePlayer {} is not in standing player list, canceled onLivingDeath", gamePlayer.getPlayerName());
             return;
         }
 
         if (event.isCanceled()) { // 被不死图腾或PlayerRevive取消，GameManager内部检查是图腾还是倒地
             BattleRoyale.LOGGER.debug("Detected a canceled LivingDeathEvent in game");
-            gameManager.onPlayerDown(gamePlayer, livingEntity);
+            gameManager.onPlayerDown(gamePlayer, livingEntity, event);
         } else { // 死亡
-            gameManager.onPlayerDeath(gamePlayer);
+            gameManager.onPlayerDeath(gamePlayer, event);
         }
     }
 }

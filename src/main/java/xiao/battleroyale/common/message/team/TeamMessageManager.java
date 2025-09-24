@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.message.AbstractMessageManager;
@@ -49,7 +50,7 @@ public class TeamMessageManager extends AbstractMessageManager<TeamMessage> {
     @Override
     protected void checkExpiredMessage() {
         // 强制更新所有队伍
-        for (GameTeam gameTeam : GameManager.get().getGameTeams()) {
+        for (GameTeam gameTeam : GameTeamManager.getGameTeams()) {
             changedId.add(gameTeam.getGameTeamId());
         }
 
@@ -59,7 +60,7 @@ public class TeamMessageManager extends AbstractMessageManager<TeamMessage> {
             changedId.add(teamId); // 强制续命同步
             message.updateTime = currentTime;
 
-            GameTeam gameTeam = GameManager.get().getGameTeamById(teamId); // TeamManager内部做了特殊处理，不应该重新build消息时会防止MessageManager获取GameTeam
+            GameTeam gameTeam = GameTeamManager.getGameTeamById(teamId); // TeamManager内部做了特殊处理，不应该重新build消息时会防止MessageManager获取GameTeam
             if (gameTeam == null) {
                 leavedMember.addAll(message.memberUUID);
                 return true;
@@ -90,7 +91,7 @@ public class TeamMessageManager extends AbstractMessageManager<TeamMessage> {
         ServerLevel serverLevel = GameManager.get().getServerLevel();
 
         for (int id : changedId) {
-            GameTeam gameTeam = GameManager.get().getGameTeamById(id); // TeamManager内部stopGame做了特殊处理，不应该重新build消息时会防止MessageManager获取GameTeam
+            GameTeam gameTeam = GameTeamManager.getGameTeamById(id); // TeamManager内部stopGame做了特殊处理，不应该重新build消息时会防止MessageManager获取GameTeam
             if (gameTeam != null) { // 队伍存在则计算NBT并发送
                 CompoundTag nbt = ClientTeamData.toNBT(gameTeam, serverLevel);
                 // 备份NBT和成员UUID
@@ -117,7 +118,7 @@ public class TeamMessageManager extends AbstractMessageManager<TeamMessage> {
         if (!leavedMember.isEmpty() && serverLevel != null) {
             List<ServerPlayer> players = new ArrayList<>();
             for (UUID playerUUID : leavedMember) {
-                if (GameManager.get().getGamePlayerByUUID(playerUUID) != null) { // 属于离队玩家，但是仍然是游戏玩家，则是加入了其他队伍，不需要通知取消渲染
+                if (GameTeamManager.getGamePlayerByUUID(playerUUID) != null) { // 属于离队玩家，但是仍然是游戏玩家，则是加入了其他队伍，不需要通知取消渲染
                     continue;
                 }
                 ServerPlayer serverPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);

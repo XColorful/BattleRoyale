@@ -8,12 +8,12 @@ import xiao.battleroyale.common.message.AbstractCommonMessage;
 
 import java.util.UUID;
 
-public class GameMessage extends AbstractCommonMessage {
+public class GameInfoMessage extends AbstractCommonMessage {
 
     private int standingPlayerCount;
     private UUID gameId;
 
-    public GameMessage(@NotNull CompoundTag nbt, int updateTime) {
+    public GameInfoMessage(@NotNull CompoundTag nbt, int updateTime) {
         super(nbt, updateTime);
         this.standingPlayerCount = 0;
         this.gameId = GameManager.get().getGameId();
