@@ -7,7 +7,7 @@ import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 
 public abstract class AbstractZoneEvent extends AbstractGameStatsEvent {
 
-    private @NotNull final IGameZone gameZone;
+    protected @NotNull final IGameZone gameZone;
 
     public AbstractZoneEvent(IGameManager gameManager, @NotNull IGameZone gameZone) {
         super(gameManager);

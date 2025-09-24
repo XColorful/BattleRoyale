@@ -3,16 +3,19 @@ package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.*;
 import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry.EffectFuncEntryBuilder;
+import xiao.battleroyale.config.common.game.zone.zonefunc.event.EventFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.*;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.UUID;
 
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
@@ -35,6 +38,7 @@ public class DefaultZone {
         zoneConfigJson.add(generateDefaultZoneConfig12());
         zoneConfigJson.add(generateDefaultZoneConfig13());
         zoneConfigJson.add(generateDefaultZoneConfig14());
+        zoneConfigJson.add(generateDefaultZoneConfig15());
         writeJsonToFile(Paths.get(GameConfigManager.get().getZoneConfigPath(), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
@@ -347,6 +351,35 @@ public class DefaultZone {
         ZoneConfig zoneConfig = new ZoneConfig(14, "Triple zone notification", "#FFAA00AA",
                 0, 80,
                 messageFuncEntry, squareEntry);
+
+        return zoneConfig.toJson();
+    }
+
+    private static JsonObject generateDefaultZoneConfig15() {
+        CompoundTag tag = new CompoundTag();
+        tag.putString("description", "Create event for other mod to subscribe");
+        tag.putBoolean("boolTrue", true);
+        tag.putBoolean("boolFalse", false);
+        tag.putFloat("float", 0.333F);
+        tag.putDouble("double", 0.88888888D);
+        tag.putLong("long", Integer.MAX_VALUE * 2L);
+        tag.putInt("int", 666666);
+        tag.putShort("short", (short) 25565);
+        tag.putString("randomUUID", UUID.randomUUID().toString());
+        CompoundTag nestedTag = new CompoundTag();
+        nestedTag.putString("additional data", "some structured data");
+        tag.put("tagInTag", nestedTag);
+
+        EventFuncEntry eventFuncEntry = new EventFuncEntry(0, 0, 0, 0,
+                "cbr:0.3.8", tag);
+
+        StartEntry startEntry = new StartEntry();
+        EndEntry endEntry = new EndEntry();
+        SquareEntry squareEntry = new SquareEntry(startEntry, endEntry, false);
+
+        ZoneConfig zoneConfig = new ZoneConfig(15, "Event Zone example", "#FFFFFFFF",
+                0, 0,
+                eventFuncEntry, squareEntry);
 
         return zoneConfig.toJson();
     }

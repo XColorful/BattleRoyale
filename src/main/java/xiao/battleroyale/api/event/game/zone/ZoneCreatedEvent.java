@@ -5,7 +5,7 @@ import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 
 public class ZoneCreatedEvent extends AbstractZoneEvent {
 
-    private final boolean success;
+    protected final boolean success;
 
     public ZoneCreatedEvent(IGameManager gameManager, IGameZone gameZone, boolean success) {
         super(gameManager, gameZone);

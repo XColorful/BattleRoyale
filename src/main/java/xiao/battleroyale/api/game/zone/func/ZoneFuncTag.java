@@ -15,6 +15,7 @@ public final class ZoneFuncTag {
     public static final String EFFECT = "effect";
     public static final String MESSAGE = "message";
     public static final String ENTITY = "entity";
+    public static final String EVENT = "event";
 
     public static final String DAMAGE = "damage";
     public static final String MOVE_DELAY = "moveDelay";
@@ -56,6 +57,10 @@ public final class ZoneFuncTag {
     public static final String SUBTITLE = "subtitle";
     public static final String SEND_ACTION_BAR = "sendActionBar";
     public static final String ACTION_BAR = "actionBar";
+
+    // event
+    public static final String PROTOCOL = "protocol";
+    public static final String TAG = "tag";
 
     // entity
 
