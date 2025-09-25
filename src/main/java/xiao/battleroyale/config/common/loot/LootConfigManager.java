@@ -9,8 +9,10 @@ import xiao.battleroyale.api.loot.LootConfigTag;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
+import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
+import xiao.battleroyale.config.ConfigManager;
 import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.common.loot.defaultconfigs.DefaultLootConfigGenerator;
 import xiao.battleroyale.config.common.loot.type.LootEntryType;
@@ -26,7 +28,7 @@ import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.*;
 public class LootConfigManager extends AbstractConfigSubManager<LootConfigManager.LootConfig> {
 
     public static final String LOOT_CONFIG_SUB_PATH = "loot";
-    public static final String LOOT_CONFIG_PATH = Paths.get(AbstractConfigSubManager.MOD_CONFIG_PATH).resolve(LOOT_CONFIG_SUB_PATH).toString();
+    public static final String LOOT_CONFIG_PATH = Paths.get(ConfigManager.MOD_CONFIG_PATH).resolve(LOOT_CONFIG_SUB_PATH).toString();
 
     protected final int DEFAULT_LOOT_CONFIG_FOLDER = LOOT_SPAWNER;
 
@@ -46,6 +48,7 @@ public class LootConfigManager extends AbstractConfigSubManager<LootConfigManage
 
 
     private LootConfigManager() {
+        super(CommandArg.LOOT);
         allFolderConfigData.put(LOOT_SPAWNER, new FolderConfigData<>());
         allFolderConfigData.put(ENTITY_SPAWNER, new FolderConfigData<>());
         allFolderConfigData.put(AIRDROP, new FolderConfigData<>());
@@ -219,31 +222,31 @@ public class LootConfigManager extends AbstractConfigSubManager<LootConfigManage
      * 特定类别的获取接口
      */
     public @Nullable LootConfig getLootSpawnerConfig(int id) {
-        return getConfigEntry(id, LOOT_SPAWNER);
+        return getConfigEntry(LOOT_SPAWNER, id);
     }
     public @Nullable List<LootConfig> getLootSpawnerConfigList() {
         return getConfigEntryList(LOOT_SPAWNER);
     }
     public @Nullable LootConfig getEntitySpawnerConfig(int id) {
-        return getConfigEntry(id, ENTITY_SPAWNER);
+        return getConfigEntry(ENTITY_SPAWNER, id);
     }
     public @Nullable List<LootConfig> getEntitySpawnerConfigList() {
         return getConfigEntryList(ENTITY_SPAWNER);
     }
     public @Nullable LootConfig getAirdropConfig(int id) {
-        return getConfigEntry(id, AIRDROP);
+        return getConfigEntry(AIRDROP, id);
     }
     public @Nullable List<LootConfig> getAirdropConfigList() {
         return getConfigEntryList(AIRDROP);
     }
     public @Nullable LootConfig getSpecialAirdropConfig(int id) {
-        return getConfigEntry(id, AIRDROP_SPECIAL);
+        return getConfigEntry(AIRDROP_SPECIAL, id);
     }
     public @Nullable List<LootConfig> getSpecialAirdropConfigList() {
         return getConfigEntryList(AIRDROP_SPECIAL);
     }
     public @Nullable LootConfig getSecretRoomConfig(int id) {
-        return getConfigEntry(id, SECRET_ROOM);
+        return getConfigEntry(SECRET_ROOM, id);
     }
     public @Nullable List<LootConfig> getSecretRoomConfigList() {
         return getConfigEntryList(SECRET_ROOM);
@@ -280,31 +283,31 @@ public class LootConfigManager extends AbstractConfigSubManager<LootConfigManage
         return switchConfigFile(LOOT_SPAWNER);
     }
     public boolean switchLootSpawnerConfig(String fileName) {
-        return switchConfigFile(fileName, LOOT_SPAWNER);
+        return switchConfigFile(LOOT_SPAWNER, fileName);
     }
     public boolean switchNextEntitySpawnerConfig() {
         return switchConfigFile(ENTITY_SPAWNER);
     }
     public boolean switchEntitySpawnerConfig(String fileName) {
-        return switchConfigFile(fileName, ENTITY_SPAWNER);
+        return switchConfigFile(ENTITY_SPAWNER, fileName);
     }
     public boolean switchNextAirdropConfig() {
         return switchConfigFile(AIRDROP);
     }
     public boolean switchAirdropConfig(String fileName) {
-        return switchConfigFile(fileName, AIRDROP);
+        return switchConfigFile(AIRDROP, fileName);
     }
     public boolean switchNextAirdropSpecialConfig() {
         return switchConfigFile(AIRDROP_SPECIAL);
     }
     public boolean switchAirdropSpecialConfig(String fileName) {
-        return switchConfigFile(fileName, AIRDROP_SPECIAL);
+        return switchConfigFile(AIRDROP_SPECIAL, fileName);
     }
     public boolean switchNextSecretRoomConfig() {
         return switchConfigFile(SECRET_ROOM);
     }
     public boolean switchSecretRoomConfig(String fileName) {
-        return switchConfigFile(fileName, SECRET_ROOM);
+        return switchConfigFile(SECRET_ROOM, fileName);
     }
 
 

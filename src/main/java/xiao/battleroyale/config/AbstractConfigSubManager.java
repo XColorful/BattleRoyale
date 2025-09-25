@@ -1,11 +1,10 @@
 package xiao.battleroyale.config;
 
 import com.google.gson.JsonObject;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigSubManager;
-import xiao.battleroyale.api.config.IConfigSingleEntry;
+import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.config.FolderConfigData.ConfigFileName;
 import xiao.battleroyale.util.ClassUtils.ArrayMap;
 
@@ -18,10 +17,14 @@ import java.util.*;
  */
 public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> implements IConfigSubManager<T> {
 
-    public static String MOD_CONFIG_PATH = "config/battleroyale";
-
     protected final int DEFAULT_CONFIG_FOLDER = 0;
     protected final Map<Integer, FolderConfigData<T>> allFolderConfigData = new HashMap<>(); // folderId -> 文件夹下配置
+
+    protected final String nameKey;
+    public AbstractConfigSubManager(String nameKey) {
+        this.nameKey = nameKey;
+        allFolderConfigData.put(DEFAULT_CONFIG_FOLDER, new FolderConfigData<>());
+    }
 
     /**
      * 获取特定子文件夹的数据
@@ -37,10 +40,6 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
             BattleRoyale.LOGGER.error("Unexpected ConfigManager folderId {}, default config dir: {}, default folderId: {}", folderId, getConfigDirPath(), DEFAULT_CONFIG_FOLDER);
             return allFolderConfigData.get(DEFAULT_CONFIG_FOLDER);
         }
-    }
-
-    public AbstractConfigSubManager() {
-        allFolderConfigData.put(DEFAULT_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     /**
@@ -92,12 +91,19 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     }
 
     /**
+     * IManagerName
+     */
+    @Override public String getNameKey() {
+        return this.nameKey;
+    }
+
+    /**
      * IConfigSubManager
      */
     @Override public @Nullable T getConfigEntry(int id) {
-        return getConfigEntry(id, DEFAULT_CONFIG_FOLDER);
+        return getConfigEntry(DEFAULT_CONFIG_FOLDER, id);
     }
-    @Override public @Nullable T getConfigEntry(int id, int folderId) {
+    @Override public @Nullable T getConfigEntry(int folderId, int id) {
         return getConfigFolderData(folderId).currentConfigs.mapGet(id);
     }
     @Override public @Nullable  List<T> getConfigEntryList() {
@@ -128,7 +134,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         return reloadConfigs(DEFAULT_CONFIG_FOLDER);
     }
     @Override public boolean reloadConfigs(int folderId) { // 读取子文件夹下所有文件数据
-        return ReloadConfigs.reloadConfigs(this, folderId);
+        return SubReloadConfigs.reloadConfigs(this, folderId);
     }
     @Override public @Nullable T parseConfigEntry(JsonObject jsonObject, Path filePath) {
         return parseConfigEntry(jsonObject, filePath, DEFAULT_CONFIG_FOLDER);
@@ -153,9 +159,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     @Override  public String getConfigPath() {
         return getConfigPath(DEFAULT_CONFIG_FOLDER);
     }
-    @Override public String getConfigPath(int folderId) {
-        return MOD_CONFIG_PATH;
-    }
+    @Override public abstract String getConfigPath(int folderId);
     @Override public String getConfigSubPath() {
         return getConfigSubPath(DEFAULT_CONFIG_FOLDER);
     }
@@ -175,15 +179,15 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     }
     @Override
     public boolean switchConfigFile(int folderId) { // 切换下一个配置
-        return SwitchConfig.switchConfigFile(this, folderId);
+        return SubSwitchConfig.switchConfigFile(this, folderId);
     }
     @Override
     public boolean switchConfigFile(String fileName) {
-        return switchConfigFile(fileName, DEFAULT_CONFIG_FOLDER);
+        return switchConfigFile(DEFAULT_CONFIG_FOLDER, fileName);
     }
     @Override
-    public boolean switchConfigFile(@NotNull String fileName, int folderId) { // 指定文件名切换配置
-        return SwitchConfig.switchConfigFile(this, fileName, folderId);
+    public boolean switchConfigFile(int folderId, String fileName) { // 指定文件名切换配置
+        return SubSwitchConfig.switchConfigFile(this, folderId, fileName);
     }
 
     /**

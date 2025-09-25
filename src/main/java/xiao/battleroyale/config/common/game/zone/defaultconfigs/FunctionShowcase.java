@@ -25,7 +25,7 @@ public class FunctionShowcase {
         zoneConfigJson.add(generateDefaultZoneConfig3());
         zoneConfigJson.add(generateDefaultZoneConfig4());
         zoneConfigJson.add(generateDefaultZoneConfig5());
-        writeJsonToFile(Paths.get(GameConfigManager.get().getZoneConfigPath(), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
+        writeJsonToFile(Paths.get(GameConfigManager.get().getConfigDirPath(ZoneConfigManager.get().getNameKey()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
     private static JsonObject generateDefaultZoneConfig0() {

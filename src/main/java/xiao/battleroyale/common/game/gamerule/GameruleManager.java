@@ -15,6 +15,7 @@ import xiao.battleroyale.common.game.gamerule.storage.McRuleStorage;
 import xiao.battleroyale.common.game.gamerule.storage.PlayerModeStorage;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
@@ -52,7 +53,7 @@ public class GameruleManager extends AbstractGameManager {
         }
 
         int gameId = GameManager.get().getGameruleConfigId();
-        GameruleConfig gameruleConfig = GameConfigManager.get().getGameruleConfig(gameId);
+        GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId);
         if (gameruleConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.server.performance.IPerformanceSingleEntry;
 import xiao.battleroyale.api.server.performance.PerformanceConfigTag;
+import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
@@ -24,10 +25,12 @@ public class PerformanceConfigManager extends AbstractConfigSubManager<Performan
     }
 
     public static PerformanceConfigManager get() {
+        ServerConfigManager.get().registerSubManager(get());
         return PerformanceConfigManagerHolder.INSTANCE;
     }
 
     private PerformanceConfigManager() {
+        super(CommandArg.PERFORMANCE);
         allFolderConfigData.put(DEFAULT_PERFORMANCE_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
@@ -165,7 +168,7 @@ public class PerformanceConfigManager extends AbstractConfigSubManager<Performan
      * 特定类别的获取接口
      */
     public PerformanceConfig getPerformanceConfig(int id) {
-        return getConfigEntry(id, DEFAULT_PERFORMANCE_CONFIG_FOLDER);
+        return getConfigEntry(DEFAULT_PERFORMANCE_CONFIG_FOLDER, id);
     }
     public List<PerformanceConfig> getPerformanceConfigList() {
         return getConfigEntryList(DEFAULT_PERFORMANCE_CONFIG_FOLDER);

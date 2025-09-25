@@ -24,7 +24,7 @@ public class PubgGamerule {
         addErangle64(gameruleConfigJson);
         addMiramar100(gameruleConfigJson);
         addMiramar64(gameruleConfigJson);
-        writeJsonToFile(Paths.get(GameConfigManager.get().getGameruleConfigPath(), DEFAULT_FILE_NAME).toString(), gameruleConfigJson);
+        writeJsonToFile(Paths.get(GameConfigManager.get().getConfigDirPath(GameruleConfigManager.get().getNameKey()), DEFAULT_FILE_NAME).toString(), gameruleConfigJson);
     }
 
     public static JsonObject addCasual(int gameId, int playerTotal, int teamSize, int GAME_TIME,

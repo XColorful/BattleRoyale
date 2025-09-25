@@ -7,6 +7,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.effect.particle.IParticleEntry;
 import xiao.battleroyale.api.game.effect.particle.IParticleSingleEntry;
 import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
+import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.effect.particle.FixedParticleData;
 import xiao.battleroyale.common.effect.particle.ParticleData;
 import xiao.battleroyale.config.AbstractConfigSubManager;
@@ -32,10 +33,12 @@ public class ParticleConfigManager extends AbstractConfigSubManager<ParticleConf
     }
 
     private ParticleConfigManager() {
+        super(CommandArg.PARTICLE);
         allFolderConfigData.put(DEFAULT_PARTICLE_CONFIG_FOLDER_ID, new FolderConfigData<>());
     }
 
     public static void init() {
+        EffectConfigManager.get().registerSubManager(get());
         get().reloadParticleConfigs();
     }
 
@@ -188,7 +191,7 @@ public class ParticleConfigManager extends AbstractConfigSubManager<ParticleConf
      * 特定类别的获取接口
      */
     public ParticleConfig getParticleConfig(int id) {
-        return getConfigEntry(id, DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
+        return getConfigEntry(DEFAULT_PARTICLE_CONFIG_FOLDER_ID, id);
     }
     public List<ParticleConfig> getAllParticleConfigs() {
         return getConfigEntryList(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);

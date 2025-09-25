@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.GameruleConfigTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleSingleEntry;
+import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
@@ -32,10 +33,12 @@ public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConf
     }
 
     private GameruleConfigManager() {
+        super(CommandArg.GAMERULE);
         allFolderConfigData.put(DEFAULT_GAMERULE_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
+        GameConfigManager.get().registerSubManager(get());
         get().reloadGameruleConfigs();
     }
 
@@ -226,7 +229,7 @@ public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConf
      * 特定类别的获取接口
      */
     public GameruleConfig getGameruleConfig(int gameId) {
-        return getConfigEntry(gameId, DEFAULT_GAMERULE_CONFIG_FOLDER);
+        return getConfigEntry(DEFAULT_GAMERULE_CONFIG_FOLDER, gameId);
     }
     public List<GameruleConfig> getGameruleConfigList() {
         return getConfigEntryList(DEFAULT_GAMERULE_CONFIG_FOLDER);

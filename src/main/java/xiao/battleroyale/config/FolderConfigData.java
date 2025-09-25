@@ -1,6 +1,6 @@
 package xiao.battleroyale.config;
 
-import xiao.battleroyale.api.config.IConfigSingleEntry;
+import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.util.ClassUtils;
 
 import java.util.HashMap;

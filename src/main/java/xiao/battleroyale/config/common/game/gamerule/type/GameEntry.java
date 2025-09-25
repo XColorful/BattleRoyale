@@ -3,7 +3,7 @@ package xiao.battleroyale.config.common.game.gamerule.type;
 import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.config.IConfigAppliable;
+import xiao.battleroyale.api.config.sub.IConfigAppliable;
 import xiao.battleroyale.api.game.gamerule.GameEntryTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.common.message.AbstractMessageManager;

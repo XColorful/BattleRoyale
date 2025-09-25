@@ -8,8 +8,15 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import xiao.battleroyale.config.client.ClientConfigManager;
+import xiao.battleroyale.config.client.display.DisplayConfigManager;
+import xiao.battleroyale.config.client.render.RenderConfigManager;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
+import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.config.common.game.bot.BotConfigManager;
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
+import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
+import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
@@ -132,21 +139,22 @@ public class ReloadCommand {
             GameConfigManager.get().reloadAllConfigs();
             messageKey = "battleroyale.message.game_config_reloaded";
         } else {
+            String subManagerNameKey;
             switch (subType) {
                 case ZONE:
-                    GameConfigManager.get().reloadZoneConfigs();
+                    subManagerNameKey = ZoneConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.zone_config_reloaded";
                     break;
                 case SPAWN:
-                    GameConfigManager.get().reloadSpawnConfigs();
+                    subManagerNameKey = SpawnConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.spawn_config_reloaded";
                     break;
                 case GAMERULE:
-                    GameConfigManager.get().reloadGameruleConfigs();
+                    subManagerNameKey = GameruleConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.gamerule_config_reloaded";
                     break;
                 case BOT:
-                    GameConfigManager.get().reloadBotConfigs();
+                    subManagerNameKey = BotConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.bot_config_reloaded";
                     break;
                 default:
@@ -154,6 +162,7 @@ public class ReloadCommand {
                     BattleRoyale.LOGGER.warn("Unknown game sub-type for reload command: {}", subType);
                     return 0;
             }
+            GameConfigManager.get().reloadConfigs(subManagerNameKey);
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Reloaded {} configs via command", subType != null ? subType : "all game");
@@ -166,9 +175,10 @@ public class ReloadCommand {
             EffectConfigManager.get().reloadAllConfigs();
             messageKey = "battleroyale.message.effect_config_reloaded";
         } else {
+            String subManagerNameKey;
             switch (subType) {
                 case PARTICLE:
-                    EffectConfigManager.get().reloadParticleConfigs();
+                    subManagerNameKey = ParticleConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.particle_config_reloaded";
                     break;
                 default:
@@ -176,6 +186,7 @@ public class ReloadCommand {
                     BattleRoyale.LOGGER.warn("Unknown effect sub-type for reload command: {}", subType);
                     return 0;
             }
+            EffectConfigManager.get().reloadConfigs(subManagerNameKey);
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Reloaded {} effect configs via command", subType != null ? subType : "all effect");
@@ -188,13 +199,14 @@ public class ReloadCommand {
             ClientConfigManager.get().reloadAllConfigs();
             messageKey = "battleroyale.message.client_config_reloaded";
         } else {
+            String subManagerNameKey;
             switch (subType) {
                 case RENDER:
-                    ClientConfigManager.get().reloadRenderConfigs();
+                    subManagerNameKey = RenderConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.render_config_reloaded";
                     break;
                 case DISPLAY:
-                    ClientConfigManager.get().reloadDisplayConfigs();
+                    subManagerNameKey = DisplayConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.display_config_reloaded";
                     break;
                 default:
@@ -202,6 +214,7 @@ public class ReloadCommand {
                     BattleRoyale.LOGGER.warn("Unknown client sub-type for reload command: {}", subType);
                     return 0;
             }
+            ClientConfigManager.get().reloadConfigs(subManagerNameKey);
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Reloaded {} client configs via command", subType != null ? subType : "all client");
@@ -214,13 +227,14 @@ public class ReloadCommand {
             ServerConfigManager.get().reloadAllConfigs();
             messageKey = "battleroyale.message.server_config_reloaded";
         } else {
+            String subManagerNameKey;
             switch (subType) {
                 case PERFORMANCE:
-                    ServerConfigManager.get().reloadPerformanceConfigs();
+                    subManagerNameKey = PerformanceConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.performance_config_reloaded";
                     break;
                 case UTILITY:
-                    ServerConfigManager.get().reloadUtilityConfigs();
+                    subManagerNameKey = UtilityConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.utility_config_reloaded";
                     break;
                 default:
@@ -228,6 +242,7 @@ public class ReloadCommand {
                     BattleRoyale.LOGGER.warn("Unknown server sub-type for reload command: {}", subType);
                     return 0;
             }
+            ServerConfigManager.get().reloadConfigs(subManagerNameKey);
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Reloaded {} server configs via command", subType != null ? subType : "all server");

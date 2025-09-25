@@ -14,6 +14,7 @@ import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.util.ChatUtils;
@@ -55,7 +56,7 @@ public class TeamManager extends AbstractGameManager implements IGameTeamReadApi
         }
 
         int configId = GameManager.get().getGameruleConfigId();
-        GameruleConfigManager.GameruleConfig gameruleConfig = GameConfigManager.get().getGameruleConfig(configId);
+        GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), configId);
         if (gameruleConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             BattleRoyale.LOGGER.warn("Failed to get gameruleConfig by id: {}", configId);

@@ -3,6 +3,7 @@ package xiao.battleroyale.config.client.display.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.config.client.ClientConfigManager;
+import xiao.battleroyale.config.client.display.DisplayConfigManager;
 import xiao.battleroyale.config.client.display.DisplayConfigManager.DisplayConfig;
 import xiao.battleroyale.config.client.display.type.GameEntry;
 import xiao.battleroyale.config.client.display.type.MapEntry;
@@ -21,7 +22,7 @@ public class DefaultDisplay {
         displayConfigJson.add(generateDefaultDisplayConfig0());
         displayConfigJson.add(generateDefaultDisplayConfig1());
         displayConfigJson.add(generateDefaultDisplayConfig2());
-        writeJsonToFile(Paths.get(ClientConfigManager.get().getDisplayConfigPath(), DEFAULT_FILE_NAME).toString(), displayConfigJson);
+        writeJsonToFile(Paths.get(ClientConfigManager.get().getConfigDirPath(DisplayConfigManager.get().getNameKey()), DEFAULT_FILE_NAME).toString(), displayConfigJson);
     }
 
     private static JsonObject generateDefaultDisplayConfig0() {

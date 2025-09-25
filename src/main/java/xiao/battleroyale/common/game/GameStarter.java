@@ -11,6 +11,7 @@ import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.compat.playerrevive.BleedingHandler;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.data.io.TempDataManager;
@@ -27,7 +28,7 @@ import static xiao.battleroyale.api.data.io.TempDataTag.GLOBAL_OFFSET;
 public class GameStarter {
 
     protected static boolean initGameConfigSetup(GameManager gameManager) {
-        GameruleConfigManager.GameruleConfig gameruleConfig = GameConfigManager.get().getGameruleConfig(gameManager.gameruleConfigId);
+        GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameManager.gameruleConfigId);
         if (gameruleConfig == null) {
             if (gameManager.serverLevel != null) {
                 ChatUtils.sendTranslatableMessageToAllPlayers(gameManager.serverLevel, "battleroyale.message.missing_gamerule_config");

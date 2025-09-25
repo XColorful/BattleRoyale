@@ -1,13 +1,13 @@
 package xiao.battleroyale.config;
 
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.config.IConfigSingleEntry;
+import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.util.ClassUtils;
 
 import java.nio.file.Path;
 import java.util.Map;
 
-public class ReloadConfigs {
+public class SubReloadConfigs {
 
     /**
      * 实现 IConfigLoadable.reloadConfigs 的核心逻辑
@@ -26,11 +26,11 @@ public class ReloadConfigs {
         Path configDirPath = context.getConfigDirPath(folderId);
 
         // 读取当前子文件夹下所有文件
-        LoadConfigs.loadAllConfigsFromDirectory(context, configDirPath, folderId);
+        SubLoadConfigs.loadAllConfigsFromDirectory(context, configDirPath, folderId);
 
         if (!context.hasConfigLoaded(folderId)) { // 没有文件或者文件无效
             context.initializeDefaultConfigsIfEmpty(folderId); // 写入默认文件之后再读一次
-            LoadConfigs.loadAllConfigsFromDirectory(context, configDirPath, folderId);
+            SubLoadConfigs.loadAllConfigsFromDirectory(context, configDirPath, folderId);
             if (!context.hasConfigLoaded(folderId)) {
                 BattleRoyale.LOGGER.error("Failed to load default configs after generation for type: {}", context.getFolderType(folderId));
                 return false;
@@ -54,7 +54,7 @@ public class ReloadConfigs {
                     continue;
                 }
                 fileNameString = entry.getKey();
-                if (context.switchConfigFile(fileNameString, folderId)) { // 先切换到配置再覆盖应用默认
+                if (context.switchConfigFile(folderId, fileNameString)) { // 先切换到配置再覆盖应用默认
                     configEntry.applyDefault();
                     BattleRoyale.LOGGER.info("Applied default config, fileName:{}, configId:{}, type:{}", fileNameString, configEntry.getConfigId(), configEntry.getType());
                     return true;
@@ -64,6 +64,6 @@ public class ReloadConfigs {
             }
         }
         BattleRoyale.LOGGER.info("No default {} applied", context.getFolderType(folderId));
-        return context.switchConfigFile(fileNameString, folderId);
+        return context.switchConfigFile(folderId, fileNameString);
     }
 }

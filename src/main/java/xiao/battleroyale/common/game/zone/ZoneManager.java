@@ -5,6 +5,7 @@ import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.api.event.game.tick.ZoneTickEvent;
 import xiao.battleroyale.api.event.game.tick.ZoneTickFinishEvent;
 import xiao.battleroyale.api.game.zone.IGameZoneReadApi;
@@ -17,6 +18,7 @@ import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.message.zone.ZoneMessageManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.util.ChatUtils;
 
@@ -52,7 +54,15 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
             return;
         }
 
-        List<ZoneConfig> allZoneConfigs = GameConfigManager.get().getZoneConfigList();
+        List<IConfigSingleEntry> allConfigs = GameConfigManager.get().getConfigEntryList(ZoneConfigManager.get().getNameKey());
+        if (allConfigs == null) {
+            BattleRoyale.LOGGER.warn("No zone config available for init game config");
+            return;
+        }
+        List<ZoneConfig> allZoneConfigs = new ArrayList<>();
+        for (IConfigSingleEntry config : allConfigs) {
+            allZoneConfigs.add((ZoneConfig) config);
+        }
         if (allZoneConfigs.isEmpty()) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_zone_config");
             BattleRoyale.LOGGER.warn("No zone config available for init game config");

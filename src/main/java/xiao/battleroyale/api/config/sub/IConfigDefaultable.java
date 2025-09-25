@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.config;
+package xiao.battleroyale.api.config.sub;
 
 import org.jetbrains.annotations.Nullable;
 

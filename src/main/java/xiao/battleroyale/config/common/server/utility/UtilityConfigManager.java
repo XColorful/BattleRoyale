@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.server.utility.IUtilitySingleEntry;
 import xiao.battleroyale.api.server.utility.UtilityConfigTag;
+import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
@@ -28,10 +29,12 @@ public class UtilityConfigManager extends AbstractConfigSubManager<UtilityConfig
     }
 
     private UtilityConfigManager() {
+        super(CommandArg.UTILITY);
         allFolderConfigData.put(DEFAULT_UTILITY_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
+        ServerConfigManager.get().registerSubManager(get());
         get().reloadUtilityConfigs();
     }
 
@@ -165,7 +168,7 @@ public class UtilityConfigManager extends AbstractConfigSubManager<UtilityConfig
      * 特定类别的获取接口
      */
     public UtilityConfig getUtilityConfig(int id) {
-        return getConfigEntry(id, DEFAULT_UTILITY_CONFIG_FOLDER);
+        return getConfigEntry(DEFAULT_UTILITY_CONFIG_FOLDER, id);
     }
     public List<UtilityConfig> getUtilityConfigList() {
         return getConfigEntryList(DEFAULT_UTILITY_CONFIG_FOLDER);

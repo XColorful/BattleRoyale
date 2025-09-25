@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.game.effect.particle;
 
-import xiao.battleroyale.api.config.ConfigEntryTag;
+import xiao.battleroyale.api.config.sub.ConfigEntryTag;
 
 public class ParticleConfigTag extends ConfigEntryTag {
 

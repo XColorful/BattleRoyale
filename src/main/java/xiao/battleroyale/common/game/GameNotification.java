@@ -10,16 +10,19 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.GameUtils;
 
+import java.util.List;
 import java.util.Set;
 
 import static xiao.battleroyale.util.CommandUtils.*;
@@ -174,7 +177,10 @@ public class GameNotification {
         ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_bot_config", botConfigId, gameManager.getBotConfigName(botConfigId)));
         ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_gamerule_config", gameruleConfigId, gameManager.getGameruleConfigName(gameruleConfigId)));
         ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_spawn_config", spawnConfigId, gameManager.getSpawnConfigName(spawnConfigId)));
-        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_zone_config", zoneConfigFileName, GameConfigManager.get().getZoneConfigList().size()));
+        List<IConfigSingleEntry> zoneConfigList = GameConfigManager.get().getConfigEntryList(ZoneConfigManager.get().getNameKey());
+        if (zoneConfigList != null) {
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_zone_config", zoneConfigFileName, zoneConfigList.size()));
+        }
     }
 
     public static void sendSelectedConfigsInfo(ServerPlayer player) {
@@ -190,6 +196,9 @@ public class GameNotification {
         ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_bot_config", botConfigId, gameManager.getBotConfigName(botConfigId)));
         ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_gamerule_config", gameruleConfigId, gameManager.getGameruleConfigName(gameruleConfigId)));
         ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_spawn_config", spawnConfigId, gameManager.getSpawnConfigName(spawnConfigId)));
-        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_zone_config", zoneConfigFileName, GameConfigManager.get().getZoneConfigList().size()));
+        List<IConfigSingleEntry> zoneConfigList = GameConfigManager.get().getConfigEntryList(ZoneConfigManager.get().getNameKey());
+        if (zoneConfigList != null) {
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_zone_config", zoneConfigFileName, zoneConfigList.size()));
+        }
     }
 }

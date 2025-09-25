@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.*;
 import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry.EffectFuncEntryBuilder;
@@ -39,7 +40,7 @@ public class DefaultZone {
         zoneConfigJson.add(generateDefaultZoneConfig13());
         zoneConfigJson.add(generateDefaultZoneConfig14());
         zoneConfigJson.add(generateDefaultZoneConfig15());
-        writeJsonToFile(Paths.get(GameConfigManager.get().getZoneConfigPath(), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
+        writeJsonToFile(Paths.get(GameConfigManager.get().getConfigDirPath(ZoneConfigManager.get().getNameKey()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
     private static JsonObject generateDefaultZoneConfig0() {

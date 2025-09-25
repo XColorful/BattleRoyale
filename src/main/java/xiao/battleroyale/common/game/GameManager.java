@@ -35,6 +35,8 @@ import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
+import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.game.GameInfoMessageManager;
@@ -429,7 +431,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
     // 用指令设置默认配置
     public boolean setGameruleConfigId(int gameId) {
-        if (gameId < 0 || GameConfigManager.get().getGameruleConfig(gameId) == null) {
+        if (gameId < 0 || GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId) == null) {
             BattleRoyale.LOGGER.info("setGameruleConfigId {} failed", gameId);
             return false;
         }
@@ -437,11 +439,11 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return true;
     }
     @Override public String getGameruleConfigName(int gameId) {
-        GameruleConfig config = GameConfigManager.get().getGameruleConfig(gameId);
+        GameruleConfig config = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId);
         return config != null ? config.getGameName() : "";
     }
     public boolean setSpawnConfigId(int id) {
-        if (id < 0 || GameConfigManager.get().getSpawnConfig(id) == null) {
+        if (id < 0 || GameConfigManager.get().getConfigEntry(SpawnConfigManager.get().getNameKey(), id) == null) {
             return false;
         }
         this.spawnConfigId = id;
@@ -463,7 +465,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return config != null ? config.name : "";
     }
     @Override public String getZoneConfigFileName() {
-        return GameConfigManager.get().getZoneConfigEntryFileName();
+        return GameConfigManager.get().getCurrentSelectedFileName(ZoneConfigManager.get().getNameKey());
     }
 
     private void setServerLevel(@Nullable ServerLevel serverLevel) {

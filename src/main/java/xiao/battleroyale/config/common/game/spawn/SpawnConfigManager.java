@@ -8,6 +8,7 @@ import xiao.battleroyale.api.game.spawn.ISpawnEntry;
 import xiao.battleroyale.api.game.spawn.ISpawnSingleEntry;
 import xiao.battleroyale.api.game.spawn.SpawnConfigTag;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
+import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
@@ -33,10 +34,12 @@ public class SpawnConfigManager extends AbstractConfigSubManager<SpawnConfigMana
     }
 
     private SpawnConfigManager() {
+        super(CommandArg.SPAWN);
         allFolderConfigData.put(DEFAULT_SPAWN_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
+        GameConfigManager.get().registerSubManager(get());
         get().reloadSpawnConfigs();
     }
 
@@ -180,7 +183,7 @@ public class SpawnConfigManager extends AbstractConfigSubManager<SpawnConfigMana
      * 特定类别的获取接口
      */
     public SpawnConfig getSpawnConfig(int id) {
-        return getConfigEntry(id, DEFAULT_SPAWN_CONFIG_FOLDER);
+        return getConfigEntry(DEFAULT_SPAWN_CONFIG_FOLDER, id);
     }
     public List<SpawnConfig> getSpawnConfigList() {
         return getConfigEntryList(DEFAULT_SPAWN_CONFIG_FOLDER);

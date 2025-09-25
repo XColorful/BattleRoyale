@@ -5,7 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.config.IConfigSingleEntry;
+import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.util.ClassUtils;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class LoadConfigs {
+public class SubLoadConfigs {
 
     /**
      * 从单个json文件数据读取配置

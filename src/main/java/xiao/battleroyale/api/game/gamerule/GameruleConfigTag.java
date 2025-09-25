@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.game.gamerule;
 
-import xiao.battleroyale.api.config.ConfigEntryTag;
+import xiao.battleroyale.api.config.sub.ConfigEntryTag;
 
 public class GameruleConfigTag extends ConfigEntryTag {
 

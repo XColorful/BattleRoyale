@@ -1,7 +1,6 @@
-package xiao.battleroyale.config;
+package xiao.battleroyale.config.client;
 
 import net.minecraftforge.common.ForgeConfigSpec;
-import xiao.battleroyale.config.client.ClientConfigManager;
 
 public class ClientConfig {
     public static ForgeConfigSpec init() {

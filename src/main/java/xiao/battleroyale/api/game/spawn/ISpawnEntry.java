@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.game.spawn;
 
-import xiao.battleroyale.api.config.IConfigEntry;
+import xiao.battleroyale.api.config.sub.IConfigEntry;
 
 public interface ISpawnEntry extends IConfigEntry {
 

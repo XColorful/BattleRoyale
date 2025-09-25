@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.game.spawn;
 
-import xiao.battleroyale.api.config.ConfigEntryTag;
+import xiao.battleroyale.api.config.sub.ConfigEntryTag;
 
 public class SpawnConfigTag extends ConfigEntryTag {
 

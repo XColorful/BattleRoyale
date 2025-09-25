@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.display.IDisplaySingleEntry;
 import xiao.battleroyale.api.client.display.DisplayConfigTag;
+import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
@@ -30,10 +31,12 @@ public class DisplayConfigManager extends AbstractConfigSubManager<DisplayConfig
     }
 
     private DisplayConfigManager() {
+        super(CommandArg.DISPLAY);
         allFolderConfigData.put(DEFAULT_DISPLAY_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
+        ClientConfigManager.get().registerSubManager(get());
         get().reloadDisplayConfigs();
     }
 
@@ -190,7 +193,7 @@ public class DisplayConfigManager extends AbstractConfigSubManager<DisplayConfig
     }
 
     public DisplayConfig getDisplayConfig(int id) {
-        return getConfigEntry(id, DEFAULT_DISPLAY_CONFIG_FOLDER);
+        return getConfigEntry(DEFAULT_DISPLAY_CONFIG_FOLDER, id);
     }
     public List<DisplayConfig> getDisplayConfigList() {
         return getConfigEntryList(DEFAULT_DISPLAY_CONFIG_FOLDER);

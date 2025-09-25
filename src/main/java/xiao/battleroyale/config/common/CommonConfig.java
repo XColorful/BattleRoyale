@@ -1,4 +1,4 @@
-package xiao.battleroyale.config;
+package xiao.battleroyale.config.common;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import xiao.battleroyale.common.game.GameManager;

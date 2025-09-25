@@ -11,8 +11,8 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.slf4j.Logger;
-import xiao.battleroyale.config.ClientConfig;
-import xiao.battleroyale.config.CommonConfig;
+import xiao.battleroyale.config.client.ClientConfig;
+import xiao.battleroyale.config.common.CommonConfig;
 import xiao.battleroyale.init.*;
 import xiao.battleroyale.resource.ResourceLoader;
 

@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.config.IConfigAppliable;
+import xiao.battleroyale.api.config.sub.IConfigAppliable;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
 import xiao.battleroyale.common.game.GameManager;

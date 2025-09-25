@@ -1,15 +1,14 @@
 package xiao.battleroyale.config;
 
-import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.config.IConfigSingleEntry;
+import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.util.ClassUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SwitchConfig {
+public class SubSwitchConfig {
 
     /**
      * 实现 IConfigSwitchable.switchConfigFile 的核心逻辑（切换下一个）
@@ -31,20 +30,20 @@ public class SwitchConfig {
         int currentIndex = fileNames.indexOf(context.getConfigFileName(folderId).string); // indexOf可能返回-1
         int nextIndex = (currentIndex + 1) % fileNames.size(); // isEmpty()已经保证不会对0取模
         String nextFileName = fileNames.get(nextIndex);
-        return context.switchConfigFile(nextFileName, folderId);
+        return context.switchConfigFile(folderId, nextFileName);
     }
 
     /**
      * 实现 IConfigSwitchable.switchConfigFile 的核心逻辑（指定名称切换）
      * @param context 抽象配置管理器实例 (this)
-     * @param fileName 指定的文件名。
      * @param folderId 文件夹 ID。
+     * @param fileName 指定的文件名。
      * @return 是否成功切换。
      */
     public static <T extends IConfigSingleEntry> boolean switchConfigFile( // 指定文件名切换配置
                                                                            AbstractConfigSubManager<T> context,
-                                                                           @NotNull String fileName,
-                                                                           int folderId) {
+                                                                           int folderId,
+                                                                           String fileName) {
 
         ClassUtils.ArrayMap<Integer, T> selectedFileConfigs = context.getConfigFolderData(folderId).fileConfigsByFileName.get(fileName);
 
