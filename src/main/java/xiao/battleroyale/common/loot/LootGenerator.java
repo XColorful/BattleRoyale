@@ -17,11 +17,15 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameIdReadApi;
+import xiao.battleroyale.api.game.IGameIdWriteApi;
 import xiao.battleroyale.api.loot.*;
 import xiao.battleroyale.api.loot.entity.IEntityLootData;
 import xiao.battleroyale.api.loot.item.IItemLootData;
 import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
 import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
+import xiao.battleroyale.common.game.GameIdHelper;
+import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.GameUtils;
@@ -52,6 +56,9 @@ public class LootGenerator {
         HAS_BLOCK_FILTER = blockFilter.hasFilter();
     }
 
+    private static final IGameIdReadApi gameIdReadApi = GameManager.get().getGameIdReadApi();
+    private static final IGameIdWriteApi gameIdWriteApi = GameManager.get().getGameIdWriteApi();
+
     /**
      * 根据物资刷新配置生成
      * @param lootContext 物资刷新环境
@@ -72,7 +79,7 @@ public class LootGenerator {
                 if (itemStack == null) {
                     continue;
                 }
-                GameUtils.addGameId(itemStack, lootContext.gameId);
+                gameIdWriteApi.addGameId(itemStack, lootContext.gameId);
                 lootItems.add(itemStack);
             }
         }
@@ -108,7 +115,7 @@ public class LootGenerator {
                     if (itemStack == null) {
                         continue;
                     }
-                    GameUtils.addGameId(itemStack, lootContext.gameId);
+                    gameIdWriteApi.addGameId(itemStack, lootContext.gameId);
                     container.setItemNoUpdate(i, itemStack); // 省流
                 } else {
                     BattleRoyale.LOGGER.warn("Ignore adding non-item to loot container at {}", target.getBlockPos());
@@ -124,7 +131,7 @@ public class LootGenerator {
                     if (entity == null) {
                         continue;
                     }
-                    GameUtils.addGameId(entity, lootContext.gameId);
+                    gameIdWriteApi.addGameId(entity, lootContext.gameId);
                     int count = entityData.getCount();
                     int range = entityData.getRange();
                     for (int j = 0; j < count; j++) {
@@ -167,7 +174,7 @@ public class LootGenerator {
                 if (itemStack == null) {
                     continue;
                 }
-                GameUtils.addGameId(itemStack, lootContext.gameId);
+                gameIdWriteApi.addGameId(itemStack, lootContext.gameId);
                 container.setItem(i, itemStack); // 使用 setItem 触发更新
             } else {
                 BattleRoyale.LOGGER.warn("Ignore adding non-item to vanilla container at {}", targetBlockEntity.getBlockPos());
@@ -222,11 +229,11 @@ public class LootGenerator {
                     (HAS_BLOCK_FILTER && !blockFilter.shouldLoot(blockEntity))) {
                 return false;
             }
-            UUID blockGameId = GameUtils.getGameId(blockEntity);
+            UUID blockGameId = gameIdReadApi.getGameId(blockEntity);
             if (blockGameId == null || !blockGameId.equals(lootContext.gameId)) {
                 ILootEntry entry = config.entry;
                 generateVanillaLoot(lootContext, blockEntity, entry);
-                GameUtils.addGameId(blockEntity, lootContext.gameId);
+                gameIdWriteApi.addGameId(blockEntity, lootContext.gameId);
                 // blockEntity.setChanged(); // addGameId内部已经标记
                 return true;
             }
@@ -264,7 +271,7 @@ public class LootGenerator {
         List<Entity> innocentEntities = new ArrayList<>();
 
         for (Entity entity : allEntitiesInChunk) {
-            UUID entityGameId = GameUtils.getGameId(entity);
+            UUID entityGameId = gameIdReadApi.getGameId(entity);
             if (entityGameId != null) {
                 if (!lootContext.gameId.equals(entityGameId)) {
                     oldEntities.add(entity);

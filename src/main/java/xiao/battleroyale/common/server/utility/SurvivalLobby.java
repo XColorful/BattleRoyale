@@ -15,6 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.GameUtilsFunction;
@@ -88,6 +89,7 @@ public class SurvivalLobby {
 
         if (dropInventory) {
             if (dropGameItemOnly) {
+                IGameIdReadApi gameIdReadApi = GameManager.get().getGameIdReadApi();
                 Inventory inventory = player.getInventory();
                 int keepCount = 0;
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
@@ -95,7 +97,7 @@ public class SurvivalLobby {
                     if (itemStack.isEmpty()) {
                         continue;
                     }
-                    if (GameUtils.getGameId(itemStack) != null) {
+                    if (gameIdReadApi.getGameId(itemStack) != null) {
                         player.drop(itemStack, true, false);
                         inventory.setItem(i, ItemStack.EMPTY);
                     } else {
@@ -111,6 +113,7 @@ public class SurvivalLobby {
 
         if (clearInventory) {
             if (clearGameItemOnly) { // 仅清理带GameId的物品
+                IGameIdReadApi gameIdReadApi = GameManager.get().getGameIdReadApi();
                 Inventory inventory = player.getInventory();
                 int keepCount = 0;
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
@@ -118,7 +121,7 @@ public class SurvivalLobby {
                     if (itemStack.isEmpty()) {
                         continue;
                     }
-                    if (GameUtils.getGameId(itemStack) != null) {
+                    if (gameIdReadApi.getGameId(itemStack) != null) {
                         inventory.setItem(i, ItemStack.EMPTY);
                     } else {
                         keepCount++;

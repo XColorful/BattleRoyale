@@ -20,6 +20,8 @@ import xiao.battleroyale.api.event.game.game.*;
 import xiao.battleroyale.api.event.game.starter.*;
 import xiao.battleroyale.api.event.game.tick.GameTickEvent;
 import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
+import xiao.battleroyale.api.game.IGameIdReadApi;
+import xiao.battleroyale.api.game.IGameIdWriteApi;
 import xiao.battleroyale.api.game.spawn.IGameLobbyReadApi;
 import xiao.battleroyale.api.game.team.IGameTeamReadApi;
 import xiao.battleroyale.api.game.IGameManager;
@@ -516,6 +518,12 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
     @Override public IGameLobbyReadApi getGameLobbyReadApi() {
         return SpawnManager.get();
+    }
+    @Override public IGameIdReadApi getGameIdReadApi() {
+        return GameIdHelper.getApi();
+    }
+    @Override public IGameIdWriteApi getGameIdWriteApi() {
+        return GameIdHelper.getApi();
     }
 
     // --------GameManagement--------
