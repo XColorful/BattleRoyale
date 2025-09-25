@@ -25,7 +25,6 @@ public class PerformanceConfigManager extends AbstractConfigSubManager<Performan
     }
 
     public static PerformanceConfigManager get() {
-        ServerConfigManager.get().registerSubManager(get());
         return PerformanceConfigManagerHolder.INSTANCE;
     }
 
@@ -35,6 +34,7 @@ public class PerformanceConfigManager extends AbstractConfigSubManager<Performan
     }
 
     public static void init() {
+        ServerConfigManager.get().registerSubManager(get());
         get().reloadPerformanceConfigs();
     }
 
