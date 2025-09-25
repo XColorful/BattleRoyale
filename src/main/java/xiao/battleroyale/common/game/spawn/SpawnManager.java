@@ -2,8 +2,11 @@ package xiao.battleroyale.common.game.spawn;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
@@ -225,45 +228,6 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
         teleportToLobby(player);
     }
 
-    public boolean canMuteki(ServerPlayer player) {
-        if (!isLobbyCreated() || GameTeamManager.hasStandingGamePlayer(player.getUUID())) { // 游戏中的玩家不能无敌
-            return false;
-        }
-
-        return player.level().dimension() == GameManager.get().getGameLevelKey()
-                && isInLobbyRange(player.position());
-    }
-
-    public void sendLobbyInfo(ServerPlayer player) {
-        if (player == null) {
-            return;
-        }
-
-        if (isLobbyCreated()) {
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_pos", lobbyPos.x, lobbyPos.y, lobbyPos.z).withStyle(ChatFormatting.AQUA));
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_dimension", lobbyDimension.x, lobbyDimension.y, lobbyDimension.z).withStyle(ChatFormatting.AQUA));
-            if (lobbyMuteki) ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_muteki").withStyle(ChatFormatting.GOLD));
-            if (lobbyHeal) ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_heal").withStyle(ChatFormatting.GREEN));
-        } else { // 没有创建大厅
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
-        }
-    }
-
-    public void sendLobbyInfo(ServerLevel serverLevel) {
-        if (serverLevel == null) {
-            return;
-        }
-
-        if (isLobbyCreated()) {
-            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_pos", lobbyPos.x, lobbyPos.y, lobbyPos.z).withStyle(ChatFormatting.AQUA));
-            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_dimension", lobbyDimension.x, lobbyDimension.y, lobbyDimension.z).withStyle(ChatFormatting.AQUA));
-            if (lobbyMuteki) ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_muteki").withStyle(ChatFormatting.GOLD));
-            if (lobbyHeal) ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_heal").withStyle(ChatFormatting.GREEN));
-        } else { // 没有创建大厅
-            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
-        }
-    }
-
     public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode, boolean teleportDropInventory, boolean teleportClearInventory) {
         if (GameManager.get().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, SpawnManager skipped set lobby");
@@ -312,6 +276,9 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
         // return configPrepared || ready || GameManager.get().isInGame(); // 任意阶段均保证大厅已创建
         return lobbyPos != null && lobbyDimension != null; // 让游戏结束后也能传送回大厅
     }
+    @Override public ResourceKey<Level> lobbyLevelKey() {
+        return GameManager.get().getGameLevelKey();
+    }
     @Override public Vec3 lobbyPos() {
         return this.lobbyPos;
     }
@@ -333,6 +300,7 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
     @Override public boolean teleportClearInventory() {
         return this.teleportClearInventory;
     }
+
     /**
      * 调用时保证 lobbyPos 和 lobbyDimension 非空
      * @param pos 需要判断的位置
@@ -349,5 +317,42 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
         return pos.x >= minX && pos.x <= maxX &&
                 pos.y >= minY && pos.y <= maxY &&
                 pos.z >= minZ && pos.z <= maxZ;
+    }
+    @Override public boolean canMuteki(@NotNull LivingEntity livingEntity) {
+        if (!isLobbyCreated() || GameTeamManager.hasStandingGamePlayer(livingEntity.getUUID())) { // 游戏中的玩家不能无敌
+            return false;
+        }
+
+        return livingEntity.level().dimension().equals(this.lobbyLevelKey())
+                && isInLobbyRange(livingEntity.position());
+    }
+
+    @Override public void sendLobbyInfo(ServerPlayer player) {
+        if (player == null) {
+            return;
+        }
+
+        if (isLobbyCreated()) {
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_pos", lobbyPos.x, lobbyPos.y, lobbyPos.z).withStyle(ChatFormatting.AQUA));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_dimension", lobbyDimension.x, lobbyDimension.y, lobbyDimension.z).withStyle(ChatFormatting.AQUA));
+            if (lobbyMuteki) ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_muteki").withStyle(ChatFormatting.GOLD));
+            if (lobbyHeal) ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_heal").withStyle(ChatFormatting.GREEN));
+        } else { // 没有创建大厅
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
+        }
+    }
+    @Override public void sendLobbyInfo(ServerLevel serverLevel) {
+        if (serverLevel == null) {
+            return;
+        }
+
+        if (isLobbyCreated()) {
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_pos", lobbyPos.x, lobbyPos.y, lobbyPos.z).withStyle(ChatFormatting.AQUA));
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_dimension", lobbyDimension.x, lobbyDimension.y, lobbyDimension.z).withStyle(ChatFormatting.AQUA));
+            if (lobbyMuteki) ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_muteki").withStyle(ChatFormatting.GOLD));
+            if (lobbyHeal) ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_heal").withStyle(ChatFormatting.GREEN));
+        } else { // 没有创建大厅
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
+        }
     }
 }

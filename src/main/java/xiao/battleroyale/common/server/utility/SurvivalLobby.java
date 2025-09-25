@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -16,6 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameIdReadApi;
+import xiao.battleroyale.api.utilitity.ILobbyReadApi;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.GameUtilsFunction;
@@ -25,7 +27,7 @@ import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.Vec3Utils;
 
-public class SurvivalLobby {
+public class SurvivalLobby implements ILobbyReadApi {
 
     private static class SurvivalLobbyHolder {
         private static final SurvivalLobby INSTANCE = new SurvivalLobby();
@@ -142,62 +144,6 @@ public class SurvivalLobby {
         BattleRoyale.LOGGER.info("Teleport player {} (UUID:{}) to lobby ({}, {}, {})", player.getName().getString(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
     }
 
-    public boolean canMuteki(ServerPlayer player) {
-        if (!isLobbyCreated() || GameTeamManager.hasStandingGamePlayer(player.getUUID())) {
-            return false;
-        }
-
-        return player.level().dimension() == levelKey
-                && isInLobbyRange(player.position());
-    }
-
-    private boolean isInLobbyRange(Vec3 pos) {
-        double minX = lobbyPos.x - lobbyDimension.x;
-        double maxX = lobbyPos.x + lobbyDimension.x;
-        double minY = lobbyPos.y - lobbyDimension.y;
-        double maxY = lobbyPos.y + lobbyDimension.y;
-        double minZ = lobbyPos.z - lobbyDimension.z;
-        double maxZ = lobbyPos.z + lobbyDimension.z;
-
-        return pos.x >= minX && pos.x <= maxX &&
-                pos.y >= minY && pos.y <= maxY &&
-                pos.z >= minZ && pos.z <= maxZ;
-    }
-
-    public boolean isLobbyCreated() {
-        return lobbyPos != null;
-    }
-
-    public void sendLobbyInfo(ServerPlayer player) {
-        if (player == null) {
-            return;
-        }
-
-        if (isLobbyCreated()) {
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_pos", lobbyPos.x, lobbyPos.y, lobbyPos.z).withStyle(ChatFormatting.AQUA));
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_dimension", lobbyDimension.x, lobbyDimension.y, lobbyDimension.z).withStyle(ChatFormatting.AQUA));
-            if (lobbyMuteki) ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_muteki").withStyle(ChatFormatting.GOLD));
-            if (lobbyHeal) ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_heal").withStyle(ChatFormatting.GREEN));
-        } else { // 没有创建大厅
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
-        }
-    }
-
-    public void sendLobbyInfo(ServerLevel serverLevel) {
-        if (serverLevel == null) {
-            return;
-        }
-
-        if (isLobbyCreated()) {
-            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_pos", lobbyPos.x, lobbyPos.y, lobbyPos.z).withStyle(ChatFormatting.AQUA));
-            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_dimension", lobbyDimension.x, lobbyDimension.y, lobbyDimension.z).withStyle(ChatFormatting.AQUA));
-            if (lobbyMuteki) ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_muteki").withStyle(ChatFormatting.GOLD));
-            if (lobbyHeal) ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_heal").withStyle(ChatFormatting.GREEN));
-        } else { // 没有创建大厅
-            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
-        }
-    }
-
     public boolean setLobby(String levelKeyString, boolean allowGamePlayerTeleport,
                             Vec3 lobbyPos, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal,
                             boolean dropInventory, boolean dropGameItemOnly, boolean clearInventory, boolean clearGameItemOnly) {
@@ -224,5 +170,85 @@ public class SurvivalLobby {
         this.clearGameItemOnly = clearGameItemOnly;
         BattleRoyale.LOGGER.debug("Successfully set survival lobby: levelKey:{}, center{}, dim{}", levelKey, lobbyPos, lobbyDimension);
         return true;
+    }
+
+    // --------ILobbyReadApi--------
+
+    @Override public boolean isLobbyCreated() {
+        return lobbyPos != null && lobbyDimension != null;
+    }
+    @Override public ResourceKey<Level> lobbyLevelKey() {
+        return levelKey;
+    }
+    @Override public Vec3 lobbyPos() {
+        return this.lobbyPos;
+    }
+    @Override public Vec3 lobbyDimension() {
+        return this.lobbyDimension;
+    }
+    @Override public boolean lobbyMuteki() {
+        return this.lobbyMuteki;
+    }
+    @Override public boolean lobbyHeal() {
+        return this.lobbyHeal;
+    }
+    @Override public boolean lobbyChangeGamemode() {
+        return true;
+    }
+    @Override public boolean teleportDropInventory() {
+        return this.dropInventory;
+    }
+    @Override public boolean teleportClearInventory() {
+        return this.clearInventory;
+    }
+
+    @Override public boolean isInLobbyRange(Vec3 pos) {
+        double minX = lobbyPos.x - lobbyDimension.x;
+        double maxX = lobbyPos.x + lobbyDimension.x;
+        double minY = lobbyPos.y - lobbyDimension.y;
+        double maxY = lobbyPos.y + lobbyDimension.y;
+        double minZ = lobbyPos.z - lobbyDimension.z;
+        double maxZ = lobbyPos.z + lobbyDimension.z;
+
+        return pos.x >= minX && pos.x <= maxX &&
+                pos.y >= minY && pos.y <= maxY &&
+                pos.z >= minZ && pos.z <= maxZ;
+    }
+    @Override public boolean canMuteki(@NotNull LivingEntity livingEntity) {
+        if (!isLobbyCreated() || GameTeamManager.hasStandingGamePlayer(livingEntity.getUUID())) {
+            return false;
+        }
+
+        return livingEntity.level().dimension().equals(this.lobbyLevelKey())
+                && isInLobbyRange(livingEntity.position());
+    }
+
+    @Override public void sendLobbyInfo(ServerPlayer player) {
+        if (player == null) {
+            return;
+        }
+
+        if (isLobbyCreated()) {
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_pos", lobbyPos.x, lobbyPos.y, lobbyPos.z).withStyle(ChatFormatting.AQUA));
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_dimension", lobbyDimension.x, lobbyDimension.y, lobbyDimension.z).withStyle(ChatFormatting.AQUA));
+            if (lobbyMuteki) ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_muteki").withStyle(ChatFormatting.GOLD));
+            if (lobbyHeal) ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.lobby_heal").withStyle(ChatFormatting.GREEN));
+        } else { // 没有创建大厅
+            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
+        }
+    }
+    @Override public void sendLobbyInfo(ServerLevel serverLevel) {
+        if (serverLevel == null) {
+            return;
+        }
+
+        if (isLobbyCreated()) {
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_pos", lobbyPos.x, lobbyPos.y, lobbyPos.z).withStyle(ChatFormatting.AQUA));
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_dimension", lobbyDimension.x, lobbyDimension.y, lobbyDimension.z).withStyle(ChatFormatting.AQUA));
+            if (lobbyMuteki) ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_muteki").withStyle(ChatFormatting.GOLD));
+            if (lobbyHeal) ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.lobby_heal").withStyle(ChatFormatting.GREEN));
+        } else { // 没有创建大厅
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
+        }
     }
 }
