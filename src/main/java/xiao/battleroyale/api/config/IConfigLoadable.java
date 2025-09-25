@@ -1,4 +1,4 @@
-package xiao.battleroyale.api;
+package xiao.battleroyale.api.config;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;

@@ -9,7 +9,7 @@ import xiao.battleroyale.api.loot.LootConfigTag;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.loot.defaultconfigs.DefaultLootConfigGenerator;
 import xiao.battleroyale.config.common.loot.type.LootEntryType;
@@ -22,10 +22,10 @@ import java.util.List;
 
 import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.*;
 
-public class LootConfigManager extends AbstractConfigManager<LootConfigManager.LootConfig> {
+public class LootConfigManager extends AbstractConfigSubManager<LootConfigManager.LootConfig> {
 
     public static final String LOOT_CONFIG_SUB_PATH = "loot";
-    public static final String LOOT_CONFIG_PATH = Paths.get(AbstractConfigManager.MOD_CONFIG_PATH).resolve(LOOT_CONFIG_SUB_PATH).toString();
+    public static final String LOOT_CONFIG_PATH = Paths.get(AbstractConfigSubManager.MOD_CONFIG_PATH).resolve(LOOT_CONFIG_SUB_PATH).toString();
 
     protected final int DEFAULT_LOOT_CONFIG_FOLDER = LOOT_SPAWNER;
 
@@ -121,19 +121,19 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
         return LootConfig.CONFIG_TYPE;
     }
     public String getLootSpawnerConfigEntryFileName() {
-        return getConfigEntryFileName(LOOT_SPAWNER);
+        return getCurrentSelectedFileName(LOOT_SPAWNER);
     }
     public String getEntitySpawnerConfigEntryFileName() {
-        return getConfigEntryFileName(ENTITY_SPAWNER);
+        return getCurrentSelectedFileName(ENTITY_SPAWNER);
     }
     public String getAirdropConfigEntryFileName() {
-        return getConfigEntryFileName(AIRDROP);
+        return getCurrentSelectedFileName(AIRDROP);
     }
     public String getAirdropSpecialConfigEntryFileName() {
-        return getConfigEntryFileName(AIRDROP_SPECIAL);
+        return getCurrentSelectedFileName(AIRDROP_SPECIAL);
     }
     public String getSecretRoomConfigEntryFileName() {
-        return getConfigEntryFileName(SECRET_ROOM);
+        return getCurrentSelectedFileName(SECRET_ROOM);
     }
 
     /**

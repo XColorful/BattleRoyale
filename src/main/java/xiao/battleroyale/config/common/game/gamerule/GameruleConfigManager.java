@@ -6,7 +6,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.GameruleConfigTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleSingleEntry;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.defaultconfigs.DefaultGameruleConfigGenerator;
@@ -20,7 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigManager.GameruleConfig> {
+public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConfigManager.GameruleConfig> {
 
     private static class GameruleConfigManagerHolder {
         private static final GameruleConfigManager INSTANCE = new GameruleConfigManager();

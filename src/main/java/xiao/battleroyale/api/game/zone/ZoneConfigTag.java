@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.game.zone;
 
-import xiao.battleroyale.api.ConfigEntryTag;
+import xiao.battleroyale.api.config.ConfigEntryTag;
 
 public final class ZoneConfigTag extends ConfigEntryTag {
 

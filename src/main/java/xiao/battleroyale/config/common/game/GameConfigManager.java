@@ -1,6 +1,6 @@
 package xiao.battleroyale.config.common.game;
 
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager.BotConfig;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
@@ -16,7 +16,7 @@ import java.util.*;
 public class GameConfigManager {
 
     public static final String GAME_CONFIG_SUB_PATH = "game";
-    public static final String GAME_CONFIG_PATH = Paths.get(AbstractConfigManager.MOD_CONFIG_PATH).resolve(GAME_CONFIG_SUB_PATH).toString();
+    public static final String GAME_CONFIG_PATH = Paths.get(AbstractConfigSubManager.MOD_CONFIG_PATH).resolve(GAME_CONFIG_SUB_PATH).toString();
 
     private static class GameConfigManagerHolder {
         private static final GameConfigManager INSTANCE = new GameConfigManager();
@@ -40,16 +40,16 @@ public class GameConfigManager {
      * IConfigManager
      */
     public String getBotConfigEntryFileName() {
-        return BotConfigManager.get().getConfigEntryFileName();
+        return BotConfigManager.get().getCurrentSelectedFileName();
     }
     public String getGameruleConfigEntryFileName() {
-        return GameruleConfigManager.get().getConfigEntryFileName();
+        return GameruleConfigManager.get().getCurrentSelectedFileName();
     }
     public String getSpawnConfigEntryFileName() {
-        return SpawnConfigManager.get().getConfigEntryFileName();
+        return SpawnConfigManager.get().getCurrentSelectedFileName();
     }
     public String getZoneConfigEntryFileName() {
-        return ZoneConfigManager.get().getConfigEntryFileName();
+        return ZoneConfigManager.get().getCurrentSelectedFileName();
     }
 
     /**

@@ -1,6 +1,6 @@
 package xiao.battleroyale.config.client;
 
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.client.display.DisplayConfigManager;
 import xiao.battleroyale.config.client.display.DisplayConfigManager.DisplayConfig;
 import xiao.battleroyale.config.client.render.RenderConfigManager;
@@ -12,7 +12,7 @@ import java.util.List;
 public class ClientConfigManager {
 
     public static final String CLIENT_CONFIG_SUB_PATH = "client";
-    public static final String CLIENT_CONFIG_PATH = Paths.get(AbstractConfigManager.MOD_CONFIG_PATH).resolve(CLIENT_CONFIG_SUB_PATH).toString();
+    public static final String CLIENT_CONFIG_PATH = Paths.get(AbstractConfigSubManager.MOD_CONFIG_PATH).resolve(CLIENT_CONFIG_SUB_PATH).toString();
 
     private static class ClientConfigManagerHolder {
         private static final ClientConfigManager INSTANCE = new ClientConfigManager();
@@ -32,10 +32,10 @@ public class ClientConfigManager {
      * IConfigManager
      */
     public String getRenderConfigEntryFileName() {
-        return RenderConfigManager.get().getConfigEntryFileName();
+        return RenderConfigManager.get().getCurrentSelectedFileName();
     }
     public String getDisplayConfigEntryFileName() {
-        return DisplayConfigManager.get().getConfigEntryFileName();
+        return DisplayConfigManager.get().getCurrentSelectedFileName();
     }
 
     /**

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.server.utility.IUtilitySingleEntry;
 import xiao.battleroyale.api.server.utility.UtilityConfigTag;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.utility.defaultconfigs.DefaultUtilityConfigGenerator;
@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
-public class UtilityConfigManager extends AbstractConfigManager<UtilityConfigManager.UtilityConfig> {
+public class UtilityConfigManager extends AbstractConfigSubManager<UtilityConfigManager.UtilityConfig> {
 
     private static class UtilityConfigManagerHolder {
         private static final UtilityConfigManager INSTANCE = new UtilityConfigManager();

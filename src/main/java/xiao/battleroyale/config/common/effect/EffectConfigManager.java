@@ -1,6 +1,6 @@
 package xiao.battleroyale.config.common.effect;
 
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager;
 import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager.ParticleConfig;
 
@@ -10,7 +10,7 @@ import java.util.List;
 public class EffectConfigManager {
 
     public static final String EFFECT_CONFIG_SUB_PATH = "effect";
-    public static final String EFFECT_CONFIG_PATH = Paths.get(AbstractConfigManager.MOD_CONFIG_PATH).resolve(EFFECT_CONFIG_SUB_PATH).toString();
+    public static final String EFFECT_CONFIG_PATH = Paths.get(AbstractConfigSubManager.MOD_CONFIG_PATH).resolve(EFFECT_CONFIG_SUB_PATH).toString();
 
     private static class EffectConfigManagerHolder {
         private static final EffectConfigManager INSTANCE = new EffectConfigManager();
@@ -27,7 +27,7 @@ public class EffectConfigManager {
      * IConfigManager
      */
     public String getParticleConfigEntryFileName() {
-        return ParticleConfigManager.get().getConfigEntryFileName();
+        return ParticleConfigManager.get().getCurrentSelectedFileName();
     }
 
     /**

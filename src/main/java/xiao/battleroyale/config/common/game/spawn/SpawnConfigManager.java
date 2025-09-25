@@ -9,7 +9,7 @@ import xiao.battleroyale.api.game.spawn.ISpawnSingleEntry;
 import xiao.battleroyale.api.game.spawn.SpawnConfigTag;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.spawn.defaultconfigs.DefaultSpawnConfigGenerator;
@@ -21,7 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class SpawnConfigManager extends AbstractConfigManager<SpawnConfigManager.SpawnConfig> {
+public class SpawnConfigManager extends AbstractConfigSubManager<SpawnConfigManager.SpawnConfig> {
 
     private static class SpawnConfigMangerHolder {
         private static final SpawnConfigManager INSTANCE = new SpawnConfigManager();

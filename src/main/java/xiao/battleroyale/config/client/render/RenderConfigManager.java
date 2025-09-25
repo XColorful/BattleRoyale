@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.render.IRenderSingleEntry;
 import xiao.battleroyale.api.client.render.RenderConfigTag;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.render.defaultconfigs.DefaultRenderConfigGenerator;
@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
-public class RenderConfigManager extends AbstractConfigManager<RenderConfigManager.RenderConfig> {
+public class RenderConfigManager extends AbstractConfigSubManager<RenderConfigManager.RenderConfig> {
 
     private static class RenderConfigManagerHolder {
         private static final RenderConfigManager INSTANCE = new RenderConfigManager();

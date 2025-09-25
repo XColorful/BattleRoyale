@@ -5,7 +5,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.IConfigAppliable;
+import xiao.battleroyale.api.config.IConfigAppliable;
 import xiao.battleroyale.api.server.utility.IUtilityEntry;
 import xiao.battleroyale.api.server.utility.SurvivalEntryTag;
 import xiao.battleroyale.common.server.utility.SurvivalLobby;

@@ -7,7 +7,7 @@ import xiao.battleroyale.api.game.bot.BotConfigTag;
 import xiao.battleroyale.api.game.bot.IBotEntry;
 import xiao.battleroyale.api.game.bot.IBotSingleEntry;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.defaultconfigs.DefaultBotConfigGenerator;
@@ -18,7 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class BotConfigManager extends AbstractConfigManager<BotConfigManager.BotConfig> {
+public class BotConfigManager extends AbstractConfigSubManager<BotConfigManager.BotConfig> {
 
     private static class BotConfigManagerHolder {
         private static final BotConfigManager INSTANCE = new BotConfigManager();

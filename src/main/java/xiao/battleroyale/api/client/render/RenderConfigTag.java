@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.client.render;
 
-import xiao.battleroyale.api.ConfigEntryTag;
+import xiao.battleroyale.api.config.ConfigEntryTag;
 
 public class RenderConfigTag extends ConfigEntryTag {
 

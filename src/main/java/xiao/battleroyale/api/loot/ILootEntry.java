@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.IConfigEntry;
+import xiao.battleroyale.api.config.IConfigEntry;
 import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 
 public interface ILootEntry extends IConfigEntry {

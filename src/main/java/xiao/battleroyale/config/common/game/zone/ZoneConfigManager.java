@@ -10,7 +10,7 @@ import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.common.game.zone.GameZoneBuilder;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.defaultconfigs.DefaultZoneConfigGenerator;
@@ -21,7 +21,7 @@ import xiao.battleroyale.util.JsonUtils;
 import java.nio.file.Path;
 import java.util.*;
 
-public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.ZoneConfig> {
+public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManager.ZoneConfig> {
 
     private static class ZoneConfigManagerHolder {
         private static final ZoneConfigManager INSTANCE = new ZoneConfigManager();

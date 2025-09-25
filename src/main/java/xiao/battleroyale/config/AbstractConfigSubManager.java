@@ -7,8 +7,8 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.IConfigManager;
-import xiao.battleroyale.api.IConfigSingleEntry;
+import xiao.battleroyale.api.config.IConfigSubManager;
+import xiao.battleroyale.api.config.IConfigSingleEntry;
 import xiao.battleroyale.util.ClassUtils;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * @param <T> 具体配置类型
  */
-public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implements IConfigManager<T> {
+public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> implements IConfigSubManager<T> {
 
     public static String MOD_CONFIG_PATH = "config/battleroyale";
 
@@ -65,7 +65,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
         }
     }
 
-    public AbstractConfigManager() {
+    public AbstractConfigSubManager() {
         allFolderConfigData.put(DEFAULT_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
@@ -200,7 +200,7 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
     }
 
     /**
-     * IConfigManager
+     * IConfigSubManager
      */
     @Override public @Nullable T getConfigEntry(int id) {
         return getConfigEntry(id, DEFAULT_CONFIG_FOLDER);
@@ -214,10 +214,10 @@ public abstract class AbstractConfigManager<T extends IConfigSingleEntry> implem
     @Override public @Nullable List<T> getConfigEntryList(int folderId) {
         return getConfigFolderData(folderId).currentConfigs.asList();
     }
-    @Override public String getConfigEntryFileName() {
-        return getConfigEntryFileName(DEFAULT_CONFIG_FOLDER);
+    @Override public String getCurrentSelectedFileName() {
+        return getCurrentSelectedFileName(DEFAULT_CONFIG_FOLDER);
     }
-    @Override public String getConfigEntryFileName(int folderId) {
+    @Override public String getCurrentSelectedFileName(int folderId) {
         return getConfigFileName(folderId).string;
     }
     @Override public String getFolderType() {

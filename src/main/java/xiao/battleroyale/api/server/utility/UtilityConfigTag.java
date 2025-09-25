@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.server.utility;
 
-import xiao.battleroyale.api.ConfigEntryTag;
+import xiao.battleroyale.api.config.ConfigEntryTag;
 
 public class UtilityConfigTag extends ConfigEntryTag {
 

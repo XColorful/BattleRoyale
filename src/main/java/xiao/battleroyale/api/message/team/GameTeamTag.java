@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.message.team;
 
-import xiao.battleroyale.api.ConfigEntryTag;
+import xiao.battleroyale.api.config.ConfigEntryTag;
 
 public class GameTeamTag extends ConfigEntryTag {
     

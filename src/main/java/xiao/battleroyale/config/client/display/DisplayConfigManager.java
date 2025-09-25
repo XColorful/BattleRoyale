@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.display.IDisplaySingleEntry;
 import xiao.battleroyale.api.client.display.DisplayConfigTag;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.display.defaultconfigs.DefaultDisplayConfigGenerator;
@@ -18,7 +18,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
-public class DisplayConfigManager extends AbstractConfigManager<DisplayConfigManager.DisplayConfig> {
+public class DisplayConfigManager extends AbstractConfigSubManager<DisplayConfigManager.DisplayConfig> {
 
     private static class DisplayConfigManagerHolder {
         private static final DisplayConfigManager INSTANCE = new DisplayConfigManager();

@@ -1,6 +1,6 @@
 package xiao.battleroyale.config.common.server;
 
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager.PerformanceConfig;
 import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
@@ -12,7 +12,7 @@ import java.util.List;
 public class ServerConfigManager {
 
     public static final String SERVER_CONFIG_SUB_PATH = "server";
-    public static final String SERVER_CONFIG_PATH = Paths.get(AbstractConfigManager.MOD_CONFIG_PATH).resolve(SERVER_CONFIG_SUB_PATH).toString();
+    public static final String SERVER_CONFIG_PATH = Paths.get(AbstractConfigSubManager.MOD_CONFIG_PATH).resolve(SERVER_CONFIG_SUB_PATH).toString();
 
     private static class ServerConfigManagerHolder {
         private static final ServerConfigManager INSTANCE = new ServerConfigManager();
@@ -34,10 +34,10 @@ public class ServerConfigManager {
      * IConfigManager
      */
     public String getPerformanceConfigEntryFileName() {
-        return PerformanceConfigManager.get().getConfigEntryFileName();
+        return PerformanceConfigManager.get().getCurrentSelectedFileName();
     }
     public String getUtilityConfigEntryFileName() {
-        return UtilityConfigManager.get().getConfigEntryFileName();
+        return UtilityConfigManager.get().getCurrentSelectedFileName();
     }
 
     /**

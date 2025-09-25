@@ -9,7 +9,7 @@ import xiao.battleroyale.api.game.effect.particle.IParticleSingleEntry;
 import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
 import xiao.battleroyale.common.effect.particle.FixedParticleData;
 import xiao.battleroyale.common.effect.particle.ParticleData;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.effect.particle.defaultconfigs.DefaultParticleConfigGenerator;
@@ -20,7 +20,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
-public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigManager.ParticleConfig> {
+public class ParticleConfigManager extends AbstractConfigSubManager<ParticleConfigManager.ParticleConfig> {
 
     private static class ParticleConfigManagerHolder {
         private static final ParticleConfigManager INSTANCE = new ParticleConfigManager();

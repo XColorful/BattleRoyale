@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.server.performance.IPerformanceSingleEntry;
 import xiao.battleroyale.api.server.performance.PerformanceConfigTag;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.performance.defaultconfigs.DefaultPerformanceConfigGenerator;
@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
-public class PerformanceConfigManager extends AbstractConfigManager<PerformanceConfigManager.PerformanceConfig> {
+public class PerformanceConfigManager extends AbstractConfigSubManager<PerformanceConfigManager.PerformanceConfig> {
 
     private static class PerformanceConfigManagerHolder {
         private static final PerformanceConfigManager INSTANCE = new PerformanceConfigManager();

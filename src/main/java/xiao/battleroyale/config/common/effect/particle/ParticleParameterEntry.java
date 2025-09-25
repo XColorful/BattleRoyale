@@ -2,7 +2,7 @@ package xiao.battleroyale.config.common.effect.particle;
 
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
-import xiao.battleroyale.api.IConfigEntry;
+import xiao.battleroyale.api.config.IConfigEntry;
 import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
 import xiao.battleroyale.util.JsonUtils;
 

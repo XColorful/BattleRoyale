@@ -1,6 +1,6 @@
 package xiao.battleroyale.config;
 
-import xiao.battleroyale.api.IConfigSingleEntry;
+import xiao.battleroyale.api.config.IConfigSingleEntry;
 
 public abstract class AbstractSingleConfig implements IConfigSingleEntry {
 
