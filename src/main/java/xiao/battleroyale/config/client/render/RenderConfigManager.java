@@ -7,6 +7,7 @@ import xiao.battleroyale.api.client.render.IRenderSingleEntry;
 import xiao.battleroyale.api.client.render.RenderConfigTag;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
+import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.render.defaultconfigs.DefaultRenderConfigGenerator;
 import xiao.battleroyale.config.client.render.type.BlockEntry;

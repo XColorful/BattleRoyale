@@ -7,6 +7,7 @@ import xiao.battleroyale.api.server.utility.IUtilitySingleEntry;
 import xiao.battleroyale.api.server.utility.UtilityConfigTag;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
+import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.utility.defaultconfigs.DefaultUtilityConfigGenerator;
 import xiao.battleroyale.config.common.server.utility.type.SurvivalEntry;

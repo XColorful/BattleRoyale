@@ -11,6 +11,7 @@ import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
+import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.spawn.defaultconfigs.DefaultSpawnConfigGenerator;
 import xiao.battleroyale.config.common.game.spawn.type.SpawnEntryType;

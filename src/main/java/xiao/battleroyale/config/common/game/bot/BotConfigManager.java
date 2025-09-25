@@ -9,6 +9,7 @@ import xiao.battleroyale.api.game.bot.IBotSingleEntry;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
+import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.defaultconfigs.DefaultBotConfigGenerator;
 import xiao.battleroyale.util.JsonUtils;
