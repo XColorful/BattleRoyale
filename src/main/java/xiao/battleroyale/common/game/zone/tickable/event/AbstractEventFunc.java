@@ -1,16 +1,18 @@
 package xiao.battleroyale.common.game.zone.tickable.event;
 
+import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.common.game.zone.tickable.AbstractSimpleFunc;
-import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
 public abstract class AbstractEventFunc extends AbstractSimpleFunc {
 
-    public AbstractEventFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset) {
-        super(moveDelay, moveTime, tickFreq, tickOffset);
-    }
+    protected final String protocol;
+    protected @NotNull final CompoundTag tag;
 
-    @Override
-    public ZoneFuncType getFuncType() {
-        return ZoneFuncType.EVENT;
+    public AbstractEventFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset,
+                             String protocol, @NotNull CompoundTag tag) {
+        super(moveDelay, moveTime, tickFreq, tickOffset);
+        this.protocol = protocol;
+        this.tag = tag;
     }
 }

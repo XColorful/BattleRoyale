@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.game.zone.zonefunc;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.game.zone.func.IZoneFuncEntry;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
+import xiao.battleroyale.config.common.game.zone.zonefunc.event.AirdropFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.event.EventFuncEntry;
 
 import java.util.HashMap;
@@ -10,19 +11,21 @@ import java.util.Map;
 import java.util.function.Function;
 
 public enum ZoneFuncType {
+    // simple
     SAFE(ZoneFuncTag.SAFE, SafeFuncEntry::fromJson),
     UNSAFE(ZoneFuncTag.UNSAFE, UnsafeFuncEntry::fromJson),
-    DANGER(ZoneFuncTag.DANGER, DangerFuncEntry::fromJson),
-    AIRDROP(ZoneFuncTag.AIRDROP, AirdropFuncEntry::fromJson),
     FIREWORK(ZoneFuncTag.FIREWORK, FireworkFuncEntry::fromJson),
     MUTEKI(ZoneFuncTag.MUTEKI, MutekiFuncEntry::fromJson),
     BOOST(ZoneFuncTag.BOOST, BoostFuncEntry::fromJson),
-    NO_FUNC(ZoneFuncTag.NO_FUNC, NoFuncEntry::fromJson),
     PARTICLE(ZoneFuncTag.PARTICLE, ParticleFuncEntry::fromJson),
     EFFECT(ZoneFuncTag.EFFECT, EffectFuncEntry::fromJson),
     MESSAGE(ZoneFuncTag.MESSAGE, MessageFuncEntry::fromJson),
-    EVENT(ZoneFuncTag.EVENT, EventFuncEntry::fromJson);
-
+    NO_FUNC(ZoneFuncTag.NO_FUNC, NoFuncEntry::fromJson),
+    // special
+    EVENT(ZoneFuncTag.EVENT, EventFuncEntry::fromJson),
+    AIRDROP(ZoneFuncTag.AIRDROP, AirdropFuncEntry::fromJson),
+    DANGER(ZoneFuncTag.DANGER, DangerFuncEntry::fromJson);
+    
     private final String name;
     private final Function<JsonObject, ? extends IZoneFuncEntry> deserializer;
 
