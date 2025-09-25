@@ -9,6 +9,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
@@ -39,14 +40,14 @@ public class MessageEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, T target) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
         MutableComponent message = Component.empty();
         message.append(
                 Component.translatable("battleroyale.loot.label")
                         .withStyle(ChatFormatting.WHITE)
         );
 
-        if (sendPosition) {
+        if (sendPosition && target != null) {
             BlockPos blockPos = target.getBlockPos();
             message.append(Component.literal(" "));
             message.append(Component.translatable(

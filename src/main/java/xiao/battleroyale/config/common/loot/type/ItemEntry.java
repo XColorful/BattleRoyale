@@ -30,7 +30,7 @@ public class ItemEntry implements IItemLootEntry {
     }
 
     @Override
-    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, T target) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
         return Collections.singletonList(new ItemData(this.itemString, this.nbt.copy(), this.count));
     }
 

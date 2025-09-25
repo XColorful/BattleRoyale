@@ -217,34 +217,34 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     /**
      * 特定类别的获取接口
      */
-    public LootConfig getLootSpawnerConfig(int id) {
+    public @Nullable LootConfig getLootSpawnerConfig(int id) {
         return getConfigEntry(id, LOOT_SPAWNER);
     }
-    public List<LootConfig> getLootSpawnerConfigList() {
+    public @Nullable List<LootConfig> getLootSpawnerConfigList() {
         return getConfigEntryList(LOOT_SPAWNER);
     }
-    public LootConfig getEntitySpawnerConfig(int id) {
+    public @Nullable LootConfig getEntitySpawnerConfig(int id) {
         return getConfigEntry(id, ENTITY_SPAWNER);
     }
-    public List<LootConfig> getEntitySpawnerConfigList() {
+    public @Nullable List<LootConfig> getEntitySpawnerConfigList() {
         return getConfigEntryList(ENTITY_SPAWNER);
     }
-    public LootConfig getAirdropConfig(int id) {
+    public @Nullable LootConfig getAirdropConfig(int id) {
         return getConfigEntry(id, AIRDROP);
     }
-    public List<LootConfig> getAirdropConfigList() {
+    public @Nullable List<LootConfig> getAirdropConfigList() {
         return getConfigEntryList(AIRDROP);
     }
-    public LootConfig getSpecialAirdropConfig(int id) {
+    public @Nullable LootConfig getSpecialAirdropConfig(int id) {
         return getConfigEntry(id, AIRDROP_SPECIAL);
     }
-    public List<LootConfig> getSpecialAirdropConfigList() {
+    public @Nullable List<LootConfig> getSpecialAirdropConfigList() {
         return getConfigEntryList(AIRDROP_SPECIAL);
     }
-    public LootConfig getSecretRoomConfig(int id) {
+    public @Nullable LootConfig getSecretRoomConfig(int id) {
         return getConfigEntry(id, SECRET_ROOM);
     }
-    public List<LootConfig> getSecretRoomConfigList() {
+    public @Nullable List<LootConfig> getSecretRoomConfigList() {
         return getConfigEntryList(SECRET_ROOM);
     }
 

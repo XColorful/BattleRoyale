@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
@@ -41,7 +42,7 @@ public class WeightEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {
         double totalWeight = 0;
         for (WeightedEntry weightedEntry : weightedEntries) {
             totalWeight += weightedEntry.weight;
@@ -61,12 +62,12 @@ public class WeightEntry implements ILootEntry {
                     }
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse weight entry at {}", target.getBlockPos(), e);
+                parseErrorLog(e, target);
             }
         } else {
-            BattleRoyale.LOGGER.warn("WeightEntry missing entries member, skipped at {}", target.getBlockPos());
+            entryErrorLog(target);
         }
-        BattleRoyale.LOGGER.warn("Unexpected WeightEntry loot result");
+        BattleRoyale.LOGGER.warn("Unexpected WeightEntry loot result, weightedEntries.size()={}, totalWeight={}", weightedEntries.size(), totalWeight);
         return new ArrayList<>();
     }
 

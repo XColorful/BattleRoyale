@@ -55,7 +55,7 @@ public class LootSpawner extends AbstractLootBlock {
                 if (player.isCreative() && player.isCrouching()) { // 切换物资刷新配置
                     int currentConfigId = lootSpawnerBlockEntity.getConfigId();
                     List<LootConfig> allConfigs = LootConfigManager.get().getLootSpawnerConfigList();
-                    if (allConfigs.isEmpty()) {
+                    if (allConfigs == null || allConfigs.isEmpty()) {
                         player.sendSystemMessage(Component.translatable("battleroyale.message.no_loot_spawner_config_available"));
                         return InteractionResult.SUCCESS;
                     }

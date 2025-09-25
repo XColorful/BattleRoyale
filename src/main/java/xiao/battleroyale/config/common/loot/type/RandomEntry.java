@@ -28,16 +28,16 @@ public class RandomEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {
         if (lootContext.random.get() < chance) {
             if (entry != null) {
                 try {
                     return entry.generateLootData(lootContext, target);
                 } catch (Exception e) {
-                    BattleRoyale.LOGGER.warn("Failed to parse random entry, skipped at {}", target.getBlockPos(), e);
+                    parseErrorLog(e, target);
                 }
             } else {
-                BattleRoyale.LOGGER.warn("RandomEntry missing entry member, skipped at {}", target.getBlockPos());
+                entryErrorLog(target);
             }
         }
         return Collections.emptyList();

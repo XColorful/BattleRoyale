@@ -52,6 +52,33 @@ public class LootGenerator {
         HAS_BLOCK_FILTER = blockFilter.hasFilter();
     }
 
+    /**
+     * 根据物资刷新配置生成
+     * @param lootContext 物资刷新环境
+     * @param entry 战利品配置
+     */
+    public static List<ItemStack> generateLootItem(LootContext lootContext, ILootEntry entry) {
+        List<ItemStack> lootItems = new ArrayList<>();
+
+        List<ILootData> lootData = entry.generateLootData(lootContext);
+        if (lootData.isEmpty()) {
+            return lootItems;
+        }
+
+        for (ILootData data : lootData) {
+            if (data.getDataType() == LootDataType.ITEM) {
+                IItemLootData itemData = (IItemLootData) data;
+                ItemStack itemStack = itemData.getItemStack();
+                if (itemStack == null) {
+                    continue;
+                }
+                GameUtils.addGameId(itemStack, lootContext.gameId);
+                lootItems.add(itemStack);
+            }
+        }
+
+        return lootItems;
+    }
 
     /**
      * 根据物资刷新配置生成
@@ -291,11 +318,11 @@ public class LootGenerator {
     }
 
     public static class LootContext {
-        public final ServerLevel serverLevel;
+        public @NotNull final ServerLevel serverLevel;
         public final ChunkPos chunkPos;
         public final UUID gameId;
         public final Supplier<Float> random;
-        public LootContext(ServerLevel serverLevel, ChunkPos chunkPos, UUID gameId) {
+        public LootContext(@NotNull ServerLevel serverLevel, ChunkPos chunkPos, UUID gameId) {
             this.serverLevel = serverLevel;
             this.chunkPos = chunkPos;
             this.gameId = gameId;

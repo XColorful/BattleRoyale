@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
@@ -31,8 +32,12 @@ public class RegexEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, T target) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
         if (entry != null) {
+            if (target == null) {
+                return Collections.emptyList();
+            }
+
             try {
                 CompoundTag nbt = target.saveWithFullMetadata();
                 String nbtString = nbt.toString();
@@ -41,10 +46,10 @@ public class RegexEntry implements ILootEntry {
                     return entry.generateLootData(lootContext, target);
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse regex entry, skipped at {}", target.getBlockPos(), e);
+                parseErrorLog(e, target);
             }
         } else {
-            BattleRoyale.LOGGER.warn("RegexEntry missing entry member, skipped at {}", target.getBlockPos());
+            entryErrorLog(target);
         }
         return Collections.emptyList();
     }

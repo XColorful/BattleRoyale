@@ -121,7 +121,7 @@ public class CommonLootManager {
      * @return 如果任务完成或中断，返回 true；否则返回 false。
      */
     public boolean onTick(TickEvent.ServerTickEvent event) {
-        if (GameManager.get().isInGame() && !this.currentGenerationGameId.equals(GameManager.get().getGameId())) {
+        if (currentGenerationLevel == null || GameManager.get().isInGame() && !this.currentGenerationGameId.equals(GameManager.get().getGameId())) {
             if (initiatingCommandSource != null) {
                 initiatingCommandSource.sendFailure(Component.translatable("battleroyale.message.game_stop_loot"));
             }
@@ -161,6 +161,9 @@ public class CommonLootManager {
     }
 
     private void sendLootRefreshResult() {
+        if (currentGenerationLevel == null) {
+            BattleRoyale.LOGGER.warn("CommonLootManager.currentGenerationLevel == null");
+        }
         if (initiatingCommandSource != null) {
             initiatingCommandSource.sendSuccess(() -> Component.translatable("battleroyale.message.loot_generation_finished", totalLootRefreshedInBatch), true);
         }

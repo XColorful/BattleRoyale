@@ -32,7 +32,7 @@ public class EntityEntry implements IEntityLootEntry {
     }
 
     @Override
-    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, T target) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
         return Collections.singletonList(new EntityData(this.entityString, this.nbt.copy(), this.count, this.range));
     }
 

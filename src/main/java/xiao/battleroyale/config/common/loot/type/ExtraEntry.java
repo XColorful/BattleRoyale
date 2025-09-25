@@ -30,7 +30,7 @@ public class ExtraEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {
         List<ILootData> lootData = new ArrayList<>(); // 防止emptyList不能修改 (UnsupportedOperationException)
         if (checkEntry != null) {
             try {
@@ -50,10 +50,10 @@ public class ExtraEntry implements ILootEntry {
                     BattleRoyale.LOGGER.warn("ExtraEntry missing extraEntry member");
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse extra entry, skipped at {}", target.getBlockPos(), e);
+                parseErrorLog(e, target);
             }
         } else {
-            BattleRoyale.LOGGER.warn("ExtraEntry missing checkEntry member, skipped at {}", target.getBlockPos());
+            entryErrorLog(target);
         }
         return lootData;
     }

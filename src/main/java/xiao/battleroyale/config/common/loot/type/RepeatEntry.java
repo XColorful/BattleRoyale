@@ -33,7 +33,7 @@ public class RepeatEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {
         int repeats = min + (int) (lootContext.random.get() * (max - min + 1));
         List<ILootData> lootData = new ArrayList<>();
         if (entry != null) {
@@ -42,10 +42,10 @@ public class RepeatEntry implements ILootEntry {
                     lootData.addAll(entry.generateLootData(lootContext, target));
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse repeat entry, skipped at {}", target.getBlockPos(), e);
+                parseErrorLog(e, target);
             }
         } else {
-            BattleRoyale.LOGGER.warn("RepeatEntry missing entry member, skipped at {}", target.getBlockPos());
+            entryErrorLog(target);
         }
         return lootData;
     }

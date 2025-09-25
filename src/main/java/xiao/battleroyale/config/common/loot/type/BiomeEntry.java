@@ -1,7 +1,6 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -9,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.BattleRoyale;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
@@ -36,21 +35,25 @@ public class BiomeEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {
         if (entry != null) {
             try {
-                BlockPos pos = target.getBlockPos();
-                Holder<Biome> biomeHolder = lootContext.serverLevel.getBiome(pos);
-                boolean inBiome = biomeHolder.unwrapKey().isPresent() &&
-                        biomes.contains(biomeHolder.unwrapKey().get());
+                boolean inBiome;
+                if (target != null) {
+                    Holder<Biome> biomeHolder = lootContext.serverLevel.getBiome(target.getBlockPos());
+                    inBiome = biomeHolder.unwrapKey().isPresent() &&
+                            biomes.contains(biomeHolder.unwrapKey().get());
+                } else {
+                    inBiome = false;
+                }
                 if (inBiome == invert) {
                     return entry.generateLootData(lootContext, target);
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse biome entry, skipped at {}", target.getBlockPos(), e);
+                parseErrorLog(e, target);
             }
         } else {
-            BattleRoyale.LOGGER.warn("BiomeEntry missing entry member, skipped at {}", target.getBlockPos());
+            entryErrorLog(target);
         }
         return Collections.emptyList();
     }
