@@ -481,14 +481,9 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
         if (isInGame()) {
             BattleRoyale.LOGGER.warn("GameManager is in game, reject to set default level ({})", levelKeyString);
-            return;
-        }
-
-        if (this.serverLevel == null) {
+        } else { // 不在游戏中就直接设置
             setGameLevelKey(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(levelKeyString)));
             BattleRoyale.LOGGER.debug("Set GameManager.gameLevelKey to {}", this.gameLevelKey);
-        } else {
-            BattleRoyale.LOGGER.debug("GameManager.serverLevel != null ({}), skipped setDefaultLevel", this.serverLevel);
         }
     }
 
