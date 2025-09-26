@@ -1,11 +1,12 @@
 package xiao.battleroyale.api.config;
 
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 
 import java.util.List;
 
-public interface IConfigManager extends IManagerName {
+public interface IConfigManager extends IManagerName, ISideOnly {
 
     // IConfigManager
     boolean registerSubManager(IConfigSubManager<?> subManager);

@@ -6,7 +6,7 @@ public class ConfigDefaultable {
     
     public static boolean generateAllDefaultConfigs(AbstractConfigManager context) {
         for (IConfigSubManager<?> subManager : context.subManagers) {
-            subManager.generateDefaultConfigs();
+            subManager.generateAllDefaultConfigs();
         }
         return !context.subManagers.isEmpty();
     }

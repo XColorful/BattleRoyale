@@ -131,13 +131,13 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         return getConfigFolderData(folderId).fileConfigsByFileName.keySet();
     }
     @Override public boolean reloadAllConfigs() {
-        return SubReloadConfigs.reloadAllConfigs(this);
+        return inProperSide() && SubReloadConfigs.reloadAllConfigs(this);
     }
     @Override public boolean reloadConfigs() {
-        return reloadConfigs(DEFAULT_CONFIG_FOLDER);
+        return inProperSide() && reloadConfigs(DEFAULT_CONFIG_FOLDER);
     }
     @Override public boolean reloadConfigs(int folderId) { // 读取子文件夹下所有文件数据
-        return SubReloadConfigs.reloadConfigs(this, folderId);
+        return inProperSide() && SubReloadConfigs.reloadConfigs(this, folderId);
     }
     @Override public @Nullable T parseConfigEntry(JsonObject jsonObject, Path filePath) {
         return parseConfigEntry(jsonObject, filePath, DEFAULT_CONFIG_FOLDER);
@@ -196,6 +196,11 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     /**
      * IConfigDefaultable
      */
+    @Override public void generateAllDefaultConfigs() {
+        for (int folderId : allFolderConfigData.keySet()) {
+            generateDefaultConfigs(folderId);
+        }
+    }
     @Override public void generateDefaultConfigs() {
         generateDefaultConfigs(DEFAULT_CONFIG_FOLDER);
     }

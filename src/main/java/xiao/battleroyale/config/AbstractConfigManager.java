@@ -141,13 +141,13 @@ public abstract class AbstractConfigManager implements IConfigManager {
 
     // IConfigManager -> IConfigSubManager::IConfigLoadable
     @Override public boolean reloadAllConfigs() {
-        return ConfigLoadable.reloadAllConfigs(this);
+        return inProperSide() && ConfigLoadable.reloadAllConfigs(this);
     }
     @Override public boolean reloadConfigs(String subManagerNameKey) {
-        return ConfigLoadable.reloadConfigs(this, subManagerNameKey);
+        return inProperSide() && ConfigLoadable.reloadConfigs(this, subManagerNameKey);
     }
     @Override public boolean reloadConfigs(String subManagerNameKey, int folderId) {
-        return ConfigLoadable.reloadConfigs(this, subManagerNameKey, folderId);
+        return inProperSide() && ConfigLoadable.reloadConfigs(this, subManagerNameKey, folderId);
     }
     @Override public @Nullable String getConfigDirPath(String subManagerNameKey) {
         return ConfigLoadable.getConfigDirPath(this, subManagerNameKey);

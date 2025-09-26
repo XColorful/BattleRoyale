@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.game.zone;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +38,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
 
     private ZoneManager() {}
 
-    public static void init() {
+    public static void init(Dist dist) {
         ;
     }
 

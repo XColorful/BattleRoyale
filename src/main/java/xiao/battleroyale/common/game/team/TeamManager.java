@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -34,7 +35,7 @@ public class TeamManager extends AbstractGameManager implements IGameTeamReadApi
 
     private TeamManager() {}
 
-    public static void init() {
+    public static void init(Dist dist) {
         ;
     }
 

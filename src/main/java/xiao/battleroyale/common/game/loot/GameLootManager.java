@@ -3,8 +3,10 @@ package xiao.battleroyale.common.game.loot;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.event.game.tick.GameLootBfsEvent;
 import xiao.battleroyale.api.event.game.tick.GameLootBfsFinishEvent;
 import xiao.battleroyale.api.event.game.tick.GameLootEvent;
@@ -26,7 +28,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class GameLootManager extends AbstractGameManager {
+public class GameLootManager extends AbstractGameManager implements ISideOnly {
 
     private static class GameLootManagerHolder {
         private static final GameLootManager INSTANCE = new GameLootManager();
@@ -39,10 +41,18 @@ public class GameLootManager extends AbstractGameManager {
     private GameLootManager() {
     }
 
-    public static void init() {
+    public static void init(Dist dist) {
+        if (!get().inProperSide(dist)) {
+            BattleRoyale.LOGGER.debug("GameLootManager skipped init() at {}", dist.toString());
+            return;
+        }
         // 预计算
         cachedCenterOffset.clear();
-        cachedCenterOffset.addAll(BfsCalculator.calculateCenterOffset(64));
+        cachedCenterOffset.addAll(BfsCalculator.calculateCenterOffset(64)); // 渣机也就20ms开销
+    }
+
+    @Override public boolean serverSideOnly() {
+        return true;
     }
 
     public int getMaxLootChunkPerTick() { return MAX_LOOT_CHUNK_PER_TICK; }

@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import org.jetbrains.annotations.NotNull;
@@ -76,13 +77,13 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         }
     }
 
-    public static void init() {
-        GameruleManager.init();
-        GameLootManager.init();
-        SpawnManager.init();
-        StatsManager.init();
-        TeamManager.init();
-        ZoneManager.init();
+    public static void init(Dist dist) {
+        GameruleManager.init(dist);
+        GameLootManager.init(dist);
+        SpawnManager.init(dist);
+        StatsManager.init(dist);
+        TeamManager.init(dist);
+        ZoneManager.init(dist);
     }
 
     protected int gameTime = 0; // 游戏运行时维护当前游戏时间
@@ -175,7 +176,6 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (GameSubManager.gameConfigAllReady()) {
             this.configPrepared = true;
             LogEventHandler.register(); // 后续玩家登录可根据配置直接加入队伍
-            ServerEventHandler.register();
             MinecraftForge.EVENT_BUS.post(new GameLoadFinishEvent(this));
         } else {
             this.configPrepared = false;
@@ -402,7 +402,6 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         stopGame(serverLevel);
         setServerLevel(null); // 手动设置为null，单人游戏重启之后也就失效了
         BattleRoyale.LOGGER.debug("Server stopped, GameManager.serverLevel set to null");
-        ServerEventHandler.unregister();
         isStopping = false;
         MinecraftForge.EVENT_BUS.post(new ServerStopFinishEvent(this));
     }

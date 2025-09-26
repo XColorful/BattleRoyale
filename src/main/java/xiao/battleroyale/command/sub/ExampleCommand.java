@@ -7,6 +7,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.display.DisplayConfigManager;
 import xiao.battleroyale.config.client.render.RenderConfigManager;
@@ -77,11 +78,7 @@ public class ExampleCommand {
     }
 
     private static int generateAllConfigs(CommandContext<CommandSourceStack> context) {
-        LootConfigManager.get().generateDefaultConfigs(LootConfigTypeEnum.ALL_LOOT);
-        GameConfigManager.get().generateAllDefaultConfigs();
-        EffectConfigManager.get().generateAllDefaultConfigs();
-        ClientConfigManager.get().generateAllDefaultConfigs();
-
+        BattleRoyale.getModConfigManager().generateAllDefaultConfigs();
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.all_default_config_generated"), true);
         BattleRoyale.LOGGER.info("Generated all default {} configs", BattleRoyale.MOD_ID);
         return Command.SINGLE_SUCCESS;

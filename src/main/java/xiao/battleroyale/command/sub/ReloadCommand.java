@@ -7,6 +7,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.display.DisplayConfigManager;
 import xiao.battleroyale.config.client.render.RenderConfigManager;
@@ -78,19 +79,7 @@ public class ReloadCommand {
     }
 
     public static int reloadAllConfigs(CommandContext<CommandSourceStack> context) {
-        // 服务端配置
-        LootConfigManager.get().reloadAllConfigs();
-        GameConfigManager.get().reloadAllConfigs();
-        EffectConfigManager.get().reloadAllConfigs();
-        ServerConfigManager.get().reloadAllConfigs();
-
-        // 客户端配置
-        if (FMLEnvironment.dist.isClient()) {
-            ClientConfigManager.get().reloadAllConfigs();
-        } else {
-            BattleRoyale.LOGGER.info("Skipped client config reload");
-        }
-
+        BattleRoyale.getModConfigManager().reloadAllConfigs();
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.all_config_reloaded"), true);
         BattleRoyale.LOGGER.info("Reloaded all {} configs", BattleRoyale.MOD_ID);
         return Command.SINGLE_SUCCESS;

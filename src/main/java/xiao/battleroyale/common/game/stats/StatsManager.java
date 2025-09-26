@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +44,7 @@ public class StatsManager extends AbstractGameManager {
 
     private StatsManager() {}
 
-    public static void init() {
+    public static void init(Dist dist) {
         ;
     }
 

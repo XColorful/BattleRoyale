@@ -1,6 +1,7 @@
 package xiao.battleroyale.api.config;
 
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.config.sub.IConfigDefaultable;
 import xiao.battleroyale.api.config.sub.IConfigLoadable;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
@@ -8,7 +9,7 @@ import xiao.battleroyale.api.config.sub.IConfigSwitchable;
 
 import java.util.List;
 
-public interface IConfigSubManager<T extends IConfigSingleEntry> extends IConfigSwitchable, IConfigLoadable<T>, IConfigDefaultable<T>, IManagerName {
+public interface IConfigSubManager<T extends IConfigSingleEntry> extends IConfigSwitchable, IConfigLoadable<T>, IConfigDefaultable<T>, IManagerName, ISideOnly {
 
     // 获取当前配置
     @Nullable T getConfigEntry(int id);

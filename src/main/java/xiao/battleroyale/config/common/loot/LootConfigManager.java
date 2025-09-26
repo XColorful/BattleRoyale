@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.loot;
 
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootEntry;
@@ -11,7 +12,7 @@ import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
 import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
-import xiao.battleroyale.config.ConfigManager;
+import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.common.loot.defaultconfigs.DefaultLootConfigGenerator;
 import xiao.battleroyale.config.common.loot.type.LootEntryType;
@@ -26,7 +27,7 @@ import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.*;
 public class LootConfigManager extends AbstractConfigSubManager<LootConfigManager.LootConfig> {
 
     public static final String LOOT_CONFIG_SUB_PATH = "loot";
-    public static final String LOOT_CONFIG_PATH = Paths.get(ConfigManager.MOD_CONFIG_PATH).resolve(LOOT_CONFIG_SUB_PATH).toString();
+    public static final String LOOT_CONFIG_PATH = Paths.get(ModConfigManager.MOD_CONFIG_PATH).resolve(LOOT_CONFIG_SUB_PATH).toString();
 
     protected final int DEFAULT_LOOT_CONFIG_FOLDER = LOOT_SPAWNER;
 
@@ -54,7 +55,11 @@ public class LootConfigManager extends AbstractConfigSubManager<LootConfigManage
         allFolderConfigData.put(SECRET_ROOM, new FolderConfigData<>());
     }
 
-    public static void init() {
+    public static void init(Dist dist) {
+        if (!get().inProperSide(dist)) {
+            return;
+        }
+        BattleRoyale.getModConfigManager().registerConfigSubManager(get());
         get().reloadAllConfigs();
     }
 

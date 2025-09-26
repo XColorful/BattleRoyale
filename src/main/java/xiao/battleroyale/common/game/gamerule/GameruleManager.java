@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.GameType;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.AbstractGameManager;
@@ -36,7 +37,7 @@ public class GameruleManager extends AbstractGameManager {
 
     private GameruleManager() {}
 
-    public static void init() {
+    public static void init(Dist dist) {
         ;
     }
 
