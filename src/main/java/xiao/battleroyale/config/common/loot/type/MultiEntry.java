@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
@@ -24,7 +25,7 @@ public class MultiEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {
         List<ILootData> lootData = new ArrayList<>();
         if (!entries.isEmpty()) {
             try {
@@ -32,10 +33,10 @@ public class MultiEntry implements ILootEntry {
                     lootData.addAll(entry.generateLootData(lootContext, target));
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse multi entry, skipped at {}", target.getBlockPos(), e);
+                parseErrorLog(e, target);
             }
         } else {
-            BattleRoyale.LOGGER.warn("MultiEntry missing entries member, skipped at {}", target.getBlockPos());
+            entryErrorLog(target);
         }
         return lootData;
     }

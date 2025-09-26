@@ -29,21 +29,19 @@ public class Tacz extends AbstractCompatMod {
      */
     @Override
     protected void onModLoaded() throws Exception {
+        // 1.0.0-beta
         Class<?> gunShootEvent = Class.forName("com.tacz.guns.api.event.common.GunShootEvent");
         gunShootEvent.getMethod("getShooter");
-
         Class<?> gunReloadEvent = Class.forName("com.tacz.guns.api.event.common.GunReloadEvent");
         gunReloadEvent.getMethod("getEntity");
-
 //        Class<?> gunFinishReloadEvent = Class.forName("com.tacz.guns.api.event.common.GunFinishReloadEvent");
 //        gunFinishReloadEvent.getMethod("getGunItemStack");
-
         Class<?> gunFireSelectEvent = Class.forName("com.tacz.guns.api.event.common.GunFireSelectEvent");
         gunFireSelectEvent.getMethod("getShooter");
-
+        // 1.0.2
         Class<?> gunMeleeEvent = Class.forName("com.tacz.guns.api.event.common.GunMeleeEvent");
         gunMeleeEvent.getMethod("getShooter");
-
+        // 1.0.0-beta
         Class<?> iGunOperator = Class.forName("com.tacz.guns.api.entity.IGunOperator");
         iGunOperator.getMethod("fromLivingEntity", LivingEntity.class);
         iGunOperator.getMethod("cancelReload");

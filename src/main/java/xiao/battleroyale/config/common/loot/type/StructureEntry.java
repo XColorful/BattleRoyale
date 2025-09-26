@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
@@ -37,19 +38,19 @@ public class StructureEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {
         if (entry != null) {
             try {
-                BlockPos pos = target.getBlockPos();
                 boolean inStructure = false;
-
-                StructureManager structureManager = lootContext.serverLevel.structureManager();
-
-                for (ResourceKey<Structure> structureKey : structures) {
-                    StructureStart structureStart = structureManager.getStructureWithPieceAt(pos, structureKey);
-                    if (structureStart != StructureStart.INVALID_START) {
-                        inStructure = true;
-                        break;
+                if (target != null) {
+                    BlockPos pos = target.getBlockPos();
+                    StructureManager structureManager = lootContext.serverLevel.structureManager();
+                    for (ResourceKey<Structure> structureKey : structures) {
+                        StructureStart structureStart = structureManager.getStructureWithPieceAt(pos, structureKey);
+                        if (structureStart != StructureStart.INVALID_START) {
+                            inStructure = true;
+                            break;
+                        }
                     }
                 }
 
@@ -57,10 +58,10 @@ public class StructureEntry implements ILootEntry {
                     return entry.generateLootData(lootContext, target);
                 }
             } catch (Exception e) {
-                BattleRoyale.LOGGER.warn("Failed to parse structure entry, skipped at {}", target.getBlockPos(), e);
+                parseErrorLog(e, target);
             }
         } else {
-            BattleRoyale.LOGGER.warn("StructureEntry missing entry member, skipped at {}", target.getBlockPos());
+            entryErrorLog(target);
         }
         return Collections.emptyList();
     }

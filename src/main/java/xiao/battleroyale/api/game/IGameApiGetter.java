@@ -11,4 +11,8 @@ public interface IGameApiGetter {
     IGameZoneReadApi getGameZoneReadApi();
 
     IGameLobbyReadApi getGameLobbyReadApi();
+
+    IGameIdReadApi getGameIdReadApi();
+
+    IGameIdWriteApi getGameIdWriteApi();
 }

@@ -1,6 +1,7 @@
 package xiao.battleroyale.event.game;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -37,10 +38,8 @@ public class LobbyEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onLivingDamage(LivingDamageEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            if (SpawnManager.get().canMuteki(player)) {
-                event.setCanceled(true);
-            }
+        if (SpawnManager.get().canMuteki(event.getEntity())) {
+            event.setCanceled(true);
         }
     }
 }

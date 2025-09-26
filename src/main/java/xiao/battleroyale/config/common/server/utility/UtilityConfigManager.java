@@ -5,8 +5,10 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.server.utility.IUtilitySingleEntry;
 import xiao.battleroyale.api.server.utility.UtilityConfigTag;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.command.CommandArg;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
+import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.utility.defaultconfigs.DefaultUtilityConfigGenerator;
 import xiao.battleroyale.config.common.server.utility.type.SurvivalEntry;
@@ -16,7 +18,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
-public class UtilityConfigManager extends AbstractConfigManager<UtilityConfigManager.UtilityConfig> {
+public class UtilityConfigManager extends AbstractConfigSubManager<UtilityConfigManager.UtilityConfig> {
 
     private static class UtilityConfigManagerHolder {
         private static final UtilityConfigManager INSTANCE = new UtilityConfigManager();
@@ -27,10 +29,12 @@ public class UtilityConfigManager extends AbstractConfigManager<UtilityConfigMan
     }
 
     private UtilityConfigManager() {
+        super(CommandArg.UTILITY);
         allFolderConfigData.put(DEFAULT_UTILITY_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
+        ServerConfigManager.get().registerSubManager(get());
         get().reloadUtilityConfigs();
     }
 
@@ -164,7 +168,7 @@ public class UtilityConfigManager extends AbstractConfigManager<UtilityConfigMan
      * 特定类别的获取接口
      */
     public UtilityConfig getUtilityConfig(int id) {
-        return getConfigEntry(id, DEFAULT_UTILITY_CONFIG_FOLDER);
+        return getConfigEntry(DEFAULT_UTILITY_CONFIG_FOLDER, id);
     }
     public List<UtilityConfig> getUtilityConfigList() {
         return getConfigEntryList(DEFAULT_UTILITY_CONFIG_FOLDER);

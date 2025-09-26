@@ -2,15 +2,18 @@ package xiao.battleroyale.config.common.loot;
 
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootConfigTag;
 import xiao.battleroyale.api.loot.LootEntryTag;
-import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
-import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
+import xiao.battleroyale.command.CommandArg;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
+import xiao.battleroyale.config.ModConfigManager;
+import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.common.loot.defaultconfigs.DefaultLootConfigGenerator;
 import xiao.battleroyale.config.common.loot.type.LootEntryType;
 import xiao.battleroyale.util.JsonUtils;
@@ -18,14 +21,13 @@ import xiao.battleroyale.util.JsonUtils;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
-import java.util.List;
 
 import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.*;
 
-public class LootConfigManager extends AbstractConfigManager<LootConfigManager.LootConfig> {
+public class LootConfigManager extends AbstractConfigSubManager<LootConfigManager.LootConfig> {
 
     public static final String LOOT_CONFIG_SUB_PATH = "loot";
-    public static final String LOOT_CONFIG_PATH = Paths.get(AbstractConfigManager.MOD_CONFIG_PATH).resolve(LOOT_CONFIG_SUB_PATH).toString();
+    public static final String LOOT_CONFIG_PATH = Paths.get(ModConfigManager.MOD_CONFIG_PATH).resolve(LOOT_CONFIG_SUB_PATH).toString();
 
     protected final int DEFAULT_LOOT_CONFIG_FOLDER = LOOT_SPAWNER;
 
@@ -45,6 +47,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
 
 
     private LootConfigManager() {
+        super(CommandArg.LOOT);
         allFolderConfigData.put(LOOT_SPAWNER, new FolderConfigData<>());
         allFolderConfigData.put(ENTITY_SPAWNER, new FolderConfigData<>());
         allFolderConfigData.put(AIRDROP, new FolderConfigData<>());
@@ -52,8 +55,12 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
         allFolderConfigData.put(SECRET_ROOM, new FolderConfigData<>());
     }
 
-    public static void init() {
-        get().reloadAllLootConfigs();
+    public static void init(Dist dist) {
+        if (!get().inProperSide(dist)) {
+            return;
+        }
+        BattleRoyale.getModConfigManager().registerConfigSubManager(get());
+        get().reloadAllConfigs();
     }
 
     /**
@@ -73,7 +80,7 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
             this.entry = entry;
         }
 
-    @Override
+        @Override
         public String getType() {
             return CONFIG_TYPE;
         }
@@ -115,25 +122,13 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
     }
 
     /**
-     * IConfigManager
+     * IConfigSubManager
      */
+    @Override public String getFolderType() {
+        return getFolderType(DEFAULT_LOOT_CONFIG_FOLDER);
+    }
     @Override public String getFolderType(int folderId) {
         return LootConfig.CONFIG_TYPE;
-    }
-    public String getLootSpawnerConfigEntryFileName() {
-        return getConfigEntryFileName(LOOT_SPAWNER);
-    }
-    public String getEntitySpawnerConfigEntryFileName() {
-        return getConfigEntryFileName(ENTITY_SPAWNER);
-    }
-    public String getAirdropConfigEntryFileName() {
-        return getConfigEntryFileName(AIRDROP);
-    }
-    public String getAirdropSpecialConfigEntryFileName() {
-        return getConfigEntryFileName(AIRDROP_SPECIAL);
-    }
-    public String getSecretRoomConfigEntryFileName() {
-        return getConfigEntryFileName(SECRET_ROOM);
     }
 
     /**
@@ -154,9 +149,6 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
             }
             default -> DefaultLootConfigGenerator.generateDefaultLootSpawnerConfig();
         }
-    }
-    @Override public int getDefaultConfigId() {
-        return getDefaultConfigId(DEFAULT_LOOT_CONFIG_FOLDER);
     }
 
     /**
@@ -199,125 +191,29 @@ public class LootConfigManager extends AbstractConfigManager<LootConfigManager.L
             default -> LOOT_SPAWNER_CONFIG_SUB_PATH;
         };
     }
+    @Override public void initializeDefaultConfigsIfEmpty() {
+        initializeDefaultConfigsIfEmpty(DEFAULT_LOOT_CONFIG_FOLDER);
+    }
+    @Override public void initializeDefaultConfigsIfEmpty(int folderId) {
+        switch (folderId) {
+            case LootConfigTypeEnum.LOOT_SPAWNER -> super.initializeDefaultConfigsIfEmpty(LootConfigTypeEnum.LOOT_SPAWNER);
+            case LootConfigTypeEnum.ENTITY_SPAWNER -> super.initializeDefaultConfigsIfEmpty(LootConfigTypeEnum.ENTITY_SPAWNER);
+            case LootConfigTypeEnum.AIRDROP -> super.initializeDefaultConfigsIfEmpty(LootConfigTypeEnum.AIRDROP);
+            case LootConfigTypeEnum.AIRDROP_SPECIAL -> super.initializeDefaultConfigsIfEmpty(LootConfigTypeEnum.AIRDROP_SPECIAL);
+            case LootConfigTypeEnum.SECRET_ROOM -> super.initializeDefaultConfigsIfEmpty(LootConfigTypeEnum.SECRET_ROOM);
+            default -> super.initializeDefaultConfigsIfEmpty(LOOT_SPAWNER);
+        }
+    }
 
     /**
      * 根据刷新实体/方块自身lootId的通用获取接口
      */
     @Nullable
     public LootConfig getLootConfig(BlockEntity be, int id) {
-        if (be instanceof LootSpawnerBlockEntity) {
-            return getLootSpawnerConfig(id);
-        } else if (be instanceof EntitySpawnerBlockEntity) {
-            return getEntitySpawnerConfig(id);
+        if (be instanceof AbstractLootBlockEntity lootBlockEntity) {
+            return this.getConfigEntry(lootBlockEntity.getConfigFolderId(), id);
         }
         BattleRoyale.LOGGER.warn("unsupported BlockEntity type");
         return null;
-    }
-
-    /**
-     * 特定类别的获取接口
-     */
-    public LootConfig getLootSpawnerConfig(int id) {
-        return getConfigEntry(id, LOOT_SPAWNER);
-    }
-    public List<LootConfig> getLootSpawnerConfigList() {
-        return getConfigEntryList(LOOT_SPAWNER);
-    }
-    public LootConfig getEntitySpawnerConfig(int id) {
-        return getConfigEntry(id, ENTITY_SPAWNER);
-    }
-    public List<LootConfig> getEntitySpawnerConfigList() {
-        return getConfigEntryList(ENTITY_SPAWNER);
-    }
-    public LootConfig getAirdropConfig(int id) {
-        return getConfigEntry(id, AIRDROP);
-    }
-    public List<LootConfig> getAirdropConfigList() {
-        return getConfigEntryList(AIRDROP);
-    }
-    public LootConfig getSpecialAirdropConfig(int id) {
-        return getConfigEntry(id, AIRDROP_SPECIAL);
-    }
-    public List<LootConfig> getSpecialAirdropConfigList() {
-        return getConfigEntryList(AIRDROP_SPECIAL);
-    }
-    public LootConfig getSecretRoomConfig(int id) {
-        return getConfigEntry(id, SECRET_ROOM);
-    }
-    public List<LootConfig> getSecretRoomConfigList() {
-        return getConfigEntryList(SECRET_ROOM);
-    }
-
-    /**
-     * 特定类别的重新读取接口
-     */
-    public void reloadAllLootConfigs() {
-        // 各物资刷新配置均以文件为选择，不需要切换
-        reloadLootSpawnerConfigs();
-        reloadEntitySpawnerConfigs();
-        reloadAirdropConfigs();
-        reloadAirdropSpecialConfigs();
-        reloadSecretRoomConfigs();
-    }
-    public void reloadLootSpawnerConfigs() {
-        reloadConfigs(LOOT_SPAWNER);
-    }
-    public void reloadEntitySpawnerConfigs() {
-        reloadConfigs(ENTITY_SPAWNER);
-    }
-    public void reloadAirdropConfigs() {
-        reloadConfigs(AIRDROP);
-    }
-    public void reloadAirdropSpecialConfigs() {
-        reloadConfigs(AIRDROP_SPECIAL);
-    }
-    public void reloadSecretRoomConfigs() {
-        reloadConfigs(SECRET_ROOM);
-    }
-
-    public boolean switchNextLootSpawnerConfig() {
-        return switchConfigFile(LOOT_SPAWNER);
-    }
-    public boolean switchLootSpawnerConfig(String fileName) {
-        return switchConfigFile(fileName, LOOT_SPAWNER);
-    }
-    public boolean switchNextEntitySpawnerConfig() {
-        return switchConfigFile(ENTITY_SPAWNER);
-    }
-    public boolean switchEntitySpawnerConfig(String fileName) {
-        return switchConfigFile(fileName, ENTITY_SPAWNER);
-    }
-    public boolean switchNextAirdropConfig() {
-        return switchConfigFile(AIRDROP);
-    }
-    public boolean switchAirdropConfig(String fileName) {
-        return switchConfigFile(fileName, AIRDROP);
-    }
-    public boolean switchNextAirdropSpecialConfig() {
-        return switchConfigFile(AIRDROP_SPECIAL);
-    }
-    public boolean switchAirdropSpecialConfig(String fileName) {
-        return switchConfigFile(fileName, AIRDROP_SPECIAL);
-    }
-    public boolean switchNextSecretRoomConfig() {
-        return switchConfigFile(SECRET_ROOM);
-    }
-    public boolean switchSecretRoomConfig(String fileName) {
-        return switchConfigFile(fileName, SECRET_ROOM);
-    }
-
-
-    @Override public void initializeDefaultConfigsIfEmpty() {
-        initializeDefaultConfigsIfEmpty(DEFAULT_LOOT_CONFIG_FOLDER);
-    }
-    @Override public void initializeDefaultConfigsIfEmpty(int folderId) {
-        switch (folderId) {
-            case LOOT_SPAWNER -> super.initializeDefaultConfigsIfEmpty(LOOT_SPAWNER);
-            case ENTITY_SPAWNER -> super.initializeDefaultConfigsIfEmpty(ENTITY_SPAWNER);
-            case AIRDROP -> super.initializeDefaultConfigsIfEmpty(AIRDROP);
-            case AIRDROP_SPECIAL -> super.initializeDefaultConfigsIfEmpty(AIRDROP_SPECIAL);
-            case SECRET_ROOM -> super.initializeDefaultConfigsIfEmpty(SECRET_ROOM);
-            default -> super.initializeDefaultConfigsIfEmpty(LOOT_SPAWNER);
-        }
     }
 }

@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
+import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
+
 import java.util.List;
 
 public class LootSpawner extends AbstractLootBlock {
@@ -54,8 +56,8 @@ public class LootSpawner extends AbstractLootBlock {
             if (blockEntity instanceof LootSpawnerBlockEntity lootSpawnerBlockEntity) {
                 if (player.isCreative() && player.isCrouching()) { // 切换物资刷新配置
                     int currentConfigId = lootSpawnerBlockEntity.getConfigId();
-                    List<LootConfig> allConfigs = LootConfigManager.get().getLootSpawnerConfigList();
-                    if (allConfigs.isEmpty()) {
+                    List<LootConfig> allConfigs = LootConfigManager.get().getConfigEntryList(LootConfigTypeEnum.LOOT_SPAWNER);
+                    if (allConfigs == null || allConfigs.isEmpty()) {
                         player.sendSystemMessage(Component.translatable("battleroyale.message.no_loot_spawner_config_available"));
                         return InteractionResult.SUCCESS;
                     }

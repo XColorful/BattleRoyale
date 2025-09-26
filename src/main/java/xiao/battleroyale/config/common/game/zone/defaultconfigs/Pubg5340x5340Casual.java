@@ -5,6 +5,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.MessageFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
@@ -92,7 +93,7 @@ public class Pubg5340x5340Casual {
         addPhase7(zoneConfigJson);
         addPhase8(zoneConfigJson);
         addPhase9(zoneConfigJson);
-        writeJsonToFile(Paths.get(GameConfigManager.get().getZoneConfigPath(), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
+        writeJsonToFile(Paths.get(GameConfigManager.get().getConfigDirPath(ZoneConfigManager.get().getNameKey()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
     public static void generateBorderCircle(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME) {

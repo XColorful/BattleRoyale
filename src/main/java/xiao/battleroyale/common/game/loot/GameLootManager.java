@@ -3,8 +3,12 @@ package xiao.battleroyale.common.game.loot;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.common.ISideOnly;
+import xiao.battleroyale.api.event.game.tick.GameLootBfsEvent;
+import xiao.battleroyale.api.event.game.tick.GameLootBfsFinishEvent;
 import xiao.battleroyale.api.event.game.tick.GameLootEvent;
 import xiao.battleroyale.api.event.game.tick.GameLootFinishEvent;
 import xiao.battleroyale.common.game.AbstractGameManager;
@@ -24,7 +28,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class GameLootManager extends AbstractGameManager {
+public class GameLootManager extends AbstractGameManager implements ISideOnly {
 
     private static class GameLootManagerHolder {
         private static final GameLootManager INSTANCE = new GameLootManager();
@@ -37,10 +41,18 @@ public class GameLootManager extends AbstractGameManager {
     private GameLootManager() {
     }
 
-    public static void init() {
+    public static void init(Dist dist) {
+        if (!get().inProperSide(dist)) {
+            BattleRoyale.LOGGER.debug("GameLootManager skipped init() at {}", dist.toString());
+            return;
+        }
         // 预计算
         cachedCenterOffset.clear();
-        cachedCenterOffset.addAll(BfsCalculator.calculateCenterOffset(64));
+        cachedCenterOffset.addAll(BfsCalculator.calculateCenterOffset(64)); // 渣机也就20ms开销
+    }
+
+    @Override public boolean serverSideOnly() {
+        return true;
     }
 
     public int getMaxLootChunkPerTick() { return MAX_LOOT_CHUNK_PER_TICK; }
@@ -190,22 +202,27 @@ public class GameLootManager extends AbstractGameManager {
         }
 
         // 区块刷新
-        processLootGeneration();
+        int lastProcessedCount = processLootGeneration();
 
         // 清理已处理区块缓存
+        int clearedCachedChunk = 0;
         if (processedChunkCache.size() > MAX_CACHED_LOOT_CHUNK) {
+            clearedCachedChunk = Math.min(CLEAN_CACHED_CHUNK, processedChunkCache.size());
             processedChunkCache.removeOldest(CLEAN_CACHED_CHUNK);
             BattleRoyale.LOGGER.debug("Cleaned {} processed chunks. Remaining: {}", CLEAN_CACHED_CHUNK, processedChunkCache.size());
         }
-
         // 清理 cachedPlayerCenterChunks，默认清理30%
+        int clearedPlayerCenterChunk = 0;
         if (cachedPlayerCenterChunks.size() > MAX_CACHED_CENTER) {
             int chunksToRemove = (int) (cachedPlayerCenterChunks.size() * 0.3); // 清理30%
             chunksToRemove = Math.max(chunksToRemove, 10); // 至少清理10个
+            clearedPlayerCenterChunk = Math.min(chunksToRemove, cachedPlayerCenterChunks.size());
             cachedPlayerCenterChunks.removeOldest(chunksToRemove);
             BattleRoyale.LOGGER.debug("Cleaned {} cached center chunks. Remaining: {}", chunksToRemove, cachedPlayerCenterChunks.size());
         }
-        MinecraftForge.EVENT_BUS.post(new GameLootFinishEvent(GameManager.get(), gameTime));
+
+        MinecraftForge.EVENT_BUS.post(new GameLootFinishEvent(GameManager.get(), gameTime,
+                lastProcessedCount, clearedCachedChunk, clearedPlayerCenterChunk));
     }
 
     /**
@@ -238,9 +255,13 @@ public class GameLootManager extends AbstractGameManager {
      * 遍历存活玩家最后位置，BFS计算待处理区块（异步版本）
      */
     private void bfsQueuedChunkAsync() {
-        // BattleRoyale.LOGGER.debug("Last BFS processed loot:{}", lastBfsProcessedLoot);
-        lastBfsProcessedLoot = 0;
+        GameManager gameManager = GameManager.get();
+        if (MinecraftForge.EVENT_BUS.post(new GameLootBfsEvent(gameManager, gameManager.getGameTime(), lastBfsProcessedLoot))) {
+            BattleRoyale.LOGGER.debug("GameLootBfsEvent canceled, skipped bfsQueuedChunkAsync");
+            return;
+        }
 
+        lastBfsProcessedLoot = 0;
         long startTime = System.nanoTime();
 
         // 使用一个本地队列来存储计算结果，避免线程冲突
@@ -303,18 +324,15 @@ public class GameLootManager extends AbstractGameManager {
         // 清空旧队列，方便GC
         oldQueue.clear();
 
-        // 记录任务结束时间并计算耗时
+        // 记录任务结束时间
         long endTime = System.nanoTime();
-        long durationMillis = TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
-
-        // BattleRoyale.LOGGER.debug("GameLootManager finished async BFS, added {} queued chunk in {}ms. Old queue size was {}.", newChunkQueue.size(), durationMillis, oldQueueSize);
-
+        MinecraftForge.EVENT_BUS.post(new GameLootBfsFinishEvent(gameManager, gameManager.getGameTime(), startTime, endTime, oldQueueSize));
     }
 
-    private void processLootGeneration() {
+    private int processLootGeneration() {
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel == null) {
-            return;
+            return 0;
         }
 
         int processedCount = 0;
@@ -329,8 +347,8 @@ public class GameLootManager extends AbstractGameManager {
                 processedCount++;
             }
         }
-        // ChatUtils.sendMessageToAllPlayers(serverLevel, "Chunk Processed this tick: " + processedCount);
-        // BattleRoyale.LOGGER.info("Chunk Processed this tick: {}", processedCount);
+
+        return processedCount;
     }
 
     @Override

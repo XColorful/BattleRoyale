@@ -5,9 +5,11 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.GameruleConfigTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleSingleEntry;
+import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
+import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.defaultconfigs.DefaultGameruleConfigGenerator;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
@@ -20,7 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigManager.GameruleConfig> {
+public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConfigManager.GameruleConfig> {
 
     private static class GameruleConfigManagerHolder {
         private static final GameruleConfigManager INSTANCE = new GameruleConfigManager();
@@ -31,10 +33,12 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
     }
 
     private GameruleConfigManager() {
+        super(CommandArg.GAMERULE);
         allFolderConfigData.put(DEFAULT_GAMERULE_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
+        GameConfigManager.get().registerSubManager(get());
         get().reloadGameruleConfigs();
     }
 
@@ -225,7 +229,7 @@ public class GameruleConfigManager extends AbstractConfigManager<GameruleConfigM
      * 特定类别的获取接口
      */
     public GameruleConfig getGameruleConfig(int gameId) {
-        return getConfigEntry(gameId, DEFAULT_GAMERULE_CONFIG_FOLDER);
+        return getConfigEntry(DEFAULT_GAMERULE_CONFIG_FOLDER, gameId);
     }
     public List<GameruleConfig> getGameruleConfigList() {
         return getConfigEntryList(DEFAULT_GAMERULE_CONFIG_FOLDER);

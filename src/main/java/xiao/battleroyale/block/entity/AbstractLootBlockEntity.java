@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.ILootObject;
 import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
+import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 
 import java.util.UUID;
 
@@ -26,6 +27,8 @@ public abstract class AbstractLootBlockEntity extends BlockEntity implements ILo
     protected AbstractLootBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
     }
+
+    public abstract int getConfigFolderId();
 
     @Override
     public int getConfigId() {

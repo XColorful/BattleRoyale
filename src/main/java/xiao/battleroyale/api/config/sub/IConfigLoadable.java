@@ -1,4 +1,4 @@
-package xiao.battleroyale.api;
+package xiao.battleroyale.api.config.sub;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +14,7 @@ public interface IConfigLoadable<T> {
     /**
      * 执行一次只重新读取一次
      */
+    boolean reloadAllConfigs();
     boolean reloadConfigs();
     boolean reloadConfigs(int folderId);
 

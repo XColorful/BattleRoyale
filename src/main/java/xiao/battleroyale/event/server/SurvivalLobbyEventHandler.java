@@ -37,10 +37,8 @@ public class SurvivalLobbyEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onLivingDamage(LivingDamageEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            if (SurvivalLobby.get().canMuteki(player)) {
-                event.setCanceled(true);
-            }
+        if (SurvivalLobby.get().canMuteki(event.getEntity())) {
+            event.setCanceled(true);
         }
     }
 }

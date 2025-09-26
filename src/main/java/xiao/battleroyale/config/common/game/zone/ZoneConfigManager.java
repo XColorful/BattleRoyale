@@ -9,9 +9,11 @@ import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
+import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.game.zone.GameZoneBuilder;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
+import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.defaultconfigs.DefaultZoneConfigGenerator;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
@@ -21,7 +23,7 @@ import xiao.battleroyale.util.JsonUtils;
 import java.nio.file.Path;
 import java.util.*;
 
-public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.ZoneConfig> {
+public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManager.ZoneConfig> {
 
     private static class ZoneConfigManagerHolder {
         private static final ZoneConfigManager INSTANCE = new ZoneConfigManager();
@@ -32,10 +34,12 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
     }
 
     private ZoneConfigManager() {
+        super(CommandArg.ZONE);
         allFolderConfigData.put(DEFAULT_ZONE_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
+        GameConfigManager.get().registerSubManager(get());
         get().reloadZoneConfigs();
     }
 
@@ -242,7 +246,7 @@ public class ZoneConfigManager extends AbstractConfigManager<ZoneConfigManager.Z
      * 特定类别的获取接口
      */
     public ZoneConfig getZoneConfig(int id) {
-        return getConfigEntry(id, DEFAULT_ZONE_CONFIG_FOLDER);
+        return getConfigEntry(DEFAULT_ZONE_CONFIG_FOLDER, id);
     }
     public List<ZoneConfig> getZoneConfigList() {
         return getConfigEntryList(DEFAULT_ZONE_CONFIG_FOLDER);

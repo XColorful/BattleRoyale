@@ -1,6 +1,6 @@
 package xiao.battleroyale.config;
 
-import xiao.battleroyale.api.IConfigSingleEntry;
+import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 
 public abstract class AbstractSingleConfig implements IConfigSingleEntry {
 
@@ -19,6 +19,11 @@ public abstract class AbstractSingleConfig implements IConfigSingleEntry {
     @Override
     public int getConfigId() {
         return this.id;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
     }
 
     @Override

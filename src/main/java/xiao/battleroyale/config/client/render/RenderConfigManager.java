@@ -5,8 +5,10 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.render.IRenderSingleEntry;
 import xiao.battleroyale.api.client.render.RenderConfigTag;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.command.CommandArg;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
+import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.render.defaultconfigs.DefaultRenderConfigGenerator;
 import xiao.battleroyale.config.client.render.type.BlockEntry;
@@ -19,7 +21,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
-public class RenderConfigManager extends AbstractConfigManager<RenderConfigManager.RenderConfig> {
+public class RenderConfigManager extends AbstractConfigSubManager<RenderConfigManager.RenderConfig> {
 
     private static class RenderConfigManagerHolder {
         private static final RenderConfigManager INSTANCE = new RenderConfigManager();
@@ -30,10 +32,12 @@ public class RenderConfigManager extends AbstractConfigManager<RenderConfigManag
     }
 
     private RenderConfigManager() {
+        super(CommandArg.RENDER);
         allFolderConfigData.put(DEFAULT_RENDER_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
+        ClientConfigManager.get().registerSubManager(get());
         get().reloadRenderConfigs();
     }
 
@@ -233,7 +237,7 @@ public class RenderConfigManager extends AbstractConfigManager<RenderConfigManag
      * 特定类别的获取接口
      */
     public RenderConfig getRenderConfig(int id) {
-        return getConfigEntry(id, DEFAULT_RENDER_CONFIG_FOLDER);
+        return getConfigEntry(DEFAULT_RENDER_CONFIG_FOLDER, id);
     }
     public List<RenderConfig> getRenderConfigList() {
         return getConfigEntryList(DEFAULT_RENDER_CONFIG_FOLDER);

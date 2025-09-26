@@ -1,5 +1,7 @@
 package xiao.battleroyale.api.game.zone.func;
 
+import xiao.battleroyale.api.loot.LootConfigTag;
+
 public final class ZoneFuncTag {
     public static final String TYPE_NAME = "zoneFuncType";
 
@@ -7,7 +9,6 @@ public final class ZoneFuncTag {
     public static final String SAFE = "safe";
     public static final String UNSAFE = "unsafe";
     public static final String DANGER = "danger";
-    public static final String AIRDROP = "airdrop";
     public static final String FIREWORK = "firework";
     public static final String MUTEKI = "muteki";
     public static final String BOOST = "boost";
@@ -16,6 +17,7 @@ public final class ZoneFuncTag {
     public static final String MESSAGE = "message";
     public static final String ENTITY = "entity";
     public static final String EVENT = "event";
+    public static final String AIRDROP = "airdrop";
 
     public static final String DAMAGE = "damage";
     public static final String MOVE_DELAY = "moveDelay";
@@ -60,6 +62,8 @@ public final class ZoneFuncTag {
     // event
     public static final String PROTOCOL = "protocol";
     public static final String TAG = "tag";
+    public static final String NBT = "nbt";
+    public static final String LOOT_ID = LootConfigTag.LOOT_ID;
 
     // entity
 

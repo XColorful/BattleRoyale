@@ -1,5 +1,6 @@
 package xiao.battleroyale.common.game.loot;
 
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.loot.GameLootManager.Offset2D;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class BfsCalculator {
             return calculatedCenterOffset.subList(0, distance + 1);
         }
 
+        long startTime = System.nanoTime();
         Set<Offset2D> visited = new HashSet<>();
 
         for (List<Offset2D> offsets : calculatedCenterOffset) {
@@ -57,6 +59,8 @@ public class BfsCalculator {
             }
             calculatedCenterOffset.add(currentDistanceOffsets);
         }
+        long endTime = System.nanoTime();
+        BattleRoyale.LOGGER.debug("BfsCalculator complete calculateCenterOffset ({} to {}), startNanoTime:{}, endNanoTime:{}", startDistance, distance, startTime, endTime);
 
         return calculatedCenterOffset.subList(0, distance + 1);
     }

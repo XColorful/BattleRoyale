@@ -21,7 +21,7 @@ public class FunctionShowcase {
     public static void generateDefaultConfigs() {
         JsonArray spawnConfigJson = new JsonArray();
         spawnConfigJson.add(generateDefaultSpawnConfig0());
-        writeJsonToFile(Paths.get(GameConfigManager.get().getSpawnConfigPath(), DEFAULT_FILE_NAME).toString(), spawnConfigJson);
+        writeJsonToFile(Paths.get(GameConfigManager.get().getConfigDirPath(SpawnConfigManager.get().getNameKey()), DEFAULT_FILE_NAME).toString(), spawnConfigJson);
     }
 
 

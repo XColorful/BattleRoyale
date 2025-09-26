@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
+import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
 import xiao.battleroyale.config.common.server.utility.UtilityConfigManager.UtilityConfig;
 import xiao.battleroyale.config.common.server.utility.type.SurvivalEntry;
 
@@ -19,7 +20,7 @@ public class DefaultUtility {
     public static void generateDefaultConfigs() {
         JsonArray utilityConfigJson = new JsonArray();
         utilityConfigJson.add(generateDefaultUtilityConfig0());
-        writeJsonToFile(Paths.get(ServerConfigManager.get().getUtilityConfigPath(), DEFAULT_FILE_NAME).toString(), utilityConfigJson);
+        writeJsonToFile(Paths.get(ServerConfigManager.get().getConfigDirPath(UtilityConfigManager.get().getNameKey()), DEFAULT_FILE_NAME).toString(), utilityConfigJson);
     }
 
     private static JsonObject generateDefaultUtilityConfig0() {

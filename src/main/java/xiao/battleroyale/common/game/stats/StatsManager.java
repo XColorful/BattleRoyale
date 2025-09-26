@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +18,8 @@ import xiao.battleroyale.common.game.stats.game.SimpleRecord;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.event.game.StatsEventHandler;
 import xiao.battleroyale.util.ChatUtils;
@@ -41,7 +44,7 @@ public class StatsManager extends AbstractGameManager {
 
     private StatsManager() {}
 
-    public static void init() {
+    public static void init(Dist dist) {
         ;
     }
 
@@ -76,7 +79,12 @@ public class StatsManager extends AbstractGameManager {
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
-        BattleroyaleEntry brEntry = GameConfigManager.get().getGameruleConfig(GameManager.get().getGameruleConfigId()).getBattleRoyaleEntry();
+        GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), GameManager.get().getGameruleConfigId());
+        if (gameruleConfig == null) {
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            return;
+        }
+        BattleroyaleEntry brEntry = gameruleConfig.getBattleRoyaleEntry();
         recordStats = brEntry.recordGameStats;
 
         this.configPrepared = true;

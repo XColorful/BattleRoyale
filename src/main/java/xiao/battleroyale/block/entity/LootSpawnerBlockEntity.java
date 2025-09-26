@@ -9,6 +9,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.init.ModBlocks;
 import xiao.battleroyale.init.ModMenuTypes;
 import xiao.battleroyale.inventory.LootSpawnerMenu;
@@ -19,6 +20,11 @@ public class LootSpawnerBlockEntity extends AbstractLootContainerBlockEntity imp
 
     public LootSpawnerBlockEntity(BlockPos pos, BlockState blockState) {
         super(ModBlocks.LOOT_SPAWNER_BE.get(), pos, blockState, 18);
+    }
+
+    @Override
+    public int getConfigFolderId() {
+        return LootConfigTypeEnum.LOOT_SPAWNER;
     }
 
     public NonNullList<ItemStack> getItems() {

@@ -3,7 +3,7 @@ package xiao.battleroyale.config.common.server.performance.type;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.IConfigAppliable;
+import xiao.battleroyale.api.config.sub.IConfigAppliable;
 import xiao.battleroyale.api.server.performance.IPerformanceEntry;
 import xiao.battleroyale.api.server.performance.GeneratorEntryTag;
 import xiao.battleroyale.common.game.loot.GameLootManager;

@@ -1,4 +1,4 @@
-package xiao.battleroyale.api;
+package xiao.battleroyale.api.config.sub;
 
 public interface IConfigAppliable {
 

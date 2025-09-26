@@ -2,7 +2,6 @@ package xiao.battleroyale.config.common.game.zone.zonefunc.event;
 
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
@@ -11,19 +10,20 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class EventFuncEntry extends AbstractEventFuncEntry {
 
-    protected final String protocol;
-    protected @NotNull final CompoundTag tag;
+    public EventFuncEntry(int moveDelay, int moveTime, int funcFreq, int funcOffset, String protocol,
+                          @Nullable CompoundTag tag) {
+        super(moveDelay, moveTime, funcFreq, funcOffset, protocol, tag);
+    }
 
-    public EventFuncEntry(int moveDelay, int moveTime, int funcFreq, int funcOffset,
-                          String protocol, @Nullable CompoundTag tag) {
-        super(moveDelay, moveTime, funcFreq, funcOffset);
-        this.protocol = protocol;
-        this.tag = tag != null ? tag : new CompoundTag();
+    @Override
+    public String getType() {
+        return ZoneFuncTag.EVENT;
     }
 
     @Override
     public ITickableZone createTickableZone() {
-        return new EventFunc(moveDelay, moveTime, tickFreq, tickOffset, protocol, tag);
+        return new EventFunc(moveDelay, moveTime, tickFreq, tickOffset,
+                protocol, tag);
     }
 
     @Override
@@ -49,6 +49,7 @@ public class EventFuncEntry extends AbstractEventFuncEntry {
 
         String protocol = JsonUtils.getJsonString(jsonObject, ZoneFuncTag.PROTOCOL, "");
         CompoundTag tag = JsonUtils.getJsonTag(jsonObject, ZoneFuncTag.TAG, null);
+
         return new EventFuncEntry(moveDelay, moveTime, tickFreq, tickOffset,
                 protocol, tag);
     }

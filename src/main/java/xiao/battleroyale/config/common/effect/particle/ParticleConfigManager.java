@@ -7,10 +7,12 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.effect.particle.IParticleEntry;
 import xiao.battleroyale.api.game.effect.particle.IParticleSingleEntry;
 import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
+import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.effect.particle.FixedParticleData;
 import xiao.battleroyale.common.effect.particle.ParticleData;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
+import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.effect.particle.defaultconfigs.DefaultParticleConfigGenerator;
 import xiao.battleroyale.util.JsonUtils;
@@ -20,7 +22,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
-public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigManager.ParticleConfig> {
+public class ParticleConfigManager extends AbstractConfigSubManager<ParticleConfigManager.ParticleConfig> {
 
     private static class ParticleConfigManagerHolder {
         private static final ParticleConfigManager INSTANCE = new ParticleConfigManager();
@@ -31,10 +33,12 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
     }
 
     private ParticleConfigManager() {
+        super(CommandArg.PARTICLE);
         allFolderConfigData.put(DEFAULT_PARTICLE_CONFIG_FOLDER_ID, new FolderConfigData<>());
     }
 
     public static void init() {
+        EffectConfigManager.get().registerSubManager(get());
         get().reloadParticleConfigs();
     }
 
@@ -187,7 +191,7 @@ public class ParticleConfigManager extends AbstractConfigManager<ParticleConfigM
      * 特定类别的获取接口
      */
     public ParticleConfig getParticleConfig(int id) {
-        return getConfigEntry(id, DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
+        return getConfigEntry(DEFAULT_PARTICLE_CONFIG_FOLDER_ID, id);
     }
     public List<ParticleConfig> getAllParticleConfigs() {
         return getConfigEntryList(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);

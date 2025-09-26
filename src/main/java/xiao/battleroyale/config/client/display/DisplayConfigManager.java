@@ -5,8 +5,10 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.display.IDisplaySingleEntry;
 import xiao.battleroyale.api.client.display.DisplayConfigTag;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.command.CommandArg;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
+import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.display.defaultconfigs.DefaultDisplayConfigGenerator;
 import xiao.battleroyale.config.client.display.type.GameEntry;
@@ -18,7 +20,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
-public class DisplayConfigManager extends AbstractConfigManager<DisplayConfigManager.DisplayConfig> {
+public class DisplayConfigManager extends AbstractConfigSubManager<DisplayConfigManager.DisplayConfig> {
 
     private static class DisplayConfigManagerHolder {
         private static final DisplayConfigManager INSTANCE = new DisplayConfigManager();
@@ -29,10 +31,12 @@ public class DisplayConfigManager extends AbstractConfigManager<DisplayConfigMan
     }
 
     private DisplayConfigManager() {
+        super(CommandArg.DISPLAY);
         allFolderConfigData.put(DEFAULT_DISPLAY_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
+        ClientConfigManager.get().registerSubManager(get());
         get().reloadDisplayConfigs();
     }
 
@@ -189,7 +193,7 @@ public class DisplayConfigManager extends AbstractConfigManager<DisplayConfigMan
     }
 
     public DisplayConfig getDisplayConfig(int id) {
-        return getConfigEntry(id, DEFAULT_DISPLAY_CONFIG_FOLDER);
+        return getConfigEntry(DEFAULT_DISPLAY_CONFIG_FOLDER, id);
     }
     public List<DisplayConfig> getDisplayConfigList() {
         return getConfigEntryList(DEFAULT_DISPLAY_CONFIG_FOLDER);

@@ -5,14 +5,14 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.slf4j.Logger;
-import xiao.battleroyale.config.ClientConfig;
-import xiao.battleroyale.config.CommonConfig;
+import xiao.battleroyale.api.config.IModConfigManager;
+import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.init.*;
 import xiao.battleroyale.resource.ResourceLoader;
 
@@ -28,13 +28,10 @@ public class BattleRoyale {
     private static MinecraftServer minecraftServer;
 
     public BattleRoyale(FMLJavaModLoadingContext context) {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.init());
-        Dist side = FMLLoader.getDist();
-        if (side == Dist.CLIENT) {
-            ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.init());
-        }
-
-        ResourceLoader.INSTANCE.packType = side.isClient() ? PackType.CLIENT_RESOURCES : PackType.SERVER_DATA;
+        Dist dist = FMLLoader.getDist();
+        ModConfigManager.init(dist);
+        GameManager.init(dist);
+        ResourceLoader.INSTANCE.packType = dist.isClient() ? PackType.CLIENT_RESOURCES : PackType.SERVER_DATA;
 
         IEventBus bus = context.getModEventBus();
         ModBlocks.BLOCKS.register(bus);
@@ -51,5 +48,11 @@ public class BattleRoyale {
     }
     public static MinecraftServer getMinecraftServer() {
         return minecraftServer;
+    }
+    public static IGameManager getGameManager() {
+        return GameManager.get();
+    }
+    public static IModConfigManager getModConfigManager() {
+        return ModConfigManager.getApi();
     }
 }

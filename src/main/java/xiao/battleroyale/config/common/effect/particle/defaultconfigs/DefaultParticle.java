@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
+import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager;
 import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager.ParticleConfig;
 import xiao.battleroyale.config.common.effect.particle.ParticleDetailEntry;
 import xiao.battleroyale.config.common.effect.particle.ParticleParameterEntry;
@@ -22,7 +23,7 @@ public class DefaultParticle {
         particleConfigJson.add(generateDefaultParticleConfig0());
         particleConfigJson.add(generateDefaultParticleConfig1());
         particleConfigJson.add(generateDefaultParticleConfig2());
-        writeJsonToFile(Paths.get(EffectConfigManager.get().getParticleConfigPath(), DEFAULT_FILE_NAME).toString(), particleConfigJson);
+        writeJsonToFile(Paths.get(EffectConfigManager.get().getConfigDirPath(ParticleConfigManager.get().getNameKey()), DEFAULT_FILE_NAME).toString(), particleConfigJson);
     }
 
     private static JsonObject generateDefaultParticleConfig0() {

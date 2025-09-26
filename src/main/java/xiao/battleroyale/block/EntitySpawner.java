@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
+import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 
 import java.util.List;
 
@@ -62,8 +63,8 @@ public class EntitySpawner extends AbstractLootBlock {
             if (blockEntity instanceof EntitySpawnerBlockEntity entitySpawnerBlockEntity) {
                 if (player.isCreative() && player.isCrouching()) { // 切换实体刷新配置
                     int currentConfigId = entitySpawnerBlockEntity.getConfigId();
-                    List<LootConfig> allConfigs = LootConfigManager.get().getEntitySpawnerConfigList();
-                    if (allConfigs.isEmpty()) {
+                    List<LootConfig> allConfigs = LootConfigManager.get().getConfigEntryList(LootConfigTypeEnum.ENTITY_SPAWNER);
+                    if (allConfigs == null || allConfigs.isEmpty()) {
                         player.sendSystemMessage(Component.translatable("battleroyale.message.no_entity_spawner_config_available"));
                         return InteractionResult.SUCCESS;
                     }

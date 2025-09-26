@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.loot;
 
-import xiao.battleroyale.api.ConfigEntryTag;
+import xiao.battleroyale.api.config.sub.ConfigEntryTag;
 
 public final class LootConfigTag extends ConfigEntryTag {
     

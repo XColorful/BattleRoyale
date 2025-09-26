@@ -14,6 +14,7 @@ import xiao.battleroyale.common.effect.particle.FixedParticleData;
 import xiao.battleroyale.common.effect.particle.ParticleData;
 import xiao.battleroyale.common.effect.particle.ParticleManager;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
+import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager;
 import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager.ParticleConfig;
 
 import java.util.UUID;
@@ -90,7 +91,7 @@ public class EffectManager implements IEffectManager {
      */
     // 仅ZoneFunc调用
     public boolean addParticle(ServerLevel serverLevel, UUID entityUUID, String channelKey, int particleId, int channelCooldown) {
-        ParticleConfig particleConfig = EffectConfigManager.get().getParticleConfig(particleId);
+        ParticleConfig particleConfig = (ParticleConfig) EffectConfigManager.get().getConfigEntry(ParticleConfigManager.get().getNameKey(), particleId);
         if (particleConfig != null) {
             ParticleData particleData = particleConfig.createParticleData(serverLevel);
             return ParticleManager.get().addEntityParticle(entityUUID, channelKey, particleData, channelCooldown);
@@ -99,7 +100,7 @@ public class EffectManager implements IEffectManager {
     }
     // 仅玩家指令调用
     public boolean addParticle(ServerLevel serverLevel, Vec3 spawnPos, String channelKey, int particleId, int channelCooldown) {
-        ParticleConfig particleConfig = EffectConfigManager.get().getParticleConfig(particleId);
+        ParticleConfig particleConfig = (ParticleConfig) EffectConfigManager.get().getConfigEntry(ParticleConfigManager.get().getNameKey(), particleId);
         if (particleConfig != null) {
             FixedParticleData particleData = particleConfig.createParticleData(serverLevel, spawnPos);
             return ParticleManager.get().addFixedParticle(channelKey, particleData, channelCooldown);

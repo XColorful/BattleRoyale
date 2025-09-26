@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.config.common.game.spawn.type.TeleportEntry;
 import xiao.battleroyale.config.common.game.spawn.type.PlaneEntry;
@@ -25,7 +26,7 @@ public class DefaultSpawn {
         spawnConfigJson.add(generateDefaultSpawnConfig0());
         spawnConfigJson.add(generateDefaultSpawnConfig1());
         spawnConfigJson.add(generateDefaultSpawnConfig2());
-        writeJsonToFile(Paths.get(GameConfigManager.get().getSpawnConfigPath(), DEFAULT_FILE_NAME).toString(), spawnConfigJson);
+        writeJsonToFile(Paths.get(GameConfigManager.get().getConfigDirPath(SpawnConfigManager.get().getNameKey()), DEFAULT_FILE_NAME).toString(), spawnConfigJson);
     }
 
     private static JsonObject generateDefaultSpawnConfig0() {

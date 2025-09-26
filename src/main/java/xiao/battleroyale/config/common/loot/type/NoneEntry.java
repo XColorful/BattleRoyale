@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.loot.type;
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
@@ -15,7 +16,7 @@ import java.util.function.Supplier;
 public class NoneEntry implements ILootEntry {
 
     @Override
-    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, T target) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
         return Collections.emptyList();
     }
 

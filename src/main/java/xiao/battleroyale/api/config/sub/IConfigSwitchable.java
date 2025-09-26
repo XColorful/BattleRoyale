@@ -1,4 +1,4 @@
-package xiao.battleroyale.api;
+package xiao.battleroyale.api.config.sub;
 
 public interface IConfigSwitchable {
 
@@ -7,11 +7,11 @@ public interface IConfigSwitchable {
      * 基于当前配置文件名在列表中的位置
      */
     boolean switchConfigFile();
-    boolean switchConfigFile(int configType);
+    boolean switchConfigFile(int folderId);
 
     /**
      * 直接切换到指定名称配置
      */
     boolean switchConfigFile(String fileName);
-    boolean switchConfigFile(String fileName, int configType);
+    boolean switchConfigFile(int folderId, String fileName);
 }

@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.game.gamerule;
 
-import xiao.battleroyale.api.IConfigSingleEntry;
+import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;

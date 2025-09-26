@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,8 @@ import xiao.battleroyale.api.event.game.game.*;
 import xiao.battleroyale.api.event.game.starter.*;
 import xiao.battleroyale.api.event.game.tick.GameTickEvent;
 import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
+import xiao.battleroyale.api.game.IGameIdReadApi;
+import xiao.battleroyale.api.game.IGameIdWriteApi;
 import xiao.battleroyale.api.game.spawn.IGameLobbyReadApi;
 import xiao.battleroyale.api.game.team.IGameTeamReadApi;
 import xiao.battleroyale.api.game.IGameManager;
@@ -33,6 +36,8 @@ import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
+import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.game.GameInfoMessageManager;
@@ -72,13 +77,13 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         }
     }
 
-    public static void init() {
-        GameruleManager.init();
-        GameLootManager.init();
-        SpawnManager.init();
-        StatsManager.init();
-        TeamManager.init();
-        ZoneManager.init();
+    public static void init(Dist dist) {
+        GameruleManager.init(dist);
+        GameLootManager.init(dist);
+        SpawnManager.init(dist);
+        StatsManager.init(dist);
+        TeamManager.init(dist);
+        ZoneManager.init(dist);
     }
 
     protected int gameTime = 0; // 游戏运行时维护当前游戏时间
@@ -171,7 +176,6 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (GameSubManager.gameConfigAllReady()) {
             this.configPrepared = true;
             LogEventHandler.register(); // 后续玩家登录可根据配置直接加入队伍
-            ServerEventHandler.register();
             MinecraftForge.EVENT_BUS.post(new GameLoadFinishEvent(this));
         } else {
             this.configPrepared = false;
@@ -398,7 +402,6 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         stopGame(serverLevel);
         setServerLevel(null); // 手动设置为null，单人游戏重启之后也就失效了
         BattleRoyale.LOGGER.debug("Server stopped, GameManager.serverLevel set to null");
-        ServerEventHandler.unregister();
         isStopping = false;
         MinecraftForge.EVENT_BUS.post(new ServerStopFinishEvent(this));
     }
@@ -427,7 +430,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
     // 用指令设置默认配置
     public boolean setGameruleConfigId(int gameId) {
-        if (gameId < 0 || GameConfigManager.get().getGameruleConfig(gameId) == null) {
+        if (gameId < 0 || GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId) == null) {
             BattleRoyale.LOGGER.info("setGameruleConfigId {} failed", gameId);
             return false;
         }
@@ -435,11 +438,11 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return true;
     }
     @Override public String getGameruleConfigName(int gameId) {
-        GameruleConfig config = GameConfigManager.get().getGameruleConfig(gameId);
+        GameruleConfig config = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId);
         return config != null ? config.getGameName() : "";
     }
     public boolean setSpawnConfigId(int id) {
-        if (id < 0 || GameConfigManager.get().getSpawnConfig(id) == null) {
+        if (id < 0 || GameConfigManager.get().getConfigEntry(SpawnConfigManager.get().getNameKey(), id) == null) {
             return false;
         }
         this.spawnConfigId = id;
@@ -461,7 +464,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return config != null ? config.name : "";
     }
     @Override public String getZoneConfigFileName() {
-        return GameConfigManager.get().getZoneConfigEntryFileName();
+        return GameConfigManager.get().getCurrentSelectedFileName(ZoneConfigManager.get().getNameKey());
     }
 
     private void setServerLevel(@Nullable ServerLevel serverLevel) {
@@ -516,6 +519,12 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
     @Override public IGameLobbyReadApi getGameLobbyReadApi() {
         return SpawnManager.get();
+    }
+    @Override public IGameIdReadApi getGameIdReadApi() {
+        return GameIdHelper.getApi();
+    }
+    @Override public IGameIdWriteApi getGameIdWriteApi() {
+        return GameIdHelper.getApi();
     }
 
     // --------GameManagement--------

@@ -6,9 +6,11 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.bot.BotConfigTag;
 import xiao.battleroyale.api.game.bot.IBotEntry;
 import xiao.battleroyale.api.game.bot.IBotSingleEntry;
+import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.config.AbstractConfigManager;
+import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
+import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.defaultconfigs.DefaultBotConfigGenerator;
 import xiao.battleroyale.util.JsonUtils;
@@ -18,7 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class BotConfigManager extends AbstractConfigManager<BotConfigManager.BotConfig> {
+public class BotConfigManager extends AbstractConfigSubManager<BotConfigManager.BotConfig> {
 
     private static class BotConfigManagerHolder {
         private static final BotConfigManager INSTANCE = new BotConfigManager();
@@ -29,10 +31,12 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
     }
 
     private BotConfigManager() {
+        super(CommandArg.BOT);
         allFolderConfigData.put(DEFAULT_BOT_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
     public static void init() {
+        GameConfigManager.get().registerSubManager(get());
         get().reloadBotConfigs();
     }
 
@@ -138,7 +142,7 @@ public class BotConfigManager extends AbstractConfigManager<BotConfigManager.Bot
      * 特定类别的获取接口
      */
     public BotConfig getBotConfig(int id) {
-        return getConfigEntry(id, DEFAULT_BOT_CONFIG_FOLDER);
+        return getConfigEntry(DEFAULT_BOT_CONFIG_FOLDER, id);
     }
     public List<BotConfig> getBotConfigList() {
         return getConfigEntryList(DEFAULT_BOT_CONFIG_FOLDER);

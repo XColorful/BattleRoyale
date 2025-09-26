@@ -28,18 +28,18 @@ public class TimeEntry implements ILootEntry {
     }
 
     @Override
-    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, T target) {
+    public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {
         int gameTime = GameManager.get().getGameTime();
         if (entry != null) {
             if (start <= gameTime && gameTime <= end) {
                 try {
                     return entry.generateLootData(lootContext, target);
                 } catch (Exception e) {
-                    BattleRoyale.LOGGER.warn("Failed to parse time entry at {}", target.getBlockPos(), e);
+                    parseErrorLog(e, target);
                 }
             }
         } else {
-            BattleRoyale.LOGGER.warn("TimeEntry missing entry member, skipped at {}", target.getBlockPos());
+            entryErrorLog(target);
         }
         return Collections.emptyList();
     }
