@@ -185,7 +185,9 @@ public class TeamManager extends AbstractGameManager implements IGameTeamReadApi
         // this.ready = false; // 不使用ready标记，因为Team会变动
 
         GameManager gameManager = GameManager.get();
-        if (!gameManager.getGameEntry().keepTeamAfterGame) {
+        GameEntry gameEntry = gameManager.getGameEntry();
+        if (gameEntry != null // 1.stopGame现在在每次服务器关闭都会触发，在未读取配置时关闭会触发; 2.配置被其他模组unregistered了，为空
+                && !gameEntry.keepTeamAfterGame) {
             // 移除原版队伍
             clearVanillaTeam(serverLevel);
 
