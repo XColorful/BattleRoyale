@@ -23,6 +23,7 @@ import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
+import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager.PerformanceConfig;
@@ -179,8 +180,8 @@ public class ConfigCommand {
     }
 
     private static int switchNextLootSpawnerConfig(CommandContext<CommandSourceStack> context) {
-        if (LootConfigManager.get().switchNextLootSpawnerConfig()) {
-            String currentFileName = LootConfigManager.get().getLootSpawnerConfigEntryFileName();
+        if (LootConfigManager.get().switchConfigFile(LootConfigTypeEnum.LOOT_SPAWNER)) {
+            String currentFileName = LootConfigManager.get().getCurrentSelectedFileName(LootConfigTypeEnum.LOOT_SPAWNER);
             BattleRoyale.LOGGER.info("Switch loot spawner config file to {} via command", currentFileName);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_loot_spawner_config_file", currentFileName), true);
             return Command.SINGLE_SUCCESS;
@@ -191,7 +192,7 @@ public class ConfigCommand {
     }
     private static int switchLootSpawnerConfig(CommandContext<CommandSourceStack> context) {
         String currentFileName = StringArgumentType.getString(context, FILE);
-        if (LootConfigManager.get().switchLootSpawnerConfig(currentFileName)) {
+        if (LootConfigManager.get().switchConfigFile(LootConfigTypeEnum.LOOT_SPAWNER, currentFileName)) {
             BattleRoyale.LOGGER.info("Switch loot spawner config file to {} via command", currentFileName);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_loot_spawner_config_file", currentFileName), true);
             return Command.SINGLE_SUCCESS;
@@ -201,8 +202,8 @@ public class ConfigCommand {
         }
     }
     private static int switchNextEntitySpawnerConfig(CommandContext<CommandSourceStack> context) {
-        if (LootConfigManager.get().switchNextEntitySpawnerConfig()) {
-            String currentFileName = LootConfigManager.get().getEntitySpawnerConfigEntryFileName();
+        if (LootConfigManager.get().switchConfigFile(LootConfigTypeEnum.ENTITY_SPAWNER)) {
+            String currentFileName = LootConfigManager.get().getCurrentSelectedFileName(LootConfigTypeEnum.ENTITY_SPAWNER);
             BattleRoyale.LOGGER.info("Switch entity spawner config file to {} via command", currentFileName);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_entity_spawner_config_file", currentFileName), true);
             return Command.SINGLE_SUCCESS;
@@ -213,7 +214,7 @@ public class ConfigCommand {
     }
     private static int switchEntitySpawnerConfig(CommandContext<CommandSourceStack> context) {
         String currentFileName = StringArgumentType.getString(context, FILE);
-        if (LootConfigManager.get().switchEntitySpawnerConfig(currentFileName)) {
+        if (LootConfigManager.get().switchConfigFile(LootConfigTypeEnum.ENTITY_SPAWNER, currentFileName)) {
             BattleRoyale.LOGGER.info("Switch entity spawner config file to {} via command", currentFileName);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_entity_spawner_config_file", currentFileName), true);
             return Command.SINGLE_SUCCESS;
@@ -223,8 +224,8 @@ public class ConfigCommand {
         }
     }
     private static int switchNextAirdropConfig(CommandContext<CommandSourceStack> context) {
-        if (LootConfigManager.get().switchNextAirdropConfig()) {
-            String currentFileName = LootConfigManager.get().getAirdropConfigEntryFileName();
+        if (LootConfigManager.get().switchConfigFile(LootConfigTypeEnum.AIRDROP)) {
+            String currentFileName = LootConfigManager.get().getCurrentSelectedFileName(LootConfigTypeEnum.AIRDROP);
             BattleRoyale.LOGGER.info("Switch airdrop config file to {} via command", currentFileName);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_airdrop_config_file", currentFileName), true);
             return Command.SINGLE_SUCCESS;
@@ -235,7 +236,7 @@ public class ConfigCommand {
     }
     private static int switchAirdropConfig(CommandContext<CommandSourceStack> context) {
         String currentFileName = StringArgumentType.getString(context, FILE);
-        if (LootConfigManager.get().switchAirdropConfig(currentFileName)) {
+        if (LootConfigManager.get().switchConfigFile(LootConfigTypeEnum.AIRDROP, currentFileName)) {
             BattleRoyale.LOGGER.info("Switch airdrop config file to {} via command", currentFileName);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_airdrop_config_file", currentFileName), true);
             return Command.SINGLE_SUCCESS;
@@ -245,8 +246,8 @@ public class ConfigCommand {
         }
     }
     private static int switchNextAirdropSpecialConfig(CommandContext<CommandSourceStack> context) {
-        if (LootConfigManager.get().switchNextAirdropSpecialConfig()) {
-            String currentFileName = LootConfigManager.get().getAirdropSpecialConfigEntryFileName();
+        if (LootConfigManager.get().switchConfigFile(LootConfigTypeEnum.AIRDROP_SPECIAL)) {
+            String currentFileName = LootConfigManager.get().getCurrentSelectedFileName(LootConfigTypeEnum.AIRDROP_SPECIAL);
             BattleRoyale.LOGGER.info("Switch airdrop special config file to {} via command", currentFileName);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_airdrop_special_config_file", currentFileName), true);
             return Command.SINGLE_SUCCESS;
@@ -257,7 +258,7 @@ public class ConfigCommand {
     }
     private static int switchAirdropSpecialConfig(CommandContext<CommandSourceStack> context) {
         String currentFileName = StringArgumentType.getString(context, FILE);
-        if (LootConfigManager.get().switchAirdropSpecialConfig(currentFileName)) {
+        if (LootConfigManager.get().switchConfigFile(LootConfigTypeEnum.AIRDROP_SPECIAL, currentFileName)) {
             BattleRoyale.LOGGER.info("Switch airdrop special config file to {} via command", currentFileName);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_airdrop_special_config_file", currentFileName), true);
             return Command.SINGLE_SUCCESS;
@@ -267,8 +268,8 @@ public class ConfigCommand {
         }
     }
     private static int switchNextSecretRoomConfig(CommandContext<CommandSourceStack> context) {
-        if (LootConfigManager.get().switchNextSecretRoomConfig()) {
-            String currentFileName = LootConfigManager.get().getSecretRoomConfigEntryFileName();
+        if (LootConfigManager.get().switchConfigFile(LootConfigTypeEnum.SECRET_ROOM)) {
+            String currentFileName = LootConfigManager.get().getCurrentSelectedFileName(LootConfigTypeEnum.SECRET_ROOM);
             BattleRoyale.LOGGER.info("Switch secret room config file to {} via command", currentFileName);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_secret_room_config_file", currentFileName), true);
             return Command.SINGLE_SUCCESS;
@@ -279,7 +280,7 @@ public class ConfigCommand {
     }
     private static int switchSecretRoomConfig(CommandContext<CommandSourceStack> context) {
         String currentFileName = StringArgumentType.getString(context, FILE);
-        if (LootConfigManager.get().switchSecretRoomConfig(currentFileName)) {
+        if (LootConfigManager.get().switchConfigFile(LootConfigTypeEnum.SECRET_ROOM, currentFileName)) {
             BattleRoyale.LOGGER.info("Switch secret room config file to {} via command", currentFileName);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_secret_room_config_file", currentFileName), true);
             return Command.SINGLE_SUCCESS;

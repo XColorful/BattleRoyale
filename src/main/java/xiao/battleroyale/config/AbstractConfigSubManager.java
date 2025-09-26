@@ -130,6 +130,9 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     @Override public Set<String> getAvailableConfigFileNames(int folderId) {
         return getConfigFolderData(folderId).fileConfigsByFileName.keySet();
     }
+    @Override public boolean reloadAllConfigs() {
+        return SubReloadConfigs.reloadAllConfigs(this);
+    }
     @Override public boolean reloadConfigs() {
         return reloadConfigs(DEFAULT_CONFIG_FOLDER);
     }

@@ -16,6 +16,7 @@ import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
+import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class AirdropFunc extends AbstractEventFunc {
 
     @Override
     public void initFunc(ZoneContext zoneContext) {
-        LootConfig airdropConfig = LootConfigManager.get().getAirdropConfig(lootId);
+        LootConfig airdropConfig = LootConfigManager.get().getConfigEntry(LootConfigTypeEnum.AIRDROP, lootId);
         if (airdropConfig == null) { // 没有物资刷新配置就视为创建失败
             return;
         }

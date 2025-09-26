@@ -19,6 +19,7 @@ import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
 import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
@@ -78,7 +79,7 @@ public class ReloadCommand {
 
     public static int reloadAllConfigs(CommandContext<CommandSourceStack> context) {
         // 服务端配置
-        LootConfigManager.get().reloadAllLootConfigs();
+        LootConfigManager.get().reloadAllConfigs();
         GameConfigManager.get().reloadAllConfigs();
         EffectConfigManager.get().reloadAllConfigs();
         ServerConfigManager.get().reloadAllConfigs();
@@ -98,28 +99,29 @@ public class ReloadCommand {
     private static int reloadLootConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
         String messageKey;
         if (subType == null) {
-            LootConfigManager.get().reloadAllLootConfigs();
+            LootConfigManager.get().reloadAllConfigs();
             messageKey = "battleroyale.message.loot_config_reloaded";
         } else {
+            int folderId = LootConfigTypeEnum.ALL_LOOT;
             switch (subType) {
                 case LOOT_SPAWNER:
-                    LootConfigManager.get().reloadLootSpawnerConfigs();
+                    folderId = LootConfigTypeEnum.LOOT_SPAWNER;
                     messageKey = "battleroyale.message.loot_spawner_config_reloaded";
                     break;
                 case ENTITY_SPAWNER:
-                    LootConfigManager.get().reloadEntitySpawnerConfigs();
+                    folderId = LootConfigTypeEnum.ENTITY_SPAWNER;
                     messageKey = "battleroyale.message.entity_spawner_config_reloaded";
                     break;
                 case AIRDROP:
-                    LootConfigManager.get().reloadAirdropConfigs();
+                    folderId = LootConfigTypeEnum.AIRDROP;
                     messageKey = "battleroyale.message.airdrop_config_reloaded";
                     break;
                 case AIRDROP_SPECIAL:
-                    LootConfigManager.get().reloadAirdropSpecialConfigs();
+                    folderId = LootConfigTypeEnum.AIRDROP_SPECIAL;
                     messageKey = "battleroyale.message.airdrop_special_config_reloaded";
                     break;
                 case SECRET_ROOM:
-                    LootConfigManager.get().reloadSecretRoomConfigs();
+                    folderId = LootConfigTypeEnum.SECRET_ROOM;
                     messageKey = "battleroyale.message.secret_room_config_reloaded";
                     break;
                 default:
@@ -127,6 +129,7 @@ public class ReloadCommand {
                     BattleRoyale.LOGGER.warn("Unknown loot sub-type for reload command: {}", subType);
                     return 0;
             }
+            LootConfigManager.get().reloadConfigs(folderId);
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Reloaded {} configs via command", subType != null ? subType : "all loot");

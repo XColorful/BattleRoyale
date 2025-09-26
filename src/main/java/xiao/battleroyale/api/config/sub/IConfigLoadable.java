@@ -14,6 +14,7 @@ public interface IConfigLoadable<T> {
     /**
      * 执行一次只重新读取一次
      */
+    boolean reloadAllConfigs();
     boolean reloadConfigs();
     boolean reloadConfigs(int folderId);
 
