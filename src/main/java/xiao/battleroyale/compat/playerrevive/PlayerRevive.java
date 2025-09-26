@@ -36,12 +36,17 @@ public class PlayerRevive extends AbstractCompatMod {
 
     @Override
     protected void onModLoaded() throws Exception {
+        // 2021_01_03
         PlayerReviveServer = Class.forName("team.creative.playerrevive.server.PlayerReviveServer");
+        // 2022_09_20
         isBleeding = PlayerReviveServer.getMethod("isBleeding", Player.class);
+        // 2021_09_20
         getBleeding = PlayerReviveServer.getMethod("getBleeding", Player.class);
         revive = PlayerReviveServer.getMethod("revive", Player.class);
         kill = PlayerReviveServer.getMethod("kill", Player.class);
+        // 2021_01_03
         IBleeding = Class.forName("team.creative.playerrevive.api.IBleeding");
+        // 2021_09_20
         revivingPlayers = IBleeding.getMethod("revivingPlayers");
     }
 
