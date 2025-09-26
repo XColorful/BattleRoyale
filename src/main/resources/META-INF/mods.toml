@@ -32,10 +32,10 @@ description='''
 [[dependencies.battleroyale]]
     modId="playerrevive"
     mandatory=false
-    versionRange="[2.0.16,]
+    versionRange="[2.0.16,]"
     side="BOTH"
 [[dependencies.battleroyale]]
     modId="tacz"
     mandatory=false
-    versionRange="[1.0.2,]
+    versionRange="[1.0.2,]"
     side="BOTH"
