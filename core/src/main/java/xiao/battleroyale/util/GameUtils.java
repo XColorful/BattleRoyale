@@ -1,25 +1,17 @@
 package xiao.battleroyale.util;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
 import java.util.List;
-import java.util.UUID;
 
 import static xiao.battleroyale.util.CommandUtils.buildIntBracketWithColor;
 import static xiao.battleroyale.util.CommandUtils.buildIntBracketWithFullColor;

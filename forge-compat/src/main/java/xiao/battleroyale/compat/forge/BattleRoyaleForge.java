@@ -8,21 +8,25 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
+import xiao.battleroyale.api.minecraft.IMcRegistry;
 import xiao.battleroyale.compat.forge.init.registry.ForgeRegistrarFactory;
+import xiao.battleroyale.compat.forge.minecraft.ForgeRegistry;
 import xiao.battleroyale.init.registry.*;
 
 @Mod(BattleRoyale.MOD_ID)
 public class BattleRoyaleForge {
 
     private final IRegistrarFactory registrarFactory;
+    private final IMcRegistry mcRegistry;
 
     public BattleRoyaleForge() {
         this.registrarFactory = new ForgeRegistrarFactory();
+        this.mcRegistry = new ForgeRegistry();
 
         Dist dist = FMLLoader.getDist();
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
 
-        BattleRoyale.init(mcSide, this.registrarFactory);
+        BattleRoyale.init(mcSide, this.registrarFactory, this.mcRegistry);
 
         // 确保所有 ModXXX 静态字段被初始化
         try {

@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -19,6 +18,7 @@ import xiao.battleroyale.api.message.team.GameTeamTag;
 import xiao.battleroyale.api.message.zone.GameZoneTag;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
+import xiao.battleroyale.api.minecraft.IMcRegistry;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 
@@ -131,7 +131,7 @@ public class NBTUtils {
 
             // 尝试根据 blockId 获取方块，否则回退到空气方块的默认状态
             ResourceLocation rl = ResourceLocation.tryParse(blockId);
-            Block block = (rl != null) ? ForgeRegistries.BLOCKS.getValue(rl) : null;
+            Block block = (rl != null) ? BattleRoyale.getMcRegistry().getBlock(rl) : null;
             return block != null ? block.defaultBlockState() : Blocks.AIR.defaultBlockState();
         }
     }

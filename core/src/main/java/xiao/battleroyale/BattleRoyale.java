@@ -8,6 +8,7 @@ import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
+import xiao.battleroyale.api.minecraft.IMcRegistry;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -25,12 +26,14 @@ public class BattleRoyale {
     protected static McSide mcSide = McSide.CLIENT;
     protected static MinecraftServer minecraftServer;
     private static IRegistrarFactory registrarFactory;
+    private static IMcRegistry mcRegistry;
 
-    public static void init(McSide mcSide, IRegistrarFactory factory) {
+    public static void init(McSide mcSide, IRegistrarFactory factory, IMcRegistry mcRegistry) {
         if (initialized) return;
 
         BattleRoyale.mcSide = mcSide;
         BattleRoyale.registrarFactory = factory;
+        BattleRoyale.mcRegistry = mcRegistry;
 
         ModConfigManager.init(mcSide);
         GameConfigManager.init(mcSide);
@@ -48,6 +51,12 @@ public class BattleRoyale {
             throw new IllegalStateException("Registrar factory has not been initialized. Call init() first.");
         }
         return registrarFactory;
+    }
+    public static IMcRegistry getMcRegistry() {
+        if (mcRegistry == null) {
+            throw new IllegalStateException("Mc registry has not been initialized. Call init() first.");
+        }
+        return mcRegistry;
     }
     public static void setMinecraftServer(MinecraftServer server) {
         minecraftServer = server;
