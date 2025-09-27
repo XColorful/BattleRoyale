@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.message.zone;
+package xiao.battleroyale.api.network.message.zone;
 
 /**
  * 用于网络通信，省流

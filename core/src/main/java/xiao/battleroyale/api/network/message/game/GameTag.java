@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.message.game;
+package xiao.battleroyale.api.network.message.game;
 
 public class GameTag {
 

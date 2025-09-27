@@ -2,7 +2,7 @@ package xiao.battleroyale.client.game.data;
 
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.message.IExpireable;
+import xiao.battleroyale.api.network.message.IExpireable;
 
 public abstract class AbstractClientExpireData implements IExpireable {
 

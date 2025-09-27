@@ -2,7 +2,7 @@ package xiao.battleroyale.common.message;
 
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.message.IMessageManager;
+import xiao.battleroyale.api.network.message.IMessageManager;
 import xiao.battleroyale.common.message.game.GameInfoMessageManager;
 import xiao.battleroyale.common.message.game.SpectateMessageManager;
 import xiao.battleroyale.common.message.team.TeamMessageManager;

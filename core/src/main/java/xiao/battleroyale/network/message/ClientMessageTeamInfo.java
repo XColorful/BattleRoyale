@@ -2,12 +2,11 @@ package xiao.battleroyale.network.message;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.message.IMessage;
+import xiao.battleroyale.api.network.message.IMessage;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 public class ClientMessageTeamInfo implements IMessage<ClientMessageTeamInfo> {
 
@@ -32,11 +31,9 @@ public class ClientMessageTeamInfo implements IMessage<ClientMessageTeamInfo> {
     }
 
     @Override
-    public void handle(ClientMessageTeamInfo message, Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        context.enqueueWork(() -> {
+    public void handle(ClientMessageTeamInfo message, Consumer<Runnable> handler) {
+        handler.accept(() -> {
             ClientGameDataManager.get().updateTeamInfo(message.teamSyncNbt);
         });
-        context.setPacketHandled(true);
     }
 }

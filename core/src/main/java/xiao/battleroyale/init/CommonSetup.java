@@ -2,7 +2,7 @@ package xiao.battleroyale.init;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.init.ICommonSetup;
-import xiao.battleroyale.network.GameInfoHandler;
+import xiao.battleroyale.network.NetworkHandler;
 
 public class CommonSetup implements ICommonSetup {
 
@@ -16,7 +16,7 @@ public class CommonSetup implements ICommonSetup {
 
     @Override
     public void onCommonSetup() {
-        GameInfoHandler.init();
+        NetworkHandler.get().registerMessages();
         BattleRoyale.getModConfigManager().reloadAllConfigs();
     }
 }

@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.message;
+package xiao.battleroyale.api.network.message;
 
 public interface IExpireable {
 

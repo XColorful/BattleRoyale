@@ -14,11 +14,10 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.message.team.GameTeamTag;
-import xiao.battleroyale.api.message.zone.GameZoneTag;
+import xiao.battleroyale.api.network.message.team.GameTeamTag;
+import xiao.battleroyale.api.network.message.zone.GameZoneTag;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
-import xiao.battleroyale.api.minecraft.IMcRegistry;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 

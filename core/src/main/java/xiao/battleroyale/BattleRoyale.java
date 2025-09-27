@@ -9,9 +9,11 @@ import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
+import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.network.NetworkHandler;
 import xiao.battleroyale.resource.ResourceLoader;
 
 import java.util.Random;
@@ -27,13 +29,16 @@ public class BattleRoyale {
     protected static MinecraftServer minecraftServer;
     private static IRegistrarFactory registrarFactory;
     private static IMcRegistry mcRegistry;
+    private static INetworkAdapter networkAdapter;
 
-    public static void init(McSide mcSide, IRegistrarFactory factory, IMcRegistry mcRegistry) {
+    public static void init(McSide mcSide, IRegistrarFactory factory, IMcRegistry mcRegistry, INetworkAdapter networkAdapter) {
         if (initialized) return;
 
         BattleRoyale.mcSide = mcSide;
         BattleRoyale.registrarFactory = factory;
         BattleRoyale.mcRegistry = mcRegistry;
+        BattleRoyale.networkAdapter = networkAdapter;
+        NetworkHandler.initialize(networkAdapter);
 
         ModConfigManager.init(mcSide);
         GameConfigManager.init(mcSide);
