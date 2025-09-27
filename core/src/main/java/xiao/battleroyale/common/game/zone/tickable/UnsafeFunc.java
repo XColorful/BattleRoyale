@@ -5,7 +5,7 @@ import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
-import xiao.battleroyale.init.ModDamageTypes;
+import xiao.battleroyale.init.registry.ModDamageTypes;
 
 import java.util.ArrayList;
 import java.util.List;

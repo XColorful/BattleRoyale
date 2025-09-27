@@ -1,9 +1,8 @@
 package xiao.battleroyale.init;
 
-import net.minecraftforge.client.event.RegisterClientCommandsEvent;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.commands.CommandSourceStack;
+import xiao.battleroyale.api.init.ICommandRegistry;
 import xiao.battleroyale.command.ClientCommand;
 import xiao.battleroyale.command.ServerCommand;
 import xiao.battleroyale.compat.pubgmc.PubgmcCommand;
@@ -11,20 +10,27 @@ import xiao.battleroyale.developer.debug.command.DebugCommand;
 import xiao.battleroyale.developer.debug.command.LocalDebugCommand;
 import xiao.battleroyale.developer.gm.command.GameMasterCommand;
 
-@Mod.EventBusSubscriber
-public class CommandRegistry {
+public class CommandRegistry implements ICommandRegistry {
 
-    @SubscribeEvent
-    public static void onServerStarting(RegisterCommandsEvent event) {
-        ServerCommand.register(event.getDispatcher());
-        DebugCommand.register(event.getDispatcher());
-        GameMasterCommand.register(event.getDispatcher());
-        PubgmcCommand.register(event.getDispatcher());
+    private static final CommandRegistry INSTANCE = new CommandRegistry();
+
+    public static CommandRegistry get() {
+        return INSTANCE;
     }
 
-    @SubscribeEvent
-    public static void onClientStarting(RegisterClientCommandsEvent event) {
-        ClientCommand.register(event.getDispatcher());
-        LocalDebugCommand.register(event.getDispatcher());
+    private CommandRegistry() {}
+
+    @Override
+    public void registerServerCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
+        ServerCommand.register(dispatcher);
+        DebugCommand.register(dispatcher);
+        GameMasterCommand.register(dispatcher);
+        PubgmcCommand.register(dispatcher);
+    }
+
+    @Override
+    public void registerClientCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
+        ClientCommand.register(dispatcher);
+        LocalDebugCommand.register(dispatcher);
     }
 }

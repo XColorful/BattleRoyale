@@ -5,7 +5,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import xiao.battleroyale.init.ModBlocks;
+import xiao.battleroyale.init.registry.ModBlocks;
 import xiao.battleroyale.client.renderer.block.LootSpawnerRenderer;
 import xiao.battleroyale.client.renderer.block.EntitySpawnerRenderer;
 

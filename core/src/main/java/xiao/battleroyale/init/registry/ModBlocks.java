@@ -1,10 +1,10 @@
-package xiao.battleroyale.init;
+package xiao.battleroyale.init.registry;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.init.IRegistrar;
-import xiao.battleroyale.api.init.IRegistryObject;
+import xiao.battleroyale.api.init.registry.IRegistrar;
+import xiao.battleroyale.api.init.registry.IRegistryObject;
 import xiao.battleroyale.block.EntitySpawner;
 import xiao.battleroyale.block.LootSpawner;
 import xiao.battleroyale.block.ZoneController;

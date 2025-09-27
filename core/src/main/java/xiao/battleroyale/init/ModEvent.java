@@ -1,23 +1,30 @@
 package xiao.battleroyale.init;
 
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.server.MinecraftServer;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.init.IModEvent;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
 
-@Mod.EventBusSubscriber(modid = BattleRoyale.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ModEvent {
+/**
+ * 核心模块事件和服务逻辑的统一处理类。
+ * 兼容层通过实现这些接口来触发核心功能。
+ */
+public class ModEvent implements IModEvent {
 
-    @SubscribeEvent
-    public static void onServerStarting(ServerStartingEvent event) {
-        BattleRoyale.setMinecraftServer(event.getServer());
+    private static final ModEvent INSTANCE = new ModEvent();
+
+    public static ModEvent get() {
+        return INSTANCE;
     }
 
-    @SubscribeEvent
-    public static void onServerStopping(ServerStoppingEvent event) {
+    @Override
+    public void onServerStarting(MinecraftServer server) {
+        BattleRoyale.setMinecraftServer(server);
+    }
+
+    @Override
+    public void onServerStopping(MinecraftServer server) {
         GameManager.get().onServerStopping();
         GameLootManager.get().awaitTerminationOnShutdown();
         BattleRoyale.setMinecraftServer(null);

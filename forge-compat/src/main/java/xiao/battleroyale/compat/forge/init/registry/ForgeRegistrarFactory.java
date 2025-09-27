@@ -1,4 +1,4 @@
-package xiao.battleroyale.compat.forge;
+package xiao.battleroyale.compat.forge.init.registry;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -13,9 +13,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import xiao.battleroyale.api.init.IMenuTypeFactory;
-import xiao.battleroyale.api.init.IRegistrar;
-import xiao.battleroyale.api.init.IRegistrarFactory;
+import xiao.battleroyale.api.init.registry.IMenuTypeFactory;
+import xiao.battleroyale.api.init.registry.IRegistrar;
+import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 
 /**
  * IRegistrarFactory 的 Forge 实现，负责创建基于 Forge API 的注册器。

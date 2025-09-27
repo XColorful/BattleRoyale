@@ -1,4 +1,4 @@
-package xiao.battleroyale.init;
+package xiao.battleroyale.init.registry;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;

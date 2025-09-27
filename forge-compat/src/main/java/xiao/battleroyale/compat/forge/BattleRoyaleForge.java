@@ -5,11 +5,11 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
-
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.init.IRegistrarFactory;
-import xiao.battleroyale.init.*;
+import xiao.battleroyale.api.init.registry.IRegistrarFactory;
+import xiao.battleroyale.compat.forge.init.registry.ForgeRegistrarFactory;
+import xiao.battleroyale.init.registry.*;
 
 @Mod(BattleRoyale.MOD_ID)
 public class BattleRoyaleForge {
@@ -25,7 +25,6 @@ public class BattleRoyaleForge {
         BattleRoyale.init(mcSide, this.registrarFactory);
 
         // 确保所有 ModXXX 静态字段被初始化
-        // 必须在注册事件之前访问这些类
         try {
             Class.forName(ModBlocks.class.getName());
             Class.forName(ModCreativeTabs.class.getName());

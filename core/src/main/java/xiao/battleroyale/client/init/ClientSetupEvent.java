@@ -10,7 +10,7 @@ import xiao.battleroyale.client.gui.LootSpawnerScreen;
 import xiao.battleroyale.client.renderer.game.GameInfoRenderer;
 import xiao.battleroyale.client.renderer.game.TeamInfoRenderer;
 import xiao.battleroyale.client.renderer.game.ZoneRenderer;
-import xiao.battleroyale.init.ModMenuTypes;
+import xiao.battleroyale.init.registry.ModMenuTypes;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT, modid = BattleRoyale.MOD_ID)
 public class ClientSetupEvent {

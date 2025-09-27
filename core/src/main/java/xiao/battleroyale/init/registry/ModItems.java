@@ -1,10 +1,10 @@
-package xiao.battleroyale.init;
+package xiao.battleroyale.init.registry;
 
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.init.IRegistrar;
-import xiao.battleroyale.api.init.IRegistryObject;
+import xiao.battleroyale.api.init.registry.IRegistrar;
+import xiao.battleroyale.api.init.registry.IRegistryObject;
 
 /**
  * 平台无关的物品注册器。

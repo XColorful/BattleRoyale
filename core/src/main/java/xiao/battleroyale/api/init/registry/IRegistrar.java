@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.init;
+package xiao.battleroyale.api.init.registry;
 
 import java.util.function.Supplier;
 

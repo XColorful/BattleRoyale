@@ -1,19 +1,22 @@
 package xiao.battleroyale.init;
 
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.init.ICompatInit;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.compat.tacz.Tacz;
 
-@Mod.EventBusSubscriber(modid = BattleRoyale.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class CompatInit {
+public class CompatInit implements ICompatInit {
 
-    @SubscribeEvent
-    public static void onLoadComplete(FMLLoadCompleteEvent event) {
+    private static final CompatInit INSTANCE = new CompatInit();
+
+    public static CompatInit get() {
+        return INSTANCE;
+    }
+
+    private CompatInit() {};
+
+    @Override
+    public void onLoadComplete() {
         PlayerRevive.get().checkLoaded();
         Tacz.get().checkLoaded();
     }
-
 }

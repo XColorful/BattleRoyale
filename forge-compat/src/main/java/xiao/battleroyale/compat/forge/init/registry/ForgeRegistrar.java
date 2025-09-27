@@ -1,11 +1,11 @@
-package xiao.battleroyale.compat.forge;
+package xiao.battleroyale.compat.forge.init.registry;
 
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.init.IRegistrar;
-import xiao.battleroyale.api.init.IRegistryObject;
+import xiao.battleroyale.api.init.registry.IRegistrar;
+import xiao.battleroyale.api.init.registry.IRegistryObject;
 
 import java.util.function.Supplier;
 

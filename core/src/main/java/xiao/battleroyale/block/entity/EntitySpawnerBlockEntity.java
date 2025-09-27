@@ -3,7 +3,7 @@ package xiao.battleroyale.block.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
-import xiao.battleroyale.init.ModBlocks;
+import xiao.battleroyale.init.registry.ModBlocks;
 
 public class EntitySpawnerBlockEntity extends AbstractLootBlockEntity {
 

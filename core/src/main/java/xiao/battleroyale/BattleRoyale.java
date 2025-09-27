@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.api.init.IRegistrarFactory;
+import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;

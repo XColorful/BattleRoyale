@@ -1,7 +1,7 @@
-package xiao.battleroyale.compat.forge;
+package xiao.battleroyale.compat.forge.init.registry;
 
 import net.minecraftforge.registries.RegistryObject;
-import xiao.battleroyale.api.init.IRegistryObject;
+import xiao.battleroyale.api.init.registry.IRegistryObject;
 
 /**
  * IRegistryObject 的 Forge 实现，包装了 Forge 的 RegistryObject。

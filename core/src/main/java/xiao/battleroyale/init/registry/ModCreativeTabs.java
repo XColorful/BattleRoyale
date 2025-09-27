@@ -1,11 +1,11 @@
-package xiao.battleroyale.init;
+package xiao.battleroyale.init.registry;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.init.IRegistrar;
-import xiao.battleroyale.api.init.IRegistryObject;
+import xiao.battleroyale.api.init.registry.IRegistrar;
+import xiao.battleroyale.api.init.registry.IRegistryObject;
 
 public class ModCreativeTabs {
     public static final IRegistrar<CreativeModeTab> TABS =
