@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
-import xiao.battleroyale.event.DelayedEvent;
+import xiao.battleroyale.event.util.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.*;

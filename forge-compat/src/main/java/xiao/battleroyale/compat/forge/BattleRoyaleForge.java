@@ -7,9 +7,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.event.IEventRegister;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
 import xiao.battleroyale.api.network.INetworkAdapter;
+import xiao.battleroyale.compat.forge.event.ForgeEventRegister;
 import xiao.battleroyale.compat.forge.init.registry.ForgeRegistrarFactory;
 import xiao.battleroyale.compat.forge.minecraft.ForgeRegistry;
 import xiao.battleroyale.compat.forge.network.ForgeNetworkAdapter;
@@ -21,15 +23,17 @@ public class BattleRoyaleForge {
     private final IRegistrarFactory registrarFactory;
     private final IMcRegistry mcRegistry;
     private final INetworkAdapter networkAdapter;
+    private final IEventRegister eventRegister;
 
     public BattleRoyaleForge() {
         this.registrarFactory = new ForgeRegistrarFactory();
         this.mcRegistry = new ForgeRegistry();
         this.networkAdapter = new ForgeNetworkAdapter();
+        this.eventRegister = new ForgeEventRegister();
         Dist dist = FMLLoader.getDist();
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
 
-        BattleRoyale.init(mcSide, this.registrarFactory, this.mcRegistry, this.networkAdapter);
+        BattleRoyale.init(mcSide, this.registrarFactory, this.mcRegistry, this.networkAdapter, this.eventRegister);
 
         // 确保所有 ModXXX 静态字段被初始化
         try {

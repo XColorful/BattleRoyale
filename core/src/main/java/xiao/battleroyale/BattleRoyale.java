@@ -6,6 +6,7 @@ import net.minecraft.server.packs.PackType;
 import org.slf4j.Logger;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.IModConfigManager;
+import xiao.battleroyale.api.event.IEventRegister;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
@@ -30,8 +31,9 @@ public class BattleRoyale {
     private static IRegistrarFactory registrarFactory;
     private static IMcRegistry mcRegistry;
     private static INetworkAdapter networkAdapter;
+    private static IEventRegister eventRegister;
 
-    public static void init(McSide mcSide, IRegistrarFactory factory, IMcRegistry mcRegistry, INetworkAdapter networkAdapter) {
+    public static void init(McSide mcSide, IRegistrarFactory factory, IMcRegistry mcRegistry, INetworkAdapter networkAdapter, IEventRegister eventRegister) {
         if (initialized) return;
 
         BattleRoyale.mcSide = mcSide;
@@ -39,6 +41,7 @@ public class BattleRoyale {
         BattleRoyale.mcRegistry = mcRegistry;
         BattleRoyale.networkAdapter = networkAdapter;
         NetworkHandler.initialize(networkAdapter);
+        BattleRoyale.eventRegister = eventRegister;
 
         ModConfigManager.init(mcSide);
         GameConfigManager.init(mcSide);
@@ -62,6 +65,12 @@ public class BattleRoyale {
             throw new IllegalStateException("Mc registry has not been initialized. Call init() first.");
         }
         return mcRegistry;
+    }
+    public static IEventRegister getEventRegister() {
+        if (eventRegister == null) {
+            throw new IllegalStateException("Event register has not been initialized. Call init() first.");
+        }
+        return eventRegister;
     }
     public static void setMinecraftServer(MinecraftServer server) {
         minecraftServer = server;

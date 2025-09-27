@@ -17,7 +17,7 @@ import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.message.MessageManager;
-import xiao.battleroyale.event.DelayedEvent;
+import xiao.battleroyale.event.util.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.ArrayList;

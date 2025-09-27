@@ -1,4 +1,4 @@
-package xiao.battleroyale.event;
+package xiao.battleroyale.event.loot;
 
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

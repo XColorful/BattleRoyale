@@ -11,7 +11,7 @@ import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.event.LootGenerationEventHandler;
+import xiao.battleroyale.event.loot.LootGenerationEventHandler;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;
