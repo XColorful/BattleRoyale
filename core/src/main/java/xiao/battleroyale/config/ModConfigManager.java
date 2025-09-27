@@ -1,8 +1,8 @@
 package xiao.battleroyale.config;
 
-import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.common.ISideOnly;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.IConfigManager;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.IModConfigManager;
@@ -28,12 +28,12 @@ public class ModConfigManager implements IModConfigManager, ISideOnly {
 
     private ModConfigManager() {}
 
-    public static void init(Dist dist) {
-        GameConfigManager.init(dist);
-        LootConfigManager.init(dist);
-        ServerConfigManager.init(dist);
-        EffectConfigManager.init(dist);
-        ClientConfigManager.init(dist);
+    public static void init(McSide mcSide) {
+        GameConfigManager.init(mcSide);
+        LootConfigManager.init(mcSide);
+        ServerConfigManager.init(mcSide);
+        EffectConfigManager.init(mcSide);
+        ClientConfigManager.init(mcSide);
     }
 
     private final ModConfigManagerData configData = new ModConfigManagerData();

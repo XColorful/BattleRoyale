@@ -1,10 +1,10 @@
 package xiao.battleroyale.init;
 
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.init.IRegistrar;
 
 public class ModSounds {
-    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, BattleRoyale.MOD_ID);
+    public static final IRegistrar<SoundEvent> SOUNDS =
+            BattleRoyale.getRegistrarFactory().createSounds(BattleRoyale.MOD_ID);
 }

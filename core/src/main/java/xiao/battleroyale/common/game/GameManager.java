@@ -16,6 +16,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.game.finish.*;
 import xiao.battleroyale.api.event.game.game.*;
 import xiao.battleroyale.api.event.game.starter.*;
@@ -77,13 +78,13 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         }
     }
 
-    public static void init(Dist dist) {
-        GameruleManager.init(dist);
-        GameLootManager.init(dist);
-        SpawnManager.init(dist);
-        StatsManager.init(dist);
-        TeamManager.init(dist);
-        ZoneManager.init(dist);
+    public static void init(McSide mcSide) {
+        GameruleManager.init(mcSide);
+        GameLootManager.init(mcSide);
+        SpawnManager.init(mcSide);
+        StatsManager.init(mcSide);
+        TeamManager.init(mcSide);
+        ZoneManager.init(mcSide);
     }
 
     protected int gameTime = 0; // 游戏运行时维护当前游戏时间

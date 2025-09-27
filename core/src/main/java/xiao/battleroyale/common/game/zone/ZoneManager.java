@@ -6,6 +6,7 @@ import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.api.event.game.tick.ZoneTickEvent;
 import xiao.battleroyale.api.event.game.tick.ZoneTickFinishEvent;
@@ -38,7 +39,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
 
     private ZoneManager() {}
 
-    public static void init(Dist dist) {
+    public static void init(McSide mcSide) {
         ;
     }
 

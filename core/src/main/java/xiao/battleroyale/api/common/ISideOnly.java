@@ -1,7 +1,6 @@
 package xiao.battleroyale.api.common;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import xiao.battleroyale.BattleRoyale;
 
 public interface ISideOnly {
 
@@ -12,11 +11,11 @@ public interface ISideOnly {
         return false;
     }
     default boolean inProperSide() {
-        return inProperSide(FMLEnvironment.dist);
+        return inProperSide(BattleRoyale.getMcSide());
     }
-    default boolean inProperSide(Dist dist) {
-        if (clientSideOnly() && dist == Dist.DEDICATED_SERVER) {
+    default boolean inProperSide(McSide mcSide) {
+        if (clientSideOnly() && mcSide == McSide.DEDICATED_SERVER) {
             return false;
-        } else return !serverSideOnly() || dist != Dist.CLIENT;
+        } else return !serverSideOnly() || mcSide != McSide.CLIENT;
     }
 }

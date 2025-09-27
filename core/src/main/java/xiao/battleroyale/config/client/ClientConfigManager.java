@@ -1,7 +1,7 @@
 package xiao.battleroyale.config.client;
 
-import net.minecraftforge.api.distmarker.Dist;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigManager;
 import xiao.battleroyale.config.ModConfigManager;
@@ -27,8 +27,8 @@ public class ClientConfigManager extends AbstractConfigManager {
         super(CommandArg.CLIENT);
     }
 
-    public static void init(Dist dist) {
-        if (!get().inProperSide(dist)) {
+    public static void init(McSide mcSide) {
+        if (!get().inProperSide(mcSide)) {
             return;
         }
         BattleRoyale.getModConfigManager().registerConfigManager(get());

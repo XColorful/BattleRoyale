@@ -11,6 +11,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
@@ -44,7 +45,7 @@ public class StatsManager extends AbstractGameManager {
 
     private StatsManager() {}
 
-    public static void init(Dist dist) {
+    public static void init(McSide mcSide) {
         ;
     }
 

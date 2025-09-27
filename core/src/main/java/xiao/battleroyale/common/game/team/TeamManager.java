@@ -8,6 +8,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.game.team.IGameTeamReadApi;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
@@ -35,7 +36,7 @@ public class TeamManager extends AbstractGameManager implements IGameTeamReadApi
 
     private TeamManager() {}
 
-    public static void init(Dist dist) {
+    public static void init(McSide mcSide) {
         ;
     }
 

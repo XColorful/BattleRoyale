@@ -2,9 +2,9 @@ package xiao.battleroyale.config.common.loot;
 
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootConfigTag;
 import xiao.battleroyale.api.loot.LootEntryTag;
@@ -55,8 +55,8 @@ public class LootConfigManager extends AbstractConfigSubManager<LootConfigManage
         allFolderConfigData.put(SECRET_ROOM, new FolderConfigData<>());
     }
 
-    public static void init(Dist dist) {
-        if (!get().inProperSide(dist)) {
+    public static void init(McSide mcSide) {
+        if (!get().inProperSide(mcSide)) {
             return;
         }
         BattleRoyale.getModConfigManager().registerConfigSubManager(get());

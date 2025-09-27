@@ -13,6 +13,7 @@ import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportEvent;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishEvent;
 import xiao.battleroyale.api.game.spawn.IGameLobbyReadApi;
@@ -53,7 +54,7 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
 
     private SpawnManager() {}
 
-    public static void init(Dist dist) {
+    public static void init(McSide mcSide) {
         ;
     }
 

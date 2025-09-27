@@ -8,6 +8,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameStatsManager;
@@ -37,7 +38,7 @@ public class GameruleManager extends AbstractGameManager {
 
     private GameruleManager() {}
 
-    public static void init(Dist dist) {
+    public static void init(McSide mcSide) {
         ;
     }
 

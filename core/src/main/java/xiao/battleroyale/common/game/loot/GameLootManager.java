@@ -7,6 +7,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.ISideOnly;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.game.tick.GameLootBfsEvent;
 import xiao.battleroyale.api.event.game.tick.GameLootBfsFinishEvent;
 import xiao.battleroyale.api.event.game.tick.GameLootEvent;
@@ -41,9 +42,9 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
     private GameLootManager() {
     }
 
-    public static void init(Dist dist) {
-        if (!get().inProperSide(dist)) {
-            BattleRoyale.LOGGER.debug("GameLootManager skipped init() at {}", dist.toString());
+    public static void init(McSide mcSide) {
+        if (!get().inProperSide(mcSide)) {
+            BattleRoyale.LOGGER.debug("GameLootManager skipped init() at {}", mcSide.toString());
             return;
         }
         // 预计算
