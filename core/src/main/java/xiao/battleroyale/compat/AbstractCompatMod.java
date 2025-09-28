@@ -1,6 +1,5 @@
 package xiao.battleroyale.compat;
 
-import net.minecraftforge.fml.ModList;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.compat.ICompatMod;
 
@@ -18,7 +17,7 @@ public abstract class AbstractCompatMod implements ICompatMod {
 
     @Override
     public void checkLoaded() {
-        if (ModList.get().isLoaded(MOD_ID)) {
+        if (BattleRoyale.getMcRegistry().isModLoaded(MOD_ID)) {
             try {
                 onModLoaded();
                 isLoaded = true;

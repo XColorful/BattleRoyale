@@ -1,20 +1,22 @@
 package xiao.battleroyale.compat.playerrevive;
 
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.EventType;
+import xiao.battleroyale.api.event.IEvent;
+import xiao.battleroyale.api.event.IEventHandler;
+import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.tacz.Tacz;
+import xiao.battleroyale.event.EventRegistry;
 
 import java.util.*;
 
-public class BleedingHandler {
+public class BleedingHandler implements IEventHandler {
 
     private static class BleedingHandlerHolder {
         private static final BleedingHandler INSTANCE = new BleedingHandler();
@@ -29,17 +31,23 @@ public class BleedingHandler {
     private static boolean isRegistered = false;
     public static boolean isIsRegistered() { return isRegistered; }
 
+    @Override
+    public String getEventHandlerName() {
+        return "BleedingHandler";
+    }
+
     public static void register() {
-        MinecraftForge.EVENT_BUS.register(get());
-        isRegistered = true;
-        BattleRoyale.LOGGER.debug("Registered BleedingHandler");
-        Tacz.registerBleedingEvent();
+        if (EventRegistry.register(get(), EventType.SERVER_TICK_EVENT)) {
+            isRegistered = true;
+            Tacz.registerBleedingEvent();
+        } else {
+            BattleRoyale.LOGGER.warn("BleedingHandler failed to register instantly");
+        }
     }
 
     public static void unregister() {
-        MinecraftForge.EVENT_BUS.unregister(get());
+        EventRegistry.unregister(get(), EventType.SERVER_TICK_EVENT);
         isRegistered = false;
-        BattleRoyale.LOGGER.debug("Unregistered BleedingHandler");
         Tacz.unregisterBleedingEvent();
     }
 
@@ -79,12 +87,16 @@ public class BleedingHandler {
         Tacz.onAddingBleedingPlayer(player);
     }
 
-    @SubscribeEvent
-    public void onPlayerBleeding(TickEvent.ServerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
+    @Override
+    public void handleEvent(EventType eventType, IEvent event) {
+        if (eventType == EventType.SERVER_TICK_EVENT) {
+            onPlayerBleeding((IServerTickEvent) event);
+        } else {
+            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
         }
+    }
 
+    public void onPlayerBleeding(IServerTickEvent event) {
         // 照理说复活事件+倒地事件应该不会一起发生在这里遍历的过程中
         // 虽然没有监听PlayerRevive的复活事件，但是PlayerRevive处理复活的逻辑是在PlayerTickEvent上的，最多晚1tick检测到
         bleedingPlayerData.entrySet().removeIf(data -> {

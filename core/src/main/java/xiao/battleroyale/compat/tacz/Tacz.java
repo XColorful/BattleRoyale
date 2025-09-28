@@ -54,13 +54,13 @@ public class Tacz extends AbstractCompatMod {
         if (!get().isLoaded() || !enableBleedingHandler) {
             return;
         }
-        TaczBleedingHandler.register();
+        TaczBleedingHandler.get().register();
     }
     public static void unregisterBleedingEvent() {
         if (!get().isLoaded()) {
             return;
         }
-        TaczBleedingHandler.unregister();
+        TaczBleedingHandler.get().unregister();
     }
 
     public static void onAddingBleedingPlayer(@NotNull Player player) {

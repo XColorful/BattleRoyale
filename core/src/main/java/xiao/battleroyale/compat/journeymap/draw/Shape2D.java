@@ -1,24 +1,24 @@
 package xiao.battleroyale.compat.journeymap.draw;
 
-import journeymap.client.api.IClientAPI;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.api.compat.journeymap.IJmApi;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static xiao.battleroyale.compat.journeymap.ShapeDrawer.drawPolygon;
-import static xiao.battleroyale.compat.journeymap.ShapeDrawer.rotatePoints;
+import static xiao.battleroyale.compat.journeymap.JMShapeDrawer.drawPolygon;
+import static xiao.battleroyale.compat.journeymap.JMShapeDrawer.rotatePoints;
 
 public class Shape2D {
 
     /**
      * 在JourneyMap上绘制一个带描边的矩形。
      */
-    public static void drawRectangleBox(IClientAPI jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
+    public static void drawRectangleBox(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                         Vec3 center, float halfWidth, float halfDepth, float rotateDegree, double y, float thickness) {
         List<BlockPos> points = new ArrayList<>();
         points.add(new BlockPos((int) (center.x - halfWidth), (int) y, (int) (center.z - halfDepth)));
@@ -34,7 +34,7 @@ public class Shape2D {
     /**
      * 在JourneyMap上绘制一个带描边的多边形。
      */
-    public static void drawPolygonCylinder(IClientAPI jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
+    public static void drawPolygonCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                            Vec3 center, float radius, int segments, float initialAngle, float rotateDegree, double y, float thickness) {
         List<BlockPos> points = new ArrayList<>();
         float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
@@ -54,7 +54,7 @@ public class Shape2D {
     /**
      * 在JourneyMap上绘制一个带描边的椭圆。
      */
-    public static void drawEllipseCylinder(IClientAPI jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
+    public static void drawEllipseCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                            Vec3 center, float halfA, float halfB, int segments, float rotateDegree, double y, float thickness) {
         List<BlockPos> points = new ArrayList<>();
         float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
@@ -74,7 +74,7 @@ public class Shape2D {
     /**
      * 在JourneyMap上绘制一个带描边的星形。
      */
-    public static void drawStarCylinder(IClientAPI jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
+    public static void drawStarCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                         Vec3 center, float outerRadius, float innerRadius, int segments, float initialAngle, float rotateDegree, double y, float thickness) {
         List<BlockPos> points = new ArrayList<>();
         final float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);

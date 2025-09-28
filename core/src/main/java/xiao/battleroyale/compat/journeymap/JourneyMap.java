@@ -5,7 +5,9 @@ import xiao.battleroyale.compat.AbstractCompatMod;
 public class JourneyMap extends AbstractCompatMod {
 
     @Override
-    public String getModId() { return "journeymap"; }
+    public String getModId() {
+        return "journeymap";
+    }
 
     private static class JourneyMapHolder {
         private static final JourneyMap INSTANCE = new JourneyMap();
@@ -22,15 +24,25 @@ public class JourneyMap extends AbstractCompatMod {
         ;
     }
 
+    protected static boolean registered = false;
+
+    public static void register() {
+        JMEventHandler.register();
+    }
+
+    public static void unregister() {
+        JMEventHandler.unregister();
+    }
+
     protected static boolean shouldDisplayZone = true;
 
     public static void setJourneyMapConfig(boolean enableJourneyMap) {
         shouldDisplayZone = enableJourneyMap;
         if (get().isLoaded()) {
             if (shouldDisplayZone) {
-                JourneyMapPlugin.register();
+                register();
             } else {
-                JourneyMapPlugin.unregister();
+                unregister();
             }
         }
     }

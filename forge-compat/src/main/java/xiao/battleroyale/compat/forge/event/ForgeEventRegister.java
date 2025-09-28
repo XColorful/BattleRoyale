@@ -5,9 +5,7 @@ import xiao.battleroyale.api.event.EventPriority;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.api.event.IEventRegister;
-import xiao.battleroyale.compat.forge.event.events.LivingDamageEventManager;
-import xiao.battleroyale.compat.forge.event.events.LivingDeathEventManager;
-import xiao.battleroyale.compat.forge.event.events.ServerTickEventManager;
+import xiao.battleroyale.compat.forge.event.events.*;
 
 public class ForgeEventRegister implements IEventRegister {
 
@@ -16,8 +14,11 @@ public class ForgeEventRegister implements IEventRegister {
         boolean registered = false;
         switch (eventType) {
             case SERVER_TICK_EVENT -> registered = ServerTickEventManager.register(eventHandler, priority, receiveCanceled);
+            case CLIENT_TICK_EVENT -> registered = ClientTickEventManager.register(eventHandler, priority, receiveCanceled);
             case LIVING_DAMAGE_EVENT -> registered = LivingDamageEventManager.register(eventHandler, priority, receiveCanceled);
             case LIVING_DEATH_EVENT -> registered = LivingDeathEventManager.register(eventHandler, priority, receiveCanceled);
+            case PLAYER_LOGGED_IN_EVENT -> registered = PlayerLoggedInEventManager.register(eventHandler, priority, receiveCanceled);
+            case PLAYER_LOGGED_OUT_EVENT -> registered = PlayerLoggedOutEventManager.register(eventHandler, priority, receiveCanceled);
         }
 
         if (registered) {
@@ -34,8 +35,11 @@ public class ForgeEventRegister implements IEventRegister {
         boolean unregistered = false;
         switch (eventType) {
             case SERVER_TICK_EVENT -> unregistered = ServerTickEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case CLIENT_TICK_EVENT -> unregistered = ClientTickEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LIVING_DAMAGE_EVENT -> unregistered = LivingDamageEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LIVING_DEATH_EVENT -> unregistered = LivingDeathEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case PLAYER_LOGGED_IN_EVENT -> unregistered = PlayerLoggedInEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case PLAYER_LOGGED_OUT_EVENT -> unregistered = PlayerLoggedOutEventManager.unregister(eventHandler, priority, receiveCanceled);
         }
 
         if (unregistered) {

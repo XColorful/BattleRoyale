@@ -5,6 +5,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import org.slf4j.Logger;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.compat.journeymap.IJmApi;
+import xiao.battleroyale.api.compat.tacz.ITaczEventRegister;
 import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.event.IEventRegister;
 import xiao.battleroyale.api.game.IGameManager;
@@ -32,8 +34,10 @@ public class BattleRoyale {
     private static IMcRegistry mcRegistry;
     private static INetworkAdapter networkAdapter;
     private static IEventRegister eventRegister;
+    public record CompatApi(IJmApi jmApi, ITaczEventRegister taczEventRegister) {}
+    private static CompatApi compatApi;
 
-    public static void init(McSide mcSide, IRegistrarFactory factory, IMcRegistry mcRegistry, INetworkAdapter networkAdapter, IEventRegister eventRegister) {
+    public static void init(McSide mcSide, IRegistrarFactory factory, IMcRegistry mcRegistry, INetworkAdapter networkAdapter, IEventRegister eventRegister, CompatApi compatApi) {
         if (initialized) return;
 
         BattleRoyale.mcSide = mcSide;
@@ -42,6 +46,7 @@ public class BattleRoyale {
         BattleRoyale.networkAdapter = networkAdapter;
         NetworkHandler.initialize(networkAdapter);
         BattleRoyale.eventRegister = eventRegister;
+        BattleRoyale.compatApi = compatApi;
 
         ModConfigManager.init(mcSide);
         GameConfigManager.init(mcSide);
@@ -71,6 +76,12 @@ public class BattleRoyale {
             throw new IllegalStateException("Event register has not been initialized. Call init() first.");
         }
         return eventRegister;
+    }
+    public static CompatApi getCompatApi() {
+        if (compatApi == null) {
+            throw new IllegalStateException("Compat api has not initialized. Call init() first.");
+        }
+        return compatApi;
     }
     public static void setMinecraftServer(MinecraftServer server) {
         minecraftServer = server;

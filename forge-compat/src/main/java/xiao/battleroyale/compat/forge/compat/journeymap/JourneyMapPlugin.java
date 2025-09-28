@@ -1,10 +1,13 @@
-package xiao.battleroyale.compat.journeymap;
+package xiao.battleroyale.compat.forge.compat.journeymap;
 
 import journeymap.client.api.IClientAPI;
 import journeymap.client.api.IClientPlugin;
+import journeymap.client.api.display.PolygonOverlay;
 import journeymap.client.api.event.ClientEvent;
-import net.minecraftforge.common.MinecraftForge;
+import journeymap.client.api.model.MapPolygon;
+import journeymap.client.api.model.ShapeProperties;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.compat.journeymap.*;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.EnumSet;
@@ -17,37 +20,15 @@ public class JourneyMapPlugin implements IClientPlugin {
 
     // API reference
     private IClientAPI jmAPI = null;
-    // Forge listener reference
-    private static ForgeEventListener forgeEventListener;
-
-    public static final String MOD_ID = BattleRoyale.MOD_ID;
 
     private static JourneyMapPlugin INSTANCE;
 
-    public JourneyMapPlugin()
-    {
+    public JourneyMapPlugin() {
         INSTANCE = this;
     }
 
     public static JourneyMapPlugin getInstance() {
         return INSTANCE;
-    }
-
-    protected static boolean registered = false;
-
-    public static void register() {
-        if (!registered && forgeEventListener != null) {
-            MinecraftForge.EVENT_BUS.register(forgeEventListener);
-            BattleRoyale.LOGGER.debug("Registered JourneyMapPlugin");
-        }
-    }
-
-    public static void unregister() {
-        if (forgeEventListener != null) {
-            MinecraftForge.EVENT_BUS.unregister(forgeEventListener);
-            forgeEventListener.jmAPI.removeAll(JourneyMapPlugin.MOD_ID);
-            BattleRoyale.LOGGER.debug("Unregistered JourneyMapPlugin");
-        }
     }
 
     /**
@@ -60,11 +41,9 @@ public class JourneyMapPlugin implements IClientPlugin {
     public void initialize(IClientAPI jmAPI) {
         BattleRoyale.LOGGER.debug("initialize JourneyMapPlugin");
         this.jmAPI = jmAPI;
-        forgeEventListener = new ForgeEventListener(jmAPI);
-        register();
-
         this.jmAPI.subscribe(getModId(), EnumSet.of(DISPLAY_UPDATE, MAPPING_STARTED, MAPPING_STOPPED));
-
+        JourneyMap.register();
+        JmApi.initialized = true;
         BattleRoyale.LOGGER.info("Initialized {}", getClass().getName());
     }
 
@@ -73,7 +52,7 @@ public class JourneyMapPlugin implements IClientPlugin {
      */
     @Override
     public String getModId() {
-        return MOD_ID;
+        return JMEventHandler.MOD_JM_ID;
     }
 
     /**
@@ -97,7 +76,7 @@ public class JourneyMapPlugin implements IClientPlugin {
             switch (event.type) {
                 case DISPLAY_UPDATE, // 这个事件并不会实时更新小地图，绘制放在ClientTickEvent里
                      MAPPING_STARTED: // 刚进游戏时触发
-                    ShapeDrawer.cachedDimension = event.dimension;
+                    JMShapeDrawer.cachedDimension = event.dimension;
                     break;
                 case MAPPING_STOPPED: // 退出游戏时触发
                     onMappingStopped(event);
@@ -109,6 +88,34 @@ public class JourneyMapPlugin implements IClientPlugin {
     }
 
     void onMappingStopped(ClientEvent event) {
-        jmAPI.removeAll(MOD_ID);
+        jmAPI.removeAll(JMEventHandler.MOD_JM_ID);
+    }
+
+    public void removeAll(String modId) {
+        jmAPI.removeAll(modId);
+    }
+
+    public void show(JMPolygonOverlay JMPolygonOverlay) {
+        JMShapeProperties jmShapeProperties = JMPolygonOverlay.JMShapeProperties();
+        ShapeProperties shapeProperties = new ShapeProperties()
+                .setFillColor(jmShapeProperties.fillColorInt())
+                .setFillOpacity(jmShapeProperties.fillOpacity())
+                .setStrokeColor(jmShapeProperties.strokeColorInt())
+                .setStrokeOpacity(jmShapeProperties.strokeOpacity())
+                .setStrokeWidth(jmShapeProperties.strokeWidth());
+
+        MapPolygon mapPolygon = new MapPolygon(JMPolygonOverlay.JMMapPolygon().points());
+
+        PolygonOverlay polygonOverlay = new PolygonOverlay(
+                JMPolygonOverlay.modId(),
+                JMPolygonOverlay.displayId(),
+                JMPolygonOverlay.dimension(),
+                shapeProperties,
+                mapPolygon);
+        try {
+            jmAPI.show(polygonOverlay);
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.error("Failed to draw filled polygon on JourneyMap: {}", e.getMessage(), e);
+        }
     }
 }

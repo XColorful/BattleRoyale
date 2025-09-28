@@ -1,12 +1,12 @@
 package xiao.battleroyale.compat.tacz;
 
-import com.tacz.guns.api.event.common.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.compat.tacz.IGunFireSelectEvent;
+import xiao.battleroyale.api.compat.tacz.IGunMeleeEvent;
+import xiao.battleroyale.api.compat.tacz.IGunReloadEvent;
+import xiao.battleroyale.api.compat.tacz.IGunShootEvent;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
@@ -28,30 +28,26 @@ public class TaczBleedingHandler {
 
     private static boolean isRegistered = false;
 
-    public static void register() {
+    public void register() {
         if (isRegistered) {
             return;
         }
-        MinecraftForge.EVENT_BUS.register(get());
-        isRegistered = true;
-        BattleRoyale.LOGGER.debug("Registered TaczBleedingHandler");
+        isRegistered = BattleRoyale.getCompatApi().taczEventRegister().registerBleedingHandler();
     }
 
-    public static void unregister() {
+    public void unregister() {
         if (!isRegistered) {
             return;
         }
-        MinecraftForge.EVENT_BUS.unregister(get());
+        BattleRoyale.getCompatApi().taczEventRegister().unregisterBleedingHandler();
         isRegistered = false;
-        BattleRoyale.LOGGER.debug("Unregistered TaczBleedingHandler");
     }
 
     /**
      * 服务端取消倒地开枪
      */
-    @SubscribeEvent
-    public void onGunShoot(GunShootEvent event) {
-        if (Tacz.allowDownShoot || event.getLogicalSide() == LogicalSide.CLIENT) {
+    public void onGunShoot(IGunShootEvent event) {
+        if (Tacz.allowDownShoot || event.getMcSide() == McSide.CLIENT) {
             return;
         }
 
@@ -67,9 +63,8 @@ public class TaczBleedingHandler {
     /**
      * 服务端取消装弹
      */
-    @SubscribeEvent
-    public void onGunReload(GunReloadEvent event) {
-        if (Tacz.allowDownReload || event.getLogicalSide() == LogicalSide.CLIENT) {
+    public void onGunReload(IGunReloadEvent event) {
+        if (Tacz.allowDownReload || event.getMcSide() == McSide.CLIENT) {
             return;
         }
 
@@ -85,21 +80,15 @@ public class TaczBleedingHandler {
 //    /**
 //     * 装弹时被击倒，倒地期间装弹完成将被取消
 //     */
-//    @SubscribeEvent
-//    public void onGunFinishReload(GunFinishReloadEvent event) {
-//        if (event.getLogicalSide() == LogicalSide.CLIENT) {
-//            return;
-//        }
-//
+//    public void onGunFinishReload(IGunFinishReloadEvent event) {
 //        // 没提供Entity或者Player，只能提前拦截
 //    }
 
     /**
      * 取消倒地时切换开火模式
      */
-    @SubscribeEvent
-    public void onGunFireSelect(GunFireSelectEvent event) {
-        if (Tacz.allowDownFireSelect || event.getLogicalSide() == LogicalSide.CLIENT) {
+    public void onGunFireSelect(IGunFireSelectEvent event) {
+        if (Tacz.allowDownFireSelect || event.getMcSide() == McSide.CLIENT) {
             return;
         }
 
@@ -115,9 +104,8 @@ public class TaczBleedingHandler {
     /**
      * 取消倒地时用枪近战
      */
-    @SubscribeEvent
-    public void onGunMeleeEvent(GunMeleeEvent event) {
-        if (Tacz.allowDownMelee || event.getLogicalSide() == LogicalSide.CLIENT) {
+    public void onGunMelee(IGunMeleeEvent event) {
+        if (Tacz.allowDownMelee || event.getMcSide() == McSide.CLIENT) {
             return;
         }
 
@@ -133,7 +121,7 @@ public class TaczBleedingHandler {
     private static String getPlayerDebugName(Player player) {
         GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(player.getUUID());
         if (gamePlayer != null) {
-            return String.format("GamePlayer [%s][%s]%s", gamePlayer.getGameTeamId(), gamePlayer.getGameSingleId(), gamePlayer.getPlayerName());
+            return String.format("GamePlayer %s", gamePlayer.getNameWithId());
         } else {
             return String.format("Player %s (UUID:%s)", player.getName().getString(), player.getUUID());
         }

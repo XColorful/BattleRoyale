@@ -1,9 +1,5 @@
 package xiao.battleroyale.compat.journeymap;
 
-import journeymap.client.api.IClientAPI;
-import journeymap.client.api.display.PolygonOverlay;
-import journeymap.client.api.model.MapPolygon;
-import journeymap.client.api.model.ShapeProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
@@ -12,6 +8,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.compat.journeymap.IJmApi;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.compat.journeymap.draw.Shape2D;
@@ -20,7 +17,7 @@ import xiao.battleroyale.compat.journeymap.draw.Shape3D;
 import java.awt.*;
 import java.util.List;
 
-public class ShapeDrawer {
+public class JMShapeDrawer {
 
     private static final float DEGREE_TO_RADIAN = (float) (Math.PI / 180.0);
     private static float THICKNESS = 2.0F;
@@ -34,9 +31,9 @@ public class ShapeDrawer {
     public static ResourceKey<Level> cachedDimension = null;
     public static boolean isCleared = false;
 
-    public static void onMappingStarted(ResourceKey<Level> dimension, IClientAPI jmAPI) {
+    public static void onMappingStarted(IJmApi jmAPI, ResourceKey<Level> dimension) {
         cachedDimension = dimension;
-        jmAPI.removeAll(JourneyMapPlugin.MOD_ID);
+        jmAPI.removeAll(JMEventHandler.MOD_JM_ID);
 
         for (ClientSingleZoneData zoneData : ClientGameDataManager.get().getActiveZones().values()) {
             if (zoneData == null || zoneData.center == null || zoneData.dimension == null) continue;
@@ -88,30 +85,31 @@ public class ShapeDrawer {
     /**
      * 在JourneyMap上绘制多边形。
      */
-    public static void drawPolygon(IClientAPI jmAPI, String displayId, ResourceKey<Level> dimension, Color color, List<BlockPos> points, float strokeWidth) {
+    public static void drawPolygon(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color, List<BlockPos> points, float strokeWidth) {
         try {
-            ShapeProperties shapeProperties = new ShapeProperties()
-                    .setFillOpacity(0.0f) // 默认是0.5，需要覆盖
-                    .setStrokeColor(color.getRGB())
-                    .setStrokeOpacity(color.getAlpha() / 255.0f)
-                    .setStrokeWidth(strokeWidth);
+            JMShapeProperties JMShapeProperties = new JMShapeProperties(0,
+                    0.0F, // 默认是0.5，需要覆盖
+                    color.getRGB(),
+                    color.getAlpha() / 255.0F,
+                    strokeWidth);
 
-            MapPolygon mapPolygon = new MapPolygon(points);
-            PolygonOverlay overlay = new PolygonOverlay(JourneyMapPlugin.MOD_ID, displayId, dimension, shapeProperties, mapPolygon);
+            JMMapPolygon JMMapPolygon = new JMMapPolygon(points);
+            JMPolygonOverlay overlay = new JMPolygonOverlay(JMEventHandler.MOD_JM_ID, displayId, dimension, JMShapeProperties, JMMapPolygon);
             jmAPI.show(overlay);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Failed to draw polygon on JourneyMap: {}", e.getMessage(), e);
         }
     }
-    public static void drawFilledPolygon(IClientAPI jmAPI, String displayId, ResourceKey<Level> dimension, Color color, List<BlockPos> points) {
+    public static void drawFilledPolygon(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color, List<BlockPos> points) {
         try {
-            ShapeProperties shapeProperties = new ShapeProperties()
-                    .setFillColor(color.getRGB())
-                    .setFillOpacity(color.getAlpha() / 255.0f)
-                    .setStrokeWidth(0); // 默认是2
+            JMShapeProperties JMShapeProperties = new JMShapeProperties(color.getRGB(),
+                    color.getAlpha() / 255.0F,
+                    0,
+                    0,
+                    0); // 默认是2
 
-            MapPolygon mapPolygon = new MapPolygon(points);
-            PolygonOverlay overlay = new PolygonOverlay(JourneyMapPlugin.MOD_ID, displayId, dimension, shapeProperties, mapPolygon);
+            JMMapPolygon JMMapPolygon = new JMMapPolygon(points);
+            JMPolygonOverlay overlay = new JMPolygonOverlay(JMEventHandler.MOD_JM_ID, displayId, dimension, JMShapeProperties, JMMapPolygon);
             jmAPI.show(overlay);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Failed to draw filled polygon on JourneyMap: {}", e.getMessage(), e);
