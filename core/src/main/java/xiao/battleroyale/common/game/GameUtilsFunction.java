@@ -6,17 +6,17 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.event.game.game.GameSpectateEvent;
+import xiao.battleroyale.api.event.game.game.GameSpectateData;
 import xiao.battleroyale.api.event.game.game.GameSpectateResult;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.message.MessageManager;
+import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.event.util.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 
@@ -77,7 +77,7 @@ public class GameUtilsFunction {
         GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(player.getUUID());
         GameSpectateResult result = getSpectateGameResult(gameManager, player, gamePlayer, isInGame);
 
-        if (MinecraftForge.EVENT_BUS.post(new GameSpectateEvent(gameManager, player, result))) {
+        if (EventPoster.postEvent(new GameSpectateData(gameManager, player, result))) {
             return GameSpectateResult.EVENT_CANCELED;
         }
 

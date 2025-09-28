@@ -3,15 +3,10 @@ package xiao.battleroyale.common.game.loot;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.event.game.tick.GameLootBfsEvent;
-import xiao.battleroyale.api.event.game.tick.GameLootBfsFinishEvent;
-import xiao.battleroyale.api.event.game.tick.GameLootEvent;
-import xiao.battleroyale.api.event.game.tick.GameLootFinishEvent;
+import xiao.battleroyale.api.event.game.tick.*;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
@@ -19,6 +14,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.server.performance.type.GeneratorEntry;
+import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.ClassUtils;
 
 import javax.annotation.Nullable;
@@ -176,7 +172,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
      * @param gameTime 当前游戏tick数
      */
     public void onGameTick(int gameTime) {
-        if (MinecraftForge.EVENT_BUS.post(new GameLootEvent(GameManager.get(),gameTime))) {
+        if (EventPoster.postEvent(new GameLootData(GameManager.get(), gameTime))) {
             return;
         }
 
@@ -222,7 +218,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
             BattleRoyale.LOGGER.debug("Cleaned {} cached center chunks. Remaining: {}", chunksToRemove, cachedPlayerCenterChunks.size());
         }
 
-        MinecraftForge.EVENT_BUS.post(new GameLootFinishEvent(GameManager.get(), gameTime,
+        EventPoster.postEvent(new GameLootFinishData(GameManager.get(), gameTime,
                 lastProcessedCount, clearedCachedChunk, clearedPlayerCenterChunk));
     }
 
@@ -257,7 +253,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
      */
     private void bfsQueuedChunkAsync() {
         GameManager gameManager = GameManager.get();
-        if (MinecraftForge.EVENT_BUS.post(new GameLootBfsEvent(gameManager, gameManager.getGameTime(), lastBfsProcessedLoot))) {
+        if (EventPoster.postEvent(new GameLootBfsData(gameManager, gameManager.getGameTime(), lastBfsProcessedLoot))) {
             BattleRoyale.LOGGER.debug("GameLootBfsEvent canceled, skipped bfsQueuedChunkAsync");
             return;
         }
@@ -327,7 +323,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
 
         // 记录任务结束时间
         long endTime = System.nanoTime();
-        MinecraftForge.EVENT_BUS.post(new GameLootBfsFinishEvent(gameManager, gameManager.getGameTime(), startTime, endTime, oldQueueSize));
+        EventPoster.postEvent(new GameLootBfsFinishData(gameManager, gameManager.getGameTime(), startTime, endTime, oldQueueSize));
     }
 
     private int processLootGeneration() {

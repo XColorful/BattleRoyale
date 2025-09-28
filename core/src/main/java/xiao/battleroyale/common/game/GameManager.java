@@ -10,8 +10,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -20,8 +18,8 @@ import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.event.game.finish.*;
 import xiao.battleroyale.api.event.game.game.*;
 import xiao.battleroyale.api.event.game.starter.*;
-import xiao.battleroyale.api.event.game.tick.GameTickEvent;
-import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
+import xiao.battleroyale.api.event.game.tick.GameTickData;
+import xiao.battleroyale.api.event.game.tick.GameTickFinishData;
 import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
 import xiao.battleroyale.api.game.spawn.IGameLobbyReadApi;
@@ -47,6 +45,7 @@ import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
+import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.event.util.DelayedEvent;
 import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.util.*;
@@ -153,7 +152,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      * 检测并加载游戏配置，不应该执行任何实际内容
      */
     public void initGameConfig(ServerLevel serverLevel) {
-        if (MinecraftForge.EVENT_BUS.post(new GameLoadEvent(this))) {
+        if (EventPoster.postEvent(new GameLoadData(this))) {
             BattleRoyale.LOGGER.debug("GameLoadEvent canceled, skipped initGameConfig");
             return;
         }
@@ -177,7 +176,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (GameSubManager.gameConfigAllReady()) {
             this.configPrepared = true;
             LogEventHandler.register(); // 后续玩家登录可根据配置直接加入队伍
-            MinecraftForge.EVENT_BUS.post(new GameLoadFinishEvent(this));
+            EventPoster.postEvent(new GameLoadFinishData(this));
         } else {
             this.configPrepared = false;
         }
@@ -189,7 +188,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (MinecraftForge.EVENT_BUS.post(new GameInitEvent(this))) {
+        if (EventPoster.postEvent(new GameInitData(this))) {
             BattleRoyale.LOGGER.debug("GameInitEvent canceled, skipped initGame");
             return;
         }
@@ -212,7 +211,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (isReady()) {
             generateGameId(); // 手动刷新 gameId
         }
-        MinecraftForge.EVENT_BUS.post(new GameInitFinishEvent(this));
+        EventPoster.postEvent(new GameInitFinishData(this));
     }
 
     /**
@@ -220,7 +219,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (MinecraftForge.EVENT_BUS.post(new GameStartEvent(this))) {
+        if (EventPoster.postEvent(new GameStartData(this))) {
             BattleRoyale.LOGGER.debug("GameStartEvent canceled, skipped startGame");
             return false;
         }
@@ -242,7 +241,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             GameStarter.startGameSetup(this);
             this.inGame = true;
             GameInfoMessageManager.get().startGame(serverLevel);
-            MinecraftForge.EVENT_BUS.post(new GameStartFinishEvent(this));
+            EventPoster.postEvent(new GameStartFinishData(this));
             return true;
         } else {
             stopGame(this.serverLevel);
@@ -273,7 +272,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     public void onGameTick(int gameTime) {
         this.gameTime = gameTime;
-        if (MinecraftForge.EVENT_BUS.post(new GameTickEvent(this, gameTime))) {
+        if (EventPoster.postEvent(new GameTickData(this, gameTime))) {
             BattleRoyale.LOGGER.debug("GameTickEvent canceled, skipped onGameTick (gameTime:{})", gameTime);
             return;
         }
@@ -290,7 +289,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (gameTime % 200 == 0) {
             finishGameIfShouldEnd(); // 每10秒保底检查游戏结束
         }
-        MinecraftForge.EVENT_BUS.post(new GameTickFinishEvent(this, gameTime));
+        EventPoster.postEvent(new GameTickFinishData(this, gameTime));
     }
 
     /**
@@ -331,7 +330,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public void finishGame(boolean hasWinner) { // IGameManager接口
-        if (MinecraftForge.EVENT_BUS.post(new GameCompleteEvent(this, hasWinner))) {
+        if (EventPoster.postEvent(new GameCompleteData(this, hasWinner))) {
             BattleRoyale.LOGGER.debug("GameCompleteEvent canceled, skipped finishGame (gameTime:{}, hasWinner:{})", gameTime, hasWinner);
             return;
         }
@@ -366,7 +365,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
                 new DelayedEvent<>(delayedTask, cachedGameLevelKey, 1, "GameManager::sendWinnerResult");
             }
         }
-        MinecraftForge.EVENT_BUS.post(new GameCompleteFinishEvent(this, hasWinner, winnerGamePlayers, winnerGameTeams));
+        EventPoster.postEvent(new GameCompleteFinishData(this, hasWinner, winnerGamePlayers, winnerGameTeams));
     }
 
     /**
@@ -374,7 +373,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        MinecraftForge.EVENT_BUS.post(new GameStopEvent(this, serverLevel));
+        EventPoster.postEvent(new GameStopData(this, serverLevel));
         GameLootManager.get().stopGame(serverLevel);
         ZoneManager.get().stopGame(serverLevel);
         SpawnManager.get().stopGame(serverLevel);
@@ -394,17 +393,17 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
         // 游戏中途若修改配置，在游戏结束后生效
         setGameLevelKey(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(this.gameLevelKeyString)));
-        MinecraftForge.EVENT_BUS.post(new GameStopFinishEvent(this, serverLevel));
+        EventPoster.postEvent(new GameStopFinishData(this, serverLevel));
     }
 
     public void onServerStopping() {
-        MinecraftForge.EVENT_BUS.post(new ServerStopEvent(this));
+        EventPoster.postEvent(new ServerStopData(this));
         isStopping = true;
         stopGame(serverLevel);
         setServerLevel(null); // 手动设置为null，单人游戏重启之后也就失效了
         BattleRoyale.LOGGER.debug("Server stopped, GameManager.serverLevel set to null");
         isStopping = false;
-        MinecraftForge.EVENT_BUS.post(new ServerStopFinishEvent(this));
+        EventPoster.postEvent(new ServerStopFinishData(this));
     }
 
     // 获取大逃杀游戏ServerLevel
@@ -650,33 +649,33 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      * PlayerRevive只允许玩家倒地，因此人机玩家无法倒地
      */
     public void onPlayerDown(@NotNull GamePlayer gamePlayer, @NotNull LivingEntity livingEntity, ILivingDeathEvent event) {
-        if (MinecraftForge.EVENT_BUS.post(new GamePlayerDownEvent(this, gamePlayer, livingEntity, event))) {
+        if (EventPoster.postEvent(new GamePlayerDownData(this, gamePlayer, livingEntity, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDownEvent canceled, skipped onPlayerDown (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
         GameEventHandler.onPlayerDown(gamePlayer, livingEntity, this.gameEntry.removeInvalidTeam);
-        MinecraftForge.EVENT_BUS.post(new GamePlayerDownFinishEvent(this, gamePlayer, livingEntity, event));
+        EventPoster.postEvent(new GamePlayerDownFinishData(this, gamePlayer, livingEntity, event));
     }
     /**
      * 调用成功即视为GamePlayer被救起
      */
     public void onPlayerRevived(@NotNull GamePlayer gamePlayer) {
-        if (MinecraftForge.EVENT_BUS.post(new GamePlayerReviveEvent(this, gamePlayer))) {
+        if (EventPoster.postEvent(new GamePlayerReviveData(this, gamePlayer))) {
             BattleRoyale.LOGGER.debug("GamePlayerReviveEvent canceled, skipped onPlayerRevive (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
         GameEventHandler.onPlayerRevived(gamePlayer);
-        MinecraftForge.EVENT_BUS.post(new GamePlayerReviveFinishEvent(this, gamePlayer));
+        EventPoster.postEvent(new GamePlayerReviveFinishData(this, gamePlayer));
     }
     /**
      * 调用成功即视为GamePlayer死亡
      */
     public void onPlayerDeath(@NotNull GamePlayer gamePlayer, ILivingDeathEvent event) {
-        if (MinecraftForge.EVENT_BUS.post(new GamePlayerDeathEvent(this, gamePlayer, event))) {
+        if (EventPoster.postEvent(new GamePlayerDeathData(this, gamePlayer, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDeathEvent canceled, skipped onPlayerDeath (GamePlayer{})", gamePlayer.getNameWithId());
             return;
         }
         GameEventHandler.onPlayerDeath(this.serverLevel, gamePlayer);
-        MinecraftForge.EVENT_BUS.post(new GamePlayerDeathFinishEvent(this, gamePlayer, event));
+        EventPoster.postEvent(new GamePlayerDeathFinishData(this, gamePlayer, event));
     }
 }

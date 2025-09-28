@@ -2,10 +2,9 @@ package xiao.battleroyale.common.game.zone;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.event.game.zone.ZoneCompleteEvent;
-import xiao.battleroyale.api.event.game.zone.ZoneCreatedEvent;
+import xiao.battleroyale.api.event.game.zone.ZoneCompleteEventData;
+import xiao.battleroyale.api.event.game.zone.ZoneCreatedEventData;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
@@ -20,6 +19,7 @@ import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
+import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.NBTUtils;
 import xiao.battleroyale.util.StringUtils;
 
@@ -103,12 +103,12 @@ public class GameZone implements IGameZone {
             addZoneDetailProperty();
             created = true;
             present = true;
-            MinecraftForge.EVENT_BUS.post(new ZoneCreatedEvent(GameManager.get(), this, true));
+            EventPoster.postEvent(new ZoneCreatedEventData(GameManager.get(), this, true));
         } else {
             addFailedZoneProperty();
             present = false;
             finished = true;
-            MinecraftForge.EVENT_BUS.post(new ZoneCreatedEvent(GameManager.get(), this, false));
+            EventPoster.postEvent(new ZoneCreatedEventData(GameManager.get(), this, false));
         }
     }
 
@@ -147,7 +147,7 @@ public class GameZone implements IGameZone {
     public void gameTick(ZoneContext zoneContext) {
         if (!shouldTick(zoneContext.gameTime)) {
             GameMessageManager.addZoneNbtMessage(this.zoneId, null); // 传入null视为提醒置空NBT
-            MinecraftForge.EVENT_BUS.post(new ZoneCompleteEvent(GameManager.get(), this));
+            EventPoster.postEvent(new ZoneCompleteEventData(GameManager.get(), this));
             return;
         }
 

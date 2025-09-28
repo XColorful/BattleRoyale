@@ -8,14 +8,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportEvent;
-import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishEvent;
+import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportData;
+import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishData;
 import xiao.battleroyale.api.game.spawn.IGameLobbyReadApi;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.common.game.AbstractGameManager;
@@ -32,6 +30,7 @@ import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
+import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.event.game.LobbyEventHandler;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.Vec3Utils;
@@ -188,7 +187,7 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
      */
     public void teleportToLobby(@NotNull ServerPlayer player) {
         GameManager gameManager = GameManager.get();
-        if (MinecraftForge.EVENT_BUS.post(new GameLobbyTeleportEvent(gameManager, player))) {
+        if (EventPoster.postEvent(new GameLobbyTeleportData(gameManager, player))) {
             BattleRoyale.LOGGER.debug("LobbyTeleportEvent canceled, skipped teleportToLobby (ServerPlayer {})", player.getName().getString());
             return;
         }
@@ -217,7 +216,7 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
             GameUtilsFunction.safeTeleport(player, lobbyPos);
         }
         BattleRoyale.LOGGER.info("Teleport player {} (UUID: {}) to lobby ({}, {}, {})", player.getName().getString(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
-        MinecraftForge.EVENT_BUS.post(new GameLobbyTeleportFinishEvent(gameManager, player));
+        EventPoster.postEvent(new GameLobbyTeleportFinishData(gameManager, player));
     }
 
     /**

@@ -8,6 +8,7 @@ import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.journeymap.IJmApi;
 import xiao.battleroyale.api.compat.tacz.ITaczEventRegister;
 import xiao.battleroyale.api.config.IModConfigManager;
+import xiao.battleroyale.api.event.IEventPoster;
 import xiao.battleroyale.api.event.IEventRegister;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
@@ -34,10 +35,11 @@ public class BattleRoyale {
     private static IMcRegistry mcRegistry;
     private static INetworkAdapter networkAdapter;
     private static IEventRegister eventRegister;
+    private static IEventPoster eventPoster;
     public record CompatApi(IJmApi jmApi, ITaczEventRegister taczEventRegister) {}
     private static CompatApi compatApi;
 
-    public static void init(McSide mcSide, IRegistrarFactory factory, IMcRegistry mcRegistry, INetworkAdapter networkAdapter, IEventRegister eventRegister, CompatApi compatApi) {
+    public static void init(McSide mcSide, IRegistrarFactory factory, IMcRegistry mcRegistry, INetworkAdapter networkAdapter, IEventRegister eventRegister, IEventPoster eventPoster, CompatApi compatApi) {
         if (initialized) return;
 
         BattleRoyale.mcSide = mcSide;
@@ -46,6 +48,7 @@ public class BattleRoyale {
         BattleRoyale.networkAdapter = networkAdapter;
         NetworkHandler.initialize(networkAdapter);
         BattleRoyale.eventRegister = eventRegister;
+        BattleRoyale.eventPoster = eventPoster;
         BattleRoyale.compatApi = compatApi;
 
         ModConfigManager.init(mcSide);
@@ -76,6 +79,12 @@ public class BattleRoyale {
             throw new IllegalStateException("Event register has not been initialized. Call init() first.");
         }
         return eventRegister;
+    }
+    public static IEventPoster getEventPoster() {
+        if (eventPoster == null) {
+            throw new IllegalStateException("Event poster has not been initialized. Call init() first.");
+        }
+        return eventPoster;
     }
     public static CompatApi getCompatApi() {
         if (compatApi == null) {

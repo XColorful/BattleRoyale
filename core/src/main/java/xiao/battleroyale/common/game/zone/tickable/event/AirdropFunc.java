@@ -4,10 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.event.game.zone.AirdropEvent;
+import xiao.battleroyale.api.event.game.zone.AirdropEventData;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
@@ -17,6 +16,7 @@ import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
+import xiao.battleroyale.event.EventPoster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +60,7 @@ public class AirdropFunc extends AbstractEventFunc {
         lootItems.clear();
         lootItems.addAll(LootGenerator.generateLootItem(lootContext, airdropConfig.entry));
 
-        MinecraftForge.EVENT_BUS.post(new AirdropEvent(GameManager.get(), zoneTickContext, protocol, tag,
+        EventPoster.postEvent(new AirdropEventData(GameManager.get(), zoneTickContext, protocol, tag,
                 lootItems, lastLootItems, nbt,
                 lootContext, airdropConfig.entry));
     }

@@ -7,15 +7,15 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.event.game.team.InvitePlayerCompleteEvent;
-import xiao.battleroyale.api.event.game.team.InvitePlayerEvent;
-import xiao.battleroyale.api.event.game.team.RequestPlayerCompleteEvent;
-import xiao.battleroyale.api.event.game.team.RequestPlayerEvent;
+import xiao.battleroyale.api.event.game.team.InvitePlayerCompleteData;
+import xiao.battleroyale.api.event.game.team.InvitePlayerData;
+import xiao.battleroyale.api.event.game.team.RequestPlayerCompleteData;
+import xiao.battleroyale.api.event.game.team.RequestPlayerData;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.UUID;
@@ -107,7 +107,7 @@ public class TeamExternal {
             return;
         }
 
-        if (MinecraftForge.EVENT_BUS.post(new InvitePlayerEvent(GameManager.get(), senderGamePlayer, sender, targetPlayer))) {
+        if (EventPoster.postEvent(new InvitePlayerData(GameManager.get(), senderGamePlayer, sender, targetPlayer))) {
             BattleRoyale.LOGGER.debug("InvitePlayerEvent canceled, skipped invitePlayer ({} to {})", senderGamePlayer.getNameWithId(), targetPlayer.getName().getString());
             return;
         }
@@ -163,7 +163,7 @@ public class TeamExternal {
             return;
         }
 
-        if (MinecraftForge.EVENT_BUS.post(new InvitePlayerCompleteEvent(GameManager.get(), senderPlayer, player, true))) {
+        if (EventPoster.postEvent(new InvitePlayerCompleteData(GameManager.get(), senderPlayer, player, true))) {
             BattleRoyale.LOGGER.debug("InvitePlayerCompleteEvent canceled, skipped acceptInvite ({} to {})", senderPlayer.getName().getString(), player.getName().getString());
             return;
         }
@@ -208,7 +208,7 @@ public class TeamExternal {
             return;
         }
 
-        if (MinecraftForge.EVENT_BUS.post(new InvitePlayerCompleteEvent(GameManager.get(), senderPlayer, player, false))) {
+        if (EventPoster.postEvent(new InvitePlayerCompleteData(GameManager.get(), senderPlayer, player, false))) {
             BattleRoyale.LOGGER.debug("InvitePlayerCompleteEvent canceled, skipped declineInvite ({} to {})", senderPlayer.getName().getString(), player.getName().getString());
             return;
         }
@@ -246,7 +246,7 @@ public class TeamExternal {
             return;
         }
 
-        if (MinecraftForge.EVENT_BUS.post(new RequestPlayerEvent(GameManager.get(), sender, targetGamePlayer, targetPlayer))) {
+        if (EventPoster.postEvent(new RequestPlayerData(GameManager.get(), sender, targetGamePlayer, targetPlayer))) {
             BattleRoyale.LOGGER.debug("RequestPlayerEvent canceled, skipped requestPlayer ({} to {})", sender.getName().getString(), targetGamePlayer.getNameWithId());
             return;
         }
@@ -321,7 +321,7 @@ public class TeamExternal {
             return;
         }
 
-        if (MinecraftForge.EVENT_BUS.post(new RequestPlayerCompleteEvent(GameManager.get(), requesterPlayer, teamLeader, true))) {
+        if (EventPoster.postEvent(new RequestPlayerCompleteData(GameManager.get(), requesterPlayer, teamLeader, true))) {
             BattleRoyale.LOGGER.debug("RequestPlayerCompleteEvent canceled, skipped acceptRequest ({} to {})", requesterPlayer, teamLeader);
             return;
         }
@@ -367,7 +367,7 @@ public class TeamExternal {
             return;
         }
 
-        if (MinecraftForge.EVENT_BUS.post(new RequestPlayerCompleteEvent(GameManager.get(), requesterPlayer, teamLeader, false))) {
+        if (EventPoster.postEvent(new RequestPlayerCompleteData(GameManager.get(), requesterPlayer, teamLeader, false))) {
             BattleRoyale.LOGGER.debug("RequestPlayerCompleteEvent canceled, skipped declineRequest ({} to {})", requesterPlayer, teamLeader);
             return;
         }

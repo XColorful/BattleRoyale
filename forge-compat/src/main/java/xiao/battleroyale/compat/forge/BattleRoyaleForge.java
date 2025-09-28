@@ -7,12 +7,14 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.event.IEventPoster;
 import xiao.battleroyale.api.event.IEventRegister;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
 import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.compat.forge.compat.journeymap.JmApi;
 import xiao.battleroyale.compat.forge.compat.tacz.TaczEventRegister;
+import xiao.battleroyale.compat.forge.event.ForgeEventPoster;
 import xiao.battleroyale.compat.forge.event.ForgeEventRegister;
 import xiao.battleroyale.compat.forge.init.registry.ForgeRegistrarFactory;
 import xiao.battleroyale.compat.forge.minecraft.ForgeRegistry;
@@ -26,6 +28,7 @@ public class BattleRoyaleForge {
     private final IMcRegistry mcRegistry;
     private final INetworkAdapter networkAdapter;
     private final IEventRegister eventRegister;
+    private final IEventPoster eventPoster;
     private final BattleRoyale.CompatApi compatApi;
 
     public BattleRoyaleForge() {
@@ -33,11 +36,12 @@ public class BattleRoyaleForge {
         this.mcRegistry = new ForgeRegistry();
         this.networkAdapter = new ForgeNetworkAdapter();
         this.eventRegister = new ForgeEventRegister();
+        this.eventPoster = new ForgeEventPoster();
         this.compatApi = new BattleRoyale.CompatApi(JmApi.get(), TaczEventRegister.get());
         Dist dist = FMLLoader.getDist();
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
 
-        BattleRoyale.init(mcSide, this.registrarFactory, this.mcRegistry, this.networkAdapter, this.eventRegister, this.compatApi);
+        BattleRoyale.init(mcSide, this.registrarFactory, this.mcRegistry, this.networkAdapter, this.eventRegister, this.eventPoster, this.compatApi);
 
         // 确保所有 ModXXX 静态字段被初始化
         try {
