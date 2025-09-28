@@ -15,10 +15,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
+import xiao.battleroyale.BattleRoyale;
 
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +55,7 @@ public class WorldText {
 
         // Vanilla
         Block block = serverLevel.getBlockState(blockPos).getBlock();
-        ResourceLocation blockRL = ForgeRegistries.BLOCKS.getKey(block);
+        ResourceLocation blockRL = BattleRoyale.getMcRegistry().getBlockRl(block);
         String blockName = block.getName().getString();
         component.append(buildHoverableText(blockName, blockRL != null ? blockRL.toString() : "null"))
                 .append(buildHoverableTextWithColor("BlockEntity",

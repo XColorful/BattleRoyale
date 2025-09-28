@@ -1,6 +1,6 @@
 package xiao.battleroyale.config.common.loot.defaultconfigs;
 
-import net.minecraftforge.fml.ModList;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.compat.tacz.Tacz;
 
 public class DefaultLootConfigGenerator {
@@ -15,7 +15,7 @@ public class DefaultLootConfigGenerator {
 
     public static void generateDefaultLootSpawnerConfig() {
         DefaultLootSpawner.generateDefaultConfigs();
-        if (ModList.get().isLoaded(Tacz.get().getModId())) {
+        if (BattleRoyale.getMcRegistry().isModLoaded(Tacz.get().getModId())) {
             TaczLootSpawner.generateDefaultConfigs();
             TaczLootSpawner.generateExtraConfigs();
             CbrgLootSpawner.generateDefaultConfigs();

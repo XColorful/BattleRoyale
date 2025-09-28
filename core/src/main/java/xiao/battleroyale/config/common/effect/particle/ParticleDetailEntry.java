@@ -4,9 +4,9 @@ import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.effect.particle.IParticleEntry;
 import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
 import xiao.battleroyale.common.effect.particle.ParticleData;
@@ -63,7 +63,7 @@ public record ParticleDetailEntry(ResourceLocation particleType, int count, int 
 
     public static ParticleDetailEntry fromJson(JsonObject jsonObject) {
         ResourceLocation particleRL = ResourceLocation.tryParse(JsonUtils.getJsonString(jsonObject, ParticleConfigTag.TYPE, ""));
-        if (particleRL == null || ForgeRegistries.PARTICLE_TYPES.getValue(particleRL) == null) {
+        if (particleRL == null || BattleRoyale.getMcRegistry().getParticleType(particleRL) == null) {
             return null;
         }
         int count = JsonUtils.getJsonInt(jsonObject, ParticleConfigTag.COUNT, 1);

@@ -5,8 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.common.game.zone.tickable.EffectFunc;
@@ -40,7 +40,7 @@ public class EffectFuncEntry extends AbstractFuncEntry {
             if (rl == null) {
                 continue;
             }
-            MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(rl);
+            MobEffect effect = BattleRoyale.getMcRegistry().getMobEffect(rl);
             if (effect == null) {
                 continue;
             }
