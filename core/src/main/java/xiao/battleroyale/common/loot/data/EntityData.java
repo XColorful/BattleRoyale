@@ -1,6 +1,5 @@
 package xiao.battleroyale.common.loot.data;
 
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -9,7 +8,6 @@ import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.entity.IEntityLootData;
-import xiao.battleroyale.util.NBTUtils;
 
 import javax.annotation.Nullable;
 
@@ -23,7 +21,7 @@ public class EntityData implements IEntityLootData {
     private final boolean isEmpty;
 
     public EntityData(String rl, @NotNull CompoundTag nbt, int count, int range) {
-        this.entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(rl)); // 无论输入不存在的RL还是null都不会返回null，小Forge露出猪脚了吧[doge]
+        this.entityType = BattleRoyale.getMcRegistry().getEntityType(new ResourceLocation(rl));
         if (this.entityType == null
                 || (this.entityType.toString().equals(EMPTY_TYPE) && !rl.equals(EMPTY_RL))) {
             this.isEmpty = true;

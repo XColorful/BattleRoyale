@@ -6,11 +6,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraftforge.event.TickEvent;
-
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.event.loot.LootGenerationEventHandler;

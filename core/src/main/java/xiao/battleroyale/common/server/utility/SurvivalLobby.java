@@ -24,7 +24,6 @@ import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.event.server.SurvivalLobbyEventHandler;
 import xiao.battleroyale.util.ChatUtils;
-import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.Vec3Utils;
 
 public class SurvivalLobby implements ILobbyReadApi {

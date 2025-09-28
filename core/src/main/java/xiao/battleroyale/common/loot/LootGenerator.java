@@ -2,6 +2,7 @@ package xiao.battleroyale.common.loot;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
@@ -14,7 +15,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameIdReadApi;
@@ -24,11 +24,9 @@ import xiao.battleroyale.api.loot.entity.IEntityLootData;
 import xiao.battleroyale.api.loot.item.IItemLootData;
 import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
 import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
-import xiao.battleroyale.common.game.GameIdHelper;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
-import xiao.battleroyale.util.GameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -341,7 +339,8 @@ public class LootGenerator {
         private List<Pattern> whiteListPatterns = new ArrayList<>();
         private List<Pattern> blackListPatterns = new ArrayList<>();
         public boolean shouldLoot(BlockEntity blockEntity) {
-            String blockId = ForgeRegistries.BLOCKS.getKey(blockEntity.getBlockState().getBlock()).toString();
+            ResourceLocation rl = BattleRoyale.getMcRegistry().getBlockRl(blockEntity.getBlockState().getBlock());
+            String blockId = rl != null ? rl.toString() : "";
 
             // 如果白名单不为空，则必须匹配至少一个白名单项
             if (!whiteListPatterns.isEmpty()) {

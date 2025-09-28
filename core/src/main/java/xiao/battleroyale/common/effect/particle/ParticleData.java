@@ -7,7 +7,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Vector3f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.config.common.effect.particle.ParticleDetailEntry;
@@ -46,7 +45,7 @@ public class ParticleData {
         }
 
         ResourceLocation particleRL = this.particle.particleType();
-        ParticleType<?> typeObj = ForgeRegistries.PARTICLE_TYPES.getValue(particleRL);
+        ParticleType<?> typeObj = BattleRoyale.getMcRegistry().getParticleType(particleRL);
         if (typeObj == null) {
             BattleRoyale.LOGGER.warn("Unknown particle ResourceLocation: {}", particleRL);
             return;
