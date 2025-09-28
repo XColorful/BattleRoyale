@@ -6,17 +6,30 @@ import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.compat.forge.event.ForgeEvent;
 import xiao.battleroyale.util.ClassUtils.ArraySet;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public abstract class AbstractEventCommon {
 
     protected final ArraySet<IEventHandler> eventHandlers = new ArraySet<>(); // 先处理的事件
     protected final ArraySet<IEventHandler> statsEventHandlers = new ArraySet<>(); // 接收canceled事件
     protected final EventType eventType;
+    protected volatile boolean isDispatching = false; // 标志位，指示当前是否处于事件分发循环中
+    protected Queue<PendingOperation> pendingOperations = new LinkedList<>();
+    protected record PendingOperation(IEventHandler eventHandler, boolean receivedCanceled, boolean isRegistration) {}
 
     public AbstractEventCommon(EventType eventType) {
         this.eventType = eventType;
     }
 
     public boolean addEventHander(IEventHandler eventHandler, boolean receivedCanceled) {
+        if (isDispatching) {
+            pendingOperations.add(new PendingOperation(eventHandler, receivedCanceled, true));
+            return !receivedCanceled ? !eventHandlers.contains(eventHandler) : !statsEventHandlers.contains(eventHandler);
+        }
+        return addEventHandlerInternal(eventHandler, receivedCanceled);
+    }
+    protected boolean addEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
         boolean added;
         if (!receivedCanceled) {
             added = eventHandlers.add(eventHandler);
@@ -34,6 +47,13 @@ public abstract class AbstractEventCommon {
     }
 
     public boolean removeEventHandler(IEventHandler eventHandler, boolean receivedCanceled) {
+        if (isDispatching) {
+            pendingOperations.add(new PendingOperation(eventHandler, receivedCanceled, false));
+            return !receivedCanceled ? eventHandlers.contains(eventHandler) : statsEventHandlers.contains(eventHandler);
+        }
+        return removeEventHandlerInternal(eventHandler, receivedCanceled);
+    }
+    protected boolean removeEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
         boolean removed;
         if (!receivedCanceled) {
             removed = eventHandlers.remove(eventHandler);
@@ -55,6 +75,8 @@ public abstract class AbstractEventCommon {
 
     protected void onEvent(Event event) {
         ForgeEvent forgeEvent = getForgeEventType(event);
+
+        isDispatching = true;
         for (IEventHandler handler : eventHandlers) {
             if (forgeEvent.isCanceled()) {
                 break;
@@ -64,6 +86,24 @@ public abstract class AbstractEventCommon {
 
         for (IEventHandler handler : statsEventHandlers) {
             handler.handleEvent(this.eventType, forgeEvent);
+        }
+        isDispatching = false;
+
+        processPendingOperations();
+    }
+
+    protected void processPendingOperations() {
+        if (pendingOperations.isEmpty()) {
+            return;
+        }
+
+        PendingOperation op;
+        while ((op = pendingOperations.poll()) != null) {
+            if (op.isRegistration) {
+                addEventHandlerInternal(op.eventHandler, op.receivedCanceled);
+            } else {
+                removeEventHandlerInternal(op.eventHandler, op.receivedCanceled);
+            }
         }
     }
 }
