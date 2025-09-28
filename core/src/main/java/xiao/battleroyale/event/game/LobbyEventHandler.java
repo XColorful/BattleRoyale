@@ -1,18 +1,19 @@
 package xiao.battleroyale.event.game;
 
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.EventType;
+import xiao.battleroyale.api.event.IEvent;
+import xiao.battleroyale.api.event.IEventHandler;
+import xiao.battleroyale.api.event.ILivingDamageEvent;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
+import xiao.battleroyale.event.EventRegistry;
 
 /**
  * 只用于实现Lobby内无敌
  * 优先级设置为HIGHEST，确保在其他伤害处理前执行
  * 注册该事件默认开启大厅无敌
  */
-public class LobbyEventHandler {
+public class LobbyEventHandler implements IEventHandler {
 
     private static class LobbyEventHandlerHolder {
         private static final LobbyEventHandler INSTANCE = new LobbyEventHandler();
@@ -24,20 +25,26 @@ public class LobbyEventHandler {
 
     private LobbyEventHandler() {}
 
+    @Override public String getEventHandlerName() {
+        return "LobbyEventHandlerHolder";
+    }
+
     public static void register() {
-        MinecraftForge.EVENT_BUS.register(get());
-        BattleRoyale.LOGGER.debug("LobbyEventHandler registered");
+        EventRegistry.register(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
     }
 
     public static void unregister() {
-        MinecraftForge.EVENT_BUS.unregister(get());
-        BattleRoyale.LOGGER.debug("LobbyEventHandler unregistered");
+        EventRegistry.unregister(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onLivingDamage(LivingDamageEvent event) {
-        if (SpawnManager.get().canMuteki(event.getEntity())) {
-            event.setCanceled(true);
+    @Override
+    public void handleEvent(EventType eventType, IEvent event) {
+        if (eventType == EventType.LIVING_DAMAGE_EVENT){
+            if (SpawnManager.get().canMuteki(((ILivingDamageEvent) event).getEntity())) {
+                event.setCanceled(true);
+            }
+        } else {
+            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
         }
     }
 }

@@ -5,7 +5,7 @@ import xiao.battleroyale.api.event.IEvent;
 
 public class ForgeEvent implements IEvent {
 
-    Event event;
+    protected Event event;
 
     public ForgeEvent(Event event) {
         this.event = event;

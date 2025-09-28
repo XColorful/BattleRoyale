@@ -1,8 +1,8 @@
 package xiao.battleroyale.api.event.game.game;
 
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.event.game.AbstractGameStatsEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -11,9 +11,9 @@ public class GamePlayerDownFinishEvent extends AbstractGameStatsEvent {
 
     private final GamePlayer gamePlayer;
     private final LivingEntity livingEntity;
-    private final LivingDeathEvent livingDeathEvent;
+    private final ILivingDeathEvent livingDeathEvent;
 
-    public GamePlayerDownFinishEvent(IGameManager gameManager, @NotNull GamePlayer gamePlayer, @NotNull LivingEntity livingEntity, LivingDeathEvent event) {
+    public GamePlayerDownFinishEvent(IGameManager gameManager, @NotNull GamePlayer gamePlayer, @NotNull LivingEntity livingEntity, ILivingDeathEvent event) {
         super(gameManager);
         this.gamePlayer = gamePlayer;
         this.livingEntity = livingEntity;
@@ -28,7 +28,7 @@ public class GamePlayerDownFinishEvent extends AbstractGameStatsEvent {
         return this.livingEntity;
     }
 
-    public LivingDeathEvent getLivingDeathEvent() {
+    public ILivingDeathEvent getLivingDeathEvent() {
         return this.livingDeathEvent;
     }
 }

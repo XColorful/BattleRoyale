@@ -1,19 +1,17 @@
 package xiao.battleroyale.event.game;
 
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.event.EventRegistry;
 
 /**
  * 监听击杀(死亡)事件，击倒机制，获取击杀者，通知计算游戏是否达到结束条件
  */
-public class PlayerDeathEventHandler {
+public class PlayerDeathEventHandler implements IEventHandler {
 
     private PlayerDeathEventHandler() {}
 
@@ -25,22 +23,33 @@ public class PlayerDeathEventHandler {
         return PlayerEventHandlerHolder.INSTANCE;
     }
 
+    @Override public String getEventHandlerName() {
+        return "PlayerDeathEventHandler";
+    }
+
     public static void register() {
-        MinecraftForge.EVENT_BUS.register(get());
+        EventRegistry.register(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOW, true);
     }
 
     public static void unregister() {
-        MinecraftForge.EVENT_BUS.unregister(get());
+        EventRegistry.unregister(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOW, true);
     }
 
+    @Override
+    public void handleEvent(EventType eventType, IEvent event) {
+        if (eventType == EventType.LIVING_DEATH_EVENT) {
+            onLivingDeath((ILivingDeathEvent) event);
+        } else {
+            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
+        }
+    }
     /**
      * 监听实体死亡事件，会被不死图腾或PlayerRevive取消
      * 当玩家死亡时，判断是否改为击倒
      * 当玩家死亡时，通知TeamManager处理
      * @param event 实体死亡事件
      */
-    @SubscribeEvent(priority = EventPriority.LOW, receiveCanceled = true) // 接收被不死图腾或PlayerRevive取消的事件
-    public void onLivingDeath(LivingDeathEvent event) {
+    private void onLivingDeath(ILivingDeathEvent event) { // 接收被不死图腾或PlayerRevive取消的事件
         LivingEntity livingEntity = event.getEntity(); // 兼容以后生物作为人机玩家
         if (livingEntity == null) {
             return;

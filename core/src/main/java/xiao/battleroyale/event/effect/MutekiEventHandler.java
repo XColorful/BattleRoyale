@@ -6,11 +6,14 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.EventType;
+import xiao.battleroyale.api.event.IEvent;
+import xiao.battleroyale.api.event.IEventHandler;
+import xiao.battleroyale.api.event.ILivingDamageEvent;
 import xiao.battleroyale.common.effect.muteki.MutekiManager;
+import xiao.battleroyale.event.EventRegistry;
 
-public class MutekiEventHandler {
-
-    private MutekiEventHandler() {}
+public class MutekiEventHandler implements IEventHandler {
 
     private static class MutekiEventHandlerHolder {
         private static final MutekiEventHandler INSTANCE = new MutekiEventHandler();
@@ -20,28 +23,32 @@ public class MutekiEventHandler {
         return MutekiEventHandlerHolder.INSTANCE;
     }
 
+    private MutekiEventHandler() {}
+
+    @Override public String getEventHandlerName() {
+        return "MutekiEventHandler";
+    }
+
     public static void register() {
-        MinecraftForge.EVENT_BUS.register(get());
-        BattleRoyale.LOGGER.debug("MutekiEventHandler registered");
+        EventRegistry.register(get(), EventType.SERVER_TICK_EVENT);
+        EventRegistry.register(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
     }
 
     public static void unregister() {
-        MinecraftForge.EVENT_BUS.unregister(get());
-        BattleRoyale.LOGGER.debug("MutekiEventHandler unregistered");
+        EventRegistry.register(get(), EventType.SERVER_TICK_EVENT);
+        EventRegistry.unregister(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
     }
 
-    @SubscribeEvent
-    public void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
-        MutekiManager.get().onTick();
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onLivingDamage(LivingDamageEvent event) {
-        if (MutekiManager.get().canMuteki(event.getEntity())) {
-            event.setCanceled(true);
+    @Override
+    public void handleEvent(EventType eventType, IEvent event) {
+        switch (eventType) {
+            case SERVER_TICK_EVENT -> MutekiManager.get().onTick();
+            case LIVING_DAMAGE_EVENT -> {
+                if (MutekiManager.get().canMuteki(((ILivingDamageEvent) event).getEntity())) {
+                    event.setCanceled(true);
+                }
+            }
+            default -> BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
         }
     }
 }

@@ -7,7 +7,7 @@ import xiao.battleroyale.common.message.game.GameInfoMessageManager;
 import xiao.battleroyale.common.message.game.SpectateMessageManager;
 import xiao.battleroyale.common.message.team.TeamMessageManager;
 import xiao.battleroyale.common.message.zone.ZoneMessageManager;
-import xiao.battleroyale.event.MessageEventHandler;
+import xiao.battleroyale.event.message.MessageEventHandler;
 import xiao.battleroyale.util.ClassUtils;
 
 import java.util.*;

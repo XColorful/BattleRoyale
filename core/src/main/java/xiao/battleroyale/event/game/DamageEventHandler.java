@@ -6,23 +6,21 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
+import xiao.battleroyale.event.EventRegistry;
 import xiao.battleroyale.util.ChatUtils;
 
 /**
  * 伤害数值调整
  */
-public class DamageEventHandler {
+public class DamageEventHandler implements IEventHandler {
 
     private DamageEventHandler() {}
 
@@ -34,14 +32,25 @@ public class DamageEventHandler {
         return DamageEventHandlerHolder.INSTANCE;
     }
 
+    @Override public String getEventHandlerName() {
+        return "DamageEventHandler";
+    }
+
     public static void register() {
-        MinecraftForge.EVENT_BUS.register(get());
-        BattleRoyale.LOGGER.debug("DamageEventHandler registered");
+        EventRegistry.register(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGH, false);
     }
 
     public static void unregister() {
-        MinecraftForge.EVENT_BUS.unregister(get());
-        BattleRoyale.LOGGER.debug("DamageEventHandler unregistered");
+        EventRegistry.unregister(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGH, false);
+    }
+
+    @Override
+    public void handleEvent(EventType eventType, IEvent event) {
+        if (eventType == EventType.LIVING_DAMAGE_EVENT) {
+            checkDamage((ILivingDamageEvent) event);
+        } else {
+            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
+        }
     }
 
     /**
@@ -50,9 +59,7 @@ public class DamageEventHandler {
      * 通知队伍更新成员信息
      * @param event 实体受到伤害事件
      */
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onLivingDamage(LivingDamageEvent event) {
-
+    private void checkDamage(ILivingDamageEvent event) {
         LivingEntity damagedEntity = event.getEntity(); // 被攻击方
         DamageSource damageSource = event.getSource(); // 攻击方
 

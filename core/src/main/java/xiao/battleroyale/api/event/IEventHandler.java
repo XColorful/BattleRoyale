@@ -2,7 +2,7 @@ package xiao.battleroyale.api.event;
 
 public interface IEventHandler {
 
-    String getEventName();
+    String getEventHandlerName();
 
     void handleEvent(EventType eventType, IEvent event);
 }

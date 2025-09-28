@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.event.game.finish.*;
 import xiao.battleroyale.api.event.game.game.*;
 import xiao.battleroyale.api.event.game.starter.*;
@@ -648,7 +649,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      * 没有队友时不允许倒地直接让PlayerRevive击杀掉
      * PlayerRevive只允许玩家倒地，因此人机玩家无法倒地
      */
-    public void onPlayerDown(@NotNull GamePlayer gamePlayer, @NotNull LivingEntity livingEntity, LivingDeathEvent event) {
+    public void onPlayerDown(@NotNull GamePlayer gamePlayer, @NotNull LivingEntity livingEntity, ILivingDeathEvent event) {
         if (MinecraftForge.EVENT_BUS.post(new GamePlayerDownEvent(this, gamePlayer, livingEntity, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDownEvent canceled, skipped onPlayerDown (GamePlayer {})", gamePlayer.getNameWithId());
             return;
@@ -670,7 +671,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     /**
      * 调用成功即视为GamePlayer死亡
      */
-    public void onPlayerDeath(@NotNull GamePlayer gamePlayer, LivingDeathEvent event) {
+    public void onPlayerDeath(@NotNull GamePlayer gamePlayer, ILivingDeathEvent event) {
         if (MinecraftForge.EVENT_BUS.post(new GamePlayerDeathEvent(this, gamePlayer, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDeathEvent canceled, skipped onPlayerDeath (GamePlayer{})", gamePlayer.getNameWithId());
             return;

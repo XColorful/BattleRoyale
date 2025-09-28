@@ -19,7 +19,7 @@ public class MessageEventHandler implements IEventHandler {
         return MessageEventHandlerHolder.INSTANCE;
     }
 
-    @Override public String getEventName() {
+    @Override public String getEventHandlerName() {
         return "MessageEventHandler";
     }
 
@@ -36,7 +36,7 @@ public class MessageEventHandler implements IEventHandler {
         if (eventType == EventType.SERVER_TICK_EVENT) {
             MessageManager.get().tick();
         } else {
-            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventName(), eventType);
+            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
         }
     }
 }

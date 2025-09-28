@@ -1,12 +1,14 @@
 package xiao.battleroyale.event.loot;
 
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.EventType;
+import xiao.battleroyale.api.event.IEvent;
+import xiao.battleroyale.api.event.IEventHandler;
+import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.common.loot.CommonLootManager;
+import xiao.battleroyale.event.EventRegistry;
 
-public class LootGenerationEventHandler {
+public class LootGenerationEventHandler implements IEventHandler {
 
     private LootGenerationEventHandler() {}
 
@@ -18,25 +20,27 @@ public class LootGenerationEventHandler {
         return LootGenerationEventHandlerHolder.INSTANCE;
     }
 
+    @Override public String getEventHandlerName() {
+        return "LootGenerationEventHandler";
+    }
+
     public static void register() {
-        LootGenerationEventHandler handler = get();
-        MinecraftForge.EVENT_BUS.register(handler);
-        BattleRoyale.LOGGER.info("LootGenerationEventHandler registered for funcTick events.");
+        EventRegistry.register(get(), EventType.SERVER_TICK_EVENT);
     }
 
     public static void unregister() {
-        LootGenerationEventHandler handler = get();
-        MinecraftForge.EVENT_BUS.unregister(handler);
-        BattleRoyale.LOGGER.info("LootGenerationEventHandler unregistered from funcTick events.");
+        EventRegistry.unregister(get(), EventType.SERVER_TICK_EVENT);
     }
 
-    @SubscribeEvent
-    public void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            boolean taskCompletedOrInterrupted = CommonLootManager.get().onTick(event);
+    @Override
+    public void handleEvent(EventType eventType, IEvent event) {
+        if (eventType == EventType.SERVER_TICK_EVENT) {
+            boolean taskCompletedOrInterrupted = CommonLootManager.get().onTick((IServerTickEvent) event);
             if (taskCompletedOrInterrupted) {
                 unregister();
             }
+        } else {
+            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
         }
     }
 }

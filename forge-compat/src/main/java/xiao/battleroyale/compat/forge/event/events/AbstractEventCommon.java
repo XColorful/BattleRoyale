@@ -1,15 +1,15 @@
-package xiao.battleroyale.compat.forge.event.event;
+package xiao.battleroyale.compat.forge.event.events;
 
 import net.minecraftforge.eventbus.api.Event;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.compat.forge.event.ForgeEvent;
-import xiao.battleroyale.util.ClassUtils;
+import xiao.battleroyale.util.ClassUtils.ArraySet;
 
 public abstract class AbstractEventCommon {
 
-    protected final ClassUtils.ArraySet<IEventHandler> eventHandlers = new ClassUtils.ArraySet<>(); // 先处理的事件
-    protected final ClassUtils.ArraySet<IEventHandler> statsEventHandlers = new ClassUtils.ArraySet<>(); // 接收canceled事件
+    protected final ArraySet<IEventHandler> eventHandlers = new ArraySet<>(); // 先处理的事件
+    protected final ArraySet<IEventHandler> statsEventHandlers = new ArraySet<>(); // 接收canceled事件
     protected final EventType eventType;
 
     public AbstractEventCommon(EventType eventType) {
@@ -49,17 +49,21 @@ public abstract class AbstractEventCommon {
     protected abstract void registerToForge();
     protected abstract void unregisterToForge();
 
+    protected ForgeEvent getForgeEventType(Event event) {
+        return new ForgeEvent(event);
+    }
+
     protected void onEvent(Event event) {
-        ForgeEvent forgeEvent = new ForgeEvent(event);
+        ForgeEvent forgeEvent = getForgeEventType(event);
         for (IEventHandler handler : eventHandlers) {
             if (forgeEvent.isCanceled()) {
                 break;
             }
-            handler.handleEvent(EventType.SERVER_TICK_EVENT, forgeEvent);
+            handler.handleEvent(this.eventType, forgeEvent);
         }
 
         for (IEventHandler handler : statsEventHandlers) {
-            handler.handleEvent(EventType.SERVER_TICK_EVENT, forgeEvent);
+            handler.handleEvent(this.eventType, forgeEvent);
         }
     }
 }

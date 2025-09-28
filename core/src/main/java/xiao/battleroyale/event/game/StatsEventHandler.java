@@ -1,21 +1,17 @@
 package xiao.battleroyale.event.game;
 
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.event.EventRegistry;
 
 /**
  * 统计造成的伤害值
  */
-public class StatsEventHandler {
+public class StatsEventHandler implements IEventHandler {
 
     private StatsEventHandler() {}
 
@@ -27,23 +23,35 @@ public class StatsEventHandler {
         return StatsEventHandlerHolder.INSTANCE;
     }
 
+    @Override public String getEventHandlerName() {
+        return "StatsEventHandler";
+    }
+
     public static void register() {
-        MinecraftForge.EVENT_BUS.register(get());
+        EventRegistry.register(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.LOWEST, true);
+        EventRegistry.register(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOWEST, true);
     }
 
     public static void unregister() {
-        MinecraftForge.EVENT_BUS.unregister(get());
-        BattleRoyale.LOGGER.debug("Unregistered StatsEventHandler");
+        EventRegistry.unregister(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.LOWEST, true);
+        EventRegistry.unregister(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOWEST, true);
     }
 
+    @Override
+    public void handleEvent(EventType eventType, IEvent event) {
+        switch (eventType) {
+            case LIVING_DAMAGE_EVENT -> onRecordDamage((ILivingDamageEvent) event);
+            case LIVING_DEATH_EVENT -> onLivingDeath((ILivingDeathEvent) event);
+            default -> BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
+        }
+    }
 
     /**
      * 监听实体受到伤害事件
      * 统计玩家造成的伤害和受到的伤害
      * @param event 实体受到伤害事件
      */
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onRecordDamage(LivingDamageEvent event) {
+    private void onRecordDamage(ILivingDamageEvent event) {
         LivingEntity damagedEntity = event.getEntity();
         GamePlayer damagedGamePlayer = GameTeamManager.getGamePlayerByUUID(damagedEntity.getUUID());
         if (damagedGamePlayer == null) {
@@ -58,13 +66,12 @@ public class StatsEventHandler {
      * 统计倒地或击杀信息
      * @param event 实体死亡事件
      */
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
-    public void onLivingDeath(LivingDeathEvent event) {
+    public void onLivingDeath(ILivingDeathEvent event) {
         LivingEntity livingEntity = event.getEntity(); // 兼容以后生物作为人机玩家
         if (livingEntity == null) {
             return;
         }
-        GameManager gameManager = GameManager.get();
+
         GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(livingEntity.getUUID());
         if (gamePlayer == null) {
             return;

@@ -10,6 +10,8 @@ import net.minecraftforge.event.TickEvent;
 
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.IEvent;
+import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.event.loot.LootGenerationEventHandler;
 
@@ -120,7 +122,7 @@ public class CommonLootManager {
      * @param event TickEvent.ServerTickEvent
      * @return 如果任务完成或中断，返回 true；否则返回 false。
      */
-    public boolean onTick(TickEvent.ServerTickEvent event) {
+    public boolean onTick(IServerTickEvent event) {
         if (currentGenerationLevel == null || GameManager.get().isInGame() && !this.currentGenerationGameId.equals(GameManager.get().getGameId())) {
             if (initiatingCommandSource != null) {
                 initiatingCommandSource.sendFailure(Component.translatable("battleroyale.message.game_stop_loot"));

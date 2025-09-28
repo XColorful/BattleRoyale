@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.event.ILivingDamageEvent;
+import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
@@ -148,7 +150,7 @@ public class StatsManager extends AbstractGameManager {
      * 记录被攻击方承受伤害量
      * @param event 实体受到伤害事件
      */
-    public void onRecordDamage(@NotNull GamePlayer damagedGamePlayer, LivingDamageEvent event) {
+    public void onRecordDamage(@NotNull GamePlayer damagedGamePlayer, ILivingDamageEvent event) {
         if (!gamePlayerStats.containsKey(damagedGamePlayer)) {
             BattleRoyale.LOGGER.warn("Reject to add new game player stats for {} (UUID: {})", damagedGamePlayer.getPlayerName(), damagedGamePlayer.getPlayerUUID());
             return;
@@ -156,7 +158,7 @@ public class StatsManager extends AbstractGameManager {
 
 
         DamageSource damageSource = event.getSource();
-        float damageAmount = event.getAmount();
+        float damageAmount = event.getDamageAmount();
         onRecordDamage(damagedGamePlayer, damageSource, damageAmount);
     }
 
@@ -186,21 +188,21 @@ public class StatsManager extends AbstractGameManager {
     /**
      * 立即复活（击倒失败）视为 被击倒1次 + 立即自救1次
      */
-    public void onRecordInstantRevive(@NotNull GamePlayer reviveGamePlayer, LivingDeathEvent event) {
+    public void onRecordInstantRevive(@NotNull GamePlayer reviveGamePlayer, ILivingDeathEvent event) {
         if (!gamePlayerStats.containsKey(reviveGamePlayer)) {
             BattleRoyale.LOGGER.warn("Reject to add new game player stats for {} (UUID: {})", reviveGamePlayer.getPlayerName(), reviveGamePlayer.getPlayerUUID());
             return;
         }
     }
 
-    public void onRecordRevive(@NotNull GamePlayer reviveGamePlayer, LivingDeathEvent event) {
+    public void onRecordRevive(@NotNull GamePlayer reviveGamePlayer, ILivingDeathEvent event) {
         if (!gamePlayerStats.containsKey(reviveGamePlayer)) {
             BattleRoyale.LOGGER.warn("Reject to add new game player stats for {} (UUID: {})", reviveGamePlayer.getPlayerName(), reviveGamePlayer.getPlayerUUID());
             return;
         }
     }
 
-    public void onRecordDown(@NotNull GamePlayer downGamePlayer, LivingDeathEvent event) {
+    public void onRecordDown(@NotNull GamePlayer downGamePlayer, ILivingDeathEvent event) {
         if (!gamePlayerStats.containsKey(downGamePlayer)) {
             BattleRoyale.LOGGER.warn("Reject to add new game player stats for {} (UUID: {})", downGamePlayer.getPlayerName(), downGamePlayer.getPlayerUUID());
             return;
@@ -208,7 +210,7 @@ public class StatsManager extends AbstractGameManager {
 
     }
 
-    public void onRecordKill(@NotNull GamePlayer downGamePlayer, LivingDeathEvent event) {
+    public void onRecordKill(@NotNull GamePlayer downGamePlayer, ILivingDeathEvent event) {
         if (!gamePlayerStats.containsKey(downGamePlayer)) {
             BattleRoyale.LOGGER.warn("Reject to add new game player stats for {} (UUID: {})", downGamePlayer.getPlayerName(), downGamePlayer.getPlayerUUID());
             return;
