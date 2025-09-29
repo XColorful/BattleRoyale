@@ -8,11 +8,9 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
+import xiao.battleroyale.api.client.event.RenderLevelStage;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
@@ -21,7 +19,6 @@ import xiao.battleroyale.util.ColorUtils;
 
 import java.awt.*;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT, modid = BattleRoyale.MOD_ID)
 public class TeamMemberRenderer {
 
     private static class TeamMemberRendererHolder {
@@ -33,19 +30,6 @@ public class TeamMemberRenderer {
     }
 
     private TeamMemberRenderer() {}
-
-    private static boolean registered = false;
-    public static boolean isRegistered() { return registered; }
-
-    public static void register() {
-        MinecraftForge.EVENT_BUS.register(get());
-        registered = true;
-    }
-
-    public static void unregister() {
-        MinecraftForge.EVENT_BUS.unregister(get());
-        registered = false;
-    }
 
     private static final RenderType TEAM_MARKER_RENDER_TYPE = CustomRenderType.SolidTranslucentColor;
 
@@ -70,9 +54,15 @@ public class TeamMemberRenderer {
     private static float A = 0.5f;
     public static void setTransparency(float a) { A = a; }
 
+    public void onRenderLevelStage(IRenderLevelStageEvent event) {
+        if (event.getStage() != RenderLevelStage.AFTER_TRANSLUCENT_BLOCKS) {
+            return;
+        }
+        onAfterTranslucentBlocks(event);
+    }
 
-    public void onRenderLevelStage(RenderLevelStageEvent event) {
-        if (!enableTeamZone || event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+    public void onAfterTranslucentBlocks(IRenderLevelStageEvent event) {
+        if (!enableTeamZone) {
             return;
         }
 
@@ -88,7 +78,7 @@ public class TeamMemberRenderer {
 
         PoseStack poseStack = event.getPoseStack();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
-        Vec3 cameraPos = event.getCamera().getPosition();
+        Vec3 cameraPos = event.getCamera_getPosition();
         float partialTicks = event.getPartialTick();
 
         VertexConsumer consumer = bufferSource.getBuffer(TEAM_MARKER_RENDER_TYPE);

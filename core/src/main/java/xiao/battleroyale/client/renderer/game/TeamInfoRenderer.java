@@ -3,11 +3,7 @@ package xiao.battleroyale.client.renderer.game;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGuiEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod;
-import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.client.event.IRenderGuiEventPost;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
@@ -17,7 +13,6 @@ import xiao.battleroyale.util.ColorUtils;
 import java.awt.*;
 import java.util.List;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT, modid = BattleRoyale.MOD_ID)
 public class TeamInfoRenderer {
 
     private static class TeamInfoRendererHolder {
@@ -29,19 +24,6 @@ public class TeamInfoRenderer {
     }
 
     private TeamInfoRenderer() {}
-
-    private static boolean registered = false;
-    public static boolean isRegistered() { return registered; }
-
-    public static void register() {
-        MinecraftForge.EVENT_BUS.register(get());
-        registered = true;
-    }
-
-    public static void unregister() {
-        MinecraftForge.EVENT_BUS.unregister(get());
-        registered = false;
-    }
 
     private static boolean displayTeam = true;
     public static void setDisplayTeam(boolean shouldDisplay) { displayTeam = shouldDisplay; }
@@ -71,7 +53,7 @@ public class TeamInfoRenderer {
     private static final int LINE_OFFSET = 9;
 
 
-    public void onRenderGuiEvent(RenderGuiEvent.Post event) {
+    public void onRenderGuiEvent(IRenderGuiEventPost event) {
         Minecraft mc = Minecraft.getInstance();
         if (!displayTeam || mc.level == null || mc.player == null) {
             return;

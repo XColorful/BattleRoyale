@@ -8,9 +8,9 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.common.MinecraftForge;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
+import xiao.battleroyale.api.client.event.RenderLevelStage;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientGameData.ClientSpectateData;
 import xiao.battleroyale.client.renderer.CustomRenderType;
@@ -31,21 +31,6 @@ public class SpectatePlayerRenderer {
     }
 
     private SpectatePlayerRenderer() {}
-
-    private static boolean registered = false;
-    public static boolean isRegistered() {
-        return registered;
-    }
-
-    public static void register() {
-        MinecraftForge.EVENT_BUS.register(get());
-        registered = true;
-    }
-
-    public static void unregister() {
-        MinecraftForge.EVENT_BUS.unregister(get());
-        registered = false;
-    }
 
     private static final RenderType SPECTATE_PLAYER_RENDER_TYPE = CustomRenderType.SolidTranslucentColor;
     private static boolean enableSpectateRender = true;
@@ -95,8 +80,15 @@ public class SpectatePlayerRenderer {
         }
     }
 
-    public void onRenderLevelStage(RenderLevelStageEvent event) {
-        if (!enableSpectateRender || event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+    public void onRenderLevelStage(IRenderLevelStageEvent event) {
+        if (event.getStage() != RenderLevelStage.AFTER_TRANSLUCENT_BLOCKS) {
+            return;
+        }
+        onAfterTranslucentBlocks(event);
+    }
+
+    public void onAfterTranslucentBlocks(IRenderLevelStageEvent event) {
+        if (!enableSpectateRender) {
             return;
         }
 
@@ -112,7 +104,7 @@ public class SpectatePlayerRenderer {
 
         PoseStack poseStack = event.getPoseStack();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
-        Vec3 cameraPos = event.getCamera().getPosition();
+        Vec3 cameraPos = event.getCamera_getPosition();
         float partialTicks = event.getPartialTick();
 
         VertexConsumer consumer = bufferSource.getBuffer(SPECTATE_PLAYER_RENDER_TYPE);

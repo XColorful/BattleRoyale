@@ -4,9 +4,11 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import org.slf4j.Logger;
+import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.journeymap.IJmApi;
 import xiao.battleroyale.api.compat.tacz.ITaczEventRegister;
+import xiao.battleroyale.api.compat.tacz.ITaczGunOperator;
 import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.event.IEventPoster;
 import xiao.battleroyale.api.event.IEventRegister;
@@ -39,10 +41,16 @@ public class BattleRoyale {
     private static INetworkHook networkHook;
     private static IEventRegister eventRegister;
     private static IEventPoster eventPoster;
-    public record CompatApi(IJmApi jmApi, ITaczEventRegister taczEventRegister) {}
+    private static IBlockModelRenderer blockModelRenderer;
+    public record CompatApi(IJmApi jmApi, ITaczEventRegister taczEventRegister, ITaczGunOperator taczGunOperator) {}
     private static CompatApi compatApi;
 
-    public static void init(McSide mcSide, IRegistrarFactory factory, IMcRegistry mcRegistry, INetworkAdapter networkAdapter, INetworkHook networkHook, IEventRegister eventRegister, IEventPoster eventPoster, CompatApi compatApi) {
+    public static void init(McSide mcSide,
+                            IRegistrarFactory factory, IMcRegistry mcRegistry,
+                            INetworkAdapter networkAdapter, INetworkHook networkHook,
+                            IEventRegister eventRegister, IEventPoster eventPoster,
+                            IBlockModelRenderer blockModelRenderer,
+                            CompatApi compatApi) {
         if (initialized) return;
 
         BattleRoyale.mcSide = mcSide;
@@ -54,6 +62,7 @@ public class BattleRoyale {
         NetworkHook.initialize(networkHook);
         BattleRoyale.eventRegister = eventRegister;
         BattleRoyale.eventPoster = eventPoster;
+        BattleRoyale.blockModelRenderer = blockModelRenderer;
         BattleRoyale.compatApi = compatApi;
 
         ModConfigManager.init(mcSide);

@@ -9,16 +9,8 @@ minecraft {
     copyIdeResources = false
 }
 
-def journeymap_api_version = "1.20-1.9-SNAPSHOT"
-
 dependencies {
-    // 直接依赖 forge，确保有 net.minecraft.* 和 net.minecraftforge.*
     minecraft "net.minecraftforge:forge:${forge_version}"
-
-    // JourneyMap API — compileOnly（编译需要，运行时由 JM mod 提供）
-    compileOnly fg.deobf("info.journeymap:journeymap-api:${journeymap_api_version}")
-    runtimeOnly fg.deobf("curse.maven:journeymap-32274:5789363")
-    compileOnly fg.deobf("curse.maven:timeless-and-classics-zero-1028108:6654541")
 }
 
 jar {

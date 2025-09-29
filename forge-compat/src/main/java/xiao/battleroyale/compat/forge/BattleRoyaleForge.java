@@ -6,6 +6,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.IEventPoster;
 import xiao.battleroyale.api.event.IEventRegister;
@@ -13,8 +14,10 @@ import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
 import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.INetworkHook;
+import xiao.battleroyale.compat.forge.client.renderer.ForgeBlockModelRenderer;
 import xiao.battleroyale.compat.forge.compat.journeymap.JmApi;
 import xiao.battleroyale.compat.forge.compat.tacz.TaczEventRegister;
+import xiao.battleroyale.compat.forge.compat.tacz.TaczGunOpeartor;
 import xiao.battleroyale.compat.forge.event.ForgeEventPoster;
 import xiao.battleroyale.compat.forge.event.ForgeEventRegister;
 import xiao.battleroyale.compat.forge.init.registry.ForgeRegistrarFactory;
@@ -32,6 +35,7 @@ public class BattleRoyaleForge {
     private final INetworkHook networkHook;
     private final IEventRegister eventRegister;
     private final IEventPoster eventPoster;
+    private final IBlockModelRenderer blockModelRenderer;
     private final BattleRoyale.CompatApi compatApi;
 
     public BattleRoyaleForge() {
@@ -41,11 +45,17 @@ public class BattleRoyaleForge {
         this.networkHook = new ForgeNetworkHook();
         this.eventRegister = new ForgeEventRegister();
         this.eventPoster = new ForgeEventPoster();
-        this.compatApi = new BattleRoyale.CompatApi(JmApi.get(), TaczEventRegister.get());
+        this.blockModelRenderer = new ForgeBlockModelRenderer();
+        this.compatApi = new BattleRoyale.CompatApi(JmApi.get(), TaczEventRegister.get(), TaczGunOpeartor.get());
         Dist dist = FMLLoader.getDist();
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
 
-        BattleRoyale.init(mcSide, this.registrarFactory, this.mcRegistry, this.networkAdapter, this.networkHook, this.eventRegister, this.eventPoster, this.compatApi);
+        BattleRoyale.init(mcSide,
+                this.registrarFactory, this.mcRegistry,
+                this.networkAdapter, this.networkHook,
+                this.eventRegister, this.eventPoster,
+                this.blockModelRenderer,
+                this.compatApi);
 
         // 确保所有 ModXXX 静态字段被初始化
         try {

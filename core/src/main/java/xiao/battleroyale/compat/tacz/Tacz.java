@@ -3,6 +3,7 @@ package xiao.battleroyale.compat.tacz;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.compat.AbstractCompatMod;
 import xiao.battleroyale.compat.playerrevive.BleedingHandler;
 
@@ -68,7 +69,7 @@ public class Tacz extends AbstractCompatMod {
             return;
         }
         // 实际取消不了换弹
-        TaczGunOperator.cancelReload(player);
+        BattleRoyale.getCompatApi().taczGunOperator().cancelLivingEntityReload(player);
     }
 
     protected static boolean enableBleedingHandler = true;
