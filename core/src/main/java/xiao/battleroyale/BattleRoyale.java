@@ -3,6 +3,7 @@ package xiao.battleroyale;
 import com.mojang.logging.LogUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.slf4j.Logger;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 import xiao.battleroyale.api.common.McSide;
@@ -17,6 +18,7 @@ import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
 import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.INetworkHook;
+import xiao.battleroyale.client.renderer.BlockModelRenderer;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -63,6 +65,7 @@ public class BattleRoyale {
         BattleRoyale.eventRegister = eventRegister;
         BattleRoyale.eventPoster = eventPoster;
         BattleRoyale.blockModelRenderer = blockModelRenderer;
+        BlockModelRenderer.initialize(blockModelRenderer);
         BattleRoyale.compatApi = compatApi;
 
         ModConfigManager.init(mcSide);
