@@ -30,7 +30,7 @@ public class MutekiEventHandler implements IEventHandler {
     }
 
     public static void unregister() {
-        EventRegistry.register(get(), EventType.SERVER_TICK_EVENT);
+        EventRegistry.unregister(get(), EventType.SERVER_TICK_EVENT);
         EventRegistry.unregister(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
     }
 
