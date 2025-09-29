@@ -3,13 +3,10 @@ package xiao.battleroyale;
 import com.mojang.logging.LogUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.slf4j.Logger;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.journeymap.IJmApi;
-import xiao.battleroyale.api.compat.tacz.ITaczEventRegister;
-import xiao.battleroyale.api.compat.tacz.ITaczGunOperator;
 import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.event.IEventPoster;
 import xiao.battleroyale.api.event.IEventRegister;
@@ -44,7 +41,7 @@ public class BattleRoyale {
     private static IEventRegister eventRegister;
     private static IEventPoster eventPoster;
     private static IBlockModelRenderer blockModelRenderer;
-    public record CompatApi(IJmApi jmApi, ITaczEventRegister taczEventRegister, ITaczGunOperator taczGunOperator) {}
+    public record CompatApi(IJmApi jmApi) {}
     private static CompatApi compatApi;
 
     public static void init(McSide mcSide,

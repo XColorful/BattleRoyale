@@ -16,8 +16,6 @@ import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.INetworkHook;
 import xiao.battleroyale.compat.forge.client.renderer.ForgeBlockModelRenderer;
 import xiao.battleroyale.compat.forge.compat.journeymap.JmApi;
-import xiao.battleroyale.compat.forge.compat.tacz.TaczEventRegister;
-import xiao.battleroyale.compat.forge.compat.tacz.TaczGunOpeartor;
 import xiao.battleroyale.compat.forge.event.ForgeEventPoster;
 import xiao.battleroyale.compat.forge.event.ForgeEventRegister;
 import xiao.battleroyale.compat.forge.init.registry.ForgeRegistrarFactory;
@@ -46,7 +44,7 @@ public class BattleRoyaleForge {
         this.eventRegister = new ForgeEventRegister();
         this.eventPoster = new ForgeEventPoster();
         this.blockModelRenderer = new ForgeBlockModelRenderer();
-        this.compatApi = new BattleRoyale.CompatApi(JmApi.get(), TaczEventRegister.get(), TaczGunOpeartor.get());
+        this.compatApi = new BattleRoyale.CompatApi(JmApi.get());
         Dist dist = FMLLoader.getDist();
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
 

@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[46,)"
+loaderVersion="[48,)"
 license="GPL3"
 
 [[mods]]
@@ -20,7 +20,7 @@ description='''
 [[dependencies.battleroyale]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.20,1.20.2)"
+    versionRange="[1.20.2,1.20.3)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.battleroyale]]
@@ -33,9 +33,4 @@ description='''
     modId="playerrevive"
     mandatory=false
     versionRange="[2.0.16,]"
-    side="BOTH"
-[[dependencies.battleroyale]]
-    modId="tacz"
-    mandatory=false
-    versionRange="[1.0.2,]"
     side="BOTH"
