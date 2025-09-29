@@ -28,6 +28,7 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.api.game.zone.IGameZoneReadApi;
+import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
@@ -67,6 +68,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
 
     private GameManager() {
+        globalCenterOffset = Vec3.ZERO; // 延迟初始化，防止意外崩溃
         // 恢复全局偏移
         String offsetString = TempDataManager.get().getString(GAME_MANAGER, GLOBAL_OFFSET);
         if (offsetString != null) {
@@ -100,7 +102,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     protected int gameruleConfigId = 0;
     private int spawnConfigId = 0;
     private int botConfigId = 0;
-    protected Vec3 globalCenterOffset = Vec3.ZERO;
+    protected Vec3 globalCenterOffset;
     protected int maxGameTime = -1;
     protected int winnerTeamTotal = 1;
     protected int requiredGameTeam = 2;
@@ -400,6 +402,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         EventPoster.postEvent(new ServerStopData(this));
         isStopping = true;
         stopGame(serverLevel);
+        EffectManager.get().forceEnd();
         setServerLevel(null); // 手动设置为null，单人游戏重启之后也就失效了
         BattleRoyale.LOGGER.debug("Server stopped, GameManager.serverLevel set to null");
         isStopping = false;
