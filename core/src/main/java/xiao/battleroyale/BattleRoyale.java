@@ -14,10 +14,12 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
 import xiao.battleroyale.api.network.INetworkAdapter;
+import xiao.battleroyale.api.network.INetworkHook;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.network.NetworkHandler;
+import xiao.battleroyale.network.NetworkHook;
 import xiao.battleroyale.resource.ResourceLoader;
 
 import java.util.Random;
@@ -34,12 +36,13 @@ public class BattleRoyale {
     private static IRegistrarFactory registrarFactory;
     private static IMcRegistry mcRegistry;
     private static INetworkAdapter networkAdapter;
+    private static INetworkHook networkHook;
     private static IEventRegister eventRegister;
     private static IEventPoster eventPoster;
     public record CompatApi(IJmApi jmApi, ITaczEventRegister taczEventRegister) {}
     private static CompatApi compatApi;
 
-    public static void init(McSide mcSide, IRegistrarFactory factory, IMcRegistry mcRegistry, INetworkAdapter networkAdapter, IEventRegister eventRegister, IEventPoster eventPoster, CompatApi compatApi) {
+    public static void init(McSide mcSide, IRegistrarFactory factory, IMcRegistry mcRegistry, INetworkAdapter networkAdapter, INetworkHook networkHook, IEventRegister eventRegister, IEventPoster eventPoster, CompatApi compatApi) {
         if (initialized) return;
 
         BattleRoyale.mcSide = mcSide;
@@ -47,6 +50,8 @@ public class BattleRoyale {
         BattleRoyale.mcRegistry = mcRegistry;
         BattleRoyale.networkAdapter = networkAdapter;
         NetworkHandler.initialize(networkAdapter);
+        BattleRoyale.networkHook = networkHook;
+        NetworkHook.initialize(networkHook);
         BattleRoyale.eventRegister = eventRegister;
         BattleRoyale.eventPoster = eventPoster;
         BattleRoyale.compatApi = compatApi;
