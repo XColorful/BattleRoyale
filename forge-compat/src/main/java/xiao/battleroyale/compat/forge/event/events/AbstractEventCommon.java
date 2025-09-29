@@ -11,6 +11,8 @@ import java.util.Queue;
 
 public abstract class AbstractEventCommon {
 
+    private final Object lock = new Object();
+
     protected final ArraySet<IEventHandler> eventHandlers = new ArraySet<>(); // 先处理的事件
     protected final ArraySet<IEventHandler> statsEventHandlers = new ArraySet<>(); // 接收canceled事件
     protected final EventType eventType;
@@ -23,11 +25,13 @@ public abstract class AbstractEventCommon {
     }
 
     public boolean addEventHander(IEventHandler eventHandler, boolean receivedCanceled) {
-        if (isDispatching) {
-            pendingOperations.add(new PendingOperation(eventHandler, receivedCanceled, true));
-            return !receivedCanceled ? !eventHandlers.contains(eventHandler) : !statsEventHandlers.contains(eventHandler);
+        synchronized (lock) {
+            if (isDispatching) {
+                pendingOperations.add(new PendingOperation(eventHandler, receivedCanceled, true));
+                return !receivedCanceled ? !eventHandlers.contains(eventHandler) : !statsEventHandlers.contains(eventHandler);
+            }
+            return addEventHandlerInternal(eventHandler, receivedCanceled);
         }
-        return addEventHandlerInternal(eventHandler, receivedCanceled);
     }
     protected boolean addEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
         boolean added;
@@ -47,11 +51,13 @@ public abstract class AbstractEventCommon {
     }
 
     public boolean removeEventHandler(IEventHandler eventHandler, boolean receivedCanceled) {
-        if (isDispatching) {
-            pendingOperations.add(new PendingOperation(eventHandler, receivedCanceled, false));
-            return !receivedCanceled ? eventHandlers.contains(eventHandler) : statsEventHandlers.contains(eventHandler);
+        synchronized (lock) {
+            if (isDispatching) {
+                pendingOperations.add(new PendingOperation(eventHandler, receivedCanceled, false));
+                return !receivedCanceled ? eventHandlers.contains(eventHandler) : statsEventHandlers.contains(eventHandler);
+            }
+            return removeEventHandlerInternal(eventHandler, receivedCanceled);
         }
-        return removeEventHandlerInternal(eventHandler, receivedCanceled);
     }
     protected boolean removeEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
         boolean removed;
@@ -76,20 +82,22 @@ public abstract class AbstractEventCommon {
     protected void onEvent(Event event) {
         ForgeEvent forgeEvent = getForgeEventType(event);
 
-        isDispatching = true;
-        for (IEventHandler handler : eventHandlers) {
-            if (forgeEvent.isCanceled()) {
-                break;
+        synchronized (lock) {
+            isDispatching = true;
+            for (IEventHandler handler : eventHandlers) {
+                if (forgeEvent.isCanceled()) {
+                    break;
+                }
+                handler.handleEvent(this.eventType, forgeEvent);
             }
-            handler.handleEvent(this.eventType, forgeEvent);
-        }
 
-        for (IEventHandler handler : statsEventHandlers) {
-            handler.handleEvent(this.eventType, forgeEvent);
-        }
-        isDispatching = false;
+            for (IEventHandler handler : statsEventHandlers) {
+                handler.handleEvent(this.eventType, forgeEvent);
+            }
+            isDispatching = false;
 
-        processPendingOperations();
+            processPendingOperations();
+        }
     }
 
     protected void processPendingOperations() {
