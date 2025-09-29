@@ -125,14 +125,15 @@ public class LootGenerator {
             for (ILootData data : lootData) {
                 if (data.getDataType() == LootDataType.ENTITY) {
                     IEntityLootData entityData = (IEntityLootData) data;
-                    Entity entity = entityData.getEntity(lootContext.serverLevel);
-                    if (entity == null) {
-                        continue;
-                    }
-                    gameIdWriteApi.addGameId(entity, lootContext.gameId);
                     int count = entityData.getCount();
                     int range = entityData.getRange();
                     for (int j = 0; j < count; j++) {
+                        Entity entity = entityData.getEntity(lootContext.serverLevel); // 每次getEntity会自动绑定新UUID
+                        if (entity == null) {
+                            BattleRoyale.LOGGER.debug("Failed to generate entity at BlockPos:{}, count:{}/{}", spawnOrigin, j+1, count);
+                            continue;
+                        }
+                        gameIdWriteApi.addGameId(entity, lootContext.gameId);
                         BlockPos spawnPos = findValidSpawnPosition(lootContext, spawnOrigin, range);
                         entity.setPos(spawnPos.getX() + 0.5F, spawnPos.getY(), spawnPos.getZ() + 0.5F);
                         lootContext.serverLevel.addFreshEntity(entity);
@@ -367,4 +368,5 @@ public class LootGenerator {
                     .map(Pattern::compile)
                     .collect(Collectors.toList());
         }
-    }}
+    }
+}
