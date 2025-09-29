@@ -9,7 +9,9 @@ allprojects {
     version = mod_version
 
     repositories {
-        mavenCentral()
+        maven {
+            url 'https://maven.aliyun.com/repository/public/'
+        }
         maven {
             name = 'MinecraftForge'
             url = 'https://maven.minecraftforge.net/'

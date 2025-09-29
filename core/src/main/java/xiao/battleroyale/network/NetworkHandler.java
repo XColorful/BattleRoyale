@@ -11,21 +11,20 @@ import xiao.battleroyale.network.message.ClientMessageTeamInfo;
 import xiao.battleroyale.network.message.ClientMessageZoneInfo;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 
 public class NetworkHandler {
 
     private static NetworkHandler INSTANCE;
     private final INetworkAdapter adapter;
     private final AtomicInteger ID_COUNT = new AtomicInteger(0);
-    public static final String PROTOCOL_VERSION = "1.2";
-    public static boolean isProtocolAccepted(String remoteVersion) {
-        return remoteVersion.equals(PROTOCOL_VERSION);
-//                || remoteVersion.equals("1.2"); // 后续添加
-    }
-    public static Predicate<String> getProtocolAcceptancePredicate() {
-        return NetworkHandler::isProtocolAccepted;
-    }
+    public static final int PROTOCOL_VERSION = 2; // 1.20.2起需要Integer.parseInt()
+//    public static boolean isProtocolAccepted(String remoteVersion) {
+//        return remoteVersion.equals(PROTOCOL_VERSION);
+////                || remoteVersion.equals("1.2"); // 后续添加
+//    }
+//    public static Predicate<String> getProtocolAcceptancePredicate() {
+//        return NetworkHandler::isProtocolAccepted;
+//    }
 
     private NetworkHandler(INetworkAdapter adapter) {
         this.adapter = adapter;

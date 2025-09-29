@@ -2,29 +2,28 @@ package xiao.battleroyale.compat.forge.network;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.network.*;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.message.IMessage;
 import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.MessageDirection;
 import xiao.battleroyale.network.NetworkHandler;
 
-import java.util.Optional;
+import java.lang.reflect.Method;
 
 public class ForgeNetworkAdapter implements INetworkAdapter {
 
     private final SimpleChannel channel;
 
     public ForgeNetworkAdapter() {
-        this.channel = NetworkRegistry.newSimpleChannel(
-                new ResourceLocation(BattleRoyale.MOD_ID, "game_channel"),
-                () -> NetworkHandler.PROTOCOL_VERSION,
-                NetworkHandler.getProtocolAcceptancePredicate(), // 服务端 -> 客户端
-                NetworkHandler.getProtocolAcceptancePredicate() // 客户端 -> 服务端
-        );
+        int protocolVersion = NetworkHandler.PROTOCOL_VERSION;
+        Channel.VersionTest acceptedVersions = Channel.VersionTest.exact(protocolVersion);
+        this.channel = ChannelBuilder
+                .named(new ResourceLocation(BattleRoyale.MOD_ID, "game_channel"))
+                .networkProtocolVersion(protocolVersion) // 协议版本必须是 int
+                .clientAcceptedVersions(acceptedVersions) // 客户端接受版本
+                .serverAcceptedVersions(acceptedVersions) // 服务端接受版本
+                .simpleChannel(); // 创建 SimpleChannel 实例
     }
 
     @Override
@@ -33,39 +32,35 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
                 ? NetworkDirection.PLAY_TO_CLIENT
                 : NetworkDirection.PLAY_TO_SERVER;
 
-        this.channel.registerMessage(
-                id,
-                clazz,
-                (messageInstance, buffer) -> messageInstance.encode(messageInstance, buffer),
-                (buffer) -> {
+        this.channel.<T>messageBuilder(clazz, id, forgeDirection)
+                .encoder((messageInstance, buffer) -> messageInstance.encode(messageInstance, buffer))
+                .decoder((buffer) -> {
                     try {
-                        return (T) clazz.getDeclaredMethod("decode", net.minecraft.network.FriendlyByteBuf.class).invoke(null, buffer);
+                        Method decodeMethod = clazz.getDeclaredMethod("decode", net.minecraft.network.FriendlyByteBuf.class);
+                        return (T) decodeMethod.invoke(null, buffer);
                     } catch (Exception e) {
                         throw new RuntimeException("Failed to decode message " + clazz.getName(), e);
                     }
-                },
-                (message, contextSupplier) -> {
-
-                    message.handle(message, (work) -> {
-                        contextSupplier.get().enqueueWork(work);
-                    });
-
-                    contextSupplier.get().setPacketHandled(true);
-                },
-                Optional.of(forgeDirection)
-        );
+                })
+                .consumerMainThread((message, context) -> {
+                    message.handle(message, context::enqueueWork);
+                })
+                .add();
     }
 
     @Override
     public void sendToAll(IMessage<?> message) {
-        this.channel.send(PacketDistributor.ALL.noArg(), message);
+        this.channel.send(
+                message,
+                PacketDistributor.ALL.noArg()
+        );
     }
 
     @Override
     public void sendToPlayer(ServerPlayer player, IMessage<?> message) {
         this.channel.send(
-                PacketDistributor.PLAYER.with(() -> player),
-                message
+                message,
+                PacketDistributor.PLAYER.with(player)
         );
     }
 }

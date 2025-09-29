@@ -37,7 +37,6 @@ minecraft {
 }
 
 def journeymap_api_version = "1.20-1.9-SNAPSHOT"
-def journeymap_api_version = "1.20.2-SNAPSHOT"
 
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"

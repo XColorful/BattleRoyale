@@ -14,7 +14,7 @@ description='''
 [[dependencies.battleroyale]]
     modId="forge"
     mandatory=true
-    versionRange="[46,)"
+    versionRange="[48,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.battleroyale]]
