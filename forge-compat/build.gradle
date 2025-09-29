@@ -1,0 +1,64 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    copyIdeResources = true
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+        server {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--nogui'
+        }
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+        data {
+            workingDirectory project.file('run-data')
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+        }
+    }
+}
+
+def journeymap_api_version = "1.20-1.9-SNAPSHOT"
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${forge_version}"
+
+    implementation project(":core")
+
+    compileOnly fg.deobf("info.journeymap:journeymap-api:${journeymap_api_version}")
+    runtimeOnly fg.deobf("curse.maven:journeymap-32274:5789363")
+    compileOnly fg.deobf("curse.maven:timeless-and-classics-zero-1028108:6654541")
+}
+
+tasks.named('jar', Jar).configure {
+    archiveBaseName.set("battleroyale")
+    archiveVersion.set(mod_version)
+    archiveClassifier.set("forge")
+    from project(':core').sourceSets.main.output
+}
+
+tasks.matching { it.name == 'remapJar' || it.name == 'reobfJar' }.configureEach {
+    if (it.hasProperty("archiveClassifier")) {
+        it.archiveBaseName.set("battleroyale")
+        it.archiveVersion.set(mod_version)
+        it.archiveClassifier.set("forge")
+    }
+}

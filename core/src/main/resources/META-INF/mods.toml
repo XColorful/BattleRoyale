@@ -1,0 +1,41 @@
+modLoader="javafml"
+loaderVersion="[46,)"
+license="GPL3"
+
+[[mods]]
+modId="battleroyale"
+version="${file.jarVersion}"
+displayName="Custom BattleRoyale"
+logoFile="logo.png"
+authors="XiaoColorful"
+description='''
+'''
+
+[[dependencies.battleroyale]]
+    modId="forge"
+    mandatory=true
+    versionRange="[46,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.battleroyale]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20,1.20.2)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.battleroyale]]
+    modId = "journeymap"
+    mandatory = false
+    versionRange = "[5.9.0,)"
+    ordering = "NONE"
+    side = "CLIENT"
+[[dependencies.battleroyale]]
+    modId="playerrevive"
+    mandatory=false
+    versionRange="[2.0.16,]"
+    side="BOTH"
+[[dependencies.battleroyale]]
+    modId="tacz"
+    mandatory=false
+    versionRange="[1.0.2,]"
+    side="BOTH"
