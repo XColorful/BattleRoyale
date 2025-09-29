@@ -71,7 +71,6 @@ public class JourneyMapPlugin implements IClientPlugin {
      */
     @Override
     public void onEvent(ClientEvent event) {
-        BattleRoyale.LOGGER.debug("Not registered but triggered event");
         try {
             switch (event.type) {
                 case DISPLAY_UPDATE, // 这个事件并不会实时更新小地图，绘制放在ClientTickEvent里
