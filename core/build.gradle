@@ -1,0 +1,21 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    copyIdeResources = false
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${forge_version}"
+    compileOnly fg.deobf("net.minecraftforge:forge:${forge_version}")
+}
+
+jar {
+    archiveBaseName.set("battleroyale")
+    archiveVersion.set(mod_version)
+    archiveClassifier.set("core")
+}
