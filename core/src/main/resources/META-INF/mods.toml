@@ -1,20 +1,20 @@
 modLoader="javafml"
-loaderVersion="[46,)"
+loaderVersion="${loader_version_range}"
 license="GPL3"
 
 [[mods]]
 modId="battleroyale"
-version="${file.jarVersion}"
+version="${mod_version}"
 displayName="Custom BattleRoyale"
 logoFile="logo.png"
 authors="XiaoColorful"
-description='''
+description='''Play customizable battleroyale in Minecraft
 '''
 
 [[dependencies.battleroyale]]
-    modId="forge"
+    modId="${target_modloader}"
     mandatory=true
-    versionRange="[46,)"
+    versionRange="${target_version_range}"
     ordering="NONE"
     side="BOTH"
 [[dependencies.battleroyale]]

@@ -36,6 +36,27 @@ minecraft {
     }
 }
 
+tasks.withType(ProcessResources).configureEach {
+    from(project(':core').sourceSets.main.resources)
+
+    def forgeLoaderRange = project.property('forge_version_range')
+
+    var replaceProperties = [
+            mod_license: project.mod_license,
+            mod_version: project.mod_version
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [
+                loader_version_range: forgeLoaderRange,
+                target_modloader: 'forge',
+                target_version_range: forgeLoaderRange,
+                project: project
+        ]
+    }
+}
+
 def journeymap_api_version = "1.20-1.9-SNAPSHOT"
 
 dependencies {
@@ -52,6 +73,7 @@ tasks.named('jar', Jar).configure {
     archiveBaseName.set("battleroyale")
     archiveVersion.set(mod_version)
     archiveClassifier.set("forge1.20.1")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':core').sourceSets.main.output
 }
 
