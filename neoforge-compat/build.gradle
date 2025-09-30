@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     id 'java-library'
     id 'eclipse'
@@ -38,17 +40,24 @@ runs {
 }
 
 tasks.withType(ProcessResources).configureEach {
+    from(project(':core').sourceSets.main.resources)
+
     var replaceProperties = [
             minecraft_version   : minecraft_version, minecraft_version_range: minecraft_version_range,
             neo_version         : neo_version, neo_version_range: neo_version_range,
-            loader_version_range: loader_version_range,
+            neo_loader_version_range: neo_loader_version_range,
             mod_id              : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors         : mod_authors, mod_description: mod_description, pack_format_number: pack_format_number,
     ]
     inputs.properties replaceProperties
 
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
-        expand replaceProperties + [project: project]
+        expand replaceProperties + [
+                loader_version_range: project.neo_loader_version_range,
+                target_modloader: 'neoforge',
+                target_version_range: project.neo_loader_version_range,
+                project: project
+        ]
     }
 }
 
@@ -67,5 +76,6 @@ tasks.named('jar', Jar).configure {
     archiveBaseName.set("battleroyale")
     archiveVersion.set(mod_version)
     archiveClassifier.set("neoforge1.20.2")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':core').sourceSets.main.output
 }

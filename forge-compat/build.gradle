@@ -36,6 +36,34 @@ minecraft {
     }
 }
 
+tasks.withType(ProcessResources).configureEach {
+    from(project(':core').sourceSets.main.resources)
+
+    def forgeLoaderRange = project.property('forge_version_range')
+
+    var replaceProperties = [
+            minecraft_version: project.minecraft_version,
+            minecraft_version_range: project.minecraft_version_range,
+            mod_id: project.mod_id,
+            mod_name: project.mod_name,
+            mod_license: project.mod_license,
+            mod_version: project.mod_version,
+            mod_authors: project.mod_authors,
+            mod_description: project.mod_description,
+            pack_format_number: project.pack_format_number,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [
+                loader_version_range: forgeLoaderRange,
+                target_modloader: 'forge',
+                target_version_range: forgeLoaderRange,
+                project: project
+        ]
+    }
+}
+
 def journeymap_api_version = "1.20-1.9-SNAPSHOT"
 
 dependencies {
@@ -51,6 +79,7 @@ tasks.named('jar', Jar).configure {
     archiveBaseName.set("battleroyale")
     archiveVersion.set(mod_version)
     archiveClassifier.set("forge1.20.2")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':core').sourceSets.main.output
 }
 
