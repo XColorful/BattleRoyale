@@ -1,0 +1,71 @@
+plugins {
+    id 'java-library'
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.neoforged.gradle.userdev' version '7.0.116'
+}
+
+repositories {
+    mavenLocal()
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+runs {
+    configureEach {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+        modSource project.sourceSets.main
+    }
+
+    client {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    server {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
+
+    gameTestServer {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    data {
+        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+}
+
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            minecraft_version   : minecraft_version, minecraft_version_range: minecraft_version_range,
+            neo_version         : neo_version, neo_version_range: neo_version_range,
+            loader_version_range: loader_version_range,
+            mod_id              : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors         : mod_authors, mod_description: mod_description, pack_format_number: pack_format_number,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+//def journeymap_api_version = project.minecraft_version + '-' + '1.9-neoforge-SNAPSHOT'
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neo_version}"
+
+    implementation project(":core")
+
+//    compileOnly fg.deobf("info.journeymap:journeymap-api:${journeymap_api_version}")
+//    runtimeOnly fg.deobf("curse.maven:journeymap-32274:5388275")
+}
+
+tasks.named('jar', Jar).configure {
+    archiveBaseName.set("battleroyale")
+    archiveVersion.set(mod_version)
+    archiveClassifier.set("neoforge1.20.2")
+    from project(':core').sourceSets.main.output
+}
