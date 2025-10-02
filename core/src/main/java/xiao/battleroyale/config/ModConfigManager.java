@@ -65,7 +65,9 @@ public class ModConfigManager implements IModConfigManager, ISideOnly {
     }
 
     @Override public boolean reloadAllConfigs() {
-        return reloadAllConfigManagers() || reloadAllConfigSubManagers();
+        boolean hasReloaded = reloadAllConfigManagers();
+        hasReloaded |= reloadAllConfigSubManagers();
+        return hasReloaded;
     }
     @Override public boolean reloadAllConfigManagers() {
         boolean hasReloaded = false;
