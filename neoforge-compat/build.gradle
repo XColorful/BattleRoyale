@@ -1,5 +1,3 @@
-import org.apache.tools.ant.filters.ReplaceTokens
-
 plugins {
     id 'java-library'
     id 'eclipse'
@@ -61,15 +59,15 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
-//def journeymap_api_version = project.minecraft_version + '-' + '1.9-neoforge-SNAPSHOT'
+def journeymap_api_version = project.minecraft_version + '-' + '1.9-neoforge-SNAPSHOT'
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
 
     implementation project(":core")
 
-//    compileOnly fg.deobf("info.journeymap:journeymap-api:${journeymap_api_version}")
-//    runtimeOnly fg.deobf("curse.maven:journeymap-32274:5388275")
+    compileOnly "info.journeymap:journeymap-api:${journeymap_api_version}"
+    runtimeOnly "curse.maven:journeymap-32274:5388275"
 }
 
 tasks.named('jar', Jar).configure {
