@@ -53,7 +53,7 @@ tasks.withType(ProcessResources).configureEach {
         expand replaceProperties + [
                 loader_version_range: project.neo_loader_version_range,
                 target_modloader: 'neoforge',
-                target_version_range: project.neo_loader_version_range,
+                target_version_range: project.neo_version_range,
                 project: project
         ]
     }
