@@ -66,6 +66,7 @@ dependencies {
 
     implementation project(":core")
 
+    journeymap_api_version = "1.20.2-1.9-SNAPSHOT" // 没有1.20.4neoforge
     compileOnly "info.journeymap:journeymap-api:${journeymap_api_version}"
     runtimeOnly "curse.maven:journeymap-32274:5457874"
 }
