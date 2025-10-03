@@ -1,12 +1,13 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 minecraft {
     mappings channel: mapping_channel, version: mapping_version
     copyIdeResources = true
+    reobf = false
     runs {
         configureEach {
             workingDirectory project.file('run')
@@ -61,21 +62,21 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
-def journeymap_api_version = "1.20-1.9-SNAPSHOT"
+def journeymap_api_version = "2.0.0-1.21.1-SNAPSHOT"
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     implementation project(":core")
 
-    compileOnly fg.deobf("info.journeymap:journeymap-api:${journeymap_api_version}")
-    runtimeOnly fg.deobf("curse.maven:journeymap-32274:5457832")
+    compileOnly fg.deobf("info.journeymap:journeymap-api-forge:${journeymap_api_version}")
+    runtimeOnly fg.deobf("curse.maven:journeymap-32274:6689204")
 }
 
 tasks.named('jar', Jar).configure {
     archiveBaseName.set("battleroyale")
     archiveVersion.set(mod_version)
-    archiveClassifier.set("forge1.20.4")
+    archiveClassifier.set("forge1.21.1")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':core').sourceSets.main.output
 }
@@ -84,6 +85,6 @@ tasks.matching { it.name == 'remapJar' || it.name == 'reobfJar' }.configureEach 
     if (it.hasProperty("archiveClassifier")) {
         it.archiveBaseName.set("battleroyale")
         it.archiveVersion.set(mod_version)
-        it.archiveClassifier.set("forge1.20.4")
+        it.archiveClassifier.set("forge1.21.1")
     }
 }

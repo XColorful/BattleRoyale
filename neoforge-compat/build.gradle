@@ -3,37 +3,43 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.116'
+    id 'net.neoforged.moddev' version '2.0.110'
 }
 
 repositories {
     mavenLocal()
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-runs {
-    configureEach {
-        systemProperty 'forge.logging.markers', 'REGISTRIES'
-        systemProperty 'forge.logging.console.level', 'debug'
-        modSource project.sourceSets.main
+neoForge {
+    runs {
+        configureEach {
+            systemProperty 'neoforge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+
+        client {
+            systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        server {
+            systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+            programArgument '--nogui'
+        }
+
+        gameTestServer {
+            systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        data {
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
     }
-
-    client {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-    }
-
-    server {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-        programArgument '--nogui'
-    }
-
-    gameTestServer {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-    }
-
-    data {
-        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    mods {
+        "${project.mod_id}" {
+            sourceSet(sourceSets.main)
+        }
     }
 }
 
@@ -59,22 +65,21 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
-def journeymap_api_version = project.minecraft_version + '-' + '1.9-neoforge-SNAPSHOT'
+def journeymap_api_version = "2.0.0-1.21.1-SNAPSHOT"
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
 
     implementation project(":core")
 
-    journeymap_api_version = "1.20.2-1.9-SNAPSHOT" // 没有1.20.4neoforge
-    compileOnly "info.journeymap:journeymap-api:${journeymap_api_version}"
-    runtimeOnly "curse.maven:journeymap-32274:5457874"
+    compileOnly "info.journeymap:journeymap-api-neoforge:${journeymap_api_version}"
+    runtimeOnly "curse.maven:journeymap-32274:6689206"
 }
 
 tasks.named('jar', Jar).configure {
     archiveBaseName.set("battleroyale")
     archiveVersion.set(mod_version)
-    archiveClassifier.set("neoforge1.20.4")
+    archiveClassifier.set("neoforge1.21.1")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':core').sourceSets.main.output
 }
