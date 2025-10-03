@@ -73,7 +73,7 @@ dependencies {
 tasks.named('jar', Jar).configure {
     archiveBaseName.set("battleroyale")
     archiveVersion.set(mod_version)
-    archiveClassifier.set("neoforge1.20.3")
+    archiveClassifier.set("neoforge1.20.4")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':core').sourceSets.main.output
 }

@@ -75,7 +75,7 @@ dependencies {
 tasks.named('jar', Jar).configure {
     archiveBaseName.set("battleroyale")
     archiveVersion.set(mod_version)
-    archiveClassifier.set("forge1.20.3")
+    archiveClassifier.set("forge1.20.4")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':core').sourceSets.main.output
 }
@@ -84,6 +84,6 @@ tasks.matching { it.name == 'remapJar' || it.name == 'reobfJar' }.configureEach 
     if (it.hasProperty("archiveClassifier")) {
         it.archiveBaseName.set("battleroyale")
         it.archiveVersion.set(mod_version)
-        it.archiveClassifier.set("forge1.20.3")
+        it.archiveClassifier.set("forge1.20.4")
     }
 }
