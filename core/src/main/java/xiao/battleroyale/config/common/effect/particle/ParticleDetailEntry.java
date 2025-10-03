@@ -62,7 +62,7 @@ public record ParticleDetailEntry(ResourceLocation particleType, int count, int 
     }
 
     public static ParticleDetailEntry fromJson(JsonObject jsonObject) {
-        ResourceLocation particleRL = ResourceLocation.tryParse(JsonUtils.getJsonString(jsonObject, ParticleConfigTag.TYPE, ""));
+        ResourceLocation particleRL = BattleRoyale.getMcRegistry().createResourceLocation(JsonUtils.getJsonString(jsonObject, ParticleConfigTag.TYPE, ""));
         if (particleRL == null || BattleRoyale.getMcRegistry().getParticleType(particleRL) == null) {
             return null;
         }

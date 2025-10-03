@@ -129,7 +129,7 @@ public class NBTUtils {
             }
 
             // 尝试根据 blockId 获取方块，否则回退到空气方块的默认状态
-            ResourceLocation rl = ResourceLocation.tryParse(blockId);
+            ResourceLocation rl = BattleRoyale.getMcRegistry().createResourceLocation(blockId);
             Block block = (rl != null) ? BattleRoyale.getMcRegistry().getBlock(rl) : null;
             return block != null ? block.defaultBlockState() : Blocks.AIR.defaultBlockState();
         }
