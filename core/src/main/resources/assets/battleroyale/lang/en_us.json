@@ -168,6 +168,7 @@
   "battleroyale.message.failed_lobby_teleport": "Failed to teleport to lobby",
   "battleroyale.message.not_allow_standing_gameplayer_spectate": "Spectating is not allowed for standing game players",
   "battleroyale.message.not_allow_standing_gameteam_spectate": "Spectating is not allowed for standing game teams",
+  "battleroyale.message.not_allow_standing_gameplayer_teleport": "Teleport is not allowed for standing game players",
   "battleroyale.message.selected_bot_config": "Bot config %s: %s",
   "battleroyale.message.selected_gamerule_config": "Gamerule config %s: %s",
   "battleroyale.message.selected_spawn_config": "Spawn config %s: %s",
