@@ -39,8 +39,6 @@ minecraft {
 tasks.withType(ProcessResources).configureEach {
     from(project(':core').sourceSets.main.resources)
 
-    def forgeLoaderRange = project.property('forge_version_range')
-
     var replaceProperties = [
             minecraft_version: project.minecraft_version,
             minecraft_version_range: project.minecraft_version_range,
@@ -56,9 +54,9 @@ tasks.withType(ProcessResources).configureEach {
 
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
         expand replaceProperties + [
-                loader_version_range: forgeLoaderRange,
+                loader_version_range: project.property('forge_loader_version_range'),
                 target_modloader: 'forge',
-                target_version_range: forgeLoaderRange,
+                target_version_range: project.property('forge_version_range'),
                 project: project
         ]
     }
