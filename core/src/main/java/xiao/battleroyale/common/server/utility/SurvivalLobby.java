@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -151,7 +150,7 @@ public class SurvivalLobby implements ILobbyReadApi {
             return false;
         }
         this.levelKeyString = levelKeyString;
-        this.levelKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(levelKeyString));
+        this.levelKey = ResourceKey.create(Registries.DIMENSION, BattleRoyale.getMcRegistry().createResourceLocation(levelKeyString));
         this.allowGamePlayerTeleport = allowGamePlayerTeleport;
 
         this.lobbyPos = lobbyPos;
