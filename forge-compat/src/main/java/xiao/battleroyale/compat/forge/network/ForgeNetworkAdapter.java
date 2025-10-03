@@ -9,6 +9,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.message.IMessage;
 import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.MessageDirection;
+import xiao.battleroyale.compat.forge.BattleRoyaleForge;
 import xiao.battleroyale.network.NetworkHandler;
 
 import java.util.Optional;
@@ -19,7 +20,7 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
 
     public ForgeNetworkAdapter() {
         this.channel = NetworkRegistry.newSimpleChannel(
-                BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:game_channel", BattleRoyale.MOD_ID)),
+                BattleRoyaleForge.mcRegistry.createResourceLocation(String.format("%s:game_channel", BattleRoyale.MOD_ID)),
                 () -> NetworkHandler.PROTOCOL_VERSION,
                 NetworkHandler.getProtocolAcceptancePredicate(), // 服务端 -> 客户端
                 NetworkHandler.getProtocolAcceptancePredicate() // 客户端 -> 服务端
