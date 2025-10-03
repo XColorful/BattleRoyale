@@ -1,6 +1,5 @@
 package xiao.battleroyale.compat.forge.network;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -20,7 +19,7 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
 
     public ForgeNetworkAdapter() {
         this.channel = NetworkRegistry.newSimpleChannel(
-                new ResourceLocation(BattleRoyale.MOD_ID, "game_channel"),
+                BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:game_channel", BattleRoyale.MOD_ID)),
                 () -> NetworkHandler.PROTOCOL_VERSION,
                 NetworkHandler.getProtocolAcceptancePredicate(), // 服务端 -> 客户端
                 NetworkHandler.getProtocolAcceptancePredicate() // 客户端 -> 服务端
