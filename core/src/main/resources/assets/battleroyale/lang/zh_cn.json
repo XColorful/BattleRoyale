@@ -168,6 +168,7 @@
   "battleroyale.message.failed_lobby_teleport": "无法传送至大厅",
   "battleroyale.message.not_allow_standing_gameplayer_spectate": "当前不允许未被淘汰的游戏玩家观战",
   "battleroyale.message.not_allow_standing_gameteam_spectate": "当前不允许未被淘汰的游戏队伍观战",
+  "battleroyale.message.not_allow_standing_gameplayer_teleport": "当前不允许未被淘汰的游戏玩家传送",
   "battleroyale.message.selected_bot_config": "人机配置%s: %s",
   "battleroyale.message.selected_gamerule_config": "大逃杀规则配置%s: %s",
   "battleroyale.message.selected_spawn_config": "出生配置%s: %s",
