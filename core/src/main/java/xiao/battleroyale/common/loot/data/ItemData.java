@@ -1,7 +1,6 @@
 package xiao.battleroyale.common.loot.data;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +17,7 @@ public class ItemData implements IItemLootData {
     private final boolean isEmpty;
 
     public ItemData(String rl, @NotNull CompoundTag nbt, int count) {
-        this.item = BattleRoyale.getMcRegistry().getItem(new ResourceLocation(rl));
+        this.item = BattleRoyale.getMcRegistry().getItem(BattleRoyale.getMcRegistry().createResourceLocation(rl));
         this.isEmpty = this.item == null
                 || (this.item.toString().equals(EMPTY_TYPE) && !rl.equals(EMPTY_RL));
         if (this.item == null) {

@@ -4,11 +4,11 @@ import com.google.gson.JsonObject;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
@@ -29,7 +29,7 @@ public class BiomeEntry implements ILootEntry {
         this.invert = invert;
         this.biomeList = biomeList;
         for (String id : biomeList) {
-            biomes.add(ResourceKey.create(Registries.BIOME, new ResourceLocation(id)));
+            biomes.add(ResourceKey.create(Registries.BIOME, BattleRoyale.getMcRegistry().createResourceLocation(id)));
         }
         this.entry = entry;
     }

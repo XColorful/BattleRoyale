@@ -1,7 +1,6 @@
 package xiao.battleroyale.common.loot.data;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -21,7 +20,7 @@ public class EntityData implements IEntityLootData {
     private final boolean isEmpty;
 
     public EntityData(String rl, @NotNull CompoundTag nbt, int count, int range) {
-        this.entityType = BattleRoyale.getMcRegistry().getEntityType(new ResourceLocation(rl));
+        this.entityType = BattleRoyale.getMcRegistry().getEntityType(BattleRoyale.getMcRegistry().createResourceLocation(rl));
         if (this.entityType == null
                 || (this.entityType.toString().equals(EMPTY_TYPE) && !rl.equals(EMPTY_RL))) {
             this.isEmpty = true;
