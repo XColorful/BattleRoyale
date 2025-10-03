@@ -20,7 +20,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
     private final String protocolVersionString = String.valueOf(NetworkHandler.PROTOCOL_VERSION);
 
     public NeoNetworkAdapter() {
-        ResourceLocation channelName = new ResourceLocation(BattleRoyale.MOD_ID, "game_channel");
+        ResourceLocation channelName = BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:game_channel", BattleRoyale.MOD_ID));
 
         this.channel = NetworkRegistry.newSimpleChannel(
                 channelName,
