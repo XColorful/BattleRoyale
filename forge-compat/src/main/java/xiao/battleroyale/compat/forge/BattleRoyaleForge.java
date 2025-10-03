@@ -36,7 +36,9 @@ public class BattleRoyaleForge {
     private final IBlockModelRenderer blockModelRenderer;
     private final BattleRoyale.CompatApi compatApi;
 
-    public BattleRoyaleForge() {
+    public BattleRoyaleForge(FMLJavaModLoadingContext context) {
+        IEventBus modEventBus = context.getModEventBus();
+
         this.registrarFactory = new ForgeRegistrarFactory();
         this.mcRegistry = new ForgeRegistry();
         this.networkAdapter = new ForgeNetworkAdapter();
@@ -66,8 +68,6 @@ public class BattleRoyaleForge {
         } catch (ClassNotFoundException e) {
             BattleRoyale.LOGGER.error("Failed to load core registrar class: {}", e.getMessage());
         }
-
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModBlocks.BLOCKS.registerAll(modEventBus);
         ModBlocks.BLOCK_ENTITIES.registerAll(modEventBus);

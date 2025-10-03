@@ -3,6 +3,7 @@ package xiao.battleroyale.client.gui;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.inventory.LootSpawnerMenu;
 
 public class LootSpawnerScreen extends AbstractLootContainerScreen<LootSpawnerMenu> {
@@ -33,6 +34,6 @@ public class LootSpawnerScreen extends AbstractLootContainerScreen<LootSpawnerMe
 
     @Override
     protected void adjustTexture() {
-        super.adjustTexture(new ResourceLocation("battleroyale", "textures/gui/loot_spawner_gui.png"));
+        super.adjustTexture(ResourceLocation.parse(String.format("%s:textures/gui/loot_spawner_gui.png", BattleRoyale.MOD_ID)));
     }
 }

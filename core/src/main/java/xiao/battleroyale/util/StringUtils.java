@@ -96,6 +96,6 @@ public class StringUtils {
         if (component == null) {
             return "";
         }
-        return Component.Serializer.toStableJson(component);
+        return Component.Serializer.toJson(component);
     }
 }

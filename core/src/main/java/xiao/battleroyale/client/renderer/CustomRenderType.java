@@ -12,7 +12,7 @@ import xiao.battleroyale.BattleRoyale;
 
 public class CustomRenderType {
 
-    private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(BattleRoyale.MOD_ID, "textures/white.png");
+    private static final ResourceLocation WHITE_TEXTURE = ResourceLocation.parse(String.format("%s:textures/white.png", BattleRoyale.MOD_ID));
     public static final RenderType SolidTranslucentColor = createSolidTranslucent();
     public static final RenderType SolidOpaqueColor = createSolidOpaque();
 

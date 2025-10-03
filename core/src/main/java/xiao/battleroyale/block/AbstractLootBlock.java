@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -18,13 +19,13 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -41,13 +42,8 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     protected static VoxelShape SHAPE = Block.box(0, 0, 0, 16, 1, 16);
 
-    public AbstractLootBlock() {
-        super(Properties.of()
-                .sound(SoundType.WOOD)
-                .strength(2.5F, 2.5F)
-                .noOcclusion()
-                .noCollission()
-        );
+    public AbstractLootBlock(BlockBehaviour.Properties properties) {
+        super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
@@ -112,8 +108,8 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
-        BlockEntity blockentity = level.getBlockEntity(pos);
+    public ItemStack getCloneItemStack(LevelReader levelReader, BlockPos pos, BlockState state) {
+        BlockEntity blockentity = levelReader.getBlockEntity(pos);
         if (blockentity instanceof LootSpawnerBlockEntity e) {
             UUID gameId = e.getGameId();
             int configId = e.getConfigId();
@@ -129,7 +125,7 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
                     })
                     .build();
         }
-        return super.getCloneItemStack(state, target, level, pos, player);
+        return super.getCloneItemStack(levelReader, pos, state);
     }
 
     public float parseRotation(Direction direction) {

@@ -1,5 +1,6 @@
 package xiao.battleroyale.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -8,8 +9,11 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -26,11 +30,23 @@ import xiao.battleroyale.network.NetworkHook;
 import java.util.List;
 
 public class LootSpawner extends AbstractLootBlock {
+    public static final MapCodec<LootSpawner> CODEC = simpleCodec(LootSpawner::new);
+
     public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
 
-    public LootSpawner() {
-        super();
+    public LootSpawner(BlockBehaviour.Properties properties) {
+        super(Properties.of()
+                .sound(SoundType.WOOD)
+                .strength(2.5F, 2.5F)
+                .noOcclusion()
+                .noCollission()
+        );
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override

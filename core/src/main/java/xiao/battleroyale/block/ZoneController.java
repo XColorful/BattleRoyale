@@ -1,5 +1,6 @@
 package xiao.battleroyale.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -31,10 +33,12 @@ import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.util.ChatUtils;
 
 public class ZoneController extends BaseEntityBlock {
+    public static final MapCodec<ZoneController> CODEC = simpleCodec(ZoneController::new);
+
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     protected static VoxelShape SHAPE = Block.box(0, 0, 0, 16, 6, 16);
 
-    public ZoneController() {
+    public ZoneController(BlockBehaviour.Properties properties) {
         super(Properties.of()
                 .sound(SoundType.STONE)
                 .strength(2.5F, 2.5F)
@@ -42,6 +46,11 @@ public class ZoneController extends BaseEntityBlock {
                 .noCollission()
         );
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override

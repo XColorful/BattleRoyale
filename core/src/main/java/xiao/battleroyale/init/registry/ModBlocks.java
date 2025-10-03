@@ -1,7 +1,9 @@
 package xiao.battleroyale.init.registry;
 
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.init.registry.IRegistrar;
 import xiao.battleroyale.api.init.registry.IRegistryObject;
@@ -21,9 +23,12 @@ public class ModBlocks {
     public static final IRegistrar<BlockEntityType<?>> BLOCK_ENTITIES =
             BattleRoyale.getRegistrarFactory().createBlockEntities(BattleRoyale.MOD_ID);
 
-    public static final IRegistryObject<Block> LOOT_SPAWNER = BLOCKS.register("loot_spawner", LootSpawner::new);
-    public static final IRegistryObject<Block> ENTITY_SPAWNER = BLOCKS.register("entity_spawner", EntitySpawner::new);
-    public static final IRegistryObject<Block> ZONE_CONTROLLER = BLOCKS.register("zone_controller", ZoneController::new);
+    public static final IRegistryObject<Block> LOOT_SPAWNER = BLOCKS.register("loot_spawner", () ->
+            new LootSpawner(BlockBehaviour.Properties.of()));
+    public static final IRegistryObject<Block> ENTITY_SPAWNER = BLOCKS.register("entity_spawner", () ->
+            new EntitySpawner(BlockBehaviour.Properties.of()));
+    public static final IRegistryObject<Block> ZONE_CONTROLLER = BLOCKS.register("zone_controller", () ->
+            new ZoneController(BlockBehaviour.Properties.of()));
 
     public static final IRegistryObject<BlockEntityType<LootSpawnerBlockEntity>> LOOT_SPAWNER_BE =
             BLOCK_ENTITIES.register("loot_spawner", () ->

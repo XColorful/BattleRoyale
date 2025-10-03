@@ -19,7 +19,7 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
         int protocolVersion = NetworkHandler.PROTOCOL_VERSION;
         Channel.VersionTest acceptedVersions = Channel.VersionTest.exact(protocolVersion);
         this.channel = ChannelBuilder
-                .named(new ResourceLocation(BattleRoyale.MOD_ID, "game_channel"))
+                .named(ResourceLocation.tryParse(String.format("%s:game_channel", BattleRoyale.MOD_ID)))
                 .networkProtocolVersion(protocolVersion) // 协议版本必须是 int
                 .clientAcceptedVersions(acceptedVersions) // 客户端接受版本
                 .serverAcceptedVersions(acceptedVersions) // 服务端接受版本
