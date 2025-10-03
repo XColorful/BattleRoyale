@@ -14,6 +14,10 @@ import javax.annotation.Nullable;
 
 public class NeoRegistry implements IMcRegistry {
 
+    @Override public ResourceLocation createResourceLocation(String rlString) {
+        return new ResourceLocation(rlString);
+    }
+
     @Override public @Nullable Block getBlock(ResourceLocation rl) {
         return BuiltInRegistries.BLOCK.get(rl);
     }
