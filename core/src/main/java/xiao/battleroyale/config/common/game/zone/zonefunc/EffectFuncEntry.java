@@ -36,7 +36,7 @@ public class EffectFuncEntry extends AbstractFuncEntry {
     public EffectFunc build() {
         List<Effect> effects = new ArrayList<>();
         for (EffectEntry effectEntry : effectEntries) {
-            ResourceLocation rl = ResourceLocation.tryParse(effectEntry.rlString);
+            ResourceLocation rl = BattleRoyale.getMcRegistry().createResourceLocation(effectEntry.rlString);
             if (rl == null) {
                 continue;
             }
