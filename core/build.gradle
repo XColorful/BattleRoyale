@@ -1,5 +1,5 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -10,8 +10,8 @@ minecraft {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${forge_version}"
-    compileOnly fg.deobf("net.minecraftforge:forge:${forge_version}")
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    compileOnly fg.deobf("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
 }
 
 jar {
