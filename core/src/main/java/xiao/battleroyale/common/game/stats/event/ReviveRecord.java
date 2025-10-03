@@ -1,6 +1,6 @@
 package xiao.battleroyale.common.game.stats.event;
 
-import javax.json.JsonObject;
+import com.google.gson.JsonObject;
 
 /**
  * 救援事件的记录，包含倒地扶起，不死图腾自救

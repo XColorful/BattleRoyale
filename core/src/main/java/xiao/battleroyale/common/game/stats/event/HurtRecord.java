@@ -1,6 +1,6 @@
 package xiao.battleroyale.common.game.stats.event;
 
-import javax.json.JsonObject;
+import com.google.gson.JsonObject;
 
 /**
  * 伤害事件的记录

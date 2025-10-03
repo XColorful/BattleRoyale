@@ -1,6 +1,6 @@
 package xiao.battleroyale.common.game.stats.event;
 
-import javax.json.JsonObject;
+import com.google.gson.JsonObject;
 
 /**
  * 淘汰事件记录

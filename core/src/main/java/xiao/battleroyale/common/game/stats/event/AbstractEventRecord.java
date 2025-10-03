@@ -1,6 +1,6 @@
 package xiao.battleroyale.common.game.stats.event;
 
-import javax.json.JsonObject;
+import com.google.gson.JsonObject;
 
 public abstract class AbstractEventRecord<T extends AbstractEventRecord<T>> {
 
