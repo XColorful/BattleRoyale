@@ -6,6 +6,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.message.IMessage;
 import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.MessageDirection;
+import xiao.battleroyale.compat.forge.BattleRoyaleForge;
 import xiao.battleroyale.network.NetworkHandler;
 
 import java.lang.reflect.Method;
@@ -18,7 +19,7 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
         int protocolVersion = NetworkHandler.PROTOCOL_VERSION;
         Channel.VersionTest acceptedVersions = Channel.VersionTest.exact(protocolVersion);
         this.channel = ChannelBuilder
-                .named(BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:game_channel", BattleRoyale.MOD_ID)))
+                .named(BattleRoyaleForge.mcRegistry.createResourceLocation(String.format("%s:game_channel", BattleRoyale.MOD_ID)))
                 .networkProtocolVersion(protocolVersion) // 协议版本必须是 int
                 .clientAcceptedVersions(acceptedVersions) // 客户端接受版本
                 .serverAcceptedVersions(acceptedVersions) // 服务端接受版本

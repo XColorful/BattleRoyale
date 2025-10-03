@@ -27,35 +27,35 @@ import xiao.battleroyale.init.registry.*;
 @Mod(BattleRoyale.MOD_ID)
 public class BattleRoyaleForge {
 
-    private final IRegistrarFactory registrarFactory;
-    private final IMcRegistry mcRegistry;
-    private final INetworkAdapter networkAdapter;
-    private final INetworkHook networkHook;
-    private final IEventRegister eventRegister;
-    private final IEventPoster eventPoster;
-    private final IBlockModelRenderer blockModelRenderer;
-    private final BattleRoyale.CompatApi compatApi;
+    public static IRegistrarFactory registrarFactory;
+    public static IMcRegistry mcRegistry;
+    public static INetworkAdapter networkAdapter;
+    public static INetworkHook networkHook;
+    public static IEventRegister eventRegister;
+    public static IEventPoster eventPoster;
+    public static IBlockModelRenderer blockModelRenderer;
+    public static BattleRoyale.CompatApi compatApi;
 
     public BattleRoyaleForge(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
 
-        this.registrarFactory = new ForgeRegistrarFactory();
-        this.mcRegistry = new ForgeRegistry();
-        this.networkAdapter = new ForgeNetworkAdapter();
-        this.networkHook = new ForgeNetworkHook();
-        this.eventRegister = new ForgeEventRegister();
-        this.eventPoster = new ForgeEventPoster();
-        this.blockModelRenderer = new ForgeBlockModelRenderer();
-        this.compatApi = new BattleRoyale.CompatApi(JmApi.get());
+        BattleRoyaleForge.registrarFactory = new ForgeRegistrarFactory();
+        BattleRoyaleForge.mcRegistry = new ForgeRegistry();
+        BattleRoyaleForge.networkAdapter = new ForgeNetworkAdapter();
+        BattleRoyaleForge.networkHook = new ForgeNetworkHook();
+        BattleRoyaleForge.eventRegister = new ForgeEventRegister();
+        BattleRoyaleForge.eventPoster = new ForgeEventPoster();
+        BattleRoyaleForge.blockModelRenderer = new ForgeBlockModelRenderer();
+        BattleRoyaleForge.compatApi = new BattleRoyale.CompatApi(JmApi.get());
         Dist dist = FMLLoader.getDist();
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
 
         BattleRoyale.init(mcSide,
-                this.registrarFactory, this.mcRegistry,
-                this.networkAdapter, this.networkHook,
-                this.eventRegister, this.eventPoster,
-                this.blockModelRenderer,
-                this.compatApi);
+                BattleRoyaleForge.registrarFactory, BattleRoyaleForge.mcRegistry,
+                BattleRoyaleForge.networkAdapter, BattleRoyaleForge.networkHook,
+                BattleRoyaleForge.eventRegister, BattleRoyaleForge.eventPoster,
+                BattleRoyaleForge.blockModelRenderer,
+                BattleRoyaleForge.compatApi);
 
         // 确保所有 ModXXX 静态字段被初始化
         try {
