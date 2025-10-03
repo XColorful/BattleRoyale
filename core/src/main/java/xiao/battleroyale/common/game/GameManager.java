@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -394,7 +393,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         StatsManager.get().stopGame(serverLevel);
 
         // 游戏中途若修改配置，在游戏结束后生效
-        setGameLevelKey(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(this.gameLevelKeyString)));
+        setGameLevelKey(ResourceKey.create(Registries.DIMENSION, BattleRoyale.getMcRegistry().createResourceLocation(this.gameLevelKeyString)));
         EventPoster.postEvent(new GameStopFinishData(this, serverLevel));
     }
 
@@ -485,7 +484,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (isInGame()) {
             BattleRoyale.LOGGER.warn("GameManager is in game, reject to set default level ({})", levelKeyString);
         } else { // 不在游戏中就直接设置
-            setGameLevelKey(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(levelKeyString)));
+            setGameLevelKey(ResourceKey.create(Registries.DIMENSION, BattleRoyale.getMcRegistry().createResourceLocation(levelKeyString)));
             BattleRoyale.LOGGER.debug("Set GameManager.gameLevelKey to {}", this.gameLevelKey);
         }
     }
