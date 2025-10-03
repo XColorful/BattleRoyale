@@ -103,7 +103,7 @@ public class DebugWorld {
 
     public static final String GET_SERVER_LEVEL = "getServerLevel";
     public void getServerLevel(CommandSourceStack source, String levelKeyString) {
-        ResourceKey<Level> levelKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(levelKeyString));
+        ResourceKey<Level> levelKey = ResourceKey.create(Registries.DIMENSION, BattleRoyale.getMcRegistry().createResourceLocation(levelKeyString));
         ServerLevel serverLevel = BattleRoyale.getMinecraftServer().getLevel(levelKey);
 
         DebugManager.sendDebugMessage(source, GET_SERVER_LEVEL, WorldText.buildServerLevel(serverLevel, levelKey, levelKeyString));

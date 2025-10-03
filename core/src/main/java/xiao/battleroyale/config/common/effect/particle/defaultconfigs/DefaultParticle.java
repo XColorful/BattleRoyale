@@ -2,8 +2,8 @@ package xiao.battleroyale.config.common.effect.particle.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager;
 import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager.ParticleConfig;
@@ -29,7 +29,7 @@ public class DefaultParticle {
     private static JsonObject generateDefaultParticleConfig0() {
         ParticleParameterEntry parameterEntry = new ParticleParameterEntry(0.1F,"#FFD700", 1, 0, null);
 
-        ParticleDetailEntry detailEntry = new ParticleDetailEntry(new ResourceLocation("minecraft:explosion_emitter"),
+        ParticleDetailEntry detailEntry = new ParticleDetailEntry(BattleRoyale.getMcRegistry().createResourceLocation("minecraft:explosion_emitter"),
                 3, 1, 8, 3, // 1 + 8 * 3 = 史 * 寄
                 new Vec3(0, 0, 0), new Vec3(8, 1, 8), true,
                 parameterEntry);
@@ -40,7 +40,7 @@ public class DefaultParticle {
     }
 
     private static JsonObject generateDefaultParticleConfig1() {
-        ParticleDetailEntry detailEntry = new ParticleDetailEntry(new ResourceLocation("minecraft:explosion"),
+        ParticleDetailEntry detailEntry = new ParticleDetailEntry(BattleRoyale.getMcRegistry().createResourceLocation("minecraft:explosion"),
                 1,20, 20, 10,
                 null, null, false,
                 null);
@@ -53,7 +53,7 @@ public class DefaultParticle {
     private static JsonObject generateDefaultParticleConfig2() {
         ParticleParameterEntry parameterEntry = new ParticleParameterEntry(0.1F,"#0000FF", 1, 0, null);
 
-        ParticleDetailEntry detailEntry = new ParticleDetailEntry(new ResourceLocation("minecraft:dust"),
+        ParticleDetailEntry detailEntry = new ParticleDetailEntry(BattleRoyale.getMcRegistry().createResourceLocation("minecraft:dust"),
                 10, 20, 20, 10,
                 new Vec3(1, 0, 1), new Vec3(2, 1, 2), false,
                 parameterEntry);

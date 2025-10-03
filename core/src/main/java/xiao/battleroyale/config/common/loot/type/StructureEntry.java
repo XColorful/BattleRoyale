@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -32,7 +31,7 @@ public class StructureEntry implements ILootEntry {
         this.invert = invert;
         this.structureList = structureList;
         for (String id : structureList) {
-            structures.add(ResourceKey.create(Registries.STRUCTURE, new ResourceLocation(id)));
+            structures.add(ResourceKey.create(Registries.STRUCTURE, BattleRoyale.getMcRegistry().createResourceLocation(id)));
         }
         this.entry = entry;
     }
