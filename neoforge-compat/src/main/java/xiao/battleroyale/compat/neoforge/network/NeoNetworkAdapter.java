@@ -10,6 +10,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.MessageDirection;
 import xiao.battleroyale.api.network.message.IMessage;
+import xiao.battleroyale.compat.neoforge.BattleRoyaleNeoforge;
 import xiao.battleroyale.network.NetworkHandler;
 
 import java.lang.reflect.Method;
@@ -20,7 +21,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
     private final String protocolVersionString = String.valueOf(NetworkHandler.PROTOCOL_VERSION);
 
     public NeoNetworkAdapter() {
-        ResourceLocation channelName = BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:game_channel", BattleRoyale.MOD_ID));
+        ResourceLocation channelName = BattleRoyaleNeoforge.mcRegistry.createResourceLocation(String.format("%s:game_channel", BattleRoyale.MOD_ID));
 
         this.channel = NetworkRegistry.newSimpleChannel(
                 channelName,

@@ -26,38 +26,38 @@ import xiao.battleroyale.init.registry.*;
 @Mod(BattleRoyale.MOD_ID)
 public class BattleRoyaleNeoforge {
 
-    private final IRegistrarFactory registrarFactory;
-    private final IMcRegistry mcRegistry;
-    private final INetworkAdapter networkAdapter;
-    private final INetworkHook networkHook;
-    private final IEventRegister eventRegister;
-    private final IEventPoster eventPoster;
-    private final IBlockModelRenderer blockModelRenderer;
-    private final BattleRoyale.CompatApi compatApi;
+    public static IRegistrarFactory registrarFactory;
+    public static IMcRegistry mcRegistry;
+    public static INetworkAdapter networkAdapter;
+    public static INetworkHook networkHook;
+    public static IEventRegister eventRegister;
+    public static IEventPoster eventPoster;
+    public static IBlockModelRenderer blockModelRenderer;
+    public static BattleRoyale.CompatApi compatApi;
 
     public BattleRoyaleNeoforge(IEventBus modEventBus) {
 
-        this.registrarFactory = new NeoRegistrarFactory();
-        this.mcRegistry = new NeoRegistry();
-        this.networkAdapter = new NeoNetworkAdapter();
-        this.networkHook = new NeoNetworkHook();
-        this.eventRegister = new NeoEventRegister();
-        this.eventPoster = new NeoEventPoster();
-        this.blockModelRenderer = new NeoBlockModelRenderer();
-        this.compatApi = new BattleRoyale.CompatApi(JmApi.get());
+        BattleRoyaleNeoforge.registrarFactory = new NeoRegistrarFactory();
+        BattleRoyaleNeoforge.mcRegistry = new NeoRegistry();
+        BattleRoyaleNeoforge.networkAdapter = new NeoNetworkAdapter();
+        BattleRoyaleNeoforge.networkHook = new NeoNetworkHook();
+        BattleRoyaleNeoforge.eventRegister = new NeoEventRegister();
+        BattleRoyaleNeoforge.eventPoster = new NeoEventPoster();
+        BattleRoyaleNeoforge.blockModelRenderer = new NeoBlockModelRenderer();
+        BattleRoyaleNeoforge.compatApi = new BattleRoyale.CompatApi(JmApi.get());
 
         Dist dist = FMLLoader.getDist();
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
 
         BattleRoyale.init(mcSide,
-                this.registrarFactory,
-                this.mcRegistry,
-                this.networkAdapter,
-                this.networkHook,
-                this.eventRegister,
-                this.eventPoster,
-                this.blockModelRenderer,
-                this.compatApi
+                BattleRoyaleNeoforge.registrarFactory,
+                BattleRoyaleNeoforge.mcRegistry,
+                BattleRoyaleNeoforge.networkAdapter,
+                BattleRoyaleNeoforge.networkHook,
+                BattleRoyaleNeoforge.eventRegister,
+                BattleRoyaleNeoforge.eventPoster,
+                BattleRoyaleNeoforge.blockModelRenderer,
+                BattleRoyaleNeoforge.compatApi
         );
 
         try {
