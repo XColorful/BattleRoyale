@@ -40,6 +40,7 @@ public class BattleRoyaleNeoforge {
         this.registrarFactory = new NeoRegistrarFactory();
         this.mcRegistry = new NeoRegistry();
         this.networkAdapter = new NeoNetworkAdapter();
+        modEventBus.register(this.networkAdapter);
         this.networkHook = new NeoNetworkHook();
         this.eventRegister = new NeoEventRegister();
         this.eventPoster = new NeoEventPoster();
