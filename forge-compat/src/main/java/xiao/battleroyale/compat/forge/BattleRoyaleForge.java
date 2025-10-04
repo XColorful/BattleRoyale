@@ -57,18 +57,6 @@ public class BattleRoyaleForge {
                 BattleRoyaleForge.blockModelRenderer,
                 BattleRoyaleForge.compatApi);
 
-        // 确保所有 ModXXX 静态字段被初始化
-        try {
-            Class.forName(ModBlocks.class.getName());
-            Class.forName(ModCreativeTabs.class.getName());
-            Class.forName(ModItems.class.getName());
-            Class.forName(ModEntities.class.getName());
-            Class.forName(ModMenuTypes.class.getName());
-            Class.forName(ModSounds.class.getName());
-        } catch (ClassNotFoundException e) {
-            BattleRoyale.LOGGER.error("Failed to load core registrar class: {}", e.getMessage());
-        }
-
         ModBlocks.BLOCKS.registerAll(modEventBus);
         ModBlocks.BLOCK_ENTITIES.registerAll(modEventBus);
         ModCreativeTabs.TABS.registerAll(modEventBus);

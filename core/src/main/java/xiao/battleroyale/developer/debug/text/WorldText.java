@@ -48,9 +48,10 @@ public class WorldText {
         if (blockPos == null || blockEntity == null) {
             return component;
         }
-        CompoundTag fullNbt = blockEntity.saveWithFullMetadata();
+        CompoundTag fullNbt = blockEntity.saveWithFullMetadata(serverLevel.registryAccess());
         int nbtCount = fullNbt.isEmpty() ? 0 : fullNbt.getAllKeys().size();
-        CompoundTag forgeData = blockEntity.getPersistentData();
+
+        CompoundTag forgeData = fullNbt.getCompound("ForgeData");
         int forgeCount = forgeData.isEmpty() ? 0 : forgeData.getAllKeys().size();
 
         // Vanilla

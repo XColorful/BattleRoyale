@@ -1,8 +1,10 @@
 package xiao.battleroyale.common.loot.data;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -35,7 +37,8 @@ public class ItemData implements IItemLootData {
         }
         ItemStack itemStack = new ItemStack(this.item, this.count);
         if (!this.nbt.isEmpty()) {
-            itemStack.setTag(this.nbt);
+            CustomData customData = CustomData.of(this.nbt);
+            itemStack.set(DataComponents.CUSTOM_DATA, customData);
         }
         return itemStack;
     }

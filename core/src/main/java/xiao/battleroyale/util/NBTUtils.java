@@ -2,6 +2,7 @@ package xiao.battleroyale.util;
 
 import com.google.gson.JsonObject;
 import com.mojang.serialization.DataResult;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
@@ -120,7 +121,7 @@ public class NBTUtils {
         } else {
             // 解析失败，记录警告并回退到默认方块状态
             String blockId = nbt.getString("Name");
-            Optional<DataResult.PartialResult<BlockState>> errorResult = result.error(); // 获取错误信息
+            Optional<DataResult.Error<BlockState>> errorResult = result.error(); // 获取错误信息
 
             if (errorResult.isPresent()) {
                 BattleRoyale.LOGGER.warn("Failed to parse BlockState from NBT: '{}', reason: {}. Returning default BlockState for {}.", nbt, errorResult.get().message(), blockId);
@@ -141,7 +142,8 @@ public class NBTUtils {
             return ItemStack.EMPTY;
         }
         try {
-            return ItemStack.of(nbt);
+            HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
+            return  registries != null ? ItemStack.parseOptional(registries, nbt) : ItemStack.EMPTY;
         } catch (Exception e) {
             BattleRoyale.LOGGER.warn("Failed to parse ItemStack from NBT: '{}', reason: {}", nbt, e.getMessage());
             return ItemStack.EMPTY;

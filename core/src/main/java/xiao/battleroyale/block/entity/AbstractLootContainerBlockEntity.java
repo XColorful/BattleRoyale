@@ -1,10 +1,12 @@
 package xiao.battleroyale.block.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -67,7 +69,8 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
             this.items.set(index, ItemStack.EMPTY);
         }
         this.setChanged();
-        sendBlockUpdated();
+        // ↓调用该函数会导致容器界面打开时，拿起物品后，界面不显示物品
+        // sendBlockUpdated();
         return result;
     }
 
@@ -82,7 +85,8 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
     public void setItem(int index, @NotNull ItemStack stack) {
         this.items.set(index, stack);
         this.setChanged();
-        sendBlockUpdated();
+        // ↓容器界面打开时，调用该函数会导致界面不显示物品（但是物品还在格子上）
+        // sendBlockUpdated();
     }
 
     public void setItemNoUpdate(int index, ItemStack stack) {
@@ -93,35 +97,40 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
     public void clearContent() {
         this.items.clear();
         this.setChanged();
-        sendBlockUpdated();
+        // ↓容器界面打开时，调用该函数会导致界面不显示物品（但是物品还在格子上）
+        // sendBlockUpdated();
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider p_333170_) {
+        super.loadAdditional(tag, p_333170_);
+        // ↓去掉会导致再次刷物资的时候，把占用原先的位置显示为空（打开容器后还是正常的），而且已经被清理掉的方块还会显示
+        // ↓即使去掉了，也不能解决重进游戏时丢失数据
+        this.items.replaceAll(ignored -> ItemStack.EMPTY);
+
         if (tag.contains(ITEMS_TAG, Tag.TAG_LIST)) {
             ListTag listTag = tag.getList(ITEMS_TAG, Tag.TAG_COMPOUND);
-            this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
             for (int i = 0; i < listTag.size(); ++i) {
                 CompoundTag itemTag = listTag.getCompound(i);
                 int slot = itemTag.getInt(SLOT_TAG);
                 if (slot >= 0 && slot < this.items.size()) {
-                    this.items.set(slot, ItemStack.of(itemTag));
+                    this.items.set(slot, ItemStack.parseOptional(p_333170_, itemTag));
                 }
             }
         }
+        // TODO 解决不能持久化保存容器物品（重进游戏会丢失容器内物品）
     }
 
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag pTag) {
-        super.saveAdditional(pTag);
+    protected void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider p_327783_) {
+        super.saveAdditional(pTag, p_327783_);
         ListTag listTag = new ListTag();
         for (int i = 0; i < this.items.size(); ++i) {
             if (!this.items.get(i).isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt(SLOT_TAG, i);
-                this.items.get(i).save(itemTag);
+                this.items.get(i).save(p_327783_, itemTag);
                 listTag.add(itemTag);
             }
         }
@@ -129,14 +138,14 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider p_329179_) {
+        CompoundTag tag = super.getUpdateTag(p_329179_);
         ListTag listTag = new ListTag();
         for (int i = 0; i < this.items.size(); ++i) {
             if (!this.items.get(i).isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt(SLOT_TAG, i);
-                this.items.get(i).save(itemTag);
+                this.items.get(i).save(p_329179_, itemTag);
                 listTag.add(itemTag);
             }
         }
@@ -151,10 +160,10 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
     }
 
     @Override
-    public void onDataPacket(net.minecraft.network.Connection net, ClientboundBlockEntityDataPacket pkt) {
+    public void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookup) {
         CompoundTag tag = pkt.getTag();
         if (tag != null) {
-            this.load(tag);
+            this.loadAdditional(tag, lookup);
         }
         // 不需要额外触发重绘，Minecraft 会自动处理 BlockEntity 数据更新后的渲染刷新
     }

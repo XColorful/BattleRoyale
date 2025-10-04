@@ -1,5 +1,6 @@
 package xiao.battleroyale.util;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -80,7 +81,8 @@ public class StringUtils {
      * @return 对应的 Component 对象。如果输入为 null 或解析失败，则返回 null。
      */
     public @Nullable static Component parseComponentString(@Nullable String inputString) {
-        return inputString != null ? Component.Serializer.fromJson(inputString) : null;
+        HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
+        return inputString != null && registries != null ? Component.Serializer.fromJson(inputString, registries) : null;
     }
 
     /**
@@ -93,9 +95,10 @@ public class StringUtils {
      * @return 对应的稳定 JSON 字符串。如果输入为 null，则返回空字符串。
      */
     public @NotNull static String componentToString(@Nullable Component component) {
-        if (component == null) {
+        HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
+        if (component == null || registries == null) {
             return "";
         }
-        return Component.Serializer.toJson(component);
+        return Component.Serializer.toJson(component, registries);
     }
 }

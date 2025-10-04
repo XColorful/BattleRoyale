@@ -20,14 +20,14 @@ public class JmApi implements IJmApi {
     @Override
     public void removeAll(String modId) {
         if (initialized) {
-            JourneyMapPlugin.getInstance().removeAll(modId);
+            ForgeJMPlugin.getInstance().removeAll(modId);
         }
     }
 
     @Override
     public void show(JMPolygonOverlay JMPolygonOverlay) {
         if (initialized) {
-            JourneyMapPlugin.getInstance().show(JMPolygonOverlay);
+            ForgeJMPlugin.getInstance().show(JMPolygonOverlay);
         }
     }
 }

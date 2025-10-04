@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3f;
+import xiao.battleroyale.block.AbstractLootBlock;
 import xiao.battleroyale.block.LootSpawner;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 
@@ -33,7 +34,8 @@ public class LootSpawnerRenderer extends LootContainerRenderer<LootSpawnerBlockE
     @Override
     protected void applyRotation(LootSpawnerBlockEntity blockEntity, PoseStack poseStack) {
         BlockState blockState = blockEntity.getBlockState();
-        Direction facing = blockState.getValue(LootSpawner.FACING);
+        LootSpawner block = (LootSpawner) blockState.getBlock();
+        Direction facing = blockState.getValue(block.getFacingProperty());
 
         // 获取旋转角度
         float yRot = 0;

@@ -1,7 +1,9 @@
 package xiao.battleroyale.api.item.builder;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.ItemLike;
 
 import java.util.function.Consumer;
@@ -31,10 +33,10 @@ public class BlockItemBuilder {
     }
 
     public ItemStack build() {
-        ItemStack block = new ItemStack(blockItem, this.count);
+        ItemStack stack = new ItemStack(blockItem, this.count);
         if (!this.nbt.isEmpty()) {
-            block.setTag(this.nbt.copy());
+            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(this.nbt.copy()));
         }
-        return block;
+        return stack;
     }
 }

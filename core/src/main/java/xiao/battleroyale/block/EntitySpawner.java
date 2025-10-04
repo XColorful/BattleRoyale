@@ -5,21 +5,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,17 +29,18 @@ import java.util.List;
 public class EntitySpawner extends AbstractLootBlock {
     public static final MapCodec<EntitySpawner> CODEC = simpleCodec(EntitySpawner::new);
 
-    public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
-    protected final static VoxelShape SHAPE = Block.box(0, 0, 0, 16, 2, 16);
+    private static final DirectionProperty THIS_FACING = DirectionProperty.create("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
+    private static final VoxelShape THIS_SHAPE = Block.box(0, 0, 0, 16, 2, 16);
 
     public EntitySpawner(BlockBehaviour.Properties properties) {
-        super(Properties.of()
-                .sound(SoundType.WOOD)
-                .strength(2.5F, 2.5F)
-                .noOcclusion()
-                .noCollission()
-        );
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH)); // 设置默认朝向
+        super(properties);
+    }
+
+    @Override public DirectionProperty getFacingProperty() {
+        return THIS_FACING;
+    }
+    @Override public VoxelShape getBlockShape() {
+        return THIS_SHAPE;
     }
 
     @Override
@@ -52,18 +49,8 @@ public class EntitySpawner extends AbstractLootBlock {
     }
 
     @Override
-    public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        return SHAPE;
-    }
-
-    @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        return this.defaultBlockState().setValue(THIS_FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Nullable
@@ -73,7 +60,7 @@ public class EntitySpawner extends AbstractLootBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    public @NotNull ItemInteractionResult useLootBlock(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
         if (!level.isClientSide) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof EntitySpawnerBlockEntity entitySpawnerBlockEntity) {
@@ -82,10 +69,10 @@ public class EntitySpawner extends AbstractLootBlock {
                     List<LootConfig> allConfigs = LootConfigManager.get().getConfigEntryList(LootConfigTypeEnum.ENTITY_SPAWNER);
                     if (allConfigs == null || allConfigs.isEmpty()) {
                         player.sendSystemMessage(Component.translatable("battleroyale.message.no_entity_spawner_config_available"));
-                        return InteractionResult.SUCCESS;
+                        return ItemInteractionResult.SUCCESS;
                     }
 
-                    LootConfig nextConfig = allConfigs.get(0);
+                    LootConfig nextConfig = allConfigs.getFirst();
                     for (LootConfig config : allConfigs) {
                         if (config.getConfigId() > currentConfigId) {
                             nextConfig = config;
@@ -94,10 +81,12 @@ public class EntitySpawner extends AbstractLootBlock {
                     }
                     entitySpawnerBlockEntity.setConfigId(nextConfig.getConfigId());
                     player.sendSystemMessage(Component.translatable("battleroyale.message.entity_spawner_lootid_switched", nextConfig.getConfigId(), nextConfig.name));
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
             }
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        // return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        // ↑会导致右键功能连续触发两次
+        return ItemInteractionResult.CONSUME;
     }
 }

@@ -1,33 +1,33 @@
 package xiao.battleroyale.compat.forge.compat.journeymap;
 
-import journeymap.client.api.IClientAPI;
-import journeymap.client.api.IClientPlugin;
-import journeymap.client.api.display.PolygonOverlay;
-import journeymap.client.api.event.ClientEvent;
-import journeymap.client.api.model.MapPolygon;
-import journeymap.client.api.model.ShapeProperties;
+import journeymap.api.v2.client.IClientAPI;
+import journeymap.api.v2.client.IClientPlugin;
+import journeymap.api.v2.client.display.PolygonOverlay;
+import journeymap.api.v2.client.JourneyMapPlugin;
+import journeymap.api.v2.client.event.MappingEvent;
+import journeymap.api.v2.client.event.DisplayUpdateEvent;
+import journeymap.api.v2.client.model.MapPolygon;
+import journeymap.api.v2.client.model.ShapeProperties;
+import journeymap.api.v2.common.event.ClientEventRegistry;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.compat.journeymap.*;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.EnumSet;
-
-import static journeymap.client.api.event.ClientEvent.Type.*;
 
 @ParametersAreNonnullByDefault
-@journeymap.client.api.ClientPlugin
-public class JourneyMapPlugin implements IClientPlugin {
+@JourneyMapPlugin(apiVersion = "2.0.0")
+public class ForgeJMPlugin implements IClientPlugin {
 
     // API reference
     private IClientAPI jmAPI = null;
 
-    private static JourneyMapPlugin INSTANCE;
+    private static ForgeJMPlugin INSTANCE;
 
-    public JourneyMapPlugin() {
+    public ForgeJMPlugin() {
         INSTANCE = this;
     }
 
-    public static JourneyMapPlugin getInstance() {
+    public static ForgeJMPlugin getInstance() {
         return INSTANCE;
     }
 
@@ -39,10 +39,10 @@ public class JourneyMapPlugin implements IClientPlugin {
      */
     @Override
     public void initialize(IClientAPI jmAPI) {
-        BattleRoyale.LOGGER.debug("initialize JourneyMapPlugin");
+        BattleRoyale.LOGGER.debug("initialize ForgeJMPlugin");
         this.jmAPI = jmAPI;
-        this.jmAPI.subscribe(getModId(), EnumSet.of(DISPLAY_UPDATE, MAPPING_STARTED, MAPPING_STOPPED));
-        JourneyMap.register();
+        ClientEventRegistry.MAPPING_EVENT.subscribe(getModId(), this::handleMappingEvent);
+        ClientEventRegistry.DISPLAY_UPDATE_EVENT.subscribe(getModId(), this::handleDisplayUpdateEvent);
         JmApi.initialized = true;
         BattleRoyale.LOGGER.info("Initialized {}", getClass().getName());
     }
@@ -55,39 +55,27 @@ public class JourneyMapPlugin implements IClientPlugin {
         return JMEventHandler.MOD_JM_ID;
     }
 
-    /**
-     * Called by JourneyMap on the main Minecraft thread when a {@link journeymap.client.api.event.ClientEvent} occurs.
-     * Be careful to minimize the time spent in this method so you don't lag the game.
-     * <p>
-     * You must call {@link IClientAPI#subscribe(String, EnumSet)} at some point to subscribe to these events, otherwise this
-     * method will never be called.
-     * <p>
-     * If the event type is {@link journeymap.client.api.event.ClientEvent.Type#DISPLAY_UPDATE},
-     * this is a signal to {@link journeymap.client.api.IClientAPI#show(journeymap.client.api.display.Displayable)}
-     * all relevant Displayables for the {@link journeymap.client.api.event.ClientEvent#dimension} indicated.
-     * (Note: ModWaypoints with persisted==true will already be shown.)
-     *
-     * @param event the event
-     */
-    @Override
-    public void onEvent(ClientEvent event) {
+    private void handleDisplayUpdateEvent(DisplayUpdateEvent event) { // 这个事件并不会实时更新小地图，绘制放在ClientTickEvent里
         try {
-            switch (event.type) {
-                case DISPLAY_UPDATE, // 这个事件并不会实时更新小地图，绘制放在ClientTickEvent里
-                     MAPPING_STARTED: // 刚进游戏时触发
-                    JMShapeDrawer.cachedDimension = event.dimension;
-                    break;
-                case MAPPING_STOPPED: // 退出游戏时触发
-                    onMappingStopped(event);
-                    break;
-            }
+            JMShapeDrawer.cachedDimension = event.dimension;
         } catch (Throwable t) {
             BattleRoyale.LOGGER.error(t.getMessage(), t);
         }
     }
 
-    void onMappingStopped(ClientEvent event) {
-        jmAPI.removeAll(JMEventHandler.MOD_JM_ID);
+    private void handleMappingEvent(MappingEvent event) {
+        try {
+            switch (event.getStage()) {
+                case MAPPING_STARTED: // 刚进游戏时触发
+                    JMShapeDrawer.cachedDimension = event.dimension;
+                    break;
+                case MAPPING_STOPPED: // 退出游戏时触发
+                    jmAPI.removeAll(JMEventHandler.MOD_JM_ID);
+                    break;
+            }
+        } catch (Throwable t) {
+            BattleRoyale.LOGGER.error(t.getMessage(), t);
+        }
     }
 
     public void removeAll(String modId) {
@@ -107,7 +95,6 @@ public class JourneyMapPlugin implements IClientPlugin {
 
         PolygonOverlay polygonOverlay = new PolygonOverlay(
                 JMPolygonOverlay.modId(),
-                JMPolygonOverlay.displayId(),
                 JMPolygonOverlay.dimension(),
                 shapeProperties,
                 mapPolygon);

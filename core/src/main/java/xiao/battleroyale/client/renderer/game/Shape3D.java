@@ -16,7 +16,7 @@ public class Shape3D {
     public static void drawFilledSphere(PoseStack poseStack, VertexConsumer consumer,
                                         float r, float g, float b, float a,
                                         float radius, int segments) {
-        final Matrix4f currentPoseMatrix = poseStack.last().pose();
+        final PoseStack.Pose currentPose = poseStack.last();
 
         // 纬度带数量，通常是经度切片的一半，避免在极点过度细分
         int stacks = segments / 2;
@@ -72,10 +72,10 @@ public class Shape3D {
                 // 渲染四边形面，避免在极点附近渲染重复面
                 // 顶点顺序: (x1,y1,z1) -> (x2,y2,z2) -> (x3,y3,z3) -> (x4,y4,z4)
                 if (i < stacks) {
-                    consumer.vertex(currentPoseMatrix, x1, y1, z1).color(r, g, b, a).normal(normal1.x(), normal1.y(), normal1.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x2, y2, z2).color(r, g, b, a).normal(normal2.x(), normal2.y(), normal2.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x3, y3, z3).color(r, g, b, a).normal(normal3.x(), normal3.y(), normal3.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x4, y4, z4).color(r, g, b, a).normal(normal4.x(), normal4.y(), normal4.z()).endVertex();
+                    consumer.addVertex(currentPose, x1, y1, z1).setColor(r, g, b, a).setNormal(normal1.x(), normal1.y(), normal1.z());
+                    consumer.addVertex(currentPose, x2, y2, z2).setColor(r, g, b, a).setNormal(normal2.x(), normal2.y(), normal2.z());
+                    consumer.addVertex(currentPose, x3, y3, z3).setColor(r, g, b, a).setNormal(normal3.x(), normal3.y(), normal3.z());
+                    consumer.addVertex(currentPose, x4, y4, z4).setColor(r, g, b, a).setNormal(normal4.x(), normal4.y(), normal4.z());
                 }
             }
         }
@@ -91,7 +91,7 @@ public class Shape3D {
     public static void drawFilledCuboid(PoseStack poseStack, VertexConsumer consumer,
                                         float r, float g, float b, float a,
                                         float halfWidth, float halfHeight, float halfDepth) {
-        final Matrix4f currentPoseMatrix = poseStack.last().pose();
+        final PoseStack.Pose currentPose = poseStack.last();
 
         float x_neg = -halfWidth;
         float y_neg = -halfHeight;
@@ -101,40 +101,40 @@ public class Shape3D {
         float z_pos = halfDepth;
 
         // 前面 (负Z轴方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.addVertex(currentPose, x_neg, y_neg, z_neg).setColor(r, g, b, a).setNormal(0.0f, 0.0f, -1.0f);
+        consumer.addVertex(currentPose, x_pos, y_neg, z_neg).setColor(r, g, b, a).setNormal(0.0f, 0.0f, -1.0f);
+        consumer.addVertex(currentPose, x_pos, y_pos, z_neg).setColor(r, g, b, a).setNormal(0.0f, 0.0f, -1.0f);
+        consumer.addVertex(currentPose, x_neg, y_pos, z_neg).setColor(r, g, b, a).setNormal(0.0f, 0.0f, -1.0f);
 
         // 后面 (正Z轴方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.addVertex(currentPose, x_neg, y_neg, z_pos).setColor(r, g, b, a).setNormal(0.0f, 0.0f, 1.0f);
+        consumer.addVertex(currentPose, x_neg, y_pos, z_pos).setColor(r, g, b, a).setNormal(0.0f, 0.0f, 1.0f);
+        consumer.addVertex(currentPose, x_pos, y_pos, z_pos).setColor(r, g, b, a).setNormal(0.0f, 0.0f, 1.0f);
+        consumer.addVertex(currentPose, x_pos, y_neg, z_pos).setColor(r, g, b, a).setNormal(0.0f, 0.0f, 1.0f);
 
         // 左侧 (负X轴方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.addVertex(currentPose, x_neg, y_neg, z_pos).setColor(r, g, b, a).setNormal(-1.0f, 0.0f, 0.0f);
+        consumer.addVertex(currentPose, x_neg, y_pos, z_pos).setColor(r, g, b, a).setNormal(-1.0f, 0.0f, 0.0f);
+        consumer.addVertex(currentPose, x_neg, y_pos, z_neg).setColor(r, g, b, a).setNormal(-1.0f, 0.0f, 0.0f);
+        consumer.addVertex(currentPose, x_neg, y_neg, z_neg).setColor(r, g, b, a).setNormal(-1.0f, 0.0f, 0.0f);
 
         // 右侧 (正X轴方向)
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.addVertex(currentPose, x_pos, y_neg, z_neg).setColor(r, g, b, a).setNormal(1.0f, 0.0f, 0.0f);
+        consumer.addVertex(currentPose, x_pos, y_pos, z_neg).setColor(r, g, b, a).setNormal(1.0f, 0.0f, 0.0f);
+        consumer.addVertex(currentPose, x_pos, y_pos, z_pos).setColor(r, g, b, a).setNormal(1.0f, 0.0f, 0.0f);
+        consumer.addVertex(currentPose, x_pos, y_neg, z_pos).setColor(r, g, b, a).setNormal(1.0f, 0.0f, 0.0f);
 
         // 顶面 (正Y方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(0, 1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(0, 1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(0, 1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(0, 1, 0).endVertex();
+        consumer.addVertex(currentPose, x_neg, y_pos, z_neg).setColor(r, g, b, a).setNormal(0.0f, 1.0f, 0.0f);
+        consumer.addVertex(currentPose, x_pos, y_pos, z_neg).setColor(r, g, b, a).setNormal(0.0f, 1.0f, 0.0f);
+        consumer.addVertex(currentPose, x_pos, y_pos, z_pos).setColor(r, g, b, a).setNormal(0.0f, 1.0f, 0.0f);
+        consumer.addVertex(currentPose, x_neg, y_pos, z_pos).setColor(r, g, b, a).setNormal(0.0f, 1.0f, 0.0f);
 
         // 底面 (负Y方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(0, -1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(0, -1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(0, -1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(0, -1, 0).endVertex();
+        consumer.addVertex(currentPose, x_neg, y_neg, z_neg).setColor(r, g, b, a).setNormal(0.0f, -1.0f, 0.0f);
+        consumer.addVertex(currentPose, x_neg, y_neg, z_pos).setColor(r, g, b, a).setNormal(0.0f, -1.0f, 0.0f);
+        consumer.addVertex(currentPose, x_pos, y_neg, z_pos).setColor(r, g, b, a).setNormal(0.0f, -1.0f, 0.0f);
+        consumer.addVertex(currentPose, x_pos, y_neg, z_neg).setColor(r, g, b, a).setNormal(0.0f, -1.0f, 0.0f);
     }
 
     /**
@@ -148,7 +148,7 @@ public class Shape3D {
     public static void drawFilledEllipsoid(PoseStack poseStack, VertexConsumer consumer,
                                            float r, float g, float b, float a,
                                            float halfA, float halfB, float halfC, int segments) {
-        final Matrix4f currentPoseMatrix = poseStack.last().pose();
+        final PoseStack.Pose currentPose = poseStack.last();
 
         // 纬度带数量，通常是经度切片的一半，避免在极点过度细分
         int stacks = segments / 2;
@@ -206,10 +206,10 @@ public class Shape3D {
 
                 // 渲染四边形面
                 if (i < stacks) { // 避免在极点渲染重复面
-                    consumer.vertex(currentPoseMatrix, x1, y1, z1).color(r, g, b, a).normal(normal1.x(), normal1.y(), normal1.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x2, y2, z2).color(r, g, b, a).normal(normal2.x(), normal2.y(), normal2.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x3, y3, z3).color(r, g, b, a).normal(normal3.x(), normal3.y(), normal3.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x4, y4, z4).color(r, g, b, a).normal(normal4.x(), normal4.y(), normal4.z()).endVertex();
+                    consumer.addVertex(currentPose, x1, y1, z1).setColor(r, g, b, a).setNormal(normal1.x(), normal1.y(), normal1.z());
+                    consumer.addVertex(currentPose, x2, y2, z2).setColor(r, g, b, a).setNormal(normal2.x(), normal2.y(), normal2.z());
+                    consumer.addVertex(currentPose, x3, y3, z3).setColor(r, g, b, a).setNormal(normal3.x(), normal3.y(), normal3.z());
+                    consumer.addVertex(currentPose, x4, y4, z4).setColor(r, g, b, a).setNormal(normal4.x(), normal4.y(), normal4.z());
                 }
             }
         }

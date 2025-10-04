@@ -20,6 +20,7 @@ public class ModEvent implements IModEvent {
 
     @Override
     public void onServerStarting(MinecraftServer server) {
+        BattleRoyale.setStaticRegistries(server.registryAccess());
         BattleRoyale.setMinecraftServer(server);
     }
 
@@ -27,6 +28,7 @@ public class ModEvent implements IModEvent {
     public void onServerStopping(MinecraftServer server) {
         GameManager.get().onServerStopping();
         GameLootManager.get().awaitTerminationOnShutdown();
+        BattleRoyale.setStaticRegistries(null);
         BattleRoyale.setMinecraftServer(null);
     }
 }

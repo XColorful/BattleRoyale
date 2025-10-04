@@ -1,5 +1,7 @@
 package xiao.battleroyale.common.effect.firework;
 
+import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
@@ -8,6 +10,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.FireworkExplosion;
+import net.minecraft.world.item.component.Fireworks;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.effect.IEffectManager;
@@ -94,18 +98,30 @@ public class FireworkManager implements IEffectManager {
 
     public static void spawnFireworkAtExactPos(@NotNull ServerLevel level, @NotNull Vec3 exactPos) {
         ItemStack fireworkStack = new ItemStack(Items.FIREWORK_ROCKET);
-        CompoundTag fireworkNbt = fireworkStack.getOrCreateTagElement("Fireworks");
-        ListTag explosionsList = new ListTag();
+        RandomSource random = level.getRandom();
 
-        CompoundTag explosionTag = new CompoundTag();
-        explosionTag.putIntArray("Colors", ColorUtils.generateRandomColors(level.getRandom(), 1, 2));
-        explosionTag.putByte("Type", (byte) level.getRandom().nextInt(5)); // 0=small ball, 1=large ball, 2=star, 3=creeper, 4=burst
-        explosionTag.putBoolean("Flicker", level.getRandom().nextBoolean());
-        explosionTag.putBoolean("Trail", level.getRandom().nextBoolean());
+        // 生成颜色列表 (IntList)
+        int[] colorArray = xiao.battleroyale.util.ColorUtils.generateRandomColors(random, 1, 2);
+        IntList colors = IntList.of(colorArray);
 
-        explosionsList.add(explosionTag);
-        fireworkNbt.put("Explosions", explosionsList);
-        fireworkNbt.putByte("Flight", (byte) (level.getRandom().nextInt(3)));
+        // 确定爆炸形状 (使用 Shape.byId 静态方法)
+        FireworkExplosion.Shape shape = FireworkExplosion.Shape.byId(random.nextInt(5)); // 0-4 对应五种形状
+
+        // 创建 FireworkExplosion 记录
+        FireworkExplosion explosion = new FireworkExplosion(
+                shape,                      // shape
+                colors,                     // colors
+                IntList.of(),               // fadeColors (留空 IntList.of())
+                random.nextBoolean(),       // hasTrail
+                random.nextBoolean()        // hasTwinkle (对应 NBT 的 "Flicker")
+        );
+
+        // 创建 Fireworks 组件对象 (烟花火箭本身属性：飞行时间和爆炸列表)
+        Fireworks fireworksComponent = new Fireworks(
+                random.nextInt(3), // Flight (0-2 对应 1-3)
+                List.of(explosion) // Explosions (爆炸效果列表)
+        );
+        fireworkStack.set(DataComponents.FIREWORKS, fireworksComponent);
 
         FireworkRocketEntity fireworkEntity = new FireworkRocketEntity(level, exactPos.x, exactPos.y, exactPos.z, fireworkStack);
         level.addFreshEntity(fireworkEntity);

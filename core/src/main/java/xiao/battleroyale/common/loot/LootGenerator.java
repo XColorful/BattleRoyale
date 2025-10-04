@@ -1,6 +1,9 @@
 package xiao.battleroyale.common.loot;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -9,6 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -119,7 +123,8 @@ public class LootGenerator {
                     BattleRoyale.LOGGER.warn("Ignore adding non-item to loot container at {}", target.getBlockPos());
                 }
             }
-            container.sendBlockUpdated(); // 省流
+            container.setChanged(); // 可能没什么用
+            container.sendBlockUpdated(); // 不调用会导致显示异常
         } else { // 实体刷新方块
             BlockPos spawnOrigin = target.getBlockPos();
             for (ILootData data : lootData) {
@@ -284,8 +289,14 @@ public class LootGenerator {
         for (Entity entity : oldEntities) {
             UUID debugGameId = null;
             if (entity instanceof ItemEntity itemEntity) {
-                if (itemEntity.getItem().getOrCreateTag().hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                    debugGameId = itemEntity.getItem().getOrCreateTag().getUUID(LootNBTTag.GAME_ID_TAG);
+                ItemStack itemStack = itemEntity.getItem();
+                CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA);
+
+                if (customData != null) {
+                    CompoundTag itemTag = customData.copyTag();
+                    if (itemTag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
+                        debugGameId = itemTag.getUUID(LootNBTTag.GAME_ID_TAG);
+                    }
                 }
             } else {
                 if (entity.getPersistentData().hasUUID(LootNBTTag.GAME_ID_TAG)) {
@@ -311,16 +322,15 @@ public class LootGenerator {
     }
 
     public static void removeLootTable(BlockEntity blockEntity) {
-        CompoundTag nbt = blockEntity.saveWithFullMetadata();
-        // nbt.remove("LootTable"); // 无效
-        // nbt.remove("LootTableSeed");
-        if (nbt.contains("LootTable")) {
-            nbt.putString("LootTable", ""); // 必须为字符串类型，空字符串会解析为"minecraft:"，否则写不进去
-            // nbt.putLong("LootTableSeed", 0L); // LootTable解析不出来之后就已经没有LootTableSeed了
-        }
-        blockEntity.load(nbt); // 写入内存，没写入硬盘
-        blockEntity.setChanged(); // 防止区块被卸载前还没交互
-        // 之后LootEntry能读取到的已经是"LootTable":"minecraft:"
+        DataComponentPatch patch = DataComponentPatch.builder()
+                .remove(DataComponents.CONTAINER_LOOT)
+                .build();
+        PatchedDataComponentMap newComponents = PatchedDataComponentMap.fromPatch(
+                blockEntity.components(),
+                patch
+        );
+        blockEntity.setComponents(newComponents);
+        blockEntity.setChanged();
     }
 
     public static class LootContext {

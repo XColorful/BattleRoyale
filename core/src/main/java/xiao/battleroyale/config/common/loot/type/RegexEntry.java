@@ -1,7 +1,9 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +41,14 @@ public class RegexEntry implements ILootEntry {
             }
 
             try {
-                CompoundTag nbt = target.saveWithFullMetadata();
+                HolderLookup.Provider provider;
+                if (target.getLevel() instanceof ServerLevel serverLevel) {
+                    provider = serverLevel.registryAccess();
+                } else {
+                    BattleRoyale.LOGGER.warn("Attempted to save BlockEntity NBT outside of ServerLevel context.");
+                    return Collections.emptyList();
+                }
+                CompoundTag nbt = target.saveWithFullMetadata(provider);
                 String nbtString = nbt.toString();
                 Matcher matcher = pattern.matcher(nbtString);
                 if (matcher.find() != invert) {

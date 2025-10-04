@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.StructureManager;
@@ -19,6 +20,7 @@ import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class StructureEntry implements ILootEntry {
     private final boolean invert;
@@ -45,7 +47,10 @@ public class StructureEntry implements ILootEntry {
                     BlockPos pos = target.getBlockPos();
                     StructureManager structureManager = lootContext.serverLevel.structureManager();
                     for (ResourceKey<Structure> structureKey : structures) {
-                        StructureStart structureStart = structureManager.getStructureWithPieceAt(pos, structureKey);
+                        Predicate<Holder<Structure>> filter = (holder) -> holder.is(structureKey);
+
+                        StructureStart structureStart = structureManager.getStructureWithPieceAt(pos, filter);
+
                         if (structureStart != StructureStart.INVALID_START) {
                             inStructure = true;
                             break;

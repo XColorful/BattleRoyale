@@ -1,9 +1,13 @@
 package xiao.battleroyale.common.game;
 
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.IGameIdReadApi;
@@ -27,11 +31,14 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
      */
     @Override public @Nullable UUID getGameId(Entity entity) {
         UUID entityGameId = null;
-        if (entity instanceof ItemEntity itemEntity) { // 物品掉落物，位于{Item:{tag:{GameId:UUID}}}
+        if (entity instanceof ItemEntity itemEntity) { // 物品掉落物，位于{Item:{components:{minecraft:custom_data:{tag:{GameId:UUID}}}}}
             ItemStack itemStack = itemEntity.getItem();
-            CompoundTag itemTag = itemStack.getOrCreateTag();
-            if (itemTag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                entityGameId = itemTag.getUUID(LootNBTTag.GAME_ID_TAG);
+            CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA);
+            if (customData != null) {
+                CompoundTag itemTag = customData.copyTag();
+                if (itemTag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
+                    entityGameId = itemTag.getUUID(LootNBTTag.GAME_ID_TAG);
+                }
             }
         } else { // 一般实体，位于{ForgeData:{GameId:UUID}}
             CompoundTag persistentData = entity.getPersistentData();
@@ -46,9 +53,12 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
      * 此方法不适用于本模组的方块
      */
     @Override public @Nullable UUID getGameId(BlockEntity blockEntity) {
-        CompoundTag forgeData = blockEntity.getPersistentData();
-        if (forgeData.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-            return forgeData.getUUID(LootNBTTag.GAME_ID_TAG);
+        CustomData customData = blockEntity.components().get(DataComponents.CUSTOM_DATA);
+        if (customData != null) {
+            CompoundTag tag = customData.copyTag();
+            if (tag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
+                return tag.getUUID(LootNBTTag.GAME_ID_TAG);
+            }
         }
         return null;
     }
@@ -56,9 +66,10 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
      * 获取 ItemStack 的GameUUID
      */
     @Override public @Nullable UUID getGameId(ItemStack itemStack) {
-        if (itemStack.hasTag()) {
-            CompoundTag tag = itemStack.getTag();
-            if (tag != null && tag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
+        CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA);
+        if (customData != null) {
+            CompoundTag tag = customData.copyTag();
+            if (tag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
                 return tag.getUUID(LootNBTTag.GAME_ID_TAG);
             }
         }
@@ -69,7 +80,10 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
      * 添加游戏UUID
      */
     @Override public void addGameId(ItemStack itemStack, UUID gameId) {
-        itemStack.getOrCreateTag().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+        CustomData customData = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+        CompoundTag tag = customData.copyTag();
+        tag.putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+        itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
     }
     @Override public void addGameId(Entity entity, UUID gameId) {
         entity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
@@ -79,7 +93,18 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
      * 此方法不适用于本模组的方块
      */
     @Override public void addGameId(BlockEntity blockEntity, UUID gameId) {
-        blockEntity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+        CustomData customData = blockEntity.components().getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+        CompoundTag tag = customData.copyTag();
+        tag.putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+        DataComponentPatch patch = DataComponentPatch.builder()
+                .set(DataComponents.CUSTOM_DATA, CustomData.of(tag))
+                .build();
+        PatchedDataComponentMap newComponents = PatchedDataComponentMap.fromPatch(
+                blockEntity.components(),
+                patch
+        );
+        blockEntity.setComponents(newComponents);
+
         blockEntity.setChanged();
     }
 }

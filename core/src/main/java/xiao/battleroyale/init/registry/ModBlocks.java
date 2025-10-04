@@ -1,7 +1,7 @@
 package xiao.battleroyale.init.registry;
 
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import xiao.battleroyale.BattleRoyale;
@@ -24,9 +24,17 @@ public class ModBlocks {
             BattleRoyale.getRegistrarFactory().createBlockEntities(BattleRoyale.MOD_ID);
 
     public static final IRegistryObject<Block> LOOT_SPAWNER = BLOCKS.register("loot_spawner", () ->
-            new LootSpawner(BlockBehaviour.Properties.of()));
+            new LootSpawner(BlockBehaviour.Properties.of()
+                    .sound(SoundType.WOOD)
+                    .strength(2.5F, 2.5F)
+                    .noOcclusion()
+                    .noCollission()));
     public static final IRegistryObject<Block> ENTITY_SPAWNER = BLOCKS.register("entity_spawner", () ->
-            new EntitySpawner(BlockBehaviour.Properties.of()));
+            new EntitySpawner(BlockBehaviour.Properties.of()
+                    .sound(SoundType.WOOD)
+                    .strength(2.5F, 2.5F)
+                    .noOcclusion()
+                    .noCollission()));
     public static final IRegistryObject<Block> ZONE_CONTROLLER = BLOCKS.register("zone_controller", () ->
             new ZoneController(BlockBehaviour.Properties.of()));
 

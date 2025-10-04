@@ -20,6 +20,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.developer.debug.text.WorldText;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class DebugWorld {
 
@@ -92,7 +93,10 @@ public class DebugWorld {
         Map<ResourceLocation, ResourceKey<Structure>> structures = new HashMap<>();
 
         for (ResourceKey<Structure> structureKey : allStructuresKeys) {
-            StructureStart structureStart = structureManager.getStructureWithPieceAt(blockPos, structureKey);
+            Predicate<Holder<Structure>> filter = (holder) -> holder.is(structureKey);
+
+            StructureStart structureStart = structureManager.getStructureWithPieceAt(blockPos, filter);
+
             if (structureStart != StructureStart.INVALID_START) {
                 structures.put(structureKey.location(), structureKey);
             }

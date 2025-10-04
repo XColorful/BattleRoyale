@@ -1,5 +1,6 @@
 package xiao.battleroyale.compat.forge.network;
 
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.*;
 import xiao.battleroyale.BattleRoyale;
@@ -28,11 +29,12 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
 
     @Override
     public <T extends IMessage<T>> void registerMessage(int id, Class<T> clazz, MessageDirection direction) {
-        NetworkDirection forgeDirection = direction == MessageDirection.SERVER_TO_CLIENT
-                ? NetworkDirection.PLAY_TO_CLIENT
-                : NetworkDirection.PLAY_TO_SERVER;
+        PacketFlow forgeFlow = direction == MessageDirection.SERVER_TO_CLIENT
+                ? PacketFlow.CLIENTBOUND
+                : PacketFlow.SERVERBOUND;
 
-        this.channel.<T>messageBuilder(clazz, id, forgeDirection)
+        this.channel.messageBuilder(clazz, id)
+                .direction(forgeFlow)
                 .encoder((messageInstance, buffer) -> messageInstance.encode(messageInstance, buffer))
                 .decoder((buffer) -> {
                     try {

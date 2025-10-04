@@ -1,8 +1,10 @@
 package xiao.battleroyale;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 import xiao.battleroyale.api.common.McSide;
@@ -23,6 +25,7 @@ import xiao.battleroyale.network.NetworkHandler;
 import xiao.battleroyale.network.NetworkHook;
 import xiao.battleroyale.resource.ResourceLoader;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BattleRoyale {
@@ -32,6 +35,7 @@ public class BattleRoyale {
     public static final Random COMMON_RANDOM = new Random();
 
     protected static boolean initialized;
+    private static HolderLookup.Provider STATIC_REGISTRIES;
     protected static McSide mcSide = McSide.CLIENT;
     protected static MinecraftServer minecraftServer;
     private static IRegistrarFactory registrarFactory;
@@ -73,6 +77,16 @@ public class BattleRoyale {
         initialized = true;
     }
 
+    public static void setStaticRegistries(@Nullable HolderLookup.Provider STATIC_REGISTRIES) {
+        BattleRoyale.STATIC_REGISTRIES = STATIC_REGISTRIES;
+    }
+    public static @Nullable HolderLookup.Provider getStaticRegistries() {
+        if (STATIC_REGISTRIES == null) {
+            LOGGER.warn("HolderLookup.Provider is being accessed too early or has not been set!");
+            return STATIC_REGISTRIES;
+        }
+        return STATIC_REGISTRIES;
+    }
     public static McSide getMcSide() {
         return mcSide;
     }
