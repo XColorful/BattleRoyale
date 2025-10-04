@@ -1,6 +1,5 @@
 package xiao.battleroyale.client.renderer.game;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
@@ -16,7 +15,7 @@ public class Shape2D {
      * @param halfDepth 矩形在Z轴方向上的半深。
      * @param height 矩形在Y轴方向上的高度。
      */
-    public static void drawFilledRectangleBox(PoseStack poseStack, VertexConsumer consumer,
+    public static void drawFilledRectangleBox(final Matrix4f matrix, VertexConsumer consumer,
                                               float r, float g, float b, float a,
                                               float halfWidth, float halfDepth, float height) {
         float x1 = -halfWidth;
@@ -24,33 +23,30 @@ public class Shape2D {
         float x2 = halfWidth;
         float z2 = halfDepth;
 
-        // 缓存矩阵
-        final Matrix4f currentPoseMatrix = poseStack.last().pose();
-
         // 渲染侧面
         // 前面 (负Z轴方向)
-        consumer.vertex(currentPoseMatrix, x1, 0, z1).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(currentPoseMatrix, x2, 0, z1).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(currentPoseMatrix, x2, height, z1).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(currentPoseMatrix, x1, height, z1).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.vertex(matrix, x1, 0, z1).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.vertex(matrix, x2, 0, z1).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.vertex(matrix, x2, height, z1).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.vertex(matrix, x1, height, z1).color(r, g, b, a).normal(0, 0, -1).endVertex();
 
         // 后面 (正Z轴方向)
-        consumer.vertex(currentPoseMatrix, x1, 0, z2).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(currentPoseMatrix, x1, height, z2).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(currentPoseMatrix, x2, height, z2).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(currentPoseMatrix, x2, 0, z2).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.vertex(matrix, x1, 0, z2).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.vertex(matrix, x1, height, z2).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.vertex(matrix, x2, height, z2).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.vertex(matrix, x2, 0, z2).color(r, g, b, a).normal(0, 0, 1).endVertex();
 
         // 左侧 (负X轴方向)
-        consumer.vertex(currentPoseMatrix, x1, 0, z1).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x1, height, z1).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x1, height, z2).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x1, 0, z2).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.vertex(matrix, x1, 0, z1).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.vertex(matrix, x1, height, z1).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.vertex(matrix, x1, height, z2).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.vertex(matrix, x1, 0, z2).color(r, g, b, a).normal(-1, 0, 0).endVertex();
 
         // 右侧 (正X轴方向)
-        consumer.vertex(currentPoseMatrix, x2, 0, z1).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x2, 0, z2).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x2, height, z2).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x2, height, z1).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.vertex(matrix, x2, 0, z1).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.vertex(matrix, x2, 0, z2).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.vertex(matrix, x2, height, z2).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.vertex(matrix, x2, height, z1).color(r, g, b, a).normal(1, 0, 0).endVertex();
     }
 
     /**
@@ -61,11 +57,9 @@ public class Shape2D {
      * @param segments 多边形的边数（或圆的近似段数），值越大越平滑。
      * @param initialAngle 初始旋转角度（弧度），用于调整多边形的朝向。
      */
-    public static void drawFilledPolygonCylinder(PoseStack poseStack, VertexConsumer consumer,
+    public static void drawFilledPolygonCylinder(final Matrix4f matrix, VertexConsumer consumer,
                                                  float r, float g, float b, float a,
                                                  float radius, float height, int segments, float initialAngle) {
-        // 缓存矩阵
-        final Matrix4f currentPoseMatrix = poseStack.last().pose();
         final float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
         final float halfTwoPiDivSegments = TWO_PI_DIV_SEGMENTS / 2.0f;
 
@@ -89,10 +83,10 @@ public class Shape2D {
             float normalX = Mth.cos(midAngle);
             float normalZ = Mth.sin(midAngle);
 
-            consumer.vertex(currentPoseMatrix, x1, 0, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(currentPoseMatrix, x1, height, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(currentPoseMatrix, x2, height, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(currentPoseMatrix, x2, 0, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(matrix, x1, 0, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(matrix, x1, height, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(matrix, x2, height, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(matrix, x2, 0, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
         }
     }
 
@@ -104,11 +98,10 @@ public class Shape2D {
      * @param height 柱体的高度。
      * @param segments 椭圆的近似段数，值越大越平滑。
      */
-    public static void drawFilledEllipseCylinder(PoseStack poseStack, VertexConsumer consumer,
+    public static void drawFilledEllipseCylinder(Matrix4f matrix, VertexConsumer consumer,
                                                  float r, float g, float b, float a,
                                                  float halfA, float halfB, float height, int segments) {
         final float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
-        final Matrix4f lastPose = poseStack.last().pose();
 
         for (int i = 0; i < segments; i++) {
             float angle1 = i * TWO_PI_DIV_SEGMENTS;
@@ -138,10 +131,10 @@ public class Shape2D {
                 normalZ = 0.0F;
             }
 
-            consumer.vertex(lastPose, x1, 0, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(lastPose, x1, height, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(lastPose, x2, height, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(lastPose, x2, 0, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(matrix, x1, 0, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(matrix, x1, height, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(matrix, x2, height, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(matrix, x2, 0, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
         }
     }
 
@@ -154,10 +147,9 @@ public class Shape2D {
      * @param segments 星形的瓣数（通常为5或更多），一个瓣由两条边组成。
      * @param initialAngle 初始旋转角度（弧度），用于调整星形的朝向。
      */
-    public static void drawFilledStarCylinder(PoseStack poseStack, VertexConsumer consumer,
+    public static void drawFilledStarCylinder(Matrix4f matrix, VertexConsumer consumer,
                                               float r, float g, float b, float a,
                                               float outerRadius, float innerRadius, float height, int segments, float initialAngle) {
-        final Matrix4f currentPoseMatrix = poseStack.last().pose();
         final float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
 
         // 星形侧面渲染
@@ -176,10 +168,10 @@ public class Shape2D {
             float normalX1 = Mth.cos(midAngleOuterInner1);
             float normalZ1 = Mth.sin(midAngleOuterInner1);
 
-            consumer.vertex(currentPoseMatrix, outerX1, 0, outerZ1).color(r, g, b, a).normal(normalX1, 0, normalZ1).endVertex();
-            consumer.vertex(currentPoseMatrix, outerX1, height, outerZ1).color(r, g, b, a).normal(normalX1, 0, normalZ1).endVertex();
-            consumer.vertex(currentPoseMatrix, innerX1, height, innerZ1).color(r, g, b, a).normal(normalX1, 0, normalZ1).endVertex();
-            consumer.vertex(currentPoseMatrix, innerX1, 0, innerZ1).color(r, g, b, a).normal(normalX1, 0, normalZ1).endVertex();
+            consumer.vertex(matrix, outerX1, 0, outerZ1).color(r, g, b, a).normal(normalX1, 0, normalZ1).endVertex();
+            consumer.vertex(matrix, outerX1, height, outerZ1).color(r, g, b, a).normal(normalX1, 0, normalZ1).endVertex();
+            consumer.vertex(matrix, innerX1, height, innerZ1).color(r, g, b, a).normal(normalX1, 0, normalZ1).endVertex();
+            consumer.vertex(matrix, innerX1, 0, innerZ1).color(r, g, b, a).normal(normalX1, 0, normalZ1).endVertex();
 
             // 内瓣边
             float innerAngle2 = initialAngle + (i * TWO_PI_DIV_SEGMENTS) + (float) (Math.PI / segments);
@@ -195,10 +187,10 @@ public class Shape2D {
             float normalX2 = -Mth.cos(midAngleInnerOuter2);
             float normalZ2 = -Mth.sin(midAngleInnerOuter2);
 
-            consumer.vertex(currentPoseMatrix, innerX2, 0, innerZ2).color(r, g, b, a).normal(normalX2, 0, normalZ2).endVertex();
-            consumer.vertex(currentPoseMatrix, innerX2, height, innerZ2).color(r, g, b, a).normal(normalX2, 0, normalZ2).endVertex();
-            consumer.vertex(currentPoseMatrix, outerX2, height, outerZ2).color(r, g, b, a).normal(normalX2, 0, normalZ2).endVertex();
-            consumer.vertex(currentPoseMatrix, outerX2, 0, outerZ2).color(r, g, b, a).normal(normalX2, 0, normalZ2).endVertex();
+            consumer.vertex(matrix, innerX2, 0, innerZ2).color(r, g, b, a).normal(normalX2, 0, normalZ2).endVertex();
+            consumer.vertex(matrix, innerX2, height, innerZ2).color(r, g, b, a).normal(normalX2, 0, normalZ2).endVertex();
+            consumer.vertex(matrix, outerX2, height, outerZ2).color(r, g, b, a).normal(normalX2, 0, normalZ2).endVertex();
+            consumer.vertex(matrix, outerX2, 0, outerZ2).color(r, g, b, a).normal(normalX2, 0, normalZ2).endVertex();
         }
     }
 }

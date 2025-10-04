@@ -1,12 +1,12 @@
 package xiao.battleroyale.client.renderer.game;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
 import xiao.battleroyale.api.client.event.RenderLevelStage;
@@ -61,67 +61,64 @@ public class ZoneRenderer {
             return;
         }
 
-        PoseStack poseStack = event.getPoseStack();
+        Matrix4f baseModelView = event.getModelViewMatrix();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         Vec3 cameraPos = event.getCamera_getPosition();
 
         for (ClientSingleZoneData zoneData : ClientGameDataManager.get().getActiveZones().values()) {
             if (zoneData == null || zoneData.center == null || zoneData.dimension == null) continue;
 
-            poseStack.pushPose();
-            try {
-                // 平移到区域中心，并抵消相机位置
-                poseStack.translate(zoneData.center.x - cameraPos.x,
-                        zoneData.center.y - cameraPos.y,
-                        zoneData.center.z - cameraPos.z);
+            Matrix4f currentZoneMatrix = new Matrix4f(baseModelView);
+            // 平移到区域中心，并抵消相机位置
+            currentZoneMatrix.translate(
+                    (float) (zoneData.center.x - cameraPos.x),
+                    (float) (zoneData.center.y - cameraPos.y),
+                    (float) (zoneData.center.z - cameraPos.z));
 
-                // 正角度为顺时针旋转区域
-                poseStack.mulPose(Axis.YP.rotationDegrees((float) -zoneData.rotateDegree));
+            // 正角度为顺时针旋转区域
+            currentZoneMatrix.rotate(Axis.YP.rotationDegrees((float) -zoneData.rotateDegree));
 
-                float r = zoneData.r;
-                float g = zoneData.g;
-                float b = zoneData.b;
-                float a = zoneData.a;
+            float r = zoneData.r;
+            float g = zoneData.g;
+            float b = zoneData.b;
+            float a = zoneData.a;
 
-                // 对光影没用，对原版云有用
-                VertexConsumer consumer = bufferSource.getBuffer(a < 0.999F ? TRANSLUCENT_ZONE : OPAQUE_ZONE);
+            // 对光影没用，对原版云有用
+            VertexConsumer consumer = bufferSource.getBuffer(a < 0.999F ? TRANSLUCENT_ZONE : OPAQUE_ZONE);
 
-                switch (zoneData.shapeType) {
-                    // 2D shape
-                    case CIRCLE ->
-                            Shape2D.drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, CIRCLE_SEGMENTS, 0);
-                    case SQUARE, RECTANGLE ->
-                            Shape2D.drawFilledRectangleBox(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y);
-                    case HEXAGON -> // 平顶正六边形
-                            Shape2D.drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, 6, 0);
-                    case POLYGON -> // 尖顶正多边形
-                            Shape2D.drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, zoneData.segments, POINTING_POLYGON_ANGLE);
-                    case ELLIPSE ->
-                            Shape2D.drawFilledEllipseCylinder(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y, ELLIPSE_SEGMENTS);
-                    case STAR -> // 尖顶星形
-                            Shape2D.drawFilledStarCylinder(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y, zoneData.segments, POINTING_POLYGON_ANGLE);
-                    // 3D shape
-                    case SPHERE ->
-                            Shape3D.drawFilledSphere(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.y, SPHERE_SEGMENTS);
-                    case CUBE, CUBOID ->
-                            Shape3D.drawFilledCuboid(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, (float) zoneData.dimension.z);
-                    case ELLIPSOID ->
-                            Shape3D.drawFilledEllipsoid(poseStack, consumer, r, g, b, a,
-                                    (float) zoneData.dimension.x, (float) zoneData.dimension.y, (float) zoneData.dimension.z, ELLIPSOID_SEGMENTS);
-                    default -> {
-                        ;
-                    }
+            switch (zoneData.shapeType) {
+                // 2D shape
+                case CIRCLE ->
+                        Shape2D.drawFilledPolygonCylinder(currentZoneMatrix, consumer, r, g, b, a,
+                                (float) zoneData.dimension.x, (float) zoneData.dimension.y, CIRCLE_SEGMENTS, 0);
+                case SQUARE, RECTANGLE ->
+                        Shape2D.drawFilledRectangleBox(currentZoneMatrix, consumer, r, g, b, a,
+                                (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y);
+                case HEXAGON -> // 平顶正六边形
+                        Shape2D.drawFilledPolygonCylinder(currentZoneMatrix, consumer, r, g, b, a,
+                                (float) zoneData.dimension.x, (float) zoneData.dimension.y, 6, 0);
+                case POLYGON -> // 尖顶正多边形
+                        Shape2D.drawFilledPolygonCylinder(currentZoneMatrix, consumer, r, g, b, a,
+                                (float) zoneData.dimension.x, (float) zoneData.dimension.y, zoneData.segments, POINTING_POLYGON_ANGLE);
+                case ELLIPSE ->
+                        Shape2D.drawFilledEllipseCylinder(currentZoneMatrix, consumer, r, g, b, a,
+                                (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y, ELLIPSE_SEGMENTS);
+                case STAR -> // 尖顶星形
+                        Shape2D.drawFilledStarCylinder(currentZoneMatrix, consumer, r, g, b, a,
+                                (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y, zoneData.segments, POINTING_POLYGON_ANGLE);
+                // 3D shape
+                case SPHERE ->
+                        Shape3D.drawFilledSphere(currentZoneMatrix, consumer, r, g, b, a,
+                                (float) zoneData.dimension.y, SPHERE_SEGMENTS);
+                case CUBE, CUBOID ->
+                        Shape3D.drawFilledCuboid(currentZoneMatrix, consumer, r, g, b, a,
+                                (float) zoneData.dimension.x, (float) zoneData.dimension.y, (float) zoneData.dimension.z);
+                case ELLIPSOID ->
+                        Shape3D.drawFilledEllipsoid(currentZoneMatrix, consumer, r, g, b, a,
+                                (float) zoneData.dimension.x, (float) zoneData.dimension.y, (float) zoneData.dimension.z, ELLIPSOID_SEGMENTS);
+                default -> {
+                    ;
                 }
-            } finally {
-                poseStack.popPose();
             }
         }
         bufferSource.endBatch();

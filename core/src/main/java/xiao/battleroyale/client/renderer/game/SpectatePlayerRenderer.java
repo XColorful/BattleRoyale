@@ -1,6 +1,5 @@
 package xiao.battleroyale.client.renderer.game;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -8,6 +7,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
 import xiao.battleroyale.api.client.event.RenderLevelStage;
@@ -102,7 +102,7 @@ public class SpectatePlayerRenderer {
             return;
         }
 
-        PoseStack poseStack = event.getPoseStack();
+        Matrix4f baseModelView = event.getModelViewMatrix();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         Vec3 cameraPos = event.getCamera_getPosition();
         float partialTicks = event.getPartialTick();
@@ -144,32 +144,28 @@ public class SpectatePlayerRenderer {
 
             float cylinderHeight = (float) (worldMaxBuildHeight - interpolatedPos.y - playerHeight);
 
-            poseStack.pushPose();
-            try {
-                // 将坐标系的原点平移到玩家的脚底中心
-                poseStack.translate(interpolatedPos.x - cameraPos.x,
-                        interpolatedPos.y - cameraPos.y,
-                        interpolatedPos.z - cameraPos.z);
-                if (renderBoundingBox) {
-                    // 渲染长方体
-                    poseStack.pushPose();
-                    // 向上平移长方体高度的一半，使其中心与玩家身体中心对齐
-                    poseStack.translate(0, playerHeight / 2.0F, 0);
-                    Shape3D.drawFilledCuboid(poseStack, consumer, r, g, b, a,
-                            baseWidth / 2.0F, playerHeight / 2.0F, baseDepth / 2.0F);
-                    poseStack.popPose();
-                }
-                if (renderBeacon) {
-                    // 渲染圆柱体
-                    poseStack.pushPose();
-                    // 向上平移到长方体的顶部
-                    poseStack.translate(0, playerHeight, 0);
-                    Shape2D.drawFilledPolygonCylinder(poseStack, consumer, r, g, b, a,
-                            baseWidth / 2.0F, cylinderHeight, 16, 0);
-                    poseStack.popPose();
-                }
-            } finally {
-                poseStack.popPose();
+            Matrix4f matrix = new Matrix4f(baseModelView);
+            // 将坐标系的原点平移到玩家的脚底中心
+            matrix.translate(
+                    (float) (interpolatedPos.x - cameraPos.x),
+                    (float) (interpolatedPos.y - cameraPos.y),
+                    (float) (interpolatedPos.z - cameraPos.z));
+
+            if (renderBoundingBox) {
+                // 渲染长方体
+                Matrix4f boundingBoxMatrix = new Matrix4f(matrix);
+                // 向上平移长方体高度的一半，使其中心与玩家身体中心对齐
+                boundingBoxMatrix.translate(0, playerHeight / 2.0F, 0);
+                Shape3D.drawFilledCuboid(boundingBoxMatrix, consumer, r, g, b, a,
+                        baseWidth / 2.0F, playerHeight / 2.0F, baseDepth / 2.0F);
+            }
+            if (renderBeacon) {
+                // 渲染圆柱体
+                Matrix4f beaconMatrix = new Matrix4f(matrix);
+                // 向上平移到长方体的顶部
+                beaconMatrix.translate(0, playerHeight, 0);
+                Shape2D.drawFilledPolygonCylinder(beaconMatrix, consumer, r, g, b, a,
+                        baseWidth / 2.0F, cylinderHeight, 16, 0);
             }
         }
         bufferSource.endBatch();
