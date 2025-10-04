@@ -1,6 +1,5 @@
 package xiao.battleroyale.compat.forge.client.event;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
@@ -25,11 +24,8 @@ public class ForgeRenderLevelStageEvent extends ForgeEvent implements IRenderLev
     }
 
     @Override
-    public PoseStack getPoseStack() {
-        PoseStack poseStack = new PoseStack();
-        Matrix4f forgeMatrix = this.typedEvent.getProjectionMatrix(); // Forge 只给 Matrix4f
-        poseStack.last().pose().set(forgeMatrix);
-        return poseStack;
+    public Matrix4f getModelViewMatrix() {
+        return this.typedEvent.getPoseStack();
     }
 
     @Override
