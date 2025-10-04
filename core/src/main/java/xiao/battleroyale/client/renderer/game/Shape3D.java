@@ -1,6 +1,5 @@
 package xiao.battleroyale.client.renderer.game;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
@@ -13,11 +12,9 @@ public class Shape3D {
      * 球体通过经纬度（UV Sphere）方式生成，由一系列四边形面组成
      * @param segments 控制球体的细分数量，值越大球体越平滑
      */
-    public static void drawFilledSphere(PoseStack poseStack, VertexConsumer consumer,
+    public static void drawFilledSphere(final Matrix4f matrix, VertexConsumer consumer,
                                         float r, float g, float b, float a,
                                         float radius, int segments) {
-        final Matrix4f currentPoseMatrix = poseStack.last().pose();
-
         // 纬度带数量，通常是经度切片的一半，避免在极点过度细分
         int stacks = segments / 2;
         // 经度切片数量
@@ -72,10 +69,10 @@ public class Shape3D {
                 // 渲染四边形面，避免在极点附近渲染重复面
                 // 顶点顺序: (x1,y1,z1) -> (x2,y2,z2) -> (x3,y3,z3) -> (x4,y4,z4)
                 if (i < stacks) {
-                    consumer.vertex(currentPoseMatrix, x1, y1, z1).color(r, g, b, a).normal(normal1.x(), normal1.y(), normal1.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x2, y2, z2).color(r, g, b, a).normal(normal2.x(), normal2.y(), normal2.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x3, y3, z3).color(r, g, b, a).normal(normal3.x(), normal3.y(), normal3.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x4, y4, z4).color(r, g, b, a).normal(normal4.x(), normal4.y(), normal4.z()).endVertex();
+                    consumer.vertex(matrix, x1, y1, z1).color(r, g, b, a).normal(normal1.x(), normal1.y(), normal1.z()).endVertex();
+                    consumer.vertex(matrix, x2, y2, z2).color(r, g, b, a).normal(normal2.x(), normal2.y(), normal2.z()).endVertex();
+                    consumer.vertex(matrix, x3, y3, z3).color(r, g, b, a).normal(normal3.x(), normal3.y(), normal3.z()).endVertex();
+                    consumer.vertex(matrix, x4, y4, z4).color(r, g, b, a).normal(normal4.x(), normal4.y(), normal4.z()).endVertex();
                 }
             }
         }
@@ -88,11 +85,9 @@ public class Shape3D {
      * @param halfHeight 长方体在Y轴方向上的半高。
      * @param halfDepth 长方体在Z轴方向上的半深。
      */
-    public static void drawFilledCuboid(PoseStack poseStack, VertexConsumer consumer,
+    public static void drawFilledCuboid(final Matrix4f matrix, VertexConsumer consumer,
                                         float r, float g, float b, float a,
                                         float halfWidth, float halfHeight, float halfDepth) {
-        final Matrix4f currentPoseMatrix = poseStack.last().pose();
-
         float x_neg = -halfWidth;
         float y_neg = -halfHeight;
         float z_neg = -halfDepth;
@@ -101,40 +96,40 @@ public class Shape3D {
         float z_pos = halfDepth;
 
         // 前面 (负Z轴方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.vertex(matrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.vertex(matrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.vertex(matrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.vertex(matrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
 
         // 后面 (正Z轴方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.vertex(matrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.vertex(matrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.vertex(matrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.vertex(matrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
 
         // 左侧 (负X轴方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.vertex(matrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.vertex(matrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.vertex(matrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.vertex(matrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(-1, 0, 0).endVertex();
 
         // 右侧 (正X轴方向)
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.vertex(matrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.vertex(matrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.vertex(matrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.vertex(matrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(1, 0, 0).endVertex();
 
         // 顶面 (正Y方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(0, 1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(0, 1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(0, 1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(0, 1, 0).endVertex();
+        consumer.vertex(matrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(0, 1, 0).endVertex();
+        consumer.vertex(matrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(0, 1, 0).endVertex();
+        consumer.vertex(matrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(0, 1, 0).endVertex();
+        consumer.vertex(matrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(0, 1, 0).endVertex();
 
         // 底面 (负Y方向)
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(0, -1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(0, -1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(0, -1, 0).endVertex();
-        consumer.vertex(currentPoseMatrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(0, -1, 0).endVertex();
+        consumer.vertex(matrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(0, -1, 0).endVertex();
+        consumer.vertex(matrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(0, -1, 0).endVertex();
+        consumer.vertex(matrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(0, -1, 0).endVertex();
+        consumer.vertex(matrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(0, -1, 0).endVertex();
     }
 
     /**
@@ -145,11 +140,9 @@ public class Shape3D {
      * @param halfC 椭球在Z轴方向上的半轴长。
      * @param segments 控制椭球的细分数量，值越大椭球越平滑。
      */
-    public static void drawFilledEllipsoid(PoseStack poseStack, VertexConsumer consumer,
+    public static void drawFilledEllipsoid(final Matrix4f matrix, VertexConsumer consumer,
                                            float r, float g, float b, float a,
                                            float halfA, float halfB, float halfC, int segments) {
-        final Matrix4f currentPoseMatrix = poseStack.last().pose();
-
         // 纬度带数量，通常是经度切片的一半，避免在极点过度细分
         int stacks = segments / 2;
         // 经度切片数量
@@ -206,10 +199,10 @@ public class Shape3D {
 
                 // 渲染四边形面
                 if (i < stacks) { // 避免在极点渲染重复面
-                    consumer.vertex(currentPoseMatrix, x1, y1, z1).color(r, g, b, a).normal(normal1.x(), normal1.y(), normal1.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x2, y2, z2).color(r, g, b, a).normal(normal2.x(), normal2.y(), normal2.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x3, y3, z3).color(r, g, b, a).normal(normal3.x(), normal3.y(), normal3.z()).endVertex();
-                    consumer.vertex(currentPoseMatrix, x4, y4, z4).color(r, g, b, a).normal(normal4.x(), normal4.y(), normal4.z()).endVertex();
+                    consumer.vertex(matrix, x1, y1, z1).color(r, g, b, a).normal(normal1.x(), normal1.y(), normal1.z()).endVertex();
+                    consumer.vertex(matrix, x2, y2, z2).color(r, g, b, a).normal(normal2.x(), normal2.y(), normal2.z()).endVertex();
+                    consumer.vertex(matrix, x3, y3, z3).color(r, g, b, a).normal(normal3.x(), normal3.y(), normal3.z()).endVertex();
+                    consumer.vertex(matrix, x4, y4, z4).color(r, g, b, a).normal(normal4.x(), normal4.y(), normal4.z()).endVertex();
                 }
             }
         }
