@@ -20,6 +20,9 @@ public class Shape3D {
         // 经度切片数量
         int slices = segments;
 
+        // 设置颜色
+        consumer.setColor(r, g, b, a);
+
         // 遍历纬度带
         for (int i = 0; i <= stacks; i++) {
             // 计算当前纬度的垂直角度 (phi)，从顶部 (0) 到底部 (PI)
@@ -69,10 +72,17 @@ public class Shape3D {
                 // 渲染四边形面，避免在极点附近渲染重复面
                 // 顶点顺序: (x1,y1,z1) -> (x2,y2,z2) -> (x3,y3,z3) -> (x4,y4,z4)
                 if (i < stacks) {
-                    consumer.vertex(matrix, x1, y1, z1).color(r, g, b, a).normal(normal1.x(), normal1.y(), normal1.z()).endVertex();
-                    consumer.vertex(matrix, x2, y2, z2).color(r, g, b, a).normal(normal2.x(), normal2.y(), normal2.z()).endVertex();
-                    consumer.vertex(matrix, x3, y3, z3).color(r, g, b, a).normal(normal3.x(), normal3.y(), normal3.z()).endVertex();
-                    consumer.vertex(matrix, x4, y4, z4).color(r, g, b, a).normal(normal4.x(), normal4.y(), normal4.z()).endVertex();
+                    consumer.setNormal(normal1.x(), normal1.y(), normal1.z());
+                    consumer.addVertex(matrix, x1, y1, z1);
+
+                    consumer.setNormal(normal2.x(), normal2.y(), normal2.z());
+                    consumer.addVertex(matrix, x2, y2, z2);
+
+                    consumer.setNormal(normal3.x(), normal3.y(), normal3.z());
+                    consumer.addVertex(matrix, x3, y3, z3);
+
+                    consumer.setNormal(normal4.x(), normal4.y(), normal4.z());
+                    consumer.addVertex(matrix, x4, y4, z4);
                 }
             }
         }
@@ -95,41 +105,50 @@ public class Shape3D {
         float y_pos = halfHeight;
         float z_pos = halfDepth;
 
+        // 设置颜色
+        consumer.setColor(r, g, b, a);
+
         // 前面 (负Z轴方向)
-        consumer.vertex(matrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(matrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(matrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(matrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.setNormal(0, 0, -1);
+        consumer.addVertex(matrix, x_neg, y_neg, z_neg);
+        consumer.addVertex(matrix, x_pos, y_neg, z_neg);
+        consumer.addVertex(matrix, x_pos, y_pos, z_neg);
+        consumer.addVertex(matrix, x_neg, y_pos, z_neg);
 
         // 后面 (正Z轴方向)
-        consumer.vertex(matrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(matrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(matrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(matrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.setNormal(0, 0, 1);
+        consumer.addVertex(matrix, x_neg, y_neg, z_pos);
+        consumer.addVertex(matrix, x_neg, y_pos, z_pos);
+        consumer.addVertex(matrix, x_pos, y_pos, z_pos);
+        consumer.addVertex(matrix, x_pos, y_neg, z_pos);
 
         // 左侧 (负X轴方向)
-        consumer.vertex(matrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(matrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(matrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(matrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.setNormal(-1, 0, 0);
+        consumer.addVertex(matrix, x_neg, y_neg, z_pos);
+        consumer.addVertex(matrix, x_neg, y_pos, z_pos);
+        consumer.addVertex(matrix, x_neg, y_pos, z_neg);
+        consumer.addVertex(matrix, x_neg, y_neg, z_neg);
 
         // 右侧 (正X轴方向)
-        consumer.vertex(matrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(matrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(matrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(matrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.setNormal(1, 0, 0);
+        consumer.addVertex(matrix, x_pos, y_neg, z_neg);
+        consumer.addVertex(matrix, x_pos, y_pos, z_neg);
+        consumer.addVertex(matrix, x_pos, y_pos, z_pos);
+        consumer.addVertex(matrix, x_pos, y_neg, z_pos);
 
         // 顶面 (正Y方向)
-        consumer.vertex(matrix, x_neg, y_pos, z_neg).color(r, g, b, a).normal(0, 1, 0).endVertex();
-        consumer.vertex(matrix, x_pos, y_pos, z_neg).color(r, g, b, a).normal(0, 1, 0).endVertex();
-        consumer.vertex(matrix, x_pos, y_pos, z_pos).color(r, g, b, a).normal(0, 1, 0).endVertex();
-        consumer.vertex(matrix, x_neg, y_pos, z_pos).color(r, g, b, a).normal(0, 1, 0).endVertex();
+        consumer.setNormal(0, 1, 0);
+        consumer.addVertex(matrix, x_neg, y_pos, z_neg);
+        consumer.addVertex(matrix, x_pos, y_pos, z_neg);
+        consumer.addVertex(matrix, x_pos, y_pos, z_pos);
+        consumer.addVertex(matrix, x_neg, y_pos, z_pos);
 
         // 底面 (负Y方向)
-        consumer.vertex(matrix, x_neg, y_neg, z_neg).color(r, g, b, a).normal(0, -1, 0).endVertex();
-        consumer.vertex(matrix, x_neg, y_neg, z_pos).color(r, g, b, a).normal(0, -1, 0).endVertex();
-        consumer.vertex(matrix, x_pos, y_neg, z_pos).color(r, g, b, a).normal(0, -1, 0).endVertex();
-        consumer.vertex(matrix, x_pos, y_neg, z_neg).color(r, g, b, a).normal(0, -1, 0).endVertex();
+        consumer.setNormal(0, -1, 0);
+        consumer.addVertex(matrix, x_neg, y_neg, z_neg);
+        consumer.addVertex(matrix, x_neg, y_neg, z_pos);
+        consumer.addVertex(matrix, x_pos, y_neg, z_pos);
+        consumer.addVertex(matrix, x_pos, y_neg, z_neg);
     }
 
     /**
@@ -147,6 +166,9 @@ public class Shape3D {
         int stacks = segments / 2;
         // 经度切片数量
         int slices = segments;
+
+        // 设置颜色
+        consumer.setColor(r, g, b, a);
 
         // 遍历纬度带
         for (int i = 0; i <= stacks; i++) {
@@ -199,10 +221,17 @@ public class Shape3D {
 
                 // 渲染四边形面
                 if (i < stacks) { // 避免在极点渲染重复面
-                    consumer.vertex(matrix, x1, y1, z1).color(r, g, b, a).normal(normal1.x(), normal1.y(), normal1.z()).endVertex();
-                    consumer.vertex(matrix, x2, y2, z2).color(r, g, b, a).normal(normal2.x(), normal2.y(), normal2.z()).endVertex();
-                    consumer.vertex(matrix, x3, y3, z3).color(r, g, b, a).normal(normal3.x(), normal3.y(), normal3.z()).endVertex();
-                    consumer.vertex(matrix, x4, y4, z4).color(r, g, b, a).normal(normal4.x(), normal4.y(), normal4.z()).endVertex();
+                    consumer.setNormal(normal1.x(), normal1.y(), normal1.z());
+                    consumer.addVertex(matrix, x1, y1, z1);
+
+                    consumer.setNormal(normal2.x(), normal2.y(), normal2.z());
+                    consumer.addVertex(matrix, x2, y2, z2);
+
+                    consumer.setNormal(normal3.x(), normal3.y(), normal3.z());
+                    consumer.addVertex(matrix, x3, y3, z3);
+
+                    consumer.setNormal(normal4.x(), normal4.y(), normal4.z());
+                    consumer.addVertex(matrix, x4, y4, z4);
                 }
             }
         }

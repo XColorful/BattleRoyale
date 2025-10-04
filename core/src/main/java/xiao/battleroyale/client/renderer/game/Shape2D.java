@@ -23,30 +23,37 @@ public class Shape2D {
         float x2 = halfWidth;
         float z2 = halfDepth;
 
+        // 设置颜色
+        consumer.setColor(r, g, b, a);
+
         // 渲染侧面
         // 前面 (负Z轴方向)
-        consumer.vertex(matrix, x1, 0, z1).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(matrix, x2, 0, z1).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(matrix, x2, height, z1).color(r, g, b, a).normal(0, 0, -1).endVertex();
-        consumer.vertex(matrix, x1, height, z1).color(r, g, b, a).normal(0, 0, -1).endVertex();
+        consumer.setNormal(0, 0, -1);
+        consumer.addVertex(matrix, x1, 0, z1);
+        consumer.addVertex(matrix, x2, 0, z1);
+        consumer.addVertex(matrix, x2, height, z1);
+        consumer.addVertex(matrix, x1, height, z1);
 
         // 后面 (正Z轴方向)
-        consumer.vertex(matrix, x1, 0, z2).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(matrix, x1, height, z2).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(matrix, x2, height, z2).color(r, g, b, a).normal(0, 0, 1).endVertex();
-        consumer.vertex(matrix, x2, 0, z2).color(r, g, b, a).normal(0, 0, 1).endVertex();
+        consumer.setNormal(0, 0, 1);
+        consumer.addVertex(matrix, x1, 0, z2);
+        consumer.addVertex(matrix, x1, height, z2);
+        consumer.addVertex(matrix, x2, height, z2);
+        consumer.addVertex(matrix, x2, 0, z2);
 
         // 左侧 (负X轴方向)
-        consumer.vertex(matrix, x1, 0, z1).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(matrix, x1, height, z1).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(matrix, x1, height, z2).color(r, g, b, a).normal(-1, 0, 0).endVertex();
-        consumer.vertex(matrix, x1, 0, z2).color(r, g, b, a).normal(-1, 0, 0).endVertex();
+        consumer.setNormal(-1, 0, 0);
+        consumer.addVertex(matrix, x1, 0, z1);
+        consumer.addVertex(matrix, x1, height, z1);
+        consumer.addVertex(matrix, x1, height, z2);
+        consumer.addVertex(matrix, x1, 0, z2);
 
         // 右侧 (正X轴方向)
-        consumer.vertex(matrix, x2, 0, z1).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(matrix, x2, 0, z2).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(matrix, x2, height, z2).color(r, g, b, a).normal(1, 0, 0).endVertex();
-        consumer.vertex(matrix, x2, height, z1).color(r, g, b, a).normal(1, 0, 0).endVertex();
+        consumer.setNormal(1, 0, 0);
+        consumer.addVertex(matrix, x2, 0, z1);
+        consumer.addVertex(matrix, x2, 0, z2);
+        consumer.addVertex(matrix, x2, height, z2);
+        consumer.addVertex(matrix, x2, height, z1);
     }
 
     /**
@@ -62,6 +69,9 @@ public class Shape2D {
                                                  float radius, float height, int segments, float initialAngle) {
         final float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
         final float halfTwoPiDivSegments = TWO_PI_DIV_SEGMENTS / 2.0f;
+
+        // 设置颜色
+        consumer.setColor(r, g, b, a);
 
         for (int i = 0; i < segments; i++) {
             float angle1 = initialAngle + (i * TWO_PI_DIV_SEGMENTS);
@@ -83,10 +93,11 @@ public class Shape2D {
             float normalX = Mth.cos(midAngle);
             float normalZ = Mth.sin(midAngle);
 
-            consumer.vertex(matrix, x1, 0, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(matrix, x1, height, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(matrix, x2, height, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(matrix, x2, 0, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.setNormal(normalX, 0, normalZ);
+            consumer.addVertex(matrix, x1, 0, z1);
+            consumer.addVertex(matrix, x1, height, z1);
+            consumer.addVertex(matrix, x2, height, z2);
+            consumer.addVertex(matrix, x2, 0, z2);
         }
     }
 
@@ -102,8 +113,10 @@ public class Shape2D {
                                                  float r, float g, float b, float a,
                                                  float halfA, float halfB, float height, int segments) {
         // 缓存矩阵
-        final PoseStack.Pose currentPose = poseStack.last();
         final float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
+
+        // 设置颜色
+        consumer.setColor(r, g, b, a);
 
         for (int i = 0; i < segments; i++) {
             float angle1 = i * TWO_PI_DIV_SEGMENTS;
@@ -133,10 +146,11 @@ public class Shape2D {
                 normalZ = 0.0F;
             }
 
-            consumer.vertex(matrix, x1, 0, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(matrix, x1, height, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(matrix, x2, height, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(matrix, x2, 0, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.setNormal(normalX, 0, normalZ);
+            consumer.addVertex(matrix, x1, 0, z1);
+            consumer.addVertex(matrix, x1, height, z1);
+            consumer.addVertex(matrix, x2, height, z2);
+            consumer.addVertex(matrix, x2, 0, z2);
         }
     }
 
@@ -154,6 +168,9 @@ public class Shape2D {
                                               float outerRadius, float innerRadius, float height, int segments, float initialAngle) {
         final float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
 
+        // 设置颜色
+        consumer.setColor(r, g, b, a);
+
         // 星形侧面渲染
         for (int i = 0; i < segments; i++) {
             // 外瓣边
@@ -170,10 +187,11 @@ public class Shape2D {
             float normalX1 = Mth.cos(midAngleOuterInner1);
             float normalZ1 = Mth.sin(midAngleOuterInner1);
 
-            consumer.vertex(matrix, outerX1, 0, outerZ1).color(r, g, b, a).normal(normalX1, 0, normalZ1).endVertex();
-            consumer.vertex(matrix, outerX1, height, outerZ1).color(r, g, b, a).normal(normalX1, 0, normalZ1).endVertex();
-            consumer.vertex(matrix, innerX1, height, innerZ1).color(r, g, b, a).normal(normalX1, 0, normalZ1).endVertex();
-            consumer.vertex(matrix, innerX1, 0, innerZ1).color(r, g, b, a).normal(normalX1, 0, normalZ1).endVertex();
+            consumer.setNormal(normalX1, 0, normalZ1);
+            consumer.addVertex(matrix, outerX1, 0, outerZ1);
+            consumer.addVertex(matrix, outerX1, height, outerZ1);
+            consumer.addVertex(matrix, innerX1, height, innerZ1);
+            consumer.addVertex(matrix, innerX1, 0, innerZ1);
 
             // 内瓣边
             float innerAngle2 = initialAngle + (i * TWO_PI_DIV_SEGMENTS) + (float) (Math.PI / segments);
@@ -189,10 +207,11 @@ public class Shape2D {
             float normalX2 = -Mth.cos(midAngleInnerOuter2);
             float normalZ2 = -Mth.sin(midAngleInnerOuter2);
 
-            consumer.vertex(matrix, innerX2, 0, innerZ2).color(r, g, b, a).normal(normalX2, 0, normalZ2).endVertex();
-            consumer.vertex(matrix, innerX2, height, innerZ2).color(r, g, b, a).normal(normalX2, 0, normalZ2).endVertex();
-            consumer.vertex(matrix, outerX2, height, outerZ2).color(r, g, b, a).normal(normalX2, 0, normalZ2).endVertex();
-            consumer.vertex(matrix, outerX2, 0, outerZ2).color(r, g, b, a).normal(normalX2, 0, normalZ2).endVertex();
+            consumer.setNormal(normalX2, 0, normalZ2);
+            consumer.addVertex(matrix, innerX2, 0, innerZ2);
+            consumer.addVertex(matrix, innerX2, height, innerZ2);
+            consumer.addVertex(matrix, outerX2, height, outerZ2);
+            consumer.addVertex(matrix, outerX2, 0, outerZ2);
         }
     }
 }
