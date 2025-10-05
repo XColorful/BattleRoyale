@@ -47,6 +47,7 @@ public class BattleRoyaleForge {
         BattleRoyaleForge.eventPoster = new ForgeEventPoster();
         BattleRoyaleForge.blockModelRenderer = new ForgeBlockModelRenderer();
         BattleRoyaleForge.compatApi = new BattleRoyale.CompatApi(JmApi.get());
+
         Dist dist = FMLLoader.getDist();
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
 
