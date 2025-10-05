@@ -62,7 +62,6 @@ public class ZoneRenderer {
         }
 
         Matrix4f baseModelView = event.getModelViewMatrix();
-        BattleRoyale.LOGGER.debug("BaseModelView:{}", baseModelView);
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         Vec3 cameraPos = event.getCamera_getPosition();
 
@@ -70,18 +69,24 @@ public class ZoneRenderer {
             if (zoneData == null || zoneData.center == null || zoneData.dimension == null) continue;
 
             Matrix4f modelMatrix = new Matrix4f();
+
             // 平移到区域中心，并抵消相机位置
             modelMatrix.translate(
                     (float) (zoneData.center.x - cameraPos.x),
                     (float) (zoneData.center.y - cameraPos.y),
                     (float) (zoneData.center.z - cameraPos.z));
-            BattleRoyale.LOGGER.debug("Center:{}, {}, {}, CameraPos:{}, {}, {}", zoneData.center.x, zoneData.center.y, zoneData.center.z, cameraPos.x, cameraPos.y, cameraPos.z);
-            BattleRoyale.LOGGER.debug("ModelMatrix:{}", modelMatrix);
+
             // 正角度为顺时针旋转区域
             modelMatrix.rotate(Axis.YP.rotationDegrees((float) -zoneData.rotateDegree));
-            BattleRoyale.LOGGER.debug("ModelMatrix:{}", modelMatrix);
-            Matrix4f finalMatrix = new Matrix4f(baseModelView);
-            finalMatrix.mul(modelMatrix);
+            Matrix4f rotationFreeBaseMatrix = new Matrix4f(baseModelView);
+            float tx = rotationFreeBaseMatrix.m30();
+            float ty = rotationFreeBaseMatrix.m31();
+            float tz = rotationFreeBaseMatrix.m32();
+            rotationFreeBaseMatrix.identity();
+            rotationFreeBaseMatrix.m30(tx);
+            rotationFreeBaseMatrix.m31(ty);
+            rotationFreeBaseMatrix.m32(tz);
+            Matrix4f finalMatrix = rotationFreeBaseMatrix.mul(modelMatrix);
             float r = zoneData.r;
             float g = zoneData.g;
             float b = zoneData.b;
@@ -90,7 +95,6 @@ public class ZoneRenderer {
             // 对光影没用，对原版云有用
             VertexConsumer consumer = bufferSource.getBuffer(a < 0.999F ? TRANSLUCENT_ZONE : OPAQUE_ZONE);
 
-            BattleRoyale.LOGGER.debug("FinalMatrix:{}", finalMatrix);
             switch (zoneData.shapeType) {
                 // 2D shape
                 case CIRCLE ->
