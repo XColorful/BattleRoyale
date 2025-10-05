@@ -82,12 +82,12 @@ public class BattleRoyaleNeoforge {
     }
 
     private void registerToEventBus(IEventBus modEventBus) {
-        modEventBus.register(NeoClientEventHandler.class);
+        //  modEventBus.register(NeoClientEventHandler.class);
         modEventBus.register(NeoClientSetup.class);
         modEventBus.register(NeoModEntityRender.class);
-        modEventBus.register(NeoCommandRegistry.class);
+        // modEventBus.register(NeoCommandRegistry.class);
         modEventBus.register(NeoCommonSetup.class);
         modEventBus.register(NeoCompatInit.class);
-        modEventBus.register(NeoModEvent.class);
+        // modEventBus.register(NeoModEvent.class);
     }
 }
