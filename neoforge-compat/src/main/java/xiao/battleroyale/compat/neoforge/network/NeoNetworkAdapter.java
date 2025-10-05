@@ -1,14 +1,15 @@
 package xiao.battleroyale.compat.neoforge.network;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
-import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.INetworkAdapter;
@@ -29,6 +30,10 @@ public class NeoNetworkAdapter implements INetworkAdapter {
     private record NeoPayload<T extends IMessage<T>>(ResourceLocation id, T message) implements CustomPacketPayload {
 
         @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return new Type<>(this.id);
+        }
+
         public void write(FriendlyByteBuf buffer) {
             this.message.encode(this.message, buffer);
         }
@@ -79,7 +84,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
         T castedMessage = (T) message;
 
         CustomPacketPayload payload = new NeoPayload<>(packetInfo.id(), castedMessage);
-        PacketDistributor.ALL.noArg().send(payload);
+        PacketDistributor.sendToAllPlayers(payload);
     }
 
     @Override
@@ -96,29 +101,36 @@ public class NeoNetworkAdapter implements INetworkAdapter {
         T castedMessage = (T) message;
 
         CustomPacketPayload payload = new NeoPayload<>(packetInfo.id(), castedMessage);
-        PacketDistributor.PLAYER.with(player).send(payload);
+        PacketDistributor.sendToPlayer(player, payload);
     }
 
     @SubscribeEvent
-    public void register(RegisterPayloadHandlerEvent event) {
-        final IPayloadRegistrar registrar = event.registrar(modId);
+    public void register(RegisterPayloadHandlersEvent event) {
+        final PayloadRegistrar registrar = event.registrar(modId);
 
         for (RegisteredPacket<?> rp : registeredPackets) {
             registerPacketInternal(registrar, rp);
         }
     }
 
-    private <T extends IMessage<T>> void registerPacketInternal(IPayloadRegistrar registrar, RegisteredPacket<T> rp) {
-
+    private <T extends IMessage<T>> void registerPacketInternal(PayloadRegistrar registrar, RegisteredPacket<T> rp) {
         ResourceLocation id = rp.id;
         Class<T> messageClass = rp.messageType;
-        FriendlyByteBuf.Reader<NeoPayload<T>> decoder = (buf) -> NeoPayload.decode(messageClass, id, buf);
+
+        CustomPacketPayload.Type<NeoPayload<T>> payloadType = new CustomPacketPayload.Type<>(id);
+
+        StreamCodec<FriendlyByteBuf, NeoPayload<T>> codec = StreamCodec.of(
+                (buf, payload) -> payload.write(buf),
+                (buf) -> NeoPayload.decode(messageClass, id, buf)
+        );
+
         IPayloadHandler<NeoPayload<T>> handler = (payload, context) -> {
             final T message = payload.message();
-            context.workHandler().execute(() -> {
+            context.enqueueWork(() -> {
                 message.handle(message, Runnable::run);
             });
         };
-        registrar.common(id, decoder, handler);
+
+        registrar.playBidirectional(payloadType, codec, handler);
     }
 }

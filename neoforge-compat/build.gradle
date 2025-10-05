@@ -3,8 +3,11 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.110'
+    id 'net.neoforged.moddev' version '2.0.112'
 }
+
+version = mod_version
+group = mod_group_id
 
 repositories {
     mavenLocal()
@@ -13,6 +16,13 @@ repositories {
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
     runs {
         configureEach {
             systemProperty 'neoforge.logging.markers', 'REGISTRIES'
@@ -20,22 +30,27 @@ neoForge {
         }
 
         client {
+            client()
             systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
         }
 
         server {
+            server()
             systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
             programArgument '--nogui'
         }
 
         gameTestServer {
+            type = "gameTestServer"
             systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
         }
 
         data {
+            data()
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
     }
+
     mods {
         "${project.mod_id}" {
             sourceSet(sourceSets.main)

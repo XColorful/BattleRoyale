@@ -1,13 +1,10 @@
 package xiao.battleroyale.compat.neoforge.init;
 
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.init.ModEvent;
 
-@Mod.EventBusSubscriber(modid = BattleRoyale.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class NeoModEvent {
 
     private static final ModEvent MOD_EVENT = ModEvent.get();

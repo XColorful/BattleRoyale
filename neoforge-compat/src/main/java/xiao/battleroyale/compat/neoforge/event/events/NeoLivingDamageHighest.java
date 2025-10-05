@@ -38,7 +38,7 @@ public class NeoLivingDamageHighest extends AbstractNeoEventCommon {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
-    public void onLivingDamageEvent(LivingDamageEvent event) {
+    public void onLivingDamageEvent(LivingDamageEvent.Pre event) {
         super.onEvent(event);
     }
 }

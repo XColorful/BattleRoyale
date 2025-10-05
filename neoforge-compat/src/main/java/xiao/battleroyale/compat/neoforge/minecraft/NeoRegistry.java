@@ -16,7 +16,7 @@ public class NeoRegistry implements IMcRegistry {
 
     @Override
     public ResourceLocation createResourceLocation(String rlString) {
-        return new ResourceLocation(rlString);
+        return ResourceLocation.parse(rlString);
     }
 
     @Override public @Nullable Block getBlock(ResourceLocation rl) {

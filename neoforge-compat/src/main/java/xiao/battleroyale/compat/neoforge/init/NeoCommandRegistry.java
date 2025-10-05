@@ -1,12 +1,10 @@
 package xiao.battleroyale.compat.neoforge.init;
 
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import xiao.battleroyale.init.CommandRegistry;
 
-@Mod.EventBusSubscriber
 public class NeoCommandRegistry {
 
     private static final CommandRegistry COMMAND_REGISTRY = CommandRegistry.get();

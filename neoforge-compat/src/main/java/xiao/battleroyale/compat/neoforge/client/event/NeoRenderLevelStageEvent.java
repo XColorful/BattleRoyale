@@ -35,6 +35,6 @@ public class NeoRenderLevelStageEvent extends NeoEvent implements IRenderLevelSt
 
     @Override
     public float getPartialTick() {
-        return this.typedEvent.getPartialTick();
+        return this.typedEvent.getPartialTick().getGameTimeDeltaPartialTick(true);
     }
 }

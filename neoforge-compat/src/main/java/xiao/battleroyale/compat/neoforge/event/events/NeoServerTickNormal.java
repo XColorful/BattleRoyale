@@ -4,7 +4,7 @@ import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.compat.neoforge.event.NeoEvent;
 import xiao.battleroyale.compat.neoforge.event.NeoServerTickEvent;
@@ -38,7 +38,7 @@ public class NeoServerTickNormal extends AbstractNeoEventCommon {
     }
 
     @SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
-    public void onServerTickEvent(TickEvent.ServerTickEvent event) {
+    public void onServerTickEvent(ServerTickEvent.Post event) {
         super.onEvent(event);
     }
 }
