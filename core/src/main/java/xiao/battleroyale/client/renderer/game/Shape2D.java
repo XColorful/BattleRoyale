@@ -25,28 +25,28 @@ public class Shape2D {
 
         // 渲染侧面
         // 前面 (负Z轴方向)
-        consumer.setNormal(0, 0, -1);
+        // consumer.setNormal(0, 0, -1);
         consumer.addVertex(matrix, x1, 0, z1).setColor(r, g, b, a);
         consumer.addVertex(matrix, x2, 0, z1).setColor(r, g, b, a);
         consumer.addVertex(matrix, x2, height, z1).setColor(r, g, b, a);
         consumer.addVertex(matrix, x1, height, z1).setColor(r, g, b, a);
 
         // 后面 (正Z轴方向)
-        consumer.setNormal(0, 0, 1);
+        // consumer.setNormal(0, 0, 1);
         consumer.addVertex(matrix, x1, 0, z2).setColor(r, g, b, a);
         consumer.addVertex(matrix, x1, height, z2).setColor(r, g, b, a);
         consumer.addVertex(matrix, x2, height, z2).setColor(r, g, b, a);
         consumer.addVertex(matrix, x2, 0, z2).setColor(r, g, b, a);
 
         // 左侧 (负X轴方向)
-        consumer.setNormal(-1, 0, 0);
+        // consumer.setNormal(-1, 0, 0);
         consumer.addVertex(matrix, x1, 0, z1).setColor(r, g, b, a);
         consumer.addVertex(matrix, x1, height, z1).setColor(r, g, b, a);
         consumer.addVertex(matrix, x1, height, z2).setColor(r, g, b, a);
         consumer.addVertex(matrix, x1, 0, z2).setColor(r, g, b, a);
 
         // 右侧 (正X轴方向)
-        consumer.setNormal(1, 0, 0);
+        // consumer.setNormal(1, 0, 0);
         consumer.addVertex(matrix, x2, 0, z1).setColor(r, g, b, a);
         consumer.addVertex(matrix, x2, 0, z2).setColor(r, g, b, a);
         consumer.addVertex(matrix, x2, height, z2).setColor(r, g, b, a);
