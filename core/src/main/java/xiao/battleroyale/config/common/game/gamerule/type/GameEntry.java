@@ -7,6 +7,7 @@ import xiao.battleroyale.api.config.sub.IConfigAppliable;
 import xiao.battleroyale.api.game.gamerule.GameEntryTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.common.message.AbstractMessageManager;
+import xiao.battleroyale.compat.tacz.Tacz;
 import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.JsonUtils;
 
@@ -232,5 +233,6 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         AbstractMessageManager.setCleanFrequency(messageCleanFreq);
         AbstractMessageManager.setExpireTime(messageExpireTime);
         AbstractMessageManager.setForceSyncFrequency(messageSyncFreq);
+        Tacz.setGameConfig(downShoot, downReload, downFireSelect, downMelee);
     }
 }

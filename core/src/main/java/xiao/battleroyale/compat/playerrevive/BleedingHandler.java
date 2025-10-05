@@ -11,6 +11,7 @@ import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.compat.tacz.Tacz;
 import xiao.battleroyale.event.EventRegistry;
 
 import java.util.*;
@@ -38,6 +39,7 @@ public class BleedingHandler implements IEventHandler {
     public static void register() {
         if (EventRegistry.register(get(), EventType.SERVER_TICK_EVENT)) {
             isRegistered = true;
+            Tacz.registerBleedingEvent();
         } else {
             BattleRoyale.LOGGER.warn("BleedingHandler failed to register instantly");
         }
@@ -46,6 +48,7 @@ public class BleedingHandler implements IEventHandler {
     public static void unregister() {
         EventRegistry.unregister(get(), EventType.SERVER_TICK_EVENT);
         isRegistered = false;
+        Tacz.unregisterBleedingEvent();
     }
 
     private static final List<Float> bleedDamage = new ArrayList<>();
@@ -81,6 +84,7 @@ public class BleedingHandler implements IEventHandler {
         float damage = bleedDamage.get(currentDownTime - 1);
         bleedingPlayerData.put(playerUUID, new BleedData(player, gamePlayer, damage, BLEED_COOLDOWN));
         BattleRoyale.LOGGER.debug("Player {} (UUID:{}) has downed {} time, damage:{}, cooldown:{}", player.getName().getString(), player.getUUID(), currentDownTime, damage, BLEED_COOLDOWN);
+        Tacz.onAddingBleedingPlayer(player);
     }
 
     @Override

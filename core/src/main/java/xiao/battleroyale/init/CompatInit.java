@@ -3,6 +3,7 @@ package xiao.battleroyale.init;
 import xiao.battleroyale.api.init.ICompatInit;
 import xiao.battleroyale.compat.journeymap.JourneyMap;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
+import xiao.battleroyale.compat.tacz.Tacz;
 
 public class CompatInit implements ICompatInit {
 
@@ -18,5 +19,6 @@ public class CompatInit implements ICompatInit {
     public void onLoadComplete() {
         JourneyMap.get().checkLoaded();
         PlayerRevive.get().checkLoaded();
+        Tacz.get().checkLoaded();
     }
 }
