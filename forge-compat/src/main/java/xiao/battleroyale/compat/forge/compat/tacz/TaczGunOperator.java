@@ -4,17 +4,17 @@ import com.tacz.guns.api.entity.IGunOperator;
 import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.api.compat.tacz.ITaczGunOperator;
 
-public class TaczGunOpeartor implements ITaczGunOperator {
+public class TaczGunOperator implements ITaczGunOperator {
 
     private static class TaczGunOperatorHolder {
-        private static final TaczGunOpeartor INSTANCE = new TaczGunOpeartor();
+        private static final TaczGunOperator INSTANCE = new TaczGunOperator();
     }
 
-    public static TaczGunOpeartor get() {
+    public static TaczGunOperator get() {
         return TaczGunOperatorHolder.INSTANCE;
     }
 
-    private TaczGunOpeartor() {}
+    private TaczGunOperator() {}
 
     @Override
     public void cancelLivingEntityReload(LivingEntity livingEntity) {
