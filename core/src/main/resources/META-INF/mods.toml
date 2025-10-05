@@ -13,24 +13,24 @@ description='''
 
 [[dependencies.battleroyale]]
     modId="${target_modloader}"
-    mandatory=true
+    type="required"
     versionRange="${target_version_range}"
     ordering="NONE"
     side="BOTH"
 [[dependencies.battleroyale]]
     modId="minecraft"
-    mandatory=true
+    type="required"
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
 [[dependencies.battleroyale]]
     modId = "journeymap"
-    mandatory = false
+    type="optional"
     versionRange = "[1.21-6.0.0-beta.1,)"
     ordering = "NONE"
     side = "CLIENT"
 [[dependencies.battleroyale]]
     modId="playerrevive"
-    mandatory=false
+    type="optional"
     versionRange="[2.0.16,]"
     side="BOTH"
