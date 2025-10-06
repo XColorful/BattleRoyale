@@ -1,18 +1,23 @@
 package xiao.battleroyale.developer.debug.command.sub.get;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.api.minecraft.InventoryIndex;
 import xiao.battleroyale.developer.debug.DebugManager;
 import xiao.battleroyale.developer.debug.DebugWorld;
 
 import static xiao.battleroyale.developer.debug.command.CommandArg.*;
+import static xiao.battleroyale.developer.debug.command.sub.GetCommand.buildDebugCommandString;
 
 public class GetWorld {
 
@@ -29,6 +34,27 @@ public class GetWorld {
                 .executes(context -> getBlockEntityNBT(context, context.getSource().getPosition()))
                 .then(Commands.argument(XYZ, Vec3Argument.vec3())
                         .executes(context -> getBlockEntityNBT(context, Vec3Argument.getVec3(context, XYZ)))));
+
+        // get playeritemstacks [player] [min max / all]
+        getCommand.then(Commands.literal(useFullName ? PLAYER_ITEM_STACKS : PLAYER_ITEM_STACKS_SHORT)
+                .then(Commands.argument(PLAYER, EntityArgument.player())
+                        .then(Commands.literal(ALL)
+                                .executes(context -> getPlayerItemStacks(context,
+                                        EntityArgument.getPlayer(context, PLAYER),
+                                        0,
+                                        Integer.MAX_VALUE - 1)))
+                        .then(Commands.argument(ID_MIN, IntegerArgumentType.integer(0))
+                                .then(Commands.argument(ID_MAX, IntegerArgumentType.integer())
+                                        .executes(context -> getPlayerItemStacks(context,
+                                                EntityArgument.getPlayer(context, PLAYER),
+                                                IntegerArgumentType.getInteger(context, ID_MIN),
+                                                IntegerArgumentType.getInteger(context, ID_MAX)))))));
+
+        // get playeritemstack [player]
+        getCommand.then(Commands.literal(useFullName ? PLAYER_ITEM_STACK : PLAYER_ITEM_STACK_SHORT)
+                .then(Commands.argument(PLAYER, EntityArgument.player())
+                        .executes(context -> getPlayerItemStack(context,
+                                EntityArgument.getPlayer(context, PLAYER)))));
 
 
         // get biome [xyz]
@@ -79,6 +105,30 @@ public class GetWorld {
     }
 
     /**
+     * 获取玩家物品的NBT
+     */
+    private static int getPlayerItemStacks(CommandContext<CommandSourceStack> context, ServerPlayer player, int min, int max) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
+        DebugWorld.get().getPlayerItemStacks(source, player, min, max);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int getPlayerItemStack(CommandContext<CommandSourceStack> context, ServerPlayer player) {
+        CommandSourceStack source = context.getSource();
+        if (!DebugManager.hasDebugPermission(source)) {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_debug_permission"));
+            return 0;
+        }
+
+        DebugWorld.get().getPlayerItemStack(source, player);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    /**
      * 获取群系/建筑信息（用于写物资刷新配置）
      */
     private static int getBiome(CommandContext<CommandSourceStack> context, Vec3 pos) {
@@ -123,5 +173,30 @@ public class GetWorld {
 
         DebugWorld.get().getLevelKey(source);
         return Command.SINGLE_SUCCESS;
+    }
+
+    public static String getPlayerItemStacksCommand(String player, int min, int max) {
+        return buildDebugCommandString(
+                GET,
+                PLAYER_ITEM_STACKS,
+                player,
+                Integer.toString(min),
+                Integer.toString(max)
+        );
+    }
+    public static String getHotbarItemStacksCommand(String playerName) {
+        return getPlayerItemStacksCommand(playerName, InventoryIndex.HOTBAR_START, InventoryIndex.HOTBAR_END);
+    }
+    public static String getInventoryItemStacksCommand(String playerName) {
+        return getPlayerItemStacksCommand(playerName, InventoryIndex.INVENTORY_START, InventoryIndex.INVENTORY_END);
+    }
+    public static String getArmorItemStacksCommand(String playerName) {
+        return getPlayerItemStacksCommand(playerName, InventoryIndex.ARMOR_START, InventoryIndex.ARMOR_END);
+    }
+    public static String getOffhandItemStacksCommand(String playerName) {
+        return getPlayerItemStacksCommand(playerName, InventoryIndex.OFFHAND_START, InventoryIndex.OFFHAND_END);
+    }
+    public static String getCustomItemStacksCommand(String playerName) {
+        return getPlayerItemStacksCommand(playerName, InventoryIndex.CUSTOM_START, Integer.MAX_VALUE - 1);
     }
 }

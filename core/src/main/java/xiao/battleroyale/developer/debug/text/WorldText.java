@@ -11,6 +11,8 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -21,7 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.LootNBTTag;
+import xiao.battleroyale.api.minecraft.InventoryIndex;
+import xiao.battleroyale.api.minecraft.InventoryIndex.SlotType;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.developer.debug.command.sub.get.GetWorld;
 
 import java.util.Arrays;
 import java.util.List;
@@ -105,6 +110,91 @@ public class WorldText {
                             gameId.equals(currentGameId) ? ChatFormatting.BLUE : ChatFormatting.GRAY));
         }
 
+        return component;
+    }
+
+    // 默认slotIndex已经排序
+    public static MutableComponent buildItemStacks(ServerPlayer player, List<Integer> slotIndex, List<ItemStack> itemStacks) {
+        MutableComponent component = Component.empty();
+        if (slotIndex.size() != itemStacks.size()) {
+            BattleRoyale.LOGGER.error("Failed to buildItemStacks, slotIndex.size()={}, itemStacks.size()={}", slotIndex.size(), itemStacks.size());
+            return component;
+        }
+
+        boolean hotbar = false;
+        boolean inventory = false;
+        boolean armor = false;
+        boolean offhand = false;
+        boolean custom = false;
+        int currentSlotIndex = -1;
+        ChatFormatting displayColor;
+        String playerName = player.getName().getString();
+        for (int i = 0; i < slotIndex.size(); i++) {
+            currentSlotIndex = slotIndex.get(i);
+            SlotType slotType = InventoryIndex.getSlotType(currentSlotIndex);
+            switch (slotType) {
+                case HOTBAR -> {
+                    displayColor = ChatFormatting.AQUA;
+                    if (!hotbar) {
+                        component.append(buildRunnableText("\n[Hotbar]",
+                                GetWorld.getHotbarItemStacksCommand(playerName),
+                                ChatFormatting.GOLD));
+                        hotbar = true;
+                    }
+                }
+                case INVENTORY -> {
+                    displayColor = ChatFormatting.GRAY;
+                    if (!inventory) {
+                        component.append(buildRunnableText("\n[Inventory]",
+                                GetWorld.getInventoryItemStacksCommand(playerName),
+                                ChatFormatting.GOLD));
+                        inventory = true;
+                    }
+                }
+                case ARMOR -> {
+                    displayColor = ChatFormatting.GREEN;
+                    if (!armor) {
+                        component.append(buildRunnableText("\n[Armor]",
+                                GetWorld.getArmorItemStacksCommand(playerName),
+                                ChatFormatting.GOLD));
+                        armor = true;
+                    }
+                }
+                case OFFHAND -> {
+                    displayColor = ChatFormatting.BLUE;
+                    if (!offhand) {
+                        component.append(buildRunnableText("\n[Offhand]",
+                                GetWorld.getOffhandItemStacksCommand(playerName),
+                                ChatFormatting.GOLD));
+                        offhand = true;
+                    }
+                }
+                default -> {
+                    displayColor = ChatFormatting.WHITE;
+                    if (!custom) {
+                        component.append(buildRunnableText("\n[Offhand]",
+                                GetWorld.getCustomItemStacksCommand(playerName),
+                                ChatFormatting.GOLD));
+                        custom = true;
+                    }
+                }
+            }
+            ItemStack itemStack = itemStacks.get(i);
+            CompoundTag nbt = itemStack.getTag();
+            component.append(buildHoverableTextWithColor(" " + itemStack.getDisplayName().getString(),
+                    buildNbtVerticalList(nbt != null ? nbt : new CompoundTag()),
+                    displayColor));
+        }
+
+        return component;
+    }
+
+    public static MutableComponent buildItemStack(ItemStack itemStack) {
+        MutableComponent component = Component.empty();
+
+        CompoundTag tag = itemStack.getTag();
+        component.append(buildHoverableText(itemStack.getDisplayName().getString(),
+                buildNbtVerticalList(tag != null ? tag : new CompoundTag())));
         return component;
     }
 
