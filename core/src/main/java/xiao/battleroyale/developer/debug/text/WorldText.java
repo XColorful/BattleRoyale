@@ -3,6 +3,8 @@ package xiao.battleroyale.developer.debug.text;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -18,10 +20,13 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.loot.LootNBTTag;
+import xiao.battleroyale.common.game.GameManager;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static xiao.battleroyale.util.CommandUtils.*;
 
@@ -50,8 +55,15 @@ public class WorldText {
         }
         CompoundTag fullNbt = blockEntity.saveWithFullMetadata();
         int nbtCount = fullNbt.isEmpty() ? 0 : fullNbt.getAllKeys().size();
+
         CompoundTag forgeData = blockEntity.getPersistentData();
         int forgeCount = forgeData.isEmpty() ? 0 : forgeData.getAllKeys().size();
+
+        ListTag items = fullNbt.getList("Items", Tag.TAG_COMPOUND);
+        int itemsCount = items.isEmpty() ? 0 : items.size();
+
+        UUID gameId = null;
+        Tag gameIdTag = null;
 
         // Vanilla
         Block block = serverLevel.getBlockState(blockPos).getBlock();
@@ -64,10 +76,33 @@ public class WorldText {
                 .append(buildRunnableVec(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ())));
         // ForgeData
         if (forgeCount > 0) {
+            if (forgeData.contains(LootNBTTag.GAME_ID_TAG)) {
+                gameId = forgeData.getUUID(LootNBTTag.GAME_ID_TAG);
+                gameIdTag = forgeData.get(LootNBTTag.GAME_ID_TAG);
+            }
             component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
                     .append(buildHoverableTextWithColor("ForgeData",
                             buildNbtVerticalList(forgeData),
                             ChatFormatting.GREEN));
+        }
+        // Items
+        if (itemsCount > 0) {
+            component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
+                    .append(buildHoverableTextWithColor("Items",
+                            buildNbtListVerticalList(items),
+                            ChatFormatting.GOLD));
+        }
+        // GameId
+        if (gameIdTag == null && fullNbt.contains(LootNBTTag.GAME_ID_TAG)) {
+            gameId = fullNbt.getUUID(LootNBTTag.GAME_ID_TAG);
+            gameIdTag = fullNbt.get(LootNBTTag.GAME_ID_TAG);
+        }
+        if (gameId != null && gameIdTag != null) {
+            UUID currentGameId = GameManager.get().getGameId();
+            component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
+                    .append(buildHoverableTextWithColor(LootNBTTag.GAME_ID_TAG,
+                            gameIdTag.getAsString(),
+                            gameId.equals(currentGameId) ? ChatFormatting.BLUE : ChatFormatting.GRAY));
         }
 
         return component;
