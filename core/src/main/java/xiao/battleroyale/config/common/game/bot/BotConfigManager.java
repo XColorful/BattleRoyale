@@ -37,7 +37,6 @@ public class BotConfigManager extends AbstractConfigSubManager<BotConfigManager.
 
     public static void init() {
         GameConfigManager.get().registerSubManager(get());
-        get().reloadBotConfigs();
     }
 
     public static final String BOT_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;

@@ -38,7 +38,6 @@ public class RenderConfigManager extends AbstractConfigSubManager<RenderConfigMa
 
     public static void init() {
         ClientConfigManager.get().registerSubManager(get());
-        get().reloadRenderConfigs();
     }
 
     public static final String RENDER_CONFIG_PATH = ClientConfigManager.CLIENT_CONFIG_PATH;

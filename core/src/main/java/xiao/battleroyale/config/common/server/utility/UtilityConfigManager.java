@@ -35,7 +35,6 @@ public class UtilityConfigManager extends AbstractConfigSubManager<UtilityConfig
 
     public static void init() {
         ServerConfigManager.get().registerSubManager(get());
-        get().reloadUtilityConfigs();
     }
 
     public static final String UTILITY_CONFIG_PATH = ServerConfigManager.SERVER_CONFIG_PATH;
