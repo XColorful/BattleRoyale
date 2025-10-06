@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlockEntity implements Container, Clearable {
     private static final String ITEMS_TAG = "Items";
     private static final String SLOT_TAG = "Slot";
-    protected NonNullList<ItemStack> items;
+    protected NonNullList<ItemStack> items; // 参考NeoForge的ItemStackHandler
 
     protected AbstractLootContainerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState, int size) {
         super(type, pos, blockState);
@@ -69,8 +69,7 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
             this.items.set(index, ItemStack.EMPTY);
         }
         this.setChanged();
-        // ↓调用该函数会导致容器界面打开时，拿起物品后，界面不显示物品
-        // sendBlockUpdated();
+        sendBlockUpdated();
         return result;
     }
 
@@ -85,8 +84,7 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
     public void setItem(int index, @NotNull ItemStack stack) {
         this.items.set(index, stack);
         this.setChanged();
-        // ↓容器界面打开时，调用该函数会导致界面不显示物品（但是物品还在格子上）
-        // sendBlockUpdated();
+        sendBlockUpdated();
     }
 
     public void setItemNoUpdate(int index, ItemStack stack) {
@@ -97,15 +95,12 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
     public void clearContent() {
         this.items.clear();
         this.setChanged();
-        // ↓容器界面打开时，调用该函数会导致界面不显示物品（但是物品还在格子上）
-        // sendBlockUpdated();
+        sendBlockUpdated();
     }
 
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider p_333170_) {
         super.loadAdditional(tag, p_333170_);
-        // ↓去掉会导致再次刷物资的时候，把占用原先的位置显示为空（打开容器后还是正常的），而且已经被清理掉的方块还会显示
-        // ↓即使去掉了，也不能解决重进游戏时丢失数据
         this.items.replaceAll(ignored -> ItemStack.EMPTY);
 
         if (tag.contains(ITEMS_TAG, Tag.TAG_LIST)) {
@@ -118,7 +113,6 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
                 }
             }
         }
-        // TODO 解决不能持久化保存容器物品（重进游戏会丢失容器内物品）
     }
 
 
@@ -127,11 +121,11 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
         super.saveAdditional(pTag, p_327783_);
         ListTag listTag = new ListTag();
         for (int i = 0; i < this.items.size(); ++i) {
-            if (!this.items.get(i).isEmpty()) {
+            ItemStack itemStack = this.items.get(i);
+            if (!itemStack.isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt(SLOT_TAG, i);
-                this.items.get(i).save(p_327783_, itemTag);
-                listTag.add(itemTag);
+                listTag.add(itemStack.save(p_327783_, itemTag));
             }
         }
         pTag.put(ITEMS_TAG, listTag);
@@ -142,11 +136,11 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
         CompoundTag tag = super.getUpdateTag(p_329179_);
         ListTag listTag = new ListTag();
         for (int i = 0; i < this.items.size(); ++i) {
-            if (!this.items.get(i).isEmpty()) {
+            ItemStack itemStack = this.items.get(i);
+            if (!itemStack.isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt(SLOT_TAG, i);
-                this.items.get(i).save(p_329179_, itemTag);
-                listTag.add(itemTag);
+                listTag.add(itemStack.save(p_329179_, itemTag));
             }
         }
         tag.put(ITEMS_TAG, listTag);

@@ -25,12 +25,6 @@ public abstract class AbstractLootMenu extends AbstractContainerMenu {
 
         addLootContainer(lootContainer);
         addPlayerInventory(playerInventory);
-        // ↓不调用就会导致拿起物品后界面清空（物品还在容器里，界面里也能取出来）
-        if (!playerInventory.player.level().isClientSide) {
-            // this.broadcastChanges();
-            // ↑每次只更新一个（有问题），用下面这个
-            this.sendAllDataToRemote();
-        }
     }
 
     protected abstract void addLootContainer(Container lootContainer);
