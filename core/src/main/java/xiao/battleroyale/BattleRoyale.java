@@ -23,6 +23,8 @@ import xiao.battleroyale.client.renderer.BlockModelRenderer;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.event.EventPoster;
+import xiao.battleroyale.event.EventRegistry;
 import xiao.battleroyale.network.NetworkHandler;
 import xiao.battleroyale.network.NetworkHook;
 import xiao.battleroyale.resource.ResourceLoader;
@@ -66,7 +68,9 @@ public class BattleRoyale {
         BattleRoyale.networkHook = networkHook;
         NetworkHook.initialize(networkHook);
         BattleRoyale.eventRegister = eventRegister;
+        EventRegistry.initialize(eventRegister);
         BattleRoyale.eventPoster = eventPoster;
+        EventPoster.initialize(eventPoster);
         BattleRoyale.blockModelRenderer = blockModelRenderer;
         BlockModelRenderer.initialize(blockModelRenderer);
         BattleRoyale.compatApi = compatApi;
@@ -103,18 +107,6 @@ public class BattleRoyale {
             throw new IllegalStateException("Mc registry has not been initialized. Call init() first.");
         }
         return mcRegistry;
-    }
-    public static IEventRegister getEventRegister() {
-        if (eventRegister == null) {
-            throw new IllegalStateException("Event register has not been initialized. Call init() first.");
-        }
-        return eventRegister;
-    }
-    public static IEventPoster getEventPoster() {
-        if (eventPoster == null) {
-            throw new IllegalStateException("Event poster has not been initialized. Call init() first.");
-        }
-        return eventPoster;
     }
     public static CompatApi getCompatApi() {
         if (compatApi == null) {
