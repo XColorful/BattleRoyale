@@ -40,7 +40,7 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
                     entityGameId = itemTag.getUUID(LootNBTTag.GAME_ID_TAG);
                 }
             }
-        } else { // 一般实体，位于{NeoForgeData:{GameId:[I; int, int, int, int]}}
+        } else { // 一般实体，位于{ForgeData:{GameId:[I; int, int, int, int]}}
             CompoundTag persistentData = entity.getPersistentData();
             if (persistentData.hasUUID(LootNBTTag.GAME_ID_TAG)) {
                 entityGameId = persistentData.getUUID(LootNBTTag.GAME_ID_TAG);
