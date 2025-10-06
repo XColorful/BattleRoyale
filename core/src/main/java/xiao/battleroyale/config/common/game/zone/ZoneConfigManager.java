@@ -40,7 +40,6 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
 
     public static void init() {
         GameConfigManager.get().registerSubManager(get());
-        get().reloadZoneConfigs();
     }
 
     public static final String ZONE_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;

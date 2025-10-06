@@ -39,7 +39,6 @@ public class ParticleConfigManager extends AbstractConfigSubManager<ParticleConf
 
     public static void init() {
         EffectConfigManager.get().registerSubManager(get());
-        get().reloadParticleConfigs();
     }
 
     public static final String PARTICLE_CONFIG_PATH = EffectConfigManager.EFFECT_CONFIG_PATH;
