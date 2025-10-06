@@ -40,7 +40,6 @@ public class SpawnConfigManager extends AbstractConfigSubManager<SpawnConfigMana
 
     public static void init() {
         GameConfigManager.get().registerSubManager(get());
-        get().reloadSpawnConfigs();
     }
 
     public static final String SPAWN_CONFIG_PATH = GameConfigManager.GAME_CONFIG_PATH;
