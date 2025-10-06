@@ -31,7 +31,7 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
      */
     @Override public @Nullable UUID getGameId(Entity entity) {
         UUID entityGameId = null;
-        if (entity instanceof ItemEntity itemEntity) { // 物品掉落物，位于{Item:{components:{minecraft:custom_data:{tag:{GameId:UUID}}}}}
+        if (entity instanceof ItemEntity itemEntity) { // 物品掉落物，位于{Item:{components:{minecraft:custom_data:{GameId:[I; int, int, int, int]}}}}
             ItemStack itemStack = itemEntity.getItem();
             CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA);
             if (customData != null) {
@@ -40,7 +40,7 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
                     entityGameId = itemTag.getUUID(LootNBTTag.GAME_ID_TAG);
                 }
             }
-        } else { // 一般实体，位于{ForgeData:{GameId:UUID}}
+        } else { // 一般实体，位于{NeoForgeData:{GameId:[I; int, int, int, int]}}
             CompoundTag persistentData = entity.getPersistentData();
             if (persistentData.hasUUID(LootNBTTag.GAME_ID_TAG)) {
                 entityGameId = persistentData.getUUID(LootNBTTag.GAME_ID_TAG);
@@ -66,7 +66,7 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
      * 获取 ItemStack 的GameUUID
      */
     @Override public @Nullable UUID getGameId(ItemStack itemStack) {
-        CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA);
+        CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA); // 物品，位于{components:{"minecraft:custom_data":{GameId:[I; int, int, int, int]}}}
         if (customData != null) {
             CompoundTag tag = customData.copyTag();
             if (tag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
