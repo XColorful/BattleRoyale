@@ -2,6 +2,8 @@ package xiao.battleroyale.util;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -221,6 +223,25 @@ public class CommandUtils {
                             .append(":" + nbt.get(key));
                 }
             }
+        }
+
+        return nbtComponent;
+    }
+
+    /**
+     * Total:int
+     * {key1:value1,key2:value2}
+     * {key3:value3}
+     */
+    public static MutableComponent buildNbtListVerticalList(ListTag nbtList) {
+        MutableComponent nbtComponent = Component.empty();
+        int size = nbtList.size();
+        nbtComponent.append(Component.literal("Total"))
+                .append(Component.literal(":" + size));
+        for (int i = 0; i < size; i++) {
+            nbtComponent.append(Component.literal("\n"));
+            Tag tag = nbtList.get(i);
+            nbtComponent.append(Component.literal(tag.toString()).withStyle(tag.getId() == Tag.TAG_COMPOUND ? ChatFormatting.WHITE : ChatFormatting.DARK_AQUA));
         }
 
         return nbtComponent;
