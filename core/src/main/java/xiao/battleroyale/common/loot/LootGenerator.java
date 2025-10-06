@@ -97,7 +97,7 @@ public class LootGenerator {
      */
     public static <T extends AbstractLootBlockEntity> void generateLoot(LootContext lootContext, T target, ILootEntry entry) {
         if (REMOVE_LOOT_TABLE) {
-            removeLootTable(target);
+            removeLootTable(lootContext, target);
         }
 
         List<ILootData> lootData = entry.generateLootData(lootContext, target);
@@ -158,7 +158,7 @@ public class LootGenerator {
             return;
         }
         if (REMOVE_LOOT_TABLE) {
-            removeLootTable(targetBlockEntity);
+            removeLootTable(lootContext, targetBlockEntity);
         }
 
         List<ILootData> lootData = entry.generateLootData(lootContext, targetBlockEntity);
@@ -321,15 +321,16 @@ public class LootGenerator {
          }
     }
 
-    public static void removeLootTable(BlockEntity blockEntity) {
-        DataComponentPatch patch = DataComponentPatch.builder()
-                .remove(DataComponents.CONTAINER_LOOT)
-                .build();
-        PatchedDataComponentMap newComponents = PatchedDataComponentMap.fromPatch(
-                blockEntity.components(),
-                patch
-        );
-        blockEntity.setComponents(newComponents);
+    public static void removeLootTable(LootContext lootContext, BlockEntity blockEntity) {
+        // 1.21.1仍然在NBT根目录用LootTable和LootTableSeed, 不在components下
+        CompoundTag nbt = blockEntity.saveWithFullMetadata(lootContext.serverLevel.registryAccess());
+        // nbt.remove("LootTable"); // 无效
+        // nbt.remove("LootTableSeed");
+        if (nbt.contains("LootTable")) {
+            nbt.putString("LootTable", ""); // 必须为字符串类型，空字符串会解析为"minecraft:"，否则写不进去
+            // nbt.putLong("LootTableSeed", 0L); // LootTable解析不出来之后就已经没有LootTableSeed了
+        }
+        blockEntity.loadWithComponents(nbt, lootContext.serverLevel.registryAccess());
         blockEntity.setChanged();
     }
 
