@@ -3,6 +3,8 @@ package xiao.battleroyale.developer.debug.text;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -18,10 +20,13 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.loot.LootNBTTag;
+import xiao.battleroyale.common.game.GameManager;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static xiao.battleroyale.util.CommandUtils.*;
 
@@ -42,7 +47,7 @@ public class WorldText {
         return component;
     }
 
-    public static final List<String> vanillaBlockEntityNbtKey = Arrays.asList("ForgeData", "x", "y", "z", "id");;
+    public static final List<String> vanillaBlockEntityNbtKey = Arrays.asList("x", "y", "z", "id");;
     public static MutableComponent buildBlockEntityNbt(ServerLevel serverLevel, BlockPos blockPos, BlockEntity blockEntity) {
         MutableComponent component = Component.empty();
         if (blockPos == null || blockEntity == null) {
@@ -51,8 +56,11 @@ public class WorldText {
         CompoundTag fullNbt = blockEntity.saveWithFullMetadata(serverLevel.registryAccess());
         int nbtCount = fullNbt.isEmpty() ? 0 : fullNbt.getAllKeys().size();
 
-        CompoundTag forgeData = fullNbt.getCompound("ForgeData");
-        int forgeCount = forgeData.isEmpty() ? 0 : forgeData.getAllKeys().size();
+        CompoundTag components = fullNbt.getCompound("components");
+        int componentsCount = components.isEmpty() ? 0 : components.getAllKeys().size();
+
+        ListTag items = fullNbt.getList("Items", Tag.TAG_COMPOUND);
+        int itemsCount = items.isEmpty() ? 0 : items.size();
 
         // Vanilla
         Block block = serverLevel.getBlockState(blockPos).getBlock();
@@ -63,12 +71,29 @@ public class WorldText {
                         buildNbtVerticalList(fullNbt),
                         nbtCount > vanillaBlockEntityNbtKey.size() ? ChatFormatting.GREEN : ChatFormatting.AQUA))
                 .append(buildRunnableVec(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ())));
-        // ForgeData
-        if (forgeCount > 0) {
+        // components
+        if (componentsCount > 0) {
             component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
-                    .append(buildHoverableTextWithColor("ForgeData",
-                            buildNbtVerticalList(forgeData),
+                    .append(buildHoverableTextWithColor("components",
+                            buildNbtVerticalList(components),
                             ChatFormatting.GREEN));
+        }
+        // Items
+        if (itemsCount > 0) {
+            component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
+                    .append(buildHoverableTextWithColor("Items",
+                            buildNbtListVerticalList(items),
+                            ChatFormatting.GOLD));
+        }
+        // GameId
+        Tag gameIdTag = fullNbt.get(LootNBTTag.GAME_ID_TAG);
+        if (fullNbt.contains(LootNBTTag.GAME_ID_TAG) && gameIdTag != null) {
+            UUID currentGameId = GameManager.get().getGameId();
+            UUID gameId = fullNbt.getUUID(LootNBTTag.GAME_ID_TAG);
+            component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
+                    .append(buildHoverableTextWithColor(LootNBTTag.GAME_ID_TAG,
+                            gameIdTag.getAsString(),
+                            gameId.equals(currentGameId) ? ChatFormatting.BLUE : ChatFormatting.GRAY));
         }
 
         return component;
