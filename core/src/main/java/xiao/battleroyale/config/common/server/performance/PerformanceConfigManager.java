@@ -35,7 +35,6 @@ public class PerformanceConfigManager extends AbstractConfigSubManager<Performan
 
     public static void init() {
         ServerConfigManager.get().registerSubManager(get());
-        get().reloadPerformanceConfigs();
     }
 
     public static final String PERFORMANCE_CONFIG_PATH = ServerConfigManager.SERVER_CONFIG_PATH;
