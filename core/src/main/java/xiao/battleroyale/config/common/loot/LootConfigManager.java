@@ -60,7 +60,6 @@ public class LootConfigManager extends AbstractConfigSubManager<LootConfigManage
             return;
         }
         BattleRoyale.getModConfigManager().registerConfigSubManager(get());
-        get().reloadAllConfigs();
     }
 
     /**
