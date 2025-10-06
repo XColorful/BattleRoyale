@@ -37,7 +37,6 @@ public class DisplayConfigManager extends AbstractConfigSubManager<DisplayConfig
 
     public static void init() {
         ClientConfigManager.get().registerSubManager(get());
-        get().reloadDisplayConfigs();
     }
 
     public static final String DISPLAY_CONFIG_PATH = ClientConfigManager.CLIENT_CONFIG_PATH;

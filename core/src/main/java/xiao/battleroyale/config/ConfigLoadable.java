@@ -7,7 +7,7 @@ public class ConfigLoadable {
 
     public static boolean reloadAllConfigs(AbstractConfigManager context) {
         for (IConfigSubManager<?> subManager : context.subManagers) {
-            subManager.reloadConfigs();
+            subManager.reloadAllConfigs();
         }
         return !context.subManagers.isEmpty();
     }

@@ -17,6 +17,7 @@ public class CommonSetup implements ICommonSetup {
     @Override
     public void onCommonSetup() {
         NetworkHandler.get().registerMessages();
+        BattleRoyale.LOGGER.debug("onCommonSetup, reloadAllConfigs:");
         BattleRoyale.getModConfigManager().reloadAllConfigs();
     }
 }

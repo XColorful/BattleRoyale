@@ -39,7 +39,6 @@ public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConf
 
     public static void init() {
         GameConfigManager.get().registerSubManager(get());
-        get().reloadGameruleConfigs();
     }
 
 
