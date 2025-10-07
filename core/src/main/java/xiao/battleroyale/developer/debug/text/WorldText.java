@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.LootNBTTag;
+import xiao.battleroyale.api.minecraft.ComponentsTag;
 import xiao.battleroyale.api.minecraft.InventoryIndex;
 import xiao.battleroyale.api.minecraft.InventoryIndex.SlotType;
 import xiao.battleroyale.common.game.GameManager;
@@ -64,7 +65,7 @@ public class WorldText {
         CompoundTag fullNbt = blockEntity.saveWithFullMetadata(serverLevel.registryAccess());
         int nbtCount = fullNbt.isEmpty() ? 0 : fullNbt.getAllKeys().size();
 
-        CompoundTag components = fullNbt.getCompound("components");
+        CompoundTag components = fullNbt.getCompound(ComponentsTag.COMPONENTS);
         int componentsCount = components.isEmpty() ? 0 : components.getAllKeys().size();
 
         ListTag items = fullNbt.getList("Items", Tag.TAG_COMPOUND);
@@ -91,7 +92,7 @@ public class WorldText {
                 gameIdTag = customDataTag.get(LootNBTTag.GAME_ID_TAG);
             }
             component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
-                    .append(buildHoverableTextWithColor("components",
+                    .append(buildHoverableTextWithColor(ComponentsTag.COMPONENTS,
                             buildNbtVerticalList(components),
                             ChatFormatting.GREEN));
         }

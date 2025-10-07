@@ -77,7 +77,7 @@ public class LootGenerator {
         for (ILootData data : lootData) {
             if (data.getDataType() == LootDataType.ITEM) {
                 IItemLootData itemData = (IItemLootData) data;
-                ItemStack itemStack = itemData.getItemStack();
+                ItemStack itemStack = itemData.getItemStack(lootContext);
                 if (itemStack == null) {
                     continue;
                 }
@@ -113,7 +113,7 @@ public class LootGenerator {
                 ILootData data = lootData.get(i);
                 if (data.getDataType() == LootDataType.ITEM) {
                     IItemLootData itemData = (IItemLootData) data;
-                    ItemStack itemStack = itemData.getItemStack();
+                    ItemStack itemStack = itemData.getItemStack(lootContext);
                     if (itemStack == null) {
                         continue;
                     }
@@ -174,7 +174,7 @@ public class LootGenerator {
             ILootData data = lootData.get(i);
             if (data.getDataType() == LootDataType.ITEM) {
                 IItemLootData itemData = (IItemLootData) data;
-                ItemStack itemStack = itemData.getItemStack();
+                ItemStack itemStack = itemData.getItemStack(lootContext);
                 if (itemStack == null) {
                     continue;
                 }
