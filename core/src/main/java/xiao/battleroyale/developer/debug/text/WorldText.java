@@ -3,12 +3,16 @@ package xiao.battleroyale.developer.debug.text;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -18,10 +22,16 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.loot.LootNBTTag;
+import xiao.battleroyale.api.minecraft.InventoryIndex;
+import xiao.battleroyale.api.minecraft.InventoryIndex.SlotType;
+import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.developer.debug.command.sub.get.GetWorld;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static xiao.battleroyale.util.CommandUtils.*;
 
@@ -50,8 +60,15 @@ public class WorldText {
         }
         CompoundTag fullNbt = blockEntity.saveWithFullMetadata();
         int nbtCount = fullNbt.isEmpty() ? 0 : fullNbt.getAllKeys().size();
+
         CompoundTag forgeData = blockEntity.getPersistentData();
         int forgeCount = forgeData.isEmpty() ? 0 : forgeData.getAllKeys().size();
+
+        ListTag items = fullNbt.getList("Items", Tag.TAG_COMPOUND);
+        int itemsCount = items.isEmpty() ? 0 : items.size();
+
+        UUID gameId = null;
+        Tag gameIdTag = null;
 
         // Vanilla
         Block block = serverLevel.getBlockState(blockPos).getBlock();
@@ -64,12 +81,120 @@ public class WorldText {
                 .append(buildRunnableVec(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ())));
         // ForgeData
         if (forgeCount > 0) {
+            if (forgeData.contains(LootNBTTag.GAME_ID_TAG)) {
+                gameId = forgeData.getUUID(LootNBTTag.GAME_ID_TAG);
+                gameIdTag = forgeData.get(LootNBTTag.GAME_ID_TAG);
+            }
             component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
                     .append(buildHoverableTextWithColor("ForgeData",
                             buildNbtVerticalList(forgeData),
                             ChatFormatting.GREEN));
         }
+        // Items
+        if (itemsCount > 0) {
+            component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
+                    .append(buildHoverableTextWithColor("Items",
+                            buildNbtListVerticalList(items),
+                            ChatFormatting.GOLD));
+        }
+        // GameId
+        if (gameIdTag == null && fullNbt.contains(LootNBTTag.GAME_ID_TAG)) {
+            gameId = fullNbt.getUUID(LootNBTTag.GAME_ID_TAG);
+            gameIdTag = fullNbt.get(LootNBTTag.GAME_ID_TAG);
+        }
+        if (gameId != null && gameIdTag != null) {
+            UUID currentGameId = GameManager.get().getGameId();
+            component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
+                    .append(buildHoverableTextWithColor(LootNBTTag.GAME_ID_TAG,
+                            gameIdTag.getAsString(),
+                            gameId.equals(currentGameId) ? ChatFormatting.BLUE : ChatFormatting.GRAY));
+        }
 
+        return component;
+    }
+
+    // 默认slotIndex已经排序
+    public static MutableComponent buildItemStacks(ServerPlayer player, List<Integer> slotIndex, List<ItemStack> itemStacks) {
+        MutableComponent component = Component.empty();
+        if (slotIndex.size() != itemStacks.size()) {
+            BattleRoyale.LOGGER.error("Failed to buildItemStacks, slotIndex.size()={}, itemStacks.size()={}", slotIndex.size(), itemStacks.size());
+            return component;
+        }
+
+        boolean hotbar = false;
+        boolean inventory = false;
+        boolean armor = false;
+        boolean offhand = false;
+        boolean custom = false;
+        int currentSlotIndex = -1;
+        ChatFormatting displayColor;
+        String playerName = player.getName().getString();
+        for (int i = 0; i < slotIndex.size(); i++) {
+            currentSlotIndex = slotIndex.get(i);
+            SlotType slotType = InventoryIndex.getSlotType(currentSlotIndex);
+            switch (slotType) {
+                case HOTBAR -> {
+                    displayColor = ChatFormatting.AQUA;
+                    if (!hotbar) {
+                        component.append(buildRunnableText("\n[Hotbar]",
+                                GetWorld.getHotbarItemStacksCommand(playerName),
+                                ChatFormatting.GOLD));
+                        hotbar = true;
+                    }
+                }
+                case INVENTORY -> {
+                    displayColor = ChatFormatting.GRAY;
+                    if (!inventory) {
+                        component.append(buildRunnableText("\n[Inventory]",
+                                GetWorld.getInventoryItemStacksCommand(playerName),
+                                ChatFormatting.GOLD));
+                        inventory = true;
+                    }
+                }
+                case ARMOR -> {
+                    displayColor = ChatFormatting.GREEN;
+                    if (!armor) {
+                        component.append(buildRunnableText("\n[Armor]",
+                                GetWorld.getArmorItemStacksCommand(playerName),
+                                ChatFormatting.GOLD));
+                        armor = true;
+                    }
+                }
+                case OFFHAND -> {
+                    displayColor = ChatFormatting.BLUE;
+                    if (!offhand) {
+                        component.append(buildRunnableText("\n[Offhand]",
+                                GetWorld.getOffhandItemStacksCommand(playerName),
+                                ChatFormatting.GOLD));
+                        offhand = true;
+                    }
+                }
+                default -> {
+                    displayColor = ChatFormatting.WHITE;
+                    if (!custom) {
+                        component.append(buildRunnableText("\n[Offhand]",
+                                GetWorld.getCustomItemStacksCommand(playerName),
+                                ChatFormatting.GOLD));
+                        custom = true;
+                    }
+                }
+            }
+            ItemStack itemStack = itemStacks.get(i);
+            CompoundTag nbt = itemStack.getTag();
+            component.append(buildHoverableTextWithColor(" " + itemStack.getDisplayName().getString(),
+                    buildNbtVerticalList(nbt != null ? nbt : new CompoundTag()),
+                    displayColor));
+        }
+
+        return component;
+    }
+
+    public static MutableComponent buildItemStack(ItemStack itemStack) {
+        MutableComponent component = Component.empty();
+
+        CompoundTag tag = itemStack.getTag();
+        component.append(buildHoverableText(itemStack.getDisplayName().getString(),
+                buildNbtVerticalList(tag != null ? tag : new CompoundTag())));
         return component;
     }
 
