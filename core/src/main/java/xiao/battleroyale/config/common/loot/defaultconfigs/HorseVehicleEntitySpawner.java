@@ -49,18 +49,18 @@ public class HorseVehicleEntitySpawner {
 
     private static ILootEntry generate60kmhHorse() {
         // 马：速度60km/h=0.833，血量20，跳跃力量1.0，钻石马铠带保护X
-        return new EntityEntry("minecraft:horse", "{Tame:1b,SaddleItem:{id:\"minecraft:saddle\",Count:1b},ArmorItem:{id:\"minecraft:diamond_horse_armor\",Count:1b,tag:{Enchantments:[{id:\"minecraft:protection\",lvl:10s}]}},Attributes:[{Name:\"minecraft:generic.movement_speed\",Base:0.8333333d},{Name:\"minecraft:generic.max_health\",Base:20.0d},{Name:\"minecraft:horse.jump_strength\",Base:1.0d}]}", 1, 5);
+        return new EntityEntry("minecraft:horse", "{Tame:1b,SaddleItem:{id:\"minecraft:saddle\",count:1},body_armor_item:{components:{\"minecraft:enchantments\":{levels:{\"minecraft:protection\":10}}},count:1,id:\"minecraft:diamond_horse_armor\"},attributes:[{id:\"minecraft:generic.movement_speed\",base:0.8333333d},{id:\"minecraft:generic.max_health\",base:20.0d},{id:\"minecraft:generic.jump_strength\",base:1.0d}]}", 1, 5);
     }
 
     // NBT标签：Items必须在ChestedHorse之前，否则不会有箱子
 
     private static ILootEntry generate30kmhDonkey() {
         // 驴：速度30km/h=0.41666，血量50，跳跃高度3.5 (jump_strength约为0.8)
-        return new EntityEntry("minecraft:donkey", "{Tame:1b,Items:[],ChestedHorse:1b,SaddleItem:{id:\"minecraft:saddle\",Count:1b},Attributes:[{Name:\"minecraft:generic.movement_speed\",Base:0.4166666d},{Name:\"minecraft:generic.max_health\",Base:50.0d},{Name:\"minecraft:horse.jump_strength\",Base:0.8d}]}", 1, 5);
+        return new EntityEntry("minecraft:donkey", "{Tame:1b,Items:[],ChestedHorse:1b,SaddleItem:{id:\"minecraft:saddle\",Count:1},attributes:[{id:\"minecraft:generic.movement_speed\",base:0.4166666d},{id:\"minecraft:generic.max_health\",base:50.0d},{id:\"minecraft:generic.jump_strength\",base:0.8d}]}", 1, 5);
     }
 
     private static ILootEntry generate40kmhMule() {
         // 骡子：速度40km/h=0.555555，血量40，跳跃高度2.5 (jump_strength约为0.7)
-        return new EntityEntry("minecraft:mule", "{Tame:1b,Items:[],ChestedHorse:1b,SaddleItem:{id:\"minecraft:saddle\",Count:1b},Attributes:[{Name:\"minecraft:generic.movement_speed\",Base:0.5555555d},{Name:\"minecraft:generic.max_health\",Base:40.0d},{Name:\"minecraft:horse.jump_strength\",Base:0.7d}]}", 1, 5);
+        return new EntityEntry("minecraft:mule", "{Tame:1b,Items:[],ChestedHorse:1b,SaddleItem:{id:\"minecraft:saddle\",Count:1},attributes:[{id:\"minecraft:generic.movement_speed\",base:0.5555555d},{id:\"minecraft:generic.max_health\",base:40.0d},{id:\"minecraft:generic.jump_strength\",base:0.7d}]}", 1, 5);
     }
 }
