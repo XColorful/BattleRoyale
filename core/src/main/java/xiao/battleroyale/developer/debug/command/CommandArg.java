@@ -25,6 +25,7 @@ public class CommandArg {
     public static final String ID_MAX = "max";
     public static final String XYZ = "xyz";
     public static final String ENTITY = "entity";
+    public static final String PLAYER = "player";
 
     // GamePlayer & GameTeam
     public static final String GAME_PLAYERS = "gameplayers";
@@ -57,6 +58,11 @@ public class CommandArg {
     public static final String BLOCK_ENTITIES_NBT_SHORT = "besnbt";
     public static final String BLOCK_ENTITY_NBT = "blockentitynbt";
     public static final String BLOCK_ENTITY_NBT_SHORT = "benbt";
+    // ItemStack
+    public static final String PLAYER_ITEM_STACKS = "playeritemstacks";
+    public static final String PLAYER_ITEM_STACKS_SHORT = "pis";
+    public static final String PLAYER_ITEM_STACK = "playeritemstack";
+    public static final String PLAYER_ITEM_STACK_SHORT = "pi";
     // World
     public static final String BIOME = "biome";
     public static final String BIOME_SHORT = "bi";

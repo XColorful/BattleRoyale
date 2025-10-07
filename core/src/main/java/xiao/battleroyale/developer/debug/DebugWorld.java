@@ -7,6 +7,10 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.StructureManager;
@@ -59,6 +63,35 @@ public class DebugWorld {
         BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);
 
         DebugManager.sendDebugMessage(source, GET_BLOCKENTITY_NBT, WorldText.buildBlockEntityNbt(serverLevel, blockPos, blockEntity));
+    }
+
+    /**
+     * [调试]getPlayerItemStacks
+     */
+    public static final String GET_PLAYER_ITEMSTACKS = "getItemStacks";
+    public void getPlayerItemStacks(CommandSourceStack source, ServerPlayer player, int min, int max) {
+        Inventory inventory = player.getInventory();
+        min = Math.max(0, min);
+        max = Math.min(max, inventory.getContainerSize() - 1);
+        List<Integer> slotIndex = new ArrayList<>();
+        List<ItemStack> itemStacks = new ArrayList<>();
+        for (int i = min; i <= max; i++) {
+            ItemStack itemStack = inventory.getItem(i);
+            if (!itemStack.isEmpty()) {
+                slotIndex.add(i);
+                itemStacks.add(itemStack);
+            }
+        }
+        DebugManager.sendDebugMessage(source, GET_PLAYER_ITEMSTACK, WorldText.buildItemStacks(player, slotIndex, itemStacks));
+    }
+
+    /**
+     * [调试]getPlayerItemStack
+     */
+    public static final String GET_PLAYER_ITEMSTACK = "getItemStack";
+    public void getPlayerItemStack(CommandSourceStack source, ServerPlayer player) {
+        ItemStack itemStack = player.getInventory().getSelected();
+        DebugManager.sendDebugMessage(source, GET_PLAYER_ITEMSTACK, WorldText.buildItemStack(itemStack));
     }
 
     /**
