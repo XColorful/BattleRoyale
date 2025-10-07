@@ -34,8 +34,3 @@ description='''
     type="optional"
     versionRange="[2.0.16,]"
     side="BOTH"
-[[dependencies.battleroyale]]
-    modId="tacz"
-    type="optional"
-    versionRange="[1.0.2,]"
-    side="BOTH"

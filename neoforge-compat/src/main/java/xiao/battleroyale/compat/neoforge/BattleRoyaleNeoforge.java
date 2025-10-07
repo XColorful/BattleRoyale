@@ -17,8 +17,6 @@ import xiao.battleroyale.compat.neoforge.client.init.NeoClientSetup;
 import xiao.battleroyale.compat.neoforge.client.init.NeoModEntityRender;
 import xiao.battleroyale.compat.neoforge.client.renderer.NeoBlockModelRenderer;
 import xiao.battleroyale.compat.neoforge.compat.journeymap.JmApi;
-import xiao.battleroyale.compat.neoforge.compat.tacz.TaczEventRegister;
-import xiao.battleroyale.compat.neoforge.compat.tacz.TaczGunOperator;
 import xiao.battleroyale.compat.neoforge.event.NeoEventPoster;
 import xiao.battleroyale.compat.neoforge.event.NeoEventRegister;
 import xiao.battleroyale.compat.neoforge.init.NeoCommonSetup;
@@ -51,7 +49,7 @@ public class BattleRoyaleNeoforge {
         BattleRoyaleNeoforge.eventRegister = new NeoEventRegister();
         BattleRoyaleNeoforge.eventPoster = new NeoEventPoster();
         BattleRoyaleNeoforge.blockModelRenderer = new NeoBlockModelRenderer();
-        BattleRoyaleNeoforge.compatApi = new BattleRoyale.CompatApi(JmApi.get(), TaczEventRegister.get(), TaczGunOperator.get());
+        BattleRoyaleNeoforge.compatApi = new BattleRoyale.CompatApi(JmApi.get());
 
         Dist dist = FMLLoader.getDist();
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;

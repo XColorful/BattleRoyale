@@ -1,8 +1,5 @@
 package xiao.battleroyale.config.common.loot.defaultconfigs;
 
-import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.compat.tacz.Tacz;
-
 public class DefaultLootConfigGenerator {
 
     public static void generateAllDefaultConfigs() {
@@ -11,12 +8,6 @@ public class DefaultLootConfigGenerator {
         generateDefaultAirdropSpecialConfig();
         generateDefaultEntitySpawnerConfig();
         generateDefaultSecretRoomConfig();
-        if (BattleRoyale.getMcRegistry().isModLoaded(Tacz.get().getModId())) {
-            TaczLootSpawner.generateDefaultConfigs();
-            TaczLootSpawner.generateExtraConfigs();
-            CbrgLootSpawner.generateDefaultConfigs();
-            CbrgLootSpawner.generateExtraConfigs();
-        }
     }
 
     public static void generateDefaultLootSpawnerConfig() {
