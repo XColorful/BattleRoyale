@@ -18,10 +18,16 @@ public class ModEvent implements IModEvent {
         return INSTANCE;
     }
 
+    private static boolean reloaded = false;
     @Override
     public void onServerStarting(MinecraftServer server) {
         BattleRoyale.setStaticRegistries(server.registryAccess());
         BattleRoyale.setMinecraftServer(server);
+        if (!reloaded) {
+            BattleRoyale.LOGGER.debug("onServerStarting, reloadAllConfigs:");
+            BattleRoyale.getModConfigManager().reloadAllConfigs();
+            reloaded = true;
+        }
     }
 
     @Override
