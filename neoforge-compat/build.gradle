@@ -36,7 +36,7 @@ runs {
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
     }
 
-    data {
+    clientData {
         arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
@@ -71,8 +71,7 @@ dependencies {
     implementation project(":core")
 
     compileOnly "info.journeymap:journeymap-api-neoforge:${journeymap_api_version}"
-    runtimeOnly "curse.maven:journeymap-32274:6689206"
-    compileOnly "curse.maven:tacz-1-21-1-1353462:7034896"
+    runtimeOnly "curse.maven:journeymap-32274:6550384"
 }
 
 tasks.named('jar', Jar).configure {
