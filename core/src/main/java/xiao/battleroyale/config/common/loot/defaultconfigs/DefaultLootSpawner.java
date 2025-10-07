@@ -28,7 +28,7 @@ public class DefaultLootSpawner {
 
     private static JsonObject generateDefaultLootSpawner0() {
         ILootEntry multiEntry = new MultiEntry(Arrays.asList(
-                new ItemEntry("minecraft:leather_helmet", "{Damage:27}", 1),
+                new ItemEntry("minecraft:leather_helmet", String.format("{components:{\"minecraft:damage\":%s}}", 27), 1),
                 new ItemEntry("minecraft:leather_chestplate", null, 1),
                 new WeightEntry(Arrays.asList(
                         WeightEntry.createWeightedEntry(20, new ItemEntry("minecraft:wooden_sword", null, 1)),
