@@ -114,13 +114,13 @@ public class CbrgLootSpawner {
         ItemEntry totem = new ItemEntry("totem_of_undying", "{}", 1);
         ItemEntry gApple = new ItemEntry("minecraft:golden_apple", "{}", 1);
         ItemEntry pearl = new ItemEntry("minecraft:ender_pearl", "{}", 1);
-        ItemEntry heal = new ItemEntry("minecraft:splash_potion", "{Potion:\"minecraft:healing\",CustomPotionEffects:[{Id:12,Duration:100}]}", 1);
-        ItemEntry harm = new ItemEntry("minecraft:splash_potion", "{Potion:\"minecraft:strong_harming\"}", 1);
+        ItemEntry heal = new ItemEntry("minecraft:splash_potion", "{components:{'minecraft:potion_contents':{potion:\"minecraft:healing\",custom_effects:[{id:\"minecraft:fire_resistance\",duration:100}]}}}", 1);
+        ItemEntry harm = new ItemEntry("minecraft:splash_potion", "{components:{'minecraft:potion_contents':{potion:\"minecraft:strong_harming\"}}}", 1);
         ItemEntry milk = new ItemEntry("minecraft:milk_bucket", "{}", 1);
-        ItemEntry poisonArrow = new ItemEntry("minecraft:tipped_arrow", "{Potion:\"minecraft:long_poison\"}", 5);
+        ItemEntry poisonArrow = new ItemEntry("minecraft:tipped_arrow", "{components:{'minecraft:potion_contents':{potion:\"minecraft:long_poison\"}}}", 5);
         ItemEntry spectralArrow = new ItemEntry("minecraft:spectral_arrow", "{}", 1);
-        ItemEntry slowArrow = new ItemEntry("minecraft:tipped_arrow", "{Potion:\"minecraft:long_slowness\"}", 5);
-        ItemEntry harmArrow = new ItemEntry("minecraft:tipped_arrow", "{Potion:\"minecraft:strong_harming\"}", 5);
+        ItemEntry slowArrow = new ItemEntry("minecraft:tipped_arrow", "{components:{'minecraft:potion_contents':{potion:\"minecraft:long_slowness\"}}}", 5);
+        ItemEntry harmArrow = new ItemEntry("minecraft:tipped_arrow", "{components:{'minecraft:potion_contents':{potion:\"minecraft:strong_harming\"}}}", 5);
         ItemEntry crossbow = new ItemEntry("minecraft:crossbow", "{}", 1);
         WeightEntry itemTypeWeight = new WeightEntry(Arrays.asList(
                 new WeightedEntry(1, dinner),
@@ -756,9 +756,9 @@ public class CbrgLootSpawner {
 
     private static ILootEntry commonHealEntry() {
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(28, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"Bandage\",\"color\":\"white\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:0,Duration:100,ShowParticles:0b,Ambient:0b}]}", 1)),
-                new WeightedEntry(16, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"First Aid Kit\",\"color\":\"red\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:3,Duration:90,ShowParticles:0b,Ambient:0b}]}", 1)),
-                new WeightedEntry(2, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"Med Kit\",\"color\":\"blue\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:3,Duration:120,ShowParticles:0b,Ambient:0b}]}", 1))
+                new WeightedEntry(28, new ItemEntry("minecraft:potion", "{components:{'minecraft:custom_name':'{\"text\":\"Bandage\",\"color\":\"white\",\"italic\":false}','minecraft:potion_contents':{custom_effects:[{id:\"minecraft:regeneration\",amplifier:0,duration:100,show_particles:0b,ambient:0b}]}}}", 1)),
+                new WeightedEntry(16, new ItemEntry("minecraft:potion", "{components:{'minecraft:custom_name':'{\"text\":\"First Aid Kit\",\"color\":\"red\",\"italic\":false}','minecraft:potion_contents':{custom_effects:[{id:\"minecraft:regeneration\",amplifier:3,duration:90,show_particles:0b,ambient:0b}]}}}", 1)),
+                new WeightedEntry(2, new ItemEntry("minecraft:potion", "{components:{'minecraft:custom_name':'{\"text\":\"Med Kit\",\"color\":\"blue\",\"italic\":false}','minecraft:potion_contents':{custom_effects:[{id:\"minecraft:regeneration\",amplifier:3,duration:120,show_particles:0b,ambient:0b}]}}}", 1))
                 // new WeightedEntry(27, new EmptyEntry("item")),
                 // new WeightedEntry(24, new EmptyEntry("item")),
                 // new WeightedEntry(3, new EmptyEntry("item"))
