@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -14,8 +14,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -25,20 +25,21 @@ import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.network.NetworkHook;
+import xiao.battleroyale.util.ChatUtils;
 
 import java.util.List;
 
 public class LootSpawner extends AbstractLootBlock {
     public static final MapCodec<LootSpawner> CODEC = simpleCodec(LootSpawner::new);
 
-    private static final DirectionProperty THIS_FACING = DirectionProperty.create("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
+    private static final EnumProperty<Direction> THIS_FACING = EnumProperty.create("facing", Direction.class, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
     private static final VoxelShape THIS_SHAPE = Block.box(0, 0, 0, 16, 1, 16);
 
     public LootSpawner(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
-    @Override public DirectionProperty getFacingProperty() {
+    @Override public EnumProperty<Direction> getFacingProperty() {
         return THIS_FACING;
     }
     @Override public VoxelShape getBlockShape() {
@@ -62,7 +63,7 @@ public class LootSpawner extends AbstractLootBlock {
     }
 
     @Override
-    public @NotNull ItemInteractionResult useLootBlock(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
+    public @NotNull InteractionResult useLootBlock(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
         if (!level.isClientSide) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof LootSpawnerBlockEntity lootSpawnerBlockEntity) {
@@ -70,8 +71,8 @@ public class LootSpawner extends AbstractLootBlock {
                     int currentConfigId = lootSpawnerBlockEntity.getConfigId();
                     List<LootConfig> allConfigs = LootConfigManager.get().getConfigEntryList(LootConfigTypeEnum.LOOT_SPAWNER);
                     if (allConfigs == null || allConfigs.isEmpty()) {
-                        player.sendSystemMessage(Component.translatable("battleroyale.message.no_loot_spawner_config_available"));
-                        return ItemInteractionResult.SUCCESS;
+                        ChatUtils.sendMessageToPlayer((ServerPlayer) player, Component.translatable("battleroyale.message.no_loot_spawner_config_available"));
+                        return InteractionResult.SUCCESS;
                     }
 
                     LootConfig nextConfig = allConfigs.getFirst();
@@ -82,19 +83,17 @@ public class LootSpawner extends AbstractLootBlock {
                         }
                     }
                     lootSpawnerBlockEntity.setConfigId(nextConfig.getConfigId());
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.loot_spawner_lootid_switched", nextConfig.getConfigId(), nextConfig.name));
-                    return ItemInteractionResult.SUCCESS;
+                    ChatUtils.sendMessageToPlayer((ServerPlayer) player, Component.translatable("battleroyale.message.loot_spawner_lootid_switched", nextConfig.getConfigId(), nextConfig.name));
+                    return InteractionResult.SUCCESS;
                 } else { // 打开界面
                     NetworkHook.get().openScreen((ServerPlayer) player, lootSpawnerBlockEntity, (buf) -> {
                         buf.writeBlockPos(pos); // 传递方块的位置
                         buf.writeUtf(lootSpawnerBlockEntity.getGameId() != null ? lootSpawnerBlockEntity.getGameId().toString() : "");
                     });
-                    return ItemInteractionResult.CONSUME;
+                    return InteractionResult.CONSUME;
                 }
             }
         }
-        // return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        // ↑似乎没什么区别，背景还是很黑
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 }

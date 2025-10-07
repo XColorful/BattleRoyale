@@ -40,11 +40,11 @@ public class ModBlocks {
 
     public static final IRegistryObject<BlockEntityType<LootSpawnerBlockEntity>> LOOT_SPAWNER_BE =
             BLOCK_ENTITIES.register("loot_spawner", () ->
-                    BlockEntityType.Builder.of(LootSpawnerBlockEntity::new, LOOT_SPAWNER.get()).build(null));
+                    new BlockEntityType<>(LootSpawnerBlockEntity::new, LOOT_SPAWNER.get()));
     public static final IRegistryObject<BlockEntityType<EntitySpawnerBlockEntity>> ENTITY_SPAWNER_BE =
             BLOCK_ENTITIES.register("entity_spawner", () ->
-                    BlockEntityType.Builder.of(EntitySpawnerBlockEntity::new, ENTITY_SPAWNER.get()).build(null));
+                    new BlockEntityType<>(EntitySpawnerBlockEntity::new, ENTITY_SPAWNER.get()));
     public static final IRegistryObject<BlockEntityType<ZoneControllerBlockEntity>> ZONE_CONTROLLER_BE =
             BLOCK_ENTITIES.register("zone_controller", () ->
-                    BlockEntityType.Builder.of(ZoneControllerBlockEntity::new, ZONE_CONTROLLER.get()).build(null));
+                    new BlockEntityType<>(ZoneControllerBlockEntity::new, ZONE_CONTROLLER.get()));
 }

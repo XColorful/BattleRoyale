@@ -4,8 +4,9 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -14,7 +15,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -23,20 +24,21 @@ import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
+import xiao.battleroyale.util.ChatUtils;
 
 import java.util.List;
 
 public class EntitySpawner extends AbstractLootBlock {
     public static final MapCodec<EntitySpawner> CODEC = simpleCodec(EntitySpawner::new);
 
-    private static final DirectionProperty THIS_FACING = DirectionProperty.create("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
+    private static final EnumProperty<Direction> THIS_FACING = EnumProperty.create("facing", Direction.class, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
     private static final VoxelShape THIS_SHAPE = Block.box(0, 0, 0, 16, 2, 16);
 
     public EntitySpawner(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
-    @Override public DirectionProperty getFacingProperty() {
+    @Override public EnumProperty<Direction> getFacingProperty() {
         return THIS_FACING;
     }
     @Override public VoxelShape getBlockShape() {
@@ -60,7 +62,7 @@ public class EntitySpawner extends AbstractLootBlock {
     }
 
     @Override
-    public @NotNull ItemInteractionResult useLootBlock(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
+    public @NotNull InteractionResult useLootBlock(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
         if (!level.isClientSide) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof EntitySpawnerBlockEntity entitySpawnerBlockEntity) {
@@ -68,8 +70,8 @@ public class EntitySpawner extends AbstractLootBlock {
                     int currentConfigId = entitySpawnerBlockEntity.getConfigId();
                     List<LootConfig> allConfigs = LootConfigManager.get().getConfigEntryList(LootConfigTypeEnum.ENTITY_SPAWNER);
                     if (allConfigs == null || allConfigs.isEmpty()) {
-                        player.sendSystemMessage(Component.translatable("battleroyale.message.no_entity_spawner_config_available"));
-                        return ItemInteractionResult.SUCCESS;
+                        ChatUtils.sendMessageToPlayer((ServerPlayer) player, Component.translatable("battleroyale.message.no_entity_spawner_config_available"));
+                        return InteractionResult.SUCCESS;
                     }
 
                     LootConfig nextConfig = allConfigs.getFirst();
@@ -80,13 +82,11 @@ public class EntitySpawner extends AbstractLootBlock {
                         }
                     }
                     entitySpawnerBlockEntity.setConfigId(nextConfig.getConfigId());
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_spawner_lootid_switched", nextConfig.getConfigId(), nextConfig.name));
-                    return ItemInteractionResult.SUCCESS;
+                    ChatUtils.sendMessageToPlayer((ServerPlayer) player, Component.translatable("battleroyale.message.entity_spawner_lootid_switched", nextConfig.getConfigId(), nextConfig.name));
+                    return InteractionResult.SUCCESS;
                 }
             }
         }
-        // return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        // ↑会导致右键功能连续触发两次
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 }

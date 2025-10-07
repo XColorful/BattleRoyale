@@ -3,6 +3,7 @@ package xiao.battleroyale.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -71,6 +72,15 @@ public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> ex
         RenderSystem.setShaderTexture(0, this.TEXTURE);
         int x = getGuiLeft() + this.textureOffX;
         int y = getGuiTop() + this.textureOffY;
-        guiGraphics.blit(this.TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(
+                (resourceLocation) -> RenderType.gui(),
+                this.TEXTURE,
+                x, y,
+                (float)0, (float)0,
+                this.imageWidth, this.imageHeight,
+                this.imageWidth, this.imageHeight,
+                256, 256,
+                -1
+        );
     }
 }

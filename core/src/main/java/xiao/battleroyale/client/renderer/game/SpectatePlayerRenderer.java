@@ -109,7 +109,7 @@ public class SpectatePlayerRenderer {
 
         VertexConsumer consumer = bufferSource.getBuffer(SPECTATE_PLAYER_RENDER_TYPE);
 
-        int worldMaxBuildHeight = mc.level.getMaxBuildHeight();
+        int worldMaxBuildHeight = mc.level.dimensionType().minY() + mc.level.dimensionType().height();
 
         float r, g, b, a = A;
         for (UUID uuid : cachedSpectatePlayerUUID) {

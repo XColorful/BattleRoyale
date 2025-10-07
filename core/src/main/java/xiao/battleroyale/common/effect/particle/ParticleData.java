@@ -58,8 +58,8 @@ public class ParticleData {
 
         if (typeObj == ParticleTypes.DUST) {
             if (parameter != null && parameter.color() != null && !parameter.color().isEmpty()) {
-                Color color = ColorUtils.parseColorFromString(parameter.color());
-                options = new DustParticleOptions(new Vector3f(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F), parameter.scale());
+                int color = ColorUtils.parseColorToInt(parameter.color()) & 0xFFFFFF;
+                options = new DustParticleOptions(color, parameter.scale());
             } else {
                 BattleRoyale.LOGGER.warn("Invalid or missing color for dust particle: {}", particleRL);
             }

@@ -6,7 +6,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -46,7 +46,7 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
         // this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
-    public abstract DirectionProperty getFacingProperty();
+    public abstract EnumProperty<Direction> getFacingProperty();
     public abstract VoxelShape getBlockShape();
 
     @Override
@@ -60,9 +60,9 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
         return null;
     }
 
-    public abstract @NotNull ItemInteractionResult useLootBlock(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit);
+    public abstract @NotNull InteractionResult useLootBlock(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit);
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack pStack, @NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack pStack, @NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
         return this.useLootBlock(pState, level, pos, player, pHand, pHit);
     }
 
@@ -81,7 +81,7 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
 
     @Override
     public @NotNull RenderShape getRenderShape(@NotNull BlockState pState) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
+        return RenderShape.MODEL;
     }
 
     @Override
@@ -116,7 +116,7 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @NotNull ItemStack getCloneItemStack(LevelReader levelReader, BlockPos pos, BlockState state) {
+    public @NotNull ItemStack getCloneItemStack(LevelReader levelReader, BlockPos pos, BlockState state, boolean includeData) {
         BlockEntity blockentity = levelReader.getBlockEntity(pos);
         if (blockentity instanceof LootSpawnerBlockEntity e) {
             UUID gameId = e.getGameId();
@@ -133,7 +133,7 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
                     })
                     .build();
         }
-        return super.getCloneItemStack(levelReader, pos, state);
+        return super.getCloneItemStack(levelReader, pos, state, includeData);
     }
 
     public float parseRotation(Direction direction) {
