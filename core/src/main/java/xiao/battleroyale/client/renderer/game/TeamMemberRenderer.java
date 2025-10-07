@@ -83,7 +83,7 @@ public class TeamMemberRenderer {
 
         VertexConsumer consumer = bufferSource.getBuffer(TEAM_MARKER_RENDER_TYPE);
 
-        int worldMaxBuildHeight = mc.level.getMaxBuildHeight();
+        int worldMaxBuildHeight = mc.level.dimensionType().minY() + mc.level.dimensionType().height();
 
         float r, g, b, a = A;
         if (useClientColor) {

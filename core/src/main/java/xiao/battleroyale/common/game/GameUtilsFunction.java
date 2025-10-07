@@ -21,6 +21,7 @@ import xiao.battleroyale.event.util.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -202,6 +203,9 @@ public class GameUtilsFunction {
             return;
         }
         player.fallDistance = 0;
-        player.teleportTo(serverLevel, x, y, z, yaw, pitch);
+        player.teleportTo(serverLevel, x, y, z,
+                Collections.emptySet(), // 绝对传送
+                yaw, pitch,
+                true);
     }
 }

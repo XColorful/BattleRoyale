@@ -15,11 +15,11 @@ public class ModDamageTypes {
     public static final ResourceKey<DamageType> UNSAFE_ZONE_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:unsafezone", BattleRoyale.MOD_ID)));
 
     public static DamageSource safeZone(ServerLevel serverLevel) {
-        return new DamageSource(serverLevel.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(SAFE_ZONE_DAMAGE));
+        return new DamageSource(serverLevel.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(SAFE_ZONE_DAMAGE));
     }
 
     public static DamageSource unsafeZone(ServerLevel serverLevel) {
-        return new DamageSource(serverLevel.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(UNSAFE_ZONE_DAMAGE));
+        return new DamageSource(serverLevel.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(UNSAFE_ZONE_DAMAGE));
     }
 
     public static boolean isZoneDamage(DamageSource damageSource) {

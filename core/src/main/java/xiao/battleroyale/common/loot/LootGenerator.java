@@ -1,9 +1,7 @@
 package xiao.battleroyale.common.loot;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -267,8 +265,9 @@ public class LootGenerator {
         return refreshedCount;
     }
     private static void clearOldLoot(LootContext lootContext) {
-        BlockPos minPos = new BlockPos(lootContext.chunkPos.getMinBlockX(), lootContext.serverLevel.getMinBuildHeight(), lootContext.chunkPos.getMinBlockZ());
-        BlockPos maxPos = new BlockPos(lootContext.chunkPos.getMaxBlockX() + 1, lootContext.serverLevel.getMaxBuildHeight(), lootContext.chunkPos.getMaxBlockZ() + 1);
+        int minY = lootContext.serverLevel.dimensionType().minY();
+        BlockPos minPos = new BlockPos(lootContext.chunkPos.getMinBlockX(), minY, lootContext.chunkPos.getMinBlockZ());
+        BlockPos maxPos = new BlockPos(lootContext.chunkPos.getMaxBlockX() + 1, minY + lootContext.serverLevel.dimensionType().height(), lootContext.chunkPos.getMaxBlockZ() + 1);
         AABB chunkAABB = new AABB(minPos.getX(), minPos.getY(), minPos.getZ(), maxPos.getX(), maxPos.getY(), maxPos.getZ());
         List<Entity> allEntitiesInChunk = lootContext.serverLevel.getEntitiesOfClass(Entity.class, chunkAABB, entity -> !(entity instanceof Player));
         List<Entity> oldEntities = new ArrayList<>();

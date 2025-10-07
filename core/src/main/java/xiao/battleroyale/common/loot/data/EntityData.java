@@ -3,6 +3,7 @@ package xiao.battleroyale.common.loot.data;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
@@ -53,7 +54,7 @@ public class EntityData implements IEntityLootData {
         if (this.isEmpty()) {
             return null;
         }
-        Entity entity = this.entityType.create(level);
+        Entity entity = this.entityType.create(level, EntitySpawnReason.COMMAND);
         if (entity != null & !this.nbt.isEmpty()) {
             entity.load(this.nbt);
         }

@@ -275,7 +275,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
         int groundY = serverLevel.getHeight(Heightmap.Types.MOTION_BLOCKING, lookupPos.getX(), lookupPos.getZ());
         double targetY = groundY + 1.0;
         // 在主世界加载失败时 targetY 返回 -63（最小建筑高度 -64），加2保证在范围内
-        if (targetY < serverLevel.getMinBuildHeight() + 2) {
+        if (targetY < serverLevel.dimensionType().minY() + 2) {
             BattleRoyale.LOGGER.debug("GroundSpawner attempt to use invalid targetY {}, adjusting to default height ({}) for queued spawn", targetY, queuedHeight);
             return new Vec3(basePos.x, queuedHeight, basePos.z);
         }

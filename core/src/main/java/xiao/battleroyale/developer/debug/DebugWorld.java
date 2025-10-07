@@ -118,7 +118,7 @@ public class DebugWorld {
         BlockPos blockPos = BlockPos.containing(pos);
         StructureManager structureManager = serverLevel.structureManager();
 
-        List<ResourceKey<Structure>> allStructuresKeys = serverLevel.registryAccess().registryOrThrow(Registries.STRUCTURE)
+        List<ResourceKey<Structure>> allStructuresKeys = serverLevel.registryAccess().lookupOrThrow(Registries.STRUCTURE)
                 .keySet().stream()
                 .map(key -> ResourceKey.create(Registries.STRUCTURE, key))
                 .toList();

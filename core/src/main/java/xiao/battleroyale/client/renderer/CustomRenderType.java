@@ -4,10 +4,11 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.TriState;
 import xiao.battleroyale.BattleRoyale;
 
 public class CustomRenderType {
@@ -41,8 +42,8 @@ public class CustomRenderType {
         RenderStateShard.WriteMaskStateShard colorWriteOnly = new RenderStateShard.WriteMaskStateShard(true, false);
 
         RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionColorShader)) // 只用颜色（无normal/uv）
-                .setTextureState(new RenderStateShard.TextureStateShard(WHITE_TEXTURE, false, false))
+                .setShaderState(new RenderStateShard.ShaderStateShard(CoreShaders.POSITION_COLOR)) // 只用颜色（无normal/uv）
+                .setTextureState(new RenderStateShard.TextureStateShard(WHITE_TEXTURE, TriState.FALSE, false))
                 .setTransparencyState(translucent)
                 .setDepthTestState(lequalDepth)
                 .setWriteMaskState(colorWriteOnly)
@@ -74,8 +75,8 @@ public class CustomRenderType {
         RenderStateShard.WriteMaskStateShard colorAndDepthWrite = new RenderStateShard.WriteMaskStateShard(true, true);
 
         RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionColorShader))
-                .setTextureState(new RenderStateShard.TextureStateShard(WHITE_TEXTURE, false, false))
+                .setShaderState(new RenderStateShard.ShaderStateShard(CoreShaders.POSITION_COLOR))
+                .setTextureState(new RenderStateShard.TextureStateShard(WHITE_TEXTURE, TriState.FALSE, false))
                 .setTransparencyState(noBlend)
                 .setDepthTestState(lequalDepth)
                 .setWriteMaskState(colorAndDepthWrite)

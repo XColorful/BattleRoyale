@@ -29,7 +29,7 @@ public class EffectFunc extends AbstractSimpleFunc {
     @Override
     public void funcTick(ZoneTickContext zoneTickContext) {
         Registry<MobEffect> mobEffectRegistry = zoneTickContext.serverLevel.registryAccess()
-                .registryOrThrow(Registries.MOB_EFFECT);
+                .lookupOrThrow(Registries.MOB_EFFECT);
 
         List<GamePlayer> playersToProcess = new ArrayList<>(zoneTickContext.gamePlayers); // 遍历副本，不然玩家挂了就 ConcurrentModificationException
         for (GamePlayer gamePlayer : playersToProcess) {
@@ -38,7 +38,7 @@ public class EffectFunc extends AbstractSimpleFunc {
                     LivingEntity entity = (LivingEntity) zoneTickContext.serverLevel.getEntity(gamePlayer.getPlayerUUID());
                     if (entity != null && entity.isAlive()) {
                         for (Effect effect : effects) {
-                            Optional<Holder.Reference<MobEffect>> effectHolderOpt = mobEffectRegistry.getHolder(effect.effectRL());
+                            Optional<Holder.Reference<MobEffect>> effectHolderOpt = mobEffectRegistry.get(effect.effectRL());
 
                             if (effectHolderOpt.isEmpty()) {
                                 BattleRoyale.LOGGER.error("MobEffect not found in registry: {}", effect.effectRL());
