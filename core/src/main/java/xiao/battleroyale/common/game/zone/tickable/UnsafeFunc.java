@@ -24,10 +24,10 @@ public class UnsafeFunc extends AbstractDamageFunc {
                 if (gamePlayer.isActiveEntity()) { // 造成一次毒圈伤害
                     LivingEntity entity = (LivingEntity) zoneTickContext.serverLevel.getEntity(gamePlayer.getPlayerUUID());
                     if (entity != null && entity.isAlive()) {
-                        entity.hurt(ModDamageTypes.safeZone(zoneTickContext.serverLevel), this.damage);
+                        entity.hurt(ModDamageTypes.unsafeZone(zoneTickContext.serverLevel), this.damage);
                     }
                 } else {
-                    StatsManager.get().onRecordDamage(gamePlayer, ModDamageTypes.safeZone(zoneTickContext.serverLevel), (float) this.damage);
+                    StatsManager.get().onRecordDamage(gamePlayer, ModDamageTypes.unsafeZone(zoneTickContext.serverLevel), (float) this.damage);
                 }
             }
         }
