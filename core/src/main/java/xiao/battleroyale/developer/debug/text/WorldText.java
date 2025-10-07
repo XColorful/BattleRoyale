@@ -2,6 +2,8 @@ package xiao.battleroyale.developer.debug.text;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -13,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -171,7 +174,8 @@ public class WorldText {
                 }
             }
             ItemStack itemStack = itemStacks.get(i);
-            CompoundTag nbt = itemStack.getTag();
+            HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
+            CompoundTag nbt = registries != null ? (CompoundTag) itemStack.save(registries) : new CompoundTag();
             component.append(buildHoverableTextWithColor(" " + itemStack.getDisplayName().getString(),
                     buildNbtVerticalList(nbt != null ? nbt : new CompoundTag()),
                     displayColor));
@@ -183,7 +187,8 @@ public class WorldText {
     public static MutableComponent buildItemStack(ItemStack itemStack) {
         MutableComponent component = Component.empty();
 
-        CompoundTag tag = itemStack.getTag();
+        HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
+        CompoundTag tag = registries != null ? (CompoundTag) itemStack.save(registries) : new CompoundTag();
         component.append(buildHoverableText(itemStack.getDisplayName().getString(),
                 buildNbtVerticalList(tag != null ? tag : new CompoundTag())));
         return component;
