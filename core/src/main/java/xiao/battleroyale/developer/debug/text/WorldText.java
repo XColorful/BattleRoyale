@@ -70,6 +70,9 @@ public class WorldText {
         ListTag items = fullNbt.getList("Items", Tag.TAG_COMPOUND);
         int itemsCount = items.isEmpty() ? 0 : items.size();
 
+        UUID gameId = null;
+        Tag gameIdTag = null;
+
         // Vanilla
         Block block = serverLevel.getBlockState(blockPos).getBlock();
         ResourceLocation blockRL = BattleRoyale.getMcRegistry().getBlockRl(block);
@@ -81,6 +84,12 @@ public class WorldText {
                 .append(buildRunnableVec(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ())));
         // components
         if (componentsCount > 0) {
+            CustomData customData = blockEntity.components().get(DataComponents.CUSTOM_DATA);
+            if (customData != null && customData.contains(LootNBTTag.GAME_ID_TAG)) {
+                CompoundTag customDataTag = customData.copyTag();
+                gameId = customDataTag.getUUID(LootNBTTag.GAME_ID_TAG);
+                gameIdTag = customDataTag.get(LootNBTTag.GAME_ID_TAG);
+            }
             component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
                     .append(buildHoverableTextWithColor("components",
                             buildNbtVerticalList(components),
@@ -94,10 +103,12 @@ public class WorldText {
                             ChatFormatting.GOLD));
         }
         // GameId
-        Tag gameIdTag = fullNbt.get(LootNBTTag.GAME_ID_TAG);
-        if (fullNbt.contains(LootNBTTag.GAME_ID_TAG) && gameIdTag != null) {
+        if (gameIdTag == null && fullNbt.contains(LootNBTTag.GAME_ID_TAG)) {
+            gameId = fullNbt.getUUID(LootNBTTag.GAME_ID_TAG);
+            gameIdTag = fullNbt.get(LootNBTTag.GAME_ID_TAG);
+        }
+        if (gameId != null && gameIdTag != null) {
             UUID currentGameId = GameManager.get().getGameId();
-            UUID gameId = fullNbt.getUUID(LootNBTTag.GAME_ID_TAG);
             component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
                     .append(buildHoverableTextWithColor(LootNBTTag.GAME_ID_TAG,
                             gameIdTag.getAsString(),
