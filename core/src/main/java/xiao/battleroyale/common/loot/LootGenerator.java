@@ -5,6 +5,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
@@ -29,6 +31,7 @@ import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
+import xiao.battleroyale.util.TagUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -293,13 +296,14 @@ public class LootGenerator {
 
                 if (customData != null) {
                     CompoundTag itemTag = customData.copyTag();
-                    if (itemTag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                        debugGameId = itemTag.getUUID(LootNBTTag.GAME_ID_TAG);
+                    if (TagUtils.hasUUID(itemTag, LootNBTTag.GAME_ID_TAG)) {
+                        debugGameId = TagUtils.getUUID(itemTag, LootNBTTag.GAME_ID_TAG);
                     }
                 }
             } else {
-                if (entity.getPersistentData().hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                    debugGameId = entity.getPersistentData().getUUID(LootNBTTag.GAME_ID_TAG);
+                CompoundTag entityTag = entity.getPersistentData();
+                if (TagUtils.hasUUID(entityTag, LootNBTTag.GAME_ID_TAG)) {
+                    debugGameId = TagUtils.getUUID(entityTag, LootNBTTag.GAME_ID_TAG);
                 }
             }
 
@@ -329,7 +333,7 @@ public class LootGenerator {
             nbt.putString("LootTable", ""); // 必须为字符串类型，空字符串会解析为"minecraft:"，否则写不进去
             // nbt.putLong("LootTableSeed", 0L); // LootTable解析不出来之后就已经没有LootTableSeed了
         }
-        blockEntity.loadWithComponents(nbt, lootContext.serverLevel.registryAccess());
+        blockEntity.loadWithComponents(TagValueInput.create(ProblemReporter.DISCARDING, lootContext.serverLevel.registryAccess(), nbt));
         blockEntity.setChanged();
     }
 

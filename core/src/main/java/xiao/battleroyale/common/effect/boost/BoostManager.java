@@ -78,7 +78,7 @@ public class BoostManager implements IEffectManager {
                 }
                 int boostEffect = boostLevel - 3;
                 if (boostEffect >= 0) {
-                    livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, EFFECT_COOLDOWN, boostEffect, false, false));
+                    livingEntity.addEffect(new MobEffectInstance(MobEffects.SPEED, EFFECT_COOLDOWN, boostEffect, false, false));
                 }
                 data.effectCooldown = EFFECT_COOLDOWN;
             }

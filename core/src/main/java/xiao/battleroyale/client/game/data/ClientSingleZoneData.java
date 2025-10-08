@@ -45,8 +45,8 @@ public class ClientSingleZoneData extends AbstractClientExpireData {
     public void updateFromNbt(@NotNull CompoundTag nbt) {
         this.lastMessageNbt = nbt;
 
-        this.name = nbt.getString(GameZoneTag.ZONE_NAME);
-        this.color = ColorUtils.parseColorFromString(nbt.getString(GameZoneTag.ZONE_COLOR));
+        this.name = nbt.getString(GameZoneTag.ZONE_NAME).get();
+        this.color = ColorUtils.parseColorFromString(nbt.getString(GameZoneTag.ZONE_COLOR).get());
         if (useClientColor) {
             this.color = ColorUtils.changeColorExceptAlpha(this.color, clientColorString);
         }
@@ -55,31 +55,31 @@ public class ClientSingleZoneData extends AbstractClientExpireData {
         this.b = this.color.getBlue() / 255.0F;
         this.a = this.color.getAlpha() / 255.0F;
 
-        String funcTypeName = nbt.getString(GameZoneTag.FUNC);
+        String funcTypeName = nbt.getString(GameZoneTag.FUNC).get();
         this.funcType = ZoneFuncType.fromName(funcTypeName);
         if (this.funcType == null) {
             BattleRoyale.LOGGER.warn("Unknown ZoneFuncType: {}", funcTypeName);
         }
 
-        String shapeTypeName = nbt.getString(GameZoneTag.SHAPE);
+        String shapeTypeName = nbt.getString(GameZoneTag.SHAPE).get();
         this.shapeType = ZoneShapeType.fromName(shapeTypeName);
         if (this.shapeType == null) {
             BattleRoyale.LOGGER.warn("Unknown ZoneShapeType: {}", shapeTypeName);
         } else {
             switch (this.shapeType) {
                 case POLYGON, STAR:
-                    this.segments = nbt.getInt(GameZoneTag.SEGMENTS);
+                    this.segments = nbt.getInt(GameZoneTag.SEGMENTS).get();
                     break;
                 // case CIRCLE, ELLIPSE, SPHERE, ELLIPSOID:
             }
         }
 
-        CompoundTag centerTag = nbt.getCompound(GameZoneTag.CENTER);
-        this.center = new Vec3(centerTag.getDouble("x"), centerTag.getDouble("y"), centerTag.getDouble("z"));
-        CompoundTag dimTag = nbt.getCompound(GameZoneTag.DIMENSION);
-        this.dimension = new Vec3(dimTag.getDouble("x"), dimTag.getDouble("y"), dimTag.getDouble("z"));
-        this.rotateDegree = nbt.contains(GameZoneTag.ROTATE) ? nbt.getDouble(GameZoneTag.ROTATE) : 0;
-        this.progress = nbt.getDouble(GameZoneTag.SHAPE_PROGRESS);
+        CompoundTag centerTag = nbt.getCompound(GameZoneTag.CENTER).get();
+        this.center = new Vec3(centerTag.getDouble("x").get(), centerTag.getDouble("y").get(), centerTag.getDouble("z").get());
+        CompoundTag dimTag = nbt.getCompound(GameZoneTag.DIMENSION).get();
+        this.dimension = new Vec3(dimTag.getDouble("x").get(), dimTag.getDouble("y").get(), dimTag.getDouble("z").get());
+        this.rotateDegree = nbt.contains(GameZoneTag.ROTATE) ? nbt.getDouble(GameZoneTag.ROTATE).get() : 0;
+        this.progress = nbt.getDouble(GameZoneTag.SHAPE_PROGRESS).get();
 
         this.lastUpdateTick = ClientGameDataManager.getCurrentTick(); // 推迟到主线程
     }

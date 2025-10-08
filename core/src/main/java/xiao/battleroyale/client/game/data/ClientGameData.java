@@ -8,6 +8,7 @@ import xiao.battleroyale.common.message.game.GameInfoMessageManager;
 import xiao.battleroyale.common.message.game.SpectateMessageManager;
 import xiao.battleroyale.util.ClassUtils;
 import xiao.battleroyale.util.ColorUtils;
+import xiao.battleroyale.util.TagUtils;
 
 import java.awt.*;
 import java.util.UUID;
@@ -35,11 +36,11 @@ public class ClientGameData extends AbstractClientExpireData {
     public void updateFromNbt(@NotNull CompoundTag messageNbt) {
         this.lastMessageNbt = messageNbt;
 
-        this.standingPlayerCount = messageNbt.getCompound(GameInfoMessageManager.ALIVE_KEY).getInt(GameTag.ALIVE);
+        this.standingPlayerCount = TagUtils.getInt(messageNbt.getCompound(GameInfoMessageManager.ALIVE_KEY).get(), GameTag.ALIVE);
         this.inGame = standingPlayerCount > 0;
         if (this.inGame) {
-            if (messageNbt.contains(GameInfoMessageManager.GAMEID_KEY)) {
-                UUID newGameId = messageNbt.getUUID(GameInfoMessageManager.GAMEID_KEY);
+            if (TagUtils.hasUUID(messageNbt, GameInfoMessageManager.GAMEID_KEY)) {
+                UUID newGameId = TagUtils.getUUID(messageNbt, GameInfoMessageManager.GAMEID_KEY);
                 if (!newGameId.equals(this.gameId)) { // 检查是否是下一局游戏，防止瞬间开游戏的一些极端情况
                     this.spectateData.clear();
                 }
@@ -70,10 +71,10 @@ public class ClientGameData extends AbstractClientExpireData {
             this.lastMessageNbt = messageNbt;
 
             // 不自动清理，由GameData的消息状况处理清理
-            CompoundTag spectateTags = messageNbt.getCompound(SpectateMessageManager.SPECTATE_KEY);
-            for (String key : spectateTags.getAllKeys()) {
+            CompoundTag spectateTags = messageNbt.getCompound(SpectateMessageManager.SPECTATE_KEY).get();
+            for (String key : spectateTags.keySet()) {
                 UUID playerUUID = UUID.fromString(key);
-                Color color = ColorUtils.parseColorFromString(spectateTags.getString(key));
+                Color color = ColorUtils.parseColorFromString(spectateTags.getString(key).get());
                 float r = color.getRed() / 255.0F;
                 float g = color.getGreen() / 255.0F;
                 float b = color.getBlue() / 255.0F;

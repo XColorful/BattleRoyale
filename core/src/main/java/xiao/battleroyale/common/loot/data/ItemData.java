@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.loot.data;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -39,8 +40,7 @@ public class ItemData implements IItemLootData {
         if (this.isEmpty()) {
             return null;
         }
-        Optional<ItemStack> itemStack = ItemStack.parse(lootContext.serverLevel.registryAccess(), this.itemTag);
-        return itemStack.orElse(ItemStack.EMPTY);
+        return ItemStack.CODEC.parse(NbtOps.INSTANCE, this.itemTag).result().orElse(ItemStack.EMPTY);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class ItemData implements IItemLootData {
             this.nbt.remove(ComponentsTag.COMPONENTS);
             // 逐个移到minecraft:custom_data里
             CompoundTag custom_data = new CompoundTag();
-            for (String key : this.nbt.getAllKeys()) {
+            for (String key : this.nbt.keySet()) {
                 custom_data.put(key, this.nbt.get(key));
             }
             // 把minecraft:custom_data放到components里

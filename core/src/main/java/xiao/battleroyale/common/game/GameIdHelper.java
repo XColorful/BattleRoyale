@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
 import xiao.battleroyale.api.loot.LootNBTTag;
+import xiao.battleroyale.util.TagUtils;
 
 import java.util.UUID;
 
@@ -36,14 +37,14 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
             CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA);
             if (customData != null) {
                 CompoundTag itemTag = customData.copyTag();
-                if (itemTag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                    entityGameId = itemTag.getUUID(LootNBTTag.GAME_ID_TAG);
+                if (TagUtils.hasUUID(itemTag, LootNBTTag.GAME_ID_TAG)) {
+                    entityGameId = TagUtils.getUUID(itemTag, LootNBTTag.GAME_ID_TAG);
                 }
             }
         } else { // 一般实体，位于{NeoForgeData:{GameId:[I; int, int, int, int]}}
-            CompoundTag persistentData = entity.getPersistentData();
-            if (persistentData.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                entityGameId = persistentData.getUUID(LootNBTTag.GAME_ID_TAG);
+            CompoundTag entityTag = entity.getPersistentData();
+            if (TagUtils.hasUUID(entityTag, LootNBTTag.GAME_ID_TAG)) {
+                entityGameId = TagUtils.getUUID(entityTag, LootNBTTag.GAME_ID_TAG);
             }
         }
         return entityGameId;
@@ -56,8 +57,8 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
         CustomData customData = blockEntity.components().get(DataComponents.CUSTOM_DATA);
         if (customData != null) {
             CompoundTag tag = customData.copyTag();
-            if (tag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                return tag.getUUID(LootNBTTag.GAME_ID_TAG);
+            if (TagUtils.hasUUID(tag, LootNBTTag.GAME_ID_TAG)) {
+                return TagUtils.getUUID(tag, LootNBTTag.GAME_ID_TAG);
             }
         }
         return null;
@@ -69,8 +70,8 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
         CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA); // 物品，位于{components:{"minecraft:custom_data":{GameId:[I; int, int, int, int]}}}
         if (customData != null) {
             CompoundTag tag = customData.copyTag();
-            if (tag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                return tag.getUUID(LootNBTTag.GAME_ID_TAG);
+            if (TagUtils.hasUUID(tag, LootNBTTag.GAME_ID_TAG)) {
+                return TagUtils.getUUID(tag, LootNBTTag.GAME_ID_TAG);
             }
         }
         return null;
@@ -82,11 +83,12 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
     @Override public void addGameId(ItemStack itemStack, UUID gameId) {
         CustomData customData = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
         CompoundTag tag = customData.copyTag();
-        tag.putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+        TagUtils.putUUID(tag, LootNBTTag.GAME_ID_TAG, gameId);
         itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
     }
     @Override public void addGameId(Entity entity, UUID gameId) {
-        entity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+        TagUtils.putUUID(entity.getPersistentData(), LootNBTTag.GAME_ID_TAG, gameId);
+        // TODO 这里写入实体没？
     }
     /**
      * 添加游戏UUID
@@ -95,7 +97,7 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
     @Override public void addGameId(BlockEntity blockEntity, UUID gameId) {
         CustomData customData = blockEntity.components().getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
         CompoundTag tag = customData.copyTag();
-        tag.putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+        TagUtils.putUUID(tag, LootNBTTag.GAME_ID_TAG, gameId);
         DataComponentPatch patch = DataComponentPatch.builder()
                 .set(DataComponents.CUSTOM_DATA, CustomData.of(tag))
                 .build();

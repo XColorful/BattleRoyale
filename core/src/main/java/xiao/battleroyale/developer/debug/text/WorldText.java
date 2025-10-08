@@ -31,6 +31,8 @@ import xiao.battleroyale.api.minecraft.InventoryIndex;
 import xiao.battleroyale.api.minecraft.InventoryIndex.SlotType;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.developer.debug.command.sub.get.GetWorld;
+import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.TagUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -63,12 +65,12 @@ public class WorldText {
             return component;
         }
         CompoundTag fullNbt = blockEntity.saveWithFullMetadata(serverLevel.registryAccess());
-        int nbtCount = fullNbt.isEmpty() ? 0 : fullNbt.getAllKeys().size();
+        int nbtCount = fullNbt.isEmpty() ? 0 : fullNbt.keySet().size();
 
-        CompoundTag components = fullNbt.getCompound(ComponentsTag.COMPONENTS);
-        int componentsCount = components.isEmpty() ? 0 : components.getAllKeys().size();
+        CompoundTag components = fullNbt.getCompound(ComponentsTag.COMPONENTS).get();
+        int componentsCount = components.isEmpty() ? 0 : components.keySet().size();
 
-        ListTag items = fullNbt.getList("Items", Tag.TAG_COMPOUND);
+        ListTag items = fullNbt.getListOrEmpty("Items");
         int itemsCount = items.isEmpty() ? 0 : items.size();
 
         UUID gameId = null;
@@ -88,7 +90,7 @@ public class WorldText {
             CustomData customData = blockEntity.components().get(DataComponents.CUSTOM_DATA);
             if (customData != null && customData.contains(LootNBTTag.GAME_ID_TAG)) {
                 CompoundTag customDataTag = customData.copyTag();
-                gameId = customDataTag.getUUID(LootNBTTag.GAME_ID_TAG);
+                gameId = TagUtils.getUUID(customDataTag, LootNBTTag.GAME_ID_TAG);
                 gameIdTag = customDataTag.get(LootNBTTag.GAME_ID_TAG);
             }
             component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
@@ -105,14 +107,14 @@ public class WorldText {
         }
         // GameId
         if (gameIdTag == null && fullNbt.contains(LootNBTTag.GAME_ID_TAG)) {
-            gameId = fullNbt.getUUID(LootNBTTag.GAME_ID_TAG);
+            gameId = TagUtils.getUUID(fullNbt, LootNBTTag.GAME_ID_TAG);
             gameIdTag = fullNbt.get(LootNBTTag.GAME_ID_TAG);
         }
         if (gameId != null && gameIdTag != null) {
             UUID currentGameId = GameManager.get().getGameId();
             component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
                     .append(buildHoverableTextWithColor(LootNBTTag.GAME_ID_TAG,
-                            gameIdTag.getAsString(),
+                            gameIdTag.toString(),
                             gameId.equals(currentGameId) ? ChatFormatting.BLUE : ChatFormatting.GRAY));
         }
 
@@ -187,10 +189,11 @@ public class WorldText {
             }
             ItemStack itemStack = itemStacks.get(i);
             HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
-            CompoundTag nbt = registries != null ? (CompoundTag) itemStack.save(registries) : new CompoundTag();
-            component.append(buildHoverableTextWithColor(" " + itemStack.getDisplayName().getString(),
-                    buildNbtVerticalList(nbt != null ? nbt : new CompoundTag()),
-                    displayColor));
+            BattleRoyale.LOGGER.debug("buildItemStacks Not implemented yet");
+//            CompoundTag nbt = registries != null ? (CompoundTag) itemStack.save(registries) : new CompoundTag();
+//            component.append(buildHoverableTextWithColor(" " + itemStack.getDisplayName().getString(),
+//                    buildNbtVerticalList(nbt != null ? nbt : new CompoundTag()),
+//                    displayColor));
         }
 
         return component;
@@ -200,9 +203,10 @@ public class WorldText {
         MutableComponent component = Component.empty();
 
         HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
-        CompoundTag tag = registries != null ? (CompoundTag) itemStack.save(registries) : new CompoundTag();
-        component.append(buildHoverableText(itemStack.getDisplayName().getString(),
-                buildNbtVerticalList(tag != null ? tag : new CompoundTag())));
+        BattleRoyale.LOGGER.debug("buildItemStack Not implemented yet");
+//        CompoundTag tag = registries != null ? (CompoundTag) itemStack.save(registries) : new CompoundTag();
+//        component.append(buildHoverableText(itemStack.getDisplayName().getString(),
+//                buildNbtVerticalList(tag != null ? tag : new CompoundTag())));
         return component;
     }
 

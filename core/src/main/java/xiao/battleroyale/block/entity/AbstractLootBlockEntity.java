@@ -7,14 +7,19 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.ILootObject;
 import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
+import xiao.battleroyale.util.TagUtils;
 
 import java.util.UUID;
 
@@ -60,30 +65,24 @@ public abstract class AbstractLootBlockEntity extends BlockEntity implements ILo
 
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider p_329179_) {
-        CompoundTag tag = new CompoundTag();
-        saveAdditional(tag, p_329179_);
-        return tag;
+        TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, p_329179_);
+        saveAdditional(output);
+        return output.buildResult();
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider p_333170_) {
-        super.loadAdditional(tag, p_333170_);
-        if (tag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-            this.gameId = tag.getUUID(LootNBTTag.GAME_ID_TAG);
-        } else {
-            this.gameId = null;
-        }
-        if (tag.contains(LootNBTTag.CONFIG_ID_TAG, Tag.TAG_INT)) {
-            this.configId = tag.getInt(LootNBTTag.CONFIG_ID_TAG);
-        }
+    public void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        this.gameId = TagUtils.getUUID(input, LootNBTTag.GAME_ID_TAG);
+        this.configId = TagUtils.getInt(input, LootNBTTag.CONFIG_ID_TAG, this.configId);
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider p_327783_) {
-        super.saveAdditional(tag, p_327783_);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
         if (gameId != null) {
-            tag.putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+            TagUtils.putUUID(output, LootNBTTag.GAME_ID_TAG, gameId);
         }
-        tag.putInt(LootNBTTag.CONFIG_ID_TAG, this.configId);
+        TagUtils.putInt(output, LootNBTTag.CONFIG_ID_TAG, this.configId);
     }
 }

@@ -80,9 +80,9 @@ public class ClientGameDataManager {
         if (syncPacketNbt.isEmpty()) {
             activeZones.clear();
         } else {
-            for (String idStr : syncPacketNbt.getAllKeys()) {
+            for (String idStr : syncPacketNbt.keySet()) {
                 int id = Integer.parseInt(idStr);
-                CompoundTag zoneNbt = syncPacketNbt.getCompound(idStr);
+                CompoundTag zoneNbt = syncPacketNbt.getCompound(idStr).get();
                 if (zoneNbt.isEmpty()) { // 空NBT表示置空
                     activeZones.remove(id);
                     continue;

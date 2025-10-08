@@ -11,6 +11,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.NBTUtils;
+import xiao.battleroyale.util.TagUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -41,19 +42,19 @@ public class ClientTeamData extends AbstractClientExpireData {
     public void updateFromNbt(@NotNull CompoundTag nbt) {
         this.lastMessageNbt = nbt;
 
-        this.teamId = nbt.getInt(GameTeamTag.TEAM_ID);
-        this.teamColor = ColorUtils.parseColorFromString(nbt.getString(GameTeamTag.TEAM_COLOR));
+        this.teamId = nbt.getInt(GameTeamTag.TEAM_ID).get();
+        this.teamColor = ColorUtils.parseColorFromString(nbt.getString(GameTeamTag.TEAM_COLOR).get());
         this.teamMemberInfoList.clear();
-        CompoundTag memberTags = nbt.getCompound(GameTeamTag.TEAM_MEMBER);
-        for (String key : memberTags.getAllKeys()) {
-            CompoundTag memberTag = memberTags.getCompound(key);
+        CompoundTag memberTags = nbt.getCompound(GameTeamTag.TEAM_MEMBER).get();
+        for (String key : memberTags.keySet()) {
+            CompoundTag memberTag = memberTags.getCompound(key).get();
             teamMemberInfoList.add(new TeamMemberInfo(
                     Integer.parseInt(key),
-                    memberTag.getString(GameTeamTag.MEMBER_NAME),
-                    memberTag.getFloat(GameTeamTag.MEMBER_HEALTH),
-                    memberTag.getInt(GameTeamTag.MEMBER_BOOST),
-                    memberTag.getUUID(GameTeamTag.MEMBER_UUID),
-                    memberTag.getBoolean(GameTeamTag.MEMBER_ALIVE)
+                    memberTag.getString(GameTeamTag.MEMBER_NAME).get(),
+                    memberTag.getFloat(GameTeamTag.MEMBER_HEALTH).get(),
+                    memberTag.getInt(GameTeamTag.MEMBER_BOOST).get(),
+                    TagUtils.getUUID(memberTags, GameTeamTag.MEMBER_UUID),
+                    memberTag.getBoolean(GameTeamTag.MEMBER_ALIVE).get()
             ));
         }
         teamMemberInfoList.sort(Comparator.comparingInt(memberInfo -> memberInfo.playerId));

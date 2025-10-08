@@ -90,7 +90,7 @@ public class DebugWorld {
      */
     public static final String GET_PLAYER_ITEMSTACK = "getItemStack";
     public void getPlayerItemStack(CommandSourceStack source, ServerPlayer player) {
-        ItemStack itemStack = player.getInventory().getSelected();
+        ItemStack itemStack = player.getInventory().getSelectedItem();
         DebugManager.sendDebugMessage(source, GET_PLAYER_ITEMSTACK, WorldText.buildItemStack(itemStack));
     }
 

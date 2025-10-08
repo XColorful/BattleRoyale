@@ -124,13 +124,13 @@ public class TeamExternal {
         String declineCommand = TeamCommand.declineInviteCommand(senderName);
         MutableComponent acceptButton = Component.translatable("battleroyale.message.accept")
                 .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD)
-                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, acceptCommand))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(acceptCommand)))
+                .withStyle(style -> style.withClickEvent(new ClickEvent.RunCommand(acceptCommand))
+                        .withHoverEvent(new HoverEvent.ShowText(Component.literal(acceptCommand)))
                 );
         MutableComponent declineButton = Component.translatable("battleroyale.message.decline")
                 .withStyle(ChatFormatting.RED, ChatFormatting.BOLD)
-                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, declineCommand))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(declineCommand)))
+                .withStyle(style -> style.withClickEvent(new ClickEvent.RunCommand(declineCommand))
+                        .withHoverEvent(new HoverEvent.ShowText(Component.literal(declineCommand)))
                 );
 
         message.append(" ").append(acceptButton).append(" ").append(declineButton);
@@ -264,13 +264,13 @@ public class TeamExternal {
         String declineCommand = TeamCommand.declineRequestCommand(senderName);
         MutableComponent acceptButton = Component.translatable("battleroyale.message.accept")
                 .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD)
-                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, acceptCommand))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(acceptCommand)))
+                .withStyle(style -> style.withClickEvent(new ClickEvent.RunCommand(acceptCommand))
+                        .withHoverEvent(new HoverEvent.ShowText(Component.literal(acceptCommand)))
                 );
         MutableComponent declineButton = Component.translatable("battleroyale.message.decline")
                 .withStyle(ChatFormatting.RED, ChatFormatting.BOLD)
-                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, declineCommand))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(declineCommand)))
+                .withStyle(style -> style.withClickEvent(new ClickEvent.RunCommand(declineCommand))
+                        .withHoverEvent(new HoverEvent.ShowText(Component.literal(declineCommand)))
                 );
         message.append(" ").append(acceptButton).append(" ").append(declineButton);
 

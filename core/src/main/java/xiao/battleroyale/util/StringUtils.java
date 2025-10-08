@@ -1,12 +1,20 @@
 package xiao.battleroyale.util;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class StringUtils {
@@ -82,7 +90,31 @@ public class StringUtils {
      */
     public @Nullable static Component parseComponentString(@Nullable String inputString) {
         HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
-        return inputString != null && registries != null ? Component.Serializer.fromJson(inputString, registries) : null;
+        if (inputString == null || registries == null) {
+            return null;
+        }
+
+        try {
+            JsonElement jsonElement = JsonParser.parseString(inputString);
+
+            DataResult<Pair<Component, JsonElement>> dataResult = ComponentSerialization.CODEC.decode(
+                    RegistryOps.create(JsonOps.INSTANCE, registries),
+                    jsonElement
+            );
+
+            Optional<Pair<Component, JsonElement>> optionalResult = dataResult.result();
+            if (optionalResult.isPresent()) {
+                return optionalResult.get().getFirst();
+            } else {
+                dataResult.error().ifPresent(error ->
+                        BattleRoyale.LOGGER.warn("Failed to parse Component from JSON string '{}': {}", inputString, error.message())
+                );
+                return null;
+            }
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.warn("Failed to parse Component from JSON string: {}", inputString, e);
+            return null;
+        }
     }
 
     /**
@@ -99,6 +131,24 @@ public class StringUtils {
         if (component == null || registries == null) {
             return "";
         }
-        return Component.Serializer.toJson(component, registries);
+        try {
+            DataResult<JsonElement> dataResult = ComponentSerialization.CODEC.encodeStart(
+                    RegistryOps.create(JsonOps.INSTANCE, registries),
+                    component
+            );
+
+            Optional<JsonElement> optionalElement = dataResult.result();
+            if (optionalElement.isPresent()) {
+                return optionalElement.get().toString();
+            } else {
+                dataResult.error().ifPresent(error ->
+                        BattleRoyale.LOGGER.error("Failed to encode Component to JSON: {}", error.message())
+                );
+                return "";
+            }
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.error("Failed to serialize Component to JSON string: {}", component.getString(), e);
+            return "";
+        }
     }
 }

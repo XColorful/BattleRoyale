@@ -88,7 +88,7 @@ public class DebugMessage {
     }
     public void getGameMessagesLocal(CommandSourceStack source, int min, int max) {
         CompoundTag messageNbt = ClientGameDataManager.get().getGameData().lastMessageNbt;
-        List<String> keyList = messageNbt.getAllKeys().stream()
+        List<String> keyList = messageNbt.keySet().stream()
                 .filter(keyString -> {
                     try {
                         int keyInt = Integer.parseInt(keyString);
@@ -111,7 +111,7 @@ public class DebugMessage {
     }
     public void getSpectateMessagesLocal(CommandSourceStack source, int min, int max) {
         CompoundTag messageNbt = ClientGameDataManager.get().getGameData().getSpectateData().lastMessageNbt;
-        List<String> keyList = messageNbt.getAllKeys().stream()
+        List<String> keyList = messageNbt.keySet().stream()
                 .filter(keyString -> {
                     try {
                         int keyInt = Integer.parseInt(keyString);
@@ -189,9 +189,9 @@ public class DebugMessage {
         CompoundTag messageNbt = gameData.lastMessageNbt;
         CompoundTag nbt = null;
         String nbtIdString = Integer.toString(nbtId);
-        for (String key : messageNbt.getAllKeys()) {
+        for (String key : messageNbt.keySet()) {
             if (key.equals(nbtIdString)) {
-                nbt = messageNbt.getCompound(key);
+                nbt = messageNbt.getCompound(key).get();
             }
         }
         DebugManager.sendLocalDebugMessage(source, GET_GAME_MESSAGE, MessageText.buildGameMessageDetailLocal(nbt, (int) gameData.getLastUpdateTick()));
@@ -205,9 +205,9 @@ public class DebugMessage {
         CompoundTag messageNbt = spectateData.lastMessageNbt;
         CompoundTag nbt = null;
         String nbtIdString = Integer.toString(nbtId);
-        for (String key : messageNbt.getAllKeys()) {
+        for (String key : messageNbt.keySet()) {
             if (key.equals(nbtIdString)) {
-                nbt = messageNbt.getCompound(key);
+                nbt = messageNbt.getCompound(key).get();
             }
         }
         DebugManager.sendLocalDebugMessage(source, GET_SPECTATE_MESSAGE, MessageText.buildSpectateMessageDetailLocal(nbt, (int) spectateData.getLastUpdateTick()));

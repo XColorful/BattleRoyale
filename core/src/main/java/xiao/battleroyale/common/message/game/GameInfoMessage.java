@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.network.message.game.GameTag;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.message.AbstractCommonMessage;
+import xiao.battleroyale.util.TagUtils;
 
 import java.util.UUID;
 
@@ -27,7 +28,6 @@ public class GameInfoMessage extends AbstractCommonMessage {
     public CompoundTag toNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putInt(GameTag.ALIVE, standingPlayerCount);
-        nbt.putUUID(GameTag.GAMEID, gameId);
-        return nbt;
+        return TagUtils.putUUID(nbt, GameTag.GAMEID, gameId);
     }
 }

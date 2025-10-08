@@ -2,6 +2,7 @@ package xiao.battleroyale.client.gui;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -79,7 +80,7 @@ public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> ex
         int x = getGuiLeft() + this.textureOffX;
         int y = getGuiTop() + this.textureOffY;
         guiGraphics.blit(
-                RenderType::guiTextured,
+                RenderPipelines.GUI_TEXTURED,
                 this.TEXTURE,
                 x, y,
                 0.0F, 0.0F,

@@ -4,17 +4,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.Container;
+import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -99,66 +101,40 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider p_333170_) {
-        super.loadAdditional(tag, p_333170_);
+    public void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
         this.items.replaceAll(ignored -> ItemStack.EMPTY);
-
-        if (tag.contains(ITEMS_TAG, Tag.TAG_LIST)) {
-            ListTag listTag = tag.getList(ITEMS_TAG, Tag.TAG_COMPOUND);
-            for (int i = 0; i < listTag.size(); ++i) {
-                CompoundTag itemTag = listTag.getCompound(i);
-                int slot = itemTag.getInt(SLOT_TAG);
-                if (slot >= 0 && slot < this.items.size()) {
-                    this.items.set(slot, ItemStack.parseOptional(p_333170_, itemTag));
-                }
+        input.listOrEmpty(ITEMS_TAG, ItemStackWithSlot.CODEC).forEach(itemWithSlot -> {
+            if (itemWithSlot.isValidInContainer(this.items.size())) {
+                this.items.set(itemWithSlot.slot(), itemWithSlot.stack());
             }
-        }
+        });
     }
 
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider p_327783_) {
-        super.saveAdditional(pTag, p_327783_);
-        ListTag listTag = new ListTag();
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+        ValueOutput.TypedOutputList<ItemStackWithSlot> itemList = output.list(ITEMS_TAG, ItemStackWithSlot.CODEC);
+
         for (int i = 0; i < this.items.size(); ++i) {
-            ItemStack itemStack = this.items.get(i);
-            if (!itemStack.isEmpty()) {
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt(SLOT_TAG, i);
-                listTag.add(itemStack.save(p_327783_, itemTag));
+            ItemStack stack = this.items.get(i);
+            if (!stack.isEmpty()) {
+                itemList.add(new ItemStackWithSlot(i, stack));
             }
         }
-        pTag.put(ITEMS_TAG, listTag);
     }
 
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider p_329179_) {
-        CompoundTag tag = super.getUpdateTag(p_329179_);
-        ListTag listTag = new ListTag();
-        for (int i = 0; i < this.items.size(); ++i) {
-            ItemStack itemStack = this.items.get(i);
-            if (!itemStack.isEmpty()) {
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt(SLOT_TAG, i);
-                listTag.add(itemStack.save(p_329179_, itemTag));
-            }
-        }
-        tag.put(ITEMS_TAG, listTag);
-        return tag;
+        TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, p_329179_);
+        saveAdditional(output);
+        return output.buildResult();
     }
 
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
-    public void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookup) {
-        CompoundTag tag = pkt.getTag();
-        if (tag != null) {
-            this.loadAdditional(tag, lookup);
-        }
-        // 不需要额外触发重绘，Minecraft 会自动处理 BlockEntity 数据更新后的渲染刷新
     }
 }

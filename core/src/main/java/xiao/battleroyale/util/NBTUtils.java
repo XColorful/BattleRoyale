@@ -33,7 +33,7 @@ public class NBTUtils {
             return new CompoundTag();
         }
         try {
-            return TagParser.parseTag(nbt);
+            return TagParser.parseCompoundFully(nbt);
         } catch (Exception e) {
             BattleRoyale.LOGGER.warn("Failed to parse NBT {}: {}", nbt, e.getMessage());
             return new CompoundTag();
@@ -103,7 +103,7 @@ public class NBTUtils {
             memberTag.putString(GameTeamTag.MEMBER_NAME, memberInfo.name);
             memberTag.putFloat(GameTeamTag.MEMBER_HEALTH, memberInfo.health);
             memberTag.putInt(GameTeamTag.MEMBER_BOOST, memberInfo.boost);
-            memberTag.putUUID(GameTeamTag.MEMBER_UUID, memberInfo.uuid);
+            TagUtils.putUUID(memberTag, GameTeamTag.MEMBER_UUID, memberInfo.uuid);
             memberTag.putBoolean(GameTeamTag.MEMBER_ALIVE, memberInfo.alive);
             teamMemberTag.put(String.valueOf(memberInfo.playerId), memberTag);
         }
@@ -120,7 +120,7 @@ public class NBTUtils {
             return result.result().get(); // 返回成功解析的方块状态
         } else {
             // 解析失败，记录警告并回退到默认方块状态
-            String blockId = nbt.getString("Name");
+            String blockId = nbt.getString("Name").orElse("minecraft:air");
             Optional<DataResult.Error<BlockState>> errorResult = result.error(); // 获取错误信息
 
             if (errorResult.isPresent()) {
@@ -142,8 +142,8 @@ public class NBTUtils {
             return ItemStack.EMPTY;
         }
         try {
-            HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
-            return  registries != null ? ItemStack.parseOptional(registries, nbt) : ItemStack.EMPTY;
+            // HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
+            return ItemStack.CODEC.parse(NbtOps.INSTANCE, nbt).result().orElse(ItemStack.EMPTY);
         } catch (Exception e) {
             BattleRoyale.LOGGER.warn("Failed to parse ItemStack from NBT: '{}', reason: {}", nbt, e.getMessage());
             return ItemStack.EMPTY;

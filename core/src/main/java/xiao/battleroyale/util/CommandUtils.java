@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagType;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -28,12 +29,12 @@ public class CommandUtils {
      */
     public static MutableComponent buildHoverableText(String displayText, String hoverText) {
         MutableComponent fieldComp = Component.literal(displayText);
-        Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(hoverText)));
+        Style style = Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Component.literal(hoverText)));
         return fieldComp.setStyle(style);
     }
     public static MutableComponent buildHoverableText(String displayText, MutableComponent hoverComponent) {
         MutableComponent fieldComp = Component.literal(displayText);
-        Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverComponent));
+        Style style = Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(hoverComponent));
         return fieldComp.setStyle(style);
     }
 
@@ -45,7 +46,7 @@ public class CommandUtils {
     }
     public static MutableComponent buildHoverableTextWithColor(String displayText, String hoverText, TextColor textColor) {
         MutableComponent fieldComp = Component.literal(displayText);
-        Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(hoverText)));
+        Style style = Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Component.literal(hoverText)));
         style = style.withColor(textColor);
 
         return fieldComp.setStyle(style);
@@ -58,7 +59,7 @@ public class CommandUtils {
     }
     public static MutableComponent buildHoverableTextWithColor(String displayText, MutableComponent hoverComponent, TextColor textColor) {
         MutableComponent fieldComp = Component.literal(displayText);
-        Style style = Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverComponent));
+        Style style = Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(hoverComponent));
         style = style.withColor(textColor);
 
         return fieldComp.setStyle(style);
@@ -70,8 +71,8 @@ public class CommandUtils {
     public static MutableComponent buildRunnableText(MutableComponent mutableComponent, String command, ChatFormatting chatFormatting) {
         return Component.empty()
                 .append(mutableComponent.setStyle(Style.EMPTY.withColor(chatFormatting)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command)))));
+                        .withClickEvent(new ClickEvent.RunCommand(command))
+                        .withHoverEvent(new HoverEvent.ShowText(Component.literal(command)))));
     }
 
     /**
@@ -88,8 +89,8 @@ public class CommandUtils {
         MutableComponent component = Component.empty();
         component.append(Component.literal(pos.toString())
                 .setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(displayName))))
+                        .withClickEvent(new ClickEvent.RunCommand(command))
+                        .withHoverEvent(new HoverEvent.ShowText(Component.literal(displayName))))
         );
 
         return component;
@@ -104,8 +105,8 @@ public class CommandUtils {
         component.append(Component.literal("["))
                 .append(Component.literal(String.valueOf(number))
                         .setStyle(Style.EMPTY
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command)))
+                                .withClickEvent(new ClickEvent.RunCommand(command))
+                                .withHoverEvent(new HoverEvent.ShowText(Component.literal(command)))
                         ))
                 .append(Component.literal("]"));
 
@@ -116,8 +117,8 @@ public class CommandUtils {
         component.append(Component.literal("["))
                 .append(Component.literal(String.valueOf(number))
                         .setStyle(Style.EMPTY
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command)))
+                                .withClickEvent(new ClickEvent.SuggestCommand(command))
+                                .withHoverEvent(new HoverEvent.ShowText(Component.literal(command)))
                         ))
                 .append(Component.literal("]"));
 
@@ -139,8 +140,8 @@ public class CommandUtils {
         component.append(Component.literal("[").withStyle(Style.EMPTY.withColor(textColor)))
                 .append(Component.literal(String.valueOf(number))
                         .setStyle(Style.EMPTY
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command)))
+                                .withClickEvent(new ClickEvent.RunCommand(command))
+                                .withHoverEvent(new HoverEvent.ShowText(Component.literal(command)))
                         ))
                 .append(Component.literal("]").withStyle(Style.EMPTY.withColor(textColor)));
 
@@ -151,8 +152,8 @@ public class CommandUtils {
         component.append(Component.literal("[").withStyle(Style.EMPTY.withColor(textColor)))
                 .append(Component.literal(String.valueOf(number))
                         .setStyle(Style.EMPTY
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command)))
+                                .withClickEvent(new ClickEvent.SuggestCommand(command))
+                                .withHoverEvent(new HoverEvent.ShowText(Component.literal(command)))
                         ))
                 .append(Component.literal("]").withStyle(Style.EMPTY.withColor(textColor)));
 
@@ -167,16 +168,16 @@ public class CommandUtils {
                 .append(Component.literal("[" + number + "]")
                 .setStyle(Style.EMPTY
                         .withColor(textColor)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command)))));
+                        .withClickEvent(new ClickEvent.RunCommand(command))
+                        .withHoverEvent(new HoverEvent.ShowText(Component.literal(command)))));
     }
     public static MutableComponent buildSuggestableIntBracketWithFullColor(int number, String command, TextColor textColor) {
         return Component.empty()
                 .append(Component.literal("[" + number + "]")
                         .setStyle(Style.EMPTY
                                 .withColor(textColor)
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command)))));
+                                .withClickEvent(new ClickEvent.SuggestCommand(command))
+                                .withHoverEvent(new HoverEvent.ShowText(Component.literal(command)))));
     }
 
     public static MutableComponent buildIntBracketWithColor(int number, TextColor textColor) {
@@ -201,20 +202,20 @@ public class CommandUtils {
      */
     public static MutableComponent buildNbtVerticalList(CompoundTag nbt) {
         MutableComponent nbtComponent = Component.empty();
-        Set<String> keys = nbt.getAllKeys();
+        Set<String> keys = nbt.keySet();
         nbtComponent.append(Component.literal("Total"))
                 .append(Component.literal(":" + keys.size()));
         for (String key : keys) {
             nbtComponent.append(Component.literal("\n"));
-            byte type = nbt.getTagType(key);
+            byte type = nbt.get(key).getId();
             switch (type) {
                 case TAG_INT -> {
-                    int x = nbt.getInt(key);
+                    int x = nbt.getInt(key).get();
                     nbtComponent.append(Component.literal(key).withStyle(x != 0 ? ChatFormatting.GRAY : ChatFormatting.DARK_GRAY))
                             .append(Component.literal(":" + x));
                 }
                 case TAG_BYTE -> {
-                    boolean bool = nbt.getBoolean(key);
+                    boolean bool = nbt.getBoolean(key).get();
                     nbtComponent.append(Component.literal(key).withStyle(bool ? ChatFormatting.GRAY : ChatFormatting.DARK_GRAY))
                             .append(Component.literal(":" + bool));
                 }

@@ -35,6 +35,7 @@ import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
+import xiao.battleroyale.util.TagUtils;
 
 import java.util.UUID;
 
@@ -100,15 +101,15 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
 
                 // GameId
                 UUID gameId = null;
-                if (nbt != null && nbt.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                    gameId = nbt.getUUID(LootNBTTag.GAME_ID_TAG);
+                if (nbt != null && TagUtils.hasUUID(nbt, LootNBTTag.GAME_ID_TAG)) {
+                    gameId = TagUtils.getUUID(nbt, LootNBTTag.GAME_ID_TAG);
                 }
                 e.setGameId(gameId != null ? gameId : UUID.randomUUID());
 
                 // ConfigId
                 int configId = LootConfigManager.get().getDefaultConfigId(); // 默认获取loot_spawner的默认id
-                if (nbt != null && nbt.contains(LootNBTTag.CONFIG_ID_TAG, Tag.TAG_INT)) {
-                    configId = nbt.getInt(LootNBTTag.CONFIG_ID_TAG);
+                if (nbt != null && TagUtils.hasInt(nbt, LootNBTTag.CONFIG_ID_TAG)) {
+                    configId = TagUtils.getInt(nbt, LootNBTTag.CONFIG_ID_TAG);
                 }
                 e.setConfigId(configId);
             }
@@ -125,7 +126,7 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
             return BlockItemBuilder.create(this)
                     .withNBT(nbt -> {
                         if (gameId != null) {
-                            nbt.putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+                            TagUtils.putUUID(nbt, LootNBTTag.GAME_ID_TAG, gameId);
                         } else {
                             nbt.remove(LootNBTTag.GAME_ID_TAG);
                         }

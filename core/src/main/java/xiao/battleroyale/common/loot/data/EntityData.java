@@ -2,9 +2,12 @@ package xiao.battleroyale.common.loot.data;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.entity.IEntityLootData;
@@ -50,13 +53,13 @@ public class EntityData implements IEntityLootData {
 
     @Nullable
     @Override
-    public Entity getEntity(ServerLevel level) {
+    public Entity getEntity(ServerLevel serverLevel) {
         if (this.isEmpty()) {
             return null;
         }
-        Entity entity = this.entityType.create(level, EntitySpawnReason.COMMAND);
+        Entity entity = this.entityType.create(serverLevel, EntitySpawnReason.COMMAND);
         if (entity != null & !this.nbt.isEmpty()) {
-            entity.load(this.nbt);
+            entity.load(TagValueInput.create(ProblemReporter.DISCARDING, serverLevel.registryAccess(), this.nbt));
         }
         return entity;
     }

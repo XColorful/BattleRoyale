@@ -94,12 +94,12 @@ public class MessageText {
         return buildMessagesCommonSimpleLocal(size, command, "TeamMembers");
     }
     public static MutableComponent buildGameMessagesSimpleLocal(ClientGameDataManager clientGameDataManager) {
-        int size = clientGameDataManager.getGameData().lastMessageNbt.getAllKeys().size();
+        int size = clientGameDataManager.getGameData().lastMessageNbt.keySet().size();
         String command = GetMessage.getLocalGameMessagesCommand(-10, 0);
         return buildMessagesCommonSimpleLocal(size, command, "GameMessages");
     }
     public static MutableComponent buildSpectateMessagesSimpleLocal(ClientGameDataManager clientGameDataManager) {
-        int size = clientGameDataManager.getGameData().getSpectateData().lastMessageNbt.getAllKeys().size();
+        int size = clientGameDataManager.getGameData().getSpectateData().lastMessageNbt.keySet().size();
         String command = GetMessage.getLocalSpectateMessagesCommand(-10, 0);
         return buildMessagesCommonSimpleLocal(size, command, "SpectateMessages");
     }
@@ -155,7 +155,7 @@ public class MessageText {
         }
         // nbt
         MutableComponent nbtComponent = buildNbtVerticalList(nbt);
-        component.append(buildHoverableTextWithColor("nbt", nbtComponent, !nbt.getAllKeys().isEmpty() ? ChatFormatting.GRAY : ChatFormatting.DARK_GRAY));
+        component.append(buildHoverableTextWithColor("nbt", nbtComponent, !nbt.keySet().isEmpty() ? ChatFormatting.GRAY : ChatFormatting.DARK_GRAY));
         component.append(Component.literal(" "));
         // updateTime
         component.append(buildHoverableText("updateTime", String.valueOf(updateTime)));
@@ -202,7 +202,7 @@ public class MessageText {
             return Component.empty();
         }
 
-        String zoneColor = zoneMessage.nbt.getString(GameZoneTag.ZONE_COLOR);
+        String zoneColor = zoneMessage.nbt.getString(GameZoneTag.ZONE_COLOR).get();
         TextColor textColor = TextColor.fromRgb(ColorUtils.parseColorToInt(zoneColor));
 
         String messageCommand = GetMessage.getZoneMessageCommand(displayId);
@@ -214,7 +214,7 @@ public class MessageText {
             return Component.empty();
         }
 
-        String zoneColor = messageNbt.getString(GameZoneTag.ZONE_COLOR);
+        String zoneColor = messageNbt.getString(GameZoneTag.ZONE_COLOR).get();
         TextColor textColor = TextColor.fromRgb(ColorUtils.parseColorToInt(zoneColor));
 
         String messageCommand = GetMessage.getLocalZoneMessageCommand(displayId);
@@ -238,7 +238,7 @@ public class MessageText {
             return Component.empty();
         }
 
-        String teamColor = teamMessage.nbt.getString(GameTeamTag.TEAM_COLOR);
+        String teamColor = teamMessage.nbt.getString(GameTeamTag.TEAM_COLOR).get();
         TextColor textColor = TextColor.fromRgb(ColorUtils.parseColorToInt(teamColor));
 
         String messageCommand = GetMessage.getTeamMessageCommand(displayId);
@@ -249,8 +249,8 @@ public class MessageText {
 
         return buildRunnableIntBracketWithColor(displayId, messageCommand, textColor)
                 .append(Component.literal("Team").withStyle(Style.EMPTY.withColor(gameTeamTextColor)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, gameTeamCommand))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(gameTeamCommand)))));
+                        .withClickEvent(new ClickEvent.RunCommand(gameTeamCommand))
+                        .withHoverEvent(new HoverEvent.ShowText(Component.literal(gameTeamCommand)))));
     }
 
     /**
