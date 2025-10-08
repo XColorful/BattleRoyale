@@ -3,6 +3,7 @@ package xiao.battleroyale.compat.neoforge.client.event;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -11,6 +12,8 @@ import xiao.battleroyale.api.client.event.RenderLevelStage;
 import xiao.battleroyale.client.event.ClientGameEventHandler;
 import xiao.battleroyale.client.event.ClientRenderEventHandler;
 import xiao.battleroyale.compat.neoforge.event.NeoClientTickEvent;
+
+import static xiao.battleroyale.client.renderer.CustomRenderType.SOLID_TRANSLUCENT_COLOR_PIPELINE;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = BattleRoyale.MOD_ID)
 public class NeoClientEventHandler {
@@ -36,5 +39,10 @@ public class NeoClientEventHandler {
     @SubscribeEvent
     public static void onRenderGuiEvent(RenderGuiEvent.Post event) {
         ClientRenderEventHandler.onRenderGuiEvent(new NeoRenderGuiEventPost(event));
+    }
+
+    @SubscribeEvent
+    public static void onRegisterPipelines(RegisterRenderPipelinesEvent event) {
+        event.registerPipeline(SOLID_TRANSLUCENT_COLOR_PIPELINE);
     }
 }

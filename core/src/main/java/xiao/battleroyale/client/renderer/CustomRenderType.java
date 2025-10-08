@@ -1,14 +1,14 @@
 package xiao.battleroyale.client.renderer;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.TriState;
 import xiao.battleroyale.BattleRoyale;
 
 public class CustomRenderType {
@@ -18,80 +18,49 @@ public class CustomRenderType {
     public static final RenderType SolidTranslucentColor = createSolidTranslucent();
     public static final RenderType SolidOpaqueColor = createSolidOpaque();
 
+    public static final RenderPipeline SOLID_TRANSLUCENT_COLOR_PIPELINE = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+            .withLocation("pipeline/solid_translucent_color")
+            .withVertexShader("core/position_color")
+            .withFragmentShader("core/position_color")
+            .withBlend(BlendFunction.TRANSLUCENT)
+            .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
+            .withDepthWrite(false)
+            .withCull(false)
+            .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
+            .build();
+
     private static RenderType createSolidTranslucent() {
-        RenderStateShard.TransparencyStateShard translucent = new RenderStateShard.TransparencyStateShard(
-                "solid_translucent",
-                () -> {
-                    RenderSystem.enableBlend();
-                    GlStateManager._blendFuncSeparate(
-                            GlStateManager.SourceFactor.SRC_ALPHA.value,
-                            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value,
-                            GlStateManager.SourceFactor.ONE.value,
-                            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value
-                    );
-                },
-                () -> {
-                    RenderSystem.disableBlend();
-                    RenderSystem.defaultBlendFunc();
-                }
-        );
-
-        // 深度测试：LEQUAL
-        RenderStateShard.DepthTestStateShard lequalDepth = new RenderStateShard.DepthTestStateShard("lequal", 515);
-        // 半透明：只写颜色，不写深度
-        RenderStateShard.WriteMaskStateShard colorWriteOnly = new RenderStateShard.WriteMaskStateShard(true, false);
-
         RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(CoreShaders.POSITION_COLOR)) // 只用颜色（无normal/uv）
-                .setTextureState(new RenderStateShard.TextureStateShard(WHITE_TEXTURE, TriState.FALSE, false))
-                .setTransparencyState(translucent)
-                .setDepthTestState(lequalDepth)
-                .setWriteMaskState(colorWriteOnly)
-                .setCullState(new RenderStateShard.CullStateShard(false))
-                .setLightmapState(new RenderStateShard.LightmapStateShard(false))
-                .setOverlayState(new RenderStateShard.OverlayStateShard(false))
-                .createCompositeState(true);
+                .setTextureState(new RenderStateShard.TextureStateShard(WHITE_TEXTURE, false))
+                .setLightmapState(RenderStateShard.NO_LIGHTMAP)
+                .setOverlayState(RenderStateShard.NO_OVERLAY)
+                .setOutputState(RenderStateShard.MAIN_TARGET)
+                .createCompositeState(false);
 
         return RenderType.create(
-                "solid_translucent",
-                DefaultVertexFormat.POSITION_COLOR,
-                VertexFormat.Mode.QUADS,
+                "solid_translucent_color",
                 256,
-                true, // affectsCrumbling
-                false, // sortOnUpload
+                false,
+                false,
+                SOLID_TRANSLUCENT_COLOR_PIPELINE,
                 state
         );
     }
 
     private static RenderType createSolidOpaque() {
-        RenderStateShard.TransparencyStateShard noBlend = new RenderStateShard.TransparencyStateShard(
-                "solid_opaque",
-                RenderSystem::disableBlend,
-                () -> {}
-        );
-
-        RenderStateShard.DepthTestStateShard lequalDepth = new RenderStateShard.DepthTestStateShard("lequal", 515);
-        // 不透明：写颜色也写深度
-        RenderStateShard.WriteMaskStateShard colorAndDepthWrite = new RenderStateShard.WriteMaskStateShard(true, true);
-
         RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(CoreShaders.POSITION_COLOR))
-                .setTextureState(new RenderStateShard.TextureStateShard(WHITE_TEXTURE, TriState.FALSE, false))
-                .setTransparencyState(noBlend)
-                .setDepthTestState(lequalDepth)
-                .setWriteMaskState(colorAndDepthWrite)
-                .setCullState(new RenderStateShard.CullStateShard(false))
-                .setLightmapState(new RenderStateShard.LightmapStateShard(false))
-                .setOverlayState(new RenderStateShard.OverlayStateShard(false))
+                .setTextureState(new RenderStateShard.TextureStateShard(WHITE_TEXTURE, false))
+                .setLightmapState(RenderStateShard.NO_LIGHTMAP)
+                .setOverlayState(RenderStateShard.NO_OVERLAY)
+                .setOutputState(RenderStateShard.MAIN_TARGET)
                 .createCompositeState(true);
 
         return RenderType.create(
-                "solid_opaque",
-                DefaultVertexFormat.POSITION_COLOR,
-                VertexFormat.Mode.QUADS,
+                "solid_opaque_color",
                 256,
-                true,
                 false,
+                false,
+                RenderPipelines.SOLID,
                 state
         );
     }
