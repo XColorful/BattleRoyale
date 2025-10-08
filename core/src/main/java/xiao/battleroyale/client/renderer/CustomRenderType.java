@@ -15,9 +15,7 @@ public class CustomRenderType {
 
     private static final ResourceLocation WHITE_TEXTURE = BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:textures/white.png", BattleRoyale.MOD_ID));
 
-    public static final RenderType SolidTranslucentColor = createSolidTranslucent();
-    public static final RenderType SolidOpaqueColor = createSolidOpaque();
-
+    // 先加载
     public static final RenderPipeline SOLID_TRANSLUCENT_COLOR_PIPELINE = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
             .withLocation("pipeline/solid_translucent_color")
             .withVertexShader("core/position_color")
@@ -28,6 +26,10 @@ public class CustomRenderType {
             .withCull(false)
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
             .build();
+    // 后加载
+    public static final RenderType SolidTranslucentColor = createSolidTranslucent();
+    public static final RenderType SolidOpaqueColor = createSolidOpaque();
+
 
     private static RenderType createSolidTranslucent() {
         RenderType.CompositeState state = RenderType.CompositeState.builder()
