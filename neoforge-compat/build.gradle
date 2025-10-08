@@ -63,7 +63,7 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
-def journeymap_api_version = "2.0.0-1.21.1-SNAPSHOT"
+def journeymap_api_version = "2.0.0-1.21.4-SNAPSHOT"
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
