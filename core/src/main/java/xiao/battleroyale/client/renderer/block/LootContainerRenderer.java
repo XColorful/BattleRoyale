@@ -5,13 +5,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
@@ -31,9 +32,9 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
     }
 
     @Override
-    public void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, @NotNull Vec3 cameraPos) {
         poseStack.pushPose();
-
+        // 比较脚下位置，不用摄像机位置
         boolean renderItem = (Minecraft.getInstance().player != null && blockEntity.getBlockPos().distSqr(Minecraft.getInstance().player.blockPosition()) <= MAX_RENDER_DISTANCE_SQ)
                 && !blockEntity.isEmpty(); // 玩家在范围内 且 容器不为空
         if (!renderItem) { // 渲染方块模型
@@ -79,7 +80,7 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
 
     private void renderBlockModel(@NotNull T blockEntity, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         BlockState blockState = blockEntity.getBlockState();
-        BakedModel bakedModel = this.blockRenderDispatcher.getBlockModel(blockState);
+        BlockStateModel bakedModel = this.blockRenderDispatcher.getBlockModel(blockState);
         ModelBlockRenderer modelBlockRenderer = this.blockRenderDispatcher.getModelRenderer();
 
         BlockModelRenderer.get().renderBlockModel(blockState,
@@ -116,7 +117,7 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
     protected abstract void applyRotation(T blockEntity, PoseStack poseStack);
 
     @Override
-    public boolean shouldRenderOffScreen(@NotNull T blockEntity) {
+    public boolean shouldRenderOffScreen() {
         return true;
     }
 }

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 
@@ -13,12 +14,12 @@ public class EntitySpawnerRenderer implements BlockEntityRenderer<EntitySpawnerB
     }
 
     @Override
-    public void render(@NotNull EntitySpawnerBlockEntity blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(@NotNull EntitySpawnerBlockEntity blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay, @NotNull Vec3 cameraPos) {
 
     }
 
     @Override
-    public boolean shouldRenderOffScreen(@NotNull EntitySpawnerBlockEntity blockEntity) {
+    public boolean shouldRenderOffScreen() {
         return true;
     }
 }
