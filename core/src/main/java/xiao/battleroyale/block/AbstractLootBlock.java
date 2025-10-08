@@ -81,7 +81,7 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
 
     @Override
     public @NotNull RenderShape getRenderShape(@NotNull BlockState pState) {
-        return RenderShape.MODEL;
+        return RenderShape.INVISIBLE; // 阻止自动渲染方块
     }
 
     @Override
