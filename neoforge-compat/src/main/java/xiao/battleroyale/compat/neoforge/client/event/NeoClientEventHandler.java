@@ -8,7 +8,6 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.client.event.RenderLevelStage;
 import xiao.battleroyale.client.event.ClientGameEventHandler;
 import xiao.battleroyale.client.event.ClientRenderEventHandler;
 import xiao.battleroyale.compat.neoforge.event.NeoClientTickEvent;
@@ -29,10 +28,11 @@ public class NeoClientEventHandler {
 //    }
     // 与onRenderLevelStage等价
     @SubscribeEvent
-    public static void onAfterTranslucentBlocks(RenderLevelStageEvent event) {
-        if (NeoRenderLevelStage.fromStage(event.getStage()) != RenderLevelStage.AFTER_TRANSLUCENT_BLOCKS) {
-            return;
-        }
+    public static void onAfterTranslucentBlocks(RenderLevelStageEvent.AfterTranslucentBlocks event) {
+        // ↓用不着，已经强制监听单个时间
+//        if (NeoRenderLevelStage.fromEventClass(event.getClass()) != RenderLevelStage.AFTER_TRANSLUCENT_BLOCKS) {
+//            return;
+//        }
         ClientRenderEventHandler.onAfterTranslucentBlocks(new NeoRenderLevelStageEvent(event));
     }
 

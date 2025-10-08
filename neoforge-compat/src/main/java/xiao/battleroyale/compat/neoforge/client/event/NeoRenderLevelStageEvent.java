@@ -15,7 +15,7 @@ public class NeoRenderLevelStageEvent extends NeoEvent implements IRenderLevelSt
     public NeoRenderLevelStageEvent(RenderLevelStageEvent event) {
         super(event);
         this.typedEvent = event;
-        this.stage = NeoRenderLevelStage.fromStage(event.getStage());
+        this.stage = NeoRenderLevelStage.fromEventClass(event.getClass());
     }
 
     @Override
