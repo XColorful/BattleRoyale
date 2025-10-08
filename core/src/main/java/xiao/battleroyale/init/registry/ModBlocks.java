@@ -1,5 +1,7 @@
 package xiao.battleroyale.init.registry;
 
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -25,18 +27,28 @@ public class ModBlocks {
 
     public static final IRegistryObject<Block> LOOT_SPAWNER = BLOCKS.register("loot_spawner", () ->
             new LootSpawner(BlockBehaviour.Properties.of()
+                    .setId(ResourceKey.create(Registries.BLOCK, BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:loot_spawner", BattleRoyale.MOD_ID))))
                     .sound(SoundType.WOOD)
                     .strength(2.5F, 2.5F)
                     .noOcclusion()
-                    .noCollission()));
+                    .noCollission()
+            ));
     public static final IRegistryObject<Block> ENTITY_SPAWNER = BLOCKS.register("entity_spawner", () ->
             new EntitySpawner(BlockBehaviour.Properties.of()
+                    .setId(ResourceKey.create(Registries.BLOCK, BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:entity_spawner", BattleRoyale.MOD_ID))))
                     .sound(SoundType.WOOD)
                     .strength(2.5F, 2.5F)
                     .noOcclusion()
-                    .noCollission()));
+                    .noCollission()
+            ));
     public static final IRegistryObject<Block> ZONE_CONTROLLER = BLOCKS.register("zone_controller", () ->
-            new ZoneController(BlockBehaviour.Properties.of()));
+            new ZoneController(BlockBehaviour.Properties.of()
+                    .setId(ResourceKey.create(Registries.BLOCK, BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:zone_controller", BattleRoyale.MOD_ID))))
+                    .sound(SoundType.STONE)
+                    .strength(2.5F, 2.5F)
+                    .noOcclusion()
+                    .noCollission()
+            ));
 
     public static final IRegistryObject<BlockEntityType<LootSpawnerBlockEntity>> LOOT_SPAWNER_BE =
             BLOCK_ENTITIES.register("loot_spawner", () ->

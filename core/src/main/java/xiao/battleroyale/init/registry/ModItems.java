@@ -1,5 +1,7 @@
 package xiao.battleroyale.init.registry;
 
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import xiao.battleroyale.BattleRoyale;
@@ -13,9 +15,18 @@ public class ModItems {
     public static final IRegistrar<Item> ITEMS = BattleRoyale.getRegistrarFactory().createItems(BattleRoyale.MOD_ID);
 
     public static final IRegistryObject<Item> LOOT_SPAWNER_ITEM = ITEMS.register("loot_spawner", () ->
-            new BlockItem(ModBlocks.LOOT_SPAWNER.get(), new Item.Properties()));
+            new BlockItem(ModBlocks.LOOT_SPAWNER.get(),
+                    new Item.Properties()
+                            .setId(ResourceKey.create(Registries.ITEM, BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:loot_spawner", BattleRoyale.MOD_ID))))
+            ));
     public static final IRegistryObject<Item> ENTITY_SPAWNER_ITEM = ITEMS.register("entity_spawner", () ->
-            new BlockItem(ModBlocks.ENTITY_SPAWNER.get(), new Item.Properties()));
+            new BlockItem(ModBlocks.ENTITY_SPAWNER.get(),
+                    new Item.Properties()
+                            .setId(ResourceKey.create(Registries.ITEM, BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:entity_spawner", BattleRoyale.MOD_ID))))
+            ));
     public static final IRegistryObject<Item> ZONE_CONTROLLER_ITEM = ITEMS.register("zone_controller", () ->
-            new BlockItem(ModBlocks.ZONE_CONTROLLER.get(), new Item.Properties()));
+            new BlockItem(ModBlocks.ZONE_CONTROLLER.get(),
+                    new Item.Properties()
+                            .setId(ResourceKey.create(Registries.ITEM, BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:zone_controller", BattleRoyale.MOD_ID))))
+            ));
 }

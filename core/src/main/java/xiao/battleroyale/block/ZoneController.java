@@ -36,17 +36,11 @@ import xiao.battleroyale.util.ChatUtils;
 public class ZoneController extends BaseEntityBlock {
     public static final MapCodec<ZoneController> CODEC = simpleCodec(ZoneController::new);
 
-    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
-    protected static VoxelShape SHAPE = Block.box(0, 0, 0, 16, 6, 16);
+    public static final EnumProperty<Direction> THIS_FACING = BlockStateProperties.HORIZONTAL_FACING;
+    protected static VoxelShape THIS_SHAPE = Block.box(0, 0, 0, 16, 6, 16);
 
     public ZoneController(BlockBehaviour.Properties properties) {
-        super(Properties.of()
-                .sound(SoundType.STONE)
-                .strength(2.5F, 2.5F)
-                .noOcclusion()
-                .noCollission()
-        );
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+        super(properties);
     }
 
     @Override
@@ -56,7 +50,7 @@ public class ZoneController extends BaseEntityBlock {
 
     @Override
     public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        return SHAPE;
+        return THIS_SHAPE;
     }
 
     @Override
@@ -84,12 +78,12 @@ public class ZoneController extends BaseEntityBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(THIS_FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(THIS_FACING);
     }
 
     @Nullable
