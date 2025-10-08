@@ -33,6 +33,7 @@ public class LootSpawnerScreen extends AbstractLootContainerScreen<LootSpawnerMe
 
     @Override
     protected void adjustTexture() {
-        super.adjustTexture(BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:textures/gui/loot_spawner_gui.png", BattleRoyale.MOD_ID)));
+        super.adjustTexture(BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:textures/gui/loot_spawner_gui.png", BattleRoyale.MOD_ID)),
+                256, 256);
     }
 }
