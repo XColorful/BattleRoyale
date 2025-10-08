@@ -16,6 +16,8 @@ import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.block.entity.ZoneControllerBlockEntity;
 
+import java.util.Set;
+
 /**
  * 平台无关的方块注册器。
  */
@@ -52,11 +54,11 @@ public class ModBlocks {
 
     public static final IRegistryObject<BlockEntityType<LootSpawnerBlockEntity>> LOOT_SPAWNER_BE =
             BLOCK_ENTITIES.register("loot_spawner", () ->
-                    new BlockEntityType<>(LootSpawnerBlockEntity::new, LOOT_SPAWNER.get()));
+                    new BlockEntityType<>(LootSpawnerBlockEntity::new, Set.of(LOOT_SPAWNER.get())));
     public static final IRegistryObject<BlockEntityType<EntitySpawnerBlockEntity>> ENTITY_SPAWNER_BE =
             BLOCK_ENTITIES.register("entity_spawner", () ->
-                    new BlockEntityType<>(EntitySpawnerBlockEntity::new, ENTITY_SPAWNER.get()));
+                    new BlockEntityType<>(EntitySpawnerBlockEntity::new, Set.of(ENTITY_SPAWNER.get())));
     public static final IRegistryObject<BlockEntityType<ZoneControllerBlockEntity>> ZONE_CONTROLLER_BE =
             BLOCK_ENTITIES.register("zone_controller", () ->
-                    new BlockEntityType<>(ZoneControllerBlockEntity::new, ZONE_CONTROLLER.get()));
+                    new BlockEntityType<>(ZoneControllerBlockEntity::new, Set.of(ZONE_CONTROLLER.get())));
 }
