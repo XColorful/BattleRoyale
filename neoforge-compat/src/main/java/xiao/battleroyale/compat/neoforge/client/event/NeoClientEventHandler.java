@@ -12,6 +12,7 @@ import xiao.battleroyale.client.event.ClientGameEventHandler;
 import xiao.battleroyale.client.event.ClientRenderEventHandler;
 import xiao.battleroyale.compat.neoforge.event.NeoClientTickEvent;
 
+import static xiao.battleroyale.client.renderer.CustomRenderType.SOLID_OPAQUE_COLOR_PIPELINE;
 import static xiao.battleroyale.client.renderer.CustomRenderType.SOLID_TRANSLUCENT_COLOR_PIPELINE;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = BattleRoyale.MOD_ID)
@@ -44,5 +45,6 @@ public class NeoClientEventHandler {
     @SubscribeEvent
     public static void onRegisterPipelines(RegisterRenderPipelinesEvent event) {
         event.registerPipeline(SOLID_TRANSLUCENT_COLOR_PIPELINE);
+        event.registerPipeline(SOLID_OPAQUE_COLOR_PIPELINE);
     }
 }
