@@ -1,6 +1,5 @@
 package xiao.battleroyale.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderType;
@@ -13,6 +12,8 @@ public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> ex
     protected ResourceLocation TEXTURE;
     protected int textureOffX = 0;
     protected int textureOffY = 0;
+    protected int textureWidth = 256;
+    protected int textureHeight = 256;
 
     public AbstractLootContainerScreen(L menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -57,7 +58,13 @@ public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> ex
     protected abstract void adjustTexture();
 
     protected void adjustTexture(ResourceLocation rl) {
+        adjustTexture(rl, 256, 256);
+    }
+
+    protected void adjustTexture(ResourceLocation rl, int textureWidth, int textureHeight) {
         this.TEXTURE = rl;
+        this.textureWidth = textureWidth;
+        this.textureHeight = textureHeight;
     }
 
     @Override
@@ -69,18 +76,15 @@ public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> ex
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        RenderSystem.setShaderTexture(0, this.TEXTURE);
         int x = getGuiLeft() + this.textureOffX;
         int y = getGuiTop() + this.textureOffY;
         guiGraphics.blit(
-                (resourceLocation) -> RenderType.gui(),
+                RenderType::guiTextured,
                 this.TEXTURE,
                 x, y,
-                (float)0, (float)0,
+                0.0F, 0.0F,
                 this.imageWidth, this.imageHeight,
-                this.imageWidth, this.imageHeight,
-                256, 256,
-                -1
+                256, 256
         );
     }
 }
