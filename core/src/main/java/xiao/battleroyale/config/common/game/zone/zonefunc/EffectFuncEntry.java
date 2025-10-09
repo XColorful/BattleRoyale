@@ -17,7 +17,7 @@ import java.util.List;
 
 public class EffectFuncEntry extends AbstractFuncEntry {
 
-    private final List<EffectEntry> effectEntries;
+    public final List<EffectEntry> effectEntries;
 
     public EffectFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset, List<EffectEntry> effectEntries) {
         super(moveDelay, moveTime, tickFreq, tickOffset);

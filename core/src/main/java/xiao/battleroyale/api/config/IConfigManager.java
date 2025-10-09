@@ -62,6 +62,14 @@ public interface IConfigManager extends IManagerName, ISideOnly {
     boolean switchConfigFile(String subManagerNameKey, String fileName);
     boolean switchConfigFile(String subManagerNameKey, int folderId, String fileName);
 
+    // IConfigManager -> IConfigSubManager::IConfigSaveable
+    boolean saveAllConfigs();
+    boolean saveConfigs(String subManagerNameKey);
+    boolean saveConfigs(String subManagerNameKey, int folderId);
+    boolean backupAllConfigs(String backupRoot);
+    boolean backupConfigs(String backupRoot, String subManagerNameKey);
+    boolean backupConfigs(String backupRoot, String subManagerNameKey, int folderId);
+
     @Deprecated default String getConfigEntryFileName(String subManagerNameKey) {
         return getCurrentSelectedFileName(subManagerNameKey);
     }

@@ -8,21 +8,21 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class MinecraftEntry implements IGameruleEntry {
 
-    public final boolean adventureMode;
-    public final boolean mobGriefing;
-    public final boolean autoSaturation;
-    public final boolean naturalRegeneration;
-    public final boolean doMobSpawning;
-    public final boolean doFireTick;
-    public final boolean doDaylightCycle;
-    public final boolean doWeatherCycle;
-    public final boolean fallDamage;
-    public final boolean tntExplosionDropDecay;
-    public final boolean spectatorGenerateChunks;
-    public final boolean clearInventory;
-    public final boolean keepInventory;
-    public final boolean doTimeSet;
-    public final int timeSet;
+    public boolean adventureMode;
+    public boolean mobGriefing;
+    public boolean autoSaturation;
+    public boolean naturalRegeneration;
+    public boolean doMobSpawning;
+    public boolean doFireTick;
+    public boolean doDaylightCycle;
+    public boolean doWeatherCycle;
+    public boolean fallDamage;
+    public boolean tntExplosionDropDecay;
+    public boolean spectatorGenerateChunks;
+    public boolean clearInventory;
+    public boolean keepInventory;
+    public boolean doTimeSet;
+    public int timeSet;
 
     public MinecraftEntry(boolean adventureMode, boolean mobGriefing, boolean autoSaturation,
                           boolean naturalRegeneration, boolean doMobSpawning, boolean doFireTick,

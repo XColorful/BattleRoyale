@@ -281,12 +281,13 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         checkAndUpdateInvalidGamePlayer(this.serverLevel); // 为其他Manager预处理当前tick
 
         // 暂时认为各Manager要按顺序tick，因此不改成监听GameTickEvent事件来触发
+        GameruleManager.get().onGameTick(gameTime);
+        // TeamManager.get().onGameTick(gameTime); // 暂时没功能
+        SpawnManager.get().onGameTick(gameTime);
         GameLootManager.get().onGameTick(gameTime);
         ZoneManager.get().onGameTick(gameTime); // Zone可以提前触发stopGame，并且Zone需要延迟stopGame到tick结束
-        // TeamManager.get().onGameTick(gameTime); // 暂时没功能
-        GameruleManager.get().onGameTick(gameTime);
-        SpawnManager.get().onGameTick(gameTime);
         // StatsManager.get().onGameTick(gameTime); // 基于事件主动记录，不用tick
+
         if (gameTime % 200 == 0) {
             finishGameIfShouldEnd(); // 每10秒保底检查游戏结束
         }
@@ -308,6 +309,10 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
 
     protected void finishGameIfShouldEnd() {
+        if (!isInGame()) {
+            return;
+        }
+
         if (TeamManager.get().getStandingTeamCount() <= winnerTeamTotal) {
             BattleRoyale.LOGGER.debug("GameManager: standingTeam <= {}, finishGame with winner", winnerTeamTotal);
             finishGame(true);

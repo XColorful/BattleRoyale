@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiEntry implements ILootEntry {
-    private final @NotNull List<ILootEntry> entries;
+    public final @NotNull List<ILootEntry> entries;
 
     public MultiEntry(@NotNull List<ILootEntry> entries) {
         this.entries = entries;
