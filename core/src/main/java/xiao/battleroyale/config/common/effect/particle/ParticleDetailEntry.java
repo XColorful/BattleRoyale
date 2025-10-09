@@ -13,9 +13,17 @@ import xiao.battleroyale.common.effect.particle.ParticleData;
 import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.StringUtils;
 
-public record ParticleDetailEntry(ResourceLocation particleType, int count, int initDelay, int interval, int repeat,
-                                  @NotNull Vec3 offset, @NotNull Vec3 offsetRange, boolean exactOffset,
-                                  @Nullable ParticleParameterEntry parameter) implements IParticleEntry {
+public class ParticleDetailEntry implements IParticleEntry {
+
+    public ResourceLocation particleType;
+    public int count;
+    public int initDelay;
+    public int interval;
+    public int repeat;
+    public @NotNull Vec3 offset;
+    public @NotNull Vec3 offsetRange;
+    public boolean exactOffset;
+    public @Nullable ParticleParameterEntry parameter;
 
     public ParticleDetailEntry(ResourceLocation particleType, int count, int initDelay, int interval, int repeat,
                                @Nullable Vec3 offset, @Nullable Vec3 offsetRange, boolean exactOffset,

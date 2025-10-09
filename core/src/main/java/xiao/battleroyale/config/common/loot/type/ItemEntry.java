@@ -17,10 +17,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class ItemEntry implements IItemLootEntry {
-    private final String itemString;
-    private final @Nullable String nbtString;
-    private final @NotNull CompoundTag nbt;
-    private final int count;
+    public String itemString;
+    public @Nullable String nbtString;
+    public @NotNull CompoundTag nbt;
+    public int count;
 
     public ItemEntry(String rl, @Nullable String nbtString, int count) {
         this.itemString = rl;

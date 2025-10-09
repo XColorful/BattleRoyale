@@ -62,8 +62,8 @@ public class ParticleManager implements IEffectManager {
                     // 生成玩家追踪粒子
                     Vec3 spawnPos = livingEntity.get().position();
                     particleData.spawnParticle(spawnPos);
-                    particleData.delayRemain = particleData.particle.interval();
-                    return ++particleData.finishedRepeat >= particleData.particle.repeat();
+                    particleData.delayRemain = particleData.particle.interval;
+                    return ++particleData.finishedRepeat >= particleData.particle.repeat;
                 });
                 return channel.shouldEnd();
             });
@@ -79,8 +79,8 @@ public class ParticleManager implements IEffectManager {
                 }
                 // 生成固定位置粒子
                 particleData.spawnParticle(particleData.particlePos);
-                particleData.delayRemain = particleData.particle.interval();
-                return ++particleData.finishedRepeat >= particleData.particle.repeat();
+                particleData.delayRemain = particleData.particle.interval;
+                return ++particleData.finishedRepeat >= particleData.particle.repeat;
             });
             return channel.shouldEnd();
         });

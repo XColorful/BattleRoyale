@@ -17,10 +17,10 @@ import java.util.List;
 
 // TODO 做成新模组？NbtEdit
 public class NbtEntry implements ILootEntry {
-    private final boolean overwrite;
-    private final JsonObject nbtJson;
-    private final @NotNull CompoundTag nbt;
-    private final List<String> keyDelete;
+    public boolean overwrite;
+    public JsonObject nbtJson;
+    public @NotNull CompoundTag nbt;
+    public final List<String> keyDelete;
 
     public NbtEntry(boolean overwrite, JsonObject nbtJson, List<String> keyDelete) {
         this.overwrite = overwrite;

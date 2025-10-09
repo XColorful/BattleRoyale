@@ -24,6 +24,10 @@ public class ServerCommand {
                 .requires(source -> source.hasPermission(2)));
         root.then(ConfigCommand.get()
                 .requires(source -> source.hasPermission(2)));
+        root.then(SaveCommand.get()
+                .requires(source -> source.hasPermission(3)));
+        root.then(BackupCommand.get()
+                .requires(source -> source.hasPermission(2)));
         root.then(TeamCommand.get()
         ); // 队伍管理全都不需要权限
         root.then(GameCommand.get()

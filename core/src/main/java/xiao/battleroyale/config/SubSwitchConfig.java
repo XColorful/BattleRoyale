@@ -27,7 +27,7 @@ public class SubSwitchConfig {
         }
         fileNames.sort(String::compareTo);
 
-        int currentIndex = fileNames.indexOf(context.getConfigFileName(folderId).string); // indexOf可能返回-1
+        int currentIndex = fileNames.indexOf(context.getConfigFolderData(folderId).getConfigFileName()); // indexOf可能返回-1
         int nextIndex = (currentIndex + 1) % fileNames.size(); // isEmpty()已经保证不会对0取模
         String nextFileName = fileNames.get(nextIndex);
         return context.switchConfigFile(folderId, nextFileName);
@@ -48,7 +48,7 @@ public class SubSwitchConfig {
         ClassUtils.ArrayMap<Integer, T> selectedFileConfigs = context.getConfigFolderData(folderId).fileConfigsByFileName.get(fileName);
 
         if (selectedFileConfigs != null) {
-            context.getConfigFileName(folderId).string = fileName;
+            context.getConfigFolderData().setConfigFileName(fileName);
             context.getConfigFolderData(folderId).currentConfigs.putAll(selectedFileConfigs.asMap());
             BattleRoyale.LOGGER.debug("Switched to config file '{}' for type: {}", fileName, context.getFolderType(folderId));
             if (!selectedFileConfigs.isEmpty()) {

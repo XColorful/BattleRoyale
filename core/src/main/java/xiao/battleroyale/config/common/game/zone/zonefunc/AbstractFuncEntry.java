@@ -4,10 +4,10 @@ import xiao.battleroyale.api.game.zone.func.IZoneFuncEntry;
 
 public abstract class AbstractFuncEntry implements IZoneFuncEntry {
 
-    protected final int moveDelay;
-    protected final int moveTime;
-    protected final int tickFreq;
-    protected final int tickOffset;
+    public int moveDelay;
+    public int moveTime;
+    public int tickFreq;
+    public int tickOffset;
 
     public AbstractFuncEntry(int moveDelay, int moveTime, int funcFreq, int funcOffset) {
         this.moveDelay = Math.max(moveDelay, 0);
