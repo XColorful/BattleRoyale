@@ -7,8 +7,8 @@ import xiao.battleroyale.config.common.game.zone.zonefunc.AbstractFuncEntry;
 
 public abstract class AbstractEventFuncEntry extends AbstractFuncEntry {
 
-    protected final String protocol;
-    protected @NotNull final CompoundTag tag;
+    public String protocol;
+    public @NotNull CompoundTag tag;
 
     public AbstractEventFuncEntry(int moveDelay, int moveTime, int funcFreq, int funcOffset,
                                   String protocol, @Nullable CompoundTag tag) {

@@ -15,9 +15,9 @@ import java.util.List;
 
 public class GameEntry implements IGameruleEntry, IConfigAppliable {
 
-    public final boolean teleportWhenInitGame;
-    public final int teamMsgExpireTimeSeconds;
-    public final List<String> teamColors;
+    public boolean teleportWhenInitGame;
+    public int teamMsgExpireTimeSeconds;
+    public List<String> teamColors;
     public static final List<String> DEFAULT_TEAM_COLORS = Arrays.asList(
             // 彩色（深），红蓝开头
             ColorUtils.parseIntToStringRGB(ChatFormatting.DARK_RED.getColor()), // §4
@@ -41,41 +41,41 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
             ColorUtils.parseIntToStringRGB(ChatFormatting.WHITE.getColor()) // §15
     );
     public static final List<Float> DEFAULT_DOWN_DAMAGE = Arrays.asList(0.3333F, 0.4444F, 0.6667F, 1.3333F, 2F, 4F, 8F, 16F, 32F);
-    public final boolean buildVanillaTeam;
-    public final boolean hideVanillaTeamName;
+    public boolean buildVanillaTeam;
+    public boolean hideVanillaTeamName;
 
-    public final int maxPlayerInvalidTime;
-    public final int maxBotInvalidTime;
-    public final boolean removeInvalidTeam;
+    public int maxPlayerInvalidTime;
+    public int maxBotInvalidTime;
+    public boolean removeInvalidTeam;
 
-    public final boolean healAllAtStart;
-    public final boolean friendlyFire;
-    public final boolean downFire;
-    public final List<Float> downDamageList;
-    public final int downDamageFrequency;
+    public boolean healAllAtStart;
+    public boolean friendlyFire;
+    public boolean downFire;
+    public List<Float> downDamageList;
+    public int downDamageFrequency;
 
-    public final boolean downShoot;
-    public final boolean downReload;
-    public final boolean downFireSelect;
-    public final boolean downMelee;
+    public boolean downShoot;
+    public boolean downReload;
+    public boolean downFireSelect;
+    public boolean downMelee;
 
-    public final boolean onlyGamePlayerSpectate;
-    public final boolean spectateAfterTeam;
-    public final boolean spectatorSeeAllTeams;
-    public final boolean teleportInterfererToLobby;
-    public final boolean forceEliminationTeleportToLobby;
+    public boolean onlyGamePlayerSpectate;
+    public boolean spectateAfterTeam;
+    public boolean spectatorSeeAllTeams;
+    public boolean teleportInterfererToLobby;
+    public boolean forceEliminationTeleportToLobby;
 
-    public final boolean allowRemainingBot;
-    public final boolean keepTeamAfterGame;
-    public final boolean teleportAfterGame;
-    public final boolean teleportWinnerAfterGame;
-    public final int winnerFireworkId;
-    public final int winnerParticleId;
-    public final boolean initGameAfterGame;
+    public boolean allowRemainingBot;
+    public boolean keepTeamAfterGame;
+    public boolean teleportAfterGame;
+    public boolean teleportWinnerAfterGame;
+    public int winnerFireworkId;
+    public int winnerParticleId;
+    public boolean initGameAfterGame;
 
-    public final int messageCleanFreq;
-    public final int messageExpireTime;
-    public final int messageSyncFreq;
+    public int messageCleanFreq;
+    public int messageExpireTime;
+    public int messageSyncFreq;
 
     public GameEntry() {
         this(true, 300, DEFAULT_TEAM_COLORS, true, true,

@@ -14,12 +14,12 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class ZoneEntry implements IRenderEntry {
 
-    public final boolean useClientColor;
-    public final String fixedColor;
-    public final int circleSegments;
-    public final int ellipseSegments;
-    public final int sphereSegments;
-    public final int ellipsoidSegments;
+    public boolean useClientColor;
+    public String fixedColor;
+    public int circleSegments;
+    public int ellipseSegments;
+    public int sphereSegments;
+    public int ellipsoidSegments;
 
     public ZoneEntry(boolean useClientColor) {
         this(useClientColor, "#0000FF",

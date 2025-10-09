@@ -7,8 +7,7 @@ public class ConfigSwitchable {
     public static boolean switchConfigFile(AbstractConfigManager context, String subManagerNameKey) {
         IConfigSubManager<?> subManager = context.subManagers.mapGet(subManagerNameKey);
         if (subManager != null) {
-            subManager.switchConfigFile();
-            return true;
+            return subManager.switchConfigFile();
         } else {
             return false;
         }
@@ -16,8 +15,7 @@ public class ConfigSwitchable {
     public static boolean switchConfigFile(AbstractConfigManager context, String subManagerNameKey, int folderId) {
         IConfigSubManager<?> subManager = context.subManagers.mapGet(subManagerNameKey);
         if (subManager != null) {
-            subManager.switchConfigFile(folderId);
-            return true;
+            return subManager.switchConfigFile(folderId);
         } else {
             return false;
         }
@@ -25,8 +23,7 @@ public class ConfigSwitchable {
     public static boolean switchConfigFile(AbstractConfigManager context, String subManagerNameKey, String fileName) {
         IConfigSubManager<?> subManager = context.subManagers.mapGet(subManagerNameKey);
         if (subManager != null) {
-            subManager.switchConfigFile(fileName);
-            return true;
+            return subManager.switchConfigFile(fileName);
         } else {
             return false;
         }
@@ -34,8 +31,7 @@ public class ConfigSwitchable {
     public static boolean switchConfigFile(AbstractConfigManager context, String subManagerNameKey, int folderId, String fileName) {
         IConfigSubManager<?> subManager = context.subManagers.mapGet(subManagerNameKey);
         if (subManager != null) {
-            subManager.switchConfigFile(folderId, fileName);
-            return true;
+            return subManager.switchConfigFile(folderId, fileName);
         } else {
             return false;
         }

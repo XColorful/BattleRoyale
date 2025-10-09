@@ -9,13 +9,13 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class SpectateEntry implements IRenderEntry {
 
-    public final boolean enableSpectateRender;
-    public final boolean useClientColor;
-    public final String fixedColor;
-    public final boolean renderBeacon;
-    public final boolean renderBoundingBox;
-    public final float transparency;
-    public final int scanFrequency;
+    public boolean enableSpectateRender;
+    public boolean useClientColor;
+    public String fixedColor;
+    public boolean renderBeacon;
+    public boolean renderBoundingBox;
+    public float transparency;
+    public int scanFrequency;
 
     public SpectateEntry(boolean enableSpectateRender, boolean useClientColor) {
         this(enableSpectateRender, useClientColor, "#00FFFF",

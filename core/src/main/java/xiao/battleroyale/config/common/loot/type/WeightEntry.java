@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WeightEntry implements ILootEntry {
-    private final List<WeightedEntry> weightedEntries;
+    public final List<WeightedEntry> weightedEntries;
 
     public static class WeightedEntry {
-        private final double weight;
-        protected final ILootEntry entry;
+        public double weight;
+        public ILootEntry entry;
 
         public WeightedEntry(double weight, @NotNull ILootEntry entry) {
             if (weight < 0) {

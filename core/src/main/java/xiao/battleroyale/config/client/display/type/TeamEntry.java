@@ -7,7 +7,7 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class TeamEntry extends AbstractHudEntry {
 
-    public final int offlineTime;
+    public int offlineTime;
 
     public TeamEntry(boolean display) {
         this(display, 0, 0, 20 * 8);

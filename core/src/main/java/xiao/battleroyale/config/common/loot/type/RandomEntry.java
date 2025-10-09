@@ -16,8 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class RandomEntry implements ILootEntry {
-    private final double chance;
-    private final ILootEntry entry;
+    public double chance;
+    public ILootEntry entry;
 
     public RandomEntry(double chance, @Nullable ILootEntry entry) {
         if (chance < 0) {

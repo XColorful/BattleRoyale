@@ -17,10 +17,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class ShuffleEntry implements ILootEntry {
-    private final boolean keepEmpty;
-    private final int min;
-    private final int max;
-    private final ILootEntry entry;
+    public boolean keepEmpty;
+    public int min;
+    public int max;
+    public ILootEntry entry;
 
     public ShuffleEntry(boolean keepEmpty, int min, int max,
                         ILootEntry entry) {
