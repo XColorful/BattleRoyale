@@ -10,9 +10,9 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class BlockEntry implements IRenderEntry {
 
-    public final double lootRenderDistance;
-    public final boolean renderItemBlockIfEmpty;
-    public final double entityRenderDistance;
+    public double lootRenderDistance;
+    public boolean renderItemBlockIfEmpty;
+    public double entityRenderDistance;
 
     public BlockEntry(double lootRenderDistance, boolean renderItemBlockIfEmpty,
                       double entityRenderDistance) {

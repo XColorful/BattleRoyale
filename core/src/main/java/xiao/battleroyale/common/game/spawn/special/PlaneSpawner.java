@@ -38,9 +38,9 @@ public class PlaneSpawner extends AbstractSimpleSpawner {
         super(shapeType, center, dimension, zoneId);
 
         this.detailType = detailType;
-        this.planeHeight = detailInfo.planeHeight();
-        this.planeSpeed = detailInfo.planeSpeed();
-        this.fixedReachTime = detailInfo.fixedReachTime();
+        this.planeHeight = detailInfo.planeHeight;
+        this.planeSpeed = detailInfo.planeSpeed;
+        this.fixedReachTime = detailInfo.fixedReachTime;
     }
 
     @Override

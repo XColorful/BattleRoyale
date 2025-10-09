@@ -45,8 +45,8 @@ public class DefaultSpawn {
         TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.FIXED,
                 new TeleportEntry.DetailInfo(Arrays.asList(
-                        new Vec3(0,-60,0),
-                        new Vec3(-50,-60, -50),
+                        new Vec3(0, -60, 0),
+                        new Vec3(-50, -60, -50),
                         new Vec3(-50, -60, 50),
                         new Vec3(50, -60, -50),
                         new Vec3(50, -60, 50)),

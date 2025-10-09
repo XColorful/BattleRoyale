@@ -19,14 +19,23 @@ import java.util.List;
 public class TeleportEntry extends AbstractCommonSpawnEntry {
 
     // detail
-    private final CommonDetailType detailType;
-    private final DetailInfo detailInfo;
+    public final CommonDetailType detailType;
+    public final DetailInfo detailInfo;
 
-    public record DetailInfo(List<Vec3> fixedPos,
-                              boolean teamTogether,
-                              boolean findGround,
-                              double randomRange,
-                             int hangTime) {}
+    public static class DetailInfo {
+        public final List<Vec3> fixedPos;
+        public boolean teamTogether;
+        public boolean findGround;
+        public double randomRange;
+        public int hangTime;
+        public DetailInfo(List<Vec3> fixedPos, boolean teamTogether, boolean findGround, double randomRange, int hangTime) {
+            this.fixedPos = fixedPos;
+            this.teamTogether = teamTogether;
+            this.findGround = findGround;
+            this.randomRange = randomRange;
+            this.hangTime = hangTime;
+        }
+    }
 
     public TeleportEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
                          CommonDetailType detailType,

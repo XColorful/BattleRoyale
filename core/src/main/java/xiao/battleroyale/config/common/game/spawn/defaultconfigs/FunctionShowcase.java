@@ -29,7 +29,7 @@ public class FunctionShowcase {
         TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.FIXED,
                 new TeleportEntry.DetailInfo(Arrays.asList(
-                        new Vec3(2032,53,-9060),
+                        new Vec3(2032, 53, -9060),
                         new Vec3(1954, 53, -9038)),
                         true, true, 0, 20 * 15)
         );

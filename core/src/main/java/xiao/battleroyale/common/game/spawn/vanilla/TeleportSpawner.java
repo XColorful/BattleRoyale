@@ -56,11 +56,11 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
         super(shapeType, center, dimension, zoneId);
 
         this.detailType = detailType;
-        this.fixedPos.addAll(detailInfo.fixedPos());
-        this.teamTogether = detailInfo.teamTogether();
-        this.findGround = detailInfo.findGround();
-        this.randomRange = detailInfo.randomRange();
-        this.hangTime = detailInfo.hangTime();
+        this.fixedPos.addAll(detailInfo.fixedPos);
+        this.teamTogether = detailInfo.teamTogether;
+        this.findGround = detailInfo.findGround;
+        this.randomRange = detailInfo.randomRange;
+        this.hangTime = detailInfo.hangTime;
     }
 
     /**

@@ -11,9 +11,9 @@ import xiao.battleroyale.util.StringUtils;
 public abstract class AbstractCommonSpawnEntry implements ISpawnEntry {
 
     // common
-    protected final SpawnShapeType shapeType;
-    protected final Vec3 centerPos;
-    protected final Vec3 dimension;
+    protected SpawnShapeType shapeType;
+    protected Vec3 centerPos;
+    protected Vec3 dimension;
     protected int preZoneId;
 
     public AbstractCommonSpawnEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension) {

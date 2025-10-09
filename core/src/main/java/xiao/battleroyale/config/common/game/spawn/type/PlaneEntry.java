@@ -17,12 +17,19 @@ import xiao.battleroyale.util.StringUtils;
 public class PlaneEntry extends AbstractCommonSpawnEntry {
 
     // detail
-    private final CommonDetailType detailType;
-    private final DetailInfo detailInfo;
+    public final CommonDetailType detailType;
+    public final DetailInfo detailInfo;
 
-    public record DetailInfo(double planeHeight,
-                             double planeSpeed,
-                             boolean fixedReachTime) {}
+    public static class DetailInfo {
+        public double planeHeight;
+        public double planeSpeed;
+        public boolean fixedReachTime;
+        public DetailInfo(double planeHeight, double planeSpeed, boolean fixedReachTime) {
+            this.planeHeight = planeHeight;
+            this.planeSpeed = planeSpeed;
+            this.fixedReachTime = fixedReachTime;
+        }
+    }
 
     public PlaneEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
                       CommonDetailType detailType,

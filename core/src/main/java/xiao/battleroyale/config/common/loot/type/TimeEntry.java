@@ -17,9 +17,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class TimeEntry implements ILootEntry {
-    private final int start;
-    private final int end;
-    private final ILootEntry entry;
+    public int start;
+    public int end;
+    public ILootEntry entry;
 
     public TimeEntry(int start, int end, @Nullable ILootEntry entry) {
         this.start = start;
