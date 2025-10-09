@@ -1,6 +1,7 @@
 package xiao.battleroyale.config;
 
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigManager;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;

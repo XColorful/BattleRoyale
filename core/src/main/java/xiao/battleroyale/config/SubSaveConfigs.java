@@ -41,7 +41,7 @@ public class SubSaveConfigs {
         JsonArray jsonArray = new JsonArray();
         // 遍历文件名
         for (Map.Entry<String, List<T>> entry : fileConfigs.entrySet()) {
-            String filePath = String.valueOf(Paths.get(folderPath, entry.getKey()));
+            String filePath = String.valueOf(Paths.get(folderPath, String.format("%s.json", entry.getKey())));
             // 遍历单个文件
             for (T configEntry : entry.getValue()) {
                 jsonArray.add(configEntry.toJson());

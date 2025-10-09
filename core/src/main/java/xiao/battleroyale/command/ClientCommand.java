@@ -4,9 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import xiao.battleroyale.command.sub.ConfigCommand;
-import xiao.battleroyale.command.sub.ExampleCommand;
-import xiao.battleroyale.command.sub.ReloadCommand;
+import xiao.battleroyale.command.sub.*;
 
 import static xiao.battleroyale.command.CommandArg.*;
 
@@ -24,6 +22,10 @@ public class ClientCommand {
         root.then(ConfigCommand.getClient()
         );
         root.then(ExampleCommand.getClient()
+        );
+        root.then(SaveCommand.getClient()
+        );
+        root.then(BackupCommand.getClient()
         );
         return root;
     }

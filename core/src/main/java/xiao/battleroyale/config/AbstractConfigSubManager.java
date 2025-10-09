@@ -218,11 +218,20 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         return inProperSide() && SubSaveConfigs.saveConfigs(this, folderId);
     }
 
+    @Override public boolean backupAllConfigs() {
+        return backupAllConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot());
+    }
     @Override public boolean backupAllConfigs(String backupRoot) {
         return inProperSide() && SubSaveConfigs.backupAllConfigs(this, backupRoot);
     }
+    @Override public boolean backupConfigs() {
+        return backupConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot());
+    }
     @Override public boolean backupConfigs(String backupRoot) {
         return backupConfigs(backupRoot, DEFAULT_CONFIG_FOLDER);
+    }
+    @Override public boolean backupConfigs(int folderId) {
+        return backupConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot(), folderId);
     }
     @Override public boolean backupConfigs(String backupRoot, int folderId) {
         return inProperSide() && SubSaveConfigs.backupConfigs(this, backupRoot, folderId);

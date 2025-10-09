@@ -117,7 +117,7 @@ public class ModConfigManager implements IModConfigManager, ISideOnly {
         }
         return hasSaved;
     }
-    public static String configBackupRoot = Paths.get(AbstractDataManager.MOD_DATA_PATH).resolve("backup").resolve("config").toString();
+    public static String configBackupRoot = Paths.get(AbstractDataManager.MOD_DATA_PATH).resolve("backup").toString();
     @Override public String getDefaultBackupRoot() {
         return configBackupRoot;
     }
