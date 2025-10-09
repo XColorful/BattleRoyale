@@ -4,12 +4,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.common.game.spawn.AbstractSimpleSpawner;
 import xiao.battleroyale.common.game.team.GameTeam;
-import xiao.battleroyale.config.common.game.spawn.type.PlaneEntry;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
+import xiao.battleroyale.config.common.game.spawn.type.detail.PlaneDetailEntry;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 
 import java.util.HashMap;
@@ -20,27 +19,25 @@ import java.util.function.Supplier;
 /**
  * 生成一个飞机
  */
-public class PlaneSpawner extends AbstractSimpleSpawner {
+public class PlaneSpawner extends AbstractSimpleSpawner<PlaneDetailEntry> {
 
     // common 在父类
 
     // detail
-    private final CommonDetailType detailType;
-    private final double planeHeight;
-    private final double planeSpeed;
-    private boolean fixedReachTime;
+    protected final double planeHeight;
+    protected final double planeSpeed;
+    protected boolean fixedReachTime;
 
-    private Entity monitoredPlane; // TODO 需要先完成飞机模型及实体
+    protected Entity trackingPlaneEntity; // TODO 需要先完成飞机模型及实体
 
     public PlaneSpawner(SpawnShapeType shapeType, Vec3 center, Vec3 dimension, int zoneId,
                         CommonDetailType detailType,
-                        PlaneEntry.DetailInfo detailInfo) {
-        super(shapeType, center, dimension, zoneId);
+                        PlaneDetailEntry detailEntry) {
+        super(shapeType, center, dimension, zoneId, detailType, detailEntry);
 
-        this.detailType = detailType;
-        this.planeHeight = detailInfo.planeHeight;
-        this.planeSpeed = detailInfo.planeSpeed;
-        this.fixedReachTime = detailInfo.fixedReachTime;
+        this.planeHeight = this.detailEntry.planeHeight;
+        this.planeSpeed = this.detailEntry.planeSpeed;
+        this.fixedReachTime = this.detailEntry.fixedReachTime;
     }
 
     @Override
@@ -96,14 +93,14 @@ public class PlaneSpawner extends AbstractSimpleSpawner {
             }
         }
 
-        if (true) { // 监控的实体不存在或没有乘客
+        if (trackingPlaneEntity == null) { // 监控的实体不存在或没有乘客
             // 立即清除实体，保证已加载（否则得 Loot 或者 GameManager 下一局清理）
             this.finished = true;
         }
     }
 
     @Override
-    public void clear() {
-
+    public void clearAfterGame() {
+        trackingPlaneEntity = null;
     }
 }

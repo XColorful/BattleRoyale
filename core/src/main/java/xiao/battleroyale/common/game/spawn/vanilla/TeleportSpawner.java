@@ -16,8 +16,8 @@ import xiao.battleroyale.common.game.spawn.AbstractSimpleSpawner;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.zone.ZoneManager;
-import xiao.battleroyale.config.common.game.spawn.type.TeleportEntry;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
+import xiao.battleroyale.config.common.game.spawn.type.detail.TeleportDetailEntry;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.util.ChatUtils;
@@ -32,35 +32,33 @@ import java.util.function.Supplier;
 /**
  * 传送所有玩家后就没什么事情了
  */
-public class TeleportSpawner extends AbstractSimpleSpawner {
+public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> {
 
     // common 在父类
 
     // detail
-    private final CommonDetailType detailType;
-    private final List<Vec3> fixedPos = new ArrayList<>(); // 如果detailType为FIXED，列表又为空，则不传送
-    private final boolean teamTogether;
-    private final boolean findGround;
-    private final double randomRange;
-    private final int hangTime;
+    protected final List<Vec3> fixedPos = new ArrayList<>(); // 如果detailType为FIXED，列表又为空，则不传送
+    protected final boolean teamTogether;
+    protected final boolean findGround;
+    protected final double randomRange;
+    protected final int hangTime;
 
-    private final List<Vec3> spawnPos = new ArrayList<>();
-    private int spawnPointIndex = 0;
-    private final Set<Integer> teleportedPlayerId = new HashSet<>();
-    private final Set<Integer> telepotedTeamId = new HashSet<>();
-    private final double queuedHeight = 1145.14; // findGround失败的时候临时反复传送到这个高度，直到区块能成功加载或达到最大时长
+    protected final List<Vec3> spawnPos = new ArrayList<>(); // 运行时点位数据
+    protected int spawnPointIndex = 0;
+    protected final Set<Integer> teleportedPlayerId = new HashSet<>();
+    protected final Set<Integer> telepotedTeamId = new HashSet<>();
+    protected final double queuedHeight = 1145.14; // findGround失败的时候临时反复传送到这个高度，直到区块能成功加载或达到最大时长
 
     public TeleportSpawner(SpawnShapeType shapeType, Vec3 center, Vec3 dimension, int zoneId,
                            CommonDetailType detailType,
-                           TeleportEntry.DetailInfo detailInfo) {
-        super(shapeType, center, dimension, zoneId);
+                           TeleportDetailEntry detailEntry) {
+        super(shapeType, center, dimension, zoneId, detailType, detailEntry);
 
-        this.detailType = detailType;
-        this.fixedPos.addAll(detailInfo.fixedPos);
-        this.teamTogether = detailInfo.teamTogether;
-        this.findGround = detailInfo.findGround;
-        this.randomRange = detailInfo.randomRange;
-        this.hangTime = detailInfo.hangTime;
+        this.fixedPos.addAll(this.detailEntry.fixedPos);
+        this.teamTogether = this.detailEntry.teamTogether;
+        this.findGround = this.detailEntry.findGround;
+        this.randomRange = this.detailEntry.randomRange;
+        this.hangTime = this.detailEntry.hangTime;
     }
 
     /**
@@ -72,46 +70,13 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
         BattleRoyale.LOGGER.debug("TeleportSpawner::init spawnPointsTotal: {}", spawnPointsTotal);
         this.prepared = false;
 
+        boolean success = false;
         switch (detailType) {
             case FIXED -> { // 如无固定点位则不传送
-                if (!fixedPos.isEmpty()) {
-                    int size = fixedPos.size();
-                    for (int i = 0; i < spawnPointsTotal; i++) {
-                        Vec3 basePos = fixedPos.get(i % size);
-                        spawnPos.add(randomAdjustXZExpandY(basePos, randomRange, random)); // 简单的二次偏移会导致落概率不均匀
-                    }
-                } else {
-                    ServerLevel serverLevel = GameManager.get().getServerLevel();
-                    if (serverLevel != null) {
-                        ChatUtils.sendMessageToAllPlayers(serverLevel, "TeleportSpawner config error: no fixed position");
-                    }
-                    BattleRoyale.LOGGER.warn("GroundSpawner detailType is '{}', but has no fixedPos", CommonDetailType.FIXED.getName());
-                    this.prepared = false;
-                    return;
-                }
+                success = TeleportSpawnerCalculator.calculateFixedPos(this, random, spawnPointsTotal);
             }
             case RANDOM -> {
-                switch (shapeType) {
-                    case CIRCLE -> {
-                        for (int i = 0; i < spawnPointsTotal; i++) {
-                            Vec3 basePos = randomCircleXZ(centerPos, dimension, random);
-                            spawnPos.add(randomAdjustXZExpandY(basePos, randomRange, random));
-                        }
-                    }
-                    case SQUARE, RECTANGLE -> {
-                        for (int i = 0; i < spawnPointsTotal; i++) {
-                            Vec3 basePos = randomAdjustXZExpandY(centerPos, dimension, random);
-                            spawnPos.add(randomAdjustXZExpandY(basePos, randomRange, random));
-                        }
-                    }
-                    default -> {
-                        ServerLevel serverLevel = GameManager.get().getServerLevel();
-                        if (serverLevel != null) {
-                            ChatUtils.sendMessageToAllPlayers(serverLevel, "TeleportSpawner config error: unsupported shapeType");
-                        }
-                        BattleRoyale.LOGGER.warn("Unsupported SpawnShapeType in TeleportSpawner");
-                    }
-                }
+                success = TeleportSpawnerCalculator.calculateRandomPos(this, random, spawnPointsTotal);
             }
             default -> {
                 ServerLevel serverLevel = GameManager.get().getServerLevel();
@@ -120,6 +85,9 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
                 }
                 BattleRoyale.LOGGER.warn("Unsupported CommonDetailType in TeleportSpawner");
             }
+        }
+        if (!success) {
+            return;
         }
 
         BattleRoyale.LOGGER.debug("TeleportSpawner::init complete, spawnPos.size() = {}", spawnPos.size());
@@ -282,8 +250,9 @@ public class TeleportSpawner extends AbstractSimpleSpawner {
         return new Vec3(basePos.x, targetY, basePos.z);
     }
 
-    public void clear() {
-        spawnPos.clear();
+    @Override
+    public void clearAfterGame() {
+        spawnPos.clear(); // 运行时点位数据
         spawnPointIndex = 0;
         teleportedPlayerId.clear();
         telepotedTeamId.clear();

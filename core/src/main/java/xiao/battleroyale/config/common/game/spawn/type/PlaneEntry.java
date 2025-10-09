@@ -10,34 +10,16 @@ import xiao.battleroyale.api.game.spawn.type.shape.SpawnShapeTag;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.common.game.spawn.special.PlaneSpawner;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
+import xiao.battleroyale.config.common.game.spawn.type.detail.PlaneDetailEntry;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.StringUtils;
 
-public class PlaneEntry extends AbstractCommonSpawnEntry {
-
-    // detail
-    public final CommonDetailType detailType;
-    public final DetailInfo detailInfo;
-
-    public static class DetailInfo {
-        public double planeHeight;
-        public double planeSpeed;
-        public boolean fixedReachTime;
-        public DetailInfo(double planeHeight, double planeSpeed, boolean fixedReachTime) {
-            this.planeHeight = planeHeight;
-            this.planeSpeed = planeSpeed;
-            this.fixedReachTime = fixedReachTime;
-        }
-    }
+public class PlaneEntry extends AbstractCommonSpawnEntry<PlaneDetailEntry> {
 
     public PlaneEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
-                      CommonDetailType detailType,
-                      DetailInfo detailInfo) {
-        super(shapeType, center, dimension);
-
-        this.detailType = detailType;
-        this.detailInfo = detailInfo;
+                      CommonDetailType detailType, PlaneDetailEntry detailEntry) {
+        super(shapeType, center, dimension, detailType, detailEntry);
     }
 
     @Override
@@ -47,7 +29,7 @@ public class PlaneEntry extends AbstractCommonSpawnEntry {
 
     @Override
     public IGameSpawner createGameSpawner() {
-        return new PlaneSpawner(shapeType, centerPos, dimension, preZoneId, detailType, detailInfo);
+        return new PlaneSpawner(shapeType, centerPos, dimension, preZoneId, detailType, detailEntry);
     }
 
     @Override
@@ -56,9 +38,7 @@ public class PlaneEntry extends AbstractCommonSpawnEntry {
         JsonObject jsonObject = super.toJson();
         // detail
         jsonObject.addProperty(SpawnDetailTag.TYPE_NAME, detailType.getName());
-        jsonObject.addProperty(SpawnDetailTag.PLANE_HEIGHT, this.detailInfo.planeHeight);
-        jsonObject.addProperty(SpawnDetailTag.PLANE_SPEED, this.detailInfo.planeSpeed);
-        jsonObject.addProperty(SpawnDetailTag.PLANE_FIXED_TIME, this.detailInfo.fixedReachTime);
+        this.detailEntry.toJson(jsonObject, this.detailType);
 
         return jsonObject;
     }
@@ -78,20 +58,15 @@ public class PlaneEntry extends AbstractCommonSpawnEntry {
             return null;
         }
 
+        // detail
         CommonDetailType detailType = CommonDetailType.fromName(JsonUtils.getJsonString(jsonObject, SpawnDetailTag.TYPE_NAME, ""));
         if (detailType == null) {
             BattleRoyale.LOGGER.info("Unknown detailType for GroundEntry, skipped");
             return null;
         }
-
-        // detail
-        double height = JsonUtils.getJsonDouble(jsonObject, SpawnDetailTag.PLANE_HEIGHT, 0);
-        double speed = JsonUtils.getJsonDouble(jsonObject, SpawnDetailTag.PLANE_SPEED, 1);
-        boolean fixedTime = JsonUtils.getJsonBool(jsonObject, SpawnDetailTag.PLANE_FIXED_TIME, false);
+        PlaneDetailEntry detailEntry = PlaneDetailEntry.fromJson(jsonObject, detailType);
 
         return new PlaneEntry(shapeType, center, dimension,
-                detailType,
-                new DetailInfo(height, speed, fixedTime)
-        );
+                detailType, detailEntry);
     }
 }

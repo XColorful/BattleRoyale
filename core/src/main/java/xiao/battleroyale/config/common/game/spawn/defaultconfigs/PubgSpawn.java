@@ -7,6 +7,7 @@ import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.config.common.game.spawn.type.TeleportEntry;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
+import xiao.battleroyale.config.common.game.spawn.type.detail.TeleportDetailEntry;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 
 import java.nio.file.Paths;
@@ -30,7 +31,7 @@ public class PubgSpawn {
     public static JsonObject addCircle(int id, int border, int radius, int percentageHundred) {
         TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.CIRCLE, new Vec3(0, -60, 0), new Vec3(radius * percentageHundred / 100D, 0, radius * percentageHundred / 100D),
                 CommonDetailType.RANDOM,
-                new TeleportEntry.DetailInfo(new ArrayList<>(), true, true, 8, 20 * 15)
+                new TeleportDetailEntry(new ArrayList<>(), true, true, 8, 20 * 15)
         );
 
         SpawnConfig spawnConfig = new SpawnConfig(id, border + "x" + border + " Circle radius " + radius + " * " + percentageHundred + "%", "#FFFFFFAA",
@@ -42,7 +43,7 @@ public class PubgSpawn {
     public static JsonObject addSquare(int id, int border, int side, int percentageHundred) {
         TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(side * percentageHundred / 100D, 0, side * percentageHundred / 100D),
                 CommonDetailType.RANDOM,
-                new TeleportEntry.DetailInfo(new ArrayList<>(), true, true, 8, 20 * 15)
+                new TeleportDetailEntry(new ArrayList<>(), true, true, 8, 20 * 15)
         );
 
         SpawnConfig spawnConfig = new SpawnConfig(id, border + "x" + border + " Square side " + side + " * " + percentageHundred + "%", "#FFFFFFAA",

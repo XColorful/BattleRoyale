@@ -8,6 +8,8 @@ import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig
 import xiao.battleroyale.config.common.game.spawn.type.TeleportEntry;
 import xiao.battleroyale.config.common.game.spawn.type.PlaneEntry;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
+import xiao.battleroyale.config.common.game.spawn.type.detail.PlaneDetailEntry;
+import xiao.battleroyale.config.common.game.spawn.type.detail.TeleportDetailEntry;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 
 import java.nio.file.Paths;
@@ -31,7 +33,7 @@ public class DefaultSpawn {
     private static JsonObject generateDefaultSpawnConfig0() {
         TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.RANDOM,
-                new TeleportEntry.DetailInfo(new ArrayList<>(), false, true, 0, 20 * 15)
+                new TeleportDetailEntry(new ArrayList<>(), false, true, 0, 20 * 15)
         );
 
         SpawnConfig spawnConfig = new SpawnConfig(0, "Random ground spawn", "#FFFFFFAA", -1, true,
@@ -43,7 +45,7 @@ public class DefaultSpawn {
     private static JsonObject generateDefaultSpawnConfig1() {
         TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.FIXED,
-                new TeleportEntry.DetailInfo(Arrays.asList(
+                new TeleportDetailEntry(Arrays.asList(
                         new Vec3(0, -60, 0),
                         new Vec3(-50, -60, -50),
                         new Vec3(-50, -60, 50),
@@ -61,7 +63,7 @@ public class DefaultSpawn {
     private static JsonObject generateDefaultSpawnConfig2() {
         PlaneEntry planeEntry = new PlaneEntry(SpawnShapeType.SQUARE, new Vec3(0, 65, 0), new Vec3(128, 0, 128),
                 CommonDetailType.RANDOM,
-                new PlaneEntry.DetailInfo(255, 2.5, true));
+                new PlaneDetailEntry(255, 2.5, true));
 
         SpawnConfig spawnConfig = new SpawnConfig(2, "Plane spawn (Not implemented)", "#FFFFFF",
                 planeEntry);
