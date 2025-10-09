@@ -6,16 +6,16 @@ import xiao.battleroyale.api.config.IConfigSubManager;
 public class ConfigLoadable {
 
     public static boolean reloadAllConfigs(AbstractConfigManager context) {
+        boolean hasReloaded = false;
         for (IConfigSubManager<?> subManager : context.subManagers) {
-            subManager.reloadAllConfigs();
+            hasReloaded |= subManager.reloadAllConfigs();
         }
-        return !context.subManagers.isEmpty();
+        return hasReloaded;
     }
     public static boolean reloadConfigs(AbstractConfigManager context, String subManagerNameKey) {
         IConfigSubManager<?> subManager = context.subManagers.mapGet(subManagerNameKey);
         if (subManager != null) {
-            subManager.reloadConfigs();
-            return true;
+            return subManager.reloadConfigs();
         } else {
             return false;
         }
@@ -23,8 +23,7 @@ public class ConfigLoadable {
     public static boolean reloadConfigs(AbstractConfigManager context, String subManagerNameKey, int folderId) {
         IConfigSubManager<?> subManager = context.subManagers.mapGet(subManagerNameKey);
         if (subManager != null) {
-            subManager.reloadConfigs(folderId);
-            return true;
+            return subManager.reloadConfigs(folderId);
         } else {
             return false;
         }

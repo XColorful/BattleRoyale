@@ -8,9 +8,9 @@ import xiao.battleroyale.util.JsonUtils;
 
 public abstract class AbstractSimpleEntry implements IZoneShapeEntry {
 
-    protected final StartEntry startEntry;
-    protected final EndEntry endEntry;
-    protected final boolean badShape;
+    public final StartEntry startEntry;
+    public final EndEntry endEntry;
+    public boolean badShape;
 
     public AbstractSimpleEntry(StartEntry startEntry, EndEntry endEntry, boolean badShape) {
         this.startEntry = startEntry;

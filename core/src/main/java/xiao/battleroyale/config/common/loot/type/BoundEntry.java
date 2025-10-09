@@ -17,12 +17,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class BoundEntry implements ILootEntry {
-    private final boolean countEmpty;
-    private final boolean countLootTime;
-    private final int min;
-    private final int max;
-    private final boolean keepEmpty;
-    private final @NotNull List<ILootEntry> entries;
+    public boolean countEmpty;
+    public boolean countLootTime;
+    public int min;
+    public int max;
+    public boolean keepEmpty;
+    public final @NotNull List<ILootEntry> entries;
 
     public BoundEntry(boolean countEmpty, boolean countLootTime, int min, int max, boolean keepEmpty,
                       @NotNull List<ILootEntry> entries) {

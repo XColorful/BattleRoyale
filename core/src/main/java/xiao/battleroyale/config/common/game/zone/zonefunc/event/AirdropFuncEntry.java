@@ -12,9 +12,9 @@ import xiao.battleroyale.util.NBTUtils;
 
 public class AirdropFuncEntry extends AbstractEventFuncEntry {
 
-    private final int lootId;
-    private @Nullable final String nbtString;
-    private @NotNull final CompoundTag nbt;
+    public int lootId;
+    public @Nullable String nbtString;
+    public @NotNull CompoundTag nbt;
 
     public AirdropFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset,
                             String protocol, @Nullable CompoundTag tag,

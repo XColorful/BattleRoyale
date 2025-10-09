@@ -8,12 +8,12 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class FireworkFuncEntry extends AbstractFuncEntry {
 
-    private final boolean trackPlayer;
-    private final int amount;
-    private final int interval;
-    private final int vRange;
-    private final int hRange;
-    private final boolean outside;
+    public boolean trackPlayer;
+    public int amount;
+    public int interval;
+    public int vRange;
+    public int hRange;
+    public boolean outside;
 
     public FireworkFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset,
                              boolean trackPlayer, int amount, int interval, int vRange, int hRange, boolean outside) {

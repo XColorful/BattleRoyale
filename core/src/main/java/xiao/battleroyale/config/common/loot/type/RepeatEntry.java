@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RepeatEntry implements ILootEntry {
-    private final int min;
-    private final int max;
-    private final ILootEntry entry;
+    public int min;
+    public int max;
+    public ILootEntry entry;
 
     public RepeatEntry(int min, int max, @Nullable ILootEntry entry) {
         if (min < 0) {

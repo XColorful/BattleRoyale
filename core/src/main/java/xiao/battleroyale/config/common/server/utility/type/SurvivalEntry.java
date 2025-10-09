@@ -15,16 +15,16 @@ import xiao.battleroyale.util.StringUtils;
 public class SurvivalEntry implements IUtilityEntry, IConfigAppliable {
 
     // survivalLobby
-    public final String levelKey;
-    public final boolean allowGamePlayerTeleport;
-    public final Vec3 lobbyCenter;
-    public final Vec3 lobbyDimension;
-    public final boolean lobbyMuteki;
-    public final boolean lobbyHeal;
-    public final boolean dropInventory;
-    public final boolean dropGameItemOnly;
-    public final boolean clearInventory;
-    public final boolean clearGameItemOnly;
+    public String levelKey;
+    public boolean allowGamePlayerTeleport;
+    public Vec3 lobbyCenter;
+    public Vec3 lobbyDimension;
+    public boolean lobbyMuteki;
+    public boolean lobbyHeal;
+    public boolean dropInventory;
+    public boolean dropGameItemOnly;
+    public boolean clearInventory;
+    public boolean clearGameItemOnly;
 
     public SurvivalEntry(String levelKey, boolean allowGamePlayerTeleport, Vec3 lobbyCenter, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal,
                          boolean dropInventory, boolean dropGameItemOnly, boolean clearInventory, boolean clearGameItemOnly) {

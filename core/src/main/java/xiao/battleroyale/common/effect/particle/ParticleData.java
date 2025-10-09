@@ -36,7 +36,7 @@ public class ParticleData {
         this.serverLevel = serverLevel;
         this.worldTime = serverLevel.getGameTime();
         this.particle = detailEntry;
-        this.delayRemain = detailEntry.initDelay();
+        this.delayRemain = detailEntry.initDelay;
     }
 
     public void spawnParticle(Vec3 spawnPos) {
@@ -44,22 +44,22 @@ public class ParticleData {
             return;
         }
 
-        ResourceLocation particleRL = this.particle.particleType();
+        ResourceLocation particleRL = this.particle.particleType;
         ParticleType<?> typeObj = BattleRoyale.getMcRegistry().getParticleType(particleRL);
         if (typeObj == null) {
             BattleRoyale.LOGGER.warn("Unknown particle ResourceLocation: {}", particleRL);
             return;
         }
 
-        ParticleParameterEntry parameter = this.particle.parameter();
+        ParticleParameterEntry parameter = this.particle.parameter;
         ParticleOptions options = null;
 
-        CompoundTag parsedNbt = (parameter != null) ? parameter.nbt() : new CompoundTag();
+        CompoundTag parsedNbt = (parameter != null) ? parameter.nbt : new CompoundTag();
 
         if (typeObj == ParticleTypes.DUST) {
-            if (parameter != null && parameter.color() != null && !parameter.color().isEmpty()) {
-                int color = ColorUtils.parseColorToInt(parameter.color()) & 0xFFFFFF;
-                options = new DustParticleOptions(color, parameter.scale());
+            if (parameter != null && parameter.color != null && !parameter.color.isEmpty()) {
+                int color = ColorUtils.parseColorToInt(parameter.color) & 0xFFFFFF;
+                options = new DustParticleOptions(color, parameter.scale);
             } else {
                 BattleRoyale.LOGGER.warn("Invalid or missing color for dust particle: {}", particleRL);
             }
@@ -71,10 +71,10 @@ public class ParticleData {
                 && parsedNbt.contains("block_state")) {
             @SuppressWarnings("unchecked")
             ParticleType<BlockParticleOption> blockParticleType = (ParticleType<BlockParticleOption>) typeObj;
-            BlockState blockState = NBTUtils.readBlockState(parsedNbt.getCompound("block_state"));
+            BlockState blockState = NBTUtils.readBlockState(parsedNbt.getCompound("block_state").get());
             options = new BlockParticleOption(blockParticleType, blockState);
         } else if (typeObj == ParticleTypes.ITEM && parsedNbt.contains("item")) {
-            ItemStack itemStack = NBTUtils.readItemStack(parsedNbt.getCompound("item"));
+            ItemStack itemStack = NBTUtils.readItemStack(parsedNbt.getCompound("item").get());
             options = new ItemParticleOption(ParticleTypes.ITEM, itemStack);
         } else if (typeObj instanceof SimpleParticleType) {
             options = (SimpleParticleType) typeObj;
@@ -87,14 +87,14 @@ public class ParticleData {
 
         float speed = 0;
         if (parameter != null) {
-            speed = parameter.speed();
+            speed = parameter.speed;
         }
 
-        Vec3 offset = particle.offset();
-        Vec3 offsetRange = particle.offsetRange();
-        boolean exactOffset = particle.exactOffset();
+        Vec3 offset = particle.offset;
+        Vec3 offsetRange = particle.offsetRange;
+        boolean exactOffset = particle.exactOffset;
         if (exactOffset) {
-            for (int i = 0; i < this.particle.count(); i++) {
+            for (int i = 0; i < this.particle.count; i++) {
                 Vec3 offsetVec = Vec3Utils.randomAdjustXYZ(offset, offsetRange, BattleRoyale.COMMON_RANDOM::nextFloat);
                 this.serverLevel.sendParticles(options,
                         spawnPos.x() + offsetVec.x(),
@@ -105,12 +105,12 @@ public class ParticleData {
                         speed);
             }
         } else {
-            for (int i = 0; i < this.particle.count(); i++) {
+            for (int i = 0; i < this.particle.count; i++) {
                 this.serverLevel.sendParticles(options,
                         spawnPos.x() + offset.x(),
                         spawnPos.y() + offset.y(),
                         spawnPos.z() + offset.z(),
-                        this.particle.count(),
+                        this.particle.count,
                         offsetRange.x, offsetRange.y, offsetRange.z,
                         speed);
             }
