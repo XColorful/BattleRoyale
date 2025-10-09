@@ -71,10 +71,10 @@ public class ParticleData {
                 && parsedNbt.contains("block_state")) {
             @SuppressWarnings("unchecked")
             ParticleType<BlockParticleOption> blockParticleType = (ParticleType<BlockParticleOption>) typeObj;
-            BlockState blockState = NBTUtils.readBlockState(parsedNbt.getCompound("block_state").orElse(new CompoundTag()));
+            BlockState blockState = NBTUtils.readBlockState(parsedNbt.getCompound("block_state"));
             options = new BlockParticleOption(blockParticleType, blockState);
         } else if (typeObj == ParticleTypes.ITEM && parsedNbt.contains("item")) {
-            ItemStack itemStack = NBTUtils.readItemStack(parsedNbt.getCompound("item").orElse(new CompoundTag()));
+            ItemStack itemStack = NBTUtils.readItemStack(parsedNbt.getCompound("item"));
             options = new ItemParticleOption(ParticleTypes.ITEM, itemStack);
         } else if (typeObj instanceof SimpleParticleType) {
             options = (SimpleParticleType) typeObj;
