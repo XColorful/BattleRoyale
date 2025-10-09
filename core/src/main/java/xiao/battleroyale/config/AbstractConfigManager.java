@@ -169,4 +169,24 @@ public abstract class AbstractConfigManager implements IConfigManager {
     @Override public boolean switchConfigFile(String subManagerNameKey, int folderId, String fileName) {
         return ConfigSwitchable.switchConfigFile(this, subManagerNameKey, folderId, fileName);
     }
+
+    // IConfigManager -> IConfigSubManager::IConfigSaveable
+    @Override public boolean saveAllConfigs() {
+        return ConfigSaveable.saveAllConfigs(this);
+    }
+    @Override public boolean saveConfigs(String subManagerNameKey) {
+        return ConfigSaveable.saveConfigs(this, subManagerNameKey);
+    }
+    @Override public boolean saveConfigs(String subManagerNameKey, int folderId) {
+        return ConfigSaveable.saveConfigs(this, subManagerNameKey, folderId);
+    }
+    @Override public boolean backupAllConfigs(String backupRoot) {
+        return ConfigSaveable.backupAllConfigs(this, backupRoot);
+    }
+    @Override public boolean backupConfigs(String backupRoot, String subManagerNameKey) {
+        return ConfigSaveable.backupConfigs(this, backupRoot, subManagerNameKey);
+    }
+    @Override public boolean backupConfigs(String backupRoot, String subManagerNameKey, int folderId) {
+        return ConfigSaveable.backupConfigs(this, backupRoot, subManagerNameKey, folderId);
+    }
 }

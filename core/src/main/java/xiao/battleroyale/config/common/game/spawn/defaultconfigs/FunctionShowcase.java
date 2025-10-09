@@ -3,7 +3,6 @@ package xiao.battleroyale.config.common.game.spawn.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.type.TeleportEntry;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
@@ -21,7 +20,7 @@ public class FunctionShowcase {
     public static void generateDefaultConfigs() {
         JsonArray spawnConfigJson = new JsonArray();
         spawnConfigJson.add(generateDefaultSpawnConfig0());
-        writeJsonToFile(Paths.get(GameConfigManager.get().getConfigDirPath(SpawnConfigManager.get().getNameKey()), DEFAULT_FILE_NAME).toString(), spawnConfigJson);
+        writeJsonToFile(Paths.get(String.valueOf(SpawnConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), spawnConfigJson);
     }
 
 

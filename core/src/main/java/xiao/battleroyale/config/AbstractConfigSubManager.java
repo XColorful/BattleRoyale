@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
-import xiao.battleroyale.config.FolderConfigData.ConfigFileName;
 import xiao.battleroyale.util.ClassUtils.ArrayMap;
 
 import java.nio.file.Path;
@@ -42,40 +41,6 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         }
     }
 
-    /**
-     * 供子类内部调用变量的getter
-     * 没重载方法对folderId进行switch case就默认没有
-     */
-    // 获取指定文件夹下所有json文件数据
-    protected Map<String, Map<Integer, T>> getFileConfigs() { return getFileConfigs(DEFAULT_CONFIG_FOLDER); }
-    protected Map<String, Map<Integer, T>> getFileConfigs(int folderId) {
-        Map<String, ArrayMap<Integer, T>> internalMaps = getConfigFolderData(folderId).fileConfigsByFileName;
-        Map<String, Map<Integer, T>> externalView = new HashMap<>();
-        for (Map.Entry<String, ArrayMap<Integer, T>> entry : internalMaps.entrySet()) {
-            externalView.put(entry.getKey(), entry.getValue().asMap()); // 提供不可修改的Map视图
-        }
-        return externalView;
-    }
-    protected Map<String, List<T>> getFileConfigsList() { return getFileConfigsList(DEFAULT_CONFIG_FOLDER); }
-    protected Map<String, List<T>> getFileConfigsList(int folderId) {
-        Map<String, ArrayMap<Integer, T>> internalMaps = getConfigFolderData(folderId).fileConfigsByFileName;
-        Map<String, List<T>> externalView = new HashMap<>();
-        for (Map.Entry<String, ArrayMap<Integer, T>> entry : internalMaps.entrySet()) {
-            externalView.put(entry.getKey(), entry.getValue().asList()); // 提供不可修改的List视图
-        }
-        return externalView;
-    }
-
-    // 获取指定文件夹下当前选中的json文件数据
-    protected Map<Integer, T> getConfigs() { return getConfigs(DEFAULT_CONFIG_FOLDER); }
-    protected Map<Integer, T> getConfigs(int folderId) { return getConfigFolderData(folderId).currentConfigs.asMap(); }
-    protected List<T> getConfigsList() { return getConfigsList(DEFAULT_CONFIG_FOLDER); }
-    protected List<T> getConfigsList(int folderId) { return getConfigFolderData(folderId).currentConfigs.asList(); }
-
-    // 获取指定文件夹下当前选中的json文件名
-    protected ConfigFileName getConfigFileName() { return getConfigFileName(DEFAULT_CONFIG_FOLDER); }
-    protected ConfigFileName getConfigFileName(int folderId) { return getConfigFolderData(folderId).configFileName; }
-
     protected Comparator<T> getConfigIdComparator() {
         return getConfigIdComparator(DEFAULT_CONFIG_FOLDER);
     }
@@ -87,7 +52,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     protected void clear(int folderId) {
         getConfigFolderData(folderId).fileConfigsByFileName.clear();
         getConfigFolderData(folderId).currentConfigs.clear();
-        getConfigFileName(folderId).string = "";
+        getConfigFolderData(folderId).setConfigFileName("");
     }
 
     /**
@@ -106,7 +71,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     @Override public @Nullable T getConfigEntry(int folderId, int id) {
         return getConfigFolderData(folderId).currentConfigs.mapGet(id);
     }
-    @Override public @Nullable  List<T> getConfigEntryList() {
+    @Override public @Nullable List<T> getConfigEntryList() {
         return getConfigEntryList(DEFAULT_CONFIG_FOLDER);
     }
     @Override public @Nullable List<T> getConfigEntryList(int folderId) {
@@ -116,11 +81,28 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         return getCurrentSelectedFileName(DEFAULT_CONFIG_FOLDER);
     }
     @Override public String getCurrentSelectedFileName(int folderId) {
-        return getConfigFileName(folderId).string;
+        return getConfigFolderData(folderId).getConfigFileName();
     }
     @Override public String getFolderType() {
         return getFolderType(DEFAULT_CONFIG_FOLDER);
     }
+
+    /**
+     * IConfigSubReadApi
+     */
+    @Override public Map<String, Map<Integer, T>> getFileConfigsMap() {
+        return getFileConfigsMap(DEFAULT_CONFIG_FOLDER);
+    }
+    @Override public Map<String, Map<Integer, T>> getFileConfigsMap(int folderId) {
+        return getConfigFolderData(folderId).getFileConfigsMap();
+    }
+    @Override public Map<String, List<T>> getFileConfigsList() {
+        return getFileConfigsList(DEFAULT_CONFIG_FOLDER);
+    }
+    @Override public Map<String, List<T>> getFileConfigsList(int folderId) {
+        return getConfigFolderData(folderId).getFileConfigsList();
+    }
+
     /**
      * IConfigLoadable
      */
@@ -221,5 +203,28 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     }
     @Override public @Nullable T getDefaultConfig(int folderId) {
         return getConfigEntry(getDefaultConfigId(folderId));
+    }
+
+    /**
+     * IConfigSaveable
+     */
+    @Override public boolean saveAllConfigs() {
+        return inProperSide() && SubSaveConfigs.saveAllConfigs(this);
+    }
+    @Override public boolean saveConfigs() {
+        return saveConfigs(DEFAULT_CONFIG_FOLDER);
+    }
+    @Override public boolean saveConfigs(int folderId) {
+        return inProperSide() && SubSaveConfigs.saveConfigs(this, folderId);
+    }
+
+    @Override public boolean backupAllConfigs(String backupRoot) {
+        return inProperSide() && SubSaveConfigs.backupAllConfigs(this, backupRoot);
+    }
+    @Override public boolean backupConfigs(String backupRoot) {
+        return backupConfigs(backupRoot, DEFAULT_CONFIG_FOLDER);
+    }
+    @Override public boolean backupConfigs(String backupRoot, int folderId) {
+        return inProperSide() && SubSaveConfigs.backupConfigs(this, backupRoot, folderId);
     }
 }

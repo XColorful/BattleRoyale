@@ -3,7 +3,6 @@ package xiao.battleroyale.config.common.game.spawn.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.config.common.game.spawn.type.TeleportEntry;
@@ -25,7 +24,7 @@ public class PubgSpawn {
         add8000x8000Square(spawnConfigJson);
         add5340x5340Circle(spawnConfigJson);
         add881x881Circle(spawnConfigJson);
-        writeJsonToFile(Paths.get(GameConfigManager.get().getConfigDirPath(SpawnConfigManager.get().getNameKey()), DEFAULT_FILE_NAME).toString(), spawnConfigJson);
+        writeJsonToFile(Paths.get(String.valueOf(SpawnConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), spawnConfigJson);
     }
 
     public static JsonObject addCircle(int id, int border, int radius, int percentageHundred) {

@@ -21,4 +21,12 @@ public interface IModConfigManager {
     boolean reloadAllConfigSubManagers();
 
     boolean generateAllDefaultConfigs();
+
+    boolean saveAllConfigs();
+    boolean saveAllConfigManagers();
+    boolean saveAllConfigSubManagers();
+    String getDefaultBackupRoot();
+    boolean backupAllConfigs(String backupRoot);
+    boolean backupAllConfigManagers(String backupRoot);
+    boolean backupAllConfigSubManagers(String backupRoot);
 }
