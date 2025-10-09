@@ -25,11 +25,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class MessageEntry implements ILootEntry {
-    private final boolean onlyGamePlayer;
-    private final boolean sendPosition;
-    private final String messageString;
-    private final String messageColor;
-    private final int colorRGB;
+    public boolean onlyGamePlayer;
+    public boolean sendPosition;
+    public String messageString;
+    public String messageColor;
+    public int colorRGB;
 
     public MessageEntry(boolean onlyGamePlayer, boolean sendPosition, String messageString, String messageColor) {
         this.onlyGamePlayer = onlyGamePlayer;

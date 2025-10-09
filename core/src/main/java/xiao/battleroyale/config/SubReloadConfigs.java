@@ -27,7 +27,7 @@ public class SubReloadConfigs {
                                                                         AbstractConfigSubManager<T> context,
                                                                         int folderId) {
         // 在清除前获取当前使用的配置文件名称
-        String fileNameString = context.getConfigFileName(folderId).string;
+        String fileNameString = context.getConfigFolderData(folderId).getConfigFileName();
         context.clear(folderId);
 
         // 获取当前子文件夹下所有文件数据引用

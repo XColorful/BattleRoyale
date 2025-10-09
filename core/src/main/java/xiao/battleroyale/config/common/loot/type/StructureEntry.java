@@ -23,10 +23,10 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class StructureEntry implements ILootEntry {
-    private final boolean invert;
-    private final List<String> structureList;
-    private final Set<ResourceKey<Structure>> structures = new HashSet<>();
-    private final ILootEntry entry;
+    public boolean invert;
+    public final List<String> structureList;
+    public final Set<ResourceKey<Structure>> structures = new HashSet<>();
+    public ILootEntry entry;
 
     public StructureEntry(boolean invert, List<String> structureList,
                           ILootEntry entry) {

@@ -19,10 +19,10 @@ import xiao.battleroyale.util.JsonUtils;
 import java.util.*;
 
 public class BiomeEntry implements ILootEntry {
-    private final boolean invert;
-    private final List<String> biomeList;
-    private final Set<ResourceKey<Biome>> biomes = new HashSet<>();
-    private final ILootEntry entry;
+    public boolean invert;
+    public final List<String> biomeList;
+    public final Set<ResourceKey<Biome>> biomes = new HashSet<>();
+    public ILootEntry entry;
 
     public BiomeEntry(boolean invert, List<String> biomeList,
                       ILootEntry entry) {

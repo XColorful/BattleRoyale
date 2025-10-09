@@ -21,10 +21,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegexEntry implements ILootEntry {
-    private final boolean invert;
-    private final String regexString;
-    private final Pattern pattern;
-    private final ILootEntry entry;
+    public boolean invert;
+    public String regexString;
+    public Pattern pattern;
+    public ILootEntry entry;
 
     public RegexEntry(boolean invert, String regexString, ILootEntry entry) {
         this.invert = invert;

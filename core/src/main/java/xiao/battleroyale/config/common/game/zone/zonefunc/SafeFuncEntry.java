@@ -9,7 +9,7 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class SafeFuncEntry extends AbstractFuncEntry {
 
-    protected final float damage;
+    public float damage;
 
     public SafeFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset, float damage) {
         super(moveDelay, moveTime, tickFreq, tickOffset);

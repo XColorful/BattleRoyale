@@ -7,8 +7,8 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class GameEntry extends AbstractHudEntry {
 
-    public final String aliveColor;
-    public final String aliveCountColor;
+    public String aliveColor;
+    public String aliveCountColor;
 
     public GameEntry(boolean display) {
         this(display, 0, 0, "", "");

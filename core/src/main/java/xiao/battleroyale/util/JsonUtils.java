@@ -32,21 +32,23 @@ public class JsonUtils {
         return GSON.toJson(object);
     }
 
-    public static void writeJsonToFile(String filePath, JsonArray jsonArray) {
+    public static boolean writeJsonToFile(String filePath, JsonArray jsonArray) {
         Path path = Paths.get(filePath);
         if (Files.notExists(path.getParent())) {
             try {
                 Files.createDirectories(path.getParent());
             } catch (IOException e) {
                 BattleRoyale.LOGGER.warn("Failed to create default config directory: {}", e.getMessage());
-                return;
+                return false;
             }
         }
         try {
             Files.writeString(path, GSON.toJson(jsonArray));
             BattleRoyale.LOGGER.debug("Write json to file: {}", path);
+            return true;
         } catch (IOException e) {
             BattleRoyale.LOGGER.warn("Failed to write json to file: {}", e.getMessage());
+            return false;
         }
     }
 

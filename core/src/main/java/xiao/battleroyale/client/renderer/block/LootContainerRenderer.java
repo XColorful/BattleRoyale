@@ -3,12 +3,9 @@ package xiao.battleroyale.client.renderer.block;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,60 +15,33 @@ import org.joml.Vector3f;
 import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
 import xiao.battleroyale.client.renderer.BlockModelRenderer;
 
-public abstract class LootContainerRenderer<T extends AbstractLootContainerBlockEntity> implements BlockEntityRenderer<T> {
+public abstract class LootContainerRenderer<T extends AbstractLootContainerBlockEntity> extends AbstractBlockRenderer<T> {
 
     protected static double MAX_RENDER_DISTANCE_SQ = 16 * 16;
-    public static void setRenderDistance(double distance) { MAX_RENDER_DISTANCE_SQ = distance * distance; }
-
-    protected final ItemRenderer itemRenderer;
-    protected final BlockRenderDispatcher blockRenderDispatcher;
+    protected static boolean RENDER_IF_EMPTY = true;
+    public static void setRenderDistance(double distance) {
+        MAX_RENDER_DISTANCE_SQ = distance * distance;
+    }
+    public static void setRenderIfEmpty(boolean bool) {
+        RENDER_IF_EMPTY = bool;
+    }
 
     public LootContainerRenderer(BlockEntityRendererProvider.Context context) {
-        this.itemRenderer = Minecraft.getInstance().getItemRenderer();
-        this.blockRenderDispatcher = context.getBlockRenderDispatcher();
+        super(context);
     }
 
     @Override
     public void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, @NotNull Vec3 cameraPos) {
         poseStack.pushPose();
-        // 比较脚下位置，不用摄像机位置
-        boolean renderItem = (Minecraft.getInstance().player != null && blockEntity.getBlockPos().distSqr(Minecraft.getInstance().player.blockPosition()) <= MAX_RENDER_DISTANCE_SQ)
-                && !blockEntity.isEmpty(); // 玩家在范围内 且 容器不为空
-        if (!renderItem) { // 渲染方块模型
-            renderBlockModel(blockEntity, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
-        } else { // 渲染容器内物品
-            ItemStack[] items = getItems(blockEntity);
-            if (items == null || items.length == 0) { // 照理不应该发生，除非hasItem有问题
+
+        boolean renderBlock = (Minecraft.getInstance().player != null
+                && blockEntity.getBlockPos().distSqr(Minecraft.getInstance().player.blockPosition()) <= MAX_RENDER_DISTANCE_SQ);
+        if (renderBlock) {
+            boolean renderItem = !blockEntity.isEmpty();
+            if (renderItem) { // 渲染容器内物品
+                renderItems(blockEntity, partialTick, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+            } else if (RENDER_IF_EMPTY) { // 渲染方块模型
                 renderBlockModel(blockEntity, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
-                return;
-            }
-
-            Vector3f renderOffset = getRenderOffset(blockEntity);
-
-            poseStack.translate(0.5F + renderOffset.x(), renderOffset.y(), 0.5F + renderOffset.z()); // 初始平移到方块中心，并考虑整体偏移
-            applyRotation(blockEntity, poseStack);
-
-            float itemScale = 1 / 2F;
-
-            poseStack.scale(itemScale, itemScale, itemScale);
-
-            for (int i = 0; i < items.length; i++) {
-                ItemStack itemStack = items[i];
-                if (itemStack.isEmpty()) {
-                    continue;
-                }
-                poseStack.pushPose();
-
-                int row = (i % 16) / 4;
-                int col = i % 4;
-                int layer = i / 16;
-                float xOffset = -0.75F + col * 0.5F;
-                float zOffset = -0.75F + row * 0.5F;
-                float yOffset = layer * itemScale;
-                poseStack.translate(xOffset, yOffset, zOffset);
-
-                this.itemRenderer.renderStatic(itemStack, ItemDisplayContext.GROUND, combinedLightIn, combinedOverlayIn, poseStack, bufferIn, blockEntity.getLevel(), 0);
-                poseStack.popPose();
             }
         }
 
@@ -118,6 +88,42 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
 
     @Override
     public boolean shouldRenderOffScreen() {
-        return true;
+        return false;
+    }
+
+    protected void renderItems(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+        ItemStack[] items = getItems(blockEntity);
+        if (items == null || items.length == 0) { // 照理不应该发生，除非hasItem有问题
+            renderBlockModel(blockEntity, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+            return;
+        }
+
+        Vector3f renderOffset = getRenderOffset(blockEntity);
+
+        poseStack.translate(0.5F + renderOffset.x(), renderOffset.y(), 0.5F + renderOffset.z()); // 初始平移到方块中心，并考虑整体偏移
+        applyRotation(blockEntity, poseStack);
+
+        float itemScale = 1 / 2F;
+
+        poseStack.scale(itemScale, itemScale, itemScale);
+
+        for (int i = 0; i < items.length; i++) {
+            ItemStack itemStack = items[i];
+            if (itemStack.isEmpty()) {
+                continue;
+            }
+            poseStack.pushPose();
+
+            int row = (i % 16) / 4;
+            int col = i % 4;
+            int layer = i / 16;
+            float xOffset = -0.75F + col * 0.5F;
+            float zOffset = -0.75F + row * 0.5F;
+            float yOffset = layer * itemScale;
+            poseStack.translate(xOffset, yOffset, zOffset);
+
+            this.itemRenderer.renderStatic(itemStack, ItemDisplayContext.GROUND, combinedLightIn, combinedOverlayIn, poseStack, bufferIn, blockEntity.getLevel(), 0);
+            poseStack.popPose();
+        }
     }
 }

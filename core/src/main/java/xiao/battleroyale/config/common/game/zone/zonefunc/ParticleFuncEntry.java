@@ -10,10 +10,10 @@ import java.util.List;
 
 public class ParticleFuncEntry extends AbstractFuncEntry {
 
-    private final List<Integer> particleIdList;
-    private final int select;
-    private final String channel;
-    private final int cooldown;
+    public final List<Integer> particleIdList;
+    public int select;
+    public String channel;
+    public int cooldown;
 
     public ParticleFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset,
                              List<Integer> particleIdList, int select, String channel, int cooldown) {
