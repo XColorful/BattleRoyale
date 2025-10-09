@@ -10,7 +10,7 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class PolygonEntry extends AbstractSimpleEntry {
 
-    private final int segments; // 边数
+    public int segments; // 边数
 
     public PolygonEntry(StartEntry startEntry, EndEntry endEntry, boolean badShape, int segments) {
         super(startEntry, endEntry, badShape);

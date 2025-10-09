@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 
 public class EmptyEntry implements IItemLootEntry {
 
-    private final LootEntryType type;
+    public LootEntryType type;
 
     public EmptyEntry(String typeString) {
         LootEntryType entryType = LootEntryType.fromName(typeString);

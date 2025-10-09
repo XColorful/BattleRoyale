@@ -8,7 +8,7 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class BoostFuncEntry extends AbstractFuncEntry {
 
-    protected final int boost;
+    public int boost;
 
     public BoostFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset, int boost) {
         super(moveDelay, moveTime, tickFreq, tickOffset);

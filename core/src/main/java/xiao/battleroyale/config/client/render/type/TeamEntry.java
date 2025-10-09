@@ -9,12 +9,12 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class TeamEntry implements IRenderEntry {
 
-    public final boolean enableTeamZone;
-    public final boolean useClientColor;
-    public final String fixedColor;
-    public final boolean renderBeacon;
-    public final boolean renderBoundingBox;
-    public final float transparency;
+    public boolean enableTeamZone;
+    public boolean useClientColor;
+    public String fixedColor;
+    public boolean renderBeacon;
+    public boolean renderBoundingBox;
+    public float transparency;
 
     public TeamEntry(boolean enableTeamZone, boolean useClientColor) {
         this(enableTeamZone, useClientColor, "#00FFFF",

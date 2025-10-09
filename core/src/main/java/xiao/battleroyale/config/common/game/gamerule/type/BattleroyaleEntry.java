@@ -15,23 +15,23 @@ import xiao.battleroyale.util.StringUtils;
 public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
 
     public static final String OVERWORLD_LEVEL_KEY = Level.OVERWORLD.location().toString();
-    public final String defaultLevelKey;
-    public final int playerTotal;
-    public final int teamSize;
-    public final boolean aiTeammate;
-    public final boolean aiEnemy;
-    public final int requiredTeamToStart;
-    public final int maxGameTime;
-    public final int winnerTeamTotal;
-    public final Vec3 lobbyCenterPos;
-    public final Vec3 lobbyDimension;
-    public final boolean lobbyMuteki;
-    public final boolean lobbyHeal;
-    public final boolean lobbyChangeGamemode;
-    public final boolean lobbyTeleportDropInventory;
-    public final boolean lobbyTeleportClearInventory;
-    public final boolean recordGameStats;
-    public final boolean autoJoinGame;
+    public String defaultLevelKey;
+    public int playerTotal;
+    public int teamSize;
+    public boolean aiTeammate;
+    public boolean aiEnemy;
+    public int requiredTeamToStart;
+    public int maxGameTime;
+    public int winnerTeamTotal;
+    public Vec3 lobbyCenterPos;
+    public Vec3 lobbyDimension;
+    public boolean lobbyMuteki;
+    public boolean lobbyHeal;
+    public boolean lobbyChangeGamemode;
+    public boolean lobbyTeleportDropInventory;
+    public boolean lobbyTeleportClearInventory;
+    public boolean recordGameStats;
+    public boolean autoJoinGame;
 
     public BattleroyaleEntry(String defaultLevelKey, int playerTotal, int teamSize, boolean aiTeammate, boolean aiEnemy,
                              int requiredTeamToStart, int maxGameTime, int winnerTeamTotal,

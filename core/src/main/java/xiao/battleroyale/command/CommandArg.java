@@ -24,6 +24,8 @@ public class CommandArg {
     public static final String PERFORMANCE = "performance";
     public static final String UTILITY = "utility";
     public static final String EXAMPLE = "example";
+    public static final String SAVE = "save";
+    public static final String BACKUP = "backup";
     public static final String TEMP = "temp";
     public static final String PUBGMC = "pubgmc";
 

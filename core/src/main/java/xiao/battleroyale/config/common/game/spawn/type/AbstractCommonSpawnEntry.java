@@ -5,21 +5,29 @@ import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.game.spawn.ISpawnEntry;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.api.game.spawn.type.shape.SpawnShapeTag;
+import xiao.battleroyale.config.common.game.spawn.type.detail.AbstractDetailEntry;
+import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.util.StringUtils;
 
-public abstract class AbstractCommonSpawnEntry implements ISpawnEntry {
+public abstract class AbstractCommonSpawnEntry<T extends AbstractDetailEntry<T>> implements ISpawnEntry {
 
     // common
-    protected final SpawnShapeType shapeType;
-    protected final Vec3 centerPos;
-    protected final Vec3 dimension;
-    protected int preZoneId;
+    public SpawnShapeType shapeType;
+    public Vec3 centerPos;
+    public Vec3 dimension;
+    public int preZoneId;
+    // detail
+    public final CommonDetailType detailType;
+    public final T detailEntry;
 
-    public AbstractCommonSpawnEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension) {
+    public AbstractCommonSpawnEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
+                                    CommonDetailType detailType, T detailEntry) {
         this.shapeType = shapeType;
         this.centerPos = center;
         this.dimension = dimension;
+        this.detailType = detailType;
+        this.detailEntry = detailEntry;
     }
 
     @Override

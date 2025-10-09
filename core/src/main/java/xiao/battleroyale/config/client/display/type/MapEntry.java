@@ -8,7 +8,7 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class MapEntry implements IRenderEntry {
 
-    public final boolean enableJourneyMap;
+    public boolean enableJourneyMap;
 
     public MapEntry() {
         this(true);
