@@ -8,7 +8,7 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class MutekiFuncEntry extends AbstractFuncEntry {
 
-    private final int mutekiTime;
+    public int mutekiTime;
 
     public MutekiFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset, int mutekiTime) {
         super(moveDelay, moveTime, tickFreq, tickOffset);

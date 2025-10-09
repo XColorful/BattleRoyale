@@ -6,9 +6,9 @@ import xiao.battleroyale.api.client.render.IRenderEntry;
 
 public abstract class AbstractHudEntry implements IRenderEntry {
 
-    public final boolean display;
-    public final double xRatio;
-    public final double yRatio;
+    public boolean display;
+    public double xRatio;
+    public double yRatio;
 
     public AbstractHudEntry(boolean display) {
         this(display, 0, 0);

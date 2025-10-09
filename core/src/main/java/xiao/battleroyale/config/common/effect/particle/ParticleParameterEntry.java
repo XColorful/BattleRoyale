@@ -6,7 +6,13 @@ import xiao.battleroyale.api.config.sub.IConfigEntry;
 import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
 import xiao.battleroyale.util.JsonUtils;
 
-public record ParticleParameterEntry(float speed, String color, float scale, int note, CompoundTag nbt) implements IConfigEntry {
+public class ParticleParameterEntry implements IConfigEntry {
+
+    public float speed;
+    public String color;
+    public float scale;
+    public int note;
+    public CompoundTag nbt;
 
     public ParticleParameterEntry(float speed, String color, float scale, int note, CompoundTag nbt) {
         this.speed = speed;

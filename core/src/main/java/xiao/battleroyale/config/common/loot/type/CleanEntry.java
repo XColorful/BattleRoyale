@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CleanEntry implements ILootEntry {
-    private final ILootEntry entry;
+    public ILootEntry entry;
 
     public CleanEntry(ILootEntry entry) {
         this.entry = entry;

@@ -10,31 +10,15 @@ import xiao.battleroyale.api.game.spawn.type.shape.SpawnShapeTag;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.common.game.spawn.vanilla.TeleportSpawner;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
+import xiao.battleroyale.config.common.game.spawn.type.detail.TeleportDetailEntry;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.util.JsonUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class TeleportEntry extends AbstractCommonSpawnEntry {
-
-    // detail
-    private final CommonDetailType detailType;
-    private final DetailInfo detailInfo;
-
-    public record DetailInfo(List<Vec3> fixedPos,
-                              boolean teamTogether,
-                              boolean findGround,
-                              double randomRange,
-                             int hangTime) {}
+public class TeleportEntry extends AbstractCommonSpawnEntry<TeleportDetailEntry> {
 
     public TeleportEntry(SpawnShapeType shapeType, Vec3 center, Vec3 dimension,
-                         CommonDetailType detailType,
-                         DetailInfo detailInfo) {
-        super(shapeType, center, dimension);
-
-        this.detailType = detailType;
-        this.detailInfo = detailInfo;
+                         CommonDetailType detailType, TeleportDetailEntry detailEntry) {
+        super(shapeType, center, dimension, detailType, detailEntry);
     }
 
     @Override
@@ -44,7 +28,7 @@ public class TeleportEntry extends AbstractCommonSpawnEntry {
 
     @Override
     public IGameSpawner createGameSpawner() {
-        return new TeleportSpawner(shapeType, centerPos, dimension, preZoneId, detailType, detailInfo);
+        return new TeleportSpawner(shapeType, centerPos, dimension, preZoneId, detailType, detailEntry);
     }
 
     @Override
@@ -53,14 +37,7 @@ public class TeleportEntry extends AbstractCommonSpawnEntry {
         JsonObject jsonObject = super.toJson();
         // detail
         jsonObject.addProperty(SpawnDetailTag.TYPE_NAME, detailType.getName());
-        switch (this.detailType) {
-            case FIXED -> jsonObject.add(SpawnDetailTag.GROUND_FIXED_POS, JsonUtils.writeVec3ListToJson(this.detailInfo.fixedPos));
-            case RANDOM -> {}
-        }
-        jsonObject.addProperty(SpawnDetailTag.GROUND_TEAM_TOGETHER, this.detailInfo.teamTogether);
-        jsonObject.addProperty(SpawnDetailTag.GROUND_FIND_GROUND, this.detailInfo.findGround);
-        jsonObject.addProperty(SpawnDetailTag.GROUND_RANDOM_RANGE, this.detailInfo.randomRange);
-        jsonObject.addProperty(SpawnDetailTag.GROUND_HANG_TIME, this.detailInfo.hangTime);
+        this.detailEntry.toJson(jsonObject, this.detailType);
 
         return jsonObject;
     }
@@ -86,19 +63,10 @@ public class TeleportEntry extends AbstractCommonSpawnEntry {
             BattleRoyale.LOGGER.info("Unknown detailType for GroundEntry, skipped");
             return null;
         }
-        List<Vec3> fixedPos = new ArrayList<>();
-        switch (detailType) {
-            case FIXED -> fixedPos = JsonUtils.getJsonVecList(jsonObject, SpawnDetailTag.GROUND_FIXED_POS);
-            case RANDOM -> {}
-        }
-        boolean teamTogether = JsonUtils.getJsonBool(jsonObject, SpawnDetailTag.GROUND_TEAM_TOGETHER, false);
-        boolean findGround = JsonUtils.getJsonBool(jsonObject, SpawnDetailTag.GROUND_FIND_GROUND, false);
-        double range = JsonUtils.getJsonDouble(jsonObject, SpawnDetailTag.GROUND_FIND_GROUND, 0);
-        int hangTime = JsonUtils.getJsonInt(jsonObject, SpawnDetailTag.GROUND_HANG_TIME, 20 * 15);
+        TeleportDetailEntry detailEntry = TeleportDetailEntry.fromJson(jsonObject, detailType);
 
         return new TeleportEntry(shapeType, center, dimension,
                 detailType,
-                new DetailInfo(fixedPos, teamTogether, findGround, range, hangTime)
-        );
+                detailEntry);
     }
 }

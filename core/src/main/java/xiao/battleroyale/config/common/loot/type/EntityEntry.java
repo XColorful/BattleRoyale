@@ -17,11 +17,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class EntityEntry implements IEntityLootEntry {
-    private final String entityString;
-    private final @Nullable String nbtString;
-    private final @NotNull CompoundTag nbt;
-    private final int count;
-    private final int range;
+    public String entityString;
+    public @Nullable String nbtString;
+    public @NotNull CompoundTag nbt;
+    public int count;
+    public int range;
 
     public EntityEntry(String rl, @Nullable String nbtString, int count, int range) {
         this.entityString = rl;

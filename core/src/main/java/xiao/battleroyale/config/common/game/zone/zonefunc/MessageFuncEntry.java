@@ -11,15 +11,15 @@ import xiao.battleroyale.util.StringUtils;
 
 public class MessageFuncEntry extends AbstractFuncEntry {
 
-    private final boolean setTitleAnimation;
-    private final int fadeInTicks;
-    private final int stayTicks;
-    private final int fadeOutTicks;
-    private final boolean sendTitles;
-    private @NotNull final Component title;
-    private @NotNull final Component subTitle;
-    private final boolean sendActionBar;
-    private @NotNull final Component actionBar;
+    public boolean setTitleAnimation;
+    public int fadeInTicks;
+    public int stayTicks;
+    public int fadeOutTicks;
+    public boolean sendTitles;
+    public @NotNull Component title;
+    public @NotNull Component subTitle;
+    public boolean sendActionBar;
+    public @NotNull Component actionBar;
 
     public MessageFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset,
                             boolean setTitleAnimation, int fadeInTicks, int stayTicks, int fadeOutTicks,

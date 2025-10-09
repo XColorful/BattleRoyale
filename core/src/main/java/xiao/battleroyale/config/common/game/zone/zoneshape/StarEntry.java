@@ -10,7 +10,7 @@ import xiao.battleroyale.util.JsonUtils;
 
 public class StarEntry extends AbstractSimpleEntry {
 
-    private final int segments;
+    public int segments;
 
     public StarEntry(StartEntry startEntry, EndEntry endEntry, boolean badShape, int segments) {
         super(startEntry, endEntry, badShape);

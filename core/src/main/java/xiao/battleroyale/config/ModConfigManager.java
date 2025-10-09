@@ -11,7 +11,9 @@ import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
+import xiao.battleroyale.data.AbstractDataManager;
 
+import java.nio.file.Paths;
 import java.util.List;
 
 public class ModConfigManager implements IModConfigManager, ISideOnly {
@@ -94,6 +96,49 @@ public class ModConfigManager implements IModConfigManager, ISideOnly {
             hasGenerated = true;
         }
         return hasGenerated;
+    }
+
+    @Override public boolean saveAllConfigs() {
+        boolean hasSaved = saveAllConfigManagers();
+        hasSaved |= saveAllConfigSubManagers();
+        return hasSaved;
+    }
+    @Override public boolean saveAllConfigManagers() {
+        boolean hasSaved = false;
+        for (IConfigManager configManager : getConfigManagers()) {
+            hasSaved |= configManager.saveAllConfigs();
+        }
+        return hasSaved;
+    }
+    @Override public boolean saveAllConfigSubManagers() {
+        boolean hasSaved = false;
+        for (IConfigSubManager<?> configSubManager : getConfigSubManagers()) {
+            hasSaved |= configSubManager.saveAllConfigs();
+        }
+        return hasSaved;
+    }
+    public static String configBackupRoot = Paths.get(AbstractDataManager.MOD_DATA_PATH).resolve("backup").toString();
+    @Override public String getDefaultBackupRoot() {
+        return configBackupRoot;
+    }
+    @Override public boolean backupAllConfigs(String backupRoot) {
+        boolean hasBackuped = backupAllConfigManagers(backupRoot);
+        hasBackuped |= backupAllConfigSubManagers(backupRoot);
+        return hasBackuped;
+    }
+    @Override public boolean backupAllConfigManagers(String backupRoot) {
+        boolean hasBackuped = false;
+        for (IConfigManager configManager : getConfigManagers()) {
+            hasBackuped |= configManager.backupAllConfigs(backupRoot);
+        }
+        return hasBackuped;
+    }
+    @Override public boolean backupAllConfigSubManagers(String backupRoot) {
+        boolean hasBackuped = false;
+        for (IConfigSubManager<?> configSubManager : getConfigSubManagers()) {
+            hasBackuped |= configSubManager.backupAllConfigs(backupRoot);
+        }
+        return hasBackuped;
     }
 
     @Override public boolean clientSideOnly() {

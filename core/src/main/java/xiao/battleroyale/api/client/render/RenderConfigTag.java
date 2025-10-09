@@ -10,6 +10,8 @@ public class RenderConfigTag extends ConfigEntryTag {
     public static String SPECTATE_ENTRY = "spectateEntry";
 
     public static String ITEM_RENDER_DISTANCE = "itemRenderDistance";
+    public static String RENDER_ITEM_BLOCK_IF_EMPTY = "renderItemBlockIfEmpty";
+    public static String ENTITY_RENDER_DISTANCE = "entityRenderDistance";
 
     public static String USE_CLIENT_COLOR = "useClientColor";
     public static String FIXED_COLOR = "fixedColor";

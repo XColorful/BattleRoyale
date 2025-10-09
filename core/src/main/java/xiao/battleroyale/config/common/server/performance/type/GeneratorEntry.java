@@ -16,24 +16,24 @@ import java.util.List;
 public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
 
     // common
-    public final boolean lootVanillaChest;
-    public final boolean removeLootTable;
-    public final boolean clearPreviousContent;
-    public final boolean removeInnocentEntity;
+    public boolean lootVanillaChest;
+    public boolean removeLootTable;
+    public boolean clearPreviousContent;
+    public boolean removeInnocentEntity;
     public final List<String> whiteListRegex;
     public final List<String> blackListRegex;
     // normal
-    public final int maxNormalTickLootChunk;
+    public int maxNormalTickLootChunk;
     // game
-    public final int maxGameTickLootChunk;
-    public final int maxGameLootDistance;
-    public final int tolerantCenterDistance;
-    public final int maxCachedCenter;
-    public final int maxQueuedChunk;
-    public final int bfsFrequency;
-    public final boolean instantNextBfs;
-    public final int maxCachedLootChunk;
-    public final int cleanCachedChunk;
+    public int maxGameTickLootChunk;
+    public int maxGameLootDistance;
+    public int tolerantCenterDistance;
+    public int maxCachedCenter;
+    public int maxQueuedChunk;
+    public int bfsFrequency;
+    public boolean instantNextBfs;
+    public int maxCachedLootChunk;
+    public int cleanCachedChunk;
 
     public GeneratorEntry(boolean lootVanillaChest, boolean removeLootTable, boolean clearPreviousContent, boolean removeInnocentEntity, @NotNull List<String> whiteListRegex, @NotNull List<String> blackListRegex,
                           int maxNormalTickLootChunk,

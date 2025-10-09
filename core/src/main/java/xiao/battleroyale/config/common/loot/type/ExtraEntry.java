@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExtraEntry implements ILootEntry {
-    private final boolean countEmpty;
-    private final boolean keepCheck;
-    private final ILootEntry checkEntry;
-    private final ILootEntry extraEntry;
+    public boolean countEmpty;
+    public boolean keepCheck;
+    public ILootEntry checkEntry;
+    public ILootEntry extraEntry;
 
     public ExtraEntry(boolean countEmpty, boolean keepCheck,
                       @Nullable ILootEntry checkEntry, @Nullable ILootEntry extraEntry) {
