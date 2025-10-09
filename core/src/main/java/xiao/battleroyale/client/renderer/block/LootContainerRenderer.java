@@ -69,7 +69,7 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
 
     @Override
     public boolean shouldRenderOffScreen(@NotNull T blockEntity) {
-        return true;
+        return false;
     }
 
     protected void renderItems(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {

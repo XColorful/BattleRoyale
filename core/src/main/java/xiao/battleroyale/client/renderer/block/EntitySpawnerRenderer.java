@@ -37,6 +37,6 @@ public class EntitySpawnerRenderer extends AbstractBlockRenderer<EntitySpawnerBl
 
     @Override
     public boolean shouldRenderOffScreen(@NotNull EntitySpawnerBlockEntity blockEntity) {
-        return true;
+        return false;
     }
 }
