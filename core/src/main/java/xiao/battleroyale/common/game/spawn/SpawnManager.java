@@ -44,6 +44,9 @@ import xiao.battleroyale.util.Vec3Utils;
 import java.util.List;
 import java.util.UUID;
 
+import static xiao.battleroyale.api.data.io.TempDataTag.PRE_CALCULATE;
+import static xiao.battleroyale.api.data.io.TempDataTag.SPAWN_MANAGER;
+
 /**
  * 管理玩家出生方式、传送相关的Manager
  */
@@ -64,7 +67,7 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
             BattleRoyale.LOGGER.debug("SpawnManager skipped init() at {}", mcSide.toString());
             return;
         }
-        JsonObject jsonObject = TempDataManager.get().getJsonObject("preCalculate", "spawnManager");
+        JsonObject jsonObject = TempDataManager.get().getJsonObject(PRE_CALCULATE, SPAWN_MANAGER);
         if (jsonObject == null) {
             return;
         }
