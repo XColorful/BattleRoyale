@@ -109,6 +109,16 @@ public class ClassUtils {
             }
             return removed;
         }
+
+        public boolean addAll(Collection<? extends T> c) {
+            boolean modified = false;
+            for (T element : c) {
+                if (add(element)) {
+                    modified = true;
+                }
+            }
+            return modified;
+        }
     }
 
     /**
@@ -177,6 +187,16 @@ public class ClassUtils {
                 poll();
             }
         }
+
+        public boolean addAll(Collection<? extends T> c) {
+            boolean modified = false;
+            for (T element : c) {
+                if (add(element)) {
+                    modified = true;
+                }
+            }
+            return modified;
+        }
     }
 
     /**
@@ -228,11 +248,14 @@ public class ClassUtils {
         }
 
         public void putAll(Map<? extends K, ? extends V> m) {
-            clear(); // 先清空，再添加，确保列表和映射同步，且顺序取决于传入Map的迭代顺序
             for (Map.Entry<? extends K, ? extends V> entry : m.entrySet()) {
                 // 调用内部的 put 方法，确保 Map 和 List 的同步更新
                 put(entry.getKey(), entry.getValue());
             }
+        }
+        public void clearAndPutAll(Map<? extends K, ? extends V> m) {
+            clear(); // 先清空，再添加，确保列表和映射同步，且顺序取决于传入Map的迭代顺序
+            putAll(m);
         }
 
         public V mapGet(K key) {
@@ -316,6 +339,16 @@ public class ClassUtils {
                 }
             }
             return removed;
+        }
+
+        public boolean addAll(Collection<? extends V> c) {
+            boolean modified = false;
+            for (V value : c) {
+                if (add(value)) {
+                    modified = true;
+                }
+            }
+            return modified;
         }
     }
 }
