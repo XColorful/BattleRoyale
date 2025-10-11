@@ -34,7 +34,9 @@ public class GameCommand {
                         .executes(GameCommand::selectedConfigs))
                 .then(Commands.literal(SPECTATE)
                         .requires(CommandSourceStack::isPlayer)
-                        .executes(GameCommand::spectateGame));
+                        .executes(GameCommand::spectateGame))
+                .then(Commands.literal(GAME_ID)
+                        .executes(GameCommand::gameId));
 
         // 需要权限
         gameCommand.then(Commands.literal(LOAD)
@@ -218,6 +220,18 @@ public class GameCommand {
             source.sendFailure(Component.translatable("battleroyale.message.switch_gamemode_failed"));
             return 0;
         }
+    }
+
+    private static int gameId(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        if (source.isPlayer()) { // 向调用的玩家发送消息
+            ServerPlayer player = context.getSource().getPlayerOrException();
+            GameNotification.sendGameIdInfo(player);
+        } else {
+            ServerLevel serverLevel = source.getLevel();
+            GameNotification.sendGameIdInfo(serverLevel);
+        }
+        return Command.SINGLE_SUCCESS;
     }
 
     public static String toLobbyCommand() {
