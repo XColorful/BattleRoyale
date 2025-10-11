@@ -5,7 +5,7 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 
 /**
- * 二维 Rectangle
+ * 二维 RectangleGrid
  */
 public class RectangleShape extends AbstractSimpleShape {
 

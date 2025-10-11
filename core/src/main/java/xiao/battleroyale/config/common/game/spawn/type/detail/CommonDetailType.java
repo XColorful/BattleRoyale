@@ -7,7 +7,8 @@ import java.util.Map;
 
 public enum CommonDetailType {
     FIXED(SpawnDetailTag.FIXED),
-    RANDOM(SpawnDetailTag.RANDOM);
+    RANDOM(SpawnDetailTag.RANDOM),
+    DISTRIBUTED(SpawnDetailTag.DISTRIBUTED);
 
     private final String name;
 

@@ -69,6 +69,7 @@ public class BattleRoyale {
         BattleRoyale.compatApi = compatApi;
 
         ModConfigManager.init(mcSide);
+        GameManager.init(mcSide);
 
         ResourceLoader.INSTANCE.packType = mcSide.isClientSide() ? PackType.CLIENT_RESOURCES : PackType.SERVER_DATA;
 

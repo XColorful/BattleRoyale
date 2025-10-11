@@ -13,7 +13,6 @@ import xiao.battleroyale.config.common.game.spawn.type.detail.TeleportDetailEntr
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
@@ -33,7 +32,7 @@ public class DefaultSpawn {
     private static JsonObject generateDefaultSpawnConfig0() {
         TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.RANDOM,
-                new TeleportDetailEntry(new ArrayList<>(), false, true, 0, 20 * 15)
+                new TeleportDetailEntry(false, true, 0, 20 * 15)
         );
 
         SpawnConfig spawnConfig = new SpawnConfig(0, "Random ground spawn", "#FFFFFFAA", -1, true,
@@ -45,13 +44,13 @@ public class DefaultSpawn {
     private static JsonObject generateDefaultSpawnConfig1() {
         TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.FIXED,
-                new TeleportDetailEntry(Arrays.asList(
+                new TeleportDetailEntry(true, true, 0, 20 * 15,
+                        Arrays.asList(
                         new Vec3(0, -60, 0),
                         new Vec3(-50, -60, -50),
                         new Vec3(-50, -60, 50),
                         new Vec3(50, -60, -50),
-                        new Vec3(50, -60, 50)),
-                        true, true, 0, 20 * 15)
+                        new Vec3(50, -60, 50)), false)
         );
 
         SpawnConfig spawnConfig = new SpawnConfig(1, "Fixed ground spawn", "#FFFFFFAA",
