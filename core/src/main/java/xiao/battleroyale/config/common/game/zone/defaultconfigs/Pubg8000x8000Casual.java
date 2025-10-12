@@ -102,7 +102,7 @@ public class Pubg8000x8000Casual {
         addPhase7(zoneConfigJson);
         addPhase8(zoneConfigJson);
         addPhase9(zoneConfigJson);
-        writeJsonToFile(Paths.get(GameConfigManager.get().getConfigDirPath(ZoneConfigManager.get().getNameKey()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
+        writeJsonToFile(Paths.get(String.valueOf(ZoneConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
     // 游戏边界
@@ -145,23 +145,6 @@ public class Pubg8000x8000Casual {
 
     private static void add8000x8000Zone(JsonArray zoneConfigJson) {
         generateBorder(zoneConfigJson, 8000 / 2F, GAME_TIME);
-
-        MessageFuncEntry messageFuncEntry = new MessageFuncEntry(0, 0, 25, 10,
-                true, 10, 80, 20,
-                true, Component.literal("§6Game Start").withStyle(ChatFormatting.BOLD), Component.literal(""),
-                false, Component.literal(""));
-        StartEntry startEntry = new StartEntry()
-                .addPreviousCenter(0, 0)
-                .addPreviousDimension(0, 0)
-                .addDimensionScale(0.99);
-        EndEntry endEntry = new EndEntry().addPreviousCenter(0, 1)
-                .addPreviousDimension(0, 1)
-                .addDimensionScale(0.99);
-        SquareEntry squareEntry = new SquareEntry(startEntry, endEntry, false);
-        ZoneConfig zoneConfig = new ZoneConfig(1, "Game Start Message", "#FFAA00AA",
-                0, 80,
-                messageFuncEntry, squareEntry);
-        zoneConfigJson.add(zoneConfig.toJson());
     }
 
     public static void addPhase(JsonArray zoneConfigJson, int phase, double SHRINK_RANGE, double SHRINK_SCALE, int PRE_ZONE_TIME, int ZONE_TIME,
