@@ -8,6 +8,7 @@ public class DefaultZoneConfigGenerator {
 
     public static void generateDefaultZoneConfig() {
         DefaultZone.generateDefaultConfigs();
+        ElytraAddon.generateDefaultConfigs();
         Pubg8000x8000Casual.generateDefaultConfigs();
         Pubg8000x8000Competitive.generateDefaultConfigs();
         Pubg5340x5340Casual.generateDefaultConfigs();

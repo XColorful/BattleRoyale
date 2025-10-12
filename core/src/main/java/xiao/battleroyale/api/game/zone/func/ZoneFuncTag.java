@@ -15,6 +15,7 @@ public final class ZoneFuncTag {
     public static final String PARTICLE = "particle";
     public static final String EFFECT = "effect";
     public static final String MESSAGE = "message";
+    public static final String INVENTORY = "inventory";
     public static final String ENTITY = "entity";
     public static final String EVENT = "event";
     public static final String AIRDROP = "airdrop";
@@ -58,6 +59,14 @@ public final class ZoneFuncTag {
     public static final String SUBTITLE = "subtitle";
     public static final String SEND_ACTION_BAR = "sendActionBar";
     public static final String ACTION_BAR = "actionBar";
+
+    // inventory
+    public static final String SKIP_NON_EMPTY_SLOT = "skipNonEmptySlot";
+    public static final String DROP_BEFORE_REPLACE = "dropBeforeReplace";
+    public static final String FIRST_SLOT_INDEX = "firstSlotIndex";
+    public static final String LAST_SLOT_INDEX = "lastSlotIndex";
+    public static final String INVENTORY_LOOT_ENTRY = "lootEntry";
+    public static final String INVENTORY_LOOT_SPAWNER_LOOT_ID = "lootSpawnerLootId";
 
     // event
     public static final String PROTOCOL = "protocol";

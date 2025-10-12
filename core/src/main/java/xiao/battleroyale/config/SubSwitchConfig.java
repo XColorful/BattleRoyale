@@ -49,7 +49,8 @@ public class SubSwitchConfig {
 
         if (selectedFileConfigs != null) {
             context.getConfigFolderData().setConfigFileName(fileName);
-            context.getConfigFolderData(folderId).currentConfigs.putAll(selectedFileConfigs.asMap());
+
+            context.getConfigFolderData(folderId).currentConfigs.clearAndPutAll(selectedFileConfigs.asMap());
             BattleRoyale.LOGGER.debug("Switched to config file '{}' for type: {}", fileName, context.getFolderType(folderId));
             if (!selectedFileConfigs.isEmpty()) {
                 T configEntry = selectedFileConfigs.listGet(0);
