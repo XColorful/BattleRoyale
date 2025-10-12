@@ -393,7 +393,7 @@ public class DefaultZone {
         ILootEntry lootEntry = new MultiEntry(Arrays.asList(
                 new EmptyEntry(LootEntryType.ITEM.getName()),
                 new EmptyEntry(LootEntryType.ITEM.getName()),
-                new ItemEntry("minecraft:elytra", "{Damage:332}", 1),
+                new ItemEntry("minecraft:elytra", String.format("{components:{\"minecraft:damage\":%s}}", 332), 1),
                 new ItemEntry("minecraft:iron_helmet", "", 1)
         ));
         InventoryFuncEntry inventoryFuncEntry = new InventoryFuncEntry(0, 0, 20, 0,
