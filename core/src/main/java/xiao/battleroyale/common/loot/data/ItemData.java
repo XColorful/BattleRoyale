@@ -12,8 +12,8 @@ public class ItemData implements IItemLootData {
     private final @Nullable Item item;
     private final @NotNull CompoundTag nbt;
     private final int count;
-    private static final String EMPTY_RL = "minecraft:air";
-    private static final String EMPTY_TYPE = "air";
+    public static final String EMPTY_RL = "minecraft:air";
+    public static final String EMPTY_TYPE = "air";
     private final boolean isEmpty;
 
     public ItemData(String rl, @NotNull CompoundTag nbt, int count) {
