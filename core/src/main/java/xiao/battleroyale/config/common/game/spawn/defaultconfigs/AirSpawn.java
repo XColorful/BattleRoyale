@@ -56,21 +56,21 @@ public class AirSpawn {
 
     private static void add8000x8000Circle(JsonArray spawnConfigJson) {
         spawnConfigJson.add(addCircle(0, 8000, 4000, 90,
-                320, 64));
+                320 + 64, 64));
     }
 
     private static void add8000x8000Square(JsonArray spawnConfigJson) {
         spawnConfigJson.add(addSquare(1, 8000, 4000, 90,
-                320, 100));
+                320 + 64, 100));
     }
 
     private static void add5340x5340Circle(JsonArray spawnConfigJson) {
         spawnConfigJson.add(addCircle(2, 5340, 5340 / 2, 90,
-                255, 32));
+                255 + 64, 32));
     }
 
     private static void add881x881Circle(JsonArray spawnConfigJson) {
         spawnConfigJson.add(addCircle(3, 881, 881 / 2, 90,
-                128, 16));
+                128 + 64, 16));
     }
 }

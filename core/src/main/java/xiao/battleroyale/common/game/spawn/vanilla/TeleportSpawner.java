@@ -150,8 +150,19 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
         // 由于所有点位在init()预计算，因此全部可视作 Fixed/提前确定 类型，全都需要应用偏移
         Vec3 globalOffest = GameManager.get().getGlobalCenterOffset();
         IGameZone gameZone = ZoneManager.get().getGameZone(preZoneCenterId);
-        if (gameZone != null && gameZone.isDetermined()) {
-            globalOffest = gameZone.getStartCenterPos();
+        if (gameZone != null) {
+            if (gameZone.isDetermined()) {
+                globalOffest = gameZone.getStartCenterPos();
+            } else if (gameZone.getZoneDelay() <= gameTime) {
+                ZoneManager.ZoneContext zoneContext = ZoneManager.get().getZoneContext();
+                if (zoneContext != null) {
+                    BattleRoyale.LOGGER.debug("TeleportSpawner: attempt to calculate zone shape in advance (preZoneCenterId: {})", preZoneCenterId);
+                    gameZone.calculateShape(zoneContext);
+                }
+                if (gameZone.isDetermined()) {
+                    globalOffest = gameZone.getStartCenterPos();
+                }
+            }
         }
 
         boolean allTeleported = true;
