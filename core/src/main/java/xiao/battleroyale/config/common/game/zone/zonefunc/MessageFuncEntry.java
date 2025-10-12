@@ -53,12 +53,7 @@ public class MessageFuncEntry extends AbstractFuncEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(ZoneFuncTag.TYPE_NAME, getType());
-        jsonObject.addProperty(ZoneFuncTag.MOVE_DELAY, moveDelay);
-        jsonObject.addProperty(ZoneFuncTag.MOVE_TIME, moveTime);
-        jsonObject.addProperty(ZoneFuncTag.TICK_FREQUENCY, tickFreq);
-        jsonObject.addProperty(ZoneFuncTag.TICK_OFFSET, tickOffset);
+        JsonObject jsonObject = super.toJson();
 
         jsonObject.addProperty(ZoneFuncTag.SET_TITLE_ANIMATION, setTitleAnimation);
         if (setTitleAnimation) {

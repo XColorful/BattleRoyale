@@ -30,13 +30,13 @@ public class EmptyEntry implements IItemLootEntry {
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
         switch (type) {
             case ITEM -> {
-                return Collections.singletonList(new ItemData("", new CompoundTag(), 0));
+                return Collections.singletonList(new ItemData(ItemData.EMPTY_RL, new CompoundTag(), 0));
             }
             case ENTITY -> {
-                return Collections.singletonList(new EntityData("", new CompoundTag(), 0, 0));
+                return Collections.singletonList(new EntityData(EntityData.EMPTY_RL, new CompoundTag(), 0, 0));
             }
             default -> {
-                return Collections.singletonList(new ItemData("", new CompoundTag(), 0));
+                return Collections.singletonList(new ItemData(ItemData.EMPTY_RL, new CompoundTag(), 0));
             }
         }
     }
@@ -50,6 +50,7 @@ public class EmptyEntry implements IItemLootEntry {
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        jsonObject.addProperty(LootEntryTag.TYPE, type.getName());
         return jsonObject;
     }
 

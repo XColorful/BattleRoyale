@@ -9,6 +9,8 @@ import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.loot.CommonLootManager;
+import xiao.battleroyale.data.io.TempDataManager;
+
 import java.util.UUID;
 
 import static xiao.battleroyale.command.CommandArg.*;
@@ -28,6 +30,7 @@ public class LootCommand {
         if (!GameManager.get().isInGame()) {
             GameManager.get().setGameId(UUID.randomUUID());
             BattleRoyale.LOGGER.info("Generated random UUID for GameManager via command");
+            TempDataManager.get().saveTempData();
         }
         UUID currentWorldGameId = GameManager.get().getGameId();
 
