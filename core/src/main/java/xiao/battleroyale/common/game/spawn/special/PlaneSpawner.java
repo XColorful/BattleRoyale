@@ -1,15 +1,19 @@
 package xiao.battleroyale.common.game.spawn.special;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
+import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.common.game.spawn.AbstractSimpleSpawner;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.detail.PlaneDetailEntry;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
+import xiao.battleroyale.util.ChatUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +54,16 @@ public class PlaneSpawner extends AbstractSimpleSpawner<PlaneDetailEntry> {
             }
             case RANDOM -> {
                 ;
+            }
+            case DISTRIBUTED -> {
+                ;
+            }
+            default -> {
+                ServerLevel serverLevel = GameManager.get().getServerLevel();
+                if (serverLevel != null) {
+                    ChatUtils.sendMessageToAllPlayers(serverLevel, "PlaneSpawner config error: unsupported detailType");
+                }
+                BattleRoyale.LOGGER.warn("Unsupported CommonDetailType in PlaneSpawner");
             }
         }
 

@@ -23,9 +23,6 @@ import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.StringUtils;
 
-import static xiao.battleroyale.util.Vec3Utils.randomAdjustXZExpandY;
-import static xiao.battleroyale.util.Vec3Utils.randomCircleXZ;
-
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -42,6 +39,12 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
     protected final boolean findGround;
     protected final double randomRange;
     protected final int hangTime;
+    protected final int fixedSimulationCount;
+    protected final double playerFactorContribution;
+    protected final boolean useGoldenSpiral;
+    protected final boolean allowOnBorder;
+    protected final double globalShrinkRatio;
+    protected boolean needShuffle;
 
     protected final List<Vec3> spawnPos = new ArrayList<>(); // 运行时点位数据
     protected int spawnPointIndex = 0;
@@ -54,11 +57,18 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
                            TeleportDetailEntry detailEntry) {
         super(shapeType, center, dimension, zoneId, detailType, detailEntry);
 
-        this.fixedPos.addAll(this.detailEntry.fixedPos);
         this.teamTogether = this.detailEntry.teamTogether;
         this.findGround = this.detailEntry.findGround;
         this.randomRange = this.detailEntry.randomRange;
         this.hangTime = this.detailEntry.hangTime;
+
+        this.fixedPos.addAll(this.detailEntry.fixedPos);
+        this.fixedSimulationCount = this.detailEntry.fixedSimulationCount;
+        this.playerFactorContribution = this.detailEntry.playerFactorContribution;
+        this.useGoldenSpiral = this.detailEntry.useGoldenSpiral;
+        this.allowOnBorder = this.detailEntry.allowOnBorder;
+        this.globalShrinkRatio = this.detailEntry.globalShrinkRatio;
+        this.needShuffle = this.detailEntry.needShuffle;
     }
 
     /**
@@ -78,6 +88,9 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
             case RANDOM -> {
                 success = TeleportSpawnerCalculator.calculateRandomPos(this, random, spawnPointsTotal);
             }
+            case DISTRIBUTED -> {
+                success = TeleportSpawnerCalculator.calculatedDistributedPos(this, random, spawnPointsTotal, (int) (fixedSimulationCount + spawnPointsTotal * playerFactorContribution));
+            }
             default -> {
                 ServerLevel serverLevel = GameManager.get().getServerLevel();
                 if (serverLevel != null) {
@@ -87,6 +100,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
             }
         }
         if (!success) {
+            clear();
             return;
         }
 
@@ -136,8 +150,19 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
         // 由于所有点位在init()预计算，因此全部可视作 Fixed/提前确定 类型，全都需要应用偏移
         Vec3 globalOffest = GameManager.get().getGlobalCenterOffset();
         IGameZone gameZone = ZoneManager.get().getGameZone(preZoneCenterId);
-        if (gameZone != null && gameZone.isDetermined()) {
-            globalOffest = gameZone.getStartCenterPos();
+        if (gameZone != null) {
+            if (gameZone.isDetermined()) {
+                globalOffest = gameZone.getStartCenterPos();
+            } else if (gameZone.getZoneDelay() <= gameTime) {
+                ZoneManager.ZoneContext zoneContext = ZoneManager.get().getZoneContext();
+                if (zoneContext != null) {
+                    BattleRoyale.LOGGER.debug("TeleportSpawner: attempt to calculate zone shape in advance (preZoneCenterId: {})", preZoneCenterId);
+                    gameZone.calculateShape(zoneContext);
+                }
+                if (gameZone.isDetermined()) {
+                    globalOffest = gameZone.getStartCenterPos();
+                }
+            }
         }
 
         boolean allTeleported = true;

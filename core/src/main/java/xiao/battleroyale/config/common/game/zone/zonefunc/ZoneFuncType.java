@@ -20,6 +20,7 @@ public enum ZoneFuncType {
     PARTICLE(ZoneFuncTag.PARTICLE, ParticleFuncEntry::fromJson),
     EFFECT(ZoneFuncTag.EFFECT, EffectFuncEntry::fromJson),
     MESSAGE(ZoneFuncTag.MESSAGE, MessageFuncEntry::fromJson),
+    INVENTORY(ZoneFuncTag.INVENTORY, InventoryFuncEntry::fromJson),
     NO_FUNC(ZoneFuncTag.NO_FUNC, NoFuncEntry::fromJson),
     // special
     EVENT(ZoneFuncTag.EVENT, EventFuncEntry::fromJson),

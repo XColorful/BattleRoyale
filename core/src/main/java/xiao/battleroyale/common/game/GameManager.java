@@ -67,7 +67,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
 
     private GameManager() {
-        globalCenterOffset = Vec3.ZERO; // 延迟初始化，防止意外崩溃
+        this.globalCenterOffset = Vec3.ZERO; // 延迟初始化，防止意外崩溃
         // 恢复全局偏移
         String offsetString = TempDataManager.get().getString(GAME_MANAGER, GLOBAL_OFFSET);
         if (offsetString != null) {
@@ -76,6 +76,17 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
                 setGlobalCenterOffset(offset);
             }
         }
+        this.gameId = UUID.randomUUID();
+        // 读取上一个gameId
+        String uuidString = TempDataManager.get().getString(GAME_MANAGER, LAST_GAME_ID);
+        if (uuidString != null) {
+            try {
+                setGameId(UUID.fromString(uuidString));
+            } catch (Exception e) {
+                BattleRoyale.LOGGER.debug("Failed to read lastGameId from temp data");
+            }
+        }
+        TempDataManager.get().writeString(GAME_MANAGER, LAST_GAME_ID, getGameId().toString());
     }
 
     public static void init(McSide mcSide) {
@@ -88,7 +99,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
 
     protected int gameTime = 0; // 游戏运行时维护当前游戏时间
-    private UUID gameId;
+    private @NotNull UUID gameId;
     private boolean inGame;
     private String gameLevelKeyString = "";
     private @Nullable ResourceKey<Level> gameLevelKey;
@@ -111,9 +122,6 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return this.gameTime;
     }
     @Override public @NotNull UUID getGameId() {
-        if (this.gameId == null) {
-            generateGameId();
-        }
         return this.gameId;
     }
     @Override public boolean isInGame() {
@@ -147,6 +155,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             return;
         }
         this.gameId = gameId;
+        TempDataManager.get().writeString(GAME_MANAGER, LAST_GAME_ID, this.gameId.toString());
     }
 
     /**

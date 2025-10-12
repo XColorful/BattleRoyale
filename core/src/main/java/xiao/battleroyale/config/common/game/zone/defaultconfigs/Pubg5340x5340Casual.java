@@ -93,7 +93,7 @@ public class Pubg5340x5340Casual {
         addPhase7(zoneConfigJson);
         addPhase8(zoneConfigJson);
         addPhase9(zoneConfigJson);
-        writeJsonToFile(Paths.get(GameConfigManager.get().getConfigDirPath(ZoneConfigManager.get().getNameKey()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
+        writeJsonToFile(Paths.get(String.valueOf(ZoneConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
     public static void generateBorderCircle(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME) {
@@ -127,7 +127,7 @@ public class Pubg5340x5340Casual {
                 .addPreviousDimension(0, 1)
                 .addDimensionScale(0.99);
         circleEntry = new CircleEntry(startEntry, endEntry, false);
-        zoneConfig = new ZoneConfig(1, "Game Start Message", "FFAA00AA",
+        zoneConfig = new ZoneConfig(1, "Game Start Message", "#FFAA00AA",
                 0, 80,
                 messageFuncEntry, circleEntry);
         zoneConfigJson.add(zoneConfig.toJson());
