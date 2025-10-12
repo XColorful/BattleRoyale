@@ -37,7 +37,7 @@ public class TeleportEntry extends AbstractCommonSpawnEntry<TeleportDetailEntry>
         JsonObject jsonObject = super.toJson();
         // detail
         jsonObject.addProperty(SpawnDetailTag.TYPE_NAME, detailType.getName());
-        this.detailEntry.toJson(jsonObject, this.detailType);
+        this.detailEntry.toJson(jsonObject, this.shapeType, this.detailType);
 
         return jsonObject;
     }

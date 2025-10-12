@@ -3,7 +3,8 @@
 	"render_type": "translucent",
 	"texture_size": [64, 64],
 	"textures": {
-		"1": "battleroyale:block/zone_controller"
+		"1": "battleroyale:block/zone_controller",
+		"particle": "battleroyale:block/zone_controller"
 	},
 	"elements": [
 		{

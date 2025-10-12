@@ -13,7 +13,6 @@ import xiao.battleroyale.config.common.game.spawn.type.detail.TeleportDetailEntr
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
@@ -24,16 +23,19 @@ public class DefaultSpawn {
 
     public static void generateDefaultConfigs() {
         JsonArray spawnConfigJson = new JsonArray();
-        spawnConfigJson.add(generateDefaultSpawnConfig0());
-        spawnConfigJson.add(generateDefaultSpawnConfig1());
-        spawnConfigJson.add(generateDefaultSpawnConfig2());
+        spawnConfigJson.add(generateRandomTeleport0());
+        spawnConfigJson.add(generateFixedTeleport1());
+        spawnConfigJson.add(generateGridDistribution2());
+        spawnConfigJson.add(generateDoubleCenterDistribution3());
+        spawnConfigJson.add(generateGoldenSpiralDistribution4());
+        spawnConfigJson.add(generatePlaneSpawn5());
         writeJsonToFile(Paths.get(String.valueOf(SpawnConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), spawnConfigJson);
     }
 
-    private static JsonObject generateDefaultSpawnConfig0() {
+    private static JsonObject generateRandomTeleport0() {
         TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.RANDOM,
-                new TeleportDetailEntry(new ArrayList<>(), false, true, 0, 20 * 15)
+                new TeleportDetailEntry(false, true, 0, 20 * 15)
         );
 
         SpawnConfig spawnConfig = new SpawnConfig(0, "Random ground spawn", "#FFFFFFAA", -1, true,
@@ -42,16 +44,16 @@ public class DefaultSpawn {
         return spawnConfig.toJson();
     }
 
-    private static JsonObject generateDefaultSpawnConfig1() {
+    private static JsonObject generateFixedTeleport1() {
         TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.FIXED,
-                new TeleportDetailEntry(Arrays.asList(
+                new TeleportDetailEntry(true, true, 0, 20 * 15,
+                        Arrays.asList(
                         new Vec3(0, -60, 0),
                         new Vec3(-50, -60, -50),
                         new Vec3(-50, -60, 50),
                         new Vec3(50, -60, -50),
-                        new Vec3(50, -60, 50)),
-                        true, true, 0, 20 * 15)
+                        new Vec3(50, -60, 50)), false)
         );
 
         SpawnConfig spawnConfig = new SpawnConfig(1, "Fixed ground spawn", "#FFFFFFAA",
@@ -60,7 +62,43 @@ public class DefaultSpawn {
         return spawnConfig.toJson();
     }
 
-    private static JsonObject generateDefaultSpawnConfig2() {
+    private static JsonObject generateGridDistribution2() {
+        TeleportEntry teleportEntry = new TeleportEntry(SpawnShapeType.RECTANGLE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
+                CommonDetailType.DISTRIBUTED,
+                new TeleportDetailEntry(true, false, 10, 20 * 15,
+                        15, 0, false, true, 0.8, false));
+
+        SpawnConfig spawnConfig = new SpawnConfig(2, "Grid distributed teleport", "#FFFFFFAA",
+                teleportEntry);
+
+        return spawnConfig.toJson();
+    }
+
+    private static JsonObject generateDoubleCenterDistribution3() {
+        TeleportEntry teleportEntry = new TeleportEntry(SpawnShapeType.CIRCLE, new Vec3(0, -60 + 255, 0), new Vec3(128, 0, 128),
+                CommonDetailType.DISTRIBUTED,
+                new TeleportDetailEntry(true, false, 0, 20 * 15,
+                        15, 0, false, true, 0.8, true));
+
+        SpawnConfig spawnConfig = new SpawnConfig(3, "Double center grid distribution teleport", "#FFFFFFAA",
+                teleportEntry);
+
+        return spawnConfig.toJson();
+    }
+
+    private static JsonObject generateGoldenSpiralDistribution4() {
+        TeleportEntry teleportEntry = new TeleportEntry(SpawnShapeType.CIRCLE, new Vec3(0, -60 + 255, 0), new Vec3(128, 0, 128),
+                CommonDetailType.DISTRIBUTED,
+                new TeleportDetailEntry(true, false, 0, 20 * 15,
+                        15, 0, true, true, 0.8, false));
+
+        SpawnConfig spawnConfig = new SpawnConfig(4, "Golden Spiral Distribution teleport", "#FFFFFFAA",
+                teleportEntry);
+
+        return spawnConfig.toJson();
+    }
+
+    private static JsonObject generatePlaneSpawn5() {
         PlaneEntry planeEntry = new PlaneEntry(SpawnShapeType.SQUARE, new Vec3(0, 65, 0), new Vec3(128, 0, 128),
                 CommonDetailType.RANDOM,
                 new PlaneDetailEntry(255, 2.5, true));

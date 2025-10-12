@@ -42,4 +42,6 @@ public interface ILootEntry extends IConfigEntry {
             BattleRoyale.LOGGER.warn("Failed to parse {} entry", this.getType());
         }
     }
+
+    // ILootEntry copy();
 }

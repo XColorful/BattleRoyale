@@ -1,6 +1,9 @@
 package xiao.battleroyale.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -92,8 +95,31 @@ public class ClassUtils {
         }
 
         @Override
-        public Iterator<T> iterator() {
-            return list.iterator();
+        public @NotNull Iterator<T> iterator() {
+            return new ArraySetIterator();
+        }
+        private class ArraySetIterator implements Iterator<T> {
+            private final Iterator<T> listIterator = list.iterator();
+            private T lastReturned = null;
+
+            @Override public boolean hasNext() {
+                return listIterator.hasNext();
+            }
+            @Override public T next() {
+                lastReturned = listIterator.next();
+                return lastReturned;
+            }
+            @Override public void remove() {
+                if (lastReturned == null) {
+                    throw new IllegalStateException();
+                }
+                listIterator.remove();
+                set.remove(lastReturned);
+                lastReturned = null;
+            }
+            @Override public void forEachRemaining(Consumer<? super T> action) {
+                listIterator.forEachRemaining(action);
+            }
         }
 
         public boolean removeIf(Predicate<? super T> filter) {
@@ -109,6 +135,21 @@ public class ClassUtils {
             }
             return removed;
         }
+
+        public boolean addAll(Collection<? extends T> c) {
+            boolean modified = false;
+            for (T element : c) {
+                modified |= add(element);
+            }
+            return modified;
+        }
+        public boolean addAll(ArraySet<? extends T> other) {
+            boolean modified = false;
+            for (T element : other) {
+                modified |= add(element);
+            }
+            return modified;
+        }
     }
 
     /**
@@ -117,7 +158,7 @@ public class ClassUtils {
      * 不需要随机删除时应优于LinkedHashSet
      * @param <T>
      */
-    public static class QueueSet<T> {
+    public static class QueueSet<T> implements Iterable<T> {
         private final Set<T> set;
         private final Queue<T> queue;
 
@@ -177,6 +218,49 @@ public class ClassUtils {
                 poll();
             }
         }
+
+        @Override
+        public @NotNull Iterator<T> iterator() {
+            return new QueueSetIterator();
+        }
+        private class QueueSetIterator implements Iterator<T> {
+            private final Iterator<T> queueIterator = queue.iterator();
+            private T lastReturned = null;
+
+            @Override public boolean hasNext() {
+                return queueIterator.hasNext();
+            }
+            @Override public T next() {
+                lastReturned = queueIterator.next();
+                return lastReturned;
+            }
+            @Override public void remove() {
+                if (lastReturned == null) {
+                    throw new IllegalStateException();
+                }
+                queueIterator.remove();
+                set.remove(lastReturned);
+                lastReturned = null;
+            }
+            @Override public void forEachRemaining(Consumer<? super T> action) {
+                queueIterator.forEachRemaining(action);
+            }
+        }
+
+        public boolean addAll(Collection<? extends T> c) {
+            boolean modified = false;
+            for (T element : c) {
+                modified |= add(element);
+            }
+            return modified;
+        }
+        public boolean addAll(QueueSet<? extends T> other) {
+            boolean modified = false;
+            for (T element : other) {
+                modified |= add(element);
+            }
+            return modified;
+        }
     }
 
     /**
@@ -228,11 +312,14 @@ public class ClassUtils {
         }
 
         public void putAll(Map<? extends K, ? extends V> m) {
-            clear(); // 先清空，再添加，确保列表和映射同步，且顺序取决于传入Map的迭代顺序
             for (Map.Entry<? extends K, ? extends V> entry : m.entrySet()) {
                 // 调用内部的 put 方法，确保 Map 和 List 的同步更新
                 put(entry.getKey(), entry.getValue());
             }
+        }
+        public void clearAndPutAll(Map<? extends K, ? extends V> m) {
+            clear(); // 先清空，再添加，确保列表和映射同步，且顺序取决于传入Map的迭代顺序
+            putAll(m);
         }
 
         public V mapGet(K key) {
@@ -296,8 +383,33 @@ public class ClassUtils {
         }
 
         @Override
-        public Iterator<V> iterator() {
-            return list.iterator();
+        public @NotNull Iterator<V> iterator() {
+            return new ArrayMapValueIterator();
+        }
+        private class ArrayMapValueIterator implements Iterator<V> {
+            private final Iterator<V> listIterator = list.iterator();
+            private V lastReturned = null;
+
+            @Override public boolean hasNext() {
+                return listIterator.hasNext();
+            }
+            @Override public V next() {
+                lastReturned = listIterator.next();
+                return lastReturned;
+            }
+            @Override public void remove() {
+                if (lastReturned == null) {
+                    throw new IllegalStateException();
+                }
+                K keyToRemove = keyExtractor.apply(lastReturned);
+
+                listIterator.remove();
+                map.remove(keyToRemove);
+                lastReturned = null;
+            }
+            @Override public void forEachRemaining(Consumer<? super V> action) {
+                listIterator.forEachRemaining(action);
+            }
         }
 
         public boolean removeIf(Predicate<? super V> filter) {
@@ -316,6 +428,21 @@ public class ClassUtils {
                 }
             }
             return removed;
+        }
+
+        public boolean addAll(Collection<? extends V> c) {
+            boolean modified = false;
+            for (V value : c) {
+                modified |= add(value);
+            }
+            return modified;
+        }
+        public boolean addAll(ArrayMap<? extends K, ? extends V> other) {
+            boolean modified = false;
+            for (V value : other) {
+                modified |= add(value);
+            }
+            return modified;
         }
     }
 }

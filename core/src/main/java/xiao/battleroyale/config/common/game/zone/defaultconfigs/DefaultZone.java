@@ -6,12 +6,17 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.*;
 import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry.EffectFuncEntryBuilder;
 import xiao.battleroyale.config.common.game.zone.zonefunc.event.EventFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.*;
+import xiao.battleroyale.config.common.loot.type.EmptyEntry;
+import xiao.battleroyale.config.common.loot.type.ItemEntry;
+import xiao.battleroyale.config.common.loot.type.LootEntryType;
+import xiao.battleroyale.config.common.loot.type.MultiEntry;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -25,24 +30,25 @@ public class DefaultZone {
 
     public static void generateDefaultConfigs() {
         JsonArray zoneConfigJson = new JsonArray();
-        zoneConfigJson.add(generateDefaultZoneConfig0());
-        zoneConfigJson.add(generateDefaultZoneConfig1());
-        zoneConfigJson.add(generateDefaultZoneConfig2());
-        zoneConfigJson.add(generateDefaultZoneConfig3());
-        zoneConfigJson.add(generateDefaultZoneConfig4());
-        zoneConfigJson.add(generateDefaultZoneConfig5());
-        zoneConfigJson.add(generateDefaultZoneConfig6());
-        zoneConfigJson.add(generateDefaultZoneConfig7());
-        zoneConfigJson.add(generateDefaultZoneConfig10());
-        zoneConfigJson.add(generateDefaultZoneConfig11());
-        zoneConfigJson.add(generateDefaultZoneConfig12());
-        zoneConfigJson.add(generateDefaultZoneConfig13());
-        zoneConfigJson.add(generateDefaultZoneConfig14());
-        zoneConfigJson.add(generateDefaultZoneConfig15());
+        zoneConfigJson.add(generateOpaqueBorder0());
+        zoneConfigJson.add(generateShrinkCircle1());
+        zoneConfigJson.add(generateFloatingRectangle2());
+        zoneConfigJson.add(generateRelativeFirework3());
+        zoneConfigJson.add(generateUnsafeHexagon4());
+        zoneConfigJson.add(generatePolygonTrap5());
+        zoneConfigJson.add(generateEllipseMonitor6());
+        zoneConfigJson.add(generateUnbreakableStar7());
+        zoneConfigJson.add(generateSphereBoost10());
+        zoneConfigJson.add(generateCubeParticle11());
+        zoneConfigJson.add(generateCuboidEffect12());
+        zoneConfigJson.add(generateEllipsoidRotation13());
+        zoneConfigJson.add(generateZoneNotification14());
+        zoneConfigJson.add(generateZoneEvent15());
+        zoneConfigJson.add(generateInitialEquipment16());
         writeJsonToFile(Paths.get(String.valueOf(ZoneConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
-    private static JsonObject generateDefaultZoneConfig0() {
+    private static JsonObject generateOpaqueBorder0() {
         SafeFuncEntry safeFuncEntry = new SafeFuncEntry(0, 0, 20, 0, 1.0F); // 直接结束缩圈
 
         StartEntry startEntry = new StartEntry();
@@ -61,7 +67,7 @@ public class DefaultZone {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateDefaultZoneConfig1() {
+    private static JsonObject generateShrinkCircle1() {
         SafeFuncEntry safeFuncEntry = new SafeFuncEntry(600, 1200, 20, -1, 1.0F); // 30秒后刷圈，缩圈1分钟
 
         StartEntry startEntry = new StartEntry();
@@ -84,7 +90,7 @@ public class DefaultZone {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateDefaultZoneConfig2() {
+    private static JsonObject generateFloatingRectangle2() {
         UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(600, 1200, 20, -1, 1.0F); // 30秒后刷圈，缩圈1分钟
 
         // 中心点(0, 0)，初始圆包含 Simple Border 的边界正方形，缩圈后半径为原先 0.5 倍
@@ -109,7 +115,7 @@ public class DefaultZone {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateDefaultZoneConfig3() {
+    private static JsonObject generateRelativeFirework3() {
         FireworkFuncEntry fireworkFuncEntry = new FireworkFuncEntry(600, 1200, 20, -1, // 30秒后刷圈，缩圈1分钟
                 true, 1, 20, 5, 3, false);
 
@@ -134,7 +140,7 @@ public class DefaultZone {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateDefaultZoneConfig4() {
+    private static JsonObject generateUnsafeHexagon4() {
         UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(600, 600, 20, -1, 10.0F);
 
         StartEntry startEntry = new StartEntry();
@@ -161,7 +167,7 @@ public class DefaultZone {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateDefaultZoneConfig5() {
+    private static JsonObject generatePolygonTrap5() {
         UnsafeFuncEntry unsafeFuncEntry = new UnsafeFuncEntry(600, 600, 20, -1, 0.001F);
 
         StartEntry startEntry = new StartEntry();
@@ -181,7 +187,7 @@ public class DefaultZone {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateDefaultZoneConfig6() {
+    private static JsonObject generateEllipseMonitor6() {
         FireworkFuncEntry fireworkFuncEntry = new FireworkFuncEntry(0, 400, 10, -1,
                 false, 1, 0, 0, 0, false);
 
@@ -205,7 +211,7 @@ public class DefaultZone {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateDefaultZoneConfig7() {
+    private static JsonObject generateUnbreakableStar7() {
         MutekiFuncEntry mutekiFuncEntry = new MutekiFuncEntry(200, 400, 20, -1,
                 200);
 
@@ -232,7 +238,7 @@ public class DefaultZone {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateDefaultZoneConfig10() {
+    private static JsonObject generateSphereBoost10() {
         BoostFuncEntry boostFuncEntry = new BoostFuncEntry(200, 400, 20, -1, 80);
 
         StartEntry startEntry = new StartEntry();
@@ -253,7 +259,7 @@ public class DefaultZone {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateDefaultZoneConfig11() {
+    private static JsonObject generateCubeParticle11() {
         ParticleFuncEntry particleFuncEntry = new ParticleFuncEntry(200, 400, 20, -1,
                 Arrays.asList(1, 1, 2), 1,"zone11", 50);
 
@@ -280,7 +286,7 @@ public class DefaultZone {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateDefaultZoneConfig12() {
+    private static JsonObject generateCuboidEffect12() {
         EffectFuncEntry effectFuncEntry = new EffectFuncEntryBuilder(200, 400, 20, -1)
                 .add("minecraft:speed", 20, 1)
                 .add("minecraft:jump_boost", 20, 1)
@@ -309,7 +315,7 @@ public class DefaultZone {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateDefaultZoneConfig13() {
+    private static JsonObject generateEllipsoidRotation13() {
         NoFuncEntry noFuncEntry = new NoFuncEntry(0, 1200);
 
         StartEntry startEntry = new StartEntry();
@@ -331,7 +337,7 @@ public class DefaultZone {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateDefaultZoneConfig14() {
+    private static JsonObject generateZoneNotification14() {
         MessageFuncEntry messageFuncEntry = new MessageFuncEntry(0, 40, 25, 10,
                 true, 10, 80, 20,
                 true, Component.literal("§6Game Start").withStyle(ChatFormatting.BOLD), Component.literal(""),
@@ -354,7 +360,7 @@ public class DefaultZone {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateDefaultZoneConfig15() {
+    private static JsonObject generateZoneEvent15() {
         CompoundTag tag = new CompoundTag();
         tag.putString("description", "Create event for other mod to subscribe");
         tag.putBoolean("boolTrue", true);
@@ -379,6 +385,34 @@ public class DefaultZone {
         ZoneConfig zoneConfig = new ZoneConfig(15, "Event Zone example", "#FFFFFFFF",
                 0, 0,
                 eventFuncEntry, squareEntry);
+
+        return zoneConfig.toJson();
+    }
+
+    private static JsonObject generateInitialEquipment16() {
+        ILootEntry lootEntry = new MultiEntry(Arrays.asList(
+                new EmptyEntry(LootEntryType.ITEM.getName()),
+                new EmptyEntry(LootEntryType.ITEM.getName()),
+                new ItemEntry("minecraft:elytra", "{Damage:332}", 1),
+                new ItemEntry("minecraft:iron_helmet", "", 1)
+        ));
+        InventoryFuncEntry inventoryFuncEntry = new InventoryFuncEntry(0, 0, 20, 0,
+                false, false, 36, 39,
+                lootEntry, -1);
+
+        StartEntry startEntry = new StartEntry();
+        startEntry.addPreviousCenter(0, 0);
+        startEntry.addFixedDimension(new Vec3(0, 255, 0));
+        EndEntry endEntry = new EndEntry();
+        endEntry.addPreviousCenter(0, 0);
+        endEntry.addPreviousDimension(0, 1);
+        endEntry.addDimensionScale(1.01);
+
+        SquareEntry squareEntry = new SquareEntry(startEntry, endEntry, false);
+
+        ZoneConfig zoneConfig = new ZoneConfig(16, "Initial elytra equipment", "#FFAA00AA",
+                80, 20,
+                inventoryFuncEntry, squareEntry);
 
         return zoneConfig.toJson();
     }

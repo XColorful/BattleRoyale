@@ -24,6 +24,7 @@ import xiao.battleroyale.util.GameUtils;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static xiao.battleroyale.util.CommandUtils.*;
 import static xiao.battleroyale.util.GameUtils.buildGamePlayerText;
@@ -200,5 +201,23 @@ public class GameNotification {
         if (zoneConfigList != null) {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_zone_config", zoneConfigFileName, zoneConfigList.size()));
         }
+    }
+
+    public static void sendGameIdInfo(ServerLevel serverLevel) {
+        if (serverLevel == null) {
+            return;
+        }
+
+        UUID gameId = GameManager.get().getGameId();
+        ChatUtils.sendMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.current_game_id", gameId));
+    }
+
+    public static void sendGameIdInfo(ServerPlayer player) {
+        if (player == null) {
+            return;
+        }
+
+        UUID gameId = GameManager.get().getGameId();
+        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.current_game_id", gameId));
     }
 }

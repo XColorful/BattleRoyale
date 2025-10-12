@@ -28,10 +28,10 @@ public class FunctionShowcase {
     private static JsonObject generateDefaultSpawnConfig0() {
         TeleportEntry groundEntry = new TeleportEntry(SpawnShapeType.SQUARE, new Vec3(0, -60, 0), new Vec3(128, 0, 128),
                 CommonDetailType.FIXED,
-                new TeleportDetailEntry(Arrays.asList(
+                new TeleportDetailEntry(true, true, 0, 20 * 15,
+                        Arrays.asList(
                         new Vec3(2032, 53, -9060),
-                        new Vec3(1954, 53, -9038)),
-                        true, true, 0, 20 * 15)
+                        new Vec3(1954, 53, -9038)), false)
         );
 
         SpawnConfigManager.SpawnConfig spawnConfig = new SpawnConfigManager.SpawnConfig(1, "Fixed ground spawn", "#FFFFFFAA",
