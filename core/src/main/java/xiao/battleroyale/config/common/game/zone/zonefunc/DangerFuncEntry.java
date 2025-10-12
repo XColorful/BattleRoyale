@@ -25,14 +25,7 @@ public class DangerFuncEntry extends AbstractFuncEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(ZoneFuncTag.TYPE_NAME, getType());
-        jsonObject.addProperty(ZoneFuncTag.MOVE_DELAY, moveDelay);
-        jsonObject.addProperty(ZoneFuncTag.MOVE_TIME, moveTime);
-        jsonObject.addProperty(ZoneFuncTag.TICK_FREQUENCY, tickFreq);
-        jsonObject.addProperty(ZoneFuncTag.TICK_OFFSET, tickOffset);
-
-        return jsonObject;
+        return super.toJson();
     }
 
     public static DangerFuncEntry fromJson(JsonObject jsonObject) {
