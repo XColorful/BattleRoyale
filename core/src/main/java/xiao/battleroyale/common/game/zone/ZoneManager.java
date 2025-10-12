@@ -205,6 +205,14 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
         this.zoneData.finishZones(finishedZoneId);
     }
 
+    public @Nullable ZoneContext getZoneContext() {
+        GameManager gameManager = GameManager.get();
+        ServerLevel serverLevel = gameManager.getServerLevel();
+        if (!gameManager.isInGame() || serverLevel == null) {
+            return null;
+        }
+        return new ZoneContext(serverLevel, GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), GameManager.get().getRandom(), gameManager.getGameTime());
+    }
 
     public static class ZoneContext {
         public @NotNull final ServerLevel serverLevel;

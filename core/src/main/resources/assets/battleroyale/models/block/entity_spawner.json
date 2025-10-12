@@ -1,5 +1,6 @@
 {
 	"credit": "Made with XiaoColorful",
+	"render_type": "translucent",
 	"texture_size": [128, 128],
 	"textures": {
 		"2": "battleroyale:block/entity_spawner",

@@ -1,5 +1,6 @@
 package xiao.battleroyale.common.game.spawn;
 
+import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -11,6 +12,9 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.algorithm.CircleGridCalculator;
+import xiao.battleroyale.algorithm.Distribution;
+import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportData;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishData;
@@ -30,18 +34,23 @@ import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
+import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.event.game.LobbyEventHandler;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.Vec3Utils;
 
 import java.util.List;
 import java.util.UUID;
 
+import static xiao.battleroyale.api.data.io.TempDataTag.PRE_CALCULATE;
+import static xiao.battleroyale.api.data.io.TempDataTag.SPAWN_MANAGER;
+
 /**
  * 管理玩家出生方式、传送相关的Manager
  */
-public class SpawnManager extends AbstractGameManager implements IGameLobbyReadApi {
+public class SpawnManager extends AbstractGameManager implements IGameLobbyReadApi, ISideOnly {
 
     private static class SpawnManagerHolder {
         private static final SpawnManager INSTANCE = new SpawnManager();
@@ -54,7 +63,35 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
     private SpawnManager() {}
 
     public static void init(McSide mcSide) {
-        ;
+        if (!get().inProperSide(mcSide)) {
+            BattleRoyale.LOGGER.debug("SpawnManager skipped init() at {}", mcSide.toString());
+            return;
+        }
+        JsonObject jsonObject = TempDataManager.get().getJsonObject(PRE_CALCULATE, SPAWN_MANAGER);
+        if (jsonObject == null) {
+            return;
+        }
+
+        // 预计算
+        // 渣机只算100要(约)27ms, 1-100要35ms, 1-1000要132ms (< 3 ticks)
+        // Distribution.CircleGrid.preCalculate(1, 1000);
+        int startN = JsonUtils.getJsonInt(jsonObject, "CircleGridStartN", 0);
+        int endN = JsonUtils.getJsonInt(jsonObject, "CircleGridEndN", 0);
+        List<Integer> nList = JsonUtils.getJsonIntList(jsonObject, "CircleGridNList");
+        boolean showDebugResult = JsonUtils.getJsonBool(jsonObject, "showDebugResult", false);
+
+        long startTime = System.nanoTime();
+        Distribution.CircleGrid.preCalculate(startN, endN);
+        Distribution.CircleGrid.preCalculate(nList);
+        long endTime = System.nanoTime();
+        BattleRoyale.LOGGER.debug("SpawnManager complete init, time:{}ms", (endTime - startTime) / 1_000_000.0);
+        if (showDebugResult) {
+            CircleGridCalculator.debugResult();
+        }
+    }
+
+    @Override public boolean serverSideOnly() {
+        return true;
     }
 
     private boolean initGameTeleport = true;

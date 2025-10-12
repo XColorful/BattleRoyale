@@ -124,7 +124,7 @@ public class TeamData extends AbstractGameManagerData {
             return;
         }
 
-        standingGamePlayers.putAll(gamePlayers.asMap());
+        standingGamePlayers.clearAndPutAll(gamePlayers.asMap());
         lockData();
     }
 

@@ -2,6 +2,7 @@ package xiao.battleroyale.init;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.init.ICommonSetup;
+import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.network.NetworkHandler;
 
 public class CommonSetup implements ICommonSetup {
@@ -19,5 +20,6 @@ public class CommonSetup implements ICommonSetup {
         NetworkHandler.get().registerMessages();
         BattleRoyale.LOGGER.debug("onCommonSetup, reloadAllConfigs:");
         BattleRoyale.getModConfigManager().reloadAllConfigs();
+        TempDataManager.get().saveTempData();
     }
 }

@@ -64,7 +64,7 @@ public class LootGenerator {
      * @param lootContext 物资刷新环境
      * @param entry 战利品配置
      */
-    public static List<ItemStack> generateLootItem(LootContext lootContext, ILootEntry entry) {
+    public static @NotNull List<ItemStack> generateLootItem(LootContext lootContext, ILootEntry entry) {
         List<ItemStack> lootItems = new ArrayList<>();
 
         List<ILootData> lootData = entry.generateLootData(lootContext);
