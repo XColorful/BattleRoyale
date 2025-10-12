@@ -2,12 +2,10 @@ package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.InventoryFuncEntry;
-import xiao.battleroyale.config.common.game.zone.zoneshape.CuboidEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.SquareEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
@@ -60,7 +58,7 @@ public class ElytraAddon {
         ILootEntry lootEntry = new MultiEntry(Arrays.asList(
                 new EmptyEntry(LootEntryType.ITEM.getName()),
                 new EmptyEntry(LootEntryType.ITEM.getName()),
-                new ItemEntry("minecraft:elytra", "{Damage:332}", 1),
+                new ItemEntry("minecraft:elytra", String.format("{components:{\"minecraft:damage\":%s}}", 332), 1),
                 new ItemEntry("minecraft:iron_helmet", "", 1)
         ));
         InventoryFuncEntry inventoryFuncEntry = new InventoryFuncEntry(0, 0, 20, 0,
