@@ -15,8 +15,8 @@ public class EntityData implements IEntityLootData {
     private final @NotNull CompoundTag nbt;
     private final int count;
     private final int range;
-    private static final String EMPTY_RL = "minecraft:pig";
-    private static final String EMPTY_TYPE = "entity.minecraft.pig";
+    public static final String EMPTY_RL = "minecraft:pig";
+    public static final String EMPTY_TYPE = "entity.minecraft.pig";
     private final boolean isEmpty;
 
     public EntityData(String rl, @NotNull CompoundTag nbt, int count, int range) {
