@@ -127,7 +127,7 @@ public class Pubg5340x5340Casual {
                 .addPreviousDimension(0, 1)
                 .addDimensionScale(0.99);
         circleEntry = new CircleEntry(startEntry, endEntry, false);
-        zoneConfig = new ZoneConfig(1, "Game Start Message", "FFAA00AA",
+        zoneConfig = new ZoneConfig(1, "Game Start Message", "#FFAA00AA",
                 0, 80,
                 messageFuncEntry, circleEntry);
         zoneConfigJson.add(zoneConfig.toJson());
