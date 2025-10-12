@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.game.spawn.type.detail;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
+import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.util.JsonUtils;
 
 public class PlaneDetailEntry extends AbstractDetailEntry<PlaneDetailEntry> {
@@ -18,7 +19,7 @@ public class PlaneDetailEntry extends AbstractDetailEntry<PlaneDetailEntry> {
     }
 
     @Override
-    public void toJson(JsonObject jsonObject, CommonDetailType detailType) {
+    public void toJson(JsonObject jsonObject, SpawnShapeType shapeType, CommonDetailType detailType) {
         jsonObject.addProperty(SpawnDetailTag.PLANE_HEIGHT, planeHeight);
         jsonObject.addProperty(SpawnDetailTag.PLANE_SPEED, planeSpeed);
         jsonObject.addProperty(SpawnDetailTag.PLANE_FIXED_TIME, fixedReachTime);

@@ -213,6 +213,7 @@
   "battleroyale.message.selected_gamerule_config": "大逃杀规则配置%s: %s",
   "battleroyale.message.selected_spawn_config": "出生配置%s: %s",
   "battleroyale.message.selected_zone_config": "区域配置%s: %s个区域",
+  "battleroyale.message.current_game_id": "当前游戏ID(字符串): %s",
 
   "battleroyale.message.load_game_configs": "已加载大逃杀配置",
   "battleroyale.message.load_game_configs_failed": "无法读取有效的大逃杀配置",
