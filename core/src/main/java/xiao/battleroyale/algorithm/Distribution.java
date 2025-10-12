@@ -211,7 +211,7 @@ public class Distribution {
             CircleGridCalculator.CircleGridData data = CircleGridCalculator.getCircleGrid(minCount);
 
             List<Vec3> finalPoints = new ArrayList<>(data.size());
-            double scale = dimension.x * shrinkRatio;
+            double scale = dimension.x * shrinkRatio / data.minRadius();
 
             for (Vec3 offset : data.points()) {
                 double x = center.x + offset.x * scale;
