@@ -1,7 +1,9 @@
 package xiao.battleroyale.compat.forge.event.game.spawn;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.ICustomEventData;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishData;
 import xiao.battleroyale.api.game.IGameManager;
@@ -9,21 +11,25 @@ import xiao.battleroyale.compat.forge.event.game.AbstractGameStatsEvent;
 
 public class GameLobbyTeleportFinishEvent extends AbstractGameStatsEvent {
 
-    protected @NotNull final ServerPlayer player;
+    protected @NotNull final LivingEntity livingEntity;
 
-    public GameLobbyTeleportFinishEvent(IGameManager gameManager, @NotNull ServerPlayer player) {
+    public GameLobbyTeleportFinishEvent(IGameManager gameManager, @NotNull LivingEntity livingEntity) {
         super(gameManager);
-        this.player = player;
+        this.livingEntity = livingEntity;
     }
 
-    public @NotNull ServerPlayer getPlayer() {
-        return this.player;
+    public @NotNull LivingEntity getLivingEntity() {
+        return this.livingEntity;
+    }
+    @Deprecated
+    public @Nullable ServerPlayer getPlayer() {
+        return this.livingEntity instanceof ServerPlayer player ? player : null;
     }
 
     public static GameLobbyTeleportFinishEvent createEvent(ICustomEventData customEventData) {
         if (!(customEventData instanceof GameLobbyTeleportFinishData data)) {
             throw new RuntimeException("Expected GameLobbyTeleportFinishData but received: " + customEventData.getClass().getName());
         }
-        return new GameLobbyTeleportFinishEvent(data.gameManager, data.player);
+        return new GameLobbyTeleportFinishEvent(data.gameManager, data.livingEntity);
     }
 }
