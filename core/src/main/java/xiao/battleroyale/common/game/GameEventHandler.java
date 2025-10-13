@@ -117,7 +117,7 @@ public class GameEventHandler {
             GameManager.get().sendEliminateMessage(gamePlayer);
             PlayerRevive playerRevive = PlayerRevive.get();
             if (serverLevel != null) {
-                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
                 if (player != null && playerRevive.isBleeding(player)) {
                     BattleRoyale.LOGGER.debug("Detected GamePlayer {} PlayerRevive.isBleeding, force kill", gamePlayer.getPlayerName());
                     playerRevive.kill(player);

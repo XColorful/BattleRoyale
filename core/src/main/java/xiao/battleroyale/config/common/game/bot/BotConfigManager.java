@@ -52,10 +52,12 @@ public class BotConfigManager extends AbstractConfigSubManager<BotConfigManager.
         public BotConfig(int id, String name, String color, IBotEntry entry) {
             this(id, name, color, false, entry);
         }
-
         public BotConfig(int id, String name, String color, boolean isDefault, IBotEntry entry) {
             super(id, name, color, isDefault);
             this.entry = entry;
+        }
+        @Override public BotConfig copy() {
+            return new BotConfig(id, name, color, isDefault, null); // TODO 替换为entry.copy()
         }
 
         @Override

@@ -24,6 +24,11 @@ public class AirdropFuncEntry extends AbstractEventFuncEntry {
         this.nbtString = nbtString;
         this.nbt = NBTUtils.stringToNBT(nbtString);
     }
+    @Override public @NotNull AirdropFuncEntry copy() {
+        return new AirdropFuncEntry(moveDelay, moveTime, tickFreq, tickOffset,
+                protocol, tag.copy(),
+                lootId, nbtString);
+    }
 
     @Override
     public String getType() {
@@ -33,7 +38,7 @@ public class AirdropFuncEntry extends AbstractEventFuncEntry {
     @Override
     public ITickableZone createTickableZone() {
         return new AirdropFunc(moveDelay, moveTime, tickFreq, tickOffset,
-                protocol, tag,
+                protocol, tag.copy(),
                 lootId, nbt);
     }
 

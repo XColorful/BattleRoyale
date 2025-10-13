@@ -15,6 +15,10 @@ import java.util.function.Supplier;
 
 public class NoneEntry implements ILootEntry {
 
+    @Override public @NotNull NoneEntry copy() {
+        return new NoneEntry();
+    }
+
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
         return Collections.emptyList();

@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.effect.particle;
 
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.config.sub.IConfigEntry;
 import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
 import xiao.battleroyale.util.JsonUtils;
@@ -23,6 +24,9 @@ public class ParticleParameterEntry implements IConfigEntry {
         this.note = note;
         // 自定义粒子预留
         this.nbt = nbt != null ? nbt : new CompoundTag();
+    }
+    @Override public @NotNull ParticleParameterEntry copy() {
+        return new ParticleParameterEntry(speed, color, scale, note, nbt.copy());
     }
 
     @Override

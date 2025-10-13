@@ -28,6 +28,10 @@ public class ExtraEntry implements ILootEntry {
         this.checkEntry = checkEntry;
         this.extraEntry = extraEntry;
     }
+    @Override public @NotNull ExtraEntry copy() {
+        return new ExtraEntry(countEmpty, keepCheck,
+                checkEntry.copy(), extraEntry.copy());
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {

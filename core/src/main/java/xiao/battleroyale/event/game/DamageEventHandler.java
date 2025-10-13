@@ -97,8 +97,11 @@ public class DamageEventHandler implements IEventHandler {
         }
         // 游戏玩家攻击非游戏玩家
         else if (attackerGamePlayer != null) {
+//            if (damageSource instanceof LivingEntity livingEntity) {
+//                ;
+//            }
+            event.setCanceled(true);
             if (damagedEntity instanceof ServerPlayer interfererPlayer) {
-                event.setCanceled(true);
                 // 把不参与游戏的玩家tp回大厅
                 if (gameManager.getGameEntry().teleportInterfererToLobby
                         && damageSource.getEntity() instanceof ServerPlayer) {
@@ -113,15 +116,17 @@ public class DamageEventHandler implements IEventHandler {
         }
         // 非游戏玩家攻击游戏玩家
         else if (targetGamePlayer != null) {
-            if (damageSource.getEntity() instanceof ServerPlayer interfererPlayer) {
+            if (damageSource.getEntity() instanceof LivingEntity livingEntity) {
                 event.setCanceled(true);
-                // 把不参与游戏的玩家tp回大厅
-                if (gameManager.getGameEntry().teleportInterfererToLobby) {
-                    SpawnManager.get().teleportToLobby(interfererPlayer);
-                    ServerLevel serverLevel = gameManager.getServerLevel();
-                    if (serverLevel != null) {
-                        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.teleport_non_game_player_to_lobby", interfererPlayer.getName().getString());
-                        gameManager.sendGameSpectateMessage(interfererPlayer); // 提供观战指令
+                if (livingEntity instanceof ServerPlayer interfererPlayer) {
+                    // 把不参与游戏的玩家tp回大厅
+                    if (gameManager.getGameEntry().teleportInterfererToLobby) {
+                        SpawnManager.get().teleportToLobby(interfererPlayer);
+                        ServerLevel serverLevel = gameManager.getServerLevel();
+                        if (serverLevel != null) {
+                            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.teleport_non_game_player_to_lobby", interfererPlayer.getName().getString());
+                            gameManager.sendGameSpectateMessage(interfererPlayer); // 提供观战指令
+                        }
                     }
                 }
             }

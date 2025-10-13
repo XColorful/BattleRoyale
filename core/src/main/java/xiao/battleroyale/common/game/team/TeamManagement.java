@@ -4,9 +4,11 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
@@ -101,7 +103,11 @@ public class TeamManagement {
             }
 
         } else { // 改为发送邀请
-            teamManager.requestPlayer(player, (ServerPlayer) serverLevel.getPlayerByUUID(targetTeam.getLeaderUUID()));
+            if (serverLevel.getPlayerByUUID(targetTeam.getLeaderUUID()) instanceof ServerPlayer targetPlayer) {
+                teamManager.requestPlayer(player, targetPlayer);
+            } else {
+                BattleRoyale.LOGGER.warn("TeamManagement: team {} leader is not ServerPlayer, decline to add {} to team", targetTeam.getGameTeamId(), player.getName().getString());
+            }
         }
     }
 
@@ -117,7 +123,7 @@ public class TeamManagement {
                 continue;
             }
             if (serverLevel != null) {
-                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
                 if (player == null) {
                     offlineGamePlayers.add(gamePlayer);
                 }
@@ -162,7 +168,7 @@ public class TeamManagement {
             // 强制淘汰后传送回大厅
             ServerLevel serverLevel = GameManager.get().getServerLevel();
             if (serverLevel != null) {
-                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
                 if (player != null) {
                     // TODO 生成战利品盒子
                     Consumer<ServerPlayer> delayedTask = isWinner -> {
@@ -181,20 +187,25 @@ public class TeamManagement {
     /**
      * 强制淘汰玩家并向队友发送消息
      */
-    protected static void forceEliminatePlayerFromTeam(ServerPlayer player) {
+    protected static void forceEliminatePlayerFromTeam(LivingEntity livingEntity) {
         TeamManager teamManager = TeamManager.get();
+        @Nullable ServerPlayer player = livingEntity instanceof ServerPlayer serverPlayer ? serverPlayer : null;
 
-        GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(player.getUUID());
+        GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(livingEntity.getUUID());
         if (gamePlayer == null) {
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
+            if (player != null) {
+                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
+            }
             return;
         }
 
         boolean playerEliminatedBefore = gamePlayer.isEliminated();
         boolean teamEliminatedBefore = gamePlayer.getTeam().isTeamEliminated();
-        if (teamManager.teamData.eliminatePlayer(player.getUUID())) {
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
-            BattleRoyale.LOGGER.info("Force eliminated player {} (UUID: {})", player.getName().getString(), player.getUUID());
+        if (teamManager.teamData.eliminatePlayer(livingEntity.getUUID())) {
+            if (player != null) {
+                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.you_are_eliminated").withStyle(ChatFormatting.RED));
+            }
+            BattleRoyale.LOGGER.info("Force eliminated livingEntity {} (UUID: {}) from team {}", livingEntity.getName().getString(), livingEntity.getUUID(), gamePlayer.getGameTeamId());
         }
 
         GameManager gameManager = GameManager.get();
@@ -202,15 +213,15 @@ public class TeamManagement {
         if (serverLevel != null) {
             if (!playerEliminatedBefore) { // 从未被淘汰到被淘汰
                 gameManager.sendEliminateMessage(gamePlayer);
-                ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.forced_elimination", player.getName()).withStyle(ChatFormatting.RED));
+                ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.forced_elimination", livingEntity.getName()).withStyle(ChatFormatting.RED));
                 if (gameManager.getGameEntry().forceEliminationTeleportToLobby) {
-                    gameManager.teleportToLobby(player); // 不用TeamManager的teleportToLobby
+                    gameManager.teleportToLobby(livingEntity); // 不用TeamManager的teleportToLobby
                 }
             } else {
                 BattleRoyale.LOGGER.debug("GamePlayer {} has already been eliminated, TeamManager skipped sending chat message", gamePlayer.getPlayerName());
             }
         }
-        BattleRoyale.LOGGER.info("Force removed player {} (UUID: {})", player.getName().getString(), player.getUUID());
+        BattleRoyale.LOGGER.info("Force removed livingEntity {} (UUID: {}) from team {}", livingEntity.getName().getString(), livingEntity.getUUID(), gamePlayer.getGameTeamId());
 
         GameTeam gameTeam = gamePlayer.getTeam();
         if (gameTeam.isTeamEliminated()) {
@@ -221,7 +232,7 @@ public class TeamManagement {
                     BattleRoyale.LOGGER.debug("Team {} has already been eliminated, TeamManager skipped sending chat message", gameTeam.getGameTeamId());
                 }
             }
-            BattleRoyale.LOGGER.info("Team {} has been eliminated for no standing player", gameTeam.getGameTeamId());
+            BattleRoyale.LOGGER.info("Team {} has been eliminated for no standing livingEntity", gameTeam.getGameTeamId());
         }
         teamManager.onTeamChangedInGame();
     }
@@ -252,7 +263,7 @@ public class TeamManagement {
                 ServerLevel serverLevel = gameManager.getServerLevel();
                 if (serverLevel != null) {
                     Scoreboard scoreboard = serverLevel.getScoreboard();
-                    ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerId);
+                    @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(playerId) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
                     if (player != null) {
                         String playerName = player.getName().getString();
                         scoreboard.removePlayerFromTeam(playerName);

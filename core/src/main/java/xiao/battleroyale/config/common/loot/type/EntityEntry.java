@@ -30,6 +30,9 @@ public class EntityEntry implements IEntityLootEntry {
         this.count = count;
         this.range = range;
     }
+    @Override public @NotNull EntityEntry copy() {
+        return new EntityEntry(entityString, nbtString, count, range);
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
