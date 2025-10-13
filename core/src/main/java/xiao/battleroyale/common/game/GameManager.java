@@ -573,7 +573,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             BattleRoyale.LOGGER.warn("Failed to notify winner ");
             return;
         }
-        ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+        @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
         if (player == null) {
             BattleRoyale.LOGGER.info("Skipped to notify winner game player {}", gamePlayer.getNameWithId());
             return;
@@ -629,8 +629,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         }
     }
     // 传送至大厅
-    @Override public boolean teleportToLobby(@NotNull ServerPlayer player) {
-        return GameUtilsFunction.teleportToLobby(player);
+    @Override public boolean teleportToLobby(@NotNull LivingEntity livingEntity) {
+        return GameUtilsFunction.teleportToLobby(livingEntity);
     }
     // 观战游戏
     @Override public boolean spectateGame(ServerPlayer player) {

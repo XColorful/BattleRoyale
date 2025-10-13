@@ -43,5 +43,7 @@ public interface ILootEntry extends IConfigEntry {
         }
     }
 
-    // ILootEntry copy();
+    @Override
+    @NotNull
+    ILootEntry copy();
 }

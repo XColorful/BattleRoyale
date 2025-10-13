@@ -11,6 +11,7 @@ import xiao.battleroyale.common.loot.CommonLootManager;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.util.JsonUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
@@ -54,6 +55,11 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         this.instantNextBfs = instantNextBfs;
         this.maxCachedLootChunk = maxCachedLootChunk;
         this.cleanCachedChunk = cleanCachedChunk;
+    }
+    @Override public @NotNull GeneratorEntry copy() {
+        return new GeneratorEntry(lootVanillaChest, removeLootTable, clearPreviousContent,  removeInnocentEntity, new ArrayList<>(whiteListRegex), new ArrayList<>(blackListRegex),
+                maxNormalTickLootChunk,
+                maxGameTickLootChunk, maxGameLootDistance, tolerantCenterDistance, maxCachedCenter, maxQueuedChunk, bfsFrequency, instantNextBfs, maxCachedLootChunk, cleanCachedChunk);
     }
 
     @Override

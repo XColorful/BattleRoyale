@@ -40,6 +40,11 @@ public class ParticleDetailEntry implements IParticleEntry {
 
         this.parameter = parameter;
     }
+    @Override public @NotNull ParticleDetailEntry copy() {
+        return new ParticleDetailEntry(particleType, count, initDelay, interval, repeat,
+                offset, offsetRange, exactOffset,
+                parameter != null ? parameter.copy() : null);
+    }
 
     @Override
     public String getType() {
@@ -48,7 +53,7 @@ public class ParticleDetailEntry implements IParticleEntry {
 
     @Override
     public ParticleData createParticleData(ServerLevel serverLevel) {
-        return new ParticleData(serverLevel, this);
+        return new ParticleData(serverLevel, this.copy());
     }
 
     @Override

@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
@@ -101,7 +102,7 @@ public class GameUtils {
     }
 
     public static void clearGamePlayerInventory(@NotNull ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
-        ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+        @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
         if (player == null) {
             BattleRoyale.LOGGER.debug("Failed to clear GamePlayer ({}) inventory by UUID: {}", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
             return;

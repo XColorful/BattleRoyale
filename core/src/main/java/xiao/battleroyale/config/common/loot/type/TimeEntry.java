@@ -26,6 +26,9 @@ public class TimeEntry implements ILootEntry {
         this.end = end;
         this.entry = entry;
     }
+    @Override public @NotNull TimeEntry copy() {
+        return new TimeEntry(start, end, entry.copy());
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {

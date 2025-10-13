@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.zone.zoneshape;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
@@ -16,6 +17,9 @@ public class PolygonEntry extends AbstractSimpleEntry {
         super(startEntry, endEntry, badShape);
         this.segments = segments;
     }
+    @Override public @NotNull PolygonEntry copy() {
+        return new PolygonEntry(startEntry.copy(), endEntry.copy(), badShape, segments);
+    }
 
     @Override
     public String getType() {
@@ -29,7 +33,7 @@ public class PolygonEntry extends AbstractSimpleEntry {
 
     @Override
     public ISpatialZone createSpatialZone() {
-        return new PolygonShape(startEntry, endEntry, badShape, segments);
+        return new PolygonShape(startEntry.copy(), endEntry.copy(), badShape, segments);
     }
 
     @Nullable

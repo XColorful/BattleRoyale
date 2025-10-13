@@ -23,6 +23,13 @@ public class EffectFuncEntry extends AbstractFuncEntry {
         super(moveDelay, moveTime, tickFreq, tickOffset);
         this.effectEntries = effectEntries;
     }
+    @Override public @NotNull EffectFuncEntry copy() {
+        List<EffectEntry> effectEntriesCopy = new ArrayList<>(effectEntries.size());
+        for (EffectEntry effectEntry : effectEntries) {
+            effectEntriesCopy.add(effectEntry.copy());
+        }
+        return new EffectFuncEntry(moveDelay, moveTime, tickFreq, tickOffset, effectEntriesCopy);
+    }
 
     @Override
     public String getType() {
@@ -86,6 +93,10 @@ public class EffectFuncEntry extends AbstractFuncEntry {
     }
 
     public record EffectEntry(String rlString, int duration, int level) {
+        public EffectEntry copy() {
+            return new EffectEntry(rlString, duration, level);
+        }
+
         public JsonObject toJson() {
             JsonObject jsonObject = new JsonObject();
 

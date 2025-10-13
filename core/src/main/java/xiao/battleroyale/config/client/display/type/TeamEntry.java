@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.client.display.type;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.client.display.DisplayConfigTag;
 import xiao.battleroyale.client.renderer.game.TeamInfoRenderer;
 import xiao.battleroyale.util.JsonUtils;
@@ -12,10 +13,12 @@ public class TeamEntry extends AbstractHudEntry {
     public TeamEntry(boolean display) {
         this(display, 0, 0, 20 * 8);
     }
-
     public TeamEntry(boolean display, double xRatio, double yRatio, int offlineTime) {
         super(display, xRatio, yRatio);
         this.offlineTime = offlineTime;
+    }
+    @Override public @NotNull TeamEntry copy() {
+        return new TeamEntry(display, xRatio, yRatio, offlineTime);
     }
 
     @Override
