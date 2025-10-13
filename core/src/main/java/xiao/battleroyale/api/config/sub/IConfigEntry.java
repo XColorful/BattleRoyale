@@ -1,6 +1,7 @@
 package xiao.battleroyale.api.config.sub;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 
 public interface IConfigEntry {
 
@@ -15,4 +16,6 @@ public interface IConfigEntry {
      * @return 包含 Entry 配置的 JSON 对象
      */
     JsonObject toJson();
+
+    @NotNull IConfigEntry copy();
 }

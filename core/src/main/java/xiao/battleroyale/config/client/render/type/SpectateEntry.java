@@ -21,7 +21,6 @@ public class SpectateEntry implements IRenderEntry {
         this(enableSpectateRender, useClientColor, "#00FFFF",
                 true, true, 0.5F, 60);
     }
-
     public SpectateEntry(boolean enableSpectateRender, boolean useClientColor, String fixedColor,
                          boolean renderBeacon, boolean renderBoundingBox, float transparency, int scanFrequency) {
         this.enableSpectateRender = enableSpectateRender;
@@ -31,6 +30,10 @@ public class SpectateEntry implements IRenderEntry {
         this.renderBoundingBox = renderBoundingBox;
         this.transparency = transparency;
         this.scanFrequency = scanFrequency;
+    }
+    @Override public @NotNull SpectateEntry copy() {
+        return new SpectateEntry(enableSpectateRender, useClientColor, fixedColor,
+                renderBeacon, renderBoundingBox, transparency, scanFrequency);
     }
 
     @Override

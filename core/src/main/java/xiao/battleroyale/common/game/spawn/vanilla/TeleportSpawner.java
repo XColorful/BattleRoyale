@@ -3,6 +3,7 @@ package xiao.battleroyale.common.game.spawn.vanilla;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -209,13 +210,13 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
 
                 // 传送玩家
                 GamePlayer gamePlayer = standingPlayers.get(i);
-                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-                if (player != null) {
+                LivingEntity livingEntity = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                if (livingEntity != null) {
                     if ((!indexAdded || !teamTogether) && targetSpawnPos.y != queuedHeight) { // (没添加过计数就添加一次，不是队伍统一传送就添加一次) && 成功找到地面
                         spawnPointIndex++;
                         indexAdded = true;
                     }
-                    GameUtilsFunction.safeTeleport(player, serverLevel, targetSpawnPos, 0, 0);
+                    GameUtilsFunction.safeTeleport(livingEntity, serverLevel, targetSpawnPos, 0, 0); // TeleportSpawner传送
                     addSpawnStats(gamePlayer, targetSpawnPos);
                     gamePlayer.setLastPos(targetSpawnPos); // 立即更新，防止下一tick找不到又躲了逻辑位置
                     teleportedPlayerId.add(gamePlayer.getGameSingleId());

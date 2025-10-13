@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.zone.zonefunc;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.api.loot.ILootEntry;
@@ -31,6 +32,11 @@ public class InventoryFuncEntry extends AbstractFuncEntry {
         this.lootEntry = lootEntry;
         this.lootSpawnerLootId = lootSpawnerLootId;
     }
+    @Override public @NotNull InventoryFuncEntry copy() {
+        return new InventoryFuncEntry(moveDelay, moveTime, tickFreq, tickOffset,
+                skipNonEmptySlot, dropBeforeReplace, firstSlotIndex, lastSlotIndex,
+                lootEntry != null ? lootEntry.copy() : null, lootSpawnerLootId);
+    }
 
     @Override
     public String getType() {
@@ -41,7 +47,7 @@ public class InventoryFuncEntry extends AbstractFuncEntry {
     public ITickableZone createTickableZone() {
         return new InventoryFunc(moveDelay, moveTime, tickFreq, tickOffset,
                 skipNonEmptySlot, dropBeforeReplace, firstSlotIndex, lastSlotIndex,
-                lootEntry, lootSpawnerLootId);
+                lootEntry != null ? lootEntry.copy() : null, lootSpawnerLootId);
     }
 
     @Override

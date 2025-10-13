@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.client.display.type;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.client.display.DisplayConfigTag;
 import xiao.battleroyale.client.renderer.game.GameInfoRenderer;
 import xiao.battleroyale.util.JsonUtils;
@@ -13,11 +14,13 @@ public class GameEntry extends AbstractHudEntry {
     public GameEntry(boolean display) {
         this(display, 0, 0, "", "");
     }
-
     public GameEntry(boolean display, double xRatio, double yRatio, String aliveColor, String aliveCountColor) {
         super(display, xRatio, yRatio);
         this.aliveColor = aliveColor;
         this.aliveCountColor = aliveCountColor;
+    }
+    @Override public @NotNull GameEntry copy() {
+        return new GameEntry(display, xRatio, yRatio, aliveColor, aliveCountColor);
     }
 
     @Override

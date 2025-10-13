@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.zone.zoneshape;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
@@ -11,6 +12,9 @@ public class EllipsoidEntry extends AbstractSimpleEntry {
 
     public EllipsoidEntry(StartEntry startEntry, EndEntry endEntry, boolean badShape) {
         super(startEntry, endEntry, badShape);
+    }
+    @Override public @NotNull EllipsoidEntry copy() {
+        return new EllipsoidEntry(startEntry.copy(), endEntry.copy(), badShape);
     }
 
     @Override
@@ -25,7 +29,7 @@ public class EllipsoidEntry extends AbstractSimpleEntry {
 
     @Override
     public ISpatialZone createSpatialZone() {
-        return new EllipsoidShape(startEntry, endEntry, badShape);
+        return new EllipsoidShape(startEntry.copy(), endEntry.copy(), badShape);
     }
 
     @Nullable

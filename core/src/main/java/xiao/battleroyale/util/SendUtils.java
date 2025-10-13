@@ -3,6 +3,7 @@ package xiao.battleroyale.util;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.network.message.IMessage;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
@@ -27,7 +28,7 @@ public class SendUtils {
 //            if (!gamePlayer.isActiveEntity()) {
 //                continue;
 //            }
-            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+            @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
             if (player == null) {
                 continue;
             }
@@ -40,7 +41,7 @@ public class SendUtils {
 //            if (!gamePlayer.isActiveEntity()) {
 //                continue;
 //            }
-            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+            @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
             if (player == null) {
                 continue;
             }

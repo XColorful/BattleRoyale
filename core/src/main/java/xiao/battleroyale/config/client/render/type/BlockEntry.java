@@ -20,6 +20,10 @@ public class BlockEntry implements IRenderEntry {
         this.renderItemBlockIfEmpty = renderItemBlockIfEmpty;
         this.entityRenderDistance = entityRenderDistance;
     }
+    @Override public @NotNull BlockEntry copy() {
+        return new BlockEntry(lootRenderDistance, renderItemBlockIfEmpty,
+                entityRenderDistance);
+    }
 
     @Override
     public String getType() {

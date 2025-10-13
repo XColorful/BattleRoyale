@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.client.display.type;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.client.display.DisplayConfigTag;
 import xiao.battleroyale.api.client.render.IRenderEntry;
 import xiao.battleroyale.compat.journeymap.JourneyMap;
@@ -13,9 +14,11 @@ public class MapEntry implements IRenderEntry {
     public MapEntry() {
         this(true);
     }
-
     public MapEntry(boolean enableJourneyMap) {
         this.enableJourneyMap = enableJourneyMap;
+    }
+    @Override public @NotNull MapEntry copy() {
+        return new MapEntry(enableJourneyMap);
     }
 
     @Override
