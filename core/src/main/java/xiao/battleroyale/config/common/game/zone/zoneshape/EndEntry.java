@@ -42,6 +42,38 @@ public class EndEntry {
     public int rotatePlayerId = 0;
     // 淘汰的玩家就没必要选择了
 
+    public EndEntry copy() {
+        EndEntry endEntry = new EndEntry();
+
+        endEntry.endCenterType = this.endCenterType;
+        endEntry.endCenterPos = this.endCenterPos;
+        endEntry.endCenterZoneId = this.endCenterZoneId;
+        endEntry.endCenterProgress = this.endCenterProgress;
+        endEntry.useRangeAsStartDimScale = this.useRangeAsStartDimScale;
+        endEntry.useCircleRange = this.useCircleRange;
+        endEntry.endCenterRange = this.endCenterRange;
+        endEntry.centerPlayerId = this.centerPlayerId;
+        endEntry.selectStanding = this.selectStanding;
+        endEntry.playerCenterLerp = this.playerCenterLerp;
+
+        endEntry.endDimensionType = this.endDimensionType;
+        endEntry.endDimension = this.endDimension;
+        endEntry.endDimensionZoneId = this.endDimensionZoneId;
+        endEntry.endDimensionProgress = this.endDimensionProgress;
+        endEntry.endDimensionScale = this.endDimensionScale;
+        endEntry.endDimensionRange = this.endDimensionRange;
+
+        endEntry.endRotationType = this.endRotationType;
+        endEntry.endRotateDegree = this.endRotateDegree;
+        endEntry.endRotateZoneId = this.endRotateZoneId;
+        endEntry.endRotateProgress = this.endRotateProgress;
+        endEntry.endRotateScale = this.endRotateScale;
+        endEntry.endRotateRange = this.endRotateRange;
+        endEntry.rotatePlayerId = this.rotatePlayerId;
+
+        return endEntry;
+    }
+
     public EndEntry() {
         ;
     }

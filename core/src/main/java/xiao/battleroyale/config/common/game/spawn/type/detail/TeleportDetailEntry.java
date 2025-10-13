@@ -70,6 +70,12 @@ public class TeleportDetailEntry extends AbstractDetailEntry<TeleportDetailEntry
         this.globalShrinkRatio = globalShrinkRatio;
         this.needShuffle = needShuffle;
     }
+    @Override public TeleportDetailEntry copy() {
+        return new TeleportDetailEntry(teamTogether, findGround, randomRange, hangTime,
+                new ArrayList<>(fixedPos),
+                fixedSimulationCount, playerFactorContribution, useGoldenSpiral, allowOnBorder, globalShrinkRatio,
+                needShuffle);
+    }
 
     @Override
     public void toJson(JsonObject jsonObject, SpawnShapeType shapeType, CommonDetailType detailType) {

@@ -39,6 +39,10 @@ public class SurvivalEntry implements IUtilityEntry, IConfigAppliable {
         this.clearInventory = clearInventory;
         this.clearGameItemOnly = clearGameItemOnly;
     }
+    @Override public @NotNull SurvivalEntry copy() {
+        return new SurvivalEntry(levelKey, allowGamePlayerTeleport, lobbyCenter, lobbyDimension, lobbyMuteki, lobbyHeal,
+                dropInventory, dropGameItemOnly, clearInventory, clearGameItemOnly);
+    }
 
     @Override
     public String getType() {

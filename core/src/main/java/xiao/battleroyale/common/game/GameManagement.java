@@ -49,8 +49,8 @@ public class GameManagement {
         }
     }
     private static void updateInvalidServerPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {
-        ServerPlayer serverPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-        if (serverPlayer == null) { // 不在线或者不在游戏运行的 serverLevel
+        @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+        if (player == null) { // 不在线或者不在游戏运行的 serverLevel
             if (gamePlayer.isActiveEntity()) {
                 GameNotification.notifyGamePlayerIsInactive(serverLevel, gamePlayer);
             }
@@ -70,11 +70,11 @@ public class GameManagement {
                     return;
                 }
                 // TODO GamePlayer health 和 absorptionAmount 处理
-                serverPlayer.setHealth(lastHealth); // 不用maxHealth检查，可能包含吸收血量
+                player.setHealth(lastHealth); // 不用maxHealth检查，可能包含吸收血量
             }
             gamePlayer.setActiveEntity(true);
-            gamePlayer.setLastHealth(serverPlayer.getHealth());
-            gamePlayer.setLastPos(serverPlayer.position());
+            gamePlayer.setLastHealth(player.getHealth());
+            gamePlayer.setLastPos(player.position());
         }
     }
     private static void updateInvalidBotPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {

@@ -4,6 +4,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -20,10 +22,7 @@ import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.event.util.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class GameUtilsFunction {
@@ -32,18 +31,20 @@ public class GameUtilsFunction {
                                             boolean teleportWinnerAfterGame, boolean teleportAfterGame) {
         // 胜利玩家
         for (GamePlayer winnerGamePlayer : winnerGamePlayers) {
-            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(winnerGamePlayer.getPlayerUUID());
-            if (player == null) {
+            LivingEntity livingEntity = serverLevel.getPlayerByUUID(winnerGamePlayer.getPlayerUUID());
+            if (livingEntity == null) {
                 continue;
             }
 
             if (teleportWinnerAfterGame) { // 传送
-                GameManager.get().teleportToLobby(player); // 传送胜利玩家回大厅
+                GameManager.get().teleportToLobby(livingEntity); // 传送胜利玩家回大厅
             } else { // 不传送，改为发送传送消息
-                Consumer<ServerPlayer> delayedTask = isWinner -> {
-                    GameNotification.sendLobbyTeleportMessage(player, true);
+                Consumer<LivingEntity> delayedTask = isWinner -> {
+                    if (livingEntity instanceof ServerPlayer player) {
+                        GameNotification.sendLobbyTeleportMessage(player, true);
+                    }
                 };
-                new DelayedEvent<>(delayedTask, player, 2, "GameManager::sendLobbyTeleportMessage");
+                new DelayedEvent<>(delayedTask, livingEntity, 2, "GameManager::sendLobbyTeleportMessage");
             }
         }
 
@@ -54,18 +55,20 @@ public class GameUtilsFunction {
                 continue;
             }
 
-            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-            if (player == null) {
+            LivingEntity livingEntity = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+            if (livingEntity == null) {
                 continue;
             }
 
             if (teleportAfterGame) {
-                GameManager.get().teleportToLobby(player); // 非胜利存活玩家直接回大厅
+                GameManager.get().teleportToLobby(livingEntity); // 非胜利存活玩家直接回大厅
             } else {
-                Consumer<ServerPlayer> delayedTask = isWinner -> {
-                    GameNotification.sendLobbyTeleportMessage(player, false);
+                Consumer<LivingEntity> delayedTask = isWinner -> {
+                    if (livingEntity instanceof ServerPlayer player) {
+                        GameNotification.sendLobbyTeleportMessage(player, false);
+                    }
                 };
-                new DelayedEvent<>(delayedTask, player, 2, "GameManager::sendLobbyTeleportMessage");
+                new DelayedEvent<>(delayedTask, livingEntity, 2, "GameManager::sendLobbyTeleportMessage");
             }
         }
     }
@@ -76,7 +79,7 @@ public class GameUtilsFunction {
     protected static GameSpectateResult spectateGame(@NotNull ServerPlayer player, boolean isInGame) {
         GameManager gameManager = GameManager.get();
         GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(player.getUUID());
-        GameSpectateResult result = getSpectateGameResult(gameManager, player, gamePlayer, isInGame);
+        GameSpectateResult result = getSpectateGameResult(gameManager, gamePlayer, isInGame);
 
         if (EventPoster.postEvent(new GameSpectateData(gameManager, player, result))) {
             return GameSpectateResult.EVENT_CANCELED;
@@ -101,7 +104,7 @@ public class GameUtilsFunction {
 
         return result;
     }
-    private static GameSpectateResult getSpectateGameResult(GameManager gameManager, @NotNull ServerPlayer player, @Nullable GamePlayer gamePlayer, boolean isInGame) {
+    private static GameSpectateResult getSpectateGameResult(GameManager gameManager, @Nullable GamePlayer gamePlayer, boolean isInGame) {
         if (!isInGame) { // 不在游戏中：从观战模式改回去
             return GameSpectateResult.CHANGE_FROM_SPECTATOR;
         }
@@ -143,12 +146,12 @@ public class GameUtilsFunction {
         GamePlayer standingGamePlayer = GameTeamManager.getRandomStandingGamePlayer();
         if (standingGamePlayer != null) {
             float yaw = 0, pitch = 0;
-            ServerPlayer targetPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(standingGamePlayer.getPlayerUUID());
+            @Nullable ServerPlayer targetPlayer = serverLevel.getPlayerByUUID(standingGamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
             if (targetPlayer != null) {
                 yaw = targetPlayer.getYRot();
                 pitch = targetPlayer.getXRot();
             }
-            GameUtilsFunction.safeTeleport(player, serverLevel, standingGamePlayer.getLastPos(), yaw, pitch);
+            GameUtilsFunction.safeTeleport(player, serverLevel, standingGamePlayer.getLastPos(), yaw, pitch); // 玩家观战传送
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_is_spectating", player.getName().getString(), standingGamePlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
         }
     }
@@ -157,7 +160,7 @@ public class GameUtilsFunction {
         SpawnManager spawnManager = SpawnManager.get();
         List<GamePlayer> healGamePlayers = new ArrayList<>(gamePlayers); // 防止意外情况
         for (GamePlayer gamePlayer : healGamePlayers) {
-            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+            @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
             if (player != null) {
                 spawnManager.healPlayer(player);
                 GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
@@ -165,47 +168,38 @@ public class GameUtilsFunction {
         }
     }
 
-    public static boolean teleportToLobby(@NotNull ServerPlayer player) {
-        if (SpawnManager.get().isLobbyCreated()) {
-            SpawnManager.get().teleportToLobby(player);
-            return true;
-        } else {
-            return false;
-        }
+    public static boolean teleportToLobby(@NotNull LivingEntity livingEntity) {
+        return SpawnManager.get().teleportToLobby(livingEntity);
     }
 
     /**
      * 安全传送，文明掉落
      * 传送不规范，玩家两行泪
      */
-    public static void safeTeleport(@NotNull ServerPlayer player, @NotNull Vec3 teleportPos) {
-        safeTeleport(player, teleportPos.x, teleportPos.y, teleportPos.z);
+    public static void safeTeleport(@NotNull LivingEntity livingEntity, @NotNull Vec3 teleportPos) {
+        safeTeleport(livingEntity, teleportPos.x, teleportPos.y, teleportPos.z);
+    }
+    public static void safeTeleport(@NotNull LivingEntity livingEntity, double x, double y, double z) {
+        if (GameManager.get().isStopping) {
+            return;
+        }
+        livingEntity.fallDistance = 0;
+        livingEntity.teleportTo(x, y, z);
     }
     /**
      * 安全传送，文明掉落
      * 传送不规范，玩家两行泪
+     * (跨纬度版本)
      */
-    public static void safeTeleport(@NotNull ServerPlayer player, double x, double y, double z) {
+    public static void safeTeleport(@NotNull LivingEntity livingEntity, @NotNull ServerLevel serverLevel, @NotNull Vec3 teleportPos, float yaw, float pitch) {
+        safeTeleport(livingEntity, serverLevel, teleportPos.x, teleportPos.y, teleportPos.z, yaw, pitch);
+    }
+    private static final Set<RelativeMovement> emptyRelativeMovement = new HashSet<>();
+    public static void safeTeleport(@NotNull LivingEntity livingEntity, @NotNull ServerLevel serverLevel, double x, double y, double z, float yaw, float pitch) {
         if (GameManager.get().isStopping) {
             return;
         }
-        player.fallDistance = 0;
-        player.teleportTo(x, y, z);
-    }
-    /**
-     * 跨纬度版本
-     */
-    public static void safeTeleport(@NotNull ServerPlayer player, @NotNull ServerLevel serverLevel, @NotNull Vec3 teleportPos, float yaw, float pitch) {
-        safeTeleport(player, serverLevel, teleportPos.x, teleportPos.y, teleportPos.z, yaw, pitch);
-    }
-    public static void safeTeleport(@NotNull ServerPlayer player, @NotNull ServerLevel serverLevel, double x, double y, double z, float yaw, float pitch) {
-        if (GameManager.get().isStopping) {
-            return;
-        }
-        player.fallDistance = 0;
-        player.teleportTo(serverLevel, x, y, z,
-                Collections.emptySet(), // 绝对传送
-                yaw, pitch,
-                true);
+        livingEntity.fallDistance = 0;
+        livingEntity.teleportTo(serverLevel, x, y, z, emptyRelativeMovement, yaw, pitch);
     }
 }

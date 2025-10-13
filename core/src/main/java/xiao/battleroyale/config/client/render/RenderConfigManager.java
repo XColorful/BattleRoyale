@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.client.render;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.render.IRenderSingleEntry;
@@ -57,7 +58,6 @@ public class RenderConfigManager extends AbstractConfigSubManager<RenderConfigMa
                             BlockEntry blockEntry, ZoneEntry zoneEntry, TeamEntry teamEntry, SpectateEntry spectateEntry) {
             this(id, name, color, false, blockEntry, zoneEntry, teamEntry, spectateEntry);
         }
-
         public RenderConfig(int id, String name, String color, boolean isDefault,
                             BlockEntry blockEntry, ZoneEntry zoneEntry, TeamEntry teamEntry, SpectateEntry spectateEntry) {
             super(id, name, color, isDefault);
@@ -65,6 +65,10 @@ public class RenderConfigManager extends AbstractConfigSubManager<RenderConfigMa
             this.zoneEntry = zoneEntry;
             this.teamEntry = teamEntry;
             this.spectateEntry = spectateEntry;
+        }
+        @Override public @NotNull RenderConfig copy() {
+            return new RenderConfig(id, name, color, isDefault,
+                    blockEntry.copy(), zoneEntry.copy(), teamEntry.copy(), spectateEntry.copy());
         }
 
         @Override

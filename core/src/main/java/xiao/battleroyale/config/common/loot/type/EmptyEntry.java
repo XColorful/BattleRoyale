@@ -25,6 +25,9 @@ public class EmptyEntry implements IItemLootEntry {
         LootEntryType entryType = LootEntryType.fromName(typeString);
         this.type = entryType != null ? entryType : LootEntryType.ITEM;
     }
+    @Override public @NotNull EmptyEntry copy() {
+        return new EmptyEntry(type.getName());
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {

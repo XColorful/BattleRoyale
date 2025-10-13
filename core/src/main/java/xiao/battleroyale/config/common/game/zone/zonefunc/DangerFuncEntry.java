@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.zone.zonefunc;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.zone.func.IZoneFuncEntry;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
@@ -11,6 +12,9 @@ public class DangerFuncEntry extends AbstractFuncEntry {
 
     public DangerFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset) {
         super(moveDelay, moveTime, tickFreq, tickOffset);
+    }
+    @Override public @NotNull DangerFuncEntry copy() {
+        return new DangerFuncEntry(moveDelay, moveTime, tickFreq, tickOffset);
     }
 
     @Override

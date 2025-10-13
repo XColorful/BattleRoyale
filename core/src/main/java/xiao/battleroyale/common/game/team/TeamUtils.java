@@ -6,6 +6,7 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.util.ColorUtils;
@@ -138,7 +139,7 @@ public class TeamUtils {
             for (GameTeam gameTeam : teamManager.getGameTeams()) {
                 PlayerTeam vanillaTeam = getClearedVanillaTeam(scoreboard, hideName, gameTeam);
                 for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) { // 原版队伍没有队长，直接遍历
-                    ServerPlayer memberPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                    @Nullable ServerPlayer memberPlayer = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
                     if (memberPlayer == null) {
                         BattleRoyale.LOGGER.warn("Failed to get GamePlayer[{}][{}]{}, skipped build vanilla team", gamePlayer.getGameTeamId(), gamePlayer.getGameSingleId(), gamePlayer.getPlayerName());
                         continue;
@@ -164,7 +165,7 @@ public class TeamUtils {
         TeamManager teamManager = TeamManager.get();
         Scoreboard scoreboard = serverLevel.getScoreboard();
         for (GamePlayer gamePlayer : teamManager.getGamePlayers()) {
-            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+            @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
             if (player == null) {
                 BattleRoyale.LOGGER.warn("Failed to get GamePlayer[{}][{}]{}, skipped clear vanilla team", gamePlayer.getGameTeamId(), gamePlayer.getGameSingleId(), gamePlayer.getPlayerName());
                 continue;

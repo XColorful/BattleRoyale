@@ -210,50 +210,60 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
         gameSpawner.tick(gameTime, GameTeamManager.getGameTeams());
     }
 
-    public void healPlayer(@NotNull ServerPlayer player) {
-        if (PlayerRevive.get().isBleeding(player)) {
+    public void healPlayer(@NotNull LivingEntity livingEntity) {
+        @Nullable ServerPlayer player = livingEntity instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+        if (player != null && PlayerRevive.get().isBleeding(player)) {
             PlayerRevive.get().revive(player);
         }
-        player.removeAllEffects();
-        player.heal(player.getMaxHealth()); // heal会触发事件
-        player.getFoodData().setFoodLevel(20);
+        livingEntity.removeAllEffects();
+        livingEntity.heal(livingEntity.getMaxHealth()); // heal会触发事件
+        if (player != null) {
+            player.getFoodData().setFoodLevel(20);
+        }
     }
 
     /**
      * 只负责帮 GameManager 传送至大厅，不负责检查
      */
-    public void teleportToLobby(@NotNull ServerPlayer player) {
+    public boolean teleportToLobby(@NotNull LivingEntity livingEntity) {
         GameManager gameManager = GameManager.get();
-        if (EventPoster.postEvent(new GameLobbyTeleportData(gameManager, player))) {
-            BattleRoyale.LOGGER.debug("LobbyTeleportEvent canceled, skipped teleportToLobby (ServerPlayer {})", player.getName().getString());
-            return;
+        if (EventPoster.postEvent(new GameLobbyTeleportData(gameManager, livingEntity))) {
+            BattleRoyale.LOGGER.debug("LobbyTeleportEvent canceled, skipped teleportToLobby (LivingEntity {})", livingEntity.getName().getString());
+            return false;
         }
 
         if (!isLobbyCreated()) {
-            BattleRoyale.LOGGER.debug("Lobby is not created, failed to teleport player {} (UUID:{}) to lobby", player.getName().getString(), player.getUUID());
-            return;
+            BattleRoyale.LOGGER.debug("Lobby is not created, failed to teleport livingEntity {} (UUID:{}) to lobby", livingEntity.getName().getString(), livingEntity.getUUID());
+            return false;
         }
-        if (lobbyHeal) {
-            healPlayer(player);
+
+        if (livingEntity instanceof ServerPlayer player) {
+            if (lobbyHeal) {
+                healPlayer(player);
+            }
+            if (changeGamemode) {
+                player.setGameMode(GameruleManager.get().getGameMode());
+            }
+            if (teleportDropInventory) {
+                player.getInventory().dropAll();
+            }
+            if (teleportClearInventory) {
+                player.getInventory().clearContent();
+            }
+        } else {
+            ;
         }
-        if (changeGamemode) {
-            player.setGameMode(GameruleManager.get().getGameMode());
-        }
-        if (teleportDropInventory) {
-            player.getInventory().dropAll();
-        }
-        if (teleportClearInventory) {
-            player.getInventory().clearContent();
-        }
+
         ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel != null) {
-            GameUtilsFunction.safeTeleport(player, serverLevel, lobbyPos, 0, 0);
+            GameUtilsFunction.safeTeleport(livingEntity, serverLevel, lobbyPos, 0, 0); // 大厅传送
         } else {
             BattleRoyale.LOGGER.debug("GameManager.serverLevel is null, teleport to literal position");
-            GameUtilsFunction.safeTeleport(player, lobbyPos);
+            GameUtilsFunction.safeTeleport(livingEntity, lobbyPos);
         }
-        BattleRoyale.LOGGER.info("Teleport player {} (UUID: {}) to lobby ({}, {}, {})", player.getName().getString(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
-        EventPoster.postEvent(new GameLobbyTeleportFinishData(gameManager, player));
+        BattleRoyale.LOGGER.info("Teleport livingEntity {} (UUID: {}) to lobby ({}, {}, {})", livingEntity.getName().getString(), livingEntity.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
+        EventPoster.postEvent(new GameLobbyTeleportFinishData(gameManager, livingEntity));
+        return true;
     }
 
     /**
@@ -261,11 +271,11 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
      */
     private void teleportGamePlayerToLobby(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel) {
         UUID id = gamePlayer.getPlayerUUID();
-        ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(id);
-        if (player == null) {
+        LivingEntity livingEntity = serverLevel.getPlayerByUUID(id);
+        if (livingEntity == null) {
             return;
         }
-        teleportToLobby(player);
+        teleportToLobby(livingEntity);
     }
 
     public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode, boolean teleportDropInventory, boolean teleportClearInventory) {

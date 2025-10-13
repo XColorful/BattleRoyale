@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.zone;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.*;
@@ -59,11 +60,9 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
         public ZoneConfig(int zoneId, String zoneName, String zoneColor, int zoneDelay, int zoneTime, IZoneFuncEntry zoneFuncEntry, IZoneShapeEntry zoneShapeEntry) {
             this(zoneId, zoneName, zoneColor, false, -1, zoneDelay, zoneTime, zoneFuncEntry, zoneShapeEntry);
         }
-
         public ZoneConfig(int zoneId, String zoneName, String zoneColor, int preZoneDelayId, int zoneDelay, int zoneTime, IZoneFuncEntry zoneFuncEntry, IZoneShapeEntry zoneShapeEntry) {
             this(zoneId, zoneName, zoneColor, false, preZoneDelayId, zoneDelay, zoneTime, zoneFuncEntry, zoneShapeEntry);
         }
-
         public ZoneConfig(int zoneId, String zoneName, String zoneColor, boolean isDefault, int preZoneDelayId, int zoneDelay, int zoneTime, IZoneFuncEntry zoneFuncEntry, IZoneShapeEntry zoneShapeEntry) {
             super(zoneId, zoneName, zoneColor, isDefault);
             this.preZoneDelayId = preZoneDelayId;
@@ -71,6 +70,9 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
             this.zoneTime = zoneTime;
             this.zoneFuncEntry = zoneFuncEntry;
             this.zoneShapeEntry = zoneShapeEntry;
+        }
+        @Override public @NotNull ZoneConfig copy() {
+            return new ZoneConfig(id, name, color, isDefault, preZoneDelayId, zoneDelay, zoneTime, zoneFuncEntry.copy(), zoneShapeEntry.copy());
         }
 
         public int getZoneId() {
