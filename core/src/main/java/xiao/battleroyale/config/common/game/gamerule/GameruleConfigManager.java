@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.gamerule;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.GameruleConfigTag;
@@ -57,12 +58,14 @@ public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConf
         public GameruleConfig(int gameId, String name, String color, BattleroyaleEntry brEntry, MinecraftEntry mcEntry, GameEntry gameEntry) {
             this(gameId, name, color, false, brEntry, mcEntry, gameEntry);
         }
-
         public GameruleConfig(int gameId, String name, String color, boolean isDefault, BattleroyaleEntry brEntry, MinecraftEntry mcEntry, GameEntry gameEntry) {
             super(gameId, name, color, isDefault);
             this.brEntry = brEntry;
             this.mcEntry = mcEntry;
             this.gameEntry = gameEntry != null ? gameEntry : new GameEntry();
+        }
+        @Override public @NotNull GameruleConfig copy() {
+            return new GameruleConfig(id, name, color, isDefault, brEntry.copy(), mcEntry.copy(), gameEntry.copy());
         }
 
         public int getGameId() {

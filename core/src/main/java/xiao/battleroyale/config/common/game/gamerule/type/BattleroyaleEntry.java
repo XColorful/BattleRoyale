@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.game.gamerule.type;
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.sub.IConfigAppliable;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
@@ -54,6 +55,12 @@ public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
         this.lobbyTeleportClearInventory = lobbyTeleportClearInventory;
         this.recordGameStats = recordGameStats;
         this.autoJoinGame = autoJoinGame;
+    }
+    @Override public @NotNull BattleroyaleEntry copy() {
+        return new BattleroyaleEntry(defaultLevelKey, playerTotal, teamSize, aiTeammate, aiEnemy,
+                requiredTeamToStart, maxGameTime, winnerTeamTotal,
+                lobbyCenterPos, lobbyDimension, lobbyMuteki, lobbyHeal, lobbyChangeGamemode, lobbyTeleportDropInventory, lobbyTeleportClearInventory,
+                recordGameStats, autoJoinGame);
     }
 
     @Override

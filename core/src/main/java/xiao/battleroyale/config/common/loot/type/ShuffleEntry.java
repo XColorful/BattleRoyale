@@ -35,6 +35,10 @@ public class ShuffleEntry implements ILootEntry {
         this.max = max;
         this.entry = entry;
     }
+    @Override public @NotNull ShuffleEntry copy() {
+        return new ShuffleEntry(keepEmpty, min, max,
+                entry.copy());
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {

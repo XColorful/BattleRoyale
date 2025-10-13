@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.zone.zonefunc;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.common.game.zone.tickable.MutekiFunc;
@@ -13,6 +14,9 @@ public class MutekiFuncEntry extends AbstractFuncEntry {
     public MutekiFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset, int mutekiTime) {
         super(moveDelay, moveTime, tickFreq, tickOffset);
         this.mutekiTime = Math.max(mutekiTime, 0);
+    }
+    @Override public @NotNull MutekiFuncEntry copy() {
+        return new MutekiFuncEntry(moveDelay, moveTime, tickFreq, tickOffset, mutekiTime);
     }
 
     @Override

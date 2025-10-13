@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.zone.zonefunc;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.common.game.zone.tickable.FireworkFunc;
@@ -24,6 +25,10 @@ public class FireworkFuncEntry extends AbstractFuncEntry {
         this.vRange = Math.max(vRange, 0);
         this.hRange = Math.max(hRange, 0);
         this.outside = outside;
+    }
+    @Override public @NotNull FireworkFuncEntry copy() {
+        return new FireworkFuncEntry(moveDelay, moveTime, tickFreq, tickOffset,
+                trackPlayer, amount, interval, vRange, hRange, outside);
     }
 
     @Override

@@ -30,6 +30,9 @@ public class RegexEntry implements ILootEntry {
         this.pattern = Pattern.compile(regexString);
         this.entry = entry;
     }
+    @Override public @NotNull RegexEntry copy() {
+        return new RegexEntry(invert, regexString, entry.copy());
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {

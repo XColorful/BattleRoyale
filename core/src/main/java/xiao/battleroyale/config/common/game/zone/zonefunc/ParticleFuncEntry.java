@@ -1,11 +1,13 @@
 package xiao.battleroyale.config.common.game.zone.zonefunc;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.common.game.zone.tickable.ParticleFunc;
 import xiao.battleroyale.util.JsonUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ParticleFuncEntry extends AbstractFuncEntry {
@@ -23,6 +25,10 @@ public class ParticleFuncEntry extends AbstractFuncEntry {
         this.channel = channel;
         this.cooldown = cooldown;
     }
+    @Override public @NotNull ParticleFuncEntry copy() {
+        return new ParticleFuncEntry(moveDelay, moveTime, tickFreq, tickOffset,
+                new ArrayList<>(particleIdList), select, channel, cooldown);
+    }
 
     @Override
     public String getType() {
@@ -31,7 +37,7 @@ public class ParticleFuncEntry extends AbstractFuncEntry {
 
     @Override
     public ITickableZone createTickableZone() {
-        return new ParticleFunc(moveDelay, moveTime, tickFreq, tickOffset, particleIdList, select, channel, cooldown);
+        return new ParticleFunc(moveDelay, moveTime, tickFreq, tickOffset, new ArrayList<>(particleIdList), select, channel, cooldown);
     }
 
     @Override

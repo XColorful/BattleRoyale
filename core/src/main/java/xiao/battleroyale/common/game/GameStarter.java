@@ -50,7 +50,7 @@ public class GameStarter {
         gameManager.maxGameTime = brEntry.maxGameTime;
         gameManager.winnerTeamTotal = brEntry.winnerTeamTotal;
         gameManager.requiredGameTeam = brEntry.requiredTeamToStart;
-        gameManager.gameEntry = gameEntry;
+        gameManager.gameEntry = gameEntry.copy();
         BleedingHandler.setBleedDamage(gameManager.gameEntry.downDamageList);
         BleedingHandler.setBleedCooldown(gameManager.gameEntry.downDamageFrequency);
         return true;

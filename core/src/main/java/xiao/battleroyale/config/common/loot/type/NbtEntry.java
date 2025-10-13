@@ -12,6 +12,7 @@ import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.NBTUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +28,9 @@ public class NbtEntry implements ILootEntry {
         this.nbtJson = nbtJson;
         this.nbt = NBTUtils.JsonToNBT(nbtJson);
         this.keyDelete = keyDelete;
+    }
+    @Override public @NotNull NbtEntry copy() {
+        return new NbtEntry(overwrite, nbtJson, new ArrayList<>(keyDelete));
     }
 
     @Override

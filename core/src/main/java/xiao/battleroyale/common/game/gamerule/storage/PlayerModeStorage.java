@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.MinecraftEntryTag;
@@ -50,7 +51,7 @@ public class PlayerModeStorage implements IRuleStorage {
             }
             UUID playerUUID = gamePlayer.getPlayerUUID();
             try {
-                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID); // 自动忽略非玩家GamePlayer（不需要切换模式）
+                @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(playerUUID) instanceof ServerPlayer serverPlayer ? serverPlayer : null; // 自动忽略非玩家GamePlayer（不需要切换模式）
                 GameType playerGameMode = player != null ? player.gameMode.getGameModeForPlayer() : this.gameMode;
                 playerModeBackup.put(playerUUID, playerGameMode);
                 BattleRoyale.LOGGER.info("Backup up gamemode {} for player {}", playerGameMode.getName(), gamePlayer.getPlayerName());
@@ -72,7 +73,7 @@ public class PlayerModeStorage implements IRuleStorage {
             }
             UUID playerUUID = gamePlayer.getPlayerUUID();
             try {
-                ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);
+                @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(playerUUID) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
                 if (player == null) {
                     continue;
                 }
@@ -94,7 +95,7 @@ public class PlayerModeStorage implements IRuleStorage {
         for (Map.Entry<UUID, GameType> entry : playerModeBackup.entrySet()) {
             UUID playerUUID = entry.getKey();
             GameType prevGameMode = entry.getValue();
-            ServerPlayer player = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);
+            @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(playerUUID) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
             if (player != null) {
                 player.setGameMode(prevGameMode);
             } else {

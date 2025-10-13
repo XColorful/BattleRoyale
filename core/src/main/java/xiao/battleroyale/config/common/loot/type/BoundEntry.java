@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
@@ -38,6 +37,14 @@ public class BoundEntry implements ILootEntry {
         this.max = max;
         this.keepEmpty = keepEmpty;
         this.entries = entries;
+    }
+    @Override public @NotNull BoundEntry copy() {
+        List<ILootEntry> entriesCopy = new ArrayList<>(entries.size());
+        for (ILootEntry entry : entries) {
+            entriesCopy.add(entry.copy());
+        }
+        return new BoundEntry(countEmpty, countLootTime, min, max, keepEmpty,
+                entriesCopy);
     }
 
     @Override

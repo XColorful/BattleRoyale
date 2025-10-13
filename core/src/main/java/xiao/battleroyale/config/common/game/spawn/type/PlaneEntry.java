@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.game.spawn.type;
 
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
@@ -21,6 +22,10 @@ public class PlaneEntry extends AbstractCommonSpawnEntry<PlaneDetailEntry> {
                       CommonDetailType detailType, PlaneDetailEntry detailEntry) {
         super(shapeType, center, dimension, detailType, detailEntry);
     }
+    @Override public @NotNull PlaneEntry copy() {
+        return new PlaneEntry(shapeType, centerPos, dimension,
+                detailType, detailEntry.copy());
+    }
 
     @Override
     public String getType() {
@@ -29,7 +34,7 @@ public class PlaneEntry extends AbstractCommonSpawnEntry<PlaneDetailEntry> {
 
     @Override
     public IGameSpawner createGameSpawner() {
-        return new PlaneSpawner(shapeType, centerPos, dimension, preZoneId, detailType, detailEntry);
+        return new PlaneSpawner(shapeType, centerPos, dimension, preZoneId, detailType, detailEntry.copy());
     }
 
     @Override
