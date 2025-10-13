@@ -2,16 +2,19 @@ package xiao.battleroyale.client.renderer.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import xiao.battleroyale.block.AbstractLootBlock;
 import xiao.battleroyale.block.LootSpawner;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 
-public class LootSpawnerRenderer extends LootContainerRenderer<LootSpawnerBlockEntity> {
+public class LootSpawnerRenderer extends LootContainerRenderer<LootSpawnerBlockEntity, CustomRenderState> {
 
     public LootSpawnerRenderer(BlockEntityRendererProvider.Context context) {
         super(context);

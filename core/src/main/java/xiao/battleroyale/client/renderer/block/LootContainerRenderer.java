@@ -3,19 +3,20 @@ package xiao.battleroyale.client.renderer.block;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
 import xiao.battleroyale.client.renderer.BlockModelRenderer;
 
-public abstract class LootContainerRenderer<T extends AbstractLootContainerBlockEntity> extends AbstractBlockRenderer<T> {
+public abstract class LootContainerRenderer<T extends AbstractLootContainerBlockEntity, S extends CustomRenderState> extends AbstractBlockRenderer<T, S> {
 
     protected static double MAX_RENDER_DISTANCE_SQ = 16 * 16;
     protected static boolean RENDER_IF_EMPTY = true;
@@ -31,7 +32,8 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
     }
 
     @Override
-    public void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, @NotNull Vec3 cameraPos) {
+    public void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn,
+                       @NotNull S renderState, @NotNull SubmitNodeCollector collector, @NotNull CameraRenderState cameraState) {
         poseStack.pushPose();
 
         boolean renderBlock = (Minecraft.getInstance().player != null
@@ -39,7 +41,7 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
         if (renderBlock) {
             boolean renderItem = !blockEntity.isEmpty();
             if (renderItem) { // 渲染容器内物品
-                renderItems(blockEntity, partialTick, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+                renderItems(blockEntity, partialTick, poseStack, bufferIn, combinedLightIn, combinedOverlayIn, collector);
             } else if (RENDER_IF_EMPTY) { // 渲染方块模型
                 renderBlockModel(blockEntity, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
             }
@@ -91,7 +93,8 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
         return false;
     }
 
-    protected void renderItems(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    protected void renderItems(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn,
+                               @NotNull SubmitNodeCollector collector) {
         ItemStack[] items = getItems(blockEntity);
         if (items == null || items.length == 0) { // 照理不应该发生，除非hasItem有问题
             renderBlockModel(blockEntity, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);

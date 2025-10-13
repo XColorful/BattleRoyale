@@ -3,13 +3,14 @@ package xiao.battleroyale.client.renderer.block;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 
-public class EntitySpawnerRenderer extends AbstractBlockRenderer<EntitySpawnerBlockEntity> implements BlockEntityRenderer<EntitySpawnerBlockEntity> {
+public class EntitySpawnerRenderer extends AbstractBlockRenderer<EntitySpawnerBlockEntity, CustomRenderState> implements BlockEntityRenderer<EntitySpawnerBlockEntity, CustomRenderState> {
 
     protected static double MAX_RENDER_DISTANCE_SQ = 16 * 16;
     public static void setRenderDistance(double distance) {
@@ -21,7 +22,8 @@ public class EntitySpawnerRenderer extends AbstractBlockRenderer<EntitySpawnerBl
     }
 
     @Override
-    public void render(@NotNull EntitySpawnerBlockEntity blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, @NotNull Vec3 cameraPos) {
+    public void render(@NotNull EntitySpawnerBlockEntity blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn,
+                       @NotNull CustomRenderState renderState, @NotNull SubmitNodeCollector collector, @NotNull CameraRenderState cameraState) {
         poseStack.pushPose();
 
         boolean renderBlock = (Minecraft.getInstance().player != null
