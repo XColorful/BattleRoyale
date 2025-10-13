@@ -32,7 +32,7 @@ public class GameManagement {
         // 筛选并增加无效时间计数
         for (GamePlayer gamePlayer : gamePlayers) {
             if (!gamePlayer.isBot()) { // 真人玩家
-                updateInvalidServerPlayer(gamePlayer, serverLevel, invalidPlayers, gameManager.getGameEntry().maxPlayerInvalidTime);
+                updateInvalidGamePlayer(gamePlayer, serverLevel, invalidPlayers, gameManager.getGameEntry().maxPlayerInvalidTime);
             } else { // 人机
                 updateInvalidBotPlayer(gamePlayer, serverLevel, invalidPlayers, gameManager.getGameEntry().maxBotInvalidTime);
             }
@@ -48,9 +48,9 @@ public class GameManagement {
             }
         }
     }
-    private static void updateInvalidServerPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {
-        @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
-        if (player == null) { // 不在线或者不在游戏运行的 serverLevel
+    private static void updateInvalidGamePlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {
+        Entity entity = serverLevel.getEntity(gamePlayer.getPlayerUUID());
+        if (!(entity instanceof LivingEntity livingEntity)) { // 不在线或者不在游戏运行的 serverLevel
             if (gamePlayer.isActiveEntity()) {
                 GameNotification.notifyGamePlayerIsInactive(serverLevel, gamePlayer);
             }
@@ -70,11 +70,11 @@ public class GameManagement {
                     return;
                 }
                 // TODO GamePlayer health 和 absorptionAmount 处理
-                player.setHealth(lastHealth); // 不用maxHealth检查，可能包含吸收血量
+                livingEntity.setHealth(lastHealth); // 不用maxHealth检查，可能包含吸收血量
             }
             gamePlayer.setActiveEntity(true);
-            gamePlayer.setLastHealth(player.getHealth());
-            gamePlayer.setLastPos(player.position());
+            gamePlayer.setLastHealth(livingEntity.getHealth());
+            gamePlayer.setLastPos(livingEntity.position());
         }
     }
     private static void updateInvalidBotPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {
