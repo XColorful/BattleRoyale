@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.server.utility;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.server.utility.IUtilitySingleEntry;
@@ -50,10 +51,12 @@ public class UtilityConfigManager extends AbstractConfigSubManager<UtilityConfig
         public UtilityConfig(int id, String name, String color, SurvivalEntry survivalEntry) {
             this(id, name, color, false, survivalEntry);
         }
-
         public UtilityConfig(int id, String name, String color, boolean isDefault, SurvivalEntry survivalEntry) {
             super(id, name, color, isDefault);
             this.survivalEntry = survivalEntry;
+        }
+        @Override public @NotNull UtilityConfig copy() {
+            return new UtilityConfig(id, name, color, isDefault, survivalEntry.copy());
         }
 
         @Override

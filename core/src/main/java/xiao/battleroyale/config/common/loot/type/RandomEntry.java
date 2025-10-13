@@ -26,6 +26,9 @@ public class RandomEntry implements ILootEntry {
         this.chance = chance;
         this.entry = entry;
     }
+    @Override public @NotNull RandomEntry copy() {
+        return new RandomEntry(chance, entry.copy());
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {

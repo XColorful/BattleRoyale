@@ -20,7 +20,6 @@ public class TeamEntry implements IRenderEntry {
         this(enableTeamZone, useClientColor, "#00FFFF",
                 true, true, 0.5F);
     }
-
     public TeamEntry(boolean enableTeamZone, boolean useClientColor, String fixedColor,
                      boolean renderBeacon, boolean renderBoundingBox, float transparency) {
         this.enableTeamZone = enableTeamZone;
@@ -29,6 +28,10 @@ public class TeamEntry implements IRenderEntry {
         this.renderBeacon = renderBeacon;
         this.renderBoundingBox = renderBoundingBox;
         this.transparency = transparency;
+    }
+    @Override public @NotNull TeamEntry copy() {
+        return new TeamEntry(enableTeamZone, useClientColor, fixedColor,
+                renderBeacon, renderBoundingBox, transparency);
     }
 
     @Override

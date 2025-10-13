@@ -28,6 +28,9 @@ public class ItemEntry implements IItemLootEntry {
         this.nbt = NBTUtils.stringToNBT(nbtString);
         this.count = count;
     }
+    @Override public @NotNull ItemEntry copy() {
+        return new ItemEntry(itemString, nbtString, count);
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {

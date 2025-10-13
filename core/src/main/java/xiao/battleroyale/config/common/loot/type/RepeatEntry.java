@@ -31,6 +31,9 @@ public class RepeatEntry implements ILootEntry {
         this.max = max;
         this.entry = entry;
     }
+    @Override public @NotNull RepeatEntry copy() {
+        return new RepeatEntry(min, max, entry.copy());
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {

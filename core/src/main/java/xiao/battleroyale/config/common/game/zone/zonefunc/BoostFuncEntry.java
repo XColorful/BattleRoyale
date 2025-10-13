@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.zone.zonefunc;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.common.game.zone.tickable.BoostFunc;
@@ -13,6 +14,9 @@ public class BoostFuncEntry extends AbstractFuncEntry {
     public BoostFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset, int boost) {
         super(moveDelay, moveTime, tickFreq, tickOffset);
         this.boost = Math.max(boost, 0);
+    }
+    @Override public @NotNull BoostFuncEntry copy() {
+        return new BoostFuncEntry(moveDelay, moveTime, tickFreq, tickOffset, boost);
     }
 
     @Override

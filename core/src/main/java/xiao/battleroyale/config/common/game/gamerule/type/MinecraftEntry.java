@@ -45,6 +45,13 @@ public class MinecraftEntry implements IGameruleEntry {
         this.doTimeSet = doTimeSet;
         this.timeSet = timeSet;
     }
+    @Override public @NotNull MinecraftEntry copy() {
+        return new MinecraftEntry(adventureMode, mobGriefing, autoSaturation,
+                naturalRegeneration, doMobSpawning, doFireTick,
+                doDaylightCycle, doWeatherCycle, fallDamage,
+                tntExplosionDropDecay, spectatorGenerateChunks, clearInventory,
+                keepInventory, doTimeSet, timeSet);
+    }
 
     @Override
     public String getType() {

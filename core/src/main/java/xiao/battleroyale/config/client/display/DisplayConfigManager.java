@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.client.display;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.display.IDisplaySingleEntry;
@@ -54,12 +55,14 @@ public class DisplayConfigManager extends AbstractConfigSubManager<DisplayConfig
         public DisplayConfig(int id, String name, String color, TeamEntry teamEntry, GameEntry gameEntry, MapEntry mapEntry) {
             this(id, name, color, false, teamEntry, gameEntry, mapEntry);
         }
-
         public DisplayConfig(int id, String name, String color, boolean isDefault, TeamEntry teamEntry, GameEntry gameEntry, MapEntry mapEntry) {
             super(id, name, color, isDefault);
             this.teamEntry = teamEntry;
             this.gameEntry = gameEntry;
             this.mapEntry = mapEntry;
+        }
+        @Override public @NotNull DisplayConfig copy() {
+            return new DisplayConfig(id, name, color, isDefault, teamEntry.copy(), gameEntry.copy(), mapEntry.copy());
         }
 
         @Override

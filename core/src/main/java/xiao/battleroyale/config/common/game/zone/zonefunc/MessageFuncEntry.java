@@ -36,6 +36,12 @@ public class MessageFuncEntry extends AbstractFuncEntry {
         this.sendActionBar = sendActionBar;
         this.actionBar = actionBar != null ? actionBar : Component.empty();
     }
+    @Override public @NotNull MessageFuncEntry copy() {
+        return new MessageFuncEntry(moveDelay, moveTime, tickFreq, tickOffset,
+                setTitleAnimation, fadeInTicks, stayTicks, fadeOutTicks,
+                sendTitles, title.copy(), subTitle.copy(),
+                sendActionBar, actionBar.copy());
+    }
 
     @Override
     public String getType() {
@@ -47,7 +53,7 @@ public class MessageFuncEntry extends AbstractFuncEntry {
         return new MessageFunc(
                 moveDelay, moveTime, tickFreq, tickOffset,
                 setTitleAnimation, fadeInTicks, stayTicks, fadeOutTicks,
-                sendTitles, title, subTitle, sendActionBar, actionBar
+                sendTitles, title.copy(), subTitle.copy(), sendActionBar, actionBar.copy()
         );
     }
 

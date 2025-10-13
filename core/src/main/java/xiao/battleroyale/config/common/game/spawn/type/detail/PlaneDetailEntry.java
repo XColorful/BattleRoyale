@@ -17,6 +17,9 @@ public class PlaneDetailEntry extends AbstractDetailEntry<PlaneDetailEntry> {
         this.planeSpeed = planeSpeed;
         this.fixedReachTime = fixedReachTime;
     }
+    @Override public PlaneDetailEntry copy() {
+        return new PlaneDetailEntry(planeHeight, planeSpeed, fixedReachTime);
+    }
 
     @Override
     public void toJson(JsonObject jsonObject, SpawnShapeType shapeType, CommonDetailType detailType) {

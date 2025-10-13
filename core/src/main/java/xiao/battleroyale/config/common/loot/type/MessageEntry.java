@@ -38,6 +38,9 @@ public class MessageEntry implements ILootEntry {
         this.messageColor = messageColor;
         this.colorRGB = ColorUtils.parseColorToInt(messageColor) & 0xFFFFFF;
     }
+    @Override public @NotNull MessageEntry copy() {
+        return new MessageEntry(onlyGamePlayer, sendPosition, messageString, messageColor);
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {

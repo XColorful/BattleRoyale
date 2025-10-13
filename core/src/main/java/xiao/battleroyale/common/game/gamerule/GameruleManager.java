@@ -59,13 +59,14 @@ public class GameruleManager extends AbstractGameManager {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;
         }
-        MinecraftEntry mcEntry = gameruleConfig.getMinecraftEntry();;
+        MinecraftEntry mcEntry = gameruleConfig.getMinecraftEntry();
         GameEntry gameEntry = gameruleConfig.getGameEntry();
         if (mcEntry == null || gameEntry == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             BattleRoyale.LOGGER.warn("Failed to get MinecraftEntry or GameEntry from GameruleConfig by id: {}", gameId);
             return;
         }
+        mcEntry = mcEntry.copy();
         this.mcEntry = mcEntry;
         this.gameruleBackup.store(mcEntry, serverLevel, null);
         this.autoSaturation = mcEntry.autoSaturation;
