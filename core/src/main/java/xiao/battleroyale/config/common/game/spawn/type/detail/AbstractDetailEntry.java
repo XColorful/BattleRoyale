@@ -8,6 +8,8 @@ public abstract class AbstractDetailEntry<T extends AbstractDetailEntry<T>> {
     public AbstractDetailEntry() {
     }
 
+    public abstract T copy();
+
     public abstract void toJson(JsonObject jsonObject, SpawnShapeType shapeType, CommonDetailType detailType);
 
     public static <T extends AbstractDetailEntry<T>> T fromJson(JsonObject jsonObject) {

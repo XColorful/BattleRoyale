@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.zone.zoneshape;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
@@ -12,6 +13,9 @@ public class CuboidEntry extends AbstractSimpleEntry {
 
     public CuboidEntry(StartEntry startEntry, EndEntry endEntry, boolean badShape) {
         super(startEntry, endEntry, badShape);
+    }
+    @Override public @NotNull CuboidEntry copy() {
+        return new CuboidEntry(startEntry.copy(), endEntry.copy(), badShape);
     }
 
     @Override
@@ -26,7 +30,7 @@ public class CuboidEntry extends AbstractSimpleEntry {
 
     @Override
     public ISpatialZone createSpatialZone() {
-        return new CuboidShape(startEntry, endEntry, badShape);
+        return new CuboidShape(startEntry.copy(), endEntry.copy(), badShape);
     }
 
     @Nullable

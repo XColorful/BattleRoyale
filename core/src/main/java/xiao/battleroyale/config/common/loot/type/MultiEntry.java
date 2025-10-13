@@ -23,6 +23,13 @@ public class MultiEntry implements ILootEntry {
     public MultiEntry(@NotNull List<ILootEntry> entries) {
         this.entries = entries;
     }
+    @Override public @NotNull MultiEntry copy() {
+        List<ILootEntry> entriesCopy = new ArrayList<>(entries.size());
+        for (ILootEntry entry : entries) {
+            entriesCopy.add(entry.copy());
+        }
+        return new MultiEntry(entriesCopy);
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {

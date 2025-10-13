@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.effect.particle;
 import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.effect.particle.IParticleEntry;
 import xiao.battleroyale.api.game.effect.particle.IParticleSingleEntry;
@@ -54,10 +55,12 @@ public class ParticleConfigManager extends AbstractConfigSubManager<ParticleConf
         public ParticleConfig(int id, String name, String color, ParticleDetailEntry entry) {
             this(id, name, color, false, entry);
         }
-
         public ParticleConfig(int id, String name, String color, boolean isDefault, ParticleDetailEntry entry) {
             super(id, name, color, isDefault);
             this.entry = entry;
+        }
+        @Override public @NotNull ParticleConfig copy() {
+            return new ParticleConfig(id, name, color, isDefault, entry.copy());
         }
 
         public int getId() {

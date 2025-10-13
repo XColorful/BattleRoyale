@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.server.performance;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.server.performance.IPerformanceSingleEntry;
@@ -50,10 +51,12 @@ public class PerformanceConfigManager extends AbstractConfigSubManager<Performan
         public PerformanceConfig(int id, String name, String color, GeneratorEntry generatorEntry) {
             this(id, name, color, false, generatorEntry);
         }
-
         public PerformanceConfig(int id, String name, String color, boolean isDefault, GeneratorEntry generatorEntry) {
             super(id, name, color, isDefault);
             this.generatorEntry = generatorEntry;
+        }
+        @Override public @NotNull PerformanceConfig copy() {
+            return new PerformanceConfig(id, name, color, isDefault, generatorEntry.copy());
         }
 
         @Override

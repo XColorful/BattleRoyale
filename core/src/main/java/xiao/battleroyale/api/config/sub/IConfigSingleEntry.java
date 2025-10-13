@@ -1,5 +1,7 @@
 package xiao.battleroyale.api.config.sub;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface IConfigSingleEntry extends IConfigEntry, IConfigAppliable {
 
     /**
@@ -11,4 +13,8 @@ public interface IConfigSingleEntry extends IConfigEntry, IConfigAppliable {
     String getName();
 
     boolean isDefaultSelect();
+
+    @Override
+    @NotNull
+    IConfigSingleEntry copy();
 }

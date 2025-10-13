@@ -31,6 +31,9 @@ public class WeightEntry implements ILootEntry {
             this.weight = weight;
             this.entry = entry;
         }
+        public WeightedEntry copy() {
+            return new WeightedEntry(weight, entry.copy());
+        }
     }
 
     public static WeightedEntry createWeightedEntry(double weight, ILootEntry entry) {
@@ -39,6 +42,13 @@ public class WeightEntry implements ILootEntry {
 
     public WeightEntry(List<WeightedEntry> weightedEntries) {
         this.weightedEntries = weightedEntries;
+    }
+    @Override public @NotNull WeightEntry copy() {
+        List<WeightedEntry> weightedEntriesCopy = new ArrayList<>(weightedEntries.size());
+        for (WeightedEntry weightedEntry : weightedEntries) {
+            weightedEntriesCopy.add(weightedEntry.copy());
+        }
+        return new WeightEntry(weightedEntriesCopy);
     }
 
     @Override

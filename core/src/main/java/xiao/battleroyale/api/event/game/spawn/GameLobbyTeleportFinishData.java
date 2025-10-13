@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.event.game.spawn;
 
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.game.AbstractGameStatsEventData;
@@ -8,11 +8,11 @@ import xiao.battleroyale.api.game.IGameManager;
 
 public class GameLobbyTeleportFinishData extends AbstractGameStatsEventData {
 
-    public @NotNull final ServerPlayer player;
+    public @NotNull final LivingEntity livingEntity;
 
-    public GameLobbyTeleportFinishData(IGameManager gameManager, @NotNull ServerPlayer player) {
+    public GameLobbyTeleportFinishData(IGameManager gameManager, @NotNull LivingEntity livingEntity) {
         super(gameManager);
-        this.player = player;
+        this.livingEntity = livingEntity;
     }
 
     @Override

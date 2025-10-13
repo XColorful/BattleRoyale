@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.loot;
 
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
@@ -73,10 +74,12 @@ public class LootConfigManager extends AbstractConfigSubManager<LootConfigManage
         public LootConfig(int lootId, String name, String color, ILootEntry entry) {
             this(lootId, name, color, false, entry);
         }
-
         public LootConfig(int lootId, String name, String color, boolean isDefault, ILootEntry entry) {
             super(lootId, name, color, isDefault);
             this.entry = entry;
+        }
+        @Override public @NotNull LootConfig copy() {
+            return new LootConfig(id, name, color, isDefault, entry.copy());
         }
 
         @Override

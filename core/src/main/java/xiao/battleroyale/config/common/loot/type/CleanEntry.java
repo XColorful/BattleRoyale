@@ -21,6 +21,9 @@ public class CleanEntry implements ILootEntry {
     public CleanEntry(ILootEntry entry) {
         this.entry = entry;
     }
+    @Override public @NotNull CleanEntry copy() {
+        return new CleanEntry(entry.copy());
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {

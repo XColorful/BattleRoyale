@@ -38,6 +38,9 @@ public class MessageEntry implements ILootEntry {
         this.messageColor = messageColor;
         this.colorRGB = ColorUtils.parseColorToInt(messageColor) & 0xFFFFFF;
     }
+    @Override public @NotNull MessageEntry copy() {
+        return new MessageEntry(onlyGamePlayer, sendPosition, messageString, messageColor);
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
@@ -70,7 +73,7 @@ public class MessageEntry implements ILootEntry {
                 if (gamePlayer == null) {
                     continue;
                 }
-                ServerPlayer player = (ServerPlayer) lootContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                @Nullable ServerPlayer player = lootContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
                 if (player != null) {
                     ChatUtils.sendMessageToPlayer(player, message);
                 }
