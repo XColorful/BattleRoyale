@@ -73,7 +73,7 @@ public class MessageEntry implements ILootEntry {
                 if (gamePlayer == null) {
                     continue;
                 }
-                ServerPlayer player = (ServerPlayer) lootContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
+                @Nullable ServerPlayer player = lootContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
                 if (player != null) {
                     ChatUtils.sendMessageToPlayer(player, message);
                 }

@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
@@ -121,9 +122,9 @@ public class TeamMessageManager extends AbstractMessageManager<TeamMessage> {
                 if (GameTeamManager.getGamePlayerByUUID(playerUUID) != null) { // 属于离队玩家，但是仍然是游戏玩家，则是加入了其他队伍，不需要通知取消渲染
                     continue;
                 }
-                ServerPlayer serverPlayer = (ServerPlayer) serverLevel.getPlayerByUUID(playerUUID);
-                if (serverPlayer != null) {
-                    players.add(serverPlayer);
+                @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(playerUUID) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+                if (player != null) {
+                    players.add(player);
                 }
             }
             sendMessageToPlayers(players, new CompoundTag(), serverLevel);

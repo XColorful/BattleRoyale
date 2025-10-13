@@ -138,7 +138,7 @@ public class SurvivalLobby implements ILobbyReadApi {
             healPlayer(player);
         }
         player.setGameMode(GameType.SURVIVAL);
-        GameUtilsFunction.safeTeleport(player, serverLevel, lobbyPos, 0, 0);
+        GameUtilsFunction.safeTeleport(player, serverLevel, lobbyPos, 0, 0); // 生存大厅传送
         BattleRoyale.LOGGER.info("Teleport player {} (UUID:{}) to lobby ({}, {}, {})", player.getName().getString(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
     }
 

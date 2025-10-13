@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -429,13 +430,13 @@ public class TeamManager extends AbstractGameManager implements IGameTeamReadApi
     /**
      * 在游戏中强制淘汰玩家并向队友发送消息
      */
-    public void forceEliminatePlayerFromTeam(ServerPlayer player) {
+    public void forceEliminatePlayerFromTeam(LivingEntity livingEntity) {
         if (!GameManager.get().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager isn't in game, skipped forceEliminatePlayerFromTeam");
             return;
         }
 
-        TeamManagement.forceEliminatePlayerFromTeam(player);
+        TeamManagement.forceEliminatePlayerFromTeam(livingEntity);
     }
     /**
      * 游戏未开始时将玩家移出队伍
