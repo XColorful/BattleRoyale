@@ -40,6 +40,36 @@ public class StartEntry {
     public int rotatePlayerId = 0;
     // 淘汰的玩家就没必要选择了
 
+    public StartEntry copy() {
+        StartEntry startEntry = new StartEntry();
+
+        startEntry.startCenterType = this.startCenterType;
+        startEntry.startCenterPos = this.startCenterPos;
+        startEntry.startCenterZoneId = this.startCenterZoneId;
+        startEntry.startCenterProgress = this.startCenterProgress;
+        startEntry.startCenterRange = this.startCenterRange;
+        startEntry.centerPlayerId = this.centerPlayerId;
+        startEntry.selectStanding = this.selectStanding;
+        startEntry.playerCenterLerp = this.playerCenterLerp;
+
+        startEntry.startDimensionType = this.startDimensionType;
+        startEntry.startDimension = this.startDimension;
+        startEntry.startDimensionZoneId = this.startDimensionZoneId;
+        startEntry.startDimensionProgress = this.startDimensionProgress;
+        startEntry.startDimensionScale = this.startDimensionScale;
+        startEntry.startDimensionRange = this.startDimensionRange;
+
+        startEntry.startRotationType = this.startRotationType;
+        startEntry.startRotateDegree = this.startRotateDegree;
+        startEntry.startRotateZoneId = this.startRotateZoneId;
+        startEntry.startRotateProgress = this.startRotateProgress;
+        startEntry.startRotateScale = this.startRotateScale;
+        startEntry.startRotateRange = this.startRotateRange;
+        startEntry.rotatePlayerId = this.rotatePlayerId;
+
+        return startEntry;
+    }
+
     public StartEntry() {
         ;
     }

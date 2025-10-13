@@ -25,7 +25,6 @@ public class ZoneEntry implements IRenderEntry {
         this(useClientColor, "#0000FF",
                 64, 64, 64, 64);
     }
-
     public ZoneEntry(boolean useClientColor, String fixedColor,
                      int circleSegments, int ellipseSegments, int sphereSegments, int ellipsoidSegments) {
         this.useClientColor = useClientColor;
@@ -34,6 +33,10 @@ public class ZoneEntry implements IRenderEntry {
         this.ellipseSegments = ellipseSegments;
         this.sphereSegments = sphereSegments;
         this.ellipsoidSegments = ellipsoidSegments;
+    }
+    @Override public @NotNull ZoneEntry copy() {
+        return new ZoneEntry(useClientColor, fixedColor,
+                circleSegments, ellipseSegments, sphereSegments, ellipsoidSegments);
     }
 
     @Override

@@ -11,6 +11,7 @@ import xiao.battleroyale.compat.tacz.Tacz;
 import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.JsonUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -87,7 +88,6 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
                 true, true, true, false, 0, 0, false,
                 20 * 7, 20 * 5, 20 * 5);
     }
-
     public GameEntry(boolean teleportWhenInitGame, int teamMsgExpireTimeSeconds, List<String> teamColors, boolean buildVanillaTeam, boolean hideVanillaTeamName,
                      int maxPlayerInvalidTime, int maxBotInvalidTime, boolean removeInvalidTeam,
                      boolean healAllAtStart, boolean friendlyFire, boolean downFire, List<Float> downDamageList, int downDamageFrequency,
@@ -127,6 +127,15 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         this.messageCleanFreq = messageCleanFreq;
         this.messageExpireTime = messageExpireTime;
         this.messageSyncFreq = messageSyncFreq;
+    }
+    @Override public @NotNull GameEntry copy() {
+        return new GameEntry(teleportWhenInitGame, teamMsgExpireTimeSeconds, new ArrayList<>(teamColors), buildVanillaTeam, hideVanillaTeamName,
+                maxPlayerInvalidTime, maxBotInvalidTime, removeInvalidTeam,
+                healAllAtStart, friendlyFire, downFire, new ArrayList<>(downDamageList), downDamageFrequency,
+                downShoot, downReload, downFireSelect, downMelee,
+                onlyGamePlayerSpectate, spectateAfterTeam, spectatorSeeAllTeams, teleportInterfererToLobby, forceEliminationTeleportToLobby,
+                allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId, initGameAfterGame,
+                messageCleanFreq, messageExpireTime, messageSyncFreq);
     }
 
     @Override
@@ -186,7 +195,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         boolean buildVanillaTeam = JsonUtils.getJsonBool(jsonObject, GameEntryTag.BUILD_VANILLA_TEAM, true);
         boolean hideVanillaTeamName = JsonUtils.getJsonBool(jsonObject, GameEntryTag.HIDE_VANILLA_TEAM_NAME, true);
 
-        int maxInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_PLAYER_INVALID_TIME, 20 * 60);
+        int maxPlayerInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_PLAYER_INVALID_TIME, 20 * 60);
         int maxBotInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_BOT_INVALID_TIME, 20 * 10);
         boolean removeInvalidTeam = JsonUtils.getJsonBool(jsonObject, GameEntryTag.REMOVE_INVALID_TEAM, false);
 
@@ -220,7 +229,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         int messageSyncFreq = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_FORCE_SYNC_FREQUENCY, 20 * 5);
 
         return new GameEntry(teleportWhenInitGame, teamMsgExpireTimeSeconds, teamColors, buildVanillaTeam, hideVanillaTeamName,
-                maxInvalidTime, maxBotInvalidTime, removeInvalidTeam,
+                maxPlayerInvalidTime, maxBotInvalidTime, removeInvalidTeam,
                 healAllAtStart, friendlyFire, downFire, downDamageList, downDamageFrequency,
                 downShoot, downReload, downFireSelect, downMelee,
                 onlyGamePlayerSpectate, spectateAfterTeam, spectatorSeeAllTeams, teleportInterfererToLobby, forceEliminationTeleportToLobby,

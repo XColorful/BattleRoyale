@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.game.zone.zonefunc.event;
 
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
@@ -14,6 +15,10 @@ public class EventFuncEntry extends AbstractEventFuncEntry {
                           @Nullable CompoundTag tag) {
         super(moveDelay, moveTime, funcFreq, funcOffset, protocol, tag);
     }
+    @Override public @NotNull EventFuncEntry copy() {
+        return new EventFuncEntry(moveDelay, moveTime, tickFreq, tickOffset, protocol,
+                tag.copy());
+    }
 
     @Override
     public String getType() {
@@ -23,7 +28,7 @@ public class EventFuncEntry extends AbstractEventFuncEntry {
     @Override
     public ITickableZone createTickableZone() {
         return new EventFunc(moveDelay, moveTime, tickFreq, tickOffset,
-                protocol, tag);
+                protocol, tag.copy());
     }
 
     @Override

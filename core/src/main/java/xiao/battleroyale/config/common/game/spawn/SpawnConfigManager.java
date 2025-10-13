@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.spawn;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
@@ -56,16 +57,17 @@ public class SpawnConfigManager extends AbstractConfigSubManager<SpawnConfigMana
         public SpawnConfig(int id, String name, String color, ISpawnEntry entry) {
             this(id, name, color, -1, false, entry);
         }
-
         public SpawnConfig(int id, String name, String color, int preZoneCenterOffset, ISpawnEntry entry) {
             this(id, name, color, preZoneCenterOffset, false, entry);
         }
-
         public SpawnConfig(int id, String name, String color, int preZoneCenterOffset, boolean isDefault, ISpawnEntry entry) {
             super(id, name, color, isDefault);
             this.preZoneCenterOffset = preZoneCenterOffset;
             this.entry = entry;
             this.entry.addPreZoneId(preZoneCenterOffset);
+        }
+        @Override public @NotNull SpawnConfig copy() {
+            return new SpawnConfig(id, name, color, preZoneCenterOffset, isDefault, entry.copy());
         }
 
         @Override

@@ -37,6 +37,10 @@ public class StructureEntry implements ILootEntry {
         }
         this.entry = entry;
     }
+    @Override public @NotNull StructureEntry copy() {
+        return new StructureEntry(invert, new ArrayList<>(structureList),
+                entry.copy());
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {

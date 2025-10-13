@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.effect.IEffectManager;
 import xiao.battleroyale.event.effect.MutekiEventHandler;
@@ -53,7 +54,7 @@ public class MutekiManager implements IEffectManager {
 
     public void notifyMutekiEnd(EntityMutekiTask task) {
         if (task.notice && task.serverLevel != null) {
-            ServerPlayer player = (ServerPlayer) task.serverLevel.getEntity(task.entityUUID);
+            @Nullable ServerPlayer player = task.serverLevel.getEntity(task.entityUUID) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
             if (player != null) {
                 ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.muteki_end").withStyle(ChatFormatting.YELLOW));
             }

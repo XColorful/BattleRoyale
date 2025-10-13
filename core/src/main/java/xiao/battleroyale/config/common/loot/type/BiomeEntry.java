@@ -33,6 +33,9 @@ public class BiomeEntry implements ILootEntry {
         }
         this.entry = entry;
     }
+    @Override public @NotNull BiomeEntry copy() {
+        return new BiomeEntry(invert, new ArrayList<>(biomeList), entry.copy());
+    }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {
