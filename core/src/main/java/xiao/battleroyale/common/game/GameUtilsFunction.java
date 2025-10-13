@@ -5,7 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.RelativeMovement;
+import net.minecraft.world.entity.Relative;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -194,12 +194,12 @@ public class GameUtilsFunction {
     public static void safeTeleport(@NotNull LivingEntity livingEntity, @NotNull ServerLevel serverLevel, @NotNull Vec3 teleportPos, float yaw, float pitch) {
         safeTeleport(livingEntity, serverLevel, teleportPos.x, teleportPos.y, teleportPos.z, yaw, pitch);
     }
-    private static final Set<RelativeMovement> emptyRelativeMovement = new HashSet<>();
+    private static final Set<Relative> emptyRelativeMovement = new HashSet<>();
     public static void safeTeleport(@NotNull LivingEntity livingEntity, @NotNull ServerLevel serverLevel, double x, double y, double z, float yaw, float pitch) {
         if (GameManager.get().isStopping) {
             return;
         }
         livingEntity.fallDistance = 0;
-        livingEntity.teleportTo(serverLevel, x, y, z, emptyRelativeMovement, yaw, pitch);
+        livingEntity.teleportTo(serverLevel, x, y, z, emptyRelativeMovement, yaw, pitch, true);
     }
 }
