@@ -63,7 +63,7 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
-def journeymap_api_version = "2.0.0-1.21.6-SNAPSHOT"
+def journeymap_api_version = "2.0.0-1.21.10-SNAPSHOT"
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
@@ -71,13 +71,13 @@ dependencies {
     implementation project(":core")
 
     compileOnly "info.journeymap:journeymap-api-neoforge:${journeymap_api_version}"
-    runtimeOnly "curse.maven:journeymap-32274:6688083"
+    runtimeOnly "curse.maven:journeymap-32274:7080161"
 }
 
 tasks.named('jar', Jar).configure {
     archiveBaseName.set("battleroyale")
     archiveVersion.set(mod_version)
-    archiveClassifier.set("neoforge1.21.6")
+    archiveClassifier.set("neoforge1.21.10")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':core').sourceSets.main.output
 }
