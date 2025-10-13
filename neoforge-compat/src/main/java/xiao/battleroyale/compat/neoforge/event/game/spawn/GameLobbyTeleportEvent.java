@@ -1,7 +1,9 @@
 package xiao.battleroyale.compat.neoforge.event.game.spawn;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.ICustomEventData;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportData;
 import xiao.battleroyale.api.game.IGameManager;
