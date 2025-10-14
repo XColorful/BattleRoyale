@@ -40,11 +40,11 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
                 && blockEntity.getBlockPos().distSqr(Minecraft.getInstance().player.blockPosition()) <= MAX_RENDER_DISTANCE_SQ);
         if (renderBlock) {
             boolean renderItem = !blockEntity.isEmpty();
-            if (renderItem) { // 渲染容器内物品
-                renderItems(blockEntity, partialTick, poseStack, bufferIn, combinedLightIn, combinedOverlayIn, collector);
-            } else if (RENDER_IF_EMPTY) { // 渲染方块模型
+//            if (renderItem) { // 渲染容器内物品
+//                renderItems(blockEntity, partialTick, poseStack, bufferIn, combinedLightIn, combinedOverlayIn, collector);
+//            } else if (RENDER_IF_EMPTY) { // 渲染方块模型
                 renderBlockModel(blockEntity, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
-            }
+//            }
         }
 
         poseStack.popPose();
