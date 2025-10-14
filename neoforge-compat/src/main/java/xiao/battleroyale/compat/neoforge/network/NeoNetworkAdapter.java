@@ -24,7 +24,8 @@ public class NeoNetworkAdapter implements INetworkAdapter {
 
     private record RegisteredPacket<T extends IMessage<T>>(
             Class<T> messageType,
-            ResourceLocation id
+            ResourceLocation id,
+            MessageDirection direction
     ) {}
 
     private record NeoPayload<T extends IMessage<T>>(ResourceLocation id, T message) implements CustomPacketPayload {
@@ -67,7 +68,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
             return;
         }
 
-        registeredPackets.add(new RegisteredPacket<>(clazz, packetId));
+        registeredPackets.add(new RegisteredPacket<>(clazz, packetId, direction));
     }
 
     @Override
@@ -131,6 +132,15 @@ public class NeoNetworkAdapter implements INetworkAdapter {
             });
         };
 
-        registrar.playBidirectional(payloadType, codec, handler);
+        if (rp.direction == MessageDirection.SERVER_TO_CLIENT) {
+            // 客户端接收并处理消息 (Server to Client)
+            registrar.playToClient(payloadType, codec, handler);
+        } else if (rp.direction == MessageDirection.CLIENT_TO_SERVER) {
+            // 服务器接收并处理消息 (Client to Server)
+            registrar.playToServer(payloadType, codec, handler);
+        } else {
+            // 默认或双向消息
+            registrar.playBidirectional(payloadType, codec, handler);
+        }
     }
 }
