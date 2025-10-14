@@ -40,15 +40,11 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
         RENDER_IF_EMPTY = bool;
     }
 
-    protected final BlockEntityRenderDispatcher blockEntityRenderDispatcher;
     protected final ItemModelResolver itemModelResolver;
-    protected final ItemRenderer itemRenderer;
 
     public LootContainerRenderer(BlockEntityRendererProvider.Context context) {
         super(context);
-        this.blockEntityRenderDispatcher = context.blockEntityRenderDispatcher();
         this.itemModelResolver = context.itemModelResolver();
-        this.itemRenderer = context.itemRenderer();
     }
 
     @Override
@@ -75,20 +71,6 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
         }
 
         poseStack.popPose();
-    }
-
-    private void renderBlockModel(@NotNull T blockEntity, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-        BlockState blockState = blockEntity.getBlockState();
-        BlockStateModel bakedModel = this.blockRenderDispatcher.getBlockModel(blockState);
-        ModelBlockRenderer modelBlockRenderer = this.blockRenderDispatcher.getModelRenderer();
-
-        BlockModelRenderer.get().renderBlockModel(blockState,
-                bakedModel,
-                modelBlockRenderer,
-                poseStack,
-                bufferIn,
-                combinedLightIn,
-                combinedOverlayIn);
     }
 
     /**

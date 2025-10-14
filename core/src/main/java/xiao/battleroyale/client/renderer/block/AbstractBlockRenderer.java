@@ -20,11 +20,9 @@ import xiao.battleroyale.client.renderer.BlockModelRenderer;
 
 public abstract class AbstractBlockRenderer<T extends AbstractLootBlockEntity, S extends BlockEntityRenderState> implements BlockEntityRenderer<T, S> {
 
-    protected final ItemRenderer itemRenderer;
     protected final BlockRenderDispatcher blockRenderDispatcher;
 
     public AbstractBlockRenderer(BlockEntityRendererProvider.Context context) {
-        this.itemRenderer = context.itemRenderer();
         this.blockRenderDispatcher = context.blockRenderDispatcher();
     }
 
