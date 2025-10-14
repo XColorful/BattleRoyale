@@ -15,11 +15,12 @@ public class EntityData implements IEntityLootData {
     private final @NotNull CompoundTag nbt;
     private final int count;
     private final int range;
+    private final int attempts;
     public static final String EMPTY_RL = "minecraft:pig";
     public static final String EMPTY_TYPE = "entity.minecraft.pig";
     private final boolean isEmpty;
 
-    public EntityData(String rl, @NotNull CompoundTag nbt, int count, int range) {
+    public EntityData(String rl, @NotNull CompoundTag nbt, int count, int range, int attempts) {
         this.entityType = BattleRoyale.getMcRegistry().getEntityType(BattleRoyale.getMcRegistry().createResourceLocation(rl));
         if (this.entityType == null
                 || (this.entityType.toString().equals(EMPTY_TYPE) && !rl.equals(EMPTY_RL))) {
@@ -35,6 +36,7 @@ public class EntityData implements IEntityLootData {
         this.nbt = nbt;
         this.count = count;
         this.range = range;
+        this.attempts = attempts;
     }
 
     @Override
@@ -45,6 +47,11 @@ public class EntityData implements IEntityLootData {
     @Override
     public int getRange() {
         return this.range;
+    }
+
+    @Override
+    public int getAttempts() {
+        return this.attempts;
     }
 
     @Nullable

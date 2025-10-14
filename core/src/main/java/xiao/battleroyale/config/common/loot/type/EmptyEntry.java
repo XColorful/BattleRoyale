@@ -36,7 +36,7 @@ public class EmptyEntry implements IItemLootEntry {
                 return Collections.singletonList(new ItemData(ItemData.EMPTY_RL, new CompoundTag(), 0));
             }
             case ENTITY -> {
-                return Collections.singletonList(new EntityData(EntityData.EMPTY_RL, new CompoundTag(), 0, 0));
+                return Collections.singletonList(new EntityData(EntityData.EMPTY_RL, new CompoundTag(), 0, 0, 0));
             }
             default -> {
                 return Collections.singletonList(new ItemData(ItemData.EMPTY_RL, new CompoundTag(), 0));
