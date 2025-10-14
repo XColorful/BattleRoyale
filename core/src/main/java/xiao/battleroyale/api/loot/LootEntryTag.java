@@ -21,6 +21,7 @@ public final class LootEntryTag {
     public static final String TYPE_STRUCTURE = "structure";
     public static final String TYPE_REGEX = "regex";
     public static final String TYPE_MESSAGE = "message";
+    public static final String TYPE_GOLEM = "golem";
     public static final String TYPE_NBT = "nbt";
 
     public static final String COUNT = "count";

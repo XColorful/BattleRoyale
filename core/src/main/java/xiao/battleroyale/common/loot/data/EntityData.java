@@ -7,6 +7,7 @@ import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.entity.IEntityLootData;
+import xiao.battleroyale.config.common.loot.type.EntityEntry;
 
 import javax.annotation.Nullable;
 
@@ -20,6 +21,9 @@ public class EntityData implements IEntityLootData {
     public static final String EMPTY_TYPE = "entity.minecraft.pig";
     private final boolean isEmpty;
 
+    public EntityData(EntityEntry entry) {
+        this(entry.entityString, entry.nbt, entry.count, entry.range, entry.attempts);
+    }
     public EntityData(String rl, @NotNull CompoundTag nbt, int count, int range, int attempts) {
         this.entityType = BattleRoyale.getMcRegistry().getEntityType(BattleRoyale.getMcRegistry().createResourceLocation(rl));
         if (this.entityType == null
