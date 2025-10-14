@@ -20,13 +20,14 @@ public class DefaultLootSpawner {
 
     public static void generateDefaultConfigs() {
         JsonArray lootSpawnerConfigsJson = new JsonArray();
-        lootSpawnerConfigsJson.add(generateDefaultLootSpawner0());
-        lootSpawnerConfigsJson.add(generateDefaultLootSpawner1());
-        lootSpawnerConfigsJson.add(generateDefaultLootSpawner2());
+        lootSpawnerConfigsJson.add(generateBasicLoot0());
+        lootSpawnerConfigsJson.add(generateCombatLoot1());
+        lootSpawnerConfigsJson.add(generateAdvanceLoot2());
+        lootSpawnerConfigsJson.add(generateFunctionLoot3());
         writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(LOOT_SPAWNER), LootConfigManager.LOOT_SPAWNER_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), lootSpawnerConfigsJson);
     }
 
-    private static JsonObject generateDefaultLootSpawner0() {
+    private static JsonObject generateBasicLoot0() {
         ILootEntry multiEntry = new MultiEntry(Arrays.asList(
                 new ItemEntry("minecraft:leather_helmet", "{Damage:27}", 1),
                 new ItemEntry("minecraft:leather_chestplate", null, 1),
@@ -46,7 +47,7 @@ public class DefaultLootSpawner {
         return lootConfig.toJson();
     }
 
-    private static JsonObject generateDefaultLootSpawner1() {
+    private static JsonObject generateCombatLoot1() {
         ILootEntry multiEntry = new MultiEntry(Arrays.asList(
                 new ItemEntry("minecraft:iron_helmet", null, 1),
                 new ItemEntry("minecraft:iron_chestplate", null, 1),
@@ -63,7 +64,7 @@ public class DefaultLootSpawner {
         return lootConfig.toJson();
     }
 
-    private static JsonObject generateDefaultLootSpawner2() {
+    private static JsonObject generateAdvanceLoot2() {
         ILootEntry boundEntry = new BoundEntry(true, true, 2, 4, false,
                 Arrays.asList(
                         new ExtraEntry(false, true,
@@ -89,6 +90,19 @@ public class DefaultLootSpawner {
 
         LootConfig lootConfig = new LootConfig(2, "Advanced loot example", "#FFFFFFAA",
                 boundEntry);
+
+        return lootConfig.toJson();
+    }
+
+    private static JsonObject generateFunctionLoot3() {
+        ILootEntry multiEntry = new MultiEntry(Arrays.asList(
+                new MessageEntry(true, true, "Chest Golem generated", "#FF0000"),
+                new GolemEntry(new EntityEntry("minecraft:copper_golem", "", 5, 5, 4)),
+                new GolemEntry(new EntityEntry("minecraft:iron_golem", "", 5, 20, 4))
+        ));
+
+        LootConfig lootConfig = new LootConfig(3, "Function loot entry", "#FFFFFFAA",
+                multiEntry);
 
         return lootConfig.toJson();
     }

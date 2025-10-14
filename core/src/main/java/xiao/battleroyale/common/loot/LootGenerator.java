@@ -124,25 +124,36 @@ public class LootGenerator {
             BlockPos spawnOrigin = target.getBlockPos();
             for (ILootData data : lootData) {
                 if (data.getDataType() == LootDataType.ENTITY) {
-                    IEntityLootData entityData = (IEntityLootData) data;
-                    int count = entityData.getCount();
-                    int range = entityData.getRange();
-                    for (int j = 0; j < count; j++) {
-                        Entity entity = entityData.getEntity(lootContext.serverLevel); // 每次getEntity会自动绑定新UUID
-                        if (entity == null) {
-                            BattleRoyale.LOGGER.debug("Failed to generate entity at BlockPos:{}, count:{}/{}", spawnOrigin, j+1, count);
-                            continue;
-                        }
-                        gameIdWriteApi.addGameId(entity, lootContext.gameId);
-                        BlockPos spawnPos = findValidSpawnPosition(lootContext, spawnOrigin, range);
-                        entity.setPos(spawnPos.getX() + 0.5F, spawnPos.getY(), spawnPos.getZ() + 0.5F);
-                        lootContext.serverLevel.addFreshEntity(entity);
-                    }
+                    generateLootEntity(lootContext, (IEntityLootData) data, spawnOrigin);
                 } else {
                     BattleRoyale.LOGGER.warn("Ignore spawn non-entity at {}", spawnOrigin);
                 }
             }
         }
+    }
+
+    /**
+     * 返回成功生成的实体数量
+     */
+    public static int generateLootEntity(LootContext lootContext, IEntityLootData entityData, BlockPos spawnOrigin) {
+        int count = entityData.getCount();
+        int range = entityData.getRange();
+        int attempts = entityData.getAttempts();
+        int generatedCount = 0;
+        for (int j = 0; j < count; j++) {
+            Entity entity = entityData.getEntity(lootContext.serverLevel); // 每次getEntity会自动绑定新UUID
+            if (entity == null) {
+                BattleRoyale.LOGGER.debug("Failed to generate entity at BlockPos:{}, count:{}/{}", spawnOrigin, j+1, count);
+                continue;
+            }
+            gameIdWriteApi.addGameId(entity, lootContext.gameId);
+            BlockPos spawnPos = findValidSpawnPosition(lootContext, spawnOrigin, range, attempts);
+            entity.setPos(spawnPos.getX() + 0.5F, spawnPos.getY(), spawnPos.getZ() + 0.5F);
+            if (lootContext.serverLevel.addFreshEntity(entity)) {
+                generatedCount++;
+            }
+        }
+        return generatedCount;
     }
 
     /**
@@ -188,8 +199,8 @@ public class LootGenerator {
      * @param range 刷新范围
      * @return 有效的刷新位置
      */
-    private static BlockPos findValidSpawnPosition(LootContext lootContext, BlockPos centerPos, int range) {
-        for (int i = 0; i < 4; i++) {
+    private static BlockPos findValidSpawnPosition(LootContext lootContext, BlockPos centerPos, int range, int attempts) {
+        for (int i = 0; i < attempts; i++) {
             int dx = (int) ((lootContext.random.get() - 0.5) * 2 * range);
             int dz = (int) ((lootContext.random.get() - 0.5) * 2 * range);
             BlockPos candidate = centerPos.offset(dx, 0, dz);

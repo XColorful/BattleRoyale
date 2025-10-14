@@ -21,11 +21,13 @@ public final class LootEntryTag {
     public static final String TYPE_STRUCTURE = "structure";
     public static final String TYPE_REGEX = "regex";
     public static final String TYPE_MESSAGE = "message";
+    public static final String TYPE_GOLEM = "golem";
     public static final String TYPE_NBT = "nbt";
 
     public static final String COUNT = "count";
     public static final String NBT = "nbt";
     public static final String RANGE = "range";
+    public static final String ATTEMPTS = "attempts";
     public static final String ENTITY = "entity";
     public static final String ITEM = "item";
     public static final String ENTRY = "entry";
