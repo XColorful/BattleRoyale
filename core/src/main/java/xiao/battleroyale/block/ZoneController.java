@@ -55,7 +55,7 @@ public class ZoneController extends BaseEntityBlock {
 
     @Override
     protected @NotNull InteractionResult useItemOn(@NotNull ItemStack pStack, @NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof ZoneControllerBlockEntity zoneControllerBlockEntity) {
                 if (player.isCrouching()) { // 切换配置

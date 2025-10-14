@@ -15,7 +15,7 @@ public enum NeoRenderLevelStage {
 //    AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS(RenderLevelStageEvent.AfterCutoutMippedBlocks.class, RenderLevelStage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS),
 //    AFTER_CUTOUT_BLOCKS(RenderLevelStageEvent.AftetCutoutBlocks.class, RenderLevelStage.AFTER_CUTOUT_BLOCKS),
     AFTER_ENTITIES(RenderLevelStageEvent.AfterEntities.class, RenderLevelStage.AFTER_ENTITIES),
-    AFTER_BLOCK_ENTITIES(RenderLevelStageEvent.AfterBlockEntities.class, RenderLevelStage.AFTER_BLOCK_ENTITIES),
+//    AFTER_BLOCK_ENTITIES(RenderLevelStageEvent.AfterBlockEntities.class, RenderLevelStage.AFTER_BLOCK_ENTITIES),
     AFTER_TRANSLUCENT_BLOCKS(RenderLevelStageEvent.AfterTranslucentBlocks.class, RenderLevelStage.AFTER_TRANSLUCENT_BLOCKS),
     AFTER_TRIPWIRE_BLOCKS(RenderLevelStageEvent.AfterTripwireBlocks.class, RenderLevelStage.AFTER_TRIPWIRE_BLOCKS),
     AFTER_PARTICLES(RenderLevelStageEvent.AfterParticles.class, RenderLevelStage.AFTER_PARTICLES),

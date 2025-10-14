@@ -74,13 +74,14 @@ public class SurvivalLobby implements ILobbyReadApi {
         }
 
         // 获取大厅所在维度ServerLevel
-        MinecraftServer server = player.getServer();
-        if (server == null) {
-            BattleRoyale.LOGGER.warn("Failed to get MinecraftServer from ServerPlayer {} (UUID:{})", player.getName().getString(), player.getUUID());
-            ChatUtils.sendMessageToPlayer(player, "Failed to get player's server");
-            return;
-        }
-        ServerLevel serverLevel = server.getLevel(levelKey);
+//        MinecraftServer server = player.getServer();
+//        if (server == null) {
+//            BattleRoyale.LOGGER.warn("Failed to get MinecraftServer from ServerPlayer {} (UUID:{})", player.getName().getString(), player.getUUID());
+//            ChatUtils.sendMessageToPlayer(player, "Failed to get player's server");
+//            return;
+//        }
+        // ↑1.20.1-1.21.6
+        ServerLevel serverLevel = BattleRoyale.getMinecraftServer().getLevel(levelKey);
         if (serverLevel == null) {
             ChatUtils.sendTranslatableMessageToPlayer(player, "battleroyale.message.failed_lobby_teleport");
             BattleRoyale.LOGGER.warn("Failed to get ServerLevel by ResourceKey<Level>: {}, original string: {}", levelKey, levelKeyString);

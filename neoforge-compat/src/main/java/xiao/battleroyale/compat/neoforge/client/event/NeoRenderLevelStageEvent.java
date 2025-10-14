@@ -1,5 +1,6 @@
 package xiao.battleroyale.compat.neoforge.client.event;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
@@ -30,11 +31,11 @@ public class NeoRenderLevelStageEvent extends NeoEvent implements IRenderLevelSt
 
     @Override
     public Vec3 getCamera_getPosition() {
-        return this.typedEvent.getCamera().getPosition();
+        return this.typedEvent.getLevelRenderState().cameraRenderState.pos;
     }
 
     @Override
     public float getPartialTick() {
-        return this.typedEvent.getPartialTick().getGameTimeDeltaPartialTick(true);
+        return Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
     }
 }

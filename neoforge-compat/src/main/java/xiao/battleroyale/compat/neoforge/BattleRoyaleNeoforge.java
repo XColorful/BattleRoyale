@@ -51,7 +51,7 @@ public class BattleRoyaleNeoforge {
         BattleRoyaleNeoforge.blockModelRenderer = new NeoBlockModelRenderer();
         BattleRoyaleNeoforge.compatApi = new BattleRoyale.CompatApi(JmApi.get());
 
-        Dist dist = FMLLoader.getDist();
+        Dist dist = FMLLoader.getCurrent().getDist();
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
 
         BattleRoyale.init(mcSide,

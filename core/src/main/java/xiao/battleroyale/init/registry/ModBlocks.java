@@ -31,7 +31,7 @@ public class ModBlocks {
                     .sound(SoundType.WOOD)
                     .strength(2.5F, 2.5F)
                     .noOcclusion()
-                    .noCollission()
+                    .noCollision()
             ));
     public static final IRegistryObject<Block> ENTITY_SPAWNER = BLOCKS.register("entity_spawner", () ->
             new EntitySpawner(BlockBehaviour.Properties.of()
@@ -39,7 +39,7 @@ public class ModBlocks {
                     .sound(SoundType.WOOD)
                     .strength(2.5F, 2.5F)
                     .noOcclusion()
-                    .noCollission()
+                    .noCollision()
             ));
     public static final IRegistryObject<Block> ZONE_CONTROLLER = BLOCKS.register("zone_controller", () ->
             new ZoneController(BlockBehaviour.Properties.of()
@@ -47,7 +47,7 @@ public class ModBlocks {
                     .sound(SoundType.STONE)
                     .strength(2.5F, 2.5F)
                     .noOcclusion()
-                    .noCollission()
+                    .noCollision()
             ));
 
     public static final IRegistryObject<BlockEntityType<LootSpawnerBlockEntity>> LOOT_SPAWNER_BE =

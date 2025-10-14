@@ -125,7 +125,8 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
             float yOffset = layer * itemScale;
             poseStack.translate(xOffset, yOffset, zOffset);
 
-            this.itemRenderer.renderStatic(itemStack, ItemDisplayContext.GROUND, combinedLightIn, combinedOverlayIn, poseStack, bufferIn, blockEntity.getLevel(), 0);
+            // TODO ItemRenderer没有renderStatic
+            // this.itemRenderer.renderStatic(itemStack, ItemDisplayContext.GROUND, combinedLightIn, combinedOverlayIn, poseStack, bufferIn, blockEntity.getLevel(), 0);
             poseStack.popPose();
         }
     }
