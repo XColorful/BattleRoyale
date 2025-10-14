@@ -4,11 +4,13 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.data.EntityData;
+import xiao.battleroyale.util.JsonUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +26,7 @@ public class GolemEntry implements ILootEntry {
         this.entityEntry = new EntityEntry(rl, nbtString, count, range, attempts);
     }
     @Override public @NotNull GolemEntry copy() {
-        return new GolemEntry(this.entityEntry);
+        return new GolemEntry(this.entityEntry.copy());
     }
 
     @Override
@@ -33,7 +35,10 @@ public class GolemEntry implements ILootEntry {
             return Collections.emptyList();
         }
 
-        LootGenerator.generateLootEntity(lootContext, new EntityData(this.entityEntry), target.getBlockPos());
+        int generatedCount = LootGenerator.generateLootEntity(lootContext, new EntityData(this.entityEntry), target.getBlockPos());
+        if (generatedCount <= 0) {
+            BattleRoyale.LOGGER.debug("Golem entry doesn't generate any entity");
+        }
 
         return Collections.emptyList();
     }
@@ -45,17 +50,32 @@ public class GolemEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = entityEntry.toJson();
-
+        JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        jsonObject.addProperty(LootEntryTag.ENTITY, entityEntry.entityString);
+        if (entityEntry.count > 0) {
+            jsonObject.addProperty(LootEntryTag.COUNT, entityEntry.count);
+        }
+        if (entityEntry.nbtString != null) {
+            jsonObject.addProperty(LootEntryTag.NBT, entityEntry.nbtString);
+        }
+        if (entityEntry.range >= 0) {
+            jsonObject.addProperty(LootEntryTag.RANGE, entityEntry.range);
+        }
+        if (entityEntry.attempts >= 0) {
+            jsonObject.addProperty(LootEntryTag.ATTEMPTS, entityEntry.attempts);
+        }
 
         return jsonObject;
     }
 
     @NotNull
     public static GolemEntry fromJson(JsonObject jsonObject) {
-        @NotNull EntityEntry entityEntry = EntityEntry.fromJson(jsonObject);
-
-        return new GolemEntry(entityEntry);
+        String entityName = JsonUtils.getJsonString(jsonObject, LootEntryTag.ENTITY, "");
+        int count = JsonUtils.getJsonInt(jsonObject, LootEntryTag.COUNT, 1);
+        String nbtString = JsonUtils.getJsonString(jsonObject, LootEntryTag.NBT, null);
+        int range = JsonUtils.getJsonInt(jsonObject, LootEntryTag.RANGE, 0);
+        int attempts = JsonUtils.getJsonInt(jsonObject, LootEntryTag.ATTEMPTS, 4);
+        return new GolemEntry(entityName, nbtString, count, range, attempts);
     }
 }

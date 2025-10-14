@@ -26,6 +26,7 @@ public enum LootEntryType {
     STRUCTURE(LootEntryTag.TYPE_STRUCTURE, StructureEntry::fromJson),
     REGEX(LootEntryTag.TYPE_REGEX, RegexEntry::fromJson),
     MESSAGE(LootEntryTag.TYPE_MESSAGE, MessageEntry::fromJson),
+    GOLEM(LootEntryTag.TYPE_GOLEM, GolemEntry::fromJson),
     NBT(LootEntryTag.TYPE_NBT, NbtEntry::fromJson);
 
     private final String name;

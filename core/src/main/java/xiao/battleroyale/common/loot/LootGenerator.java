@@ -132,10 +132,14 @@ public class LootGenerator {
         }
     }
 
-    public static void generateLootEntity(LootContext lootContext, IEntityLootData entityData, BlockPos spawnOrigin) {
+    /**
+     * 返回成功生成的实体数量
+     */
+    public static int generateLootEntity(LootContext lootContext, IEntityLootData entityData, BlockPos spawnOrigin) {
         int count = entityData.getCount();
         int range = entityData.getRange();
         int attempts = entityData.getAttempts();
+        int generatedCount = 0;
         for (int j = 0; j < count; j++) {
             Entity entity = entityData.getEntity(lootContext.serverLevel); // 每次getEntity会自动绑定新UUID
             if (entity == null) {
@@ -145,8 +149,11 @@ public class LootGenerator {
             gameIdWriteApi.addGameId(entity, lootContext.gameId);
             BlockPos spawnPos = findValidSpawnPosition(lootContext, spawnOrigin, range, attempts);
             entity.setPos(spawnPos.getX() + 0.5F, spawnPos.getY(), spawnPos.getZ() + 0.5F);
-            lootContext.serverLevel.addFreshEntity(entity);
+            if (lootContext.serverLevel.addFreshEntity(entity)) {
+                generatedCount++;
+            }
         }
+        return generatedCount;
     }
 
     /**
