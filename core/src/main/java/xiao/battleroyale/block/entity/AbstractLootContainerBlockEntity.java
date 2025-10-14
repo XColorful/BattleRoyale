@@ -31,6 +31,10 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
         this.items = NonNullList.withSize(size, ItemStack.EMPTY);
     }
 
+    public static int getLootContainerSize() {
+        return 100;
+    }
+
     @Override
     public int getContainerSize() {
         return this.items.size();
