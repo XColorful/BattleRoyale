@@ -19,7 +19,7 @@ public class SubSaveConfigs {
         return hasSaved;
     }
     public static <T extends IConfigSingleEntry> boolean saveConfigs(AbstractConfigSubManager<T> context, int folderId) {
-        String configDirPath = String.valueOf(context.getConfigDirPath());
+        String configDirPath = String.valueOf(context.getConfigDirPath(folderId));
         return writeConfigs(context, configDirPath, folderId);
     }
 
@@ -31,7 +31,7 @@ public class SubSaveConfigs {
         return hasBackuped;
     }
     public static <T extends IConfigSingleEntry> boolean backupConfigs(AbstractConfigSubManager<T> context, String backupRoot, int folderId) {
-        String configDirPath = String.valueOf(Paths.get(backupRoot, String.valueOf(context.getConfigDirPath())));
+        String configDirPath = String.valueOf(Paths.get(backupRoot, String.valueOf(context.getConfigDirPath(folderId))));
         return writeConfigs(context, configDirPath, folderId);
     }
 
