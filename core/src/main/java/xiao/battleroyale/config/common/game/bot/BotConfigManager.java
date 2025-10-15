@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.bot;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.bot.BotConfigTag;
@@ -56,7 +57,7 @@ public class BotConfigManager extends AbstractConfigSubManager<BotConfigManager.
             super(id, name, color, isDefault);
             this.entry = entry;
         }
-        @Override public BotConfig copy() {
+        @Override public @NotNull BotConfig copy() {
             return new BotConfig(id, name, color, isDefault, null); // TODO 替换为entry.copy()
         }
 

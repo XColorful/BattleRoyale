@@ -66,79 +66,9 @@ public class ModConfigManager implements IModConfigManager, ISideOnly {
         return configData.getConfigSubManager(subManagerNameKey);
     }
 
-    @Override public boolean reloadAllConfigs() {
-        boolean hasReloaded = reloadAllConfigManagers();
-        hasReloaded |= reloadAllConfigSubManagers();
-        return hasReloaded;
-    }
-    @Override public boolean reloadAllConfigManagers() {
-        boolean hasReloaded = false;
-        for (IConfigManager configManager : getConfigManagers()) {
-            hasReloaded |= configManager.reloadAllConfigs();
-        }
-        return hasReloaded;
-    }
-    @Override public boolean reloadAllConfigSubManagers() {
-        boolean hasReloaded = false;
-        for (IConfigSubManager<?> configSubManager : getConfigSubManagers()) {
-            hasReloaded |= configSubManager.reloadAllConfigs();
-        }
-        return hasReloaded;
-    }
-
-    @Override public boolean generateAllDefaultConfigs() {
-        boolean hasGenerated = false;
-        for (IConfigManager configManager : getConfigManagers()) {
-            hasGenerated |= configManager.generateAllDefaultConfigs();
-        }
-        for (IConfigSubManager<?> configSubManager : getConfigSubManagers()) {
-            configSubManager.generateAllDefaultConfigs();
-            hasGenerated = true;
-        }
-        return hasGenerated;
-    }
-
-    @Override public boolean saveAllConfigs() {
-        boolean hasSaved = saveAllConfigManagers();
-        hasSaved |= saveAllConfigSubManagers();
-        return hasSaved;
-    }
-    @Override public boolean saveAllConfigManagers() {
-        boolean hasSaved = false;
-        for (IConfigManager configManager : getConfigManagers()) {
-            hasSaved |= configManager.saveAllConfigs();
-        }
-        return hasSaved;
-    }
-    @Override public boolean saveAllConfigSubManagers() {
-        boolean hasSaved = false;
-        for (IConfigSubManager<?> configSubManager : getConfigSubManagers()) {
-            hasSaved |= configSubManager.saveAllConfigs();
-        }
-        return hasSaved;
-    }
     public static String configBackupRoot = Paths.get(AbstractDataManager.MOD_DATA_PATH).resolve("backup").toString();
     @Override public String getDefaultBackupRoot() {
         return configBackupRoot;
-    }
-    @Override public boolean backupAllConfigs(String backupRoot) {
-        boolean hasBackuped = backupAllConfigManagers(backupRoot);
-        hasBackuped |= backupAllConfigSubManagers(backupRoot);
-        return hasBackuped;
-    }
-    @Override public boolean backupAllConfigManagers(String backupRoot) {
-        boolean hasBackuped = false;
-        for (IConfigManager configManager : getConfigManagers()) {
-            hasBackuped |= configManager.backupAllConfigs(backupRoot);
-        }
-        return hasBackuped;
-    }
-    @Override public boolean backupAllConfigSubManagers(String backupRoot) {
-        boolean hasBackuped = false;
-        for (IConfigSubManager<?> configSubManager : getConfigSubManagers()) {
-            hasBackuped |= configSubManager.backupAllConfigs(backupRoot);
-        }
-        return hasBackuped;
     }
 
     @Override public boolean clientSideOnly() {

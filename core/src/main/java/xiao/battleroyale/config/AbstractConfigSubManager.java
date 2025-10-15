@@ -112,8 +112,8 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     @Override public Set<String> getAvailableConfigFileNames(int folderId) {
         return getConfigFolderData(folderId).fileConfigsByFileName.keySet();
     }
-    @Override public boolean reloadAllConfigs() {
-        return inProperSide() && SubReloadConfigs.reloadAllConfigs(this);
+    @Override public Set<Integer> getAvailableFolderIds() {
+        return allFolderConfigData.keySet();
     }
     @Override public boolean reloadConfigs() {
         return inProperSide() && reloadConfigs(DEFAULT_CONFIG_FOLDER);
@@ -134,14 +134,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     @Override public void initializeDefaultConfigsIfEmpty() {
         initializeDefaultConfigsIfEmpty(DEFAULT_CONFIG_FOLDER);
     }
-    @Override public void initializeDefaultConfigsIfEmpty(int folderId) {
-        if (hasConfigLoaded(folderId)) { // 防御一下
-            return;
-        }
-        generateDefaultConfigs(folderId);
-        BattleRoyale.LOGGER.info("Generated default configs in {}", getConfigDirPath(folderId));
-    }
-    @Override  public String getConfigPath() {
+    @Override public String getConfigPath() {
         return getConfigPath(DEFAULT_CONFIG_FOLDER);
     }
     @Override public abstract String getConfigPath(int folderId);
@@ -150,9 +143,6 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     }
     @Override public Path getConfigDirPath() {
         return getConfigDirPath(DEFAULT_CONFIG_FOLDER);
-    }
-    @Override public Path getConfigDirPath(int folderId) {
-        return Paths.get(getConfigPath(folderId)).resolve(getConfigSubPath(folderId));
     }
 
     /**
@@ -178,39 +168,41 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     /**
      * IConfigDefaultable
      */
-    @Override public void generateAllDefaultConfigs() {
-        for (int folderId : allFolderConfigData.keySet()) {
-            generateDefaultConfigs(folderId);
-        }
-    }
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_CONFIG_FOLDER);
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_CONFIG_FOLDER);
     }
     @Override public int getDefaultConfigId(int folderId) {
+        if (!getAvailableFolderIds().contains(folderId)) {
+            return -1;
+        }
         return getConfigFolderData(folderId).DEFAULT_CONFIG_ID;
     }
-    @Override public void setDefaultConfigId(int id) {
-        setDefaultConfigId(id, DEFAULT_CONFIG_FOLDER);
+    @Override public boolean setDefaultConfigId(int id) {
+        return setDefaultConfigId(id, DEFAULT_CONFIG_FOLDER);
     }
-    @Override public void setDefaultConfigId(int id, int folderId) {
+    @Override public boolean setDefaultConfigId(int folderId,int id) {
+        if (!getAvailableFolderIds().contains(folderId)) {
+            return false;
+        }
         getConfigFolderData(folderId).DEFAULT_CONFIG_ID = id;
+        return true;
     }
     @Override public @Nullable T getDefaultConfig() {
         return getDefaultConfig(DEFAULT_CONFIG_FOLDER);
     }
     @Override public @Nullable T getDefaultConfig(int folderId) {
+        if (!getAvailableFolderIds().contains(folderId)) {
+            return null;
+        }
         return getConfigEntry(getDefaultConfigId(folderId));
     }
 
     /**
      * IConfigSaveable
      */
-    @Override public boolean saveAllConfigs() {
-        return inProperSide() && SubSaveConfigs.saveAllConfigs(this);
-    }
     @Override public boolean saveConfigs() {
         return saveConfigs(DEFAULT_CONFIG_FOLDER);
     }
@@ -218,20 +210,8 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         return inProperSide() && SubSaveConfigs.saveConfigs(this, folderId);
     }
 
-    @Override public boolean backupAllConfigs() {
-        return backupAllConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot());
-    }
-    @Override public boolean backupAllConfigs(String backupRoot) {
-        return inProperSide() && SubSaveConfigs.backupAllConfigs(this, backupRoot);
-    }
-    @Override public boolean backupConfigs() {
-        return backupConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot());
-    }
     @Override public boolean backupConfigs(String backupRoot) {
         return backupConfigs(backupRoot, DEFAULT_CONFIG_FOLDER);
-    }
-    @Override public boolean backupConfigs(int folderId) {
-        return backupConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot(), folderId);
     }
     @Override public boolean backupConfigs(String backupRoot, int folderId) {
         return inProperSide() && SubSaveConfigs.backupConfigs(this, backupRoot, folderId);

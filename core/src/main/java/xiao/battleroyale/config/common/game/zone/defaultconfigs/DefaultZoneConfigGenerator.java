@@ -2,8 +2,9 @@ package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
 public class DefaultZoneConfigGenerator {
 
-    public static void generateAllDefaultConfigs() {
+    public static boolean generateAllDefaultConfigs() {
         generateDefaultZoneConfig();
+        return true;
     }
 
     public static void generateDefaultZoneConfig() {

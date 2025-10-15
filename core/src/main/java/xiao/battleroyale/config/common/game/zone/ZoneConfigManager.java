@@ -186,21 +186,21 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_ZONE_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_ZONE_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultZoneConfigGenerator.generateDefaultZoneConfig();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        return DefaultZoneConfigGenerator.generateAllDefaultConfigs();
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_ZONE_CONFIG_FOLDER);
     }
-    @Override public void setDefaultConfigId(int id) {
-        return;
+    @Override public boolean setDefaultConfigId(int id) {
+        return false;
     }
-    @Override public void setDefaultConfigId(int id, int folderId) {
-        return;
+    @Override public boolean setDefaultConfigId(int folderId, int id) {
+        return false;
     }
 
     /**

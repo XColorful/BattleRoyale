@@ -11,25 +11,11 @@ import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class SubSaveConfigs {
 
-    public static <T extends IConfigSingleEntry> boolean saveAllConfigs(AbstractConfigSubManager<T> context) {
-        boolean hasSaved = false;
-        for (int folderId : context.allFolderConfigData.keySet()) {
-            hasSaved |= context.saveConfigs(folderId);
-        }
-        return hasSaved;
-    }
     public static <T extends IConfigSingleEntry> boolean saveConfigs(AbstractConfigSubManager<T> context, int folderId) {
         String configDirPath = String.valueOf(context.getConfigDirPath(folderId));
         return writeConfigs(context, configDirPath, folderId);
     }
 
-    public static <T extends IConfigSingleEntry> boolean backupAllConfigs(AbstractConfigSubManager<T> context, String backupRoot) {
-        boolean hasBackuped = false;
-        for (int folderId : context.allFolderConfigData.keySet()) {
-            hasBackuped |= context.backupConfigs(backupRoot, folderId);
-        }
-        return hasBackuped;
-    }
     public static <T extends IConfigSingleEntry> boolean backupConfigs(AbstractConfigSubManager<T> context, String backupRoot, int folderId) {
         String configDirPath = String.valueOf(Paths.get(backupRoot, String.valueOf(context.getConfigDirPath(folderId))));
         return writeConfigs(context, configDirPath, folderId);
