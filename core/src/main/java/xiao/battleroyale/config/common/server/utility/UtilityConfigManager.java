@@ -166,23 +166,6 @@ public class UtilityConfigManager extends AbstractConfigSubManager<UtilityConfig
         return UTILITY_CONFIG_SUB_PATH;
     }
 
-    /**
-     * 特定类别的获取接口
-     */
-    public UtilityConfig getUtilityConfig(int id) {
-        return getConfigEntry(DEFAULT_UTILITY_CONFIG_FOLDER, id);
-    }
-    public List<UtilityConfig> getUtilityConfigList() {
-        return getConfigEntryList(DEFAULT_UTILITY_CONFIG_FOLDER);
-    }
-
-    /**
-     * 特定类别的重新获取接口
-     */
-    public void reloadUtilityConfigs() {
-        reloadConfigs(DEFAULT_UTILITY_CONFIG_FOLDER);
-    }
-
     @Override public void initializeDefaultConfigsIfEmpty() {
         super.initializeDefaultConfigsIfEmpty(DEFAULT_UTILITY_CONFIG_FOLDER);
     }

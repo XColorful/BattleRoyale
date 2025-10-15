@@ -465,18 +465,18 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return true;
     }
     @Override public String getSpawnConfigName(int id) {
-        SpawnConfigManager.SpawnConfig config = SpawnConfigManager.get().getSpawnConfig(id);
+        SpawnConfigManager.SpawnConfig config = SpawnConfigManager.get().getConfigEntry(id);
         return config != null ? config.name : "";
     }
     public boolean setBotConfigId(int id) {
-        if (id < 0 || BotConfigManager.get().getBotConfig(id) == null) {
+        if (id < 0 || BotConfigManager.get().getConfigEntry(id) == null) {
             return false;
         }
         this.botConfigId = id;
         return true;
     }
     @Override public String getBotConfigName(int id) {
-        BotConfigManager.BotConfig config = BotConfigManager.get().getBotConfig(id);
+        BotConfigManager.BotConfig config = BotConfigManager.get().getConfigEntry(id);
         return config != null ? config.name : "";
     }
     @Override public String getZoneConfigFileName() {

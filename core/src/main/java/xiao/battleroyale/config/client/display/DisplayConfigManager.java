@@ -194,17 +194,6 @@ public class DisplayConfigManager extends AbstractConfigSubManager<DisplayConfig
         return DISPLAY_CONFIG_SUB_PATH;
     }
 
-    public DisplayConfig getDisplayConfig(int id) {
-        return getConfigEntry(DEFAULT_DISPLAY_CONFIG_FOLDER, id);
-    }
-    public List<DisplayConfig> getDisplayConfigList() {
-        return getConfigEntryList(DEFAULT_DISPLAY_CONFIG_FOLDER);
-    }
-
-    public void reloadDisplayConfigs() {
-        reloadConfigs(DEFAULT_DISPLAY_CONFIG_FOLDER);
-    }
-
     @Override public void initializeDefaultConfigsIfEmpty() {
         super.initializeDefaultConfigsIfEmpty(DEFAULT_DISPLAY_CONFIG_FOLDER);
     }

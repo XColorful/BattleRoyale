@@ -139,23 +139,6 @@ public class BotConfigManager extends AbstractConfigSubManager<BotConfigManager.
         return BOT_CONFIG_SUB_PATH;
     }
 
-    /**
-     * 特定类别的获取接口
-     */
-    public BotConfig getBotConfig(int id) {
-        return getConfigEntry(DEFAULT_BOT_CONFIG_FOLDER, id);
-    }
-    public List<BotConfig> getBotConfigList() {
-        return getConfigEntryList(DEFAULT_BOT_CONFIG_FOLDER);
-    }
-
-    /**
-     * 特定类别的重新读取接口
-     */
-    public void reloadBotConfigs() {
-        reloadConfigs(DEFAULT_BOT_CONFIG_FOLDER);
-    }
-
     @Override public void initializeDefaultConfigsIfEmpty() {
         super.initializeDefaultConfigsIfEmpty(DEFAULT_BOT_CONFIG_FOLDER);
     }

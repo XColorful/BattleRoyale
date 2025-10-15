@@ -243,24 +243,6 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
         return ZONE_CONFIG_SUB_PATH;
     }
 
-    /**
-     * 特定类别的获取接口
-     */
-    public ZoneConfig getZoneConfig(int id) {
-        return getConfigEntry(DEFAULT_ZONE_CONFIG_FOLDER, id);
-    }
-    public List<ZoneConfig> getZoneConfigList() {
-        return getConfigEntryList(DEFAULT_ZONE_CONFIG_FOLDER);
-    }
-
-    /**
-     * 特定类别的重新读取接口
-     */
-    public void reloadZoneConfigs() {
-        reloadConfigs(DEFAULT_ZONE_CONFIG_FOLDER);
-        // Zone以整个文件为选择，不需要切换
-    }
-
     @Override public void initializeDefaultConfigsIfEmpty() {
         super.initializeDefaultConfigsIfEmpty(DEFAULT_ZONE_CONFIG_FOLDER);
     }

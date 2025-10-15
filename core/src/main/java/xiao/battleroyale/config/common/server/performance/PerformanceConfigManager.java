@@ -166,23 +166,6 @@ public class PerformanceConfigManager extends AbstractConfigSubManager<Performan
         return PERFORMANCE_CONFIG_SUB_PATH;
     }
 
-    /**
-     * 特定类别的获取接口
-     */
-    public PerformanceConfig getPerformanceConfig(int id) {
-        return getConfigEntry(DEFAULT_PERFORMANCE_CONFIG_FOLDER, id);
-    }
-    public List<PerformanceConfig> getPerformanceConfigList() {
-        return getConfigEntryList(DEFAULT_PERFORMANCE_CONFIG_FOLDER);
-    }
-
-    /**
-     * 特定类别的重新获取接口
-     */
-    public void reloadPerformanceConfigs() {
-        reloadConfigs(DEFAULT_PERFORMANCE_CONFIG_FOLDER);
-    }
-
     @Override public void initializeDefaultConfigsIfEmpty() {
         super.initializeDefaultConfigsIfEmpty(DEFAULT_PERFORMANCE_CONFIG_FOLDER);
     }

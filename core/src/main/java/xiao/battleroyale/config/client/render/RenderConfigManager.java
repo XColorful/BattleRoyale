@@ -236,23 +236,6 @@ public class RenderConfigManager extends AbstractConfigSubManager<RenderConfigMa
         return RENDER_CONFIG_SUB_PATH;
     }
 
-    /**
-     * 特定类别的获取接口
-     */
-    public RenderConfig getRenderConfig(int id) {
-        return getConfigEntry(DEFAULT_RENDER_CONFIG_FOLDER, id);
-    }
-    public List<RenderConfig> getRenderConfigList() {
-        return getConfigEntryList(DEFAULT_RENDER_CONFIG_FOLDER);
-    }
-
-    /**
-     * 特定类别的重新获取接口
-     */
-    public void reloadRenderConfigs() {
-        reloadConfigs(DEFAULT_RENDER_CONFIG_FOLDER);
-    }
-
     @Override public void initializeDefaultConfigsIfEmpty() {
         super.initializeDefaultConfigsIfEmpty(DEFAULT_RENDER_CONFIG_FOLDER);
     }

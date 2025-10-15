@@ -227,23 +227,6 @@ public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConf
         return GAMERULE_CONFIG_SUB_PATH;
     }
 
-    /**
-     * 特定类别的获取接口
-     */
-    public GameruleConfig getGameruleConfig(int gameId) {
-        return getConfigEntry(DEFAULT_GAMERULE_CONFIG_FOLDER, gameId);
-    }
-    public List<GameruleConfig> getGameruleConfigList() {
-        return getConfigEntryList(DEFAULT_GAMERULE_CONFIG_FOLDER);
-    }
-
-    /**
-     * 特定类别的重新读取接口
-     */
-    public void reloadGameruleConfigs() {
-        reloadConfigs(DEFAULT_GAMERULE_CONFIG_FOLDER);
-    }
-
     @Override public void initializeDefaultConfigsIfEmpty() {
         super.initializeDefaultConfigsIfEmpty(DEFAULT_GAMERULE_CONFIG_FOLDER);
     }

@@ -180,23 +180,6 @@ public class SpawnConfigManager extends AbstractConfigSubManager<SpawnConfigMana
         return SPAWN_CONFIG_SUB_PATH;
     }
 
-    /**
-     * 特定类别的获取接口
-     */
-    public SpawnConfig getSpawnConfig(int id) {
-        return getConfigEntry(DEFAULT_SPAWN_CONFIG_FOLDER, id);
-    }
-    public List<SpawnConfig> getSpawnConfigList() {
-        return getConfigEntryList(DEFAULT_SPAWN_CONFIG_FOLDER);
-    }
-
-    /**
-     * 特定类别的重新读取接口
-     */
-    public void reloadSpawnConfigs() {
-        reloadConfigs(DEFAULT_SPAWN_CONFIG_FOLDER);
-    }
-
     @Override public void initializeDefaultConfigsIfEmpty() {
         super.initializeDefaultConfigsIfEmpty(DEFAULT_SPAWN_CONFIG_FOLDER);
     }

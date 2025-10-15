@@ -189,23 +189,6 @@ public class ParticleConfigManager extends AbstractConfigSubManager<ParticleConf
         return PARTICLE_CONFIG_SUB_PATH;
     }
 
-    /**
-     * 特定类别的获取接口
-     */
-    public ParticleConfig getParticleConfig(int id) {
-        return getConfigEntry(DEFAULT_PARTICLE_CONFIG_FOLDER_ID, id);
-    }
-    public List<ParticleConfig> getAllParticleConfigs() {
-        return getConfigEntryList(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
-    }
-
-    /**
-     * 特定类别的重新读取接口
-     */
-    public void reloadParticleConfigs() {
-        reloadConfigs(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
-    }
-
     @Override public void initializeDefaultConfigsIfEmpty() {
         super.initializeDefaultConfigsIfEmpty(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
     }
