@@ -38,9 +38,9 @@ public class SubSaveConfigs {
     public static <T extends IConfigSingleEntry> boolean writeConfigs(AbstractConfigSubManager<T> context, String folderPath, int folderId) {
         boolean hasWrited = false;
         Map<String, List<T>> fileConfigs = context.getFileConfigsList(folderId);
-        JsonArray jsonArray = new JsonArray();
         // 遍历文件名
         for (Map.Entry<String, List<T>> entry : fileConfigs.entrySet()) {
+            JsonArray jsonArray = new JsonArray();
             String filePath = String.valueOf(Paths.get(folderPath, String.format("%s.json", entry.getKey())));
             // 遍历单个文件
             for (T configEntry : entry.getValue()) {
