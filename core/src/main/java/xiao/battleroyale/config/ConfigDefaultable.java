@@ -13,7 +13,7 @@ public class ConfigDefaultable {
     public static boolean generateDefaultConfig(AbstractConfigManager context, String subManagerNameKey) {
         IConfigSubManager<?> subManager = context.subManagers.mapGet(subManagerNameKey);
         if (subManager != null) {
-            subManager.generateDefaultConfigs();
+            subManager.generateAllDefaultConfigs();
             return true;
         } else {
             return false;
