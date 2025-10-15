@@ -15,7 +15,7 @@ public class ConfigLoadable {
     public static boolean reloadConfigs(AbstractConfigManager context, String subManagerNameKey) {
         IConfigSubManager<?> subManager = context.subManagers.mapGet(subManagerNameKey);
         if (subManager != null) {
-            return subManager.reloadConfigs();
+            return subManager.reloadAllConfigs();
         } else {
             return false;
         }

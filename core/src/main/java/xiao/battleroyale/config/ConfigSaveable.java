@@ -14,7 +14,7 @@ public class ConfigSaveable {
     public static boolean saveConfigs(AbstractConfigManager context, String subManagerNameKey) {
         IConfigSubManager<?> subManager = context.subManagers.mapGet(subManagerNameKey);
         if (subManager != null) {
-            return subManager.saveConfigs();
+            return subManager.saveAllConfigs();
         } else {
             return false;
         }
@@ -37,7 +37,7 @@ public class ConfigSaveable {
     public static boolean backupConfigs(AbstractConfigManager context, String backupRoot, String subManagerNameKey) {
         IConfigSubManager<?> subManager = context.subManagers.mapGet(subManagerNameKey);
         if (subManager != null) {
-            return subManager.backupConfigs(backupRoot);
+            return subManager.backupAllConfigs(backupRoot);
         } else {
             return false;
         }

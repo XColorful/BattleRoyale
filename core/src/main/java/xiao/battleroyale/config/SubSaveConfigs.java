@@ -19,7 +19,7 @@ public class SubSaveConfigs {
         return hasSaved;
     }
     public static <T extends IConfigSingleEntry> boolean saveConfigs(AbstractConfigSubManager<T> context, int folderId) {
-        String configDirPath = String.valueOf(context.getConfigDirPath());
+        String configDirPath = String.valueOf(context.getConfigDirPath(folderId));
         return writeConfigs(context, configDirPath, folderId);
     }
 
@@ -31,16 +31,16 @@ public class SubSaveConfigs {
         return hasBackuped;
     }
     public static <T extends IConfigSingleEntry> boolean backupConfigs(AbstractConfigSubManager<T> context, String backupRoot, int folderId) {
-        String configDirPath = String.valueOf(Paths.get(backupRoot, String.valueOf(context.getConfigDirPath())));
+        String configDirPath = String.valueOf(Paths.get(backupRoot, String.valueOf(context.getConfigDirPath(folderId))));
         return writeConfigs(context, configDirPath, folderId);
     }
 
     public static <T extends IConfigSingleEntry> boolean writeConfigs(AbstractConfigSubManager<T> context, String folderPath, int folderId) {
         boolean hasWrited = false;
         Map<String, List<T>> fileConfigs = context.getFileConfigsList(folderId);
-        JsonArray jsonArray = new JsonArray();
         // 遍历文件名
         for (Map.Entry<String, List<T>> entry : fileConfigs.entrySet()) {
+            JsonArray jsonArray = new JsonArray();
             String filePath = String.valueOf(Paths.get(folderPath, String.format("%s.json", entry.getKey())));
             // 遍历单个文件
             for (T configEntry : entry.getValue()) {
