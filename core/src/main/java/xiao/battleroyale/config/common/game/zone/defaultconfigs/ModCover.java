@@ -16,7 +16,7 @@ import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class ModCover {
 
-    private static final String DEFAULT_FILE_NAME = "example_mod_cover";
+    private static final String DEFAULT_FILE_NAME = "example_mod_cover.json";
 
     public static void generateDefaultConfigs(String configDirPath) {
         JsonArray zoneConfigJson = new JsonArray();
