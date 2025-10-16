@@ -28,6 +28,7 @@ public enum LootEntryType {
     REGEX(LootEntryTag.TYPE_REGEX, RegexEntry::fromJson),
     MESSAGE(LootEntryTag.TYPE_MESSAGE, MessageEntry::fromJson),
     GOLEM(LootEntryTag.TYPE_GOLEM, GolemEntry::fromJson),
+    SHAPE(LootEntryTag.TYPE_SHAPE, ShapeEntry::fromJson),
     NBT(LootEntryTag.TYPE_NBT, NbtEntry::fromJson),
     EVENT(LootEntryTag.TYPE_EVENT, EventEntry::fromJson);
 

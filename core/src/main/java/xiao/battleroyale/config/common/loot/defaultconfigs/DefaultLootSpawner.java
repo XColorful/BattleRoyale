@@ -3,7 +3,11 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
+import xiao.battleroyale.config.common.game.zone.zoneshape.SphereEntry;
+import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.type.*;
 import xiao.battleroyale.config.common.loot.type.event.EventEntry;
@@ -85,7 +89,17 @@ public class DefaultLootSpawner {
                                                 new ItemEntry("minecraft:grass_block", "", 1)
                                         ))
                                 )
-                        )
+                        ),
+                        new ShapeEntry(false,
+                                new SphereEntry(
+                                        new StartEntry()
+                                                .addFixedCenter(new Vec3(0, 0, 0))
+                                                .addFixedDimension(new Vec3(200, 200, 200)),
+                                        new EndEntry()
+                                                .addFixedCenter(new Vec3(0, 0, 0))
+                                                .addFixedDimension(new Vec3(10, 10, 10)),
+                                        false),
+                                new ItemEntry("minecraft:diamond_sword", "", 1))
                 )
         );
 

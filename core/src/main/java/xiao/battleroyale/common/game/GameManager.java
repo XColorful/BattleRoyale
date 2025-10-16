@@ -131,6 +131,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return inGame;
     }
     @Override public Vec3 getGlobalCenterOffset() { return globalCenterOffset; }
+    @Override public int getMaxGameTime() { return maxGameTime; }
     @Override public int getWinnerTeamTotal() {
         return winnerTeamTotal;
     }
