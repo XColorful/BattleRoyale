@@ -11,6 +11,7 @@ import xiao.battleroyale.compat.neoforge.event.game.starter.*;
 import xiao.battleroyale.compat.neoforge.event.game.team.*;
 import xiao.battleroyale.compat.neoforge.event.game.tick.*;
 import xiao.battleroyale.compat.neoforge.event.game.zone.*;
+import xiao.battleroyale.compat.neoforge.event.loot.generate.*;
 import net.neoforged.bus.api.Event;
 
 public class NeoEventPoster implements IEventPoster {
@@ -65,6 +66,8 @@ public class NeoEventPoster implements IEventPoster {
             case CUSTOM_ZONE_EVENT -> publishedEvent = NeoForge.EVENT_BUS.post(CustomZoneEvent.createEvent(customEventData));
             case ZONE_COMPLETE_EVENT -> publishedEvent = NeoForge.EVENT_BUS.post(ZoneCompleteEvent.createEvent(customEventData));
             case ZONE_CREATED_EVENT -> publishedEvent = NeoForge.EVENT_BUS.post(ZoneCreatedEvent.createEvent(customEventData));
+            // generate
+            case CUSTOM_GENERATE_EVENT -> publishedEvent = NeoForge.EVENT_BUS.post(CustomGenerateEvent.createEvent(customEventData));
             default -> {
                 return false;
             }
