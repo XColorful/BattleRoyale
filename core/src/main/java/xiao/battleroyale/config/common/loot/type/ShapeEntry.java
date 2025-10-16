@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.loot.ILootData;
@@ -39,7 +38,6 @@ public class ShapeEntry extends AbstractLootEntry {
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
-        BattleRoyale.LOGGER.debug("ShapeEntry generateLootData");
         List<ILootData> lootData = new ArrayList<>();
         if (entry != null) {
             try {
@@ -47,27 +45,18 @@ public class ShapeEntry extends AbstractLootEntry {
                 if (shapeEntry != null) {
                     ZoneManager.ZoneContext zoneContext = ZoneManager.get().getCommonZoneContext();
                     if (zoneContext != null && target != null) {
-                        BattleRoyale.LOGGER.debug("zoneContext != null && target != null");
                         ISpatialZone spatialZone = shapeEntry.createSpatialZone();
                         spatialZone.calculateShape(zoneContext);
                         GameManager gameManager = GameManager.get();
                         float gameTime = gameManager.getGameTime();
                         float maxGameTime = gameManager.getMaxGameTime();
-                        if (spatialZone.isDetermined()) {
-                            BattleRoyale.LOGGER.debug("spatialZone is determined");
-                            BattleRoyale.LOGGER.debug("start: {}, {}", spatialZone.getStartCenterPos(), spatialZone.getStartDimension());
-                            BattleRoyale.LOGGER.debug("end: {}, {}", spatialZone.getEndCenterPos(), spatialZone.getEndDimension());
-                        }
-                        BattleRoyale.LOGGER.debug("target: {}", target.getBlockPos().getCenter());
                         if (spatialZone.isWithinZone(target.getBlockPos().getCenter(), gameTime / maxGameTime)) {
                             isInRange = true;
-                            BattleRoyale.LOGGER.debug("ShapeEntry: isInRange set to true");
                         }
                     }
                 }
                 if (isInRange != invert) {
                     lootData.addAll(entry.generateLootData(lootContext, target));
-                    BattleRoyale.LOGGER.debug("lootData.addAll");
                 }
             } catch (Exception e) {
                 parseErrorLog(e, target);

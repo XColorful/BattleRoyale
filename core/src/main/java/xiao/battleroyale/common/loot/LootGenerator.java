@@ -162,22 +162,21 @@ public class LootGenerator {
      * 刷新原版箱子
      */
     public static void generateVanillaLoot(LootContext lootContext, BlockEntity targetBlockEntity, ILootEntry entry) {
-        if (!(targetBlockEntity instanceof Container container)) {
-            return;
-        }
         if (REMOVE_LOOT_TABLE) {
             removeLootTable(targetBlockEntity);
         }
 
+        // 执行刷新
         List<ILootData> lootData = entry.generateLootData(lootContext, targetBlockEntity);
-        if (lootData.isEmpty()) {
+        if (lootData.isEmpty() || !(targetBlockEntity instanceof Container container)) {
             return;
         }
+        // 非容器方块实体至此结束
 
+        // 容器方块实体
         if (CLEAR_PREVIOUS_CONTENT) {
             container.clearContent();
         }
-
         for (int i = 0; i < lootData.size() && i < container.getContainerSize(); i++) {
             ILootData data = lootData.get(i);
             if (data.getDataType() == LootDataType.ITEM) {
