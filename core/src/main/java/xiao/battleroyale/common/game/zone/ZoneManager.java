@@ -44,7 +44,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
 
     protected final ZoneData zoneData = new ZoneData();
 
-    private boolean stackZoneConfig = true;
+    private boolean stackZoneConfig = false;
     public void setStackZoneConfig(boolean bool) {
         stackZoneConfig = bool;
     }

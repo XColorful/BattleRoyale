@@ -7,6 +7,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.data.io.TempDataManager;
 
 import static xiao.battleroyale.command.CommandArg.*;
@@ -21,6 +22,9 @@ public class TempCommand {
                                 .executes(TempCommand::turnPubgmcCompatibility)
                         )
                 )
+                .then(Commands.literal(INIT_STACK_ZONE_CONFIG)
+                        .then(Commands.argument(BOOL, BoolArgumentType.bool())
+                                .executes(TempCommand::turnInitStackZoneConfig)))
                 .requires(source -> source.hasPermission(3))
                 .then(Commands.literal(CLEAR)
                                 .executes(TempCommand::clearAllTempData)
@@ -35,6 +39,17 @@ public class TempCommand {
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.enable_pubgmc_registry"), false);
         } else {
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.disable_pubgmc_registry"), false);
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int turnInitStackZoneConfig(CommandContext<CommandSourceStack> context) {
+        boolean turn = BoolArgumentType.getBool(context, BOOL);
+        ZoneManager.get().setStackZoneConfig(turn);
+        if (turn) {
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.enable_init_stack_zone_config"), false);
+        } else {
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.disable_init_stack_zone_config"), false);
         }
         return Command.SINGLE_SUCCESS;
     }
