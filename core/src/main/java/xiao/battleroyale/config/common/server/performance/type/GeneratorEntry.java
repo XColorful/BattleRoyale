@@ -40,6 +40,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
     public GeneratorEntry(boolean lootAnyBlockEntity, boolean lootVanillaChest, boolean removeLootTable, boolean clearPreviousContent, boolean removeInnocentEntity, @NotNull List<String> whiteListRegex, @NotNull List<String> blackListRegex,
                           int maxNormalTickLootChunk,
                           int maxGameTickLootChunk, int maxGameLootDistance, int tolerantCenterDistance, int maxCachedCenter, int maxQueuedChunk, int bfsFrequency, boolean instantNextBfs, int maxCachedLootChunk, int cleanCachedChunk) {
+        this.lootAnyBlockEntity = lootAnyBlockEntity;
         this.lootVanillaChest = lootVanillaChest;
         this.removeLootTable = removeLootTable;
         this.clearPreviousContent = clearPreviousContent;
