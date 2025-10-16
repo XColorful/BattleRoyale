@@ -1,12 +1,9 @@
 package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.config.common.game.GameConfigManager;
-import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.MessageFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.NoFuncEntry;
@@ -90,7 +87,7 @@ public class Pubg8000x8000Casual {
 
     public static final int GAME_TIME = INIT_ZONE_DELAY + ZONE1_TIME + ZONE2_TIME + ZONE3_TIME + ZONE4_TIME + ZONE5_TIME + ZONE6_TIME + ZONE7_TIME + ZONE8_TIME + ZONE9_TIME;
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray zoneConfigJson = new JsonArray();
         add8000x8000Zone(zoneConfigJson);
         addPhase1(zoneConfigJson);
@@ -102,7 +99,7 @@ public class Pubg8000x8000Casual {
         addPhase7(zoneConfigJson);
         addPhase8(zoneConfigJson);
         addPhase9(zoneConfigJson);
-        writeJsonToFile(Paths.get(String.valueOf(ZoneConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
     // 游戏边界

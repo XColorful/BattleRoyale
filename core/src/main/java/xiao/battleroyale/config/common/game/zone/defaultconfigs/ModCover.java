@@ -3,7 +3,6 @@ package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.NoFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.CircleEntry;
@@ -19,11 +18,11 @@ public class ModCover {
 
     private static final String DEFAULT_FILE_NAME = "example_mod_cover";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray zoneConfigJson = new JsonArray();
         zoneConfigJson.add(generateBorder());
         zoneConfigJson.add(generateInner());
-        writeJsonToFile(Paths.get(String.valueOf(ZoneConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
     private static JsonObject generateBorder() {

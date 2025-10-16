@@ -2,7 +2,6 @@ package xiao.battleroyale.config.common.server.performance.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager.PerformanceConfig;
 import xiao.battleroyale.config.common.server.performance.type.GeneratorEntry;
 
@@ -15,13 +14,13 @@ public class DefaultPerformance {
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray performanceConfigJson = new JsonArray();
         performanceConfigJson.add(generateDefaultPerformanceConfig0());
         performanceConfigJson.add(generateDefaultPerformanceConfig1());
         performanceConfigJson.add(generateDefaultPerformanceConfig2());
         performanceConfigJson.add(generateDefaultPerformanceConfig3());
-        writeJsonToFile(Paths.get(String.valueOf(PerformanceConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), performanceConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), performanceConfigJson);
     }
 
     private static JsonObject generateDefaultPerformanceConfig0() {

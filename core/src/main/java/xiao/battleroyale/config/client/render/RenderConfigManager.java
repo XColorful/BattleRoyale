@@ -184,12 +184,13 @@ public class RenderConfigManager extends AbstractConfigSubManager<RenderConfigMa
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_RENDER_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_RENDER_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultRenderConfigGenerator.generateDefaultRenderConfigs();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        DefaultRenderConfigGenerator.generateAllDefaultConfig(String.valueOf(getConfigDirPath()));
+        return true;
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_RENDER_CONFIG_FOLDER);

@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.bot;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.bot.BotConfigTag;
@@ -56,7 +57,7 @@ public class BotConfigManager extends AbstractConfigSubManager<BotConfigManager.
             super(id, name, color, isDefault);
             this.entry = entry;
         }
-        @Override public BotConfig copy() {
+        @Override public @NotNull BotConfig copy() {
             return new BotConfig(id, name, color, isDefault, null); // TODO 替换为entry.copy()
         }
 
@@ -99,12 +100,13 @@ public class BotConfigManager extends AbstractConfigSubManager<BotConfigManager.
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_BOT_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_BOT_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultBotConfigGenerator.generateDefaultBotConfigs();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        DefaultBotConfigGenerator.generateAllDefaultConfigs(String.valueOf(getConfigDirPath()));
+        return true;
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_BOT_CONFIG_FOLDER);

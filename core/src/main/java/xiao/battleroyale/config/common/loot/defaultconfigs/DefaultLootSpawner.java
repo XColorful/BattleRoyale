@@ -3,7 +3,6 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.type.*;
 
@@ -11,20 +10,19 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.LOOT_SPAWNER;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultLootSpawner {
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray lootSpawnerConfigsJson = new JsonArray();
         lootSpawnerConfigsJson.add(generateBasicLoot0());
         lootSpawnerConfigsJson.add(generateCombatLoot1());
         lootSpawnerConfigsJson.add(generateAdvanceLoot2());
         lootSpawnerConfigsJson.add(generateFunctionLoot3());
-        writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(LOOT_SPAWNER), LootConfigManager.LOOT_SPAWNER_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), lootSpawnerConfigsJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), lootSpawnerConfigsJson);
     }
 
     private static JsonObject generateBasicLoot0() {

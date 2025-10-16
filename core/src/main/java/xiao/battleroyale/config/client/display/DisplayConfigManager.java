@@ -152,12 +152,13 @@ public class DisplayConfigManager extends AbstractConfigSubManager<DisplayConfig
         return DisplayConfig.CONFIG_TYPE;
     }
 
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_DISPLAY_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_DISPLAY_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultDisplayConfigGenerator.generateDefaultDisplayConfigs();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        DefaultDisplayConfigGenerator.generateAllDefaultConfig(String.valueOf(getConfigDirPath()));
+        return true;
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_DISPLAY_CONFIG_FOLDER);

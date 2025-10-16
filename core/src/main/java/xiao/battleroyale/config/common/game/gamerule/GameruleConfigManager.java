@@ -177,12 +177,13 @@ public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConf
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_GAMERULE_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_GAMERULE_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultGameruleConfigGenerator.generateDefaultGameruleConfigs();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        DefaultGameruleConfigGenerator.generateAllDefaultConfigs(String.valueOf(getConfigDirPath()));
+        return true;
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_GAMERULE_CONFIG_FOLDER);

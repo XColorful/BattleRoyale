@@ -133,12 +133,13 @@ public class SpawnConfigManager extends AbstractConfigSubManager<SpawnConfigMana
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_SPAWN_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_SPAWN_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultSpawnConfigGenerator.generateDefaultSpawnConfigs();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        DefaultSpawnConfigGenerator.generateAllDefaultConfigs(String.valueOf(getConfigDirPath()));
+        return true;
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_SPAWN_CONFIG_FOLDER);
