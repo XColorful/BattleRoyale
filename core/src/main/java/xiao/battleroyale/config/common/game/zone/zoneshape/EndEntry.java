@@ -90,6 +90,9 @@ public class EndEntry {
         return this;
     }
     public EndEntry addRelativeCenter(Vec3 relativeAdd) {
+        if (this.endCenterType != EndCenterType.PREVIOUS) {
+            BattleRoyale.LOGGER.warn("Please use EndEntry::addPreviousCenter before addRelativeCenter {}", relativeAdd);
+        }
         this.endCenterType = EndCenterType.RELATIVE;
         this.endCenterPos = relativeAdd;
         return this;
@@ -127,6 +130,9 @@ public class EndEntry {
         return this;
     }
     public EndEntry addRelativeDimension(Vec3 relativeAdd) {
+        if (this.endDimensionType != EndDimensionType.PREVIOUS) {
+            BattleRoyale.LOGGER.warn("Please use EndEntry::addPreviousDimension before addRelativeDimension {}", relativeAdd);
+        }
         this.endDimensionType = EndDimensionType.RELATIVE;
         this.endDimension = relativeAdd;
         return this;
@@ -152,6 +158,9 @@ public class EndEntry {
         return this;
     }
     public EndEntry addRelativeRotate(double degree) {
+        if (this.endRotationType != EndRotationType.PREVIOUS) {
+            BattleRoyale.LOGGER.warn("Please use EndEntry::addPreviousRotate before addRelativeRotate {}", degree);
+        }
         this.endRotationType = EndRotationType.RELATIVE;
         this.endRotateDegree = degree;
         return this;

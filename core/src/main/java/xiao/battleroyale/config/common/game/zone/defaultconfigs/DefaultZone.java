@@ -7,7 +7,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.*;
 import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry.EffectFuncEntryBuilder;
@@ -28,7 +27,7 @@ public class DefaultZone {
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray zoneConfigJson = new JsonArray();
         zoneConfigJson.add(generateOpaqueBorder0());
         zoneConfigJson.add(generateShrinkCircle1());
@@ -45,7 +44,7 @@ public class DefaultZone {
         zoneConfigJson.add(generateZoneNotification14());
         zoneConfigJson.add(generateZoneEvent15());
         zoneConfigJson.add(generateInitialEquipment16());
-        writeJsonToFile(Paths.get(String.valueOf(ZoneConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
     private static JsonObject generateOpaqueBorder0() {

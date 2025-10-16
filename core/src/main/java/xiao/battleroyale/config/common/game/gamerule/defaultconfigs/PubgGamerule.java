@@ -17,13 +17,13 @@ public class PubgGamerule {
 
     private static final String DEFAULT_FILE_NAME = "example_pubg_map.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray gameruleConfigJson = new JsonArray();
         addErangle100(gameruleConfigJson);
         addErangle64(gameruleConfigJson);
         addMiramar100(gameruleConfigJson);
         addMiramar64(gameruleConfigJson);
-        writeJsonToFile(Paths.get(String.valueOf(GameruleConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), gameruleConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), gameruleConfigJson);
     }
 
     public static JsonObject addCasual(int gameId, int playerTotal, int teamSize, int GAME_TIME,

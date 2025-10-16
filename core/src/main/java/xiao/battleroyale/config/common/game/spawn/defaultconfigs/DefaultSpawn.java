@@ -3,7 +3,6 @@ package xiao.battleroyale.config.common.game.spawn.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.config.common.game.spawn.type.TeleportEntry;
 import xiao.battleroyale.config.common.game.spawn.type.PlaneEntry;
@@ -21,7 +20,7 @@ public class DefaultSpawn {
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray spawnConfigJson = new JsonArray();
         spawnConfigJson.add(generateRandomTeleport0());
         spawnConfigJson.add(generateFixedTeleport1());
@@ -29,7 +28,7 @@ public class DefaultSpawn {
         spawnConfigJson.add(generateDoubleCenterDistribution3());
         spawnConfigJson.add(generateGoldenSpiralDistribution4());
         spawnConfigJson.add(generatePlaneSpawn5());
-        writeJsonToFile(Paths.get(String.valueOf(SpawnConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), spawnConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), spawnConfigJson);
     }
 
     private static JsonObject generateRandomTeleport0() {

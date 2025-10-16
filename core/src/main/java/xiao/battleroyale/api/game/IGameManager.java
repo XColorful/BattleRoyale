@@ -16,6 +16,7 @@ public interface IGameManager extends IGameSubManager, IGameConfigGetter, IGameA
     UUID getGameId();
     boolean isInGame();
     Vec3 getGlobalCenterOffset();
+    int getMaxGameTime();
     int getWinnerTeamTotal();
     int getRequiredGameTeam();
     ServerLevel getServerLevel();

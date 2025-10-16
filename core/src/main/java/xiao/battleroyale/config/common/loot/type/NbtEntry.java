@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 // TODO 做成新模组？NbtEdit
-public class NbtEntry implements ILootEntry {
+public class NbtEntry extends AbstractLootEntry {
     public boolean overwrite;
     public JsonObject nbtJson;
     public @NotNull CompoundTag nbt;
@@ -53,8 +53,7 @@ public class NbtEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.OVERWRITE, overwrite);
         jsonObject.add(LootEntryTag.NBT, nbtJson);
         jsonObject.add(LootEntryTag.KEY_DELETE, JsonUtils.writeStringListToJson(keyDelete));

@@ -24,7 +24,7 @@ import xiao.battleroyale.util.JsonUtils;
 import java.util.Collections;
 import java.util.List;
 
-public class MessageEntry implements ILootEntry {
+public class MessageEntry extends AbstractLootEntry {
     public boolean onlyGamePlayer;
     public boolean sendPosition;
     public String messageString;
@@ -100,8 +100,7 @@ public class MessageEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.ONLY_GAME_PLAYER, onlyGamePlayer);
         jsonObject.addProperty(LootEntryTag.SEND_POSITION, sendPosition);
         jsonObject.addProperty(LootEntryTag.MESSAGE, messageString);

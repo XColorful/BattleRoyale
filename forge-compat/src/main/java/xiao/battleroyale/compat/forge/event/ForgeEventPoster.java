@@ -11,6 +11,7 @@ import xiao.battleroyale.compat.forge.event.game.starter.*;
 import xiao.battleroyale.compat.forge.event.game.team.*;
 import xiao.battleroyale.compat.forge.event.game.tick.*;
 import xiao.battleroyale.compat.forge.event.game.zone.*;
+import xiao.battleroyale.compat.forge.event.loot.generate.CustomGenerateEvent;
 
 public class ForgeEventPoster implements IEventPoster {
 
@@ -135,6 +136,10 @@ public class ForgeEventPoster implements IEventPoster {
             }
             case ZONE_CREATED_EVENT -> {
                 return MinecraftForge.EVENT_BUS.post(ZoneCreatedEvent.createEvent(customEventData));
+            }
+            // generate
+            case CUSTOM_GENERATE_EVENT -> {
+                return MinecraftForge.EVENT_BUS.post(CustomGenerateEvent.createEvent(customEventData));
             }
             default -> {
                 return false;

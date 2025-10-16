@@ -2,7 +2,6 @@ package xiao.battleroyale.config.common.game.bot.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager.BotConfig;
 
 import java.nio.file.Paths;
@@ -13,10 +12,10 @@ public class DefaultBot {
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray botConfigJson = new JsonArray();
         botConfigJson.add(generateDefaultBotConfig0());
-        writeJsonToFile(Paths.get(String.valueOf(BotConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), botConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), botConfigJson);
     }
 
     private static JsonObject generateDefaultBotConfig0() {

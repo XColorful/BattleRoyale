@@ -6,6 +6,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.event.game.zone.AirdropEventData;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
@@ -39,7 +41,10 @@ public class AirdropFunc extends AbstractEventFunc {
 
     @Override
     public void initFunc(ZoneContext zoneContext) {
-        LootConfig airdropConfig = LootConfigManager.get().getConfigEntry(LootConfigTypeEnum.AIRDROP, lootId);
+        IConfigSubManager<?> lootConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(LootConfigManager.get().getNameKey());
+
+        @Nullable LootConfig airdropConfig = lootConfigManager == null ? null
+                : lootConfigManager.getConfigEntry(LootConfigTypeEnum.AIRDROP, lootId) instanceof LootConfig config ? config : null;
         if (airdropConfig == null) { // 没有物资刷新配置就视为创建失败
             return;
         }

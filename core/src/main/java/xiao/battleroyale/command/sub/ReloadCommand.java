@@ -6,6 +6,8 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import xiao.battleroyale.api.config.IConfigManager;
+import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.display.DisplayConfigManager;
 import xiao.battleroyale.config.client.render.RenderConfigManager;
@@ -26,6 +28,8 @@ import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
 import javax.annotation.Nullable;
 
 import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.command.sub.ConfigUtils.getConfigManager;
+import static xiao.battleroyale.command.sub.ConfigUtils.getConfigSubManager;
 
 public class ReloadCommand {
     
@@ -84,12 +88,16 @@ public class ReloadCommand {
     }
 
     private static int reloadLootConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigSubManager<?> lootConfigManager = getConfigSubManager(context, LootConfigManager.get().getNameKey());
+        if (lootConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            LootConfigManager.get().reloadAllConfigs();
+            success = lootConfigManager.reloadAllConfigs();
             messageKey = "battleroyale.message.loot_config_reloaded";
         } else {
-            int folderId = LootConfigTypeEnum.ALL_LOOT;
+            int folderId;
             switch (subType) {
                 case LOOT_SPAWNER:
                     folderId = LootConfigTypeEnum.LOOT_SPAWNER;
@@ -116,7 +124,7 @@ public class ReloadCommand {
                     BattleRoyale.LOGGER.warn("Unknown loot sub-type for reload command: {}", subType);
                     return 0;
             }
-            LootConfigManager.get().reloadConfigs(folderId);
+            success = lootConfigManager.reloadConfigs(folderId) ? 1 : 0;
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Reloaded {} configs via command", subType != null ? subType : "all loot");
@@ -124,9 +132,13 @@ public class ReloadCommand {
     }
 
     private static int reloadGameConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigManager gameConfigManager = getConfigManager(context, GameConfigManager.get().getNameKey());
+        if (gameConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            GameConfigManager.get().reloadAllConfigs();
+            success = gameConfigManager.reloadAllConfigs();
             messageKey = "battleroyale.message.game_config_reloaded";
         } else {
             String subManagerNameKey;
@@ -152,7 +164,10 @@ public class ReloadCommand {
                     BattleRoyale.LOGGER.warn("Unknown game sub-type for reload command: {}", subType);
                     return 0;
             }
-            GameConfigManager.get().reloadConfigs(subManagerNameKey);
+            IConfigSubManager<?> configSubManager = gameConfigManager.getConfigSubManager(subManagerNameKey);
+            if (configSubManager == null) return 0;
+
+            success = configSubManager.reloadAllConfigs();
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Reloaded {} configs via command", subType != null ? subType : "all game");
@@ -160,9 +175,13 @@ public class ReloadCommand {
     }
 
     private static int reloadEffectConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigManager effectConfigManager = getConfigManager(context, EffectConfigManager.get().getNameKey());
+        if (effectConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            EffectConfigManager.get().reloadAllConfigs();
+            success = effectConfigManager.reloadAllConfigs();
             messageKey = "battleroyale.message.effect_config_reloaded";
         } else {
             String subManagerNameKey;
@@ -176,7 +195,10 @@ public class ReloadCommand {
                     BattleRoyale.LOGGER.warn("Unknown effect sub-type for reload command: {}", subType);
                     return 0;
             }
-            EffectConfigManager.get().reloadConfigs(subManagerNameKey);
+            IConfigSubManager<?> configSubManager = effectConfigManager.getConfigSubManager(subManagerNameKey);
+            if (configSubManager == null) return 0;
+
+            success = configSubManager.reloadAllConfigs();
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Reloaded {} effect configs via command", subType != null ? subType : "all effect");
@@ -184,9 +206,13 @@ public class ReloadCommand {
     }
 
     private static int reloadClientConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigManager clientConfigManager = getConfigManager(context, ClientConfigManager.get().getNameKey());
+        if (clientConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            ClientConfigManager.get().reloadAllConfigs();
+            success = clientConfigManager.reloadAllConfigs();
             messageKey = "battleroyale.message.client_config_reloaded";
         } else {
             String subManagerNameKey;
@@ -204,7 +230,10 @@ public class ReloadCommand {
                     BattleRoyale.LOGGER.warn("Unknown client sub-type for reload command: {}", subType);
                     return 0;
             }
-            ClientConfigManager.get().reloadConfigs(subManagerNameKey);
+            IConfigSubManager<?> configSubManager = clientConfigManager.getConfigSubManager(subManagerNameKey);
+            if (configSubManager == null) return 0;
+
+            success = configSubManager.reloadAllConfigs();
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Reloaded {} client configs via command", subType != null ? subType : "all client");
@@ -212,9 +241,13 @@ public class ReloadCommand {
     }
 
     private static int reloadServerConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigManager serverConfigManager = getConfigManager(context, ServerConfigManager.get().getNameKey());
+        if (serverConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            ServerConfigManager.get().reloadAllConfigs();
+            success = serverConfigManager.reloadAllConfigs();
             messageKey = "battleroyale.message.server_config_reloaded";
         } else {
             String subManagerNameKey;
@@ -232,7 +265,10 @@ public class ReloadCommand {
                     BattleRoyale.LOGGER.warn("Unknown server sub-type for reload command: {}", subType);
                     return 0;
             }
-            ServerConfigManager.get().reloadConfigs(subManagerNameKey);
+            IConfigSubManager<?> configSubManager = serverConfigManager.getConfigSubManager(subManagerNameKey);
+            if (configSubManager == null) return 0;
+
+            success = configSubManager.reloadAllConfigs();
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Reloaded {} server configs via command", subType != null ? subType : "all server");

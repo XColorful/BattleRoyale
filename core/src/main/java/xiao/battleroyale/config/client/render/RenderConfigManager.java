@@ -184,12 +184,13 @@ public class RenderConfigManager extends AbstractConfigSubManager<RenderConfigMa
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_RENDER_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_RENDER_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultRenderConfigGenerator.generateDefaultRenderConfigs();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        DefaultRenderConfigGenerator.generateAllDefaultConfig(String.valueOf(getConfigDirPath()));
+        return true;
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_RENDER_CONFIG_FOLDER);
@@ -234,23 +235,6 @@ public class RenderConfigManager extends AbstractConfigSubManager<RenderConfigMa
     }
     @Override public String getConfigSubPath(int folderId) {
         return RENDER_CONFIG_SUB_PATH;
-    }
-
-    /**
-     * 特定类别的获取接口
-     */
-    public RenderConfig getRenderConfig(int id) {
-        return getConfigEntry(DEFAULT_RENDER_CONFIG_FOLDER, id);
-    }
-    public List<RenderConfig> getRenderConfigList() {
-        return getConfigEntryList(DEFAULT_RENDER_CONFIG_FOLDER);
-    }
-
-    /**
-     * 特定类别的重新获取接口
-     */
-    public void reloadRenderConfigs() {
-        reloadConfigs(DEFAULT_RENDER_CONFIG_FOLDER);
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {
