@@ -1,6 +1,7 @@
 package xiao.battleroyale.api.game.zone.gamezone;
 
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 
@@ -25,7 +26,7 @@ public interface ISpatialZone {
     /**
      * 用于初始化起止状态
      */
-    void calculateShape(ZoneContext zoneContext);
+    void calculateShape(@NotNull ZoneContext zoneContext);
 
     /**
      * 判断起止状态是否已经确定

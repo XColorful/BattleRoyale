@@ -1,9 +1,12 @@
 package xiao.battleroyale.api.config;
 
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.config.sub.*;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 public interface IConfigSubManager<T extends IConfigSingleEntry> extends IManagerName, ISideOnly,
@@ -34,5 +37,56 @@ public interface IConfigSubManager<T extends IConfigSingleEntry> extends IManage
     }
     @Deprecated default String getConfigEntryFileName(int folderId) {
         return getCurrentSelectedFileName(folderId);
+    }
+
+    // IConfigLoadable
+    @Override
+    default int reloadAllConfigs() {
+        if (!inProperSide()) return 0;
+        int reloadCount = 0;
+        for (int folderId : getAvailableFolderIds()) {
+            reloadCount += reloadConfigs(folderId) ? 1 : 0;
+        }
+        return reloadCount;
+    }
+    @Override
+    default void initializeDefaultConfigsIfEmpty(int folderId) {
+        if (hasConfigLoaded(folderId)) { // 防御一下
+            return;
+        }
+        generateDefaultConfigs(folderId);
+        BattleRoyale.LOGGER.info("Generated default configs in {}", getConfigDirPath(folderId));
+    }
+    @Override
+    default Path getConfigDirPath(int folderId) {
+        return Paths.get(getConfigPath(folderId)).resolve(getConfigSubPath(folderId));
+    }
+    // IConfigDefaultable
+    @Override
+    default int generateAllDefaultConfigs() {
+        int generateCount = 0;
+        for (int folderId : getAvailableFolderIds()) {
+            generateCount += (generateDefaultConfigs(folderId) ? 1 : 0);
+        }
+        return generateCount;
+    }
+    // IConfigSaveable
+    @Override
+    default int saveAllConfigs() {
+        if (!inProperSide()) return 0;
+        int saveCount = 0;
+        for (int folderId : getAvailableFolderIds()) {
+            saveCount += saveConfigs(folderId) ? 1 : 0;
+        }
+        return saveCount;
+    }
+    @Override
+    default int backupAllConfigs(String backupRoot) {
+        if (!inProperSide()) return 0;
+        int backupCount = 0;
+        for (int folderId : getAvailableFolderIds()) {
+            backupCount += backupConfigs(backupRoot, folderId) ? 1 : 0;
+        }
+        return backupCount;
     }
 }

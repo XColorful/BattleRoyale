@@ -120,12 +120,13 @@ public class UtilityConfigManager extends AbstractConfigSubManager<UtilityConfig
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_UTILITY_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_UTILITY_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultUtilityConfigGenerator.generateDefaultUtilityConfig();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        DefaultUtilityConfigGenerator.generateAllDefaultConfigs(String.valueOf(getConfigDirPath()));
+        return true;
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_UTILITY_CONFIG_FOLDER);
@@ -164,23 +165,6 @@ public class UtilityConfigManager extends AbstractConfigSubManager<UtilityConfig
     }
     @Override public String getConfigSubPath(int folderId) {
         return UTILITY_CONFIG_SUB_PATH;
-    }
-
-    /**
-     * 特定类别的获取接口
-     */
-    public UtilityConfig getUtilityConfig(int id) {
-        return getConfigEntry(DEFAULT_UTILITY_CONFIG_FOLDER, id);
-    }
-    public List<UtilityConfig> getUtilityConfigList() {
-        return getConfigEntryList(DEFAULT_UTILITY_CONFIG_FOLDER);
-    }
-
-    /**
-     * 特定类别的重新获取接口
-     */
-    public void reloadUtilityConfigs() {
-        reloadConfigs(DEFAULT_UTILITY_CONFIG_FOLDER);
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {

@@ -186,21 +186,21 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_ZONE_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_ZONE_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultZoneConfigGenerator.generateDefaultZoneConfig();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        return DefaultZoneConfigGenerator.generateAllDefaultConfigs(String.valueOf(getConfigDirPath()));
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_ZONE_CONFIG_FOLDER);
     }
-    @Override public void setDefaultConfigId(int id) {
-        return;
+    @Override public boolean setDefaultConfigId(int id) {
+        return false;
     }
-    @Override public void setDefaultConfigId(int id, int folderId) {
-        return;
+    @Override public boolean setDefaultConfigId(int folderId, int id) {
+        return false;
     }
 
     /**
@@ -241,24 +241,6 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
     }
     @Override public String getConfigSubPath(int folderId) {
         return ZONE_CONFIG_SUB_PATH;
-    }
-
-    /**
-     * 特定类别的获取接口
-     */
-    public ZoneConfig getZoneConfig(int id) {
-        return getConfigEntry(DEFAULT_ZONE_CONFIG_FOLDER, id);
-    }
-    public List<ZoneConfig> getZoneConfigList() {
-        return getConfigEntryList(DEFAULT_ZONE_CONFIG_FOLDER);
-    }
-
-    /**
-     * 特定类别的重新读取接口
-     */
-    public void reloadZoneConfigs() {
-        reloadConfigs(DEFAULT_ZONE_CONFIG_FOLDER);
-        // Zone以整个文件为选择，不需要切换
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {

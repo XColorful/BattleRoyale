@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ShuffleEntry implements ILootEntry {
+public class ShuffleEntry extends AbstractLootEntry {
     public boolean keepEmpty;
     public int min;
     public int max;
@@ -80,8 +80,7 @@ public class ShuffleEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.KEEP_EMPTY, keepEmpty);
         jsonObject.addProperty(LootEntryTag.MIN, min);
         jsonObject.addProperty(LootEntryTag.MAX, max);

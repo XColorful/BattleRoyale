@@ -15,7 +15,7 @@ import xiao.battleroyale.util.JsonUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepeatEntry implements ILootEntry {
+public class RepeatEntry extends AbstractLootEntry {
     public int min;
     public int max;
     public ILootEntry entry;
@@ -69,8 +69,7 @@ public class RepeatEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         if (min >= 0) {
             jsonObject.addProperty(LootEntryTag.MIN, this.min);
         }
