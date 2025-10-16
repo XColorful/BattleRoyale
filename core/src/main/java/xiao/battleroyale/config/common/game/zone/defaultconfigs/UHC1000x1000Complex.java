@@ -47,7 +47,7 @@ public class UHC1000x1000Complex {
 
         SquareEntry squareEntry = new SquareEntry(startEntry, endEntry, false);
 
-        ZoneConfig zoneConfig = new ZoneConfig(0, "UHC border", "#FFFFFF77",
+        ZoneConfig zoneConfig = new ZoneConfig(0, "UHC border", "#FFFFFF00",
                 0, maxGameTime,
                 safeFuncEntry, squareEntry);
 
@@ -68,15 +68,16 @@ public class UHC1000x1000Complex {
                 .addPreviousDimension(preZoneId, 1);
         EndEntry endEntry = new EndEntry()
                 .addPreviousCenter(zoneId, 0)
+                .addPreviousDimension(zoneId, 0)
                 .addRelativeDimension(new Vec3(-shrinkBorderSide / 2, 0, -shrinkBorderSide / 2));
 
         SquareEntry squareEntry = new SquareEntry(startEntry, endEntry, false);
 
         String zoneName = String.format("Phase %s border", phase);
         int zoneColorInt = (int) (0xFF * phase / (float) totalPhaseCount);
-        String zoneColor = "#0000FF" + String.format("%02X", zoneColorInt);; // #RRGGBBAA
+        String zoneColor = "#0000FF" + String.format("%02X", zoneColorInt); // #RRGGBBAA
         ZoneConfig zoneConfig = new ZoneConfig(zoneId, zoneName, zoneColor, preZoneId,
-                timePerPhase, timePerPhase,
+                phase == 1 ? 0 : timePerPhase, timePerPhase,
                 safeFuncEntry, squareEntry);
 
         return zoneConfig.toJson();
@@ -96,7 +97,7 @@ public class UHC1000x1000Complex {
 
         String zoneName = String.format("Phase %s border", phase);
         int zoneColorInt = (int) (0xFF * phase / (float) totalPhaseCount);
-        String zoneColor = "#0000FF" + String.format("%02X", zoneColorInt);; // #RRGGBBAA
+        String zoneColor = "#0000FF" + String.format("%02X", zoneColorInt); // #RRGGBBAA
         ZoneConfig zoneConfig = new ZoneConfig(zoneId, zoneName, zoneColor, preZoneId,
                 timePerPhase, eternalTime,
                 safeFuncEntry, squareEntry);
