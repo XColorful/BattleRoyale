@@ -17,7 +17,7 @@ import xiao.battleroyale.util.JsonUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultiEntry implements ILootEntry {
+public class MultiEntry extends AbstractLootEntry {
     public final @NotNull List<ILootEntry> entries;
 
     public MultiEntry(@NotNull List<ILootEntry> entries) {
@@ -80,8 +80,7 @@ public class MultiEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         JsonArray entriesArray = new JsonArray();
         for (ILootEntry entry : entries) {
             entriesArray.add(entry.toJson());

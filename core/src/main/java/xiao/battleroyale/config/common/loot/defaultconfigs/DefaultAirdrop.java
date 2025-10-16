@@ -3,7 +3,6 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.type.ItemEntry;
 import xiao.battleroyale.config.common.loot.type.MultiEntry;
@@ -13,17 +12,16 @@ import xiao.battleroyale.config.common.loot.type.WeightEntry;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.AIRDROP;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultAirdrop{
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray airdropConfigsJson = new JsonArray();
         airdropConfigsJson.add(generateDefaultAirdrop());
-        writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(AIRDROP), LootConfigManager.AIRDROP_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), airdropConfigsJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), airdropConfigsJson);
     }
 
     private static JsonObject generateDefaultAirdrop() {

@@ -23,11 +23,11 @@ public class ElytraAddon {
 
     private static final String DEFAULT_FILE_NAME = "example_elytra_addon.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray zoneConfigJson = new JsonArray();
         zoneConfigJson.add(generateLevitationEffect2());
         zoneConfigJson.add(generateElytraEquipment3());
-        writeJsonToFile(Paths.get(String.valueOf(ZoneConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
     private static JsonObject generateLevitationEffect2() {

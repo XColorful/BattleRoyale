@@ -2,7 +2,6 @@ package xiao.battleroyale.config.client.render.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import xiao.battleroyale.config.client.render.RenderConfigManager;
 import xiao.battleroyale.config.client.render.RenderConfigManager.RenderConfig;
 import xiao.battleroyale.config.client.render.type.BlockEntry;
 import xiao.battleroyale.config.client.render.type.SpectateEntry;
@@ -17,13 +16,13 @@ public class DefaultRender {
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray renderConfigJson = new JsonArray();
         renderConfigJson.add(generateDefaultRenderConfig0());
         renderConfigJson.add(generateDefaultRenderConfig1());
         renderConfigJson.add(generateDefaultRenderConfig2());
         renderConfigJson.add(generateDefaultRenderConfig3());
-        writeJsonToFile(Paths.get(String.valueOf(RenderConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), renderConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), renderConfigJson);
     }
 
     private static JsonObject generateDefaultRenderConfig0() {

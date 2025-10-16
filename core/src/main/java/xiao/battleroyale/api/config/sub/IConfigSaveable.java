@@ -1,15 +1,20 @@
 package xiao.battleroyale.api.config.sub;
 
+import xiao.battleroyale.BattleRoyale;
+
 public interface IConfigSaveable {
 
-    boolean saveAllConfigs();
+    int saveAllConfigs();
     boolean saveConfigs();
     boolean saveConfigs(int folderId);
 
-    boolean backupAllConfigs();
-    boolean backupAllConfigs(String backupRoot);
-    boolean backupConfigs();
+    default int backupAllConfigs() {
+        return backupAllConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot());
+    }
+    int backupAllConfigs(String backupRoot);
+    default boolean backupConfigs(int folderId) {
+        return backupConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot(), folderId);
+    }
     boolean backupConfigs(String backupRoot);
-    boolean backupConfigs(int folderId);
     boolean backupConfigs(String backupRoot, int folderId);
 }

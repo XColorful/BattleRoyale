@@ -17,6 +17,8 @@ public interface IEntityLootData extends ILootData {
 
     int getRange();
 
+    int getAttempts();
+
     @Nullable
     Entity getEntity(ServerLevel serverLevel);
 }

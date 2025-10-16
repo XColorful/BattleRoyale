@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class NoneEntry implements ILootEntry {
+public class NoneEntry extends AbstractLootEntry {
 
     @Override public @NotNull NoneEntry copy() {
         return new NoneEntry();
@@ -31,8 +31,7 @@ public class NoneEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         return jsonObject;
     }
 
