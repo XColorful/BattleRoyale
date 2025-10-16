@@ -16,5 +16,7 @@ public class DefaultZoneConfigGenerator {
         Pubg881x881Casual.generateDefaultConfigs(configDirPath);
         FunctionShowcase.generateDefaultConfigs(configDirPath);
         ModCover.generateDefaultConfigs(configDirPath);
+        UHC1000x1000Simple.generateDefaultConfigs(configDirPath);
+        UHC1000x1000Complex.generateDefaultConfigs(configDirPath);
     }
 }
