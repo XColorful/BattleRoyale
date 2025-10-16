@@ -44,7 +44,10 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
 
     protected final ZoneData zoneData = new ZoneData();
 
-    private boolean stackZoneConfig = true; // TODO 增加配置
+    private boolean stackZoneConfig = true;
+    public void setStackZoneConfig(boolean bool) {
+        stackZoneConfig = bool;
+    }
 
     private boolean isTicking = false;
     protected static boolean shouldStopGame = false; // 让其对GameZone可见
