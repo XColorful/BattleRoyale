@@ -15,7 +15,7 @@ import xiao.battleroyale.util.JsonUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CleanEntry implements ILootEntry {
+public class CleanEntry extends AbstractLootEntry {
     public ILootEntry entry;
 
     public CleanEntry(ILootEntry entry) {
@@ -52,8 +52,7 @@ public class CleanEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.add(LootEntryTag.ENTRY, entry.toJson());
         return jsonObject;
     }

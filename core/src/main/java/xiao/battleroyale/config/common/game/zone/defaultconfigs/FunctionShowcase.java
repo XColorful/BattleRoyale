@@ -16,7 +16,7 @@ public class FunctionShowcase {
 
     private static final String DEFAULT_FILE_NAME = "example_function_showcase.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray zoneConfigJson = new JsonArray();
         zoneConfigJson.add(generateDefaultZoneConfig0());
         zoneConfigJson.add(generateDefaultZoneConfig1());
@@ -24,7 +24,7 @@ public class FunctionShowcase {
         zoneConfigJson.add(generateDefaultZoneConfig3());
         zoneConfigJson.add(generateDefaultZoneConfig4());
         zoneConfigJson.add(generateDefaultZoneConfig5());
-        writeJsonToFile(Paths.get(String.valueOf(ZoneConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
     private static JsonObject generateDefaultZoneConfig0() {

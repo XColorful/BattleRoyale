@@ -22,7 +22,7 @@ import xiao.battleroyale.util.JsonUtils;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class StructureEntry implements ILootEntry {
+public class StructureEntry extends AbstractLootEntry {
     public boolean invert;
     public final List<String> structureList;
     public final Set<ResourceKey<Structure>> structures = new HashSet<>();
@@ -90,8 +90,7 @@ public class StructureEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.INVERT, invert);
         jsonObject.add(LootEntryTag.FILTER, JsonUtils.writeStringListToJson(structureList));
         if (entry != null) {

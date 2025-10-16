@@ -2,7 +2,6 @@ package xiao.battleroyale.config.common.server.performance.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager.PerformanceConfig;
 import xiao.battleroyale.config.common.server.performance.type.GeneratorEntry;
 
@@ -15,19 +14,19 @@ public class DefaultPerformance {
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray performanceConfigJson = new JsonArray();
         performanceConfigJson.add(generateDefaultPerformanceConfig0());
         performanceConfigJson.add(generateDefaultPerformanceConfig1());
         performanceConfigJson.add(generateDefaultPerformanceConfig2());
         performanceConfigJson.add(generateDefaultPerformanceConfig3());
-        writeJsonToFile(Paths.get(String.valueOf(PerformanceConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), performanceConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), performanceConfigJson);
     }
 
     private static JsonObject generateDefaultPerformanceConfig0() {
         // 默认性能配置:
         // 玩家数量: 10人, 模拟距离: 16, BFS处理Tick: 5秒
-        GeneratorEntry generatorEntry = new GeneratorEntry(true, true, true, true, new ArrayList<>(), new ArrayList<>(),
+        GeneratorEntry generatorEntry = new GeneratorEntry(false, true, true, true, true, new ArrayList<>(), new ArrayList<>(),
                 2000,
                 2000, 20, 3, 1500, 50000, 100, false, 100000, 10000);
 
@@ -39,7 +38,7 @@ public class DefaultPerformance {
     private static JsonObject generateDefaultPerformanceConfig1() {
         // 最大质量配置:
         // 玩家数量: 20人, 模拟距离: 20, BFS处理Tick: 5秒
-        GeneratorEntry generatorEntry = new GeneratorEntry(true, true, true, true, new ArrayList<>(), new ArrayList<>(),
+        GeneratorEntry generatorEntry = new GeneratorEntry(false, true, true, true, true, new ArrayList<>(), new ArrayList<>(),
                 3000,
                 3000, 32, 3, 1500, 50000, 100, true, 100000, 10000);
 
@@ -51,7 +50,7 @@ public class DefaultPerformance {
     private static JsonObject generateDefaultPerformanceConfig2() {
         // 更好性能配置:
         // 玩家数量: 8人, 模拟距离: 8, BFS处理Tick: 5秒
-        GeneratorEntry generatorEntry = new GeneratorEntry(true, true, true, true, new ArrayList<>(), new ArrayList<>(),
+        GeneratorEntry generatorEntry = new GeneratorEntry(false, true, true, true, true, new ArrayList<>(), new ArrayList<>(),
                 500,
                 500, 16, 3, 500, 3000, 100, false, 50000, 10000);
 
@@ -113,7 +112,7 @@ public class DefaultPerformance {
 
         // 12600KF狮城+Y城共两人64模拟距离物资刷新，只要100ms（含未加载区块的跳过），BFS频率最好是大一点，然后开启立即下一次BFS
 
-        GeneratorEntry generatorEntry = new GeneratorEntry(true, true, true, true, new ArrayList<>(), new ArrayList<>(),
+        GeneratorEntry generatorEntry = new GeneratorEntry(false, true, true, true, true, new ArrayList<>(), new ArrayList<>(),
                 100000,
                 100000, 128, 0, 50000, 200000, 100, true, 300000, 10000);
 

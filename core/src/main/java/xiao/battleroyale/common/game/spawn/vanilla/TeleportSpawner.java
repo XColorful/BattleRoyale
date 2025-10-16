@@ -2,7 +2,6 @@ package xiao.battleroyale.common.game.spawn.vanilla;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
@@ -155,7 +154,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
             if (gameZone.isDetermined()) {
                 globalOffest = gameZone.getStartCenterPos();
             } else if (gameZone.getZoneDelay() <= gameTime) {
-                ZoneManager.ZoneContext zoneContext = ZoneManager.get().getZoneContext();
+                ZoneManager.ZoneContext zoneContext = ZoneManager.get().getZoneContextInGame();
                 if (zoneContext != null) {
                     BattleRoyale.LOGGER.debug("TeleportSpawner: attempt to calculate zone shape in advance (preZoneCenterId: {})", preZoneCenterId);
                     gameZone.calculateShape(zoneContext);

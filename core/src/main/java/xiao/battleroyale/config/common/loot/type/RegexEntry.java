@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RegexEntry implements ILootEntry {
+public class RegexEntry extends AbstractLootEntry {
     public boolean invert;
     public String regexString;
     public Pattern pattern;
@@ -82,8 +82,7 @@ public class RegexEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.INVERT, invert);
         jsonObject.addProperty(LootEntryTag.REGEX, regexString);
         if (entry != null) {

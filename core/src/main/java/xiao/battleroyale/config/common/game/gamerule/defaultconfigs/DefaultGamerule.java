@@ -3,7 +3,6 @@ package xiao.battleroyale.config.common.game.gamerule.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
@@ -17,11 +16,11 @@ public class DefaultGamerule {
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray gameruleConfigJson = new JsonArray();
         gameruleConfigJson.add(generateDefaultGameruleConfig0());
         gameruleConfigJson.add(generateDefaultGameruleConfig1());
-        writeJsonToFile(Paths.get(String.valueOf(GameruleConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), gameruleConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), gameruleConfigJson);
     }
 
     private static JsonObject generateDefaultGameruleConfig0() {

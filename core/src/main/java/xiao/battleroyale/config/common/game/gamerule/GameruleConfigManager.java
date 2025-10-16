@@ -177,12 +177,13 @@ public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConf
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_GAMERULE_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_GAMERULE_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultGameruleConfigGenerator.generateDefaultGameruleConfigs();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        DefaultGameruleConfigGenerator.generateAllDefaultConfigs(String.valueOf(getConfigDirPath()));
+        return true;
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_GAMERULE_CONFIG_FOLDER);
@@ -225,23 +226,6 @@ public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConf
     }
     @Override public String getConfigSubPath(int folderId) {
         return GAMERULE_CONFIG_SUB_PATH;
-    }
-
-    /**
-     * 特定类别的获取接口
-     */
-    public GameruleConfig getGameruleConfig(int gameId) {
-        return getConfigEntry(DEFAULT_GAMERULE_CONFIG_FOLDER, gameId);
-    }
-    public List<GameruleConfig> getGameruleConfigList() {
-        return getConfigEntryList(DEFAULT_GAMERULE_CONFIG_FOLDER);
-    }
-
-    /**
-     * 特定类别的重新读取接口
-     */
-    public void reloadGameruleConfigs() {
-        reloadConfigs(DEFAULT_GAMERULE_CONFIG_FOLDER);
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {
