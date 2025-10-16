@@ -5,6 +5,7 @@ import xiao.battleroyale.api.config.sub.ConfigEntryTag;
 public class GeneratorEntryTag extends ConfigEntryTag {
 
     public static final String COMMON = "common";
+    public static final String LOOT_ANY_BLOCK_ENTITY = "lootAnyBlockEntity";
     public static final String LOOT_VANILLA_CHEST = "lootVanillaChest";
     public static final String REMOVE_LOOT_TABLE = "removeLootTable";
     public static final String CLEAR_PREVIOUS_CONTENT = "clearPreviousContent";

@@ -9,14 +9,6 @@ import java.util.Map;
 
 public class SubReloadConfigs {
 
-    public static <T extends IConfigSingleEntry> boolean reloadAllConfigs(
-            AbstractConfigSubManager<T> context) {
-        boolean hasReloaded = false;
-        for (int folderId : context.allFolderConfigData.keySet()) {
-            hasReloaded |= context.reloadConfigs(folderId);
-        }
-        return hasReloaded;
-    }
     /**
      * 实现 IConfigLoadable.reloadConfigs 的核心逻辑
      * @param context 抽象配置管理器实例 (this)

@@ -44,7 +44,10 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
 
     protected final ZoneData zoneData = new ZoneData();
 
-    private boolean stackZoneConfig = true; // TODO 增加配置
+    private boolean stackZoneConfig = false;
+    public void setStackZoneConfig(boolean bool) {
+        stackZoneConfig = bool;
+    }
 
     private boolean isTicking = false;
     protected static boolean shouldStopGame = false; // 让其对GameZone可见
@@ -205,13 +208,22 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
         this.zoneData.finishZones(finishedZoneId);
     }
 
-    public @Nullable ZoneContext getZoneContext() {
+    public @Nullable ZoneContext getZoneContextInGame() {
         GameManager gameManager = GameManager.get();
         ServerLevel serverLevel = gameManager.getServerLevel();
         if (!gameManager.isInGame() || serverLevel == null) {
             return null;
         }
-        return new ZoneContext(serverLevel, GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), GameManager.get().getRandom(), gameManager.getGameTime());
+        return new ZoneContext(serverLevel, GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), gameManager.getRandom(), gameManager.getGameTime());
+    }
+    public @Nullable ZoneContext getCommonZoneContext() {
+        GameManager gameManager = GameManager.get();
+        ServerLevel serverLevel = gameManager.getServerLevel();
+        if (serverLevel == null) {
+            return null;
+        }
+        List<GamePlayer> gamePlayers = gameManager.isInGame() ? GameTeamManager.getStandingGamePlayers() : GameTeamManager.getGamePlayers();
+        return new ZoneContext(serverLevel, gamePlayers, this.zoneData.getGameZones(), gameManager.getRandom(), gameManager.getGameTime());
     }
 
     public static class ZoneContext {

@@ -4,14 +4,14 @@ import org.jetbrains.annotations.Nullable;
 
 public interface IConfigDefaultable<T> {
 
-    void generateAllDefaultConfigs();
-    void generateDefaultConfigs();
-    void generateDefaultConfigs(int folderId);
+    int generateAllDefaultConfigs();
+    boolean generateDefaultConfigs();
+    boolean generateDefaultConfigs(int folderId);
 
     int getDefaultConfigId();
     int getDefaultConfigId(int folderId);
-    void setDefaultConfigId(int id);
-    void setDefaultConfigId(int id, int folderId);
+    boolean setDefaultConfigId(int id);
+    boolean setDefaultConfigId(int folderId,int id);
     @Nullable T getDefaultConfig();
     @Nullable T getDefaultConfig(int folderId);
 }

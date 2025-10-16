@@ -1,8 +1,6 @@
 package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
 import com.google.gson.JsonArray;
-import xiao.battleroyale.config.common.game.GameConfigManager;
-import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 
 import java.nio.file.Paths;
 
@@ -60,7 +58,7 @@ public class Pubg881x881Casual {
 
     private static final int GAME_TIME = INIT_ZONE_DELAY + ZONE4_TIME + ZONE5_TIME + ZONE6_TIME + ZONE7_TIME + ZONE8_TIME + ZONE9_TIME;
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray zoneConfigJson = new JsonArray();
         add881x881Zone(zoneConfigJson);
         addPhase4(zoneConfigJson);
@@ -69,7 +67,7 @@ public class Pubg881x881Casual {
         addPhase7(zoneConfigJson);
         addPhase8(zoneConfigJson);
         addPhase9(zoneConfigJson);
-        writeJsonToFile(Paths.get(String.valueOf(ZoneConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
     private static void add881x881Zone(JsonArray zoneConfigJson) {

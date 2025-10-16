@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.minecraft.EquipmentLevel;
-import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.type.*;
 import xiao.battleroyale.config.common.loot.type.WeightEntry.WeightedEntry;
@@ -12,7 +11,6 @@ import xiao.battleroyale.config.common.loot.type.WeightEntry.WeightedEntry;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.LOOT_SPAWNER;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 import static xiao.battleroyale.api.minecraft.EquipmentLevel.*;
 
@@ -21,18 +19,18 @@ public class TaczLootSpawner {
     private static final String DEFAULT_FILE_NAME = "example_tacz_1.1.6.json";
     private static final String EXTRA_FILE_NAME = "example_tacz_1.1.6_extra.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray lootSpawnerConfigsJson = new JsonArray();
         lootSpawnerConfigsJson.add(generateTaczCommonLoot());
         lootSpawnerConfigsJson.add(generateTaczRareLoot());
-        writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(LOOT_SPAWNER), LootConfigManager.LOOT_SPAWNER_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), lootSpawnerConfigsJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), lootSpawnerConfigsJson);
     }
 
-    public static void generateExtraConfigs() {
+    public static void generateExtraConfigs(String configDirPath) {
         JsonArray lootSpawnerConfigsJson = new JsonArray();
         lootSpawnerConfigsJson.add(generateTaczExtraLoot());
         lootSpawnerConfigsJson.add(generateTaczRareLoot());
-        writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(LOOT_SPAWNER), LootConfigManager.LOOT_SPAWNER_CONFIG_SUB_PATH, EXTRA_FILE_NAME).toString(), lootSpawnerConfigsJson);
+        writeJsonToFile(Paths.get(configDirPath, EXTRA_FILE_NAME).toString(), lootSpawnerConfigsJson);
     }
 
     /**

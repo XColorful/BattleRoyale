@@ -3,7 +3,6 @@ package xiao.battleroyale.config.common.server.utility.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
 import xiao.battleroyale.config.common.server.utility.UtilityConfigManager.UtilityConfig;
 import xiao.battleroyale.config.common.server.utility.type.SurvivalEntry;
 
@@ -16,10 +15,10 @@ public class DefaultUtility {
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray utilityConfigJson = new JsonArray();
         utilityConfigJson.add(generateDefaultUtilityConfig0());
-        writeJsonToFile(Paths.get(String.valueOf(UtilityConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), utilityConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), utilityConfigJson);
     }
 
     private static JsonObject generateDefaultUtilityConfig0() {
