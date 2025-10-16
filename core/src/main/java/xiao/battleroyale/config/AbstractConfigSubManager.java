@@ -69,18 +69,27 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         return getConfigEntry(DEFAULT_CONFIG_FOLDER, id);
     }
     @Override public @Nullable T getConfigEntry(int folderId, int id) {
+        if (!getAvailableFolderIds().contains(folderId)) {
+            return null;
+        }
         return getConfigFolderData(folderId).currentConfigs.mapGet(id);
     }
     @Override public @Nullable List<T> getConfigEntryList() {
         return getConfigEntryList(DEFAULT_CONFIG_FOLDER);
     }
     @Override public @Nullable List<T> getConfigEntryList(int folderId) {
+        if (!getAvailableFolderIds().contains(folderId)) {
+            return null;
+        }
         return getConfigFolderData(folderId).currentConfigs.asList();
     }
     @Override public String getCurrentSelectedFileName() {
         return getCurrentSelectedFileName(DEFAULT_CONFIG_FOLDER);
     }
     @Override public String getCurrentSelectedFileName(int folderId) {
+        if (!getAvailableFolderIds().contains(folderId)) {
+            return null;
+        }
         return getConfigFolderData(folderId).getConfigFileName();
     }
     @Override public String getFolderType() {

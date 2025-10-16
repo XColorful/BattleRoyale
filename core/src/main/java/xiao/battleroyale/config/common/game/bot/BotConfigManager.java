@@ -100,12 +100,13 @@ public class BotConfigManager extends AbstractConfigSubManager<BotConfigManager.
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_BOT_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_BOT_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultBotConfigGenerator.generateDefaultBotConfigs();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        DefaultBotConfigGenerator.generateAllDefaultConfigs(String.valueOf(getConfigDirPath()));
+        return true;
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_BOT_CONFIG_FOLDER);

@@ -142,12 +142,13 @@ public class ParticleConfigManager extends AbstractConfigSubManager<ParticleConf
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultParticleConfigGenerator.generateDefaultParticleConfigs();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        DefaultParticleConfigGenerator.generateAllDefaultConfigs(String.valueOf(getConfigDirPath()));
+        return true;
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_PARTICLE_CONFIG_FOLDER_ID);

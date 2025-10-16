@@ -120,12 +120,13 @@ public class UtilityConfigManager extends AbstractConfigSubManager<UtilityConfig
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_UTILITY_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_UTILITY_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultUtilityConfigGenerator.generateDefaultUtilityConfig();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        DefaultUtilityConfigGenerator.generateAllDefaultConfigs(String.valueOf(getConfigDirPath()));
+        return true;
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_UTILITY_CONFIG_FOLDER);

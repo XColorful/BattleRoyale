@@ -1,6 +1,7 @@
 package xiao.battleroyale.api.config;
 
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 
@@ -49,11 +50,11 @@ public interface IConfigManager extends IManagerName, ISideOnly {
         }
         return generateCount;
     }
-    default int generateDefaultConfig(String subManagerNameKey) {
+    default int generateDefaultConfigs(String subManagerNameKey) {
         IConfigSubManager<?> subManager = getConfigSubManager(subManagerNameKey);
         return subManager != null ? subManager.generateAllDefaultConfigs() : 0;
     }
-    default int generateDefaultConfig(String subManagerNameKey, int folderId) {
+    default int generateDefaultConfigs(String subManagerNameKey, int folderId) {
         IConfigSubManager<?> subManager = getConfigSubManager(subManagerNameKey);
         return subManager != null ? (subManager.generateDefaultConfigs(folderId) ? 1 : 0) : 0;
     }
@@ -140,12 +141,18 @@ public interface IConfigManager extends IManagerName, ISideOnly {
         IConfigSubManager<?> subManager = getConfigSubManager(subManagerNameKey);
         return subManager != null ? (subManager.saveConfigs(folderId) ? 1 : 0) : 0;
     }
+    default int backupAllConfigs() {
+        return backupAllConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot());
+    }
     default int backupAllConfigs(String backupRoot) {
         int backupCount = 0;
         for (IConfigSubManager<?> subManager : getConfigSubManagers()) {
             backupCount += subManager.backupAllConfigs(backupRoot);
         }
         return backupCount;
+    }
+    default int backupConfigs(String subManagerNamekey) {
+        return backupConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot(), subManagerNamekey);
     }
     default int backupConfigs(String backupRoot, String subManagerNameKey) {
         IConfigSubManager<?> subManager = getConfigSubManager(subManagerNameKey);

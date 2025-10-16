@@ -65,6 +65,10 @@ public class ModConfigManager implements IModConfigManager, ISideOnly {
     @Override public @Nullable IConfigSubManager<?> getConfigSubManager(String subManagerNameKey) {
         return configData.getConfigSubManager(subManagerNameKey);
     }
+    @Override public @Nullable IConfigSubManager<?> getConfigSubManager(String managerNameKey, String subManagerNameKey) {
+        IConfigManager configManager = configData.getConfigManager(managerNameKey);
+        return configManager != null ? configManager.getConfigSubManager(subManagerNameKey) : null;
+    }
 
     public static String configBackupRoot = Paths.get(AbstractDataManager.MOD_DATA_PATH).resolve("backup").toString();
     @Override public String getDefaultBackupRoot() {

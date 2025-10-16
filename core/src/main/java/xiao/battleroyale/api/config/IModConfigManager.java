@@ -15,6 +15,7 @@ public interface IModConfigManager {
     List<IConfigSubManager<?>> getConfigSubManagers();
     @Nullable IConfigManager getConfigManager(String managerNameKey);
     @Nullable IConfigSubManager<?> getConfigSubManager(String subManagerNameKey);
+    @Nullable IConfigSubManager<?> getConfigSubManager(String managerNameKey, String subManagerNameKey);
 
     default int reloadAllConfigs() {
         return reloadAllConfigManagers() + reloadAllConfigSubManagers();

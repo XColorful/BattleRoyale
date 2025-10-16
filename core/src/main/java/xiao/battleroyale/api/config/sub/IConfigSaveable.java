@@ -12,8 +12,8 @@ public interface IConfigSaveable {
         return backupAllConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot());
     }
     int backupAllConfigs(String backupRoot);
-    default int backupConfigs(int folderId) {
-        return (backupConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot(), folderId) ? 1 : 0);
+    default boolean backupConfigs(int folderId) {
+        return backupConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot(), folderId);
     }
     boolean backupConfigs(String backupRoot);
     boolean backupConfigs(String backupRoot, int folderId);
