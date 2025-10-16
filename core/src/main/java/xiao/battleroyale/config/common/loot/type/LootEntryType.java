@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.loot.type;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
+import xiao.battleroyale.config.common.loot.type.event.EventEntry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,8 @@ public enum LootEntryType {
     REGEX(LootEntryTag.TYPE_REGEX, RegexEntry::fromJson),
     MESSAGE(LootEntryTag.TYPE_MESSAGE, MessageEntry::fromJson),
     GOLEM(LootEntryTag.TYPE_GOLEM, GolemEntry::fromJson),
-    NBT(LootEntryTag.TYPE_NBT, NbtEntry::fromJson);
+    NBT(LootEntryTag.TYPE_NBT, NbtEntry::fromJson),
+    EVENT(LootEntryTag.TYPE_EVENT, EventEntry::fromJson);
 
     private final String name;
     private final Function<JsonObject, ? extends ILootEntry> deserializer;
