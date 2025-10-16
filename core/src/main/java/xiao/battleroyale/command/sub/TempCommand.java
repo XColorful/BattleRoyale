@@ -2,11 +2,13 @@ package xiao.battleroyale.command.sub;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.data.io.TempDataManager;
 
@@ -25,6 +27,9 @@ public class TempCommand {
                 .then(Commands.literal(INIT_STACK_ZONE_CONFIG)
                         .then(Commands.argument(BOOL, BoolArgumentType.bool())
                                 .executes(TempCommand::turnInitStackZoneConfig)))
+                .then(Commands.literal(GAME_STEP)
+                        .then(Commands.argument(INTERVAL, IntegerArgumentType.integer())
+                                .executes(TempCommand::changeGameStep)))
                 .requires(source -> source.hasPermission(3))
                 .then(Commands.literal(CLEAR)
                                 .executes(TempCommand::clearAllTempData)
@@ -50,6 +55,16 @@ public class TempCommand {
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.enable_init_stack_zone_config"), false);
         } else {
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.disable_init_stack_zone_config"), false);
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int changeGameStep(CommandContext<CommandSourceStack> context) {
+        int gameStep = IntegerArgumentType.getInteger(context, INTERVAL);
+        if (GameManager.get().setGameStep(gameStep)) {
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.set_game_step_success", gameStep), false);
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.set_game_step_fail", gameStep));
         }
         return Command.SINGLE_SUCCESS;
     }

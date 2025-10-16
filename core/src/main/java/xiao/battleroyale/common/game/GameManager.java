@@ -102,6 +102,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
 
     protected int gameTime = 0; // 游戏运行时维护当前游戏时间
+    protected int gameStep = 1;
     private @NotNull UUID gameId;
     private boolean inGame;
     private String gameLevelKeyString = "";
@@ -147,6 +148,14 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         }
         globalCenterOffset = offset;
         TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(globalCenterOffset));
+        return true;
+    }
+
+    public boolean setGameStep(int step) {
+        if (step < 1) {
+            return false;
+        }
+        this.gameStep = step;
         return true;
     }
 
@@ -272,7 +281,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             stopGame(null);
         }
 
-        this.gameTime++; // 从0开始，首次tick的gameTime为1
+        this.gameTime += gameStep; // 从0开始，首次tick的gameTime为1
         if (this.gameTime <= this.maxGameTime) { // 可tick的gameTime范围: [1, maxGameTime]
             onGameTick(this.gameTime);
         } else { // 超过最大游戏时长
