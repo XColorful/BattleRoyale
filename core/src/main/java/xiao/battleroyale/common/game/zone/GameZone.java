@@ -2,6 +2,7 @@ package xiao.battleroyale.common.game.zone;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.game.zone.ZoneCompleteEventData;
 import xiao.battleroyale.api.event.game.zone.ZoneCreatedEventData;
@@ -275,7 +276,7 @@ public class GameZone implements IGameZone {
     @Override
     public ZoneShapeType getShapeType() { return spatialZone.getShapeType(); }
     @Override
-    public void calculateShape(ZoneContext zoneContext) {
+    public void calculateShape(@NotNull ZoneContext zoneContext) {
         spatialZone.calculateShape(zoneContext);
     }
     @Override

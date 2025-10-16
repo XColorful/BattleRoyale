@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager;
 import xiao.battleroyale.config.common.effect.particle.ParticleConfigManager.ParticleConfig;
 import xiao.battleroyale.config.common.effect.particle.ParticleDetailEntry;
 import xiao.battleroyale.config.common.effect.particle.ParticleParameterEntry;
@@ -17,12 +16,12 @@ public class DefaultParticle {
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray particleConfigJson = new JsonArray();
         particleConfigJson.add(generateDefaultParticleConfig0());
         particleConfigJson.add(generateDefaultParticleConfig1());
         particleConfigJson.add(generateDefaultParticleConfig2());
-        writeJsonToFile(Paths.get(String.valueOf(ParticleConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), particleConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), particleConfigJson);
     }
 
     private static JsonObject generateDefaultParticleConfig0() {

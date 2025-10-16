@@ -7,6 +7,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.IConfigManager;
+import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.display.DisplayConfigManager;
 import xiao.battleroyale.config.client.render.RenderConfigManager;
@@ -26,6 +28,8 @@ import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
 import javax.annotation.Nullable;
 
 import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.command.sub.ConfigUtils.getConfigManager;
+import static xiao.battleroyale.command.sub.ConfigUtils.getConfigSubManager;
 
 public class SaveCommand {
 
@@ -84,9 +88,13 @@ public class SaveCommand {
     }
 
     private static int saveLootConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigSubManager<?> lootConfigManager = getConfigSubManager(context, LootConfigManager.get().getNameKey());
+        if (lootConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            LootConfigManager.get().saveAllConfigs();
+            success = lootConfigManager.saveAllConfigs();
             messageKey = "battleroyale.message.loot_config_saved";
         } else {
             int folderId;
@@ -116,7 +124,7 @@ public class SaveCommand {
                     BattleRoyale.LOGGER.warn("Unknown loot sub-type for save command: {}", subType);
                     return 0;
             }
-            LootConfigManager.get().saveConfigs(folderId);
+            success = lootConfigManager.saveConfigs(folderId) ? 1 : 0;
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Saved {} configs via command", subType != null ? subType : "all loot");
@@ -124,9 +132,13 @@ public class SaveCommand {
     }
 
     private static int saveGameConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigManager gameConfigManager = getConfigManager(context, GameConfigManager.get().getNameKey());
+        if (gameConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            GameConfigManager.get().saveAllConfigs();
+            success = gameConfigManager.saveAllConfigs();
             messageKey = "battleroyale.message.game_config_saved";
         } else {
             String subManagerNameKey;
@@ -152,7 +164,10 @@ public class SaveCommand {
                     BattleRoyale.LOGGER.warn("Unknown game sub-type for save command: {}", subType);
                     return 0;
             }
-            GameConfigManager.get().saveConfigs(subManagerNameKey);
+            IConfigSubManager<?> configSubManager = gameConfigManager.getConfigSubManager(subManagerNameKey);
+            if (configSubManager == null) return 0;
+
+            success = configSubManager.saveAllConfigs();
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Saved {} configs via command", subType != null ? subType : "all game");
@@ -160,9 +175,13 @@ public class SaveCommand {
     }
 
     private static int saveEffectConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigManager effectConfigManager = getConfigManager(context, EffectConfigManager.get().getNameKey());
+        if (effectConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            EffectConfigManager.get().saveAllConfigs();
+            success = effectConfigManager.saveAllConfigs();
             messageKey = "battleroyale.message.effect_config_saved";
         } else {
             String subManagerNameKey;
@@ -176,7 +195,10 @@ public class SaveCommand {
                     BattleRoyale.LOGGER.warn("Unknown effect sub-type for save command: {}", subType);
                     return 0;
             }
-            EffectConfigManager.get().saveConfigs(subManagerNameKey);
+            IConfigSubManager<?> configSubManager = effectConfigManager.getConfigSubManager(subManagerNameKey);
+            if (configSubManager == null) return 0;
+
+            success = configSubManager.saveAllConfigs();
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Saved {} effect configs via command", subType != null ? subType : "all effect");
@@ -184,9 +206,13 @@ public class SaveCommand {
     }
 
     private static int saveClientConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigManager clientConfigManager = getConfigManager(context, ClientConfigManager.get().getNameKey());
+        if (clientConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            ClientConfigManager.get().saveAllConfigs();
+            success = clientConfigManager.saveAllConfigs();
             messageKey = "battleroyale.message.client_config_saved";
         } else {
             String subManagerNameKey;
@@ -204,7 +230,10 @@ public class SaveCommand {
                     BattleRoyale.LOGGER.warn("Unknown client sub-type for save command: {}", subType);
                     return 0;
             }
-            ClientConfigManager.get().saveConfigs(subManagerNameKey);
+            IConfigSubManager<?> configSubManager = clientConfigManager.getConfigSubManager(subManagerNameKey);
+            if (configSubManager == null) return 0;
+
+            success = configSubManager.saveAllConfigs();
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Saved {} client configs via command", subType != null ? subType : "all client");
@@ -212,9 +241,13 @@ public class SaveCommand {
     }
 
     private static int saveServerConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigManager serverConfigManager = getConfigManager(context, ServerConfigManager.get().getNameKey());
+        if (serverConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            ServerConfigManager.get().saveAllConfigs();
+            success = serverConfigManager.saveAllConfigs();
             messageKey = "battleroyale.message.server_config_saved";
         } else {
             String subManagerNameKey;
@@ -232,7 +265,10 @@ public class SaveCommand {
                     BattleRoyale.LOGGER.warn("Unknown server sub-type for save command: {}", subType);
                     return 0;
             }
-            ServerConfigManager.get().saveConfigs(subManagerNameKey);
+            IConfigSubManager<?> configSubManager = serverConfigManager.getConfigSubManager(subManagerNameKey);
+            if (configSubManager == null) return 0;
+
+            success = configSubManager.saveAllConfigs();
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Saved {} server configs via command", subType != null ? subType : "all server");

@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.config.IConfigManager;
+import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.event.game.finish.*;
 import xiao.battleroyale.api.event.game.game.*;
@@ -45,6 +47,7 @@ import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
+import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.event.util.DelayedEvent;
 import xiao.battleroyale.event.game.*;
@@ -99,6 +102,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
 
     protected int gameTime = 0; // 游戏运行时维护当前游戏时间
+    protected int gameStep = 1;
     private @NotNull UUID gameId;
     private boolean inGame;
     private String gameLevelKeyString = "";
@@ -128,6 +132,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return inGame;
     }
     @Override public Vec3 getGlobalCenterOffset() { return globalCenterOffset; }
+    @Override public int getMaxGameTime() { return maxGameTime; }
     @Override public int getWinnerTeamTotal() {
         return winnerTeamTotal;
     }
@@ -143,6 +148,14 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         }
         globalCenterOffset = offset;
         TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(globalCenterOffset));
+        return true;
+    }
+
+    public boolean setGameStep(int step) {
+        if (step < 1) {
+            return false;
+        }
+        this.gameStep = step;
         return true;
     }
 
@@ -268,7 +281,16 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             stopGame(null);
         }
 
-        this.gameTime++; // 从0开始，首次tick的gameTime为1
+        // 由于引入了gameStep, 防止极端值溢出int
+        // 同时又没有必要改成long (把step设置为极大值依旧没解决问题)
+        // gameStep主要用于调试目的, 只能通过手动设置临时数据修改 (或其他模组调用public接口)
+        try {
+            this.gameTime = Math.addExact(this.gameTime, gameStep); // 从0开始，首次tick的gameTime为1
+        } catch (ArithmeticException e) {
+            BattleRoyale.LOGGER.warn("GameTime addition caused an overflow.", e);
+            stopGame(this.serverLevel);
+        }
+
         if (this.gameTime <= this.maxGameTime) { // 可tick的gameTime范围: [1, maxGameTime]
             onGameTick(this.gameTime);
         } else { // 超过最大游戏时长
@@ -287,19 +309,30 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             return;
         }
 
-        checkAndUpdateInvalidGamePlayer(this.serverLevel); // 为其他Manager预处理当前tick
+        try {
+            checkAndUpdateInvalidGamePlayer(this.serverLevel); // 为其他Manager预处理当前tick
 
-        // 暂时认为各Manager要按顺序tick，因此不改成监听GameTickEvent事件来触发
-        GameruleManager.get().onGameTick(gameTime);
-        // TeamManager.get().onGameTick(gameTime); // 暂时没功能
-        SpawnManager.get().onGameTick(gameTime);
-        GameLootManager.get().onGameTick(gameTime);
-        ZoneManager.get().onGameTick(gameTime); // Zone可以提前触发stopGame，并且Zone需要延迟stopGame到tick结束
-        // StatsManager.get().onGameTick(gameTime); // 基于事件主动记录，不用tick
+            // 暂时认为各Manager要按顺序tick，因此不改成监听GameTickEvent事件来触发
+            GameruleManager.get().onGameTick(gameTime);
+            // TeamManager.get().onGameTick(gameTime); // 暂时没功能
+            SpawnManager.get().onGameTick(gameTime);
+            GameLootManager.get().onGameTick(gameTime);
+            ZoneManager.get().onGameTick(gameTime); // Zone可以提前触发stopGame，并且Zone需要延迟stopGame到tick结束
+            // StatsManager.get().onGameTick(gameTime); // 基于事件主动记录，不用tick
 
-        if (gameTime % 200 == 0) {
-            finishGameIfShouldEnd(); // 每10秒保底检查游戏结束
+            if (gameTime % 200 == 0) {
+                finishGameIfShouldEnd(); // 每10秒保底检查游戏结束
+            }
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.error("An unexpected exception occurred during game tick at time {}: {}", gameTime, e);
+            if (this.serverLevel != null) {
+                ChatUtils.sendMessageToAllPlayers(this.serverLevel, "An unexpected exception occurred during game tick at game time " + gameTime);
+            }
+            if (isInGame()) {
+                stopGame(this.serverLevel);
+            }
         }
+
         EventPoster.postEvent(new GameTickFinishData(this, gameTime));
     }
 
@@ -446,7 +479,9 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
     // 用指令设置默认配置
     public boolean setGameruleConfigId(int gameId) {
-        if (gameId < 0 || GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId) == null) {
+        IConfigManager gameConfigManager = BattleRoyale.getModConfigManager().getConfigManager(GameConfigManager.get().getNameKey());
+
+        if (gameConfigManager == null || gameId < 0 || gameConfigManager.getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId) == null) {
             BattleRoyale.LOGGER.info("setGameruleConfigId {} failed", gameId);
             return false;
         }
@@ -454,33 +489,48 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return true;
     }
     @Override public String getGameruleConfigName(int gameId) {
-        GameruleConfig config = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId);
-        return config != null ? config.getGameName() : "";
+        IConfigManager gameConfigManager = BattleRoyale.getModConfigManager().getConfigManager(GameConfigManager.get().getNameKey());
+        if (gameConfigManager == null) return "";
+
+        GameruleConfig gameruleConfig = gameConfigManager.getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId) instanceof GameruleConfig config ? config : null;
+        return gameruleConfig != null ? gameruleConfig.getGameName() : "";
     }
     public boolean setSpawnConfigId(int id) {
-        if (id < 0 || GameConfigManager.get().getConfigEntry(SpawnConfigManager.get().getNameKey(), id) == null) {
+        IConfigManager gameConfigManager = BattleRoyale.getModConfigManager().getConfigManager(GameConfigManager.get().getNameKey());
+
+        if (gameConfigManager == null || id < 0 || gameConfigManager.getConfigEntry(SpawnConfigManager.get().getNameKey(), id) == null) {
             return false;
         }
         this.spawnConfigId = id;
         return true;
     }
     @Override public String getSpawnConfigName(int id) {
-        SpawnConfigManager.SpawnConfig config = SpawnConfigManager.get().getSpawnConfig(id);
-        return config != null ? config.name : "";
+        IConfigManager gameConfigManager = BattleRoyale.getModConfigManager().getConfigManager(GameConfigManager.get().getNameKey());
+        if (gameConfigManager == null) return "";
+
+        SpawnConfig spawnConfig = gameConfigManager.getConfigEntry(SpawnConfigManager.get().getNameKey(), id) instanceof SpawnConfig config ? config : null;
+        return spawnConfig != null ? spawnConfig.name : "";
     }
     public boolean setBotConfigId(int id) {
-        if (id < 0 || BotConfigManager.get().getBotConfig(id) == null) {
+        IConfigSubManager<?> botConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(GameConfigManager.get().getNameKey(), BotConfigManager.get().getNameKey());
+        if (botConfigManager == null || id < 0 || botConfigManager.getConfigEntry(id) == null) {
             return false;
         }
         this.botConfigId = id;
         return true;
     }
     @Override public String getBotConfigName(int id) {
-        BotConfigManager.BotConfig config = BotConfigManager.get().getBotConfig(id);
-        return config != null ? config.name : "";
+        IConfigManager gameConfigManager = BattleRoyale.getModConfigManager().getConfigManager(GameConfigManager.get().getNameKey());
+        if (gameConfigManager == null) return "";
+
+        BotConfigManager.BotConfig botConfig = gameConfigManager.getConfigEntry(BotConfigManager.get().getNameKey(), id) instanceof BotConfigManager.BotConfig config ? config : null;
+        return botConfig != null ? botConfig.name : "";
     }
     @Override public String getZoneConfigFileName() {
-        return GameConfigManager.get().getCurrentSelectedFileName(ZoneConfigManager.get().getNameKey());
+        IConfigManager gameConfigManager = BattleRoyale.getModConfigManager().getConfigManager(GameConfigManager.get().getNameKey());
+        if (gameConfigManager == null) return "";
+
+        return gameConfigManager.getCurrentSelectedFileName(ZoneConfigManager.get().getNameKey());
     }
 
     private void setServerLevel(@Nullable ServerLevel serverLevel) {
