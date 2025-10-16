@@ -10,11 +10,12 @@ public interface IConfigLoadable<T> {
 
     Set<String> getAvailableConfigFileNames();
     Set<String> getAvailableConfigFileNames(int folderId);
+    Set<Integer> getAvailableFolderIds();
 
     /**
      * 执行一次只重新读取一次
      */
-    boolean reloadAllConfigs();
+    int reloadAllConfigs();
     boolean reloadConfigs();
     boolean reloadConfigs(int folderId);
 
@@ -40,6 +41,6 @@ public interface IConfigLoadable<T> {
     String getConfigPath(int folderId);
     String getConfigSubPath();
     String getConfigSubPath(int folderId);
-    Path getConfigDirPath();
-    Path getConfigDirPath(int folderId);
+    @Nullable Path getConfigDirPath();
+    @Nullable Path getConfigDirPath(int folderId);
 }

@@ -39,6 +39,8 @@ public class LootGenerator {
 
     public static final int CHUNK_NOT_LOADED = -1;
 
+    private static boolean LOOT_ANY_BLOCK_ENTITY = true;
+    public static void setLootAnyBlockEntity(boolean bool) { LOOT_ANY_BLOCK_ENTITY = bool; }
     private static boolean LOOT_VANILLA_CHEST = true;
     public static void setLootVanillaChest(boolean bool) { LOOT_VANILLA_CHEST = bool; }
     private static boolean REMOVE_LOOT_TABLE = false;
@@ -231,7 +233,7 @@ public class LootGenerator {
                 return true;
             }
         } else if (LOOT_VANILLA_CHEST) { // 原版方块
-            if (!(blockEntity instanceof Container)) {
+            if (!LOOT_ANY_BLOCK_ENTITY && !(blockEntity instanceof Container)) {
                 return false;
             }
             LootConfig config = LootConfigManager.get().getDefaultConfig();

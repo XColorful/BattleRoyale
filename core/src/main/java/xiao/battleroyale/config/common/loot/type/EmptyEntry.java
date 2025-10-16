@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class EmptyEntry implements IItemLootEntry {
+public class EmptyEntry extends AbstractLootEntry {
 
     public LootEntryType type;
 
@@ -51,8 +51,7 @@ public class EmptyEntry implements IItemLootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.TYPE, type.getName());
         return jsonObject;
     }

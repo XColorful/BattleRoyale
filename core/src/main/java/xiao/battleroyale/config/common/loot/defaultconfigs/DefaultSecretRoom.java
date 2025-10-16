@@ -3,7 +3,6 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.type.ItemEntry;
 import xiao.battleroyale.config.common.loot.type.MultiEntry;
@@ -11,17 +10,16 @@ import xiao.battleroyale.config.common.loot.type.MultiEntry;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.SECRET_ROOM;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultSecretRoom{
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray secretRoomConfigsJson = new JsonArray();
         secretRoomConfigsJson.add(generateDefaultSecretRoom());
-        writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(SECRET_ROOM), LootConfigManager.SECRET_ROOM_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), secretRoomConfigsJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), secretRoomConfigsJson);
     }
 
     private static JsonObject generateDefaultSecretRoom() {

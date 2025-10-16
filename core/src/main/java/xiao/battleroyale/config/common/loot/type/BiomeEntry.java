@@ -18,7 +18,7 @@ import xiao.battleroyale.util.JsonUtils;
 
 import java.util.*;
 
-public class BiomeEntry implements ILootEntry {
+public class BiomeEntry extends AbstractLootEntry {
     public boolean invert;
     public final List<String> biomeList;
     public final Set<ResourceKey<Biome>> biomes = new HashSet<>();
@@ -77,8 +77,7 @@ public class BiomeEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.INVERT, invert);
         jsonObject.add(LootEntryTag.FILTER, JsonUtils.writeStringListToJson(biomeList));
         if (entry != null) {

@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class TimeEntry implements ILootEntry {
+public class TimeEntry extends AbstractLootEntry {
     public int start;
     public int end;
     public ILootEntry entry;
@@ -63,8 +63,7 @@ public class TimeEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.START, this.start);
         jsonObject.addProperty(LootEntryTag.END, this.end);
         if (entry != null) {

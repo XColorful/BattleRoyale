@@ -2,29 +2,34 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.config.common.loot.LootConfigManager;
+import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
+import xiao.battleroyale.config.common.game.zone.zoneshape.SphereEntry;
+import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.type.*;
+import xiao.battleroyale.config.common.loot.type.event.EventEntry;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
-import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.LOOT_SPAWNER;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DefaultLootSpawner {
 
     private static final String DEFAULT_FILE_NAME = "example.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray lootSpawnerConfigsJson = new JsonArray();
         lootSpawnerConfigsJson.add(generateBasicLoot0());
         lootSpawnerConfigsJson.add(generateCombatLoot1());
         lootSpawnerConfigsJson.add(generateAdvanceLoot2());
         lootSpawnerConfigsJson.add(generateFunctionLoot3());
-        writeJsonToFile(Paths.get(LootConfigManager.get().getConfigPath(LOOT_SPAWNER), LootConfigManager.LOOT_SPAWNER_CONFIG_SUB_PATH, DEFAULT_FILE_NAME).toString(), lootSpawnerConfigsJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), lootSpawnerConfigsJson);
     }
 
     private static JsonObject generateBasicLoot0() {
@@ -84,7 +89,17 @@ public class DefaultLootSpawner {
                                                 new ItemEntry("minecraft:grass_block", "", 1)
                                         ))
                                 )
-                        )
+                        ),
+                        new ShapeEntry(false,
+                                new SphereEntry(
+                                        new StartEntry()
+                                                .addFixedCenter(new Vec3(0, 0, 0))
+                                                .addFixedDimension(new Vec3(200, 200, 200)),
+                                        new EndEntry()
+                                                .addFixedCenter(new Vec3(0, 0, 0))
+                                                .addFixedDimension(new Vec3(10, 10, 10)),
+                                        false),
+                                new ItemEntry("minecraft:diamond_sword", "", 1))
                 )
         );
 
@@ -95,10 +110,25 @@ public class DefaultLootSpawner {
     }
 
     private static JsonObject generateFunctionLoot3() {
+        CompoundTag tag = new CompoundTag();
+        tag.putString("description", "Create event for other mod to subscribe");
+        tag.putBoolean("boolTrue", true);
+        tag.putBoolean("boolFalse", false);
+        tag.putFloat("float", 0.333F);
+        tag.putDouble("double", 0.88888888D);
+        tag.putLong("long", Integer.MAX_VALUE * 2L);
+        tag.putInt("int", 666666);
+        tag.putShort("short", (short) 25565);
+        tag.putString("randomUUID", UUID.randomUUID().toString());
+        CompoundTag nestedTag = new CompoundTag();
+        nestedTag.putString("additional data", "some structured data");
+        tag.put("tagInTag", nestedTag);
+
         ILootEntry multiEntry = new MultiEntry(Arrays.asList(
                 new MessageEntry(true, true, "Chest Golem generated", "#FF0000"),
                 new GolemEntry(new EntityEntry("minecraft:copper_golem", "", 5, 5, 4)),
-                new GolemEntry(new EntityEntry("minecraft:iron_golem", "", 5, 20, 4))
+                new GolemEntry(new EntityEntry("minecraft:iron_golem", "", 5, 20, 4)),
+                new EventEntry("cbr:0.4.3", tag)
         ));
 
         LootConfig lootConfig = new LootConfig(3, "Function loot entry", "#FFFFFFAA",

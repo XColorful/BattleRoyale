@@ -120,12 +120,13 @@ public class PerformanceConfigManager extends AbstractConfigSubManager<Performan
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_PERFORMANCE_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_PERFORMANCE_CONFIG_FOLDER);
     }
 
-    @Override public void generateDefaultConfigs(int folderId) {
-        DefaultPerformanceConfigGenerator.generateDefaultPerformanceConfig();
+    @Override public boolean generateDefaultConfigs(int folderId) {
+        DefaultPerformanceConfigGenerator.generateAllDefaultConfigs(String.valueOf(getConfigDirPath()));
+        return true;
     }
     @Override public int getDefaultConfigId() {
         return getDefaultConfigId(DEFAULT_PERFORMANCE_CONFIG_FOLDER);
@@ -164,23 +165,6 @@ public class PerformanceConfigManager extends AbstractConfigSubManager<Performan
     }
     @Override public String getConfigSubPath(int folderId) {
         return PERFORMANCE_CONFIG_SUB_PATH;
-    }
-
-    /**
-     * 特定类别的获取接口
-     */
-    public PerformanceConfig getPerformanceConfig(int id) {
-        return getConfigEntry(DEFAULT_PERFORMANCE_CONFIG_FOLDER, id);
-    }
-    public List<PerformanceConfig> getPerformanceConfigList() {
-        return getConfigEntryList(DEFAULT_PERFORMANCE_CONFIG_FOLDER);
-    }
-
-    /**
-     * 特定类别的重新获取接口
-     */
-    public void reloadPerformanceConfigs() {
-        reloadConfigs(DEFAULT_PERFORMANCE_CONFIG_FOLDER);
     }
 
     @Override public void initializeDefaultConfigsIfEmpty() {

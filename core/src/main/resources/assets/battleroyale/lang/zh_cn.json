@@ -37,6 +37,8 @@
   "battleroyale.message.no_display_config_available": "当前没有已加载的显示配置",
   "battleroyale.message.no_performance_config_available": "当前没有已加载的性能配置",
   "battleroyale.message.no_utility_config_available": "当前没有已加载的实用配置",
+  "battleroyale.message.no_config_manager_available": "当前没有已加载的%s配置管理器",
+  "battleroyale.message.no_sub_config_manager_available": "当前没有已加载的%s子配置管理器",
 
   "battleroyale.message.all_config_reloaded": "已重新加载所有大逃杀配置",
   "battleroyale.message.loot_config_reloaded": "已重新加载所有物资刷新配置",

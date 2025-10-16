@@ -18,10 +18,10 @@ public class FunctionShowcase {
 
     private static final String DEFAULT_FILE_NAME = "example_function_showcase.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray spawnConfigJson = new JsonArray();
         spawnConfigJson.add(generateDefaultSpawnConfig0());
-        writeJsonToFile(Paths.get(String.valueOf(SpawnConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), spawnConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), spawnConfigJson);
     }
 
 

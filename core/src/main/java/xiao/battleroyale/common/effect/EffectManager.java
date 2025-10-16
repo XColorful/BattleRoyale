@@ -5,6 +5,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.IConfigManager;
+import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.game.effect.IEffectManager;
 import xiao.battleroyale.common.effect.boost.BoostManager;
 import xiao.battleroyale.common.effect.firework.FireworkManager;
@@ -91,7 +94,10 @@ public class EffectManager implements IEffectManager {
      */
     // 仅ZoneFunc调用
     public boolean addParticle(ServerLevel serverLevel, UUID entityUUID, String channelKey, int particleId, int channelCooldown) {
-        ParticleConfig particleConfig = (ParticleConfig) EffectConfigManager.get().getConfigEntry(ParticleConfigManager.get().getNameKey(), particleId);
+        IConfigManager effectConfigManager = BattleRoyale.getModConfigManager().getConfigManager(EffectConfigManager.get().getNameKey());
+        if (effectConfigManager == null) return false;
+
+        ParticleConfig particleConfig = effectConfigManager.getConfigEntry(ParticleConfigManager.get().getNameKey(), particleId) instanceof ParticleConfig config ? config : null;
         if (particleConfig != null) {
             ParticleData particleData = particleConfig.createParticleData(serverLevel);
             return ParticleManager.get().addEntityParticle(entityUUID, channelKey, particleData, channelCooldown);
@@ -100,7 +106,10 @@ public class EffectManager implements IEffectManager {
     }
     // 仅玩家指令调用
     public boolean addParticle(ServerLevel serverLevel, Vec3 spawnPos, String channelKey, int particleId, int channelCooldown) {
-        ParticleConfig particleConfig = (ParticleConfig) EffectConfigManager.get().getConfigEntry(ParticleConfigManager.get().getNameKey(), particleId);
+        IConfigManager effectConfigManager = BattleRoyale.getModConfigManager().getConfigManager(EffectConfigManager.get().getNameKey());
+        if (effectConfigManager == null) return false;
+
+        ParticleConfig particleConfig = effectConfigManager.getConfigEntry(ParticleConfigManager.get().getNameKey(), particleId) instanceof ParticleConfig config ? config : null;
         if (particleConfig != null) {
             FixedParticleData particleData = particleConfig.createParticleData(serverLevel, spawnPos);
             return ParticleManager.get().addFixedParticle(channelKey, particleData, channelCooldown);

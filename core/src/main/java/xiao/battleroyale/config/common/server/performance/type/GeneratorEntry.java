@@ -17,6 +17,7 @@ import java.util.List;
 public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
 
     // common
+    public boolean lootAnyBlockEntity;
     public boolean lootVanillaChest;
     public boolean removeLootTable;
     public boolean clearPreviousContent;
@@ -36,7 +37,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
     public int maxCachedLootChunk;
     public int cleanCachedChunk;
 
-    public GeneratorEntry(boolean lootVanillaChest, boolean removeLootTable, boolean clearPreviousContent, boolean removeInnocentEntity, @NotNull List<String> whiteListRegex, @NotNull List<String> blackListRegex,
+    public GeneratorEntry(boolean lootAnyBlockEntity, boolean lootVanillaChest, boolean removeLootTable, boolean clearPreviousContent, boolean removeInnocentEntity, @NotNull List<String> whiteListRegex, @NotNull List<String> blackListRegex,
                           int maxNormalTickLootChunk,
                           int maxGameTickLootChunk, int maxGameLootDistance, int tolerantCenterDistance, int maxCachedCenter, int maxQueuedChunk, int bfsFrequency, boolean instantNextBfs, int maxCachedLootChunk, int cleanCachedChunk) {
         this.lootVanillaChest = lootVanillaChest;
@@ -57,7 +58,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         this.cleanCachedChunk = cleanCachedChunk;
     }
     @Override public @NotNull GeneratorEntry copy() {
-        return new GeneratorEntry(lootVanillaChest, removeLootTable, clearPreviousContent,  removeInnocentEntity, new ArrayList<>(whiteListRegex), new ArrayList<>(blackListRegex),
+        return new GeneratorEntry(lootAnyBlockEntity, lootVanillaChest, removeLootTable, clearPreviousContent,  removeInnocentEntity, new ArrayList<>(whiteListRegex), new ArrayList<>(blackListRegex),
                 maxNormalTickLootChunk,
                 maxGameTickLootChunk, maxGameLootDistance, tolerantCenterDistance, maxCachedCenter, maxQueuedChunk, bfsFrequency, instantNextBfs, maxCachedLootChunk, cleanCachedChunk);
     }
@@ -85,6 +86,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
             return null;
         }
         // common
+        boolean lootAnyBlockEntity = JsonUtils.getJsonBool(commonObject, GeneratorEntryTag.LOOT_ANY_BLOCK_ENTITY, false);
         boolean lootVanillaChest = JsonUtils.getJsonBool(commonObject, GeneratorEntryTag.LOOT_VANILLA_CHEST, false);
         boolean removeLootTable = JsonUtils.getJsonBool(commonObject, GeneratorEntryTag.REMOVE_LOOT_TABLE, false);
         boolean clearPreviousContent = JsonUtils.getJsonBool(commonObject, GeneratorEntryTag.CLEAR_PREVIOUS_CONTENT, true);
@@ -104,13 +106,14 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         int maxCachedLootChunk = JsonUtils.getJsonInt(gameObject, GeneratorEntryTag.MAX_CACHED_LOOT_CHUNK, 50000);
         int cleanCachedChunk = JsonUtils.getJsonInt(gameObject, GeneratorEntryTag.CLEAN_CACHED_CHUNK, 2000);
 
-        return new GeneratorEntry(lootVanillaChest, removeLootTable, clearPreviousContent, removeInnocentEntity, vanillaWhiteList, vainllaBlackList,
+        return new GeneratorEntry(lootAnyBlockEntity, lootVanillaChest, removeLootTable, clearPreviousContent, removeInnocentEntity, vanillaWhiteList, vainllaBlackList,
                 maxNormalTickLootChunk,
                 maxGameTickLootChunk, maxGameLootDistance, tolerantCenterDistance, maxCachedCenter, maxQueuedChunk, bfsFrequency, instantNextBfs, maxCachedLootChunk, cleanCachedChunk);
     }
 
     @Override
     public void applyDefault() {
+        LootGenerator.setLootAnyBlockEntity(lootAnyBlockEntity);
         LootGenerator.setLootVanillaChest(lootVanillaChest);
         LootGenerator.setRemoveLootTable(removeLootTable);
         LootGenerator.setClearPreviousContent(clearPreviousContent);
@@ -123,6 +126,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
     @NotNull
     private JsonObject generateCommonJson() {
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(GeneratorEntryTag.LOOT_ANY_BLOCK_ENTITY, lootAnyBlockEntity);
         jsonObject.addProperty(GeneratorEntryTag.LOOT_VANILLA_CHEST, lootVanillaChest);
         jsonObject.addProperty(GeneratorEntryTag.REMOVE_LOOT_TABLE, removeLootTable);
         jsonObject.addProperty(GeneratorEntryTag.CLEAN_CACHED_CHUNK, clearPreviousContent);

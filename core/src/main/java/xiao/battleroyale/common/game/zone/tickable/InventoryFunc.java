@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -16,6 +17,7 @@ import xiao.battleroyale.common.loot.InventoryGenerator;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
+import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 
 import javax.annotation.Nullable;
@@ -49,8 +51,10 @@ public class InventoryFunc extends AbstractSimpleFunc {
         ServerLevel serverLevel = zoneTickContext.serverLevel;
         UUID gameId = GameManager.get().getGameId();
         List<ItemStack> lootItems = new ArrayList<>();
-        LootConfigManager.LootConfig lootConfig = LootConfigManager.get().getConfigEntry(LootConfigTypeEnum.LOOT_SPAWNER, this.lootSpawnerLootId);
-        ILootEntry additionalLootEntry = lootConfig != null ? lootConfig.entry : null;
+        IConfigSubManager<?> lootConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(LootConfigManager.get().getNameKey());
+        @Nullable LootConfig lootConfig = lootConfigManager == null ? null
+                : lootConfigManager.getConfigEntry(LootConfigTypeEnum.LOOT_SPAWNER, this.lootSpawnerLootId) instanceof LootConfig config ? config : null;
+        @Nullable ILootEntry additionalLootEntry = lootConfig != null ? lootConfig.entry : null;
 
         for (GamePlayer gamePlayer : zoneTickContext.gamePlayers) {
             if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {

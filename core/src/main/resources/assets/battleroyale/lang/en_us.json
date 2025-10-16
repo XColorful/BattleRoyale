@@ -37,6 +37,8 @@
   "battleroyale.message.no_display_config_available": "No display config available",
   "battleroyale.message.no_performance_config_available": "No performance config available",
   "battleroyale.message.no_utility_config_available": "No utility config available",
+  "battleroyale.message.no_config_manager_available": "No %s config manager available",
+  "battleroyale.message.no_sub_config_manager_available": "No %s sub config manager available",
 
   "battleroyale.message.all_config_reloaded": "Reloaded all battleroyale configs",
   "battleroyale.message.loot_config_reloaded": "Reloaded all loot configs",

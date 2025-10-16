@@ -2,12 +2,10 @@ package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.InventoryFuncEntry;
-import xiao.battleroyale.config.common.game.zone.zoneshape.CuboidEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.SquareEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
@@ -25,11 +23,11 @@ public class ElytraAddon {
 
     private static final String DEFAULT_FILE_NAME = "example_elytra_addon.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray zoneConfigJson = new JsonArray();
         zoneConfigJson.add(generateLevitationEffect2());
         zoneConfigJson.add(generateElytraEquipment3());
-        writeJsonToFile(Paths.get(String.valueOf(ZoneConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), zoneConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
     private static JsonObject generateLevitationEffect2() {

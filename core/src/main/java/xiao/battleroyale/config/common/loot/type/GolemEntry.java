@@ -15,7 +15,7 @@ import xiao.battleroyale.util.JsonUtils;
 import java.util.Collections;
 import java.util.List;
 
-public class GolemEntry implements ILootEntry {
+public class GolemEntry extends AbstractLootEntry {
 
     public final @NotNull EntityEntry entityEntry;
 
@@ -50,8 +50,7 @@ public class GolemEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.ENTITY, entityEntry.entityString);
         if (entityEntry.count > 0) {
             jsonObject.addProperty(LootEntryTag.COUNT, entityEntry.count);

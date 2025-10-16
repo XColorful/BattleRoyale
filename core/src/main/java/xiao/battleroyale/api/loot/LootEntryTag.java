@@ -1,5 +1,7 @@
 package xiao.battleroyale.api.loot;
 
+import xiao.battleroyale.api.game.zone.ZoneConfigTag;
+
 public final class LootEntryTag {
 
     public static final String TYPE_NAME = "lootType";
@@ -22,7 +24,9 @@ public final class LootEntryTag {
     public static final String TYPE_REGEX = "regex";
     public static final String TYPE_MESSAGE = "message";
     public static final String TYPE_GOLEM = "golem";
+    public static final String TYPE_SHAPE = "shape";
     public static final String TYPE_NBT = "nbt";
+    public static final String TYPE_EVENT = "event";
 
     public static final String COUNT = "count";
     public static final String NBT = "nbt";
@@ -54,6 +58,9 @@ public final class LootEntryTag {
     public static final String MESSAGE_COLOR = "messageColor";
     public static final String OVERWRITE = "overwrite";
     public static final String KEY_DELETE = "keyDelete";
+    public static final String SHAPE_ENTRY = "shapeEntry";
+    public static final String PROTOCOL = "protocol";
+    public static final String TAG = "tag";
 
     private LootEntryTag() {};
 }
