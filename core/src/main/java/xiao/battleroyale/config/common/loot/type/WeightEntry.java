@@ -17,7 +17,7 @@ import xiao.battleroyale.util.JsonUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WeightEntry implements ILootEntry {
+public class WeightEntry extends AbstractLootEntry {
     public final List<WeightedEntry> weightedEntries;
 
     public static class WeightedEntry {
@@ -109,8 +109,7 @@ public class WeightEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         JsonArray itemsArray = new JsonArray();
         for (WeightedEntry weightedEntry : weightedEntries) {
             JsonObject itemObject = new JsonObject();

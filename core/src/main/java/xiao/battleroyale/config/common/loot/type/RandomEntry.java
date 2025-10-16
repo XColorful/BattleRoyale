@@ -15,7 +15,7 @@ import xiao.battleroyale.util.JsonUtils;
 import java.util.Collections;
 import java.util.List;
 
-public class RandomEntry implements ILootEntry {
+public class RandomEntry extends AbstractLootEntry {
     public double chance;
     public ILootEntry entry;
 
@@ -61,8 +61,7 @@ public class RandomEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.CHANCE, this.chance);
         if (this.entry != null) {
             jsonObject.add(LootEntryTag.ENTRY, this.entry.toJson());

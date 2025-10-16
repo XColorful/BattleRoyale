@@ -16,7 +16,7 @@ import xiao.battleroyale.util.NBTUtils;
 import java.util.Collections;
 import java.util.List;
 
-public class EntityEntry implements IEntityLootEntry {
+public class EntityEntry extends AbstractLootEntry implements IEntityLootEntry {
     public String entityString;
     public @Nullable String nbtString;
     public @NotNull CompoundTag nbt;
@@ -51,8 +51,7 @@ public class EntityEntry implements IEntityLootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.ENTITY, entityString);
         if (this.count > 0) {
             jsonObject.addProperty(LootEntryTag.COUNT, count);
