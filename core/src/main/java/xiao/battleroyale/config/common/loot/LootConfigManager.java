@@ -136,21 +136,21 @@ public class LootConfigManager extends AbstractConfigSubManager<LootConfigManage
     /**
      * IConfigDefaultable
      */
-    @Override public void generateDefaultConfigs() {
-        generateDefaultConfigs(DEFAULT_LOOT_CONFIG_FOLDER);
+    @Override public boolean generateDefaultConfigs() {
+        return generateDefaultConfigs(DEFAULT_LOOT_CONFIG_FOLDER);
     }
-    @Override public void generateDefaultConfigs(int folderId) {
+    @Override public boolean generateDefaultConfigs(int folderId) {
         switch (folderId) {
-            case LOOT_SPAWNER -> DefaultLootConfigGenerator.generateDefaultLootSpawnerConfig();
-            case ENTITY_SPAWNER -> DefaultLootConfigGenerator.generateDefaultEntitySpawnerConfig();
-            case AIRDROP -> DefaultLootConfigGenerator.generateDefaultAirdropConfig();
-            case AIRDROP_SPECIAL -> DefaultLootConfigGenerator.generateDefaultAirdropSpecialConfig();
-            case SECRET_ROOM -> DefaultLootConfigGenerator.generateDefaultSecretRoomConfig();
-            case ALL_LOOT -> {
-                DefaultLootConfigGenerator.generateAllDefaultConfigs();
+            case LOOT_SPAWNER -> DefaultLootConfigGenerator.generateDefaultLootSpawnerConfig(String.valueOf(getConfigDirPath(folderId)));
+            case ENTITY_SPAWNER -> DefaultLootConfigGenerator.generateDefaultEntitySpawnerConfig(String.valueOf(getConfigDirPath(folderId)));
+            case AIRDROP -> DefaultLootConfigGenerator.generateDefaultAirdropConfig(String.valueOf(getConfigDirPath(folderId)));
+            case AIRDROP_SPECIAL -> DefaultLootConfigGenerator.generateDefaultAirdropSpecialConfig(String.valueOf(getConfigDirPath(folderId)));
+            case SECRET_ROOM -> DefaultLootConfigGenerator.generateDefaultSecretRoomConfig(String.valueOf(getConfigDirPath(folderId)));
+            default -> {
+                return false;
             }
-            default -> DefaultLootConfigGenerator.generateDefaultLootSpawnerConfig();
         }
+        return true;
     }
 
     /**

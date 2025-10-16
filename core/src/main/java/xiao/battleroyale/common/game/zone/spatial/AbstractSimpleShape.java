@@ -2,6 +2,7 @@ package xiao.battleroyale.common.game.zone.spatial;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
@@ -122,7 +123,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     }
 
     @Override
-    public void calculateShape(ZoneContext zoneContext) {
+    public void calculateShape(@NotNull ZoneContext zoneContext) {
         if (!determined) {
             // GameManager全局修改，仅用在Fixed类型
             Vec3 globalCenterOffset = GameManager.get().getGlobalCenterOffset();

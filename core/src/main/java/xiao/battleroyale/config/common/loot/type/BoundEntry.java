@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BoundEntry implements ILootEntry {
+public class BoundEntry extends AbstractLootEntry {
     public boolean countEmpty;
     public boolean countLootTime;
     public int min;
@@ -106,8 +106,7 @@ public class BoundEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.COUNT_EMPTY, countEmpty);
         jsonObject.addProperty(LootEntryTag.COUNT_LOOT_TIME, countLootTime);
         if (min >= 0) {

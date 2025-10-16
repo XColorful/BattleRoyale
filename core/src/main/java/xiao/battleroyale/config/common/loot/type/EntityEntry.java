@@ -16,27 +16,32 @@ import xiao.battleroyale.util.NBTUtils;
 import java.util.Collections;
 import java.util.List;
 
-public class EntityEntry implements IEntityLootEntry {
+public class EntityEntry extends AbstractLootEntry implements IEntityLootEntry {
     public String entityString;
     public @Nullable String nbtString;
     public @NotNull CompoundTag nbt;
     public int count;
     public int range;
+    public int attempts;
 
     public EntityEntry(String rl, @Nullable String nbtString, int count, int range) {
+        this(rl, nbtString, count, range, 4);
+    }
+    public EntityEntry(String rl, @Nullable String nbtString, int count, int range, int attempts) {
         this.entityString = rl;
         this.nbtString = nbtString;
         this.nbt = NBTUtils.stringToNBT(nbtString);
         this.count = count;
         this.range = range;
+        this.attempts = attempts;
     }
     @Override public @NotNull EntityEntry copy() {
-        return new EntityEntry(entityString, nbtString, count, range);
+        return new EntityEntry(entityString, nbtString, count, range, attempts);
     }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
-        return Collections.singletonList(new EntityData(this.entityString, this.nbt.copy(), this.count, this.range));
+        return Collections.singletonList(new EntityData(this.entityString, this.nbt.copy(), this.count, this.range, this.attempts));
     }
 
     @Override
@@ -46,8 +51,7 @@ public class EntityEntry implements IEntityLootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.ENTITY, entityString);
         if (this.count > 0) {
             jsonObject.addProperty(LootEntryTag.COUNT, count);
@@ -58,6 +62,9 @@ public class EntityEntry implements IEntityLootEntry {
         if (this.range >= 0) {
             jsonObject.addProperty(LootEntryTag.RANGE, this.range);
         }
+        if (this.attempts >= 0) {
+            jsonObject.addProperty(LootEntryTag.ATTEMPTS, this.attempts);
+        }
         return jsonObject;
     }
 
@@ -67,6 +74,7 @@ public class EntityEntry implements IEntityLootEntry {
         int count = JsonUtils.getJsonInt(jsonObject, LootEntryTag.COUNT, 1);
         String nbtString = JsonUtils.getJsonString(jsonObject, LootEntryTag.NBT, null);
         int range = JsonUtils.getJsonInt(jsonObject, LootEntryTag.RANGE, 0);
-        return new EntityEntry(entityName, nbtString, count, range);
+        int attempts = JsonUtils.getJsonInt(jsonObject, LootEntryTag.ATTEMPTS, 4);
+        return new EntityEntry(entityName, nbtString, count, range, attempts);
     }
 }

@@ -17,13 +17,13 @@ public class AirSpawn {
 
     private static final String DEFAULT_FILE_NAME = "example_airSpawn.json";
 
-    public static void generateDefaultConfigs() {
+    public static void generateDefaultConfigs(String configDirPath) {
         JsonArray spawnConfigJson = new JsonArray();
         add8000x8000Circle(spawnConfigJson);
         add8000x8000Square(spawnConfigJson);
         add5340x5340Circle(spawnConfigJson);
         add881x881Circle(spawnConfigJson);
-        writeJsonToFile(Paths.get(String.valueOf(SpawnConfigManager.get().getConfigDirPath()), DEFAULT_FILE_NAME).toString(), spawnConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), spawnConfigJson);
     }
 
     public static JsonObject addCircle(int id, int border, int radius, int percentageHundred,

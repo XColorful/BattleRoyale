@@ -23,13 +23,13 @@ public class ModConfigManagerData {
     }
 
     public boolean addManager(IConfigManager configManager) {
-        if (hasManager(configManager)) {
+        if (!configManager.inProperSide() || hasManager(configManager)) {
             return false;
         }
         return configManagers.add(configManager);
     }
     public boolean addManager(IConfigSubManager<?> configSubManager) {
-        if (hasManager(configSubManager)) {
+        if (!configSubManager.inProperSide() || hasManager(configSubManager)) {
             return false;
         }
         return configSubManagers.add(configSubManager);

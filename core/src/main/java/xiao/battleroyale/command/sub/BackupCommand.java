@@ -7,6 +7,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.IConfigManager;
+import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.display.DisplayConfigManager;
 import xiao.battleroyale.config.client.render.RenderConfigManager;
@@ -26,6 +28,8 @@ import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
 import javax.annotation.Nullable;
 
 import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.command.sub.ConfigUtils.getConfigManager;
+import static xiao.battleroyale.command.sub.ConfigUtils.getConfigSubManager;
 
 public class BackupCommand {
 
@@ -77,19 +81,27 @@ public class BackupCommand {
     }
 
     private static int backupAllConfigs(CommandContext<CommandSourceStack> context) {
-        BattleRoyale.getModConfigManager().backupAllConfigs();
-        context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.all_config_backed_up"), true);
-        BattleRoyale.LOGGER.info("Backed up all {} configs", BattleRoyale.MOD_ID);
-        return Command.SINGLE_SUCCESS;
+        if (BattleRoyale.getModConfigManager().backupAllConfigs() > 0) {
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.all_config_backed_up"), true);
+            BattleRoyale.LOGGER.info("Backed up all {} configs", BattleRoyale.MOD_ID);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_config_manager_available", BattleRoyale.MOD_ID));
+            return 0;
+        }
     }
 
     private static int backupLootConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigSubManager<?> lootConfigManager = getConfigSubManager(context, LootConfigManager.get().getNameKey());
+        if (lootConfigManager == null) return 0;
+
+        int success;
         String messageKey;
         if (subType == null) {
-            LootConfigManager.get().backupAllConfigs();
+            success = lootConfigManager.backupAllConfigs();
             messageKey = "battleroyale.message.loot_config_backed_up";
         } else {
-            int folderId = LootConfigTypeEnum.ALL_LOOT;
+            int folderId;
             switch (subType) {
                 case LOOT_SPAWNER:
                     folderId = LootConfigTypeEnum.LOOT_SPAWNER;
@@ -116,7 +128,7 @@ public class BackupCommand {
                     BattleRoyale.LOGGER.warn("Unknown loot sub-type for backup command: {}", subType);
                     return 0;
             }
-            LootConfigManager.get().backupConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot(), folderId);
+            success = (lootConfigManager.backupConfigs(folderId) ? 1 : 0);
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Backed up {} configs via command", subType != null ? subType : "all loot");
@@ -124,9 +136,13 @@ public class BackupCommand {
     }
 
     private static int backupGameConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigManager gameConfigManager = getConfigManager(context, GameConfigManager.get().getNameKey());
+        if (gameConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            GameConfigManager.get().backupAllConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot());
+            success = gameConfigManager.backupAllConfigs();
             messageKey = "battleroyale.message.game_config_backed_up";
         } else {
             String subManagerNameKey;
@@ -152,7 +168,7 @@ public class BackupCommand {
                     BattleRoyale.LOGGER.warn("Unknown game sub-type for backup command: {}", subType);
                     return 0;
             }
-            GameConfigManager.get().backupConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot(), subManagerNameKey);
+            success = gameConfigManager.backupConfigs(subManagerNameKey);
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
         BattleRoyale.LOGGER.info("Backed up {} configs via command", subType != null ? subType : "all game");
@@ -160,9 +176,13 @@ public class BackupCommand {
     }
 
     private static int backupEffectConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigManager effectConfigManager = getConfigManager(context, EffectConfigManager.get().getNameKey());
+        if (effectConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            EffectConfigManager.get().backupAllConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot());
+            success = effectConfigManager.backupAllConfigs();
             messageKey = "battleroyale.message.effect_config_backed_up";
         } else {
             String subManagerNameKey;
@@ -176,17 +196,21 @@ public class BackupCommand {
                     BattleRoyale.LOGGER.warn("Unknown effect sub-type for backup command: {}", subType);
                     return 0;
             }
-            EffectConfigManager.get().backupConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot(), subManagerNameKey);
+            success = effectConfigManager.backupConfigs(subManagerNameKey);
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
-        BattleRoyale.LOGGER.info("Backed up {} effect configs via command", subType != null ? subType : "all effect");
+        BattleRoyale.LOGGER.info("Backed up {} configs via command", subType != null ? subType : "all effect");
         return Command.SINGLE_SUCCESS;
     }
 
     private static int backupClientConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigManager clientConfigManager = getConfigManager(context, ClientConfigManager.get().getNameKey());
+        if (clientConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            ClientConfigManager.get().backupAllConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot());
+            success = clientConfigManager.backupAllConfigs();
             messageKey = "battleroyale.message.client_config_backed_up";
         } else {
             String subManagerNameKey;
@@ -204,17 +228,21 @@ public class BackupCommand {
                     BattleRoyale.LOGGER.warn("Unknown client sub-type for backup command: {}", subType);
                     return 0;
             }
-            ClientConfigManager.get().backupConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot(), subManagerNameKey);
+            success = clientConfigManager.backupConfigs(subManagerNameKey);
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
-        BattleRoyale.LOGGER.info("Backed up {} client configs via command", subType != null ? subType : "all client");
+        BattleRoyale.LOGGER.info("Backed up {} configs via command", subType != null ? subType : "all client");
         return Command.SINGLE_SUCCESS;
     }
 
     private static int backupServerConfigs(CommandContext<CommandSourceStack> context, @Nullable String subType) {
+        IConfigManager serverConfigManager = getConfigManager(context, ServerConfigManager.get().getNameKey());
+        if (serverConfigManager == null) return 0;
+
+        int success = 0;
         String messageKey;
         if (subType == null) {
-            ServerConfigManager.get().backupAllConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot());
+            success = serverConfigManager.backupAllConfigs();
             messageKey = "battleroyale.message.server_config_backed_up";
         } else {
             String subManagerNameKey;
@@ -232,10 +260,10 @@ public class BackupCommand {
                     BattleRoyale.LOGGER.warn("Unknown server sub-type for backup command: {}", subType);
                     return 0;
             }
-            ServerConfigManager.get().backupConfigs(BattleRoyale.getModConfigManager().getDefaultBackupRoot(), subManagerNameKey);
+            success = serverConfigManager.backupConfigs(subManagerNameKey);
         }
         context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
-        BattleRoyale.LOGGER.info("Backed up {} server configs via command", subType != null ? subType : "all server");
+        BattleRoyale.LOGGER.info("Backed up {} configs via command", subType != null ? subType : "all server");
         return Command.SINGLE_SUCCESS;
     }
 }

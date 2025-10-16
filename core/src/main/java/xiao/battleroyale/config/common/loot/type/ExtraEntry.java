@@ -15,7 +15,7 @@ import xiao.battleroyale.util.JsonUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExtraEntry implements ILootEntry {
+public class ExtraEntry extends AbstractLootEntry {
     public boolean countEmpty;
     public boolean keepCheck;
     public ILootEntry checkEntry;
@@ -81,8 +81,7 @@ public class ExtraEntry implements ILootEntry {
 
     @Override
     public JsonObject toJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty(LootEntryTag.TYPE_NAME, getType());
+        JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.COUNT_EMPTY, countEmpty);
         jsonObject.addProperty(LootEntryTag.KEEP_CHECK, keepCheck);
         if (checkEntry != null) {
