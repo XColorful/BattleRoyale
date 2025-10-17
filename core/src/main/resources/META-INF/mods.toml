@@ -1,11 +1,13 @@
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
-license="GPL3"
+license="${mod_license}"
+issueTrackerURL="https://github.com/XColorful/BattleRoyale/issues"
 
 [[mods]]
 modId="battleroyale"
 version="${mod_version}"
 displayName="Custom BattleRoyale"
+displayURL="https://github.com/XColorful/BattleRoyale/wiki"
 logoFile="logo.png"
 authors="XiaoColorful"
 description='''Play customizable battleroyale in Minecraft
