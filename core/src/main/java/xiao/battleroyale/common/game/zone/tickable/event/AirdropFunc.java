@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -55,9 +56,11 @@ public class AirdropFunc extends AbstractEventFunc {
     public void funcTick(ZoneTickContext zoneTickContext) {
         assert airdropConfig != null; // 在initFunc里提前返回了
 
+        Vec3 zoneCenter = zoneTickContext.spatialZone.getCenterPos(zoneTickContext.progress);
+        if (zoneCenter == null) zoneCenter = Vec3.ZERO;
         LootContext lootContext = new LootContext(
                 zoneTickContext.serverLevel,
-                new ChunkPos(new BlockPos(0, 0, 0)),
+                new ChunkPos(new BlockPos((int) zoneCenter.x, (int) zoneCenter.y, (int) zoneCenter.z)),
                 GameManager.get().getGameId()
         );
 

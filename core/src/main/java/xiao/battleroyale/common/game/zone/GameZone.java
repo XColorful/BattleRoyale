@@ -129,8 +129,8 @@ public class GameZone implements IGameZone {
     }
 
     private boolean shouldTick(int gameTime) {
-        checkShouldFinish(gameTime);
-        return isCreated() && isPresent() && !isFinished() // GameZone
+        return !checkShouldFinish(gameTime)
+                && isCreated() && isPresent() && !isFinished() // GameZone
                 && !ZoneManager.shouldStopGame; // 每tick多一个bool检查，少一个列表对象复制（直接用视图遍历）
     }
 
@@ -162,7 +162,7 @@ public class GameZone implements IGameZone {
             MessageManager.get().extendZoneMessageTime(zoneId, FORCE_SYNC_FREQUENCY);
         }
         if ((zoneContext.gameTime + getTickOffset()) % getTickFrequency() == 0) {
-            funcTick(new ZoneTickContext(zoneContext, shapeProgress, spatialZone));
+            funcTick(new ZoneTickContext(zoneContext, zoneId, shapeProgress, spatialZone));
         }
     }
 

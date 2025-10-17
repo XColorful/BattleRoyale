@@ -15,8 +15,7 @@ public class AirdropEvent extends AbstractSpecialZoneEvent {
 
     protected final List<ItemStack> lootItems;
     protected final List<ItemStack> lastLootItems;
-    protected @NotNull
-    final CompoundTag nbt;
+    protected @NotNull final CompoundTag nbt;
     protected final LootGenerator.LootContext lootContext;
     protected final ILootEntry lootEntry;
 

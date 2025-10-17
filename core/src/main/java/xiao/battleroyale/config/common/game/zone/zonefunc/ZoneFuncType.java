@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import xiao.battleroyale.api.game.zone.func.IZoneFuncEntry;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.config.common.game.zone.zonefunc.event.AirdropFuncEntry;
+import xiao.battleroyale.config.common.game.zone.zonefunc.event.EntityFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.event.EventFuncEntry;
 
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public enum ZoneFuncType {
     // special
     EVENT(ZoneFuncTag.EVENT, EventFuncEntry::fromJson),
     AIRDROP(ZoneFuncTag.AIRDROP, AirdropFuncEntry::fromJson),
+    ENTITY(ZoneFuncTag.ENTITY, EntityFuncEntry::fromJson),
     DANGER(ZoneFuncTag.DANGER, DangerFuncEntry::fromJson);
     
     private final String name;

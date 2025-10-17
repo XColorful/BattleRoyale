@@ -56,48 +56,49 @@ public class EventRegister implements ICustomEventRegister {
         return switch (customEventType) {
             // finish
             case GAME_COMPLETE_EVENT,
-            GAME_COMPLETE_FINISH_EVENT,
-            GAME_STOP_EVENT,
-            GAME_STOP_FINISH_EVENT,
-            SERVER_STOP_EVENT,
-            SERVER_STOP_FINISH_EVENT -> GameFinishEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
+                 GAME_COMPLETE_FINISH_EVENT,
+                 GAME_STOP_EVENT,
+                 GAME_STOP_FINISH_EVENT,
+                 SERVER_STOP_EVENT,
+                 SERVER_STOP_FINISH_EVENT -> GameFinishEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             // game
             case GAME_PLAYER_DEATH_EVENT,
-            GAME_PLAYER_DEATH_FINISH_EVENT,
-            GAME_PLAYER_DOWN_EVENT,
-            GAME_PLAYER_DOWN_FINISH_EVENT,
-            GAME_PLAYER_REVIVE_EVENT,
-            GAME_PLAYER_REVIVE_FINISH_EVENT,
-            GAME_SPECTATE_EVENT -> GameGameEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
+                 GAME_PLAYER_DEATH_FINISH_EVENT,
+                 GAME_PLAYER_DOWN_EVENT,
+                 GAME_PLAYER_DOWN_FINISH_EVENT,
+                 GAME_PLAYER_REVIVE_EVENT,
+                 GAME_PLAYER_REVIVE_FINISH_EVENT,
+                 GAME_SPECTATE_EVENT -> GameGameEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             // spawn
             case GAME_LOBBY_TELEPORT_EVENT,
-            GAME_LOBBY_TELEPORT_FINISH_EVENT -> GameSpawnEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
+                 GAME_LOBBY_TELEPORT_FINISH_EVENT -> GameSpawnEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             // starter
             case GAME_INIT_EVENT,
-            GAME_INIT_FINISH_EVENT,
-            GAME_LOAD_EVENT,
-            GAME_LOAD_FINISH_EVENT,
-            GAME_START_EVENT,
-            GAME_START_FINISH_EVENT -> GameStarterEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
+                 GAME_INIT_FINISH_EVENT,
+                 GAME_LOAD_EVENT,
+                 GAME_LOAD_FINISH_EVENT,
+                 GAME_START_EVENT,
+                 GAME_START_FINISH_EVENT -> GameStarterEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             // team
             case INVITE_PLAYER_EVENT,
-            INVITE_PLAYER_COMPLETE_EVENT,
-            REQUEST_PLAYER_EVENT,
-            REQUEST_PLAYER_COMPLETE_EVENT -> GameTeamEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
+                 INVITE_PLAYER_COMPLETE_EVENT,
+                 REQUEST_PLAYER_EVENT,
+                 REQUEST_PLAYER_COMPLETE_EVENT -> GameTeamEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             // tick
             case GAME_LOOT_BFS_EVENT,
-            GAME_LOOT_BFS_FINISH_EVENT,
-            GAME_LOOT_EVENT,
-            GAME_LOOT_FINISH_EVENT,
-            GAME_TICK_EVENT,
-            GAME_TICK_FINISH_EVENT,
-            ZONE_TICK_EVENT,
-            ZONE_TICK_FINISH_EVENT -> GameTickEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
+                 GAME_LOOT_BFS_FINISH_EVENT,
+                 GAME_LOOT_EVENT,
+                 GAME_LOOT_FINISH_EVENT,
+                 GAME_TICK_EVENT,
+                 GAME_TICK_FINISH_EVENT,
+                 ZONE_TICK_EVENT,
+                 ZONE_TICK_FINISH_EVENT -> GameTickEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             // zone
-            case AIRDROP_EVENT,
-            CUSTOM_ZONE_EVENT,
-            ZONE_COMPLETE_EVENT,
-            ZONE_CREATED_EVENT -> GameZoneEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
+            case ZONE_COMPLETE_EVENT,
+                 ZONE_CREATED_EVENT,
+                 CUSTOM_ZONE_EVENT,
+                 AIRDROP_EVENT,
+                 ENTITY_EVENT -> GameZoneEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             // generate
             case CUSTOM_GENERATE_EVENT -> LootGenerateEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             default -> {
@@ -150,10 +151,11 @@ public class EventRegister implements ICustomEventRegister {
                  ZONE_TICK_EVENT,
                  ZONE_TICK_FINISH_EVENT -> GameTickEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
             // zone
-            case AIRDROP_EVENT,
+            case ZONE_COMPLETE_EVENT,
+                 ZONE_CREATED_EVENT,
                  CUSTOM_ZONE_EVENT,
-                 ZONE_COMPLETE_EVENT,
-                 ZONE_CREATED_EVENT -> GameZoneEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
+                 AIRDROP_EVENT,
+                 ENTITY_EVENT -> GameZoneEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
             // generate
             case CUSTOM_GENERATE_EVENT -> LootGenerateEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
             default -> {

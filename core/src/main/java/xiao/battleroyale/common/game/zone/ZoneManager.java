@@ -249,14 +249,16 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
         }
     }
     public static class ZoneTickContext extends ZoneContext {
+        public final int zoneId;
         public final double progress;
         public final ISpatialZone spatialZone;
         /**
          * @param progress 圈进度
          * @param spatialZone 提供圈的状态，计算与玩家相关的逻辑
          */
-        public ZoneTickContext(ZoneContext zoneContext, double progress, ISpatialZone spatialZone) {
+        public ZoneTickContext(ZoneContext zoneContext, int zoneId, double progress, ISpatialZone spatialZone) {
             super(zoneContext.serverLevel, zoneContext.gamePlayers, zoneContext.gameZones, zoneContext.random, zoneContext.gameTime);
+            this.zoneId = zoneId;
             this.progress = progress;
             this.spatialZone = spatialZone;
         }

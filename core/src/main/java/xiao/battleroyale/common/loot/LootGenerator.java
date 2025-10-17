@@ -86,6 +86,28 @@ public class LootGenerator {
 
         return lootItems;
     }
+    public static @NotNull List<Entity> generateLootEntities(LootContext lootContext, ILootEntry entry) {
+        List<Entity> lootEntities = new ArrayList<>();
+
+        List<ILootData> lootData = entry.generateLootData(lootContext);
+        if (lootData.isEmpty()) {
+            return lootEntities;
+        }
+
+        for (ILootData data : lootData) {
+            if (data.getDataType() == LootDataType.ENTITY) {
+                IEntityLootData entityLootData = (IEntityLootData) data;
+                Entity entity = entityLootData.getEntity(lootContext.serverLevel);
+                if (entity == null) {
+                    continue;
+                }
+                gameIdWriteApi.addGameId(entity, lootContext.gameId);
+                lootEntities.add(entity);
+            }
+        }
+
+        return lootEntities;
+    }
 
     /**
      * 根据物资刷新配置生成
@@ -126,7 +148,7 @@ public class LootGenerator {
             BlockPos spawnOrigin = target.getBlockPos();
             for (ILootData data : lootData) {
                 if (data.getDataType() == LootDataType.ENTITY) {
-                    generateLootEntity(lootContext, (IEntityLootData) data, spawnOrigin);
+                    generateLootEntities(lootContext, (IEntityLootData) data, spawnOrigin);
                 } else {
                     BattleRoyale.LOGGER.warn("Ignore spawn non-entity at {}", spawnOrigin);
                 }
@@ -137,7 +159,7 @@ public class LootGenerator {
     /**
      * 返回成功生成的实体数量
      */
-    public static int generateLootEntity(LootContext lootContext, IEntityLootData entityData, BlockPos spawnOrigin) {
+    public static int generateLootEntities(LootContext lootContext, IEntityLootData entityData, BlockPos spawnOrigin) {
         int count = entityData.getCount();
         int range = entityData.getRange();
         int attempts = entityData.getAttempts();

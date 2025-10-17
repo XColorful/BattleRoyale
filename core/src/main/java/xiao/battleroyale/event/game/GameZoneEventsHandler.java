@@ -14,9 +14,10 @@ public class GameZoneEventsHandler extends AbstractEventHandler {
     }
 
     private GameZoneEventsHandler() {
-        super(CustomEventType.AIRDROP_EVENT,
-                CustomEventType.CUSTOM_ZONE_EVENT,
+        super(CustomEventType.ZONE_CREATED_EVENT,
                 CustomEventType.ZONE_COMPLETE_EVENT,
-                CustomEventType.ZONE_CREATED_EVENT);
+                CustomEventType.CUSTOM_ZONE_EVENT,
+                CustomEventType.AIRDROP_EVENT,
+                CustomEventType.ENTITY_EVENT);
     }
 }

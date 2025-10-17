@@ -27,48 +27,49 @@ public class EventPoster implements ICustomEventPoster {
         switch (customEventType) {
             // finish
             case GAME_COMPLETE_EVENT,
-            GAME_COMPLETE_FINISH_EVENT,
-            GAME_STOP_EVENT,
-            GAME_STOP_FINISH_EVENT,
-            SERVER_STOP_EVENT,
-            SERVER_STOP_FINISH_EVENT -> GameFinishEventsHandler.get().handleEvent(customEvent);
+                 GAME_COMPLETE_FINISH_EVENT,
+                 GAME_STOP_EVENT,
+                 GAME_STOP_FINISH_EVENT,
+                 SERVER_STOP_EVENT,
+                 SERVER_STOP_FINISH_EVENT -> GameFinishEventsHandler.get().handleEvent(customEvent);
             // game
             case GAME_PLAYER_DEATH_EVENT,
-            GAME_PLAYER_DEATH_FINISH_EVENT,
-            GAME_PLAYER_DOWN_EVENT,
-            GAME_PLAYER_DOWN_FINISH_EVENT,
-            GAME_PLAYER_REVIVE_EVENT,
-            GAME_PLAYER_REVIVE_FINISH_EVENT,
-            GAME_SPECTATE_EVENT -> GameGameEventsHandler.get().handleEvent(customEvent);
+                 GAME_PLAYER_DEATH_FINISH_EVENT,
+                 GAME_PLAYER_DOWN_EVENT,
+                 GAME_PLAYER_DOWN_FINISH_EVENT,
+                 GAME_PLAYER_REVIVE_EVENT,
+                 GAME_PLAYER_REVIVE_FINISH_EVENT,
+                 GAME_SPECTATE_EVENT -> GameGameEventsHandler.get().handleEvent(customEvent);
             // spawn
             case GAME_LOBBY_TELEPORT_EVENT,
-            GAME_LOBBY_TELEPORT_FINISH_EVENT -> GameSpawnEventsHandler.get().handleEvent(customEvent);
+                 GAME_LOBBY_TELEPORT_FINISH_EVENT -> GameSpawnEventsHandler.get().handleEvent(customEvent);
             // starter
             case GAME_INIT_EVENT,
-            GAME_INIT_FINISH_EVENT,
-            GAME_LOAD_EVENT,
-            GAME_LOAD_FINISH_EVENT,
-            GAME_START_EVENT,
-            GAME_START_FINISH_EVENT -> GameStarterEventsHandler.get().handleEvent(customEvent);
+                 GAME_INIT_FINISH_EVENT,
+                 GAME_LOAD_EVENT,
+                 GAME_LOAD_FINISH_EVENT,
+                 GAME_START_EVENT,
+                 GAME_START_FINISH_EVENT -> GameStarterEventsHandler.get().handleEvent(customEvent);
             // team
             case INVITE_PLAYER_EVENT,
-            INVITE_PLAYER_COMPLETE_EVENT,
-            REQUEST_PLAYER_EVENT,
-            REQUEST_PLAYER_COMPLETE_EVENT -> GameTeamEventsHandler.get().handleEvent(customEvent);
+                 INVITE_PLAYER_COMPLETE_EVENT,
+                 REQUEST_PLAYER_EVENT,
+                 REQUEST_PLAYER_COMPLETE_EVENT -> GameTeamEventsHandler.get().handleEvent(customEvent);
             // tick
             case GAME_LOOT_BFS_EVENT,
-            GAME_LOOT_BFS_FINISH_EVENT,
-            GAME_LOOT_EVENT,
-            GAME_LOOT_FINISH_EVENT,
-            GAME_TICK_EVENT,
-            GAME_TICK_FINISH_EVENT,
-            ZONE_TICK_EVENT,
-            ZONE_TICK_FINISH_EVENT -> GameTickEventsHandler.get().handleEvent(customEvent);
+                 GAME_LOOT_BFS_FINISH_EVENT,
+                 GAME_LOOT_EVENT,
+                 GAME_LOOT_FINISH_EVENT,
+                 GAME_TICK_EVENT,
+                 GAME_TICK_FINISH_EVENT,
+                 ZONE_TICK_EVENT,
+                 ZONE_TICK_FINISH_EVENT -> GameTickEventsHandler.get().handleEvent(customEvent);
             // zone
-            case AIRDROP_EVENT,
-            CUSTOM_ZONE_EVENT,
-            ZONE_COMPLETE_EVENT,
-            ZONE_CREATED_EVENT -> GameZoneEventsHandler.get().handleEvent(customEvent);
+            case ZONE_COMPLETE_EVENT,
+                 ZONE_CREATED_EVENT,
+                 CUSTOM_ZONE_EVENT,
+                 AIRDROP_EVENT,
+                 ENTITY_EVENT -> GameZoneEventsHandler.get().handleEvent(customEvent);
             // generate
             case CUSTOM_GENERATE_EVENT -> LootGenerateEventsHandler.get().handleEvent(customEvent);
             default -> {
