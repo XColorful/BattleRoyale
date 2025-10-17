@@ -3,7 +3,7 @@ package xiao.battleroyale.common.game.zone.tickable.event;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.event.game.zone.CustomZoneEventData;
+import xiao.battleroyale.api.event.game.zone.CustomZoneEvent;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
@@ -28,7 +28,7 @@ public class EventFunc extends AbstractEventFunc {
         for (GamePlayer gamePlayer : zoneTickContext.gamePlayers) {
             if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
                 LivingEntity livingEntity = (LivingEntity) zoneTickContext.serverLevel.getEntity(gamePlayer.getPlayerUUID());
-                EventPoster.postEvent(new CustomZoneEventData(gameManager, zoneTickContext, this.protocol, this.tag, gamePlayer, livingEntity));
+                EventPoster.postEvent(new CustomZoneEvent(gameManager, zoneTickContext, this.protocol, this.tag, gamePlayer, livingEntity));
             }
         }
     }

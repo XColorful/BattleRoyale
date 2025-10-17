@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigSubManager;
-import xiao.battleroyale.api.event.game.zone.AirdropEventData;
+import xiao.battleroyale.api.event.game.zone.AirdropEvent;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
@@ -65,7 +65,7 @@ public class AirdropFunc extends AbstractEventFunc {
         lootItems.clear();
         lootItems.addAll(LootGenerator.generateLootItem(lootContext, airdropConfig.entry));
 
-        EventPoster.postEvent(new AirdropEventData(GameManager.get(), zoneTickContext, protocol, tag,
+        EventPoster.postEvent(new AirdropEvent(GameManager.get(), zoneTickContext, protocol, tag,
                 lootItems, lastLootItems, nbt,
                 lootContext, airdropConfig.entry));
     }

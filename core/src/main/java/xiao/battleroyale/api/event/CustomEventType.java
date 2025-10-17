@@ -26,7 +26,7 @@ public enum CustomEventType {
     GAME_LOAD_FINISH_EVENT,
     GAME_START_EVENT,
     GAME_START_FINISH_EVENT,
-    // team,
+    // team
     INVITE_PLAYER_EVENT,
     INVITE_PLAYER_COMPLETE_EVENT,
     REQUEST_PLAYER_EVENT,
