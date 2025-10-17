@@ -3,7 +3,7 @@ package xiao.battleroyale.event.handler.server;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.common.server.utility.SurvivalLobby;
-import xiao.battleroyale.event.EventRegistry;
+import xiao.battleroyale.event.EventRegister;
 
 /**
  * 只用于实现生存模式大厅内无敌
@@ -27,11 +27,11 @@ public class SurvivalLobbyEventHandler implements IEventHandler {
     }
 
     public static void register() {
-        EventRegistry.register(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGHEST, false);
+        EventRegister.register(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGHEST, false);
     }
 
     public static void unregister() {
-        EventRegistry.unregister(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGHEST, false);
+        EventRegister.unregister(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGHEST, false);
     }
 
     @Override

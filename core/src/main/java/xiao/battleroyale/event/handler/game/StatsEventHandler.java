@@ -6,7 +6,7 @@ import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.event.EventRegistry;
+import xiao.battleroyale.event.EventRegister;
 
 /**
  * 统计造成的伤害值
@@ -28,13 +28,13 @@ public class StatsEventHandler implements IEventHandler {
     }
 
     public static void register() {
-        EventRegistry.register(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.LOWEST, true);
-        EventRegistry.register(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOWEST, true);
+        EventRegister.register(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.LOWEST, true);
+        EventRegister.register(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOWEST, true);
     }
 
     public static void unregister() {
-        EventRegistry.unregister(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.LOWEST, true);
-        EventRegistry.unregister(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOWEST, true);
+        EventRegister.unregister(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.LOWEST, true);
+        EventRegister.unregister(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOWEST, true);
     }
 
     @Override

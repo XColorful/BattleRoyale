@@ -6,7 +6,7 @@ import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.api.event.ILivingDamageEvent;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
-import xiao.battleroyale.event.EventRegistry;
+import xiao.battleroyale.event.EventRegister;
 
 /**
  * 只用于实现Lobby内无敌
@@ -30,11 +30,11 @@ public class LobbyEventHandler implements IEventHandler {
     }
 
     public static void register() {
-        EventRegistry.register(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
+        EventRegister.register(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
     }
 
     public static void unregister() {
-        EventRegistry.unregister(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
+        EventRegister.unregister(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
     }
 
     @Override

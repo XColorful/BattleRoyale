@@ -14,7 +14,7 @@ import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
-import xiao.battleroyale.event.EventRegistry;
+import xiao.battleroyale.event.EventRegister;
 import xiao.battleroyale.util.ChatUtils;
 
 /**
@@ -37,11 +37,11 @@ public class DamageEventHandler implements IEventHandler {
     }
 
     public static void register() {
-        EventRegistry.register(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGH, false);
+        EventRegister.register(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGH, false);
     }
 
     public static void unregister() {
-        EventRegistry.unregister(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGH, false);
+        EventRegister.unregister(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGH, false);
     }
 
     @Override

@@ -5,7 +5,7 @@ import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.event.EventRegistry;
+import xiao.battleroyale.event.EventRegister;
 
 public class LoopEventHandler implements IEventHandler {
 
@@ -24,11 +24,11 @@ public class LoopEventHandler implements IEventHandler {
     }
 
     public static void register() {
-        EventRegistry.register(get(), EventType.SERVER_TICK_EVENT);
+        EventRegister.register(get(), EventType.SERVER_TICK_EVENT);
     }
 
     public static void unregister() {
-        EventRegistry.unregister(get(), EventType.SERVER_TICK_EVENT);
+        EventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
     }
 
     @Override

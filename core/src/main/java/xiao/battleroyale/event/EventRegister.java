@@ -2,17 +2,26 @@ package xiao.battleroyale.event;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
-import xiao.battleroyale.common.game.stats.GamePlayerStats;
 import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.event.loot.LootGenerateEventsHandler;
 
-public class EventRegistry implements ICustomEventRegister {
+public class EventRegister implements ICustomEventRegister {
+
+    private static class EventRegisterHolder {
+        private static final EventRegister INSTANCE = new EventRegister();
+    }
+
+    public static ICustomEventRegister get() {
+        return EventRegisterHolder.INSTANCE;
+    }
+
+    private EventRegister() {}
 
     private static IEventRegister eventRegister;
 
     public static void initialize(IEventRegister eventRegister) {
-        if (EventRegistry.eventRegister == null) {
-            EventRegistry.eventRegister = eventRegister;
+        if (EventRegister.eventRegister == null) {
+            EventRegister.eventRegister = eventRegister;
         }
     }
 

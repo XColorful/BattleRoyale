@@ -6,7 +6,7 @@ import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.api.event.ILivingDamageEvent;
 import xiao.battleroyale.common.effect.muteki.MutekiManager;
-import xiao.battleroyale.event.EventRegistry;
+import xiao.battleroyale.event.EventRegister;
 
 public class MutekiEventHandler implements IEventHandler {
 
@@ -25,13 +25,13 @@ public class MutekiEventHandler implements IEventHandler {
     }
 
     public static void register() {
-        EventRegistry.register(get(), EventType.SERVER_TICK_EVENT);
-        EventRegistry.register(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
+        EventRegister.register(get(), EventType.SERVER_TICK_EVENT);
+        EventRegister.register(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
     }
 
     public static void unregister() {
-        EventRegistry.unregister(get(), EventType.SERVER_TICK_EVENT);
-        EventRegistry.unregister(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
+        EventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
+        EventRegister.unregister(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
     }
 
     @Override

@@ -6,7 +6,7 @@ import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.event.EventRegistry;
+import xiao.battleroyale.event.EventRegister;
 
 /**
  * 监听击杀(死亡)事件，击倒机制，获取击杀者，通知计算游戏是否达到结束条件
@@ -28,11 +28,11 @@ public class PlayerDeathEventHandler implements IEventHandler {
     }
 
     public static void register() {
-        EventRegistry.register(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOW, true);
+        EventRegister.register(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOW, true);
     }
 
     public static void unregister() {
-        EventRegistry.unregister(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOW, true);
+        EventRegister.unregister(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOW, true);
     }
 
     @Override

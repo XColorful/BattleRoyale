@@ -13,6 +13,7 @@ import xiao.battleroyale.api.compat.tacz.ITaczEventRegister;
 import xiao.battleroyale.api.compat.tacz.ITaczGunOperator;
 import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.event.ICustomEventPoster;
+import xiao.battleroyale.api.event.ICustomEventRegister;
 import xiao.battleroyale.api.event.IEventRegister;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
@@ -23,7 +24,7 @@ import xiao.battleroyale.client.renderer.BlockModelRenderer;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.event.EventPoster;
-import xiao.battleroyale.event.EventRegistry;
+import xiao.battleroyale.event.EventRegister;
 import xiao.battleroyale.network.NetworkHandler;
 import xiao.battleroyale.network.NetworkHook;
 import xiao.battleroyale.resource.ResourceLoader;
@@ -57,7 +58,7 @@ public class BattleRoyale {
         BattleRoyale.mcRegistry = mcRegistry;
         NetworkHandler.initialize(networkAdapter);
         NetworkHook.initialize(networkHook);
-        EventRegistry.initialize(eventRegister);
+        EventRegister.initialize(eventRegister);
         BlockModelRenderer.initialize(blockModelRenderer);
         BattleRoyale.compatApi = compatApi;
 
@@ -98,6 +99,9 @@ public class BattleRoyale {
     }
     public static ICustomEventPoster getEventPoster() {
         return EventPoster.get();
+    }
+    public static ICustomEventRegister getEventRegister() {
+        return EventRegister.get();
     }
     public static IGameManager getGameManager() {
         return GameManager.get();
