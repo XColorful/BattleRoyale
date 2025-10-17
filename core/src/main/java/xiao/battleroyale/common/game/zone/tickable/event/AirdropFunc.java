@@ -4,11 +4,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigSubManager;
-import xiao.battleroyale.api.event.game.zone.AirdropEventData;
+import xiao.battleroyale.api.event.game.zone.AirdropEvent;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
@@ -44,10 +45,11 @@ public class AirdropFunc extends AbstractEventFunc {
         IConfigSubManager<?> lootConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(LootConfigManager.get().getNameKey());
 
         @Nullable LootConfig airdropConfig = lootConfigManager == null ? null
-                : lootConfigManager.getConfigEntry(LootConfigTypeEnum.AIRDROP, lootId) instanceof LootConfig config ? config : null;
+                : lootConfigManager.getConfigEntry(LootConfigTypeEnum.AIRDROP, lootId) instanceof LootConfig config ? config.copy() : null;
         if (airdropConfig == null) { // 没有物资刷新配置就视为创建失败
             return;
         }
+        this.airdropConfig = airdropConfig;
 
         super.initFunc(zoneContext);
     }
@@ -55,9 +57,11 @@ public class AirdropFunc extends AbstractEventFunc {
     public void funcTick(ZoneTickContext zoneTickContext) {
         assert airdropConfig != null; // 在initFunc里提前返回了
 
+        Vec3 zoneCenter = zoneTickContext.spatialZone.getCenterPos(zoneTickContext.progress);
+        if (zoneCenter == null) zoneCenter = Vec3.ZERO;
         LootContext lootContext = new LootContext(
                 zoneTickContext.serverLevel,
-                new ChunkPos(new BlockPos(0, 0, 0)),
+                new ChunkPos(new BlockPos((int) zoneCenter.x, (int) zoneCenter.y, (int) zoneCenter.z)),
                 GameManager.get().getGameId()
         );
 
@@ -65,7 +69,7 @@ public class AirdropFunc extends AbstractEventFunc {
         lootItems.clear();
         lootItems.addAll(LootGenerator.generateLootItem(lootContext, airdropConfig.entry));
 
-        EventPoster.postEvent(new AirdropEventData(GameManager.get(), zoneTickContext, protocol, tag,
+        EventPoster.postEvent(new AirdropEvent(GameManager.get(), zoneTickContext, protocol, tag,
                 lootItems, lastLootItems, nbt,
                 lootContext, airdropConfig.entry));
     }

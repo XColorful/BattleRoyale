@@ -16,8 +16,8 @@ import xiao.battleroyale.algorithm.CircleGridCalculator;
 import xiao.battleroyale.algorithm.Distribution;
 import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportData;
-import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishData;
+import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportEvent;
+import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishEvent;
 import xiao.battleroyale.api.game.spawn.IGameLobbyReadApi;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.common.game.AbstractGameManager;
@@ -36,7 +36,7 @@ import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.event.EventPoster;
-import xiao.battleroyale.event.game.LobbyEventHandler;
+import xiao.battleroyale.event.handler.game.LobbyEventHandler;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.Vec3Utils;
@@ -81,8 +81,8 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
         boolean showDebugResult = JsonUtils.getJsonBool(jsonObject, "showDebugResult", false);
 
         long startTime = System.nanoTime();
-        Distribution.CircleGrid.preCalculate(startN, endN);
-        Distribution.CircleGrid.preCalculate(nList);
+        Distribution.CircleGrid.get().preCalculate(startN, endN);
+        Distribution.CircleGrid.get().preCalculate(nList);
         long endTime = System.nanoTime();
         BattleRoyale.LOGGER.debug("SpawnManager complete init, time:{}ms", (endTime - startTime) / 1_000_000.0);
         if (showDebugResult) {
@@ -227,7 +227,7 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
      */
     public boolean teleportToLobby(@NotNull LivingEntity livingEntity) {
         GameManager gameManager = GameManager.get();
-        if (EventPoster.postEvent(new GameLobbyTeleportData(gameManager, livingEntity))) {
+        if (EventPoster.postEvent(new GameLobbyTeleportEvent(gameManager, livingEntity))) {
             BattleRoyale.LOGGER.debug("LobbyTeleportEvent canceled, skipped teleportToLobby (LivingEntity {})", livingEntity.getName().getString());
             return false;
         }
@@ -262,7 +262,7 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
             GameUtilsFunction.safeTeleport(livingEntity, lobbyPos);
         }
         BattleRoyale.LOGGER.info("Teleport livingEntity {} (UUID: {}) to lobby ({}, {}, {})", livingEntity.getName().getString(), livingEntity.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
-        EventPoster.postEvent(new GameLobbyTeleportFinishData(gameManager, livingEntity));
+        EventPoster.postEvent(new GameLobbyTeleportFinishEvent(gameManager, livingEntity));
         return true;
     }
 
