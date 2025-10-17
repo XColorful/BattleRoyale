@@ -45,10 +45,11 @@ public class AirdropFunc extends AbstractEventFunc {
         IConfigSubManager<?> lootConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(LootConfigManager.get().getNameKey());
 
         @Nullable LootConfig airdropConfig = lootConfigManager == null ? null
-                : lootConfigManager.getConfigEntry(LootConfigTypeEnum.AIRDROP, lootId) instanceof LootConfig config ? config : null;
+                : lootConfigManager.getConfigEntry(LootConfigTypeEnum.AIRDROP, lootId) instanceof LootConfig config ? config.copy() : null;
         if (airdropConfig == null) { // 没有物资刷新配置就视为创建失败
             return;
         }
+        this.airdropConfig = airdropConfig;
 
         super.initFunc(zoneContext);
     }

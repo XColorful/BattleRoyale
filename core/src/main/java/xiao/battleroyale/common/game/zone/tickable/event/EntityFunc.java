@@ -45,10 +45,11 @@ public class EntityFunc extends AbstractEventFunc {
         IConfigSubManager<?> lootConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(LootConfigManager.get().getNameKey());
 
         @Nullable LootConfig entityConfig = lootConfigManager == null ? null
-                : lootConfigManager.getConfigEntry(LootConfigTypeEnum.ENTITY_SPAWNER, lootId) instanceof LootConfig config ? config : null;
+                : lootConfigManager.getConfigEntry(LootConfigTypeEnum.ENTITY_SPAWNER, lootId) instanceof LootConfig config ? config.copy() : null;
         if (entityConfig == null) {
             return;
         }
+        this.entityConfig = entityConfig;
 
         super.initFunc(zoneContext);
     }
