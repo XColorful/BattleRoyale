@@ -81,8 +81,8 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
         boolean showDebugResult = JsonUtils.getJsonBool(jsonObject, "showDebugResult", false);
 
         long startTime = System.nanoTime();
-        Distribution.CircleGrid.preCalculate(startN, endN);
-        Distribution.CircleGrid.preCalculate(nList);
+        Distribution.CircleGrid.get().preCalculate(startN, endN);
+        Distribution.CircleGrid.get().preCalculate(nList);
         long endTime = System.nanoTime();
         BattleRoyale.LOGGER.debug("SpawnManager complete init, time:{}ms", (endTime - startTime) / 1_000_000.0);
         if (showDebugResult) {

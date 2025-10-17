@@ -4,6 +4,8 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import org.slf4j.Logger;
+import xiao.battleroyale.algorithm.AlgorithmFacade;
+import xiao.battleroyale.api.algorithm.IAlgorithmApi;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.journeymap.IJmApi;
@@ -102,5 +104,8 @@ public class BattleRoyale {
     }
     public static IModConfigManager getModConfigManager() {
         return ModConfigManager.getApi();
+    }
+    public static IAlgorithmApi getAlgorithmApi() {
+        return AlgorithmFacade.get();
     }
 }
