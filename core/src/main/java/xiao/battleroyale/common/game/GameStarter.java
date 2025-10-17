@@ -15,10 +15,10 @@ import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.Gamer
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.data.io.TempDataManager;
-import xiao.battleroyale.event.game.DamageEventHandler;
-import xiao.battleroyale.event.game.LogEventHandler;
-import xiao.battleroyale.event.game.LoopEventHandler;
-import xiao.battleroyale.event.game.PlayerDeathEventHandler;
+import xiao.battleroyale.event.handler.game.DamageEventHandler;
+import xiao.battleroyale.event.handler.game.LogEventHandler;
+import xiao.battleroyale.event.handler.game.LoopEventHandler;
+import xiao.battleroyale.event.handler.game.PlayerDeathEventHandler;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.StringUtils;
 

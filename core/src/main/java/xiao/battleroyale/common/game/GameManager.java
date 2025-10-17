@@ -19,8 +19,8 @@ import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.event.game.finish.*;
 import xiao.battleroyale.api.event.game.game.*;
 import xiao.battleroyale.api.event.game.starter.*;
-import xiao.battleroyale.api.event.game.tick.GameTickData;
-import xiao.battleroyale.api.event.game.tick.GameTickFinishData;
+import xiao.battleroyale.api.event.game.tick.GameTickEvent;
+import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
 import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
 import xiao.battleroyale.api.game.spawn.IGameLobbyReadApi;
@@ -49,8 +49,8 @@ import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.event.EventPoster;
-import xiao.battleroyale.event.util.DelayedEvent;
-import xiao.battleroyale.event.game.*;
+import xiao.battleroyale.event.handler.game.LogEventHandler;
+import xiao.battleroyale.event.handler.util.DelayedEvent;
 import xiao.battleroyale.util.*;
 
 import java.util.*;
@@ -175,7 +175,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      * 检测并加载游戏配置，不应该执行任何实际内容
      */
     public void initGameConfig(ServerLevel serverLevel) {
-        if (EventPoster.postEvent(new GameLoadData(this))) {
+        if (EventPoster.postEvent(new GameLoadEvent(this))) {
             BattleRoyale.LOGGER.debug("GameLoadEvent canceled, skipped initGameConfig");
             return;
         }
@@ -199,7 +199,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (GameSubManager.gameConfigAllReady()) {
             this.configPrepared = true;
             LogEventHandler.register(); // 后续玩家登录可根据配置直接加入队伍
-            EventPoster.postEvent(new GameLoadFinishData(this));
+            EventPoster.postEvent(new GameLoadFinishEvent(this));
         } else {
             this.configPrepared = false;
         }
@@ -211,7 +211,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (EventPoster.postEvent(new GameInitData(this))) {
+        if (EventPoster.postEvent(new GameInitEvent(this))) {
             BattleRoyale.LOGGER.debug("GameInitEvent canceled, skipped initGame");
             return;
         }
@@ -234,7 +234,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (isReady()) {
             generateGameId(); // 手动刷新 gameId
         }
-        EventPoster.postEvent(new GameInitFinishData(this));
+        EventPoster.postEvent(new GameInitFinishEvent(this));
     }
 
     /**
@@ -242,7 +242,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (EventPoster.postEvent(new GameStartData(this))) {
+        if (EventPoster.postEvent(new GameStartEvent(this))) {
             BattleRoyale.LOGGER.debug("GameStartEvent canceled, skipped startGame");
             return false;
         }
@@ -264,7 +264,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             GameStarter.startGameSetup(this);
             this.inGame = true;
             GameInfoMessageManager.get().startGame(serverLevel);
-            EventPoster.postEvent(new GameStartFinishData(this));
+            EventPoster.postEvent(new GameStartFinishEvent(this));
             return true;
         } else {
             stopGame(this.serverLevel);
@@ -304,7 +304,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     public void onGameTick(int gameTime) {
         this.gameTime = gameTime;
-        if (EventPoster.postEvent(new GameTickData(this, gameTime))) {
+        if (EventPoster.postEvent(new GameTickEvent(this, gameTime))) {
             BattleRoyale.LOGGER.debug("GameTickEvent canceled, skipped onGameTick (gameTime:{})", gameTime);
             return;
         }
@@ -333,7 +333,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             }
         }
 
-        EventPoster.postEvent(new GameTickFinishData(this, gameTime));
+        EventPoster.postEvent(new GameTickFinishEvent(this, gameTime));
     }
 
     /**
@@ -378,7 +378,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public void finishGame(boolean hasWinner) { // IGameManager接口
-        if (EventPoster.postEvent(new GameCompleteData(this, hasWinner))) {
+        if (EventPoster.postEvent(new GameCompleteEvent(this, hasWinner))) {
             BattleRoyale.LOGGER.debug("GameCompleteEvent canceled, skipped finishGame (gameTime:{}, hasWinner:{})", gameTime, hasWinner);
             return;
         }
@@ -413,7 +413,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
                 new DelayedEvent<>(delayedTask, cachedGameLevelKey, 1, "GameManager::sendWinnerResult");
             }
         }
-        EventPoster.postEvent(new GameCompleteFinishData(this, hasWinner, winnerGamePlayers, winnerGameTeams));
+        EventPoster.postEvent(new GameCompleteFinishEvent(this, hasWinner, winnerGamePlayers, winnerGameTeams));
     }
 
     /**
@@ -421,7 +421,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        EventPoster.postEvent(new GameStopData(this, serverLevel));
+        EventPoster.postEvent(new GameStopEvent(this, serverLevel));
         GameLootManager.get().stopGame(serverLevel);
         ZoneManager.get().stopGame(serverLevel);
         SpawnManager.get().stopGame(serverLevel);
@@ -441,18 +441,18 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
         // 游戏中途若修改配置，在游戏结束后生效
         setGameLevelKey(ResourceKey.create(Registries.DIMENSION, BattleRoyale.getMcRegistry().createResourceLocation(this.gameLevelKeyString)));
-        EventPoster.postEvent(new GameStopFinishData(this, serverLevel));
+        EventPoster.postEvent(new GameStopFinishEvent(this, serverLevel));
     }
 
     public void onServerStopping() {
-        EventPoster.postEvent(new ServerStopData(this));
+        EventPoster.postEvent(new ServerStopEvent(this));
         isStopping = true;
         stopGame(serverLevel);
         EffectManager.get().forceEnd();
         setServerLevel(null); // 手动设置为null，单人游戏重启之后也就失效了
         BattleRoyale.LOGGER.debug("Server stopped, GameManager.serverLevel set to null");
         isStopping = false;
-        EventPoster.postEvent(new ServerStopFinishData(this));
+        EventPoster.postEvent(new ServerStopFinishEvent(this));
     }
 
     // 获取大逃杀游戏ServerLevel
@@ -715,33 +715,33 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      * PlayerRevive只允许玩家倒地，因此人机玩家无法倒地
      */
     public void onPlayerDown(@NotNull GamePlayer gamePlayer, @NotNull LivingEntity livingEntity, ILivingDeathEvent event) {
-        if (EventPoster.postEvent(new GamePlayerDownData(this, gamePlayer, livingEntity, event))) {
+        if (EventPoster.postEvent(new GamePlayerDownEvent(this, gamePlayer, livingEntity, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDownEvent canceled, skipped onPlayerDown (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
         GameEventHandler.onPlayerDown(gamePlayer, livingEntity, this.gameEntry.removeInvalidTeam);
-        EventPoster.postEvent(new GamePlayerDownFinishData(this, gamePlayer, livingEntity, event));
+        EventPoster.postEvent(new GamePlayerDownFinishEvent(this, gamePlayer, livingEntity, event));
     }
     /**
      * 调用成功即视为GamePlayer被救起
      */
     public void onPlayerRevived(@NotNull GamePlayer gamePlayer) {
-        if (EventPoster.postEvent(new GamePlayerReviveData(this, gamePlayer))) {
+        if (EventPoster.postEvent(new GamePlayerReviveEvent(this, gamePlayer))) {
             BattleRoyale.LOGGER.debug("GamePlayerReviveEvent canceled, skipped onPlayerRevive (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
         GameEventHandler.onPlayerRevived(gamePlayer);
-        EventPoster.postEvent(new GamePlayerReviveFinishData(this, gamePlayer));
+        EventPoster.postEvent(new GamePlayerReviveFinishEvent(this, gamePlayer));
     }
     /**
      * 调用成功即视为GamePlayer死亡
      */
     public void onPlayerDeath(@NotNull GamePlayer gamePlayer, ILivingDeathEvent event) {
-        if (EventPoster.postEvent(new GamePlayerDeathData(this, gamePlayer, event))) {
+        if (EventPoster.postEvent(new GamePlayerDeathEvent(this, gamePlayer, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDeathEvent canceled, skipped onPlayerDeath (GamePlayer{})", gamePlayer.getNameWithId());
             return;
         }
         GameEventHandler.onPlayerDeath(this.serverLevel, gamePlayer);
-        EventPoster.postEvent(new GamePlayerDeathFinishData(this, gamePlayer, event));
+        EventPoster.postEvent(new GamePlayerDeathFinishEvent(this, gamePlayer, event));
     }
 }

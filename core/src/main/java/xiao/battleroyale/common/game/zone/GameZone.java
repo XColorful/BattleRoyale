@@ -4,8 +4,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.event.game.zone.ZoneCompleteEventData;
-import xiao.battleroyale.api.event.game.zone.ZoneCreatedEventData;
+import xiao.battleroyale.api.event.game.zone.ZoneCompleteEvent;
+import xiao.battleroyale.api.event.game.zone.ZoneCreatedEvent;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
@@ -104,12 +104,12 @@ public class GameZone implements IGameZone {
             addZoneDetailProperty();
             created = true;
             present = true;
-            EventPoster.postEvent(new ZoneCreatedEventData(GameManager.get(), this, true));
+            EventPoster.postEvent(new ZoneCreatedEvent(GameManager.get(), this, true));
         } else {
             addFailedZoneProperty();
             present = false;
             finished = true;
-            EventPoster.postEvent(new ZoneCreatedEventData(GameManager.get(), this, false));
+            EventPoster.postEvent(new ZoneCreatedEvent(GameManager.get(), this, false));
         }
     }
 
@@ -148,7 +148,7 @@ public class GameZone implements IGameZone {
     public void gameTick(ZoneContext zoneContext) {
         if (!shouldTick(zoneContext.gameTime)) {
             GameMessageManager.addZoneNbtMessage(this.zoneId, null); // 传入null视为提醒置空NBT
-            EventPoster.postEvent(new ZoneCompleteEventData(GameManager.get(), this));
+            EventPoster.postEvent(new ZoneCompleteEvent(GameManager.get(), this));
             return;
         }
 

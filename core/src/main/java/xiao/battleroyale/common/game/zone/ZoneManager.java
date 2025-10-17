@@ -6,8 +6,8 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
-import xiao.battleroyale.api.event.game.tick.ZoneTickData;
-import xiao.battleroyale.api.event.game.tick.ZoneTickFinishData;
+import xiao.battleroyale.api.event.game.tick.ZoneTickEvent;
+import xiao.battleroyale.api.event.game.tick.ZoneTickFinishEvent;
 import xiao.battleroyale.api.game.zone.IGameZoneReadApi;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
@@ -161,7 +161,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
     @Override
     public void onGameTick(int gameTime) {
         GameManager gameManager = GameManager.get();
-        if (EventPoster.postEvent(new ZoneTickData(gameManager, gameTime))) {
+        if (EventPoster.postEvent(new ZoneTickEvent(gameManager, gameTime))) {
             return;
         }
 
@@ -197,7 +197,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
             }
         }
         this.isTicking = false;
-        EventPoster.postEvent(new ZoneTickFinishData(gameManager, gameTime));
+        EventPoster.postEvent(new ZoneTickFinishEvent(gameManager, gameTime));
 
         if (shouldStopGame) { // 在移除区域前执行，防止区域结束的tick没有发送消息
             clear(serverLevel);
