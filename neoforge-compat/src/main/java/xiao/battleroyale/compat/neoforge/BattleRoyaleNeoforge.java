@@ -7,7 +7,6 @@ import net.neoforged.fml.loading.FMLLoader;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.event.IEventPoster;
 import xiao.battleroyale.api.event.IEventRegister;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
@@ -37,7 +36,6 @@ public class BattleRoyaleNeoforge {
     public static INetworkAdapter networkAdapter;
     public static INetworkHook networkHook;
     public static IEventRegister eventRegister;
-    public static IEventPoster eventPoster;
     public static IBlockModelRenderer blockModelRenderer;
     public static BattleRoyale.CompatApi compatApi;
 
@@ -49,7 +47,6 @@ public class BattleRoyaleNeoforge {
         modEventBus.register(BattleRoyaleNeoforge.networkAdapter);
         BattleRoyaleNeoforge.networkHook = new NeoNetworkHook();
         BattleRoyaleNeoforge.eventRegister = new NeoEventRegister();
-        BattleRoyaleNeoforge.eventPoster = new NeoEventPoster();
         BattleRoyaleNeoforge.blockModelRenderer = new NeoBlockModelRenderer();
         BattleRoyaleNeoforge.compatApi = new BattleRoyale.CompatApi(JmApi.get(), TaczEventRegister.get(), TaczGunOperator.get());
 
@@ -57,12 +54,9 @@ public class BattleRoyaleNeoforge {
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
 
         BattleRoyale.init(mcSide,
-                BattleRoyaleNeoforge.registrarFactory,
-                BattleRoyaleNeoforge.mcRegistry,
-                BattleRoyaleNeoforge.networkAdapter,
-                BattleRoyaleNeoforge.networkHook,
+                BattleRoyaleNeoforge.registrarFactory, BattleRoyaleNeoforge.mcRegistry,
+                BattleRoyaleNeoforge.networkAdapter, BattleRoyaleNeoforge.networkHook,
                 BattleRoyaleNeoforge.eventRegister,
-                BattleRoyaleNeoforge.eventPoster,
                 BattleRoyaleNeoforge.blockModelRenderer,
                 BattleRoyaleNeoforge.compatApi
         );
