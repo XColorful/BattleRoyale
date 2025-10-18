@@ -10,7 +10,7 @@ displayName="Custom BattleRoyale"
 displayURL="https://github.com/XColorful/BattleRoyale/wiki"
 logoFile="logo.png"
 authors="XiaoColorful"
-description='''
+description='''Play customizable battleroyale in Minecraft
 '''
 
 [[dependencies.battleroyale]]
