@@ -97,12 +97,14 @@ public class LootGenerator {
         for (ILootData data : lootData) {
             if (data.getDataType() == LootDataType.ENTITY) {
                 IEntityLootData entityLootData = (IEntityLootData) data;
-                Entity entity = entityLootData.getEntity(lootContext.serverLevel);
-                if (entity == null) {
-                    continue;
+                int count = entityLootData.getCount();
+                for (int i = 0; i < count; i++) {
+                    Entity entity = entityLootData.getEntity(lootContext.serverLevel);
+                    if (entity == null) break;
+
+                    gameIdWriteApi.addGameId(entity, lootContext.gameId);
+                    lootEntities.add(entity);
                 }
-                gameIdWriteApi.addGameId(entity, lootContext.gameId);
-                lootEntities.add(entity);
             }
         }
 

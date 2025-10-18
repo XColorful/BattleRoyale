@@ -70,12 +70,10 @@ public class InventoryFunc extends AbstractSimpleFunc {
                     if (this.lootEntry != null) {
                         lootItems = LootGenerator.generateLootItem(lootContext, this.lootEntry);
                     }
-                    BattleRoyale.LOGGER.debug("lootItems.size()={}", lootItems.size());
                     // 再刷引用物资刷新器的
                     if (additionalLootEntry != null) {
                         lootItems.addAll(LootGenerator.generateLootItem(lootContext, additionalLootEntry));
                     }
-                    BattleRoyale.LOGGER.debug("lootItems.size()={}", lootItems.size());
                     for (ItemStack itemStack : lootItems) {
                         BattleRoyale.LOGGER.debug(itemStack.toString());
                     }
