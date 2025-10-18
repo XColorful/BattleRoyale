@@ -82,4 +82,9 @@ public interface ISpatialZone {
      * 供多边形使用
      */
     int getSegments();
+
+    @Nullable
+    Double getTopCenterPos(double progress);
+    @Nullable
+    Double getBottomCenterPos(double progress);
 }

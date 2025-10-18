@@ -423,6 +423,26 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
         return endRotateDegree;
     }
 
+    @Override
+    public @Nullable Double getTopCenterPos(double progress) {
+        Vec3 center = getCenterPos(progress);
+        Vec3 dimension = getDimension(progress);
+        if (center == null || dimension == null) {
+            BattleRoyale.LOGGER.debug("Failed to get top pos by progress:{}", progress);
+            return null;
+        }
+        return center.y + dimension.y;
+    }
+    @Override
+    public @Nullable Double getBottomCenterPos(double progress) {
+        Vec3 center = getCenterPos(progress);
+        if (center == null) {
+            BattleRoyale.LOGGER.debug("Failed to get bottom pos by progress:{}", progress);
+            return null;
+        }
+        return center.y;
+    }
+
     @Nullable
     public Vec3 getPreviousCenterById(int zoneId, double progress) {
         IGameZone gameZone = ZoneManager.get().getGameZone(zoneId);

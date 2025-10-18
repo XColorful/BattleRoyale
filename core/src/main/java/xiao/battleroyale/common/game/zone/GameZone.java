@@ -304,6 +304,10 @@ public class GameZone implements IGameZone {
     public double getRotateDegree(double progress) { return spatialZone.getRotateDegree(progress); }
     @Override
     public double getEndRotateDegree() { return spatialZone.getEndRotateDegree(); }
+    @Override
+    public @Nullable Double getTopCenterPos(double progress) { return spatialZone.getTopCenterPos(progress); }
+    @Override
+    public @Nullable Double getBottomCenterPos(double progress) { return spatialZone.getBottomCenterPos(progress); }
 
     @Override
     public boolean hasBadShape() {
