@@ -152,7 +152,7 @@ public class GameZone implements IGameZone {
             return;
         }
 
-        double shapeProgress = tickableZone.getShapeProgress(zoneContext.gameTime, zoneDelay);
+        double shapeProgress = getShapeProgress(zoneContext.gameTime);
         // 同步客户端
         if (Math.abs(shapeProgress - prevShapeProgress) > 0.001F) { // 圈在移动，频繁更新
             prevShapeProgress = shapeProgress;
@@ -202,6 +202,11 @@ public class GameZone implements IGameZone {
                 this.spatialZone,
                 shapeProgress
         );
+    }
+
+    @Override
+    public double getShapeProgress(int gameTime) {
+        return tickableZone.getShapeProgress(gameTime, zoneDelay);
     }
 
     @Override
