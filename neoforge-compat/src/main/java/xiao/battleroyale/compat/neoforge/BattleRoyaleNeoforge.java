@@ -7,7 +7,6 @@ import net.neoforged.fml.loading.FMLLoader;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.event.IEventPoster;
 import xiao.battleroyale.api.event.IEventRegister;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
@@ -15,7 +14,6 @@ import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.INetworkHook;
 import xiao.battleroyale.compat.neoforge.client.renderer.NeoBlockModelRenderer;
 import xiao.battleroyale.compat.neoforge.compat.journeymap.JmApi;
-import xiao.battleroyale.compat.neoforge.event.NeoEventPoster;
 import xiao.battleroyale.compat.neoforge.event.NeoEventRegister;
 import xiao.battleroyale.compat.neoforge.init.registry.NeoRegistrarFactory;
 import xiao.battleroyale.compat.neoforge.minecraft.NeoRegistry;
@@ -31,7 +29,6 @@ public class BattleRoyaleNeoforge {
     public static INetworkAdapter networkAdapter;
     public static INetworkHook networkHook;
     public static IEventRegister eventRegister;
-    public static IEventPoster eventPoster;
     public static IBlockModelRenderer blockModelRenderer;
     public static BattleRoyale.CompatApi compatApi;
 
@@ -42,7 +39,6 @@ public class BattleRoyaleNeoforge {
         BattleRoyaleNeoforge.networkAdapter = new NeoNetworkAdapter();
         BattleRoyaleNeoforge.networkHook = new NeoNetworkHook();
         BattleRoyaleNeoforge.eventRegister = new NeoEventRegister();
-        BattleRoyaleNeoforge.eventPoster = new NeoEventPoster();
         BattleRoyaleNeoforge.blockModelRenderer = new NeoBlockModelRenderer();
         BattleRoyaleNeoforge.compatApi = new BattleRoyale.CompatApi(JmApi.get());
 
@@ -50,26 +46,12 @@ public class BattleRoyaleNeoforge {
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
 
         BattleRoyale.init(mcSide,
-                BattleRoyaleNeoforge.registrarFactory,
-                BattleRoyaleNeoforge.mcRegistry,
-                BattleRoyaleNeoforge.networkAdapter,
-                BattleRoyaleNeoforge.networkHook,
+                BattleRoyaleNeoforge.registrarFactory, BattleRoyaleNeoforge.mcRegistry,
+                BattleRoyaleNeoforge.networkAdapter, BattleRoyaleNeoforge.networkHook,
                 BattleRoyaleNeoforge.eventRegister,
-                BattleRoyaleNeoforge.eventPoster,
                 BattleRoyaleNeoforge.blockModelRenderer,
                 BattleRoyaleNeoforge.compatApi
         );
-
-        try {
-            Class.forName(ModBlocks.class.getName());
-            Class.forName(ModCreativeTabs.class.getName());
-            Class.forName(ModItems.class.getName());
-            Class.forName(ModEntities.class.getName());
-            Class.forName(ModMenuTypes.class.getName());
-            Class.forName(ModSounds.class.getName());
-        } catch (ClassNotFoundException e) {
-            BattleRoyale.LOGGER.error("Failed to load core registrar class: {}", e.getMessage());
-        }
 
         // NeoForge 自动将 modEventBus 传入构造函数，无需 FMLJavaModLoadingContext.get()
         // IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
