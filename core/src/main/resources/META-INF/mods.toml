@@ -36,3 +36,8 @@ description='''
     mandatory=false
     versionRange="[2.0.16,]"
     side="BOTH"
+[[dependencies.battleroyale]]
+    modId="cbraddon"
+    mandatory=false
+    versionRange="[0.4.4-dev2,)"
+    side="SERVER"

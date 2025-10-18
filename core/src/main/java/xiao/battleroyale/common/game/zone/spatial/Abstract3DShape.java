@@ -310,4 +310,25 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
     protected boolean hasEqualXYZAbsDimension() {
         return Vec3Utils.equalXYZAbs(startDimension) && Vec3Utils.equalXYZAbs(endDimension);
     }
+
+    @Override
+    public @Nullable Double getTopCenterPos(double progress) {
+        Vec3 center = getCenterPos(progress);
+        Vec3 dimension = getDimension(progress);
+        if (center == null || dimension == null) {
+            BattleRoyale.LOGGER.debug("Failed to get top pos by progress:{}", progress);
+            return null;
+        }
+        return center.y + dimension.y / 2;
+    }
+    @Override
+    public @Nullable Double getBottomCenterPos(double progress) {
+        Vec3 center = getCenterPos(progress);
+        Vec3 dimension = getDimension(progress);
+        if (center == null || dimension == null) {
+            BattleRoyale.LOGGER.debug("Failed to get bottom pos by progress:{}", progress);
+            return null;
+        }
+        return center.y - dimension.y / 2;
+    }
 }

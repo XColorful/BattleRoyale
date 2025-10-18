@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.event.loot.generate.CustomGenerateEventData;
+import xiao.battleroyale.api.event.loot.generate.CustomGenerateEvent;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.common.loot.LootGenerator;
@@ -28,7 +28,7 @@ public class EventEntry extends AbstractEventLootEntry {
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
         List<ILootData> lootData = new ArrayList<>();
-        if (EventPoster.postEvent(new CustomGenerateEventData<>(lootContext, target, protocol, tag, lootData))) {
+        if (EventPoster.postEvent(new CustomGenerateEvent<>(lootContext, target, protocol, tag, lootData))) {
             return lootData;
         } else {
             return Collections.emptyList();
