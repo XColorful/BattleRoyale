@@ -41,3 +41,8 @@ description='''Play customizable battleroyale in Minecraft
     mandatory=false
     versionRange="[1.0.2,]"
     side="BOTH"
+[[dependencies.battleroyale]]
+    modId="cbraddon"
+    mandatory=false
+    versionRange="[0.4.4-dev2,)"
+    side="SERVER"
