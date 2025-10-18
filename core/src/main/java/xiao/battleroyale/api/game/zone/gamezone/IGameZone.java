@@ -74,4 +74,6 @@ public interface IGameZone extends ITickableZone, ISpatialZone {
      * @return 序列化NBT
      */
     CompoundTag toNBT(double progress);
+
+    double getShapeProgress(int gameTime);
 }
