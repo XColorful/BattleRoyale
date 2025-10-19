@@ -79,13 +79,13 @@ public class TeleportSpawnerCalculator {
         switch (context.shapeType) {
             case CIRCLE -> {
                 if (context.useGoldenSpiral) { // 黄金螺旋
-                    basePositions = Distribution.GoldenSpiral.distributed(context.centerPos, context.dimension, simulationCount, context.allowOnBorder, context.globalShrinkRatio);
+                    basePositions = Distribution.GoldenSpiral.get().distributed(context.centerPos, context.dimension, simulationCount, context.allowOnBorder, context.globalShrinkRatio);
                 } else { // 双圆心网格
-                    basePositions = Distribution.CircleGrid.distributed(context.centerPos, context.dimension, simulationCount, context.allowOnBorder, context.globalShrinkRatio);
+                    basePositions = Distribution.CircleGrid.get().distributed(context.centerPos, context.dimension, simulationCount, context.allowOnBorder, context.globalShrinkRatio);
                 }
             }
             case SQUARE, RECTANGLE -> {
-                basePositions = Distribution.RectangleGrid.distributed(context.centerPos, context.dimension, simulationCount, context.allowOnBorder, context.globalShrinkRatio);
+                basePositions = Distribution.RectangleGrid.get().distributed(context.centerPos, context.dimension, simulationCount, context.allowOnBorder, context.globalShrinkRatio);
             }
             default -> {
                 ServerLevel serverLevel = GameManager.get().getServerLevel();

@@ -8,7 +8,6 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.event.IEventPoster;
 import xiao.battleroyale.api.event.IEventRegister;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
@@ -32,7 +31,6 @@ public class BattleRoyaleForge {
     public static INetworkAdapter networkAdapter;
     public static INetworkHook networkHook;
     public static IEventRegister eventRegister;
-    public static IEventPoster eventPoster;
     public static IBlockModelRenderer blockModelRenderer;
     public static BattleRoyale.CompatApi compatApi;
 
@@ -44,7 +42,6 @@ public class BattleRoyaleForge {
         BattleRoyaleForge.networkAdapter = new ForgeNetworkAdapter();
         BattleRoyaleForge.networkHook = new ForgeNetworkHook();
         BattleRoyaleForge.eventRegister = new ForgeEventRegister();
-        BattleRoyaleForge.eventPoster = new ForgeEventPoster();
         BattleRoyaleForge.blockModelRenderer = new ForgeBlockModelRenderer();
         BattleRoyaleForge.compatApi = new BattleRoyale.CompatApi(JmApi.get(), null, null);
 
@@ -54,7 +51,7 @@ public class BattleRoyaleForge {
         BattleRoyale.init(mcSide,
                 BattleRoyaleForge.registrarFactory, BattleRoyaleForge.mcRegistry,
                 BattleRoyaleForge.networkAdapter, BattleRoyaleForge.networkHook,
-                BattleRoyaleForge.eventRegister, BattleRoyaleForge.eventPoster,
+                BattleRoyaleForge.eventRegister,
                 BattleRoyaleForge.blockModelRenderer,
                 BattleRoyaleForge.compatApi);
 
