@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
-import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.data.EntityData;
@@ -35,7 +34,7 @@ public class GolemEntry extends AbstractLootEntry {
             return Collections.emptyList();
         }
 
-        int generatedCount = LootGenerator.generateLootEntity(lootContext, new EntityData(this.entityEntry), target.getBlockPos());
+        int generatedCount = LootGenerator.generateLootEntities(lootContext, new EntityData(this.entityEntry), target.getBlockPos());
         if (generatedCount <= 0) {
             BattleRoyale.LOGGER.debug("Golem entry doesn't generate any entity");
         }

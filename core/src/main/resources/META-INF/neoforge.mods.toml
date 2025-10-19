@@ -10,7 +10,7 @@ displayName="Custom BattleRoyale"
 displayURL="https://github.com/XColorful/BattleRoyale/wiki"
 logoFile="logo.png"
 authors="XiaoColorful"
-description='''
+description='''Play customizable battleroyale in Minecraft
 '''
 
 [[dependencies.battleroyale]]
@@ -36,3 +36,8 @@ description='''
     type="optional"
     versionRange="[2.0.16,]"
     side="BOTH"
+[[dependencies.battleroyale]]
+    modId="cbraddon"
+    type="optional"
+    versionRange="[0.4.4-dev2,)"
+    side="SERVER"
