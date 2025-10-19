@@ -16,7 +16,6 @@ import xiao.battleroyale.compat.neoforge.client.init.NeoClientSetup;
 import xiao.battleroyale.compat.neoforge.client.init.NeoModEntityRender;
 import xiao.battleroyale.compat.neoforge.client.renderer.NeoBlockModelRenderer;
 import xiao.battleroyale.compat.neoforge.compat.journeymap.JmApi;
-import xiao.battleroyale.compat.neoforge.event.NeoEventPoster;
 import xiao.battleroyale.compat.neoforge.event.NeoEventRegister;
 import xiao.battleroyale.compat.neoforge.init.NeoCommonSetup;
 import xiao.battleroyale.compat.neoforge.init.NeoCompatInit;
