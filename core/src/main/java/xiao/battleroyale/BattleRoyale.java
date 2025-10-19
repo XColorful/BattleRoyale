@@ -43,7 +43,6 @@ public class BattleRoyale {
     protected static MinecraftServer minecraftServer;
     private static IRegistrarFactory registrarFactory;
     private static IMcRegistry mcRegistry;
-    private static IEventPoster eventPoster;
     public record CompatApi(IJmApi jmApi) {}
     private static CompatApi compatApi;
 
