@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.event.loot.LootGenerationEventHandler;
+import xiao.battleroyale.event.handler.loot.LootGenerationEventHandler;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;

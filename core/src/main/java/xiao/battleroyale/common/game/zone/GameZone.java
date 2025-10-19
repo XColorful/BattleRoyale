@@ -4,8 +4,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.event.game.zone.ZoneCompleteEventData;
-import xiao.battleroyale.api.event.game.zone.ZoneCreatedEventData;
+import xiao.battleroyale.api.event.game.zone.ZoneCompleteEvent;
+import xiao.battleroyale.api.event.game.zone.ZoneCreatedEvent;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
@@ -104,12 +104,12 @@ public class GameZone implements IGameZone {
             addZoneDetailProperty();
             created = true;
             present = true;
-            EventPoster.postEvent(new ZoneCreatedEventData(GameManager.get(), this, true));
+            EventPoster.postEvent(new ZoneCreatedEvent(GameManager.get(), this, true));
         } else {
             addFailedZoneProperty();
             present = false;
             finished = true;
-            EventPoster.postEvent(new ZoneCreatedEventData(GameManager.get(), this, false));
+            EventPoster.postEvent(new ZoneCreatedEvent(GameManager.get(), this, false));
         }
     }
 
@@ -129,8 +129,8 @@ public class GameZone implements IGameZone {
     }
 
     private boolean shouldTick(int gameTime) {
-        checkShouldFinish(gameTime);
-        return isCreated() && isPresent() && !isFinished() // GameZone
+        return !checkShouldFinish(gameTime)
+                && isCreated() && isPresent() && !isFinished() // GameZone
                 && !ZoneManager.shouldStopGame; // 每tick多一个bool检查，少一个列表对象复制（直接用视图遍历）
     }
 
@@ -148,11 +148,11 @@ public class GameZone implements IGameZone {
     public void gameTick(ZoneContext zoneContext) {
         if (!shouldTick(zoneContext.gameTime)) {
             GameMessageManager.addZoneNbtMessage(this.zoneId, null); // 传入null视为提醒置空NBT
-            EventPoster.postEvent(new ZoneCompleteEventData(GameManager.get(), this));
+            EventPoster.postEvent(new ZoneCompleteEvent(GameManager.get(), this));
             return;
         }
 
-        double shapeProgress = tickableZone.getShapeProgress(zoneContext.gameTime, zoneDelay);
+        double shapeProgress = getShapeProgress(zoneContext.gameTime);
         // 同步客户端
         if (Math.abs(shapeProgress - prevShapeProgress) > 0.001F) { // 圈在移动，频繁更新
             prevShapeProgress = shapeProgress;
@@ -162,7 +162,7 @@ public class GameZone implements IGameZone {
             MessageManager.get().extendZoneMessageTime(zoneId, FORCE_SYNC_FREQUENCY);
         }
         if ((zoneContext.gameTime + getTickOffset()) % getTickFrequency() == 0) {
-            funcTick(new ZoneTickContext(zoneContext, shapeProgress, spatialZone));
+            funcTick(new ZoneTickContext(zoneContext, zoneId, shapeProgress, spatialZone));
         }
     }
 
@@ -202,6 +202,11 @@ public class GameZone implements IGameZone {
                 this.spatialZone,
                 shapeProgress
         );
+    }
+
+    @Override
+    public double getShapeProgress(int gameTime) {
+        return tickableZone.getShapeProgress(gameTime, zoneDelay);
     }
 
     @Override
@@ -299,6 +304,10 @@ public class GameZone implements IGameZone {
     public double getRotateDegree(double progress) { return spatialZone.getRotateDegree(progress); }
     @Override
     public double getEndRotateDegree() { return spatialZone.getEndRotateDegree(); }
+    @Override
+    public @Nullable Double getTopCenterPos(double progress) { return spatialZone.getTopCenterPos(progress); }
+    @Override
+    public @Nullable Double getBottomCenterPos(double progress) { return spatialZone.getBottomCenterPos(progress); }
 
     @Override
     public boolean hasBadShape() {

@@ -9,7 +9,7 @@ import xiao.battleroyale.api.event.IClientTickEvent;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.client.game.ClientGameDataManager;
-import xiao.battleroyale.event.EventRegistry;
+import xiao.battleroyale.event.EventRegister;
 
 public class JMEventHandler implements IEventHandler {
 
@@ -31,11 +31,11 @@ public class JMEventHandler implements IEventHandler {
     }
 
     protected static void register() {
-        EventRegistry.register(get(), EventType.CLIENT_TICK_EVENT);
+        EventRegister.register(get(), EventType.CLIENT_TICK_EVENT);
     }
 
     protected static void unregister() {
-        EventRegistry.unregister(JMEventHandler.get(), EventType.CLIENT_TICK_EVENT);
+        EventRegister.unregister(JMEventHandler.get(), EventType.CLIENT_TICK_EVENT);
         BattleRoyale.getCompatApi().jmApi().removeAll(JMEventHandler.MOD_JM_ID);
     }
 
