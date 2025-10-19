@@ -5,11 +5,14 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import org.slf4j.Logger;
+import xiao.battleroyale.algorithm.AlgorithmFacade;
+import xiao.battleroyale.api.algorithm.IAlgorithmApi;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.journeymap.IJmApi;
 import xiao.battleroyale.api.config.IModConfigManager;
-import xiao.battleroyale.api.event.IEventPoster;
+import xiao.battleroyale.api.event.ICustomEventPoster;
+import xiao.battleroyale.api.event.ICustomEventRegister;
 import xiao.battleroyale.api.event.IEventRegister;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
@@ -20,7 +23,7 @@ import xiao.battleroyale.client.renderer.BlockModelRenderer;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.event.EventPoster;
-import xiao.battleroyale.event.EventRegistry;
+import xiao.battleroyale.event.EventRegister;
 import xiao.battleroyale.network.NetworkHandler;
 import xiao.battleroyale.network.NetworkHook;
 import xiao.battleroyale.resource.ResourceLoader;
@@ -40,18 +43,13 @@ public class BattleRoyale {
     protected static MinecraftServer minecraftServer;
     private static IRegistrarFactory registrarFactory;
     private static IMcRegistry mcRegistry;
-    private static INetworkAdapter networkAdapter;
-    private static INetworkHook networkHook;
-    private static IEventRegister eventRegister;
-    private static IEventPoster eventPoster;
-    private static IBlockModelRenderer blockModelRenderer;
     public record CompatApi(IJmApi jmApi) {}
     private static CompatApi compatApi;
 
     public static void init(McSide mcSide,
                             IRegistrarFactory factory, IMcRegistry mcRegistry,
                             INetworkAdapter networkAdapter, INetworkHook networkHook,
-                            IEventRegister eventRegister, IEventPoster eventPoster,
+                            IEventRegister eventRegister,
                             IBlockModelRenderer blockModelRenderer,
                             CompatApi compatApi) {
         if (initialized) return;
@@ -59,15 +57,9 @@ public class BattleRoyale {
         BattleRoyale.mcSide = mcSide;
         BattleRoyale.registrarFactory = factory;
         BattleRoyale.mcRegistry = mcRegistry;
-        BattleRoyale.networkAdapter = networkAdapter;
         NetworkHandler.initialize(networkAdapter);
-        BattleRoyale.networkHook = networkHook;
         NetworkHook.initialize(networkHook);
-        BattleRoyale.eventRegister = eventRegister;
-        EventRegistry.initialize(eventRegister);
-        BattleRoyale.eventPoster = eventPoster;
-        EventPoster.initialize(eventPoster);
-        BattleRoyale.blockModelRenderer = blockModelRenderer;
+        EventRegister.initialize(eventRegister);
         BlockModelRenderer.initialize(blockModelRenderer);
         BattleRoyale.compatApi = compatApi;
 
@@ -116,10 +108,19 @@ public class BattleRoyale {
     public static MinecraftServer getMinecraftServer() {
         return minecraftServer;
     }
+    public static ICustomEventPoster getEventPoster() {
+        return EventPoster.get();
+    }
+    public static ICustomEventRegister getEventRegister() {
+        return EventRegister.get();
+    }
     public static IGameManager getGameManager() {
         return GameManager.get();
     }
     public static IModConfigManager getModConfigManager() {
         return ModConfigManager.getApi();
+    }
+    public static IAlgorithmApi getAlgorithmApi() {
+        return AlgorithmFacade.get();
     }
 }
