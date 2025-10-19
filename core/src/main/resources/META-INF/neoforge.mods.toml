@@ -43,6 +43,6 @@ description='''Play customizable battleroyale in Minecraft
     side="BOTH"
 [[dependencies.battleroyale]]
     modId="cbraddon"
-    mandatory=false
+    type="optional"
     versionRange="[0.4.4-dev2,)"
     side="SERVER"
