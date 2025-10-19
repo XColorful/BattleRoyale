@@ -1,13 +1,22 @@
 package xiao.battleroyale.algorithm;
 
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.api.algorithm.ICircleGrid;
+import xiao.battleroyale.api.algorithm.IGoldenSpiral;
+import xiao.battleroyale.api.algorithm.IRectangleGrid;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Distribution {
     
-    public static class RectangleGrid {
+    public static class RectangleGrid implements IRectangleGrid {
+
+        private static final RectangleGrid INSTANCE = new RectangleGrid();
+        public static IRectangleGrid get() {
+            return INSTANCE;
+        }
+        private RectangleGrid() {}
 
         /**
          * 计算矩形网格所需的 Nx 和 Ny。
@@ -15,7 +24,7 @@ public class Distribution {
          * @param count 目标点位数量
          * @return 包含 {Nx, Ny} 的数组
          */
-        private static int[] calculateGridSize(Vec3 dimension, int count) {
+        private int[] calculateGridSize(Vec3 dimension, int count) {
             if (count <= 0) return new int[]{1, 1};
 
             double aspectRatio = dimension.x / dimension.z;
@@ -45,7 +54,7 @@ public class Distribution {
          * @param ny Z方向网格数
          * @return 内部收缩因子
          */
-        private static double getRectangleInternalShrinkFactor(int nx, int ny) {
+        private double getRectangleInternalShrinkFactor(int nx, int ny) {
             // 计算 X 和 Z 方向的收缩因子： S = 1 - 1/N
             double shrinkFactorX = 1.0 - (1.0 / nx);
             double shrinkFactorZ = 1.0 - (1.0 / ny);
@@ -61,13 +70,13 @@ public class Distribution {
          * @param count 目标点位数量
          * @return 初始网格中心点列表
          */
-        public static List<Vec3> distributed(Vec3 center, Vec3 dimension, int count) {
+        @Override public List<Vec3> distributed(Vec3 center, Vec3 dimension, int count) {
             int[] gridSize = calculateGridSize(dimension, count);
             int nx = gridSize[0];
             int ny = gridSize[1];
             return distributed(center, dimension, nx, ny);
         }
-        private static List<Vec3> distributed(Vec3 center, Vec3 dimension, int nx, int ny) {
+        private List<Vec3> distributed(Vec3 center, Vec3 dimension, int nx, int ny) {
             List<Vec3> points = new ArrayList<>();
 
             // 计算每个网格单元的尺寸 (dx, dz)
@@ -91,7 +100,7 @@ public class Distribution {
         }
 
         // 便利接口
-        public static List<Vec3> distributed(Vec3 center, Vec3 dimension, int count, boolean allowOnBorder, double globalShrinkRatio) {
+        @Override public List<Vec3> distributed(Vec3 center, Vec3 dimension, int count, boolean allowOnBorder, double globalShrinkRatio) {
             double internalShrinkFactor = 1.0;
 
             int[] gridSize = calculateGridSize(dimension, count);
@@ -112,7 +121,13 @@ public class Distribution {
         
     }
 
-    public static class GoldenSpiral {
+    public static class GoldenSpiral implements IGoldenSpiral {
+
+        private static final GoldenSpiral INSTANCE = new GoldenSpiral();
+        public static IGoldenSpiral get() {
+            return INSTANCE;
+        }
+        private GoldenSpiral() {}
 
         /**
          * 在圆形区域内，使用黄金角螺旋 (Golden Angle/Fibonacci Spiral) 计算分散点位。
@@ -123,11 +138,11 @@ public class Distribution {
          * @param count 目标点位数量
          * @return 初始螺旋点位列表
          */
-        public static List<Vec3> distributed(Vec3 center, Vec3 dimension, int count) {
+        @Override public List<Vec3> distributed(Vec3 center, Vec3 dimension, int count) {
             return distributed(center, dimension, count, 1);
         }
         // 便利接口
-        public static List<Vec3> distributed(Vec3 center, Vec3 dimension, int count, boolean allowOnBorder, double globalShrinkRatio) {
+        @Override public List<Vec3> distributed(Vec3 center, Vec3 dimension, int count, boolean allowOnBorder, double globalShrinkRatio) {
             double shrinkFactor = 1.0;
             if (!allowOnBorder && count > 1) { // 1的时候不缩放
                 // 收缩因子计算：1 - 1/√(N+4)
@@ -138,7 +153,7 @@ public class Distribution {
 
             return distributed(center, dimension, count, finalShrinkRatio);
         }
-        private static List<Vec3> distributed(Vec3 center, Vec3 dimension, int count, double shrinkRatio) {
+        private List<Vec3> distributed(Vec3 center, Vec3 dimension, int count, double shrinkRatio) {
             List<Vec3> points = new ArrayList<>();
 
             // 黄金角: 约 137.5 度，用于在圆上按索引顺序生成低偏差的螺旋角度
@@ -165,15 +180,21 @@ public class Distribution {
         
     }
 
-    public static class CircleGrid {
+    public static class CircleGrid implements ICircleGrid {
 
-        public static void preCalculate(int n) {
+        private static final CircleGrid INSTANCE = new CircleGrid();
+        public static ICircleGrid get() {
+            return INSTANCE;
+        }
+        private CircleGrid() {}
+
+        public void preCalculate(int n) {
             CircleGridCalculator.preCalculate(n);
         }
-        public static void preCalculate(List<Integer> nList) {
+        public void preCalculate(List<Integer> nList) {
             CircleGridCalculator.preCalculate(nList);
         }
-        public static void preCalculate(int startN, int endN) {
+        public void preCalculate(int startN, int endN) {
             CircleGridCalculator.preCalculate(startN, endN);
         }
 
@@ -186,11 +207,11 @@ public class Distribution {
          * @param minCount 目标点位数量
          * @return 初始网格点位列表
          */
-        public static List<Vec3> distributed(Vec3 center, Vec3 dimension, int minCount) {
+        @Override public List<Vec3> distributed(Vec3 center, Vec3 dimension, int minCount) {
             return distributed(center, dimension, minCount, 1.0);
         }
         // 便利接口
-        public static List<Vec3> distributed(Vec3 center, Vec3 dimension, int minCount, boolean allowOnBorder, double globalShrinkRatio) {
+        @Override public List<Vec3> distributed(Vec3 center, Vec3 dimension, int minCount, boolean allowOnBorder, double globalShrinkRatio) {
             if (minCount <= 0) return new ArrayList<>();
 
             double internalShrinkFactor = 1.0;
@@ -207,7 +228,7 @@ public class Distribution {
 
             return distributed(center, dimension, minCount, finalShrinkRatio);
         }
-        private static List<Vec3> distributed(Vec3 center, Vec3 dimension, int minCount, double shrinkRatio) {
+        private List<Vec3> distributed(Vec3 center, Vec3 dimension, int minCount, double shrinkRatio) {
             CircleGridCalculator.CircleGridData data = CircleGridCalculator.getCircleGrid(minCount);
 
             List<Vec3> finalPoints = new ArrayList<>(data.size());

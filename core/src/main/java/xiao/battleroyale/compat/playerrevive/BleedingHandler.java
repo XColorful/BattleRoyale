@@ -11,7 +11,7 @@ import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.event.EventRegistry;
+import xiao.battleroyale.event.EventRegister;
 
 import java.util.*;
 
@@ -36,7 +36,7 @@ public class BleedingHandler implements IEventHandler {
     }
 
     public static void register() {
-        if (EventRegistry.register(get(), EventType.SERVER_TICK_EVENT)) {
+        if (EventRegister.register(get(), EventType.SERVER_TICK_EVENT)) {
             isRegistered = true;
         } else {
             BattleRoyale.LOGGER.warn("BleedingHandler failed to register instantly");
@@ -44,7 +44,7 @@ public class BleedingHandler implements IEventHandler {
     }
 
     public static void unregister() {
-        EventRegistry.unregister(get(), EventType.SERVER_TICK_EVENT);
+        EventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
         isRegistered = false;
     }
 

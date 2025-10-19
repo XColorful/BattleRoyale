@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.effect.IEffectManager;
-import xiao.battleroyale.event.effect.MutekiEventHandler;
+import xiao.battleroyale.event.handler.effect.MutekiEventHandler;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.ArrayList;
