@@ -20,6 +20,7 @@ public class Distribution {
 
         /**
          * 计算矩形网格所需的 Nx 和 Ny。
+         * 该算法通过系统搜索，保证找到 Nx * Ny >= count 且比例 Nx/Ny 最接近区域长宽比的解。
          * @param dimension 区域尺寸 (X, Z分量为长宽)
          * @param count 目标点位数量
          * @return 包含 {Nx, Ny} 的数组
@@ -27,24 +28,44 @@ public class Distribution {
         private int[] calculateGridSize(Vec3 dimension, int count) {
             if (count <= 0) return new int[]{1, 1};
 
-            double aspectRatio = dimension.x / dimension.z;
-            // 估算最接近长宽比的 Nx 和 Ny
-            int nx = (int) Math.round(Math.sqrt(count * aspectRatio));
-            int ny = (int) Math.round(Math.sqrt(count / aspectRatio));
+            final double ratio = dimension.x / dimension.z;
 
-            // 迭代增加 Nx 或 Ny，直到 N*M >= count (过采样)
-            while (nx * ny < count) {
-                // 增加短边方向的网格数，以维持比例
-                if (nx * aspectRatio < ny) {
-                    nx++;
-                } else {
-                    ny++;
+            // 初始化最佳解
+            int bestNx = 1;
+            int bestNy = count;
+            double minError = Double.MAX_VALUE;
+
+            // 搜索上限设为 count，确保找到所有可能的 Nx * Ny >= count 的组合。
+            int maxSearch = count;
+
+            for (int ny = 1; ny <= maxSearch; ny++) {
+                // 计算满足 Nx * Ny >= count 的最小整数 Nx
+                int nx = (int) Math.ceil((double) count / ny);
+
+                // 计算比例误差： |当前比例 - 目标比例|
+                double currentRatio = (double) nx / ny;
+                double error = Math.abs(currentRatio - ratio);
+
+                // 检查是否是更优解
+                if (error < minError) {
+                    minError = error;
+                    bestNx = nx;
+                    bestNy = ny;
+                } else if (error == minError) {
+                    // 如果误差相同，选择总点数 Nx * Ny 最小的解（最小化过采样）
+                    if (nx * ny < bestNx * bestNy) {
+                        bestNx = nx;
+                        bestNy = ny;
+                    }
+                }
+
+                // 优化退出：当 Nx 降到 1 时，继续增加 Ny 只会导致比例越来越差。
+                if (nx == 1 && ny > 1) {
+                    break;
                 }
             }
 
-            nx = Math.max(1, nx);
-            ny = Math.max(1, ny);
-            return new int[]{nx, ny};
+            return new int[]{bestNx, bestNy};
         }
 
         /**
