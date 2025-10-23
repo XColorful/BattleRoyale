@@ -39,6 +39,9 @@ public class NeoClientTickHigh extends AbstractNeoEventCommon {
 
     @SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = true)
     public void onClientTickEvent(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         super.onEvent(event);
     }
 }
