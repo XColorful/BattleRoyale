@@ -95,7 +95,6 @@ public class SphereShape extends Abstract3DShape {
         if (needEqualAbs) {
             baseVec = Vec3Utils.applyYAbsToXZ(baseVec);
         }
-        BattleRoyale.LOGGER.debug("SphereShape.getDimension({}):{}, dimensionDist:{}", progress, baseVec, dimensionDist);
         if (checkBadShape
                 && (Vec3Utils.hasNegative(baseVec) || !Vec3Utils.equalXYZAbs(baseVec))) {
             return Vec3Utils.positive(baseVec);
