@@ -41,9 +41,9 @@ public class CFHCGamerule {
                 false, true, 0);
         GameEntry gameEntry = new GameEntry(true, 300, DEFAULT_TEAM_COLORS, true, true,
                 20 * 60, 20 * 10, true,
-                true, true, false, DEFAULT_DOWN_DAMAGE, 20,
+                true, true, true, false, DEFAULT_DOWN_DAMAGE, 20,
                 false, false, false, false,
-                false, true, true, true, true,
+                false, true, true, true, true, true,
                 false, true, false, false, 0, 0, false,
                 20 * 7, 20 * 5, 20 * 5);
         GameruleConfig gameruleConfig = new GameruleConfig(gameId, String.format("%s %s %s", name, playerTotal, teamSize), "#FFFFFFAA",
