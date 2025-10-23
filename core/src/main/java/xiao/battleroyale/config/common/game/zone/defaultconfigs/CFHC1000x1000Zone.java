@@ -21,17 +21,17 @@ import java.util.Arrays;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 // Custom Fast Hardcore
-public class CFHC1000x1000Simple {
+public class CFHC1000x1000Zone {
 
     private static final String DEFAULT_FILE_NAME = "example_CustomFastHardcore_1000x1000_25minutes.json";
 
     // 初始阶段5分钟+2/3/4阶段各5分钟+最终阶段5分钟
     // 1/2/3/4/5阶段每秒扣血0.2/0.4/0.6/0.8/1血
-    private static final int TOTAL_GAME_PHASE = 5;
-    private static final int _5_minutes = 5 * 60 * 20;
-    private static final int MAX_GAME_TIME = _5_minutes * (TOTAL_GAME_PHASE + 1); // 上限半小时
+    public static final int TOTAL_GAME_PHASE = 5;
+    public static final int _5_minutes = 5 * 60 * 20;
+    public static final int MAX_GAME_TIME = _5_minutes * (TOTAL_GAME_PHASE + 1); // 上限半小时
 
-    private static final double INITIAL_BORDER_RADIUS = 500; // 直径1000
+    public static final double INITIAL_BORDER_RADIUS = 500; // 直径1000
 
     public static void generateDefaultConfigs(String configDirPath) {
         JsonArray zoneConfigJson = new JsonArray();
