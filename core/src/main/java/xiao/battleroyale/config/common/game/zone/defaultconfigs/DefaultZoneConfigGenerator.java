@@ -22,7 +22,7 @@ public class DefaultZoneConfigGenerator {
         UHC1000x1000Simple.generateDefaultConfigs(configDirPath);
         UHC1000x1000Complex.generateDefaultConfigs(configDirPath);
         if (BattleRoyale.getMcRegistry().isModLoaded(CbrAddon.get().getModId())) {
-            CFHC1000x1000Simple.generateDefaultConfigs(configDirPath);
+            CFHC1000x1000Zone.generateDefaultConfigs(configDirPath);
         }
     }
 }
