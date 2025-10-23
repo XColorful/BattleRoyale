@@ -1,5 +1,6 @@
 package xiao.battleroyale.api.event.game.zone;
 
+import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -20,10 +21,10 @@ public class EntityEvent extends AbstractSpecialZoneEvent {
     protected final ILootEntry lootEntry;
 
     public EntityEvent(IGameManager gameManager, @NotNull ZoneManager.ZoneTickContext zoneTickContext,
-                       String protocol, @NotNull CompoundTag tag,
+                       String protocol, @NotNull JsonObject jsonTag,
                        List<Entity> lootEntities, List<Entity> lastLootEntities, @NotNull CompoundTag nbt,
                        LootGenerator.LootContext lootContext, ILootEntry lootEntry) {
-        super(gameManager, zoneTickContext, protocol, tag);
+        super(gameManager, zoneTickContext, protocol, jsonTag);
         this.lootEntities = lootEntities;
         this.lastLootEntities = lastLootEntities;
         this.nbt = nbt;
@@ -42,7 +43,6 @@ public class EntityEvent extends AbstractSpecialZoneEvent {
         return this.lastLootEntities;
     }
 
-    @Override
     public @NotNull CompoundTag getNbt() {
         return this.nbt;
     }

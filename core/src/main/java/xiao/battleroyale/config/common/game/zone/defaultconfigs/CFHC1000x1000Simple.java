@@ -1,8 +1,8 @@
 package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.loot.ILootEntry;
@@ -181,23 +181,23 @@ public class CFHC1000x1000Simple {
         zoneConfigJson.add(message_zoneConfig.toJson());
 
         // 红色轰炸区
-        CompoundTag bomb_tag = new CompoundTag();
-        bomb_tag.putString("distributionType", "CircleGrid");
-        bomb_tag.putDouble("lootFactorContribution", 1);
-        bomb_tag.putInt("fixedSimulation", 100);
-        bomb_tag.putBoolean("allowOnBorder", true);
-        bomb_tag.putDouble("globalShrinkRatio", 1);
-        bomb_tag.putBoolean("needShuffle", true);
-        bomb_tag.putString("randomRange", StringUtils.vectorToString(new Vec3(5, 0, 5)));
-        bomb_tag.putBoolean("findGround", true);
-        bomb_tag.putBoolean("limitToBottom", false);
-        bomb_tag.putBoolean("limitToTop", true);
-        bomb_tag.putString("additionalOffset", StringUtils.vectorToString(new Vec3(0, 30, 0)));
-        bomb_tag.putBoolean("ignoreOutside", true);
-        bomb_tag.putString("relativeMovementRandomRange", StringUtils.vectorToString(new Vec3(0.5, 3, 0.5)));
+        JsonObject bomb_jsonTag = new JsonObject();
+        bomb_jsonTag.addProperty("distributionType", "CircleGrid");
+        bomb_jsonTag.addProperty("lootFactorContribution", 1);
+        bomb_jsonTag.addProperty("fixedSimulation", 100);
+        bomb_jsonTag.addProperty("allowOnBorder", true);
+        bomb_jsonTag.addProperty("globalShrinkRatio", 1);
+        bomb_jsonTag.addProperty("needShuffle", true);
+        bomb_jsonTag.addProperty("randomRange", StringUtils.vectorToString(new Vec3(5, 0, 5)));
+        bomb_jsonTag.addProperty("findGround", true);
+        bomb_jsonTag.addProperty("limitToBottom", false);
+        bomb_jsonTag.addProperty("limitToTop", true);
+        bomb_jsonTag.addProperty("additionalOffset", StringUtils.vectorToString(new Vec3(0, 30, 0)));
+        bomb_jsonTag.addProperty("ignoreOutside", true);
+        bomb_jsonTag.addProperty("relativeMovementRandomRange", StringUtils.vectorToString(new Vec3(0.5, 3, 0.5)));
         int bomb_zoneTime = phaseTime / 10;
         EntityFuncEntry bomb_entityFuncEntry = new EntityFuncEntry(0, bomb_zoneTime, 10, 0,
-                "cbra:0.4.4", bomb_tag, 1, "{Motion:[0d,-5d,0d]}");
+                "cbra:0.4.4", bomb_jsonTag, 1, "{Motion:[0d,-5d,0d]}");
         CircleEntry bomb_circleEntry = new CircleEntry(
                 new StartEntry().addPreviousCenter(forecast_zoneId, 0).addCenterRange(shrinkRadius / 2).addPlayerCenterLerp(0.5)
                         .addFixedDimension(new Vec3(0, 384, 0)),
@@ -211,23 +211,23 @@ public class CFHC1000x1000Simple {
         zoneConfigJson.add(bomb_zoneConfig.toJson());
 
         // 青色实体刷新区
-        CompoundTag tag = new CompoundTag();
-        tag.putString("distributionType", "GoldenSpiral");
-        tag.putDouble("lootFactorContribution", 0);
-        tag.putInt("fixedSimulation", 25);
-        tag.putBoolean("allowOnBorder", true);
-        tag.putDouble("globalShrinkRatio", 1);
-        tag.putBoolean("needShuffle", true);
-        tag.putString("randomRange", StringUtils.vectorToString(new Vec3(0, 0, 0)));
-        tag.putBoolean("findGround", true);
-        tag.putBoolean("limitToBottom", false);
-        tag.putBoolean("limitToTop", true);
-        tag.putString("additionalOffset", StringUtils.vectorToString(new Vec3(0, 0.5, 0)));
-        tag.putBoolean("ignoreOutside", true);
-        tag.putString("relativeMovementRandomRange", StringUtils.vectorToString(Vec3.ZERO));
+        JsonObject jsonTag = new JsonObject();
+        jsonTag.addProperty("distributionType", "GoldenSpiral");
+        jsonTag.addProperty("lootFactorContribution", 0);
+        jsonTag.addProperty("fixedSimulation", 25);
+        jsonTag.addProperty("allowOnBorder", true);
+        jsonTag.addProperty("globalShrinkRatio", 1);
+        jsonTag.addProperty("needShuffle", true);
+        jsonTag.addProperty("randomRange", StringUtils.vectorToString(new Vec3(0, 0, 0)));
+        jsonTag.addProperty("findGround", true);
+        jsonTag.addProperty("limitToBottom", false);
+        jsonTag.addProperty("limitToTop", true);
+        jsonTag.addProperty("additionalOffset", StringUtils.vectorToString(new Vec3(0, 0.5, 0)));
+        jsonTag.addProperty("ignoreOutside", true);
+        jsonTag.addProperty("relativeMovementRandomRange", StringUtils.vectorToString(Vec3.ZERO));
         int entity_zoneTime = bomb_zoneTime * 2;
         EntityFuncEntry entityFuncEntry = new EntityFuncEntry(0, entity_zoneTime, 20 * 10, 0,
-                "cbra:0.4.4", tag, 2, "{Motion:[0d,0.5d,0d]}");
+                "cbra:0.4.4", jsonTag, 2, "{Motion:[0d,0.5d,0d]}");
         CircleEntry entity_circleEntry = new CircleEntry(
                 new StartEntry().addPreviousCenter(bomb_zoneId, 1)
                         .addFixedDimension(new Vec3(shrinkRadius * (totalGamePhase - phase + 1) * 0.1, 384, shrinkRadius * (totalGamePhase - phase + 1) * 0.1)),

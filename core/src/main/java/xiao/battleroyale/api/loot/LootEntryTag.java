@@ -60,7 +60,7 @@ public final class LootEntryTag {
     public static final String KEY_DELETE = "keyDelete";
     public static final String SHAPE_ENTRY = "shapeEntry";
     public static final String PROTOCOL = "protocol";
-    public static final String TAG = "tag";
+    public static final String TAG = "jsonTag";
 
     private LootEntryTag() {};
 }

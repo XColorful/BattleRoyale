@@ -18,17 +18,17 @@ import java.util.List;
 
 public class EventEntry extends AbstractEventLootEntry {
 
-    public EventEntry(String protocol, @Nullable CompoundTag tag) {
-        super(protocol, tag);
+    public EventEntry(String protocol, @Nullable JsonObject jsonTag) {
+        super(protocol, jsonTag);
     }
     @Override public @NotNull EventEntry copy() {
-        return new EventEntry(protocol, tag.copy());
+        return new EventEntry(protocol, jsonTag.deepCopy());
     }
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
         List<ILootData> lootData = new ArrayList<>();
-        if (EventPoster.postEvent(new CustomGenerateEvent<>(lootContext, target, protocol, tag, lootData))) {
+        if (EventPoster.postEvent(new CustomGenerateEvent<>(lootContext, target, protocol, jsonTag, lootData))) {
             return lootData;
         } else {
             return Collections.emptyList();
@@ -43,9 +43,9 @@ public class EventEntry extends AbstractEventLootEntry {
     @NotNull
     public static EventEntry fromJson(JsonObject jsonObject) {
         String protocol = JsonUtils.getJsonString(jsonObject, LootEntryTag.PROTOCOL, "");
-        CompoundTag tag = JsonUtils.getJsonTag(jsonObject, LootEntryTag.TAG, null);
+        JsonObject jsonTag = JsonUtils.getJsonObject(jsonObject, LootEntryTag.TAG, null);
 
-        return new EventEntry(protocol, tag);
+        return new EventEntry(protocol, jsonTag);
     }
 
     @Override

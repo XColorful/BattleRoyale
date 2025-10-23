@@ -12,12 +12,12 @@ import xiao.battleroyale.util.JsonUtils;
 public class EventFuncEntry extends AbstractEventFuncEntry {
 
     public EventFuncEntry(int moveDelay, int moveTime, int funcFreq, int funcOffset, String protocol,
-                          @Nullable CompoundTag tag) {
-        super(moveDelay, moveTime, funcFreq, funcOffset, protocol, tag);
+                          @Nullable JsonObject jsonTag) {
+        super(moveDelay, moveTime, funcFreq, funcOffset, protocol, jsonTag);
     }
     @Override public @NotNull EventFuncEntry copy() {
         return new EventFuncEntry(moveDelay, moveTime, tickFreq, tickOffset, protocol,
-                tag.copy());
+                jsonTag.deepCopy());
     }
 
     @Override
@@ -28,7 +28,7 @@ public class EventFuncEntry extends AbstractEventFuncEntry {
     @Override
     public ITickableZone createTickableZone() {
         return new EventFunc(moveDelay, moveTime, tickFreq, tickOffset,
-                protocol, tag.copy());
+                protocol, jsonTag.deepCopy());
     }
 
     @Override
@@ -36,7 +36,7 @@ public class EventFuncEntry extends AbstractEventFuncEntry {
         JsonObject jsonObject = super.toJson();
 
         jsonObject.addProperty(ZoneFuncTag.PROTOCOL, protocol);
-        jsonObject.add(ZoneFuncTag.TAG, JsonUtils.writeTagToJson(tag));
+        jsonObject.add(ZoneFuncTag.TAG, jsonTag);
 
         return jsonObject;
     }
@@ -48,9 +48,9 @@ public class EventFuncEntry extends AbstractEventFuncEntry {
         int tickOffset = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.TICK_OFFSET, -1);
 
         String protocol = JsonUtils.getJsonString(jsonObject, ZoneFuncTag.PROTOCOL, "");
-        CompoundTag tag = JsonUtils.getJsonTag(jsonObject, ZoneFuncTag.TAG, null);
+        JsonObject jsonTag = JsonUtils.getJsonObject(jsonObject, ZoneFuncTag.TAG, null);
 
         return new EventFuncEntry(moveDelay, moveTime, tickFreq, tickOffset,
-                protocol, tag);
+                protocol, jsonTag);
     }
 }

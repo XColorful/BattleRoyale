@@ -11,17 +11,17 @@ import xiao.battleroyale.util.JsonUtils;
 public abstract class AbstractEventLootEntry extends AbstractLootEntry {
 
     public String protocol;
-    public @NotNull CompoundTag tag;
+    public @NotNull JsonObject jsonTag;
 
-    public AbstractEventLootEntry(String protocol, @Nullable CompoundTag tag) {
+    public AbstractEventLootEntry(String protocol, @Nullable JsonObject jsonTag) {
         this.protocol = protocol;
-        this.tag = tag != null ? tag : new CompoundTag();
+        this.jsonTag = jsonTag != null ? jsonTag : new JsonObject();
     }
 
     public JsonObject toJson() {
         JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.PROTOCOL, protocol);
-        jsonObject.add(LootEntryTag.TAG, JsonUtils.writeTagToJson(tag));
+        jsonObject.add(LootEntryTag.TAG, jsonTag);
         return jsonObject;
     }
 }

@@ -1,5 +1,6 @@
 package xiao.battleroyale.common.game.zone.tickable.event;
 
+import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -13,8 +14,8 @@ import xiao.battleroyale.event.EventPoster;
 public class EventFunc extends AbstractEventFunc {
 
     public EventFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset,
-                     String protocol, @NotNull CompoundTag tag) {
-        super(moveDelay, moveTime, tickFreq, tickOffset, protocol, tag);
+                     String protocol, @NotNull JsonObject jsonTag) {
+        super(moveDelay, moveTime, tickFreq, tickOffset, protocol, jsonTag);
     }
 
     @Override
@@ -28,7 +29,7 @@ public class EventFunc extends AbstractEventFunc {
         for (GamePlayer gamePlayer : zoneTickContext.gamePlayers) {
             if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
                 LivingEntity livingEntity = (LivingEntity) zoneTickContext.serverLevel.getEntity(gamePlayer.getPlayerUUID());
-                EventPoster.postEvent(new CustomZoneEvent(gameManager, zoneTickContext, this.protocol, this.tag, gamePlayer, livingEntity));
+                EventPoster.postEvent(new CustomZoneEvent(gameManager, zoneTickContext, this.protocol, this.jsonTag, gamePlayer, livingEntity));
             }
         }
     }

@@ -1,5 +1,6 @@
 package xiao.battleroyale.common.game.zone.tickable.event;
 
+import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -33,7 +34,7 @@ public class AirdropFunc extends AbstractEventFunc {
     protected final List<ItemStack> lootItems = new ArrayList<>();
 
     public AirdropFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset,
-                       String protocol, @NotNull CompoundTag tag,
+                       String protocol, @NotNull JsonObject tag,
                        int lootId, @NotNull CompoundTag nbt) {
         super(moveDelay, moveTime, tickFreq, tickOffset, protocol, tag);
         this.lootId = lootId;
@@ -69,7 +70,7 @@ public class AirdropFunc extends AbstractEventFunc {
         lootItems.clear();
         lootItems.addAll(LootGenerator.generateLootItem(lootContext, airdropConfig.entry));
 
-        EventPoster.postEvent(new AirdropEvent(GameManager.get(), zoneTickContext, protocol, tag,
+        EventPoster.postEvent(new AirdropEvent(GameManager.get(), zoneTickContext, protocol, jsonTag,
                 lootItems, lastLootItems, nbt,
                 lootContext, airdropConfig.entry));
     }
