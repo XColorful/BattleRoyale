@@ -70,7 +70,7 @@ public final class ZoneFuncTag {
 
     // event
     public static final String PROTOCOL = "protocol";
-    public static final String TAG = "tag";
+    public static final String JSON_TAG = "jsonTag";
     public static final String NBT = "nbt";
     public static final String LOOT_ID = LootConfigTag.LOOT_ID;
 

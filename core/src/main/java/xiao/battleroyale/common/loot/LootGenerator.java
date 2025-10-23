@@ -340,7 +340,7 @@ public class LootGenerator {
         // 清除无GameId的实体
          if (REMOVE_INNOCENT_ENTITY) {
              for (Entity entity : innocentEntities) {
-                 BattleRoyale.LOGGER.debug("Clear entity with no gameId tag: {} (UUID: {}) at {}", entity.getName().getString(), entity.getUUID(), entity.position());
+                 BattleRoyale.LOGGER.debug("Clear entity with no gameId jsonTag: {} (UUID: {}) at {}", entity.getName().getString(), entity.getUUID(), entity.position());
                  entity.remove(Entity.RemovalReason.DISCARDED);
              }
          }

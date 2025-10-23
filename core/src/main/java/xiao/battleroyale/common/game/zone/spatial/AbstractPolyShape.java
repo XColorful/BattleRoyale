@@ -38,6 +38,8 @@ public abstract class AbstractPolyShape extends AbstractSimpleShape {
 
     @Override
     protected boolean additionalCalculationCheck() {
+        assert startDimension != null && endDimension != null;
+
         hasBadShape = hasNegativeDimension()
                 || !Vec3Utils.equalXZAbs(startDimension) || !Vec3Utils.equalXZAbs(endDimension);
         checkBadShape = hasBadShape && !allowBadShape;
@@ -51,6 +53,7 @@ public abstract class AbstractPolyShape extends AbstractSimpleShape {
 
     @Override
     public @Nullable Vec3 getStartDimension() {
+        if (startDimension == null) return null;
         if (checkBadShape
                 && (Vec3Utils.hasNegative(startDimension) || !Vec3Utils.equalXZAbs(startDimension))) {
             return Vec3Utils.positive(Vec3Utils.applyXAbsToZ(startDimension));
@@ -63,12 +66,10 @@ public abstract class AbstractPolyShape extends AbstractSimpleShape {
     public @Nullable Vec3 getDimension(double progress) {
         double allowedProgress = GameZone.allowedProgress(progress);
         if (!determined) {
-            if (dimensionDist == null) {
-                return null;
-            }
             BattleRoyale.LOGGER.warn("Shape is not fully determined yet, may produce unexpected dimension calculation");
         }
         Vec3 baseVec = getDimensionNoCheck(allowedProgress);
+        if (baseVec == null) return null;
         if (checkBadShape
                 && (Vec3Utils.hasNegative(baseVec) || !Vec3Utils.equalXZAbs(baseVec))) {
             return Vec3Utils.positive(Vec3Utils.applyXAbsToZ(baseVec));
@@ -79,6 +80,7 @@ public abstract class AbstractPolyShape extends AbstractSimpleShape {
 
     @Override
     public @Nullable Vec3 getEndDimension() {
+        if (endDimension == null) return null;
         if (checkBadShape
                 && (Vec3Utils.hasNegative(endDimension) || !Vec3Utils.equalXZAbs(endDimension))) {
             return Vec3Utils.positive(Vec3Utils.applyXAbsToZ(endDimension));

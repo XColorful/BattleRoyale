@@ -292,18 +292,20 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
             endRotateDegree += zoneContext.random.get() * endEntry.endRotateRange;
             endRotateDegree *= endEntry.endRotateScale;
         }
-        if (additionalCalculationCheck()
-                && startCenter != null&& startDimension != null
-                && endCenter != null && endDimension != null) {
+        if (startCenter != null&& startDimension != null
+                && endCenter != null && endDimension != null
+                && additionalCalculationCheck()) { // 额外检查放最后
             // 预计算
             centerDist = endCenter.subtract(startCenter);
-            dimensionDist = endDimension.subtract(endDimension);
+            dimensionDist = endDimension.subtract(startDimension);
             rotateDist = endRotateDegree - startRotateDegree;
             // 缓存，用于加速判断isWithinZone
             cachedCenter = startCenter;
             cachedDimension = startDimension;
             cachedProgress = 0;
             determined = true;
+        } else {
+            determined = false;
         }
     }
 

@@ -173,6 +173,7 @@ public class JsonUtils {
         return UUIDString;
     }
 
+    @Deprecated
     @NotNull
     public static JsonObject writeTagToJson(CompoundTag tag) {
         JsonObject jsonObject = new JsonObject();
@@ -468,6 +469,7 @@ public class JsonUtils {
         return component != null ? component : defaultValue;
     }
 
+    @Deprecated
     public static CompoundTag getJsonTag(@Nullable JsonObject jsonObject, String key, CompoundTag defaultValue) {
         if (jsonObject == null || key == null || key.isEmpty()) {
             return defaultValue;
