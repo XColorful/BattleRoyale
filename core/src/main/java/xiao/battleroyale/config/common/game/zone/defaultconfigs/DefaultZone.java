@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.minecraft.InventoryIndex;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.*;
 import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry.EffectFuncEntryBuilder;
@@ -396,7 +397,7 @@ public class DefaultZone {
                 new ItemEntry("minecraft:iron_helmet", "", 1)
         ));
         InventoryFuncEntry inventoryFuncEntry = new InventoryFuncEntry(0, 0, 20, 0,
-                false, false, 36, 39,
+                false, false, InventoryIndex.ARMOR_START, InventoryIndex.ARMOR_END,
                 lootEntry, -1);
 
         StartEntry startEntry = new StartEntry();
