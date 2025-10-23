@@ -97,8 +97,8 @@ public class GameZone implements IGameZone {
     @Override
     public void createZone(ZoneContext zoneContext) {
         if (!created) {
-            tickableZone.initFunc(zoneContext);
-            spatialZone.calculateShape(zoneContext);
+            initFunc(zoneContext);
+            calculateShape(zoneContext);
         }
         if (tickableZone.isReady() && spatialZone.isDetermined()) {
             addZoneDetailProperty();

@@ -1,5 +1,8 @@
 package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.compat.cbraddon.CbrAddon;
+
 public class DefaultZoneConfigGenerator {
 
     public static boolean generateAllDefaultConfigs(String configDirPath) {
@@ -18,5 +21,8 @@ public class DefaultZoneConfigGenerator {
         ModCover.generateDefaultConfigs(configDirPath);
         UHC1000x1000Simple.generateDefaultConfigs(configDirPath);
         UHC1000x1000Complex.generateDefaultConfigs(configDirPath);
+        if (BattleRoyale.getMcRegistry().isModLoaded(CbrAddon.get().getModId())) {
+            CFHC1000x1000Simple.generateDefaultConfigs(configDirPath);
+        }
     }
 }

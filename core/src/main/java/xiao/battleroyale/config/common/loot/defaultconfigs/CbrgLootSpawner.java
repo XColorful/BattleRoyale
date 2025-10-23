@@ -290,7 +290,7 @@ public class CbrgLootSpawner {
     private static ILootEntry rareSREntry() {
         String lynx_amrNBT = "{" +
                 "HasBulletInBarrel: 0b, " +
-                "AttachmentSCOPE: {id: \"tacz:attachment\", Count: 1b, tag: {AttachmentId:\"cbrg:6x_scope\"}}, " +
+                "AttachmentSCOPE: {id: \"tacz:attachment\", Count: 1b, jsonTag: {AttachmentId:\"cbrg:6x_scope\"}}, " +
                 "GunFireMode: \"" + "SEMI" + "\", " +
                 "GunCurrentAmmoCount: 10, " +
                 "GunId: \"suffuse:" + "gm6" + "\"" +
