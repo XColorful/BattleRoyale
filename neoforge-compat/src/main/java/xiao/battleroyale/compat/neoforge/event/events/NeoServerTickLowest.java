@@ -39,6 +39,9 @@ public class NeoServerTickLowest extends AbstractNeoEventCommon {
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public void onServerTickEvent(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         super.onEvent(event);
     }
 }
