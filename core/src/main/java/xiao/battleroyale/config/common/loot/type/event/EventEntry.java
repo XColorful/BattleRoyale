@@ -1,7 +1,6 @@
 package xiao.battleroyale.config.common.loot.type.event;
 
 import com.google.gson.JsonObject;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +42,7 @@ public class EventEntry extends AbstractEventLootEntry {
     @NotNull
     public static EventEntry fromJson(JsonObject jsonObject) {
         String protocol = JsonUtils.getJsonString(jsonObject, LootEntryTag.PROTOCOL, "");
-        JsonObject jsonTag = JsonUtils.getJsonObject(jsonObject, LootEntryTag.TAG, null);
+        JsonObject jsonTag = JsonUtils.getJsonObject(jsonObject, LootEntryTag.JSON_TAG, null);
 
         return new EventEntry(protocol, jsonTag);
     }

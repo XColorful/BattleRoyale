@@ -47,7 +47,7 @@ public class AirdropFuncEntry extends AbstractEventFuncEntry {
         JsonObject jsonObject = super.toJson();
 
         jsonObject.addProperty(ZoneFuncTag.PROTOCOL, protocol);
-        jsonObject.add(ZoneFuncTag.TAG, jsonTag);
+        jsonObject.add(ZoneFuncTag.JSON_TAG, jsonTag);
 
         jsonObject.addProperty(ZoneFuncTag.LOOT_ID, lootId);
         jsonObject.addProperty(ZoneFuncTag.NBT, nbtString);
@@ -62,7 +62,7 @@ public class AirdropFuncEntry extends AbstractEventFuncEntry {
         int tickOffset = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.TICK_OFFSET, -1);
 
         String protocol = JsonUtils.getJsonString(jsonObject, ZoneFuncTag.PROTOCOL, "");
-        JsonObject jsonTag = JsonUtils.getJsonObject(jsonObject, ZoneFuncTag.TAG, null);
+        JsonObject jsonTag = JsonUtils.getJsonObject(jsonObject, ZoneFuncTag.JSON_TAG, null);
 
         int lootId = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.LOOT_ID, 0);
         String nbtString = JsonUtils.getJsonString(jsonObject, ZoneFuncTag.NBT, "");

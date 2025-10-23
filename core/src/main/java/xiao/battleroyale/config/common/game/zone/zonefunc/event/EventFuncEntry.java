@@ -1,7 +1,6 @@
 package xiao.battleroyale.config.common.game.zone.zonefunc.event;
 
 import com.google.gson.JsonObject;
-import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
@@ -36,7 +35,7 @@ public class EventFuncEntry extends AbstractEventFuncEntry {
         JsonObject jsonObject = super.toJson();
 
         jsonObject.addProperty(ZoneFuncTag.PROTOCOL, protocol);
-        jsonObject.add(ZoneFuncTag.TAG, jsonTag);
+        jsonObject.add(ZoneFuncTag.JSON_TAG, jsonTag);
 
         return jsonObject;
     }
@@ -48,7 +47,7 @@ public class EventFuncEntry extends AbstractEventFuncEntry {
         int tickOffset = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.TICK_OFFSET, -1);
 
         String protocol = JsonUtils.getJsonString(jsonObject, ZoneFuncTag.PROTOCOL, "");
-        JsonObject jsonTag = JsonUtils.getJsonObject(jsonObject, ZoneFuncTag.TAG, null);
+        JsonObject jsonTag = JsonUtils.getJsonObject(jsonObject, ZoneFuncTag.JSON_TAG, null);
 
         return new EventFuncEntry(moveDelay, moveTime, tickFreq, tickOffset,
                 protocol, jsonTag);

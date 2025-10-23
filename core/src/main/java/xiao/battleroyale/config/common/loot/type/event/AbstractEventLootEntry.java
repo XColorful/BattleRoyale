@@ -1,12 +1,10 @@
 package xiao.battleroyale.config.common.loot.type.event;
 
 import com.google.gson.JsonObject;
-import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.LootEntryTag;
 import xiao.battleroyale.config.common.loot.type.AbstractLootEntry;
-import xiao.battleroyale.util.JsonUtils;
 
 public abstract class AbstractEventLootEntry extends AbstractLootEntry {
 
@@ -21,7 +19,7 @@ public abstract class AbstractEventLootEntry extends AbstractLootEntry {
     public JsonObject toJson() {
         JsonObject jsonObject = super.toJson();
         jsonObject.addProperty(LootEntryTag.PROTOCOL, protocol);
-        jsonObject.add(LootEntryTag.TAG, jsonTag);
+        jsonObject.add(LootEntryTag.JSON_TAG, jsonTag);
         return jsonObject;
     }
 }
