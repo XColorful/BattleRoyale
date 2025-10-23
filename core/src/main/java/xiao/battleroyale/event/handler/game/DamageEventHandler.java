@@ -14,6 +14,7 @@ import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
+import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.event.EventRegister;
 import xiao.battleroyale.util.ChatUtils;
 
@@ -77,15 +78,16 @@ public class DamageEventHandler implements IEventHandler {
             }
         }
 
+        GameEntry gameEntry = gameManager.getGameEntry();
+
         // 游戏玩家之间的伤害
         if (attackerGamePlayer != null && targetGamePlayer != null) {
             // 如果双方在同一队伍，且友伤关闭，则取消伤害
-            if (attackerGamePlayer.getGameTeamId() == targetGamePlayer.getGameTeamId()) {
-                if (!gameManager.getGameEntry().friendlyFire) {
-                    event.setCanceled(true);
-                }
+            if (attackerGamePlayer.getGameTeamId() == targetGamePlayer.getGameTeamId()
+                    && !gameEntry.friendlyFire) {
+                event.setCanceled(true);
             }
-            if (!gameManager.getGameEntry().downFire) {
+            if (!gameEntry.downFire) {
                 if (damageSource.getEntity() instanceof ServerPlayer attackPlayer
                         && PlayerRevive.get().isBleeding(attackPlayer)) {
                     ChatUtils.sendComponentMessageToPlayer(attackPlayer, Component.translatable("battleroyale.message.down_fire_not_enabled").withStyle(ChatFormatting.RED));
@@ -100,10 +102,12 @@ public class DamageEventHandler implements IEventHandler {
 //            if (damageSource instanceof LivingEntity livingEntity) {
 //                ;
 //            }
-            event.setCanceled(true);
+            if (!gameEntry.canHurtNonGamePlayer) {
+                event.setCanceled(true);
+            }
             if (damagedEntity instanceof ServerPlayer interfererPlayer) {
-                // 把不参与游戏的玩家tp回大厅
-                if (gameManager.getGameEntry().teleportInterfererToLobby
+                // 把不参与游戏的[ServerPlayer玩家]tp回大厅
+                if (gameEntry.teleportInterfererToLobby
                         && damageSource.getEntity() instanceof ServerPlayer) {
                     SpawnManager.get().teleportToLobby(interfererPlayer);
                     ServerLevel serverLevel = gameManager.getServerLevel();
@@ -117,10 +121,12 @@ public class DamageEventHandler implements IEventHandler {
         // 非游戏玩家攻击游戏玩家
         else if (targetGamePlayer != null) {
             if (damageSource.getEntity() instanceof LivingEntity livingEntity) {
-                event.setCanceled(true);
+                if (!gameEntry.allowInterfererDamage) {
+                    event.setCanceled(true);
+                }
                 if (livingEntity instanceof ServerPlayer interfererPlayer) {
-                    // 把不参与游戏的玩家tp回大厅
-                    if (gameManager.getGameEntry().teleportInterfererToLobby) {
+                    // 把不参与游戏的[ServerPlayer玩家]tp回大厅
+                    if (gameEntry.teleportInterfererToLobby) {
                         SpawnManager.get().teleportToLobby(interfererPlayer);
                         ServerLevel serverLevel = gameManager.getServerLevel();
                         if (serverLevel != null) {
