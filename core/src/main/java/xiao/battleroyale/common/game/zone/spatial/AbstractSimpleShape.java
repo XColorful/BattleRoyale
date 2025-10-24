@@ -38,11 +38,11 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     protected boolean hasBadShape = false; // 外部调用
     protected boolean checkBadShape = false; // 类内使用
 
-    protected Vec3 startCenter = null;
-    protected Vec3 startDimension = null;
+    protected @Nullable Vec3 startCenter = null;
+    protected @Nullable Vec3 startDimension = null;
     protected double startRotateDegree = 0;
-    protected Vec3 endCenter = null;
-    protected Vec3 endDimension = null;
+    protected @Nullable Vec3 endCenter = null;
+    protected @Nullable Vec3 endDimension = null;
     protected double endRotateDegree = 0;
 
     protected Vec3 cachedCenter = Vec3.ZERO;
@@ -52,9 +52,9 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     protected static final double EPSILON = 1.0E-9; // 移动30分钟的圈每tick的变化为 2.778 x 10^-5
 
     protected boolean determined = false;
-    protected Vec3 centerDist;
-    protected Vec3 dimensionDist;
-    protected double rotateDist;
+    protected Vec3 centerDist = Vec3.ZERO;
+    protected Vec3 dimensionDist = Vec3.ZERO;
+    protected double rotateDist = 0;
 
     public AbstractSimpleShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
         this.startEntry = startEntry;
@@ -310,9 +310,9 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             endRotateDegree += zoneContext.random.get() * endEntry.endRotateRange;
             endRotateDegree *= endEntry.endRotateScale;
         }
-        if (additionalCalculationCheck()
-                && startCenter != null && startDimension != null
-                && endCenter != null && endDimension != null) {
+        if (startCenter != null && startDimension != null
+                && endCenter != null && endDimension != null
+                && additionalCalculationCheck()) { // 额外检查放最后
             // 预计算
             centerDist = endCenter.subtract(startCenter);
             dimensionDist = endDimension.subtract(startDimension);
@@ -322,6 +322,8 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             cachedDimension = startDimension;
             cachedProgress = 0;
             determined = true;
+        } else {
+            determined = false;
         }
     }
 
@@ -331,6 +333,8 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
      * 如区域形状无特殊要求，此函数应始终返回true
      */
     protected boolean additionalCalculationCheck() {
+        assert startDimension != null && endDimension != null;
+
         hasBadShape = hasNegativeDimension();
         checkBadShape = hasBadShape && !allowBadShape; // 会生成坏形状，并且不允许出现坏形状 -> 需要在运行时检查
         return true;
@@ -361,6 +365,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
     @Override
     public @Nullable Vec3 getCenterPos(double progress) {
+        if (startCenter == null) return null;
         double allowedProgress = GameZone.allowedProgress(progress);
         if (!determined) {
             BattleRoyale.LOGGER.warn("Shape is not fully determined yet, may produce unexpected center calculation");
@@ -377,6 +382,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
     @Override
     public @Nullable Vec3 getStartDimension() {
+        if (startDimension == null) return null;
         return checkBadShape ? Vec3Utils.positive(startDimension) : startDimension;
     }
 
@@ -384,16 +390,15 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     public @Nullable Vec3 getDimension(double progress) {
         double allowedProgress = GameZone.allowedProgress(progress);
         if (!determined) {
-            if (dimensionDist == null) {
-                return null;
-            }
             BattleRoyale.LOGGER.warn("Shape is not fully determined yet, may produce unexpected dimension calculation");
         }
         Vec3 baseVec = getDimensionNoCheck(allowedProgress);
+        if (baseVec == null) return null;
         return checkBadShape ? Vec3Utils.positive(baseVec) : baseVec;
     }
 
-    protected Vec3 getDimensionNoCheck(double progress) {
+    protected @Nullable Vec3 getDimensionNoCheck(double progress) {
+        if (startDimension == null) return null;
         return new Vec3(startDimension.x + dimensionDist.x * progress,
                 startDimension.y + dimensionDist.y * progress,
                 startDimension.z + dimensionDist.z * progress);
@@ -401,6 +406,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
     @Override
     public @Nullable Vec3 getEndDimension() {
+        if (endDimension == null) return null;
         return checkBadShape ? Vec3Utils.positive(endDimension) : endDimension;
     }
 
