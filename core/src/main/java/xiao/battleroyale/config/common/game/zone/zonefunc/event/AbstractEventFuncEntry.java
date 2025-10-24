@@ -1,6 +1,6 @@
 package xiao.battleroyale.config.common.game.zone.zonefunc.event;
 
-import net.minecraft.nbt.CompoundTag;
+import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.config.common.game.zone.zonefunc.AbstractFuncEntry;
@@ -8,12 +8,12 @@ import xiao.battleroyale.config.common.game.zone.zonefunc.AbstractFuncEntry;
 public abstract class AbstractEventFuncEntry extends AbstractFuncEntry {
 
     public String protocol;
-    public @NotNull CompoundTag tag;
+    public @NotNull JsonObject jsonTag;
 
     public AbstractEventFuncEntry(int moveDelay, int moveTime, int funcFreq, int funcOffset,
-                                  String protocol, @Nullable CompoundTag tag) {
+                                  String protocol, @Nullable JsonObject jsonTag) {
         super(moveDelay, moveTime, funcFreq, funcOffset);
         this.protocol = protocol;
-        this.tag = tag != null ? tag : new CompoundTag();
+        this.jsonTag = jsonTag != null ? jsonTag : new JsonObject();
     }
 }

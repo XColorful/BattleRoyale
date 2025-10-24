@@ -16,6 +16,7 @@ public class GameEntryTag extends ConfigEntryTag {
     public static final String REMOVE_INVALID_TEAM = "removeInvalidTeam";
     public static final String HEAL_ALL_AT_START = "healAllAtStart";
     public static final String FRIENDLY_FIRE = "friendlyFire";
+    public static final String CAN_HURT_NON_GAME_PLAYER = "canHurtNonGamePlayer";
     public static final String DOWN_FIRE = "downFire";
     public static final String DOWN_DAMAGE_LIST = "downDamage";
     public static final String DOWN_DAMAGE_FREQUENCY = "downDamageFrequency";
@@ -26,6 +27,7 @@ public class GameEntryTag extends ConfigEntryTag {
     public static final String ONLY_GAME_PLAYER_SPECTATE = "onlyGamePlayerSpectate";
     public static final String SPECTATE_AFTER_TEAM = "spectateAfterTeamEliminated";
     public static final String SPECTATOR_SEE_ALL_TEAMS = "spectatorSeeAllTeams";
+    public static final String ALLOW_INTERFERER_DAMAGE = "allowInterfererDamage";
     public static final String TELEPORT_INTERFERER_TO_LOBBY = "teleportInterfererToLobby";
     public static final String FORCE_ELIMINATION_TELEPORT_TO_LOBBY = "forceEliminationTeleportToLobby";
     public static final String ALLOW_REMAINING_BOT = "allowRemainingBot";

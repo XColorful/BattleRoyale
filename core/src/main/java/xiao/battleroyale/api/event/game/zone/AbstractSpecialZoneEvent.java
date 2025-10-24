@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.event.game.zone;
 
-import net.minecraft.nbt.CompoundTag;
+import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.event.game.AbstractGameEvent;
 import xiao.battleroyale.api.game.IGameManager;
@@ -11,14 +11,14 @@ public abstract class AbstractSpecialZoneEvent extends AbstractGameEvent {
     protected @NotNull
     final ZoneManager.ZoneTickContext zoneTickContext;
     protected final String protocol;
-    protected @NotNull final CompoundTag tag;
+    protected @NotNull final JsonObject jsonTag;
 
     public AbstractSpecialZoneEvent(IGameManager gameManager, @NotNull ZoneManager.ZoneTickContext zoneTickContext,
-                                    String protocol, @NotNull CompoundTag tag) {
+                                    String protocol, @NotNull JsonObject jsonTag) {
         super(gameManager);
         this.zoneTickContext = zoneTickContext;
         this.protocol = protocol;
-        this.tag = tag;
+        this.jsonTag = jsonTag;
     }
 
     public @NotNull ZoneManager.ZoneTickContext getZoneTickContext() {
@@ -29,11 +29,12 @@ public abstract class AbstractSpecialZoneEvent extends AbstractGameEvent {
         return this.protocol;
     }
 
-    public @NotNull CompoundTag getTag() {
-        return this.tag;
+    public @NotNull JsonObject getJsonTag() {
+        return this.jsonTag;
     }
 
-    public @NotNull CompoundTag getNbt() {
-        return this.tag;
+    @Deprecated
+    public @NotNull JsonObject getTag() {
+        return getJsonTag();
     }
 }

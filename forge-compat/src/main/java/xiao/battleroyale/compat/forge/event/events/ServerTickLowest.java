@@ -39,6 +39,9 @@ public class ServerTickLowest extends AbstractEventCommon {
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public void onServerTickEvent(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         super.onEvent(event);
     }
 }
