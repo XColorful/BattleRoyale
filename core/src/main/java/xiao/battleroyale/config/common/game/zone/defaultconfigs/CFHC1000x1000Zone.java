@@ -93,8 +93,8 @@ public class CFHC1000x1000Zone {
 
         // 透明装备区
         ILootEntry lootEntry = new MultiEntry(Arrays.asList(
-                new ItemEntry("minecraft:stone_axe", "{Enchantments:[{lvl:10s,id:\"minecraft:efficiency\"}]}" , 1), // We are 伐木不累!
-                new ItemEntry("minecraft:stone_pickaxe", "{Enchantments:[{lvl:10s,id:\"minecraft:efficiency\"},{lvl:3s,id:\"minecraft:unbreaking\"}]}", 1), // 哇! 神稿
+                new ItemEntry("minecraft:stone_axe", "{components:{\"minecraft:enchantments\":{\"minecraft:efficiency\":10}}}" , 1), // We are 伐木不累!
+                new ItemEntry("minecraft:stone_pickaxe", "{components:{\"minecraft:enchantments\":{\"minecraft:efficiency\":10,\"minecraft:unbreaking\":3}}}", 1), // 哇! 神稿
                 new ItemEntry("minecraft:cherry_planks", "" , 64), // 樱花木板
                 new ItemEntry("minecraft:basalt", "", 64), // 玄武岩
                 new ItemEntry("minecraft:ender_pearl", "", 1), // 末影珍珠
@@ -197,7 +197,7 @@ public class CFHC1000x1000Zone {
         bomb_jsonTag.addProperty("relativeMovementRandomRange", StringUtils.vectorToString(new Vec3(0.5, 3, 0.5)));
         int bomb_zoneTime = phaseTime / 10;
         EntityFuncEntry bomb_entityFuncEntry = new EntityFuncEntry(0, bomb_zoneTime, 10, 0,
-                "cbra:0.4.4", bomb_jsonTag, 1, "{Motion:[0d,-5d,0d]}");
+                "cbra:0.4.4", bomb_jsonTag, 1, "{Motion:[I;0,-5,0]}");
         CircleEntry bomb_circleEntry = new CircleEntry(
                 new StartEntry().addPreviousCenter(forecast_zoneId, 0).addCenterRange(shrinkRadius / 2).addPlayerCenterLerp(0.5)
                         .addFixedDimension(new Vec3(0, 384, 0)),
@@ -227,7 +227,7 @@ public class CFHC1000x1000Zone {
         jsonTag.addProperty("relativeMovementRandomRange", StringUtils.vectorToString(Vec3.ZERO));
         int entity_zoneTime = bomb_zoneTime * 2;
         EntityFuncEntry entityFuncEntry = new EntityFuncEntry(0, entity_zoneTime, 20 * 10, 0,
-                "cbra:0.4.4", jsonTag, 2, "{Motion:[0d,0.5d,0d]}");
+                "cbra:0.4.4", jsonTag, 2, "{Motion:[I;0,0.5,0]}");
         CircleEntry entity_circleEntry = new CircleEntry(
                 new StartEntry().addPreviousCenter(bomb_zoneId, 1)
                         .addFixedDimension(new Vec3(shrinkRadius * (totalGamePhase - phase + 1) * 0.1, 384, shrinkRadius * (totalGamePhase - phase + 1) * 0.1)),
