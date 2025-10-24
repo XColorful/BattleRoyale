@@ -1,5 +1,6 @@
 package xiao.battleroyale.common.game.zone.tickable.event;
 
+import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -33,9 +34,9 @@ public class EntityFunc extends AbstractEventFunc {
     protected final List<Entity> lootEntities = new ArrayList<>();
 
     public EntityFunc(int moveDelay, int moveTime, int tickFreq, int tickOffset,
-                      String protocol, @NotNull CompoundTag tag,
+                      String protocol, @NotNull JsonObject jsonTag,
                       int lootId, @NotNull CompoundTag nbt) {
-        super(moveDelay, moveTime, tickFreq, tickOffset, protocol, tag);
+        super(moveDelay, moveTime, tickFreq, tickOffset, protocol, jsonTag);
         this.lootId = lootId;
         this.nbt = nbt;
     }
@@ -69,7 +70,7 @@ public class EntityFunc extends AbstractEventFunc {
         lootEntities.clear();
         lootEntities.addAll(LootGenerator.generateLootEntities(lootContext, entityConfig.entry));
 
-        if (EventPoster.postEvent(new EntityEvent(GameManager.get(), zoneTickContext, protocol, tag,
+        if (EventPoster.postEvent(new EntityEvent(GameManager.get(), zoneTickContext, protocol, jsonTag,
                 lootEntities, lastLootEntities, nbt,
                 lootContext, entityConfig.entry))) {
             BattleRoyale.LOGGER.debug("Entity Func canceled");

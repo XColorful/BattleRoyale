@@ -110,25 +110,25 @@ public class DefaultLootSpawner {
     }
 
     private static JsonObject generateFunctionLoot3() {
-        CompoundTag tag = new CompoundTag();
-        tag.putString("description", "Create event for other mod to subscribe");
-        tag.putBoolean("boolTrue", true);
-        tag.putBoolean("boolFalse", false);
-        tag.putFloat("float", 0.333F);
-        tag.putDouble("double", 0.88888888D);
-        tag.putLong("long", Integer.MAX_VALUE * 2L);
-        tag.putInt("int", 666666);
-        tag.putShort("short", (short) 25565);
-        tag.putString("randomUUID", UUID.randomUUID().toString());
-        CompoundTag nestedTag = new CompoundTag();
-        nestedTag.putString("additional data", "some structured data");
-        tag.put("tagInTag", nestedTag);
+        JsonObject jsonTag = new JsonObject();
+        jsonTag.addProperty("description", "Create event for other mod to subscribe");
+        jsonTag.addProperty("boolTrue", true);
+        jsonTag.addProperty("boolFalse", false);
+        jsonTag.addProperty("float", 0.333F);
+        jsonTag.addProperty("double", 0.88888888D);
+        jsonTag.addProperty("long", Integer.MAX_VALUE * 2L);
+        jsonTag.addProperty("int", 666666);
+        jsonTag.addProperty("short", (short) 25565);
+        jsonTag.addProperty("randomUUID", UUID.randomUUID().toString());
+        JsonObject nestedJsonTag = new JsonObject();
+        nestedJsonTag.addProperty("additional data", "some structured data");
+        jsonTag.add("tagInTag", nestedJsonTag);
 
         ILootEntry multiEntry = new MultiEntry(Arrays.asList(
                 new MessageEntry(true, true, "Chest Golem generated", "#FF0000"),
                 new GolemEntry(new EntityEntry("minecraft:copper_golem", "", 5, 5, 4)),
                 new GolemEntry(new EntityEntry("minecraft:iron_golem", "", 5, 20, 4)),
-                new EventEntry("cbr:0.4.3", tag)
+                new EventEntry("cbr:0.4.3", jsonTag)
         ));
 
         LootConfig lootConfig = new LootConfig(3, "Function loot entry", "#FFFFFFAA",

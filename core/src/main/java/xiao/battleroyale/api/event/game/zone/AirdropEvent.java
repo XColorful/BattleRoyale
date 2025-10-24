@@ -1,5 +1,6 @@
 package xiao.battleroyale.api.event.game.zone;
 
+import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -20,10 +21,10 @@ public class AirdropEvent extends AbstractSpecialZoneEvent {
     protected final ILootEntry lootEntry;
 
     public AirdropEvent(IGameManager gameManager, @NotNull ZoneManager.ZoneTickContext zoneTickContext,
-                        String protocol, @NotNull CompoundTag tag,
+                        String protocol, @NotNull JsonObject jsonTag,
                         List<ItemStack> lootItems, List<ItemStack> lastLootItems, @NotNull CompoundTag nbt,
                         LootGenerator.LootContext lootContext, ILootEntry lootEntry) {
-        super(gameManager, zoneTickContext, protocol, tag);
+        super(gameManager, zoneTickContext, protocol, jsonTag);
         this.lootItems = lootItems;
         this.lastLootItems = lastLootItems;
         this.nbt = nbt;
@@ -42,7 +43,6 @@ public class AirdropEvent extends AbstractSpecialZoneEvent {
         return this.lastLootItems;
     }
 
-    @Override
     public @NotNull CompoundTag getNbt() {
         return this.nbt;
     }

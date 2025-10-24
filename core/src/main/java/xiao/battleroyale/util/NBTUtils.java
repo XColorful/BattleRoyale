@@ -44,6 +44,7 @@ public class NBTUtils {
      * @param nbt 要转换的 CompoundTag。
      * @return MoJangson 格式的字符串。
      */
+    @Deprecated
     @NotNull
     public static String nbtToString(CompoundTag nbt) {
         if (nbt == null) {

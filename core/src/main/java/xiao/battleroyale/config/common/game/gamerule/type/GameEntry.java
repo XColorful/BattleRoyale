@@ -51,6 +51,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
 
     public boolean healAllAtStart;
     public boolean friendlyFire;
+    public boolean canHurtNonGamePlayer;
     public boolean downFire;
     public List<Float> downDamageList;
     public int downDamageFrequency;
@@ -63,6 +64,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public boolean onlyGamePlayerSpectate;
     public boolean spectateAfterTeam;
     public boolean spectatorSeeAllTeams;
+    public boolean allowInterfererDamage;
     public boolean teleportInterfererToLobby;
     public boolean forceEliminationTeleportToLobby;
 
@@ -81,17 +83,17 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public GameEntry() {
         this(true, 300, DEFAULT_TEAM_COLORS, true, true,
                 20 * 60, 20 * 10, false,
-                true, false, false, DEFAULT_DOWN_DAMAGE, 20,
+                true, false, true, false, DEFAULT_DOWN_DAMAGE, 20,
                 false, false, false, false,
-                false, true, true, true, true,
+                false, true, true, false, true, true,
                 true, true, true, false, 0, 0, false,
                 20 * 7, 20 * 5, 20 * 5);
     }
     public GameEntry(boolean teleportWhenInitGame, int teamMsgExpireTimeSeconds, List<String> teamColors, boolean buildVanillaTeam, boolean hideVanillaTeamName,
                      int maxPlayerInvalidTime, int maxBotInvalidTime, boolean removeInvalidTeam,
-                     boolean healAllAtStart, boolean friendlyFire, boolean downFire, List<Float> downDamageList, int downDamageFrequency,
+                     boolean healAllAtStart, boolean friendlyFire, boolean canHurtNonGamePlayer, boolean downFire, List<Float> downDamageList, int downDamageFrequency,
                      boolean downShoot, boolean downReload, boolean downFireSelect, boolean downMelee,
-                     boolean onlyGamePlayerSpectate, boolean spectateAfterTeam, boolean spectatorSeeAllTeams, boolean teleportInterfererToLobby, boolean forceEliminationTeleportToLobby,
+                     boolean onlyGamePlayerSpectate, boolean spectateAfterTeam, boolean spectatorSeeAllTeams, boolean allowInterfererDamage, boolean teleportInterfererToLobby, boolean forceEliminationTeleportToLobby,
                      boolean allowRemainingBot, boolean keepTeamAfterGame, boolean teleportAfterGame, boolean teleportWinnerAfterGame, int winnerFireworkId, int winnerParticleId, boolean initGameAfterGame,
                      int messageCleanFreq, int messageExpireTime, int messageSyncFreq) {
         this.teleportWhenInitGame = teleportWhenInitGame;
@@ -104,6 +106,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         this.removeInvalidTeam = removeInvalidTeam;
         this.healAllAtStart = healAllAtStart;
         this.friendlyFire = friendlyFire;
+        this.canHurtNonGamePlayer = canHurtNonGamePlayer;
         this.downFire = downFire;
         this.downDamageList = downDamageList;
         this.downDamageFrequency = downDamageFrequency;
@@ -114,6 +117,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         this.onlyGamePlayerSpectate = onlyGamePlayerSpectate;
         this.spectateAfterTeam = spectateAfterTeam;
         this.spectatorSeeAllTeams = spectatorSeeAllTeams;
+        this.allowInterfererDamage = allowInterfererDamage;
         this.teleportInterfererToLobby = teleportInterfererToLobby;
         this.forceEliminationTeleportToLobby = forceEliminationTeleportToLobby;
         this.allowRemainingBot = allowRemainingBot;
@@ -130,9 +134,9 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     @Override public @NotNull GameEntry copy() {
         return new GameEntry(teleportWhenInitGame, teamMsgExpireTimeSeconds, new ArrayList<>(teamColors), buildVanillaTeam, hideVanillaTeamName,
                 maxPlayerInvalidTime, maxBotInvalidTime, removeInvalidTeam,
-                healAllAtStart, friendlyFire, downFire, new ArrayList<>(downDamageList), downDamageFrequency,
+                healAllAtStart, friendlyFire, canHurtNonGamePlayer, downFire, new ArrayList<>(downDamageList), downDamageFrequency,
                 downShoot, downReload, downFireSelect, downMelee,
-                onlyGamePlayerSpectate, spectateAfterTeam, spectatorSeeAllTeams, teleportInterfererToLobby, forceEliminationTeleportToLobby,
+                onlyGamePlayerSpectate, spectateAfterTeam, spectatorSeeAllTeams, allowInterfererDamage, teleportInterfererToLobby, forceEliminationTeleportToLobby,
                 allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId, initGameAfterGame,
                 messageCleanFreq, messageExpireTime, messageSyncFreq);
     }
@@ -157,6 +161,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
 
         jsonObject.addProperty(GameEntryTag.HEAL_ALL_AT_START, healAllAtStart);
         jsonObject.addProperty(GameEntryTag.FRIENDLY_FIRE, friendlyFire);
+        jsonObject.addProperty(GameEntryTag.CAN_HURT_NON_GAME_PLAYER, canHurtNonGamePlayer);
         jsonObject.addProperty(GameEntryTag.DOWN_FIRE, downFire);
         jsonObject.add(GameEntryTag.DOWN_DAMAGE_LIST, JsonUtils.writeFloatListToJson(downDamageList));
         jsonObject.addProperty(GameEntryTag.DOWN_DAMAGE_FREQUENCY, downDamageFrequency);
@@ -169,6 +174,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         jsonObject.addProperty(GameEntryTag.ONLY_GAME_PLAYER_SPECTATE, onlyGamePlayerSpectate);
         jsonObject.addProperty(GameEntryTag.SPECTATE_AFTER_TEAM, spectateAfterTeam);
         jsonObject.addProperty(GameEntryTag.SPECTATOR_SEE_ALL_TEAMS, spectatorSeeAllTeams);
+        jsonObject.addProperty(GameEntryTag.ALLOW_INTERFERER_DAMAGE, allowInterfererDamage);
         jsonObject.addProperty(GameEntryTag.TELEPORT_INTERFERER_TO_LOBBY, teleportInterfererToLobby);
         jsonObject.addProperty(GameEntryTag.FORCE_ELIMINATION_TELEPORT_TO_LOBBY, forceEliminationTeleportToLobby);
 
@@ -200,6 +206,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
 
         boolean healAllAtStart = JsonUtils.getJsonBool(jsonObject, GameEntryTag.HEAL_ALL_AT_START, true);
         boolean friendlyFire = JsonUtils.getJsonBool(jsonObject, GameEntryTag.FRIENDLY_FIRE, false);
+        boolean canHurtNonGamePlayer = JsonUtils.getJsonBool(jsonObject, GameEntryTag.CAN_HURT_NON_GAME_PLAYER, false);
         boolean downFire = JsonUtils.getJsonBool(jsonObject, GameEntryTag.DOWN_FIRE, false);
         List<Float> downDamageList = JsonUtils.getJsonFloatList(jsonObject, GameEntryTag.DOWN_DAMAGE_LIST);
         int downDamageFrequency = JsonUtils.getJsonInt(jsonObject, GameEntryTag.DOWN_DAMAGE_FREQUENCY, 20);
@@ -212,6 +219,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         boolean onlyGamePlayerSpectate = JsonUtils.getJsonBool(jsonObject, GameEntryTag.ONLY_GAME_PLAYER_SPECTATE, false);
         boolean spectateAfterTeam = JsonUtils.getJsonBool(jsonObject, GameEntryTag.SPECTATE_AFTER_TEAM, true);
         boolean spectatorSeeAllTeams = JsonUtils.getJsonBool(jsonObject, GameEntryTag.SPECTATOR_SEE_ALL_TEAMS, true);
+        boolean allowInterfererDamage = JsonUtils.getJsonBool(jsonObject, GameEntryTag.ALLOW_INTERFERER_DAMAGE, false);
         boolean teleportInterfererToLobby = JsonUtils.getJsonBool(jsonObject, GameEntryTag.TELEPORT_INTERFERER_TO_LOBBY, true);
         boolean forceEliminationTeleportToLobby = JsonUtils.getJsonBool(jsonObject, GameEntryTag.FORCE_ELIMINATION_TELEPORT_TO_LOBBY, true);
 
@@ -229,9 +237,9 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
 
         return new GameEntry(teleportWhenInitGame, teamMsgExpireTimeSeconds, teamColors, buildVanillaTeam, hideVanillaTeamName,
                 maxPlayerInvalidTime, maxBotInvalidTime, removeInvalidTeam,
-                healAllAtStart, friendlyFire, downFire, downDamageList, downDamageFrequency,
+                healAllAtStart, friendlyFire, canHurtNonGamePlayer, downFire, downDamageList, downDamageFrequency,
                 downShoot, downReload, downFireSelect, downMelee,
-                onlyGamePlayerSpectate, spectateAfterTeam, spectatorSeeAllTeams, teleportInterfererToLobby, forceEliminationTeleportToLobby,
+                onlyGamePlayerSpectate, spectateAfterTeam, spectatorSeeAllTeams, allowInterfererDamage, teleportInterfererToLobby, forceEliminationTeleportToLobby,
                 allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId, initGameAfterGame,
                 messageCleanFreq, messageExpireTime, messageSyncFreq);
     }

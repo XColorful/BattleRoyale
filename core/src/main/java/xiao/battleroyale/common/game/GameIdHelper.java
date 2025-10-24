@@ -27,7 +27,7 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
      */
     @Override public @Nullable UUID getGameId(Entity entity) {
         UUID entityGameId = null;
-        if (entity instanceof ItemEntity itemEntity) { // 物品掉落物，位于{Item:{tag:{GameId:UUID}}}
+        if (entity instanceof ItemEntity itemEntity) { // 物品掉落物，位于{Item:{jsonTag:{GameId:UUID}}}
             ItemStack itemStack = itemEntity.getItem();
             CompoundTag itemTag = itemStack.getOrCreateTag();
             if (itemTag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
