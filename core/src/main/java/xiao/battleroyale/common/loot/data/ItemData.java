@@ -2,6 +2,8 @@ package xiao.battleroyale.common.loot.data;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -10,8 +12,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.item.IItemLootData;
 import xiao.battleroyale.api.minecraft.ComponentsTag;
 import xiao.battleroyale.common.loot.LootGenerator;
-
-import java.util.Optional;
 
 public class ItemData implements IItemLootData {
     private final @Nullable Item item;
@@ -40,7 +40,12 @@ public class ItemData implements IItemLootData {
         if (this.isEmpty()) {
             return null;
         }
-        return ItemStack.CODEC.parse(NbtOps.INSTANCE, this.itemTag).result().orElse(ItemStack.EMPTY);
+        /*
+         * NbtOps.INSTANCE写不进附魔NBT
+         * 必须要这个registryAccess
+         */
+        RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, lootContext.serverLevel.registryAccess());
+        return ItemStack.CODEC.parse(registryOps, this.itemTag).result().orElse(ItemStack.EMPTY);
     }
 
     @Override
