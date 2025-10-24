@@ -147,6 +147,8 @@ public class StarShape extends AbstractSimpleShape {
 
     @Override
     protected boolean additionalCalculationCheck() {
+        assert startDimension != null && endDimension != null;
+
         hasBadShape = hasNegativeDimension()
                 || startDimension.x < startDimension.z || endDimension.x < endDimension.z;
         checkBadShape = hasBadShape && !allowBadShape;
@@ -155,6 +157,7 @@ public class StarShape extends AbstractSimpleShape {
 
     @Override
     public @Nullable Vec3 getStartDimension() {
+        if (startDimension == null) return null;
         if (checkBadShape
                 && (Vec3Utils.hasNegative(startDimension) || startDimension.x < startDimension.z)) {
             return Vec3Utils.positive(new Vec3(startDimension.z, startDimension.y, startDimension.x));
@@ -167,12 +170,10 @@ public class StarShape extends AbstractSimpleShape {
     public @Nullable Vec3 getDimension(double progress) {
         double allowedProgress = GameZone.allowedProgress(progress);
         if (!determined) {
-            if (dimensionDist == null) {
-                return null;
-            }
             BattleRoyale.LOGGER.warn("Shape is not fully determined yet, may produce unexpected dimension calculation");
         }
         Vec3 baseVec = getDimensionNoCheck(allowedProgress);
+        if (baseVec == null) return null;
         if (checkBadShape
                 && (Vec3Utils.hasNegative(baseVec) || baseVec.x < baseVec.z)) {
             return Vec3Utils.positive(new Vec3(baseVec.z, baseVec.y, baseVec.x));
@@ -183,6 +184,7 @@ public class StarShape extends AbstractSimpleShape {
 
     @Override
     public @Nullable Vec3 getEndDimension() {
+        if (endDimension == null) return null;
         if (checkBadShape
                 && (Vec3Utils.hasNegative(endDimension) || endDimension.x < endDimension.z)) {
             return Vec3Utils.positive(new Vec3(endDimension.z, endDimension.y, endDimension.x));

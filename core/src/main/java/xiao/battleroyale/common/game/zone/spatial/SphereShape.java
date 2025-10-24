@@ -59,6 +59,8 @@ public class SphereShape extends Abstract3DShape {
 
     @Override
     protected boolean additionalCalculationCheck() {
+        assert startDimension != null && endDimension != null;
+
         hasBadShape = hasNegativeDimension();
         checkBadShape = hasBadShape && !allowBadShape;
         needEqualAbs = !hasEqualXYZAbsDimension();
@@ -72,6 +74,7 @@ public class SphereShape extends Abstract3DShape {
 
     @Override
     public @Nullable Vec3 getStartDimension() {
+        if (startDimension == null) return null;
         Vec3 baseV = needEqualAbs ? Vec3Utils.applyYAbsToXZ(startDimension) : startDimension;
         if (checkBadShape
                 && (Vec3Utils.hasNegative(startDimension) || !Vec3Utils.equalXYZAbs(startDimension))) {
@@ -85,12 +88,10 @@ public class SphereShape extends Abstract3DShape {
     public @Nullable Vec3 getDimension(double progress) {
         double allowedProgress = GameZone.allowedProgress(progress);
         if (!determined) {
-            if (dimensionDist == null) {
-                return null;
-            }
             BattleRoyale.LOGGER.warn("Shape is not fully determined yet, may produce unexpected dimension calculation");
         }
         Vec3 baseVec = getDimensionNoCheck(allowedProgress);
+        if (baseVec == null) return null;
         if (needEqualAbs) {
             baseVec = Vec3Utils.applyYAbsToXZ(baseVec);
         }
@@ -104,6 +105,7 @@ public class SphereShape extends Abstract3DShape {
 
     @Override
     public @Nullable Vec3 getEndDimension() {
+        if (endDimension == null) return null;
         Vec3 baseV = needEqualAbs ? Vec3Utils.applyYAbsToXZ(endDimension) : endDimension;
         if (checkBadShape
                 && (Vec3Utils.hasNegative(endDimension) || !Vec3Utils.equalXYZAbs(endDimension))) {
