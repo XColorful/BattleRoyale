@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.event.game.zone;
 
-import net.minecraft.nbt.CompoundTag;
+import com.google.gson.JsonObject;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,8 +17,8 @@ public class CustomZoneEvent extends AbstractSpecialZoneEvent {
     final LivingEntity livingEntity;
 
     public CustomZoneEvent(IGameManager gameManager, @NotNull ZoneManager.ZoneTickContext zoneTickContext, String protocol,
-                           @NotNull CompoundTag nbt, @NotNull GamePlayer gamePlayer, @Nullable LivingEntity livingEntity) {
-        super(gameManager, zoneTickContext, protocol, nbt);
+                           @NotNull JsonObject jsonTag, @NotNull GamePlayer gamePlayer, @Nullable LivingEntity livingEntity) {
+        super(gameManager, zoneTickContext, protocol, jsonTag);
         this.gamePlayer = gamePlayer;
         this.livingEntity = livingEntity;
     }

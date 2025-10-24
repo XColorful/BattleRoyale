@@ -17,16 +17,16 @@ public class AirdropFuncEntry extends AbstractEventFuncEntry {
     public @NotNull CompoundTag nbt;
 
     public AirdropFuncEntry(int moveDelay, int moveTime, int tickFreq, int tickOffset,
-                            String protocol, @Nullable CompoundTag tag,
+                            String protocol, @Nullable JsonObject jsonTag,
                             int lootId, @Nullable String nbtString) {
-        super(moveDelay, moveTime, tickFreq, tickOffset, protocol, tag);
+        super(moveDelay, moveTime, tickFreq, tickOffset, protocol, jsonTag);
         this.lootId = lootId;
         this.nbtString = nbtString;
         this.nbt = NBTUtils.stringToNBT(nbtString);
     }
     @Override public @NotNull AirdropFuncEntry copy() {
         return new AirdropFuncEntry(moveDelay, moveTime, tickFreq, tickOffset,
-                protocol, tag.copy(),
+                protocol, jsonTag.deepCopy(),
                 lootId, nbtString);
     }
 
@@ -38,7 +38,7 @@ public class AirdropFuncEntry extends AbstractEventFuncEntry {
     @Override
     public ITickableZone createTickableZone() {
         return new AirdropFunc(moveDelay, moveTime, tickFreq, tickOffset,
-                protocol, tag.copy(),
+                protocol, jsonTag.deepCopy(),
                 lootId, nbt);
     }
 
@@ -47,7 +47,7 @@ public class AirdropFuncEntry extends AbstractEventFuncEntry {
         JsonObject jsonObject = super.toJson();
 
         jsonObject.addProperty(ZoneFuncTag.PROTOCOL, protocol);
-        jsonObject.add(ZoneFuncTag.TAG, JsonUtils.writeTagToJson(tag));
+        jsonObject.add(ZoneFuncTag.JSON_TAG, jsonTag);
 
         jsonObject.addProperty(ZoneFuncTag.LOOT_ID, lootId);
         jsonObject.addProperty(ZoneFuncTag.NBT, nbtString);
@@ -62,13 +62,13 @@ public class AirdropFuncEntry extends AbstractEventFuncEntry {
         int tickOffset = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.TICK_OFFSET, -1);
 
         String protocol = JsonUtils.getJsonString(jsonObject, ZoneFuncTag.PROTOCOL, "");
-        CompoundTag tag = JsonUtils.getJsonTag(jsonObject, ZoneFuncTag.TAG, null);
+        JsonObject jsonTag = JsonUtils.getJsonObject(jsonObject, ZoneFuncTag.JSON_TAG, null);
 
         int lootId = JsonUtils.getJsonInt(jsonObject, ZoneFuncTag.LOOT_ID, 0);
         String nbtString = JsonUtils.getJsonString(jsonObject, ZoneFuncTag.NBT, "");
 
         return new AirdropFuncEntry(moveDelay, moveTime, tickFreq, tickOffset,
-                protocol, tag,
+                protocol, jsonTag,
                 lootId, nbtString);
     }
 }
