@@ -1,5 +1,6 @@
 package xiao.battleroyale.api.event.loot.generate;
 
+import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
@@ -13,9 +14,9 @@ public class CustomGenerateEvent <T extends BlockEntity> extends AbstractSpecial
 
     protected final List<ILootData> lootData;
 
-    public CustomGenerateEvent(LootGenerator.LootContext lootContext, T target, String protocol, @NotNull CompoundTag tag,
+    public CustomGenerateEvent(LootGenerator.LootContext lootContext, T target, String protocol, @NotNull JsonObject jsonTag,
                                List<ILootData> lootData) {
-        super(lootContext, target, protocol, tag);
+        super(lootContext, target, protocol, jsonTag);
         this.lootData = lootData;
     }
     @Override public CustomEventType getEventType() {

@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.minecraft.InventoryIndex;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.*;
 import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry.EffectFuncEntryBuilder;
@@ -360,22 +361,19 @@ public class DefaultZone {
     }
 
     private static JsonObject generateZoneEvent15() {
-        CompoundTag tag = new CompoundTag();
-        tag.putString("description", "Create event for other mod to subscribe");
-        tag.putBoolean("boolTrue", true);
-        tag.putBoolean("boolFalse", false);
-        tag.putFloat("float", 0.333F);
-        tag.putDouble("double", 0.88888888D);
-        tag.putLong("long", Integer.MAX_VALUE * 2L);
-        tag.putInt("int", 666666);
-        tag.putShort("short", (short) 25565);
-        tag.putString("randomUUID", UUID.randomUUID().toString());
-        CompoundTag nestedTag = new CompoundTag();
-        nestedTag.putString("additional data", "some structured data");
-        tag.put("tagInTag", nestedTag);
+        JsonObject jsonTag = new JsonObject();
+        jsonTag.addProperty("description", "Create event for other mod to subscribe");
+        jsonTag.addProperty("boolTrue", true);
+        jsonTag.addProperty("boolFalse", false);
+        jsonTag.addProperty("float", 0.333F);
+        jsonTag.addProperty("double", 0.88888888D);
+        jsonTag.addProperty("long", Integer.MAX_VALUE * 2L);
+        jsonTag.addProperty("int", 666666);
+        jsonTag.addProperty("short", (short) 25565);
+        jsonTag.addProperty("randomUUID", UUID.randomUUID().toString());
 
         EventFuncEntry eventFuncEntry = new EventFuncEntry(0, 0, 0, 0,
-                "cbr:0.3.8", tag);
+                "cbr:0.3.8", jsonTag);
 
         StartEntry startEntry = new StartEntry();
         EndEntry endEntry = new EndEntry();
@@ -396,7 +394,7 @@ public class DefaultZone {
                 new ItemEntry("minecraft:iron_helmet", "", 1)
         ));
         InventoryFuncEntry inventoryFuncEntry = new InventoryFuncEntry(0, 0, 20, 0,
-                false, false, 36, 39,
+                false, false, InventoryIndex.ARMOR_START, InventoryIndex.ARMOR_END,
                 lootEntry, -1);
 
         StartEntry startEntry = new StartEntry();

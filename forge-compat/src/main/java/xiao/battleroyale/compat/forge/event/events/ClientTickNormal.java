@@ -39,6 +39,9 @@ public class ClientTickNormal extends AbstractEventCommon {
 
     @SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
     public void onClientTickEvent(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         super.onEvent(event);
     }
 }
