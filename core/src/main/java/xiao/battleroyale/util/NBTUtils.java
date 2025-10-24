@@ -5,7 +5,9 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -115,7 +117,10 @@ public class NBTUtils {
 
     @NotNull
     public static BlockState readBlockState(@NotNull CompoundTag nbt) {
-        DataResult<BlockState> result = BlockState.CODEC.parse(NbtOps.INSTANCE, nbt);
+        HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
+        DataResult<BlockState> result = registries != null ?
+                BlockState.CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, registries), nbt)
+                : BlockState.CODEC.parse(NbtOps.INSTANCE, nbt);
 
         if (result.result().isPresent()) {
             return result.result().get(); // 返回成功解析的方块状态
@@ -143,7 +148,11 @@ public class NBTUtils {
             return ItemStack.EMPTY;
         }
         try {
-            // HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
+            HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
+            if (registries != null) {
+                RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, registries);
+                return ItemStack.CODEC.parse(registryOps, nbt).result().orElse(ItemStack.EMPTY);
+            }
             return ItemStack.CODEC.parse(NbtOps.INSTANCE, nbt).result().orElse(ItemStack.EMPTY);
         } catch (Exception e) {
             BattleRoyale.LOGGER.warn("Failed to parse ItemStack from NBT: '{}', reason: {}", nbt, e.getMessage());
