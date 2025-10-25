@@ -16,6 +16,9 @@ public class DefaultLootConfigGenerator {
 
     public static void generateDefaultLootSpawnerConfig(String configDirPath) {
         DefaultLootSpawner.generateDefaultConfigs(configDirPath);
+        if (BattleRoyale.getMcRegistry().isModLoaded(CbrAddon.get().getModId())) {
+            CFHCLootSpawner.generateDefaultConfigs(configDirPath);
+        }
         if (BattleRoyale.getMcRegistry().isModLoaded(Tacz.get().getModId())) {
             TaczLootSpawner.generateDefaultConfigs(configDirPath);
             TaczLootSpawner.generateExtraConfigs(configDirPath);
