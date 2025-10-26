@@ -83,20 +83,25 @@ public abstract class AbstractNeoEventCommon {
         NeoEvent neoEvent = getNeoEventType(event);
 
         synchronized (lock) {
+            boolean isCurrentDispatching = isDispatching;
             isDispatching = true;
-            for (IEventHandler handler : eventHandlers) {
-                if (neoEvent.isCanceled()) {
-                    break;
+            try {
+                for (IEventHandler handler : eventHandlers) {
+                    if (neoEvent.isCanceled()) {
+                        break;
+                    }
+                    handler.handleEvent(this.eventType, neoEvent);
                 }
-                handler.handleEvent(this.eventType, neoEvent);
-            }
 
-            for (IEventHandler handler : statsEventHandlers) {
-                handler.handleEvent(this.eventType, neoEvent);
+                for (IEventHandler handler : statsEventHandlers) {
+                    handler.handleEvent(this.eventType, neoEvent);
+                }
+            } finally {
+                if (!isCurrentDispatching) { // 防止事件A里触发事件B, 事件B提前执行processPendingOperations (否则得把迭代换成索引遍历, 但是不治本)
+                    processPendingOperations();
+                    isDispatching = false;
+                }
             }
-            isDispatching = false;
-
-            processPendingOperations();
         }
     }
 
