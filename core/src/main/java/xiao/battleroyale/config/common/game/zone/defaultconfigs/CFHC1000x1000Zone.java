@@ -93,7 +93,7 @@ public class CFHC1000x1000Zone {
 
         // 透明装备区
         ILootEntry lootEntry = new MultiEntry(Arrays.asList(
-                new ItemEntry("minecraft:wooden_axe", "{components:{\"minecraft:enchantments\":{levels:{\"minecraft:efficiency\":10\"minecraft:unbreaking\":3}}}}" , 1), // We are 伐木不累!
+                new ItemEntry("minecraft:wooden_axe", "{components:{\"minecraft:enchantments\":{levels:{\"minecraft:efficiency\":10,\"minecraft:unbreaking\":3}}}}" , 1), // We are 伐木不累!
                 new ItemEntry("minecraft:iron_pickaxe", "{components:{\"minecraft:enchantments\":{levels:{\"minecraft:efficiency\":10,\"minecraft:unbreaking\":3}}}}", 1), // 哇! 神稿
                 new ItemEntry("minecraft:cherry_planks", "" , 64), // 樱花木板
                 new ItemEntry("minecraft:basalt", "", 64), // 玄武岩
