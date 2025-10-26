@@ -62,4 +62,9 @@ public class ItemEntry extends AbstractLootEntry implements IItemLootEntry {
         }
         return jsonObject;
     }
+
+    public EntityEntry toEntityEntry() {
+        String validNbtString = nbtString == null || nbtString.isEmpty() ? "{}" : nbtString;
+        return new EntityEntry("minecraft:item", String.format("{Item:{id:\"%s\",Count:%sb,tag:%s}}", itemString, count, validNbtString), 1, 0);
+    }
 }
