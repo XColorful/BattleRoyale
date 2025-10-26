@@ -24,7 +24,7 @@ public class CFHCLootSpawner {
     }
 
     public static JsonObject addCombined() {
-        RepeatEntry repeatEntry = new RepeatEntry(1, 4,
+        RepeatEntry repeatEntry = new RepeatEntry(3, 6,
                 new MultiEntry(Arrays.asList(
                         new WeightEntry(Arrays.asList(
                                 new WeightedEntry(5, generateResources()),
@@ -32,10 +32,10 @@ public class CFHCLootSpawner {
                                 new WeightedEntry(5, generateFunction()),
                                 new WeightedEntry(5, generateOthers())
                         )),
-                        new RepeatEntry(0, 4, new EmptyEntry(LootEntryType.ITEM.getName()))
+                        new RepeatEntry(0, 3, new EmptyEntry(LootEntryType.ITEM.getName()))
                 ))
         );
-        LootConfig lootConfig = new LootConfig(0, "CFHC commonn loot", "#FFFFFFAA", repeatEntry);
+        LootConfig lootConfig = new LootConfig(0, "CFHC common loot", "#FFFFFFAA", repeatEntry);
         return lootConfig.toJson();
     }
 
