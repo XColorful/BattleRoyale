@@ -144,7 +144,7 @@ public class CFHCLootSpawner {
     }
     public static ILootEntry generateSpecial() { // 特殊
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(5, new ItemEntry("minecraft:elytra", "{Damage:402}", 1))
+                new WeightedEntry(5, new ItemEntry("minecraft:elytra", String.format("{components:{\"minecraft:damage\":%s}}", 402), 1))
         ));
     }
     public static ILootEntry generateHorse() { // 骑兵
@@ -325,14 +325,14 @@ public class CFHCLootSpawner {
     }
     public static ILootEntry generateMomentum() { // 气势
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", "{instrument:\"minecraft:ponder_goat_horn\"}", 1)),
-                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", "{instrument:\"minecraft:sing_goat_horn\"}", 1)),
-                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", "{instrument:\"minecraft:seek_goat_horn\"}", 1)),
-                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", "{instrument:\"minecraft:feel_goat_horn\"}", 1)),
-                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", "{instrument:\"minecraft:admire_goat_horn\"}", 1)),
-                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", "{instrument:\"minecraft:call_goat_horn\"}", 1)),
-                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", "{instrument:\"minecraft:yearn_goat_horn\"}", 1)),
-                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", "{instrument:\"minecraft:dream_goat_horn\"}", 1))
+                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", String.format("{components:{\"minecraft:instrument\":\"%s\"}}", "minecraft:ponder_goat_horn"), 1)),
+                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", String.format("{components:{\"minecraft:instrument\":\"%s\"}}", "minecraft:sing_goat_horn"), 1)),
+                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", String.format("{components:{\"minecraft:instrument\":\"%s\"}}", "minecraft:seek_goat_horn"), 1)),
+                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", String.format("{components:{\"minecraft:instrument\":\"%s\"}}", "minecraft:feel_goat_horn"), 1)),
+                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", String.format("{components:{\"minecraft:instrument\":\"%s\"}}", "minecraft:admire_goat_horn"), 1)),
+                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", String.format("{components:{\"minecraft:instrument\":\"%s\"}}", "minecraft:call_goat_horn"), 1)),
+                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", String.format("{components:{\"minecraft:instrument\":\"%s\"}}", "minecraft:yearn_goat_horn"), 1)),
+                new WeightedEntry(5, new ItemEntry("minecraft:goat_horn", String.format("{components:{\"minecraft:instrument\":\"%s\"}}", "minecraft:dream_goat_horn"), 1))
         ));
     }
 }
