@@ -53,7 +53,8 @@ public class EquipmentLevel {
         switch (material) {
             case LEATHER -> baseDurability = 5;
             case GOLDEN -> baseDurability = 7;
-            case CHAINMAIL, IRON -> baseDurability = 16;
+            case CHAINMAIL -> baseDurability = 15;
+            case IRON -> baseDurability = 16;
             case DIAMOND -> baseDurability = 33;
             case NETHERITE -> baseDurability = 37;
             case TURTLE -> baseDurability = 25;
