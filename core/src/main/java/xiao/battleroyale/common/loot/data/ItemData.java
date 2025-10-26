@@ -27,7 +27,7 @@ public class ItemData implements IItemLootData {
         this.isEmpty = this.item == null
                 || (this.item.toString().equals(EMPTY_TYPE) && !rl.equals(EMPTY_RL));
         if (this.item == null) {
-            BattleRoyale.LOGGER.warn("Faild to get item type from ResourceLocation {}", rl);
+            BattleRoyale.LOGGER.warn("Failed to get item type from ResourceLocation {}", rl);
         }
         this.nbt = nbt;
         this.count = count; // 原版已经处理小于等于0
