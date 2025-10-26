@@ -52,7 +52,7 @@ public class CFHCEntitySpawner {
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(5, new ItemEntry("minecraft:totem_of_undying", "", 1).toEntityEntry()),
                 new WeightedEntry(5, EquipmentLevel.equipment(EquipmentLevel.NETHERITE, EquipmentLevel.HELMET, 7, 5).toEntityEntry()),
-                new WeightedEntry(5, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:regeneration\"}", 1).toEntityEntry()),
+                new WeightedEntry(5, new ItemEntry("minecraft:potion", "{components:{\"minecraft:potion_contents\":{potion:\"minecraft:regeneration\"}}}", 1).toEntityEntry()),
                 new WeightedEntry(15, new ItemEntry("minecraft:golden_apple", "", 1).toEntityEntry()),
                 new WeightedEntry(20, new ItemEntry("minecraft:golden_carrot", "" ,1).toEntityEntry())
         ));
@@ -83,7 +83,7 @@ public class CFHCEntitySpawner {
                 ))),
                 new WeightedEntry(15, new ItemEntry("minecraft:diamond_sword", "", 1).toEntityEntry()),
                 new WeightedEntry(10, new ItemEntry("minecraft:iron_sword", "", 1).toEntityEntry()),
-                new WeightedEntry(15, new ItemEntry("minecraft:potion", "{Potion:\"minecraft:healing\"}", 1).toEntityEntry())
+                new WeightedEntry(15, new ItemEntry("minecraft:potion", "{components:{\"minecraft:potion_contents\":{potion:\"minecraft:healing\"}}}", 1).toEntityEntry())
         ));
     }
 }
