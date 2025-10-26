@@ -24,7 +24,7 @@ public abstract class AbstractEventCommon {
         this.eventType = eventType;
     }
 
-    public boolean addEventHander(IEventHandler eventHandler, boolean receivedCanceled) {
+    protected final boolean addEventHander(IEventHandler eventHandler, boolean receivedCanceled) {
         synchronized (lock) {
             if (isDispatching) {
                 pendingOperations.add(new PendingOperation(eventHandler, receivedCanceled, true));
@@ -33,7 +33,7 @@ public abstract class AbstractEventCommon {
             return addEventHandlerInternal(eventHandler, receivedCanceled);
         }
     }
-    protected boolean addEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
+    protected final boolean addEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
         boolean added;
         if (!receivedCanceled) {
             added = eventHandlers.add(eventHandler);
@@ -59,7 +59,7 @@ public abstract class AbstractEventCommon {
             return removeEventHandlerInternal(eventHandler, receivedCanceled);
         }
     }
-    protected boolean removeEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
+    protected final boolean removeEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
         boolean removed;
         if (!receivedCanceled) {
             removed = eventHandlers.remove(eventHandler);
@@ -83,24 +83,29 @@ public abstract class AbstractEventCommon {
         ForgeEvent forgeEvent = getForgeEventType(event);
 
         synchronized (lock) {
+            boolean isCurrentDispatching = isDispatching;
             isDispatching = true;
-            for (IEventHandler handler : eventHandlers) {
-                if (forgeEvent.isCanceled()) {
-                    break;
+            try {
+                for (IEventHandler handler : eventHandlers) {
+                    if (forgeEvent.isCanceled()) {
+                        break;
+                    }
+                    handler.handleEvent(this.eventType, forgeEvent);
                 }
-                handler.handleEvent(this.eventType, forgeEvent);
-            }
 
-            for (IEventHandler handler : statsEventHandlers) {
-                handler.handleEvent(this.eventType, forgeEvent);
+                for (IEventHandler handler : statsEventHandlers) {
+                    handler.handleEvent(this.eventType, forgeEvent);
+                }
+            } finally {
+                if (!isCurrentDispatching) { // 防止事件A里触发事件B, 事件B提前执行processPendingOperations (否则得把迭代换成索引遍历, 但是不治本)
+                    processPendingOperations();
+                    isDispatching = false;
+                }
             }
-            isDispatching = false;
-
-            processPendingOperations();
         }
     }
 
-    protected void processPendingOperations() {
+    protected final void processPendingOperations() {
         if (pendingOperations.isEmpty()) {
             return;
         }
