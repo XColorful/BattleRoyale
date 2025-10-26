@@ -64,7 +64,10 @@ public class ItemEntry extends AbstractLootEntry implements IItemLootEntry {
     }
 
     public EntityEntry toEntityEntry() {
-        String validNbtString = nbtString == null || nbtString.isEmpty() ? "{}" : nbtString;
-        return new EntityEntry("minecraft:item", String.format("{Item:{id:\"%s\",Count:%sb,tag:%s}}", itemString, count, validNbtString), 1, 0);
+        String validNbtString = "components:{}";
+        if (nbtString != null && !nbtString.isEmpty() && !nbtString.equals("{}") && nbtString.length() > 2) {
+            validNbtString = nbtString.substring(1, nbtString.length() - 1); // 去掉最外层的{}
+        }
+        return new EntityEntry("minecraft:item", String.format("{Item:{%s,count:%s,id:\"%s\"}}", validNbtString, count, itemString), 1, 0);
     }
 }
