@@ -97,8 +97,8 @@ public abstract class AbstractEventCommon {
                     handler.handleEvent(this.eventType, forgeEvent);
                 }
             } finally {
-                processPendingOperations();
-                if (!isCurrentDispatching) {
+                if (!isCurrentDispatching) { // 防止事件A里触发事件B, 事件B提前执行processPendingOperations (否则得把迭代换成索引遍历, 但是不治本)
+                    processPendingOperations();
                     isDispatching = false;
                 }
             }
