@@ -47,7 +47,7 @@ public class HorseVehicleEntitySpawner {
 
     private static ILootEntry generate60kmhHorse() {
         // 马：速度60km/h=0.833，血量20，跳跃力量1.0，钻石马铠带保护X
-        return new EntityEntry("minecraft:horse", "{Tame:1b,SaddleItem:{id:\"minecraft:saddle\",Count:1b},ArmorItem:{id:\"minecraft:diamond_horse_armor\",Count:1b,jsonTag:{Enchantments:[{id:\"minecraft:protection\",lvl:10s}]}},Attributes:[{Name:\"minecraft:generic.movement_speed\",Base:0.8333333d},{Name:\"minecraft:generic.max_health\",Base:20.0d},{Name:\"minecraft:horse.jump_strength\",Base:1.0d}]}", 1, 5);
+        return new EntityEntry("minecraft:horse", "{Tame:1b,SaddleItem:{id:\"minecraft:saddle\",Count:1b},ArmorItem:{id:\"minecraft:diamond_horse_armor\",Count:1b,tag:{Enchantments:[{id:\"minecraft:protection\",lvl:10s}]}},Attributes:[{Name:\"minecraft:generic.movement_speed\",Base:0.8333333d},{Name:\"minecraft:generic.max_health\",Base:20.0d},{Name:\"minecraft:horse.jump_strength\",Base:1.0d}]}", 1, 5);
     }
 
     // NBT标签：Items必须在ChestedHorse之前，否则不会有箱子
