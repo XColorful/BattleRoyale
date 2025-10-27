@@ -203,15 +203,15 @@ public class TaczLootSpawner {
     // 强制写入空配件的NBT标签字符串
     private static MultiEntry gunAmmoBuilderEmpty(String gunName, String ammoName, int ammoCount, String fireMode) {
         String emptyAttachmentsNBT = "{" +
-                "AttachmentEXTENDED_MAG: {id: \"minecraft:air\", Count:0b, jsonTag: {struck:0b, glide:0b}}, " +
+                "AttachmentEXTENDED_MAG: {id: \"minecraft:air\", Count:0b, tag: {struck:0b, glide:0b}}, " +
                 "HasBulletInBarrel: 0b, " +
-                "AttachmentSCOPE: {id: \"minecraft:air\", Count: 0b, jsonTag: {struck: 0b, glide: 0b}}, " +
-                "AttachmentMUZZLE: {id: \"minecraft:air\", Count: 0b, jsonTag: {struck: 0b, glide: 0b}}, " +
-                "AttachmentLASER: {id: \"minecraft:air\", Count: 0b, jsonTag: {struck: 0b, glide: 0b}}, " +
+                "AttachmentSCOPE: {id: \"minecraft:air\", Count: 0b, tag: {struck: 0b, glide: 0b}}, " +
+                "AttachmentMUZZLE: {id: \"minecraft:air\", Count: 0b, tag: {struck: 0b, glide: 0b}}, " +
+                "AttachmentLASER: {id: \"minecraft:air\", Count: 0b, tag: {struck: 0b, glide: 0b}}, " +
                 "GunFireMode: \"" + fireMode + "\", " +
                 "GunCurrentAmmoCount: 0, " +
-                "AttachmentGRIP: {id: \"minecraft:air\", Count: 0b, jsonTag: {struck: 0b, glide: 0b}}, " +
-                "AttachmentSTOCK: {id: \"minecraft:air\", Count: 0b, jsonTag: {struck:0b, glide:0b}}, " +
+                "AttachmentGRIP: {id: \"minecraft:air\", Count: 0b, tag: {struck: 0b, glide: 0b}}, " +
+                "AttachmentSTOCK: {id: \"minecraft:air\", Count: 0b, tag: {struck:0b, glide:0b}}, " +
                 "GunId: \"tacz:" + gunName + "\"" +
                 "}";
 
