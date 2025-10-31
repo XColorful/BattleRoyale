@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.game.team.IGameTeamReadApi;
+import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
@@ -101,7 +102,7 @@ public class TeamManager extends AbstractGameManager implements IGameTeamReadApi
 
         // clearOrUpdateTeamIfLimitChanged(); // initGameConfig到这里已经处理过了
         if (!this.teamConfig.autoJoinGame) {
-            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.require_manually_join");
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.require_manually_join", TeamCommand.joinCommand()));
         } else { // 自动加入队伍
             List<ServerPlayer> onlinePlayers = serverLevel.getPlayers(p -> true);
             Collections.shuffle(onlinePlayers);

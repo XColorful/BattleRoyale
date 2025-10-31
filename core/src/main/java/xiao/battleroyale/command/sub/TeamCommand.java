@@ -147,6 +147,14 @@ public class TeamCommand {
         return Command.SINGLE_SUCCESS;
     }
 
+    public static String joinCommand() {
+        return buildCommandString(
+                MOD_ID,
+                TEAM,
+                JOIN
+        );
+    }
+
     public static String acceptInviteCommand(String senderName) {
         return buildCommandString(
                 MOD_ID,

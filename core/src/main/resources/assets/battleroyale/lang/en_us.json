@@ -1,5 +1,5 @@
 {
-  "itemGroup.tab.battleroyale.block": "Battle Royale Blocks",
+  "itemGroup.tab.battleroyale": "Custom BattleRoyale",
 
   "item.battleroyale.loot_spawner": "Loot Spawner",
   "item.battleroyale.entity_spawner": "Entity Spawner",
@@ -151,7 +151,7 @@
   "battleroyale.message.missing_zone_config": "Missing valid zone config for battleroyale game",
   "battleroyale.message.missing_bot_config": "Missing valid bot config for battleroyale game",
 
-  "battleroyale.message.require_manually_join": "Auto-join game is disabled, use '/battleroyale team join' to join game",
+  "battleroyale.message.require_manually_join": "Auto-join game is disabled, use '%s' to join game",
   "battleroyale.message.reached_player_limit": "Exceeded maximum player limit: %s",
   "battleroyale.message.failed_to_join_team": "Failed to join team %s",
   "battleroyale.message.joined_to_team": "Joined to team %s",
