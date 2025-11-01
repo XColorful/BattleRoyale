@@ -1,5 +1,5 @@
 {
-  "itemGroup.tab.battleroyale.block": "Battle Royale方块",
+  "itemGroup.tab.battleroyale": "自定义大逃杀",
 
   "item.battleroyale.loot_spawner": "物资刷新器",
   "item.battleroyale.entity_spawner": "实体生成器",
@@ -151,7 +151,7 @@
   "battleroyale.message.missing_zone_config": "缺少有效的区域配置",
   "battleroyale.message.missing_bot_config": "缺少有效的人机配置",
 
-  "battleroyale.message.require_manually_join": "当前配置未启用自动加入游戏, 请使用指令'/battleroyale team join'加入游戏",
+  "battleroyale.message.require_manually_join": "当前配置未启用自动加入游戏, 请使用指令'%s'加入游戏",
   "battleroyale.message.reached_player_limit": "已超过最大玩家人数限制: %s",
   "battleroyale.message.failed_to_join_team": "无法加入队伍%s",
   "battleroyale.message.joined_to_team": "已加入队伍%s",
