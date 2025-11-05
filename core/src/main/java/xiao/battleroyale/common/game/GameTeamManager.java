@@ -13,7 +13,7 @@ import java.util.UUID;
  * 将GameManager集中的接口抽离成static方法
  */
 public class GameTeamManager {
-    
+
     private static final IGameTeamReadApi teamManagerInstance = TeamManager.get();
 
     // TeamManager
@@ -26,8 +26,4 @@ public class GameTeamManager {
     public static List<GamePlayer> getGamePlayers() { return teamManagerInstance.getGamePlayers(); }
     public static List<GamePlayer> getStandingGamePlayers() { return teamManagerInstance.getStandingGamePlayers(); }
     public static @Nullable GamePlayer getRandomStandingGamePlayer() { return teamManagerInstance.getRandomStandingGamePlayer(); }
-
-    public static IGameTeamReadApi getApi() {
-        return teamManagerInstance;
-    }
 }

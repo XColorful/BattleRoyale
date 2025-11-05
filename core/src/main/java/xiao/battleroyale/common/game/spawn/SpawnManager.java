@@ -20,6 +20,7 @@ import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportEvent;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishEvent;
 import xiao.battleroyale.api.game.spawn.IGameLobbyReadApi;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
+import xiao.battleroyale.api.game.spawn.ISpawnManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
@@ -50,7 +51,7 @@ import static xiao.battleroyale.api.data.io.TempDataTag.SPAWN_MANAGER;
 /**
  * 管理玩家出生方式、传送相关的Manager
  */
-public class SpawnManager extends AbstractGameManager implements IGameLobbyReadApi, ISideOnly {
+public class SpawnManager extends AbstractGameManager implements IGameLobbyReadApi, ISideOnly, ISpawnManager {
 
     private static class SpawnManagerHolder {
         private static final SpawnManager INSTANCE = new SpawnManager();

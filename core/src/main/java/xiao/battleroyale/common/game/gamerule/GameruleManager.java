@@ -8,6 +8,7 @@ import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.game.gamerule.IGameruleManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameStatsManager;
@@ -25,7 +26,7 @@ import xiao.battleroyale.util.GameUtils;
 
 import java.util.List;
 
-public class GameruleManager extends AbstractGameManager {
+public class GameruleManager extends AbstractGameManager implements IGameruleManager {
 
     private static class GameruleManagerHolder {
         private static final GameruleManager INSTANCE = new GameruleManager();

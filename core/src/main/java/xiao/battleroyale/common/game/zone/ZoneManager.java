@@ -9,6 +9,7 @@ import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.api.event.game.tick.ZoneTickEvent;
 import xiao.battleroyale.api.event.game.tick.ZoneTickFinishEvent;
 import xiao.battleroyale.api.game.zone.IGameZoneReadApi;
+import xiao.battleroyale.api.game.zone.IZoneManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.game.AbstractGameManager;
@@ -26,7 +27,7 @@ import xiao.battleroyale.util.ChatUtils;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi {
+public class ZoneManager extends AbstractGameManager implements IZoneManager {
 
     private static class ZoneManagerHolder {
         private static final ZoneManager INSTANCE = new ZoneManager();

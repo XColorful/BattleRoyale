@@ -11,6 +11,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.ILivingDamageEvent;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
+import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
@@ -32,7 +33,7 @@ import java.util.*;
 
 import static xiao.battleroyale.data.AbstractDataManager.MOD_DATA_PATH;
 
-public class StatsManager extends AbstractGameManager {
+public class StatsManager extends AbstractGameManager implements IStatsManager {
 
     private static class StatsManagerHolder {
         private static final StatsManager INSTANCE = new StatsManager();

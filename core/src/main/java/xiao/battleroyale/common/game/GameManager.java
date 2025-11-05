@@ -23,12 +23,15 @@ import xiao.battleroyale.api.event.game.tick.GameTickEvent;
 import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
 import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
-import xiao.battleroyale.api.game.spawn.IGameLobbyReadApi;
-import xiao.battleroyale.api.game.team.IGameTeamReadApi;
+import xiao.battleroyale.api.game.gamerule.IGameruleManager;
+import xiao.battleroyale.api.game.loot.IGameLootManager;
+import xiao.battleroyale.api.game.spawn.ISpawnManager;
+import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
-import xiao.battleroyale.api.game.zone.IGameZoneReadApi;
+import xiao.battleroyale.api.game.team.ITeamManager;
+import xiao.battleroyale.api.game.zone.IZoneManager;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
@@ -101,6 +104,61 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         ZoneManager.init(mcSide);
     }
 
+    private @NotNull IGameruleManager gameruleManager = GameruleManager.get();
+    private @NotNull IGameLootManager gameLootManager = GameLootManager.get();
+    private @NotNull ISpawnManager spawnManager = SpawnManager.get();
+    private @NotNull IStatsManager statsManager = StatsManager.get();
+    private @NotNull ITeamManager teamManager = TeamManager.get();
+    private @NotNull IZoneManager zoneManager = ZoneManager.get();
+    @Override public boolean setGameruleManager(@NotNull IGameruleManager gameruleManager) {
+        if (isInGame()) return false;
+        this.gameruleManager = gameruleManager;
+        return true;
+    }
+    @Override public boolean setGameLootManager(@NotNull IGameLootManager gameLootManager) {
+        if (isInGame()) return false;
+        this.gameLootManager = gameLootManager;
+        return true;
+    }
+    @Override public boolean setSpawnManager(@NotNull ISpawnManager spawnManager) {
+        if (isInGame()) return false;
+        this.spawnManager = spawnManager;
+        return true;
+    }
+    @Override public boolean setStatsManager(@NotNull IStatsManager statsManager) {
+        if (isInGame()) return false;
+        this.statsManager = statsManager;
+        return true;
+    }
+    @Override public boolean setTeamManager(@NotNull ITeamManager teamManager) {
+        if (isInGame()) return false;
+        this.teamManager = teamManager;
+        return true;
+    }
+    @Override public boolean setZoneManager(@NotNull IZoneManager zoneManager) {
+        if (isInGame()) return false;
+        this.zoneManager = zoneManager;
+        return true;
+    }
+    @Override public @NotNull IGameruleManager getGameruleManager() {
+        return gameruleManager;
+    }
+    @Override public @NotNull IGameLootManager getGameLootManager() {
+        return gameLootManager;
+    }
+    @Override public @NotNull ISpawnManager getSpawnManager() {
+        return spawnManager;
+    }
+    @Override public @NotNull IStatsManager getStatsManager() {
+        return statsManager;
+    }
+    @Override public @NotNull ITeamManager getTeamManager() {
+        return teamManager;
+    }
+    @Override public @NotNull IZoneManager getZoneManager() {
+        return zoneManager;
+    }
+
     protected int gameTime = 0; // 游戏运行时维护当前游戏时间
     protected int gameStep = 1;
     private @NotNull UUID gameId;
@@ -113,7 +171,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     protected boolean isStopping = false;
 
     // config
-    protected int gameruleConfigId = 0;
+    private int gameruleConfigId = 0;
     private int spawnConfigId = 0;
     private int botConfigId = 0;
     protected Vec3 globalCenterOffset;
@@ -572,15 +630,6 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
     // --------GameApi--------
 
-    @Override public IGameTeamReadApi getGameTeamReadApi() {
-        return GameTeamManager.getApi();
-    }
-    @Override public IGameZoneReadApi getGameZoneReadApi() {
-        return GameZoneManager.getApi();
-    }
-    @Override public IGameLobbyReadApi getGameLobbyReadApi() {
-        return SpawnManager.get();
-    }
     @Override public IGameIdReadApi getGameIdReadApi() {
         return GameIdHelper.getApi();
     }

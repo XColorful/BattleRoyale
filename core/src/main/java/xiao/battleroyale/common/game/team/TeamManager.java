@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.game.team.IGameTeamReadApi;
+import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
@@ -25,7 +26,7 @@ import xiao.battleroyale.util.ChatUtils;
 import java.util.*;
 import java.util.List;
 
-public class TeamManager extends AbstractGameManager implements IGameTeamReadApi {
+public class TeamManager extends AbstractGameManager implements ITeamManager {
 
     private static class TeamManagerHolder {
         private static final TeamManager INSTANCE = new TeamManager();

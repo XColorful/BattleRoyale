@@ -7,6 +7,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.game.tick.*;
+import xiao.battleroyale.api.game.loot.IGameLootManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
@@ -25,7 +26,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class GameLootManager extends AbstractGameManager implements ISideOnly {
+public class GameLootManager extends AbstractGameManager implements ISideOnly, IGameLootManager {
 
     private static class GameLootManagerHolder {
         private static final GameLootManager INSTANCE = new GameLootManager();

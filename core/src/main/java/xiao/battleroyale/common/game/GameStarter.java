@@ -28,7 +28,7 @@ import static xiao.battleroyale.api.data.io.TempDataTag.GLOBAL_OFFSET;
 public class GameStarter {
 
     protected static boolean initGameConfigSetup(GameManager gameManager) {
-        GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameManager.gameruleConfigId);
+        GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameManager.getGameruleConfigId());
         if (gameruleConfig == null) {
             if (gameManager.serverLevel != null) {
                 ChatUtils.sendTranslatableMessageToAllPlayers(gameManager.serverLevel, "battleroyale.message.missing_gamerule_config");
