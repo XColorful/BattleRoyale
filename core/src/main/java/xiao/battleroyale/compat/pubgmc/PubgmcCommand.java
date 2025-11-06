@@ -130,7 +130,7 @@ public class PubgmcCommand {
         Vec2 xzCoords = Vec2Argument.getVec2(context, XZ);
         Vec3 offset = new Vec3(xzCoords.x, 0, xzCoords.y);
         double side = DoubleArgumentType.getDouble(context, SIDE);
-        if (GameManager.get().setGlobalCenterOffset(offset)) {
+        if (BattleRoyale.getGameManager().setGlobalCenterOffset(offset)) {
             if (source.isPlayer()) {
                 source.sendSuccess(() -> Component.translatable("battleroyale.message.set_global_offset", String.format("%.2f", offset.x), String.format("%.2f", offset.y), String.format("%.2f", offset.z)).withStyle(ChatFormatting.GREEN), false);
             }
@@ -146,7 +146,7 @@ public class PubgmcCommand {
     private static int deleteMap(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         Vec3 offset = Vec3.ZERO;
-        if (GameManager.get().setGlobalCenterOffset(offset)) {
+        if (BattleRoyale.getGameManager().setGlobalCenterOffset(offset)) {
             if (source.isPlayer()) {
                 source.sendSuccess(() -> Component.translatable("battleroyale.message.set_global_offset", String.format("%.2f", offset.x), String.format("%.2f", offset.y), String.format("%.2f", offset.z)).withStyle(ChatFormatting.GREEN), false);
             }

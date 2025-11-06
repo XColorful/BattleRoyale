@@ -9,6 +9,7 @@ import net.minecraft.world.level.ChunkPos;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.IServerTickEvent;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.event.handler.loot.LootGenerationEventHandler;
 
@@ -54,7 +55,7 @@ public class CommonLootManager {
      * @return 队列中的总区块数；如果已有任务正在进行，则返回 0；如果游戏已在进行，则返回 -1。
      */
     public int startGenerationTask(CommandSourceStack source, UUID gameId) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             source.sendFailure(Component.translatable("battleroyale.message.game_cancel_loot"));
             return -1;
         }
@@ -120,7 +121,8 @@ public class CommonLootManager {
      * @return 如果任务完成或中断，返回 true；否则返回 false。
      */
     public boolean onTick(IServerTickEvent event) {
-        if (currentGenerationLevel == null || GameManager.get().isInGame() && !this.currentGenerationGameId.equals(GameManager.get().getGameId())) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (currentGenerationLevel == null || gameManager.isInGame() && !this.currentGenerationGameId.equals(gameManager.getGameId())) {
             if (initiatingCommandSource != null) {
                 initiatingCommandSource.sendFailure(Component.translatable("battleroyale.message.game_stop_loot"));
             }

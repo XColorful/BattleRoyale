@@ -1,12 +1,15 @@
 package xiao.battleroyale.common.game;
 
 import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.ApiStatus;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
 
 public class GameSubManager {
 
-    protected static void initGameConfigSubManager(IGameManager gameManager, ServerLevel serverLevel) {
+    @ApiStatus.Internal
+    public static void initGameConfigSubManager(IGameManager gameManager, ServerLevel serverLevel) {
+        gameManager.getGameProcessManager().initGameConfig(serverLevel);
         gameManager.getGameLootManager().initGameConfig(serverLevel);
         gameManager.getGameruleManager().initGameConfig(serverLevel);
         gameManager.getSpawnManager().initGameConfig(serverLevel);
@@ -16,17 +19,20 @@ public class GameSubManager {
         gameManager.getStatsManager().initGameConfig(serverLevel);
     }
 
-    protected static boolean gameConfigAllReady(IGameManager gameManager) {
+    @ApiStatus.Internal
+    public static boolean gameConfigAllReady(IGameManager gameManager) {
         return (gameManager.getGameLootManager().isPreparedForGame() // 判定的优先级最低
                 && gameManager.getGameruleManager().isPreparedForGame()
                 && gameManager.getSpawnManager().isPreparedForGame()
                 && gameManager.getGameLobbyManager().isPreparedForGame()
                 && gameManager.getTeamManager().isPreparedForGame()
                 && gameManager.getZoneManager().isPreparedForGame()
-                && gameManager.getStatsManager().isPreparedForGame());
+                && gameManager.getStatsManager().isPreparedForGame()
+                && gameManager.getGameProcessManager().isPreparedForGame());
     }
 
-    protected static void initGameSubManager(IGameManager gameManager, ServerLevel serverLevel) {
+    @ApiStatus.Internal
+    public static void initGameSubManager(IGameManager gameManager, ServerLevel serverLevel) {
         gameManager.getStatsManager().initGame(serverLevel); // 先清空stats
         gameManager.getGameLootManager().initGame(serverLevel);
         gameManager.getTeamManager().initGame(serverLevel); // TeamManager先处理组队
@@ -34,8 +40,10 @@ public class GameSubManager {
         gameManager.getSpawnManager().initGame(serverLevel);
         gameManager.getGameLobbyManager().initGame(serverLevel); // GameLobbyManager会传送至大厅并更改游戏模式
         gameManager.getZoneManager().initGame(serverLevel);
+        gameManager.getGameProcessManager().initGame(serverLevel);
     }
-    protected static boolean startGameSubManager(IGameManager gameManager, ServerLevel serverLevel) {
+    @ApiStatus.Internal
+    public static boolean startGameSubManager(IGameManager gameManager, ServerLevel serverLevel) {
         if (!gameManager.getGameLootManager().startGame(serverLevel)) { // 判定的优先级最高
             BattleRoyale.LOGGER.warn("GameLootManager failed to start game");
             return false;
@@ -56,6 +64,9 @@ public class GameSubManager {
             return false;
         } else if (!gameManager.getStatsManager().startGame(serverLevel)) {
             BattleRoyale.LOGGER.warn("StatsManager failed to start game");
+            return false;
+        } else if (!gameManager.getGameProcessManager().startGame(serverLevel)) {
+            BattleRoyale.LOGGER.warn("GameProcessManager failed to start game");
             return false;
         }
         return true;

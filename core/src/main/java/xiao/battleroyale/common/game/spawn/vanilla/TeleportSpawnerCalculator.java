@@ -32,7 +32,7 @@ public class TeleportSpawnerCalculator {
                 context.spawnPos.add(randomAdjustXZExpandY(basePos, context.randomRange, random));
             }
         } else {
-            ServerLevel serverLevel = GameManager.get().getServerLevel();
+            ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
             if (serverLevel != null) {
                 ChatUtils.sendMessageToAllPlayers(serverLevel, "TeleportSpawner config error: no fixed position");
             }
@@ -58,7 +58,7 @@ public class TeleportSpawnerCalculator {
                 }
             }
             default -> {
-                ServerLevel serverLevel = GameManager.get().getServerLevel();
+                ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
                 if (serverLevel != null) {
                     ChatUtils.sendMessageToAllPlayers(serverLevel, "TeleportSpawner config error: unsupported shapeType");
                 }
@@ -88,7 +88,7 @@ public class TeleportSpawnerCalculator {
                 basePositions = Distribution.RectangleGrid.get().distributed(context.centerPos, context.dimension, simulationCount, context.allowOnBorder, context.globalShrinkRatio);
             }
             default -> {
-                ServerLevel serverLevel = GameManager.get().getServerLevel();
+                ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
                 if (serverLevel != null) {
                     ChatUtils.sendMessageToAllPlayers(serverLevel, "TeleportSpawner config error: unsupported shapeType");
                 }

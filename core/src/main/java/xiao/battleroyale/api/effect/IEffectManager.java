@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.game.effect;
+package xiao.battleroyale.api.effect;
 
 public interface IEffectManager {
 

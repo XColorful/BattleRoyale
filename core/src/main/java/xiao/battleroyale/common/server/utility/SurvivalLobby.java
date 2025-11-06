@@ -89,7 +89,7 @@ public class SurvivalLobby implements ILobbyReadApi {
 
         if (dropInventory) {
             if (dropGameItemOnly) {
-                IGameIdReadApi gameIdReadApi = GameManager.get().getGameIdReadApi();
+                IGameIdReadApi gameIdReadApi = BattleRoyale.getGameManager().getGameIdReadApi();
                 Inventory inventory = player.getInventory();
                 int keepCount = 0;
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
@@ -113,7 +113,7 @@ public class SurvivalLobby implements ILobbyReadApi {
 
         if (clearInventory) {
             if (clearGameItemOnly) { // 仅清理带GameId的物品
-                IGameIdReadApi gameIdReadApi = GameManager.get().getGameIdReadApi();
+                IGameIdReadApi gameIdReadApi = BattleRoyale.getGameManager().getGameIdReadApi();
                 Inventory inventory = player.getInventory();
                 int keepCount = 0;
                 for (int i = 0; i < inventory.getContainerSize(); i++) {

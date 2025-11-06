@@ -84,7 +84,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
-        GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), GameManager.get().getGameruleConfigId());
+        GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), BattleRoyale.getGameManager().getGameruleConfigId());
         if (gameruleConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;
@@ -335,7 +335,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
         addGameStats(jsonArray);
         JsonUtils.writeJsonToFile(filePath, jsonArray);
 
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
         if (serverLevel != null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.saved_game_stats");
         } else {

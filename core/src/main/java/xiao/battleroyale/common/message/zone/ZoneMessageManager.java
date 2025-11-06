@@ -59,7 +59,7 @@ public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> impl
         if (gameZone == null) {
             addNbtMessage(nbtId, null);
         } else {
-            int gameTime = GameManager.get().getGameTime();
+            int gameTime = BattleRoyale.getGameManager().getGameTime();
             int zoneDelay = gameZone.getZoneDelay();
             double shapeProgress = gameZone.getShapeProgress(gameTime, zoneDelay);
             addNbtMessage(nbtId, gameZone.toNBT(shapeProgress));

@@ -64,7 +64,7 @@ public abstract class AbstractSimpleSpawner<T extends AbstractDetailEntry<T>> im
 
     @Override
     public void clear() {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, reject to clear Spawner (type:{})", getSpawnerTypeString());
             return;
         }

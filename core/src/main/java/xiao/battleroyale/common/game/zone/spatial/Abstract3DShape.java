@@ -106,7 +106,7 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
     public void calculateShape(@NotNull ZoneContext zoneContext) {
         if (!determined) {
             // GameManager全局修改，仅用在Fixed类型
-            Vec3 globalCenterOffset = GameManager.get().getGlobalCenterOffset();
+            Vec3 globalCenterOffset = BattleRoyale.getGameManager().getGlobalCenterOffset();
 
             // start center
             switch (startEntry.startCenterType) {

@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.game.zone.ZoneCompleteEvent;
 import xiao.battleroyale.api.event.game.zone.ZoneCreatedEvent;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
@@ -104,12 +105,12 @@ public class GameZone implements IGameZone {
             addZoneDetailProperty();
             created = true;
             present = true;
-            EventPoster.postEvent(new ZoneCreatedEvent(GameManager.get(), this, true));
+            EventPoster.postEvent(new ZoneCreatedEvent(BattleRoyale.getGameManager(), this, true));
         } else {
             addFailedZoneProperty();
             present = false;
             finished = true;
-            EventPoster.postEvent(new ZoneCreatedEvent(GameManager.get(), this, false));
+            EventPoster.postEvent(new ZoneCreatedEvent(BattleRoyale.getGameManager(), this, false));
         }
     }
 
@@ -148,7 +149,7 @@ public class GameZone implements IGameZone {
     public void gameTick(ZoneContext zoneContext) {
         if (!shouldTick(zoneContext.gameTime)) {
             GameMessageManager.addZoneNbtMessage(this.zoneId, null); // 传入null视为提醒置空NBT
-            EventPoster.postEvent(new ZoneCompleteEvent(GameManager.get(), this));
+            EventPoster.postEvent(new ZoneCompleteEvent(BattleRoyale.getGameManager(), this));
             return;
         }
 
@@ -230,7 +231,7 @@ public class GameZone implements IGameZone {
         Map<String, String> stringWriter = new HashMap<>();
 
         // common
-        intWriter.put(CREATE_TIME, GameManager.get().getGameTime());
+        intWriter.put(CREATE_TIME, BattleRoyale.getGameManager().getGameTime());
         stringWriter.put(ZONE_NAME_TAG, zoneName);
         stringWriter.put(ZONE_COLOR_TAG, zoneColor);
         intWriter.put(ZONE_DELAY_TAG, zoneDelay);
@@ -262,7 +263,7 @@ public class GameZone implements IGameZone {
         Map<String, String> stringWriter = new HashMap<>();
 
         // common
-        intWriter.put(CREATE_TIME, GameManager.get().getGameTime());
+        intWriter.put(CREATE_TIME, BattleRoyale.getGameManager().getGameTime());
         stringWriter.put(ZONE_NAME_TAG, zoneName);
 
         GameStatsManager.recordZoneInt(this.zoneId, intWriter);

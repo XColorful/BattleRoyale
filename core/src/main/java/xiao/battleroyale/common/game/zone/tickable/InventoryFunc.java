@@ -49,7 +49,7 @@ public class InventoryFunc extends AbstractSimpleFunc {
     @Override
     public void funcTick(ZoneTickContext zoneTickContext) {
         ServerLevel serverLevel = zoneTickContext.serverLevel;
-        UUID gameId = GameManager.get().getGameId();
+        UUID gameId = BattleRoyale.getGameManager().getGameId();
         List<ItemStack> lootItems = new ArrayList<>();
         IConfigSubManager<?> lootConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(LootConfigManager.get().getNameKey());
         @Nullable LootConfig lootConfig = lootConfigManager == null ? null

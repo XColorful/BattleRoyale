@@ -5,23 +5,22 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.Team;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.util.ColorUtils;
 
 import java.util.*;
 
-/**
- * 该类仅用于抽离TeamManager的功能实现，简化TeamManager
- * 类似.h和.cpp的设计
- */
 public class TeamUtils {
 
     /**
      * 返回非人机队伍数量
      */
+    @ApiStatus.Internal
     public static int getNonBotTeamCount(TeamManager teamManager) {
         int count = 0;
         Set<Integer> playerTeamId = new HashSet<>();
@@ -40,6 +39,7 @@ public class TeamUtils {
     /**
      * 返回未被淘汰的非人机队伍数量
      */
+    @ApiStatus.Internal
     public static int getStandingPlayerTeamCount(TeamManager teamManager) {
         int count = 0;
         Set<Integer> playerTeamId = new HashSet<>();
@@ -55,10 +55,12 @@ public class TeamUtils {
         return count;
     }
 
+    @ApiStatus.Internal
     public static int getStandingTeamCount(TeamManager teamManager) {
         return teamManager.teamData.getTotalStandingTeamCount();
     }
 
+    @ApiStatus.Internal
     public static boolean isPlayerLeader(TeamManager teamManager, UUID playerUUID) {
         GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(playerUUID);
         if (gamePlayer == null) {
@@ -72,6 +74,7 @@ public class TeamUtils {
      * 找到第一个未满员队伍
      * @return 可用的队伍，如无则返回 -1
      */
+    @ApiStatus.Internal
     public static int findNotFullTeamId(TeamManager teamManager) {
         if (teamManager.teamData.getTotalPlayerCount() >= teamManager.teamConfig.playerLimit) {
             return -1;
@@ -94,17 +97,20 @@ public class TeamUtils {
     /**
      * 判断是否有足够队伍开始游戏
      */
+    @ApiStatus.Internal
     public static boolean hasEnoughPlayerTeamToStart(TeamManager teamManager) {
         return hasEnoughPlayerToStart(teamManager) && hasEnoughTeamToStart(teamManager);
     }
+    @ApiStatus.Internal
     public static boolean hasEnoughPlayerToStart(TeamManager teamManager) {
         int totalPlayerAndBots = teamManager.getTotalMembers();
-        int minTeam = GameManager.get().getRequiredGameTeam();
+        int minTeam = BattleRoyale.getGameManager().getRequiredGameTeam();
         return totalPlayerAndBots >= minTeam // 真人玩家满足最小单人队限制
                 || teamManager.teamConfig.aiEnemy; // TODO 人机填充
     }
+    @ApiStatus.Internal
     public static boolean hasEnoughTeamToStart(TeamManager teamManager) {
-        if (!GameManager.get().getGameEntry().allowRemainingBot) { // 不允许剩余人机打架 -> 开局不能直接只剩人机队
+        if (!BattleRoyale.getGameManager().getGameEntry().allowRemainingBot) { // 不允许剩余人机打架 -> 开局不能直接只剩人机队
             List<GameTeam> gameTeams = teamManager.getGameTeams();
             for (GameTeam gameTeam : gameTeams) {
                 if (!gameTeam.onlyRemainBot()) {
@@ -114,7 +120,7 @@ public class TeamUtils {
             return false;
         } else { // 允许人机打架
             int totalPlayerTeam = getNonBotTeamCount(teamManager);
-            int minTeam = GameManager.get().getRequiredGameTeam();
+            int minTeam = BattleRoyale.getGameManager().getRequiredGameTeam();
             return totalPlayerTeam >= minTeam // 满足最小队伍限制
                     || teamManager.teamConfig.aiEnemy; // TODO 人机填充
         }
@@ -125,7 +131,7 @@ public class TeamUtils {
      * @param serverLevel 用于从 GamePlayer 获取 ServerPlayer 的维度
      * @param hideName 是否向其他队伍隐藏名称
      */
-    public static void buildVanillaTeamForAllGameTeams(TeamManager teamManager, @NotNull ServerLevel serverLevel, boolean hideName) {
+    public static void buildVanillaTeamForAllGameTeams(ITeamManager teamManager, @NotNull ServerLevel serverLevel, boolean hideName) {
         try {
             Scoreboard scoreboard = serverLevel.getScoreboard();
             for (GameTeam gameTeam : teamManager.getGameTeams()) {

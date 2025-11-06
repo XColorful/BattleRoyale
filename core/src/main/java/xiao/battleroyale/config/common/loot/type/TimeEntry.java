@@ -32,7 +32,7 @@ public class TimeEntry extends AbstractLootEntry {
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {
-        int gameTime = GameManager.get().getGameTime();
+        int gameTime = BattleRoyale.getGameManager().getGameTime();
         if (entry != null) {
             if (start <= gameTime && gameTime <= end) {
                 try {

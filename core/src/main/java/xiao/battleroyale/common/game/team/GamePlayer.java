@@ -41,7 +41,7 @@ public class GamePlayer {
     }
 
     public void reset() {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, reject to reset GamePlayer {}, team {}", playerName, getGameTeamId());
             return;
         }

@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
@@ -89,7 +90,7 @@ public class TeamMessageManager extends AbstractMessageManager<TeamMessage> {
 
     @Override
     protected void sendMessages() {
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
 
         for (int id : changedId) {
             GameTeam gameTeam = GameTeamManager.getGameTeamById(id); // TeamManager内部stopGame做了特殊处理，不应该重新build消息时会防止MessageManager获取GameTeam

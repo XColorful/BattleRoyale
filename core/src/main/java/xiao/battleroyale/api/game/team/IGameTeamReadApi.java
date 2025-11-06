@@ -19,4 +19,8 @@ public interface IGameTeamReadApi {
     List<GamePlayer> getStandingGamePlayers();
     @Nullable GamePlayer getRandomStandingGamePlayer();
     int getTotalMembers();
+
+    int getNonBotTeamCount();
+    int getStandingPlayerTeamCount();
+    int getStandingTeamCount();
 }

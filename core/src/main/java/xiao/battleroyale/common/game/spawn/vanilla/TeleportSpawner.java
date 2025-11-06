@@ -94,7 +94,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
                 success = TeleportSpawnerCalculator.calculatedDistributedPos(this, random, spawnPointsTotal, (int) (fixedSimulationCount + spawnPointsTotal * playerFactorContribution));
             }
             default -> {
-                ServerLevel serverLevel = GameManager.get().getServerLevel();
+                ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
                 if (serverLevel != null) {
                     ChatUtils.sendMessageToAllPlayers(serverLevel, "TeleportSpawner config error: unsupported detailType");
                 }
@@ -139,7 +139,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
      */
     @Override
     public void tick(int gameTime, List<GameTeam> gameTeams) {
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
         if (gameTime > this.hangTime) {
             this.finished = true;
             BattleRoyale.LOGGER.warn("GroundSpawner reached maximum spawn attempt time, force finished");

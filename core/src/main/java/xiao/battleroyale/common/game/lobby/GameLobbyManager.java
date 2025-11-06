@@ -15,7 +15,8 @@ import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportEvent;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.api.game.spawn.IGameLobbyManager;
+import xiao.battleroyale.api.game.lobby.IGameLobbyManager;
+import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
@@ -33,6 +34,8 @@ import xiao.battleroyale.util.Vec3Utils;
 
 import java.util.List;
 import java.util.UUID;
+
+import static xiao.battleroyale.util.CommandUtils.buildRunnableText;
 
 public class GameLobbyManager extends AbstractGameManager implements IGameLobbyManager {
 
@@ -65,11 +68,12 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.isInGame()) {
             return;
         }
 
-        int gameId = GameManager.get().getGameruleConfigId();
+        int gameId = gameManager.getGameruleConfigId();
         GameruleConfigManager.GameruleConfig gameruleConfig = (GameruleConfigManager.GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId);
         if (gameruleConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
@@ -102,7 +106,7 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
 
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             return;
         }
         if (!this.configPrepared) {
@@ -115,16 +119,16 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
             for (GamePlayer gamePlayer : gamePlayerList) {
                 teleportGamePlayerToLobby(gamePlayer, serverLevel);
             }
-            BattleRoyale.LOGGER.debug("SpawnManager::initGame teleported all game player to lobby");
+            BattleRoyale.LOGGER.debug("GameLobbyManager::initGame teleported all game player to lobby");
         }
         this.configPrepared = false;
         this.ready = true;
-        BattleRoyale.LOGGER.debug("SpawnManager complete initGame");
+        BattleRoyale.LOGGER.debug("GameLobbyManager complete initGame");
     }
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             return false;
         }
 
@@ -147,7 +151,7 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
     @Override public boolean teleportToLobby(@NotNull LivingEntity livingEntity) {
         IGameManager gameManager = BattleRoyale.getGameManager();
         if (EventPoster.postEvent(new GameLobbyTeleportEvent(gameManager, livingEntity))) {
-            BattleRoyale.LOGGER.debug("LobbyTeleportEvent canceled, skipped teleportToLobby (LivingEntity {})", livingEntity.getName().getString());
+            BattleRoyale.LOGGER.debug("LobbyTeleportEvent canceled, skipped teleportToLobbyInGame (LivingEntity {})", livingEntity.getName().getString());
             return false;
         }
 
@@ -196,7 +200,7 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
         }
     }
     @Override public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode, boolean teleportDropInventory, boolean teleportClearInventory) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, SpawnManager skipped set lobby");
             return false;
         }
@@ -238,11 +242,11 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
     // --------GameApi--------
 
     @Override public boolean isLobbyCreated() {
-        // return configPrepared || ready || GameManager.get().isInGame(); // 任意阶段均保证大厅已创建
+        // return configPrepared || ready || BattleRoyale.getGameManager().isInGame(); // 任意阶段均保证大厅已创建
         return lobbyPos != null && lobbyDimension != null; // 让游戏结束后也能传送回大厅
     }
     @Override public ResourceKey<Level> lobbyLevelKey() {
-        return GameManager.get().getGameLevelKey();
+        return BattleRoyale.getGameManager().getGameLevelKey();
     }
     @Override public Vec3 lobbyPos() {
         return this.lobbyPos;
@@ -319,5 +323,16 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
         } else { // 没有创建大厅
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
         }
+    }
+    @Override public void sendLobbyTeleportMessage(@NotNull ServerPlayer player, boolean isWinner) {
+        String toLobbyCommand = GameCommand.toLobbyCommand();
+
+        Component fullMessage = Component.translatable("battleroyale.message.back_to_lobby").withStyle(ChatFormatting.AQUA)
+                .append(Component.literal(" "))
+                .append(buildRunnableText(Component.translatable("battleroyale.message.teleport"),
+                        toLobbyCommand,
+                        isWinner ? ChatFormatting.GOLD :  ChatFormatting.GREEN));
+
+        ChatUtils.sendComponentMessageToPlayer(player, fullMessage);
     }
 }

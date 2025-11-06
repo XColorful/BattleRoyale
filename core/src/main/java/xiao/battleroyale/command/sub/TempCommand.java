@@ -9,6 +9,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.data.io.TempDataManager;
@@ -62,7 +63,7 @@ public class TempCommand {
 
     private static int changeGameStep(CommandContext<CommandSourceStack> context) {
         int gameStep = IntegerArgumentType.getInteger(context, INTERVAL);
-        if (GameManager.get().setGameStep(gameStep)) {
+        if (BattleRoyale.getGameManager().setGameStep(gameStep)) {
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.set_game_step_success", gameStep), false);
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.set_game_step_fail", gameStep));

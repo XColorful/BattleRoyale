@@ -8,6 +8,7 @@ import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.gamerule.IGameruleManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
@@ -54,11 +55,12 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.isInGame()) {
             return;
         }
 
-        int gameId = GameManager.get().getGameruleConfigId();
+        int gameId = gameManager.getGameruleConfigId();
         GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId);
         if (gameruleConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
@@ -82,7 +84,7 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
 
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             return;
         }
         if (!this.configPrepared) {
@@ -100,7 +102,7 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             return false;
         }
 
@@ -128,7 +130,7 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
     @Override
     public void onGameTick(int gameTime) {
         if (autoSaturation && gameTime % 200 == 0) {
-            ServerLevel serverLevel = GameManager.get().getServerLevel();
+            ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
             if (serverLevel == null) {
                 return;
             }

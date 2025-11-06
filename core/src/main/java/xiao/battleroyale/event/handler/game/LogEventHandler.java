@@ -51,7 +51,7 @@ public class LogEventHandler implements IEventHandler {
      */
     private void onPlayerLoggedIn(IPlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            GameManager.get().onPlayerLoggedIn(serverPlayer);
+            BattleRoyale.getGameManager().onPlayerLoggedIn(serverPlayer);
         }
     }
 
@@ -62,7 +62,7 @@ public class LogEventHandler implements IEventHandler {
      */
     private void onPlayerLoggedOut(IPlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            GameManager.get().onPlayerLoggedOut(serverPlayer);
+            BattleRoyale.getGameManager().onPlayerLoggedOut(serverPlayer);
         }
     }
 }

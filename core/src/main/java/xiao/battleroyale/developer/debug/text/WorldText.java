@@ -103,7 +103,7 @@ public class WorldText {
             gameIdTag = fullNbt.get(LootNBTTag.GAME_ID_TAG);
         }
         if (gameId != null && gameIdTag != null) {
-            UUID currentGameId = GameManager.get().getGameId();
+            UUID currentGameId = BattleRoyale.getGameManager().getGameId();
             component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
                     .append(buildHoverableTextWithColor(LootNBTTag.GAME_ID_TAG,
                             gameIdTag.getAsString(),

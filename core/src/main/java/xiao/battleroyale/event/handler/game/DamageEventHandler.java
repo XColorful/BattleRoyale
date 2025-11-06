@@ -8,6 +8,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
@@ -64,7 +65,7 @@ public class DamageEventHandler implements IEventHandler {
         LivingEntity damagedEntity = event.getEntity(); // 被攻击方
         DamageSource damageSource = event.getSource(); // 攻击方
 
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager());
 
         GamePlayer targetGamePlayer = GameTeamManager.hasStandingGamePlayer(damagedEntity.getUUID()) ? GameTeamManager.getGamePlayerByUUID(damagedEntity.getUUID()) : null;
         if (targetGamePlayer != null && targetGamePlayer.isEliminated()) {

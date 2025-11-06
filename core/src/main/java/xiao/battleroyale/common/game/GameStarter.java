@@ -1,5 +1,6 @@
 package xiao.battleroyale.common.game;
 
+import org.jetbrains.annotations.ApiStatus;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.effect.EffectManager;
@@ -28,7 +29,8 @@ import static xiao.battleroyale.api.data.io.TempDataTag.GLOBAL_OFFSET;
 
 public class GameStarter {
 
-    protected static boolean initGameConfigSetup(GameManager gameManager) {
+    @ApiStatus.Internal
+    public static boolean initGameConfigSetup(GameManager gameManager) {
         GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameManager.getGameruleConfigId());
         if (gameruleConfig == null) {
             if (gameManager.serverLevel != null) {
@@ -56,12 +58,14 @@ public class GameStarter {
         BleedingHandler.setBleedCooldown(gameManager.gameEntry.downDamageFrequency);
         return true;
     }
-    protected static void initGameSetup(GameManager gameManager) {
+    @ApiStatus.Internal
+    public static void initGameSetup(GameManager gameManager) {
         // 清除游戏效果
         EffectManager.get().forceEnd();
         gameManager.configPrepared = false;
     }
-    protected static void startGameSetup(GameManager gameManager) {
+    @ApiStatus.Internal
+    public static void startGameSetup(GameManager gameManager) {
         // gameManager.ready = false; // 不使用ready标记，因为Team会变动
         gameManager.gameTime = 0; // 游戏结束后不手动重置
         gameManager.winnerGameTeams.clear(); // 游戏结束后不手动重置
@@ -71,7 +75,7 @@ public class GameStarter {
         TempDataManager.get().startGame(gameManager.serverLevel); // 立即写入备份
         if (gameManager.gameEntry.healAllAtStart) {
             if (gameManager.serverLevel != null) {
-                GameUtilsFunction.healGamePlayers(gameManager.serverLevel, GameTeamManager.getGamePlayers());
+                gameManager.getGameProcessManager().healGamePlayers(gameManager.serverLevel, GameTeamManager.getGamePlayers());
             } else {
                 BattleRoyale.LOGGER.debug("GameManager.serverLevel is null, failed to heal GamePlayers");
             }

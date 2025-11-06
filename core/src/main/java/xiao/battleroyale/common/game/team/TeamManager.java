@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.process.IGameProcessManager;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
@@ -58,11 +60,12 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.isInGame()) {
             return;
         }
 
-        int configId = GameManager.get().getGameruleConfigId();
+        int configId = gameManager.getGameruleConfigId();
         GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), configId);
         if (gameruleConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
@@ -100,7 +103,8 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
 
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame() || !this.configPrepared) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.isInGame() || !this.configPrepared) {
             return;
         }
 
@@ -125,7 +129,6 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
                 forceJoinTeam(player); // 初始化时先强制分配，后续调整玩家自行处理
             }
         }
-        GameManager gameManager = GameManager.get();
         if (gameManager.getGameEntry().buildVanillaTeam) {
             buildVanillaTeam(serverLevel, gameManager.getGameEntry().hideVanillaTeamName);
         }
@@ -147,7 +150,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
     @Override
     public boolean startGame(ServerLevel serverLevel) {
         BattleRoyale.LOGGER.info("Attempt to start Game");
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         if (gameManager.isInGame() || !isReady()) {
             return false;
         }
@@ -176,11 +179,12 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
      * 通常在人数变更的时候可能提前结束游戏，手动提醒以降低 GameManager 检查频率
      */
     protected void onTeamChangedInGame() {
-        if (!GameManager.get().isInGame()) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (!gameManager.isInGame()) {
             return;
         }
 
-        GameManager.get().checkIfGameShouldEnd();
+        gameManager.checkIfGameShouldEnd();
     }
 
     @Override
@@ -190,7 +194,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
         this.configPrepared = false;
         // this.ready = false; // 不使用ready标记，因为Team会变动
 
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         GameEntry gameEntry = gameManager.getGameEntry();
         if (gameEntry != null // 1.stopGame现在在每次服务器关闭都会触发，在未读取配置时关闭会触发; 2.配置被其他模组unregistered了，为空
                 && !gameEntry.keepTeamAfterGame) {
@@ -230,7 +234,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
      * 强制清除队伍信息
      */
     public void clear() {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.info("GameManager is in game, teamData skipped clear");
             return;
         }
@@ -276,121 +280,86 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
 
     // -------TeamNofitication-------
 
-    /**
-     * 通知队伍原玩家新成员入队
-     * @param newGamePlayer 新入队的成员
-     */
-    public void notifyPlayerJoinTeam(GamePlayer newGamePlayer) {
-        TeamNotification.notifyPlayerJoinTeam(newGamePlayer, GameManager.get().getServerLevel());
-    }
     public void sendPlayerTeamId(ServerPlayer player) {
-        TeamNotification.sendPlayerTeamId(this, player);
+        TeamNotification.sendPlayerTeamId(getGamePlayerByUUID(player.getUUID()), player);
     }
 
     // -------TeamExternal-------
 
-    /**
-     * 玩家加入游戏，优先创建队伍，无法创建队伍则发送申请
-     * @param player 需要加入队伍的玩家
-     */
     public void joinTeam(ServerPlayer player) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         TeamExternal.joinTeam(this, player);
     }
-    /**
-     * 玩家尝试创建一个指定的队伍 (已存在则改为申请)。
-     * @param player 需要加入队伍的玩家
-     * @param teamId 加入队伍的 teamId
-     */
     public void joinTeamSpecific(ServerPlayer player, int teamId) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         TeamExternal.joinTeamSpecific(this, player, teamId);
     }
-    // 踢出队伍
     public void kickPlayer(ServerPlayer sender, ServerPlayer targetPlayer) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         TeamExternal.kickPlayer(this, sender, targetPlayer);
     }
-    // 邀请玩家
     public void invitePlayer(ServerPlayer sender, ServerPlayer targetPlayer) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         TeamExternal.invitePlayer(this, sender, targetPlayer);
     }
-    // 接收邀请
     public void acceptInvite(ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         TeamExternal.acceptInvite(this, player, senderPlayer);
     }
-    // 拒绝邀请
     public void declineInvite(ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         TeamExternal.declineInvite(this, player, senderPlayer);
     }
-    // 申请入队
     public void requestPlayer(ServerPlayer sender, ServerPlayer targetPlayer) { // 申请者，目标玩家
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         TeamExternal.requestPlayer(this, sender, targetPlayer);
     }
-    // 接收申请
     public void acceptRequest(ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         TeamExternal.acceptRequest(this, teamLeader, requesterPlayer);
     }
-    // 拒绝申请
     public void declineRequest(ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
 
         TeamExternal.declineRequest(this, teamLeader, requesterPlayer);
     }
-    // 离开队伍
-    /**
-     * 返回玩家是否还在队伍里
-     * 在游戏中调用该函数只淘汰不离队
-     */
     public boolean leaveTeam(@NotNull ServerPlayer player) {
         return TeamExternal.leaveTeam(this, player);
-    }
-    /**
-     * 传送玩家至大厅，如果正在游戏中则淘汰
-     * @param player 需传送的玩家
-     */
-    public void teleportToLobby(ServerPlayer player) {
-        TeamExternal.teleportToLobby(this, player);
     }
 
     // -------TeamManagement-------
@@ -401,7 +370,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
      * @param player 需要加入队伍的玩家
      */
     public void forceJoinTeam(ServerPlayer player) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
             return;
         }
@@ -420,35 +389,25 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
     private void removeNoTeamPlayer() {
         TeamManagement.removeNoTeamGamePlayer(this);
     }
-    /**
-     * 在游戏中强制淘汰玩家，不包含发送系统消息
-     * 成功淘汰后发送大厅传送消息
-     */
+
     public boolean forceEliminatePlayerSilence(GamePlayer gamePlayer) {
-        if (!GameManager.get().isInGame()) {
+        if (!BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager isn't in game, skipped forceEliminatePlayerSilence");
             return false;
         }
 
         return TeamManagement.forceEliminatePlayerSilence(this, gamePlayer);
     }
-    /**
-     * 在游戏中强制淘汰玩家并向队友发送消息
-     */
     public void forceEliminatePlayerFromTeam(LivingEntity livingEntity) {
-        if (!GameManager.get().isInGame()) {
+        if (!BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager isn't in game, skipped forceEliminatePlayerFromTeam");
             return;
         }
 
         TeamManagement.forceEliminatePlayerFromTeam(this, livingEntity);
     }
-    /**
-     * 游戏未开始时将玩家移出队伍
-     * @return 是否移出队伍
-     */
     public boolean removePlayerFromTeam(@NotNull UUID playerId) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, skipped removePlayerFromTeam");
             return false;
         }
@@ -486,14 +445,9 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
     protected boolean hasEnoughPlayerTeamToStart() {
         return TeamUtils.hasEnoughPlayerTeamToStart(this);
     }
-    /**
-     * 在传入的 ServerLevel 下为全体 GamePlayer 构建原版队伍
-     * @param serverLevel 用于从 GamePlayer 获取 ServerPlayer 的维度
-     * @param hideName 是否向其他队伍隐藏名称
-     */
+
     public void buildVanillaTeam(@Nullable ServerLevel serverLevel, boolean hideName) {
-        GameManager gameManager = GameManager.get();
-        if (gameManager.isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, reject to build vanilla team");
             return;
         }
@@ -504,10 +458,6 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
 
         TeamUtils.buildVanillaTeamForAllGameTeams(this, serverLevel, hideName);
     }
-    /**
-     * 在传入的 ServerLevel 下为全体 GamePlayer 退出原版队伍
-     * @param serverLevel 用于从 GamePlayer 获取 ServerPlayer 的维度
-     */
     public void clearVanillaTeam(@Nullable ServerLevel serverLevel) {
         if (serverLevel == null) {
             BattleRoyale.LOGGER.debug("TeamManager::clearVanillaTeam received a null ServerLevel, skipped clear vanilla team");

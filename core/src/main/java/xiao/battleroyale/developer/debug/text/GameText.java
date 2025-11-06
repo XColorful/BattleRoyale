@@ -5,6 +5,7 @@ import net.minecraft.network.chat.*;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -205,7 +206,7 @@ public class GameText {
         component.append(Component.literal(" "));
 
         // IGameZone 悬浮
-        int gameTime = GameManager.get().getGameTime();
+        int gameTime = BattleRoyale.getGameManager().getGameTime();
         int zoneDelay = gameZone.getZoneDelay();
         double shapeProgress = gameZone.getShapeProgress(gameTime, zoneDelay);
         MutableComponent iGameZoneHover = Component.empty()

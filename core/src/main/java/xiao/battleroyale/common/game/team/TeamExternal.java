@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.game.team.*;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.event.EventPoster;
@@ -97,7 +98,7 @@ public class TeamExternal {
             return;
         }
 
-        if (EventPoster.postEvent(new InvitePlayerEvent(GameManager.get(), senderGamePlayer, sender, targetPlayer))) {
+        if (EventPoster.postEvent(new InvitePlayerEvent(BattleRoyale.getGameManager(), senderGamePlayer, sender, targetPlayer))) {
             BattleRoyale.LOGGER.debug("InvitePlayerEvent canceled, skipped invitePlayer ({} to {})", senderGamePlayer.getNameWithId(), targetPlayer.getName().getString());
             return;
         }
@@ -128,7 +129,8 @@ public class TeamExternal {
     }
 
     public static void acceptInvite(TeamManager teamManager, ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null || player == null) {
             return;
         } else if (senderPlayer == null || !TeamUtils.isPlayerLeader(teamManager, senderPlayer.getUUID())) { // 玩家未加载或不是队长
@@ -151,7 +153,7 @@ public class TeamExternal {
             return;
         }
 
-        if (EventPoster.postEvent(new InvitePlayerCompleteEvent(GameManager.get(), senderPlayer, player, true))) {
+        if (EventPoster.postEvent(new InvitePlayerCompleteEvent(gameManager, senderPlayer, player, true))) {
             BattleRoyale.LOGGER.debug("InvitePlayerCompleteEvent canceled, skipped acceptInvite ({} to {})", senderPlayer.getName().getString(), player.getName().getString());
             return;
         }
@@ -175,7 +177,8 @@ public class TeamExternal {
     }
 
     public static void declineInvite(TeamManager teamManager, ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null || player == null) {
             return;
         } else if (senderPlayer == null || !TeamUtils.isPlayerLeader(teamManager, senderPlayer.getUUID())) { // 玩家未加载或不是队长
@@ -194,7 +197,7 @@ public class TeamExternal {
             return;
         }
 
-        if (EventPoster.postEvent(new InvitePlayerCompleteEvent(GameManager.get(), senderPlayer, player, false))) {
+        if (EventPoster.postEvent(new InvitePlayerCompleteEvent(gameManager, senderPlayer, player, false))) {
             BattleRoyale.LOGGER.debug("InvitePlayerCompleteEvent canceled, skipped declineInvite ({} to {})", senderPlayer.getName().getString(), player.getName().getString());
             return;
         }
@@ -206,7 +209,8 @@ public class TeamExternal {
     }
 
     public static void requestPlayer(TeamManager teamManager, ServerPlayer sender, ServerPlayer targetPlayer) { // 申请者，目标玩家
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null || sender == null) {
             return;
         } else if (targetPlayer == null) {
@@ -230,7 +234,7 @@ public class TeamExternal {
             return;
         }
 
-        if (EventPoster.postEvent(new RequestPlayerEvent(GameManager.get(), sender, targetGamePlayer, targetPlayer))) {
+        if (EventPoster.postEvent(new RequestPlayerEvent(gameManager, sender, targetGamePlayer, targetPlayer))) {
             BattleRoyale.LOGGER.debug("RequestPlayerEvent canceled, skipped requestPlayer ({} to {})", sender.getName().getString(), targetGamePlayer.getNameWithId());
             return;
         }
@@ -262,7 +266,8 @@ public class TeamExternal {
     }
 
     public static void acceptRequest(TeamManager teamManager, ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null || teamLeader == null) {
             return;
         } else if (requesterPlayer == null) {
@@ -303,7 +308,7 @@ public class TeamExternal {
             return;
         }
 
-        if (EventPoster.postEvent(new RequestPlayerCompleteEvent(GameManager.get(), requesterPlayer, teamLeader, true))) {
+        if (EventPoster.postEvent(new RequestPlayerCompleteEvent(gameManager, requesterPlayer, teamLeader, true))) {
             BattleRoyale.LOGGER.debug("RequestPlayerCompleteEvent canceled, skipped acceptRequest ({} to {})", requesterPlayer, teamLeader);
             return;
         }
@@ -315,7 +320,8 @@ public class TeamExternal {
     }
 
     public static void declineRequest(TeamManager teamManager, ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null || teamLeader == null) {
             return;
         } else if (requesterPlayer == null) {
@@ -347,7 +353,7 @@ public class TeamExternal {
             return;
         }
 
-        if (EventPoster.postEvent(new RequestPlayerCompleteEvent(GameManager.get(), requesterPlayer, teamLeader, false))) {
+        if (EventPoster.postEvent(new RequestPlayerCompleteEvent(gameManager, requesterPlayer, teamLeader, false))) {
             BattleRoyale.LOGGER.debug("RequestPlayerCompleteEvent canceled, skipped declineRequest ({} to {})", requesterPlayer, teamLeader);
             return;
         }
@@ -357,10 +363,6 @@ public class TeamExternal {
         ChatUtils.sendComponentMessageToPlayer(requesterPlayer, Component.translatable("battleroyale.message.player_declined_request", teamLeader.getName().getString()).withStyle(ChatFormatting.RED));
     }
 
-    /**
-     * 返回玩家是否还在队伍里
-     * 在游戏中调用该函数只淘汰不离队
-     */
     public static boolean leaveTeam(TeamManager teamManager, @NotNull ServerPlayer player) {
         UUID playerUUID = player.getUUID();
         GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(playerUUID);
@@ -376,28 +378,5 @@ public class TeamExternal {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.GREEN));
         }
         return teamManager.getGamePlayerByUUID(playerUUID) == null;
-    }
-
-    /**
-     * 传送玩家至大厅，如果正在游戏中则淘汰
-     * @param player 需传送的玩家
-     */
-    public static void teleportToLobby(TeamManager teamManager, ServerPlayer player) {
-        if (player == null || !player.isAlive()) {
-            return;
-        }
-
-        if (teamManager.teamData.hasStandingGamePlayer(player.getUUID())) { // 游戏进行中，且未被淘汰
-            if (GameManager.get().teleportToLobby(player)) { // 若成功传送，则淘汰该玩家
-                teamManager.forceEliminatePlayerFromTeam(player); // 强制淘汰
-            } else {
-                BattleRoyale.LOGGER.error("Teleport in game player while not has lobby");
-                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
-            }
-        } else if (GameManager.get().teleportToLobby(player)) { // 传送，且传送成功
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.teleported_to_lobby").withStyle(ChatFormatting.GREEN));
-        } else {
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
-        }
     }
 }

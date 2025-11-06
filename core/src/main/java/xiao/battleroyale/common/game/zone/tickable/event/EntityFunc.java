@@ -12,6 +12,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.event.game.zone.EntityEvent;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
@@ -60,17 +61,18 @@ public class EntityFunc extends AbstractEventFunc {
 
         Vec3 zoneCenter = zoneTickContext.spatialZone.getCenterPos(zoneTickContext.progress);
         if (zoneCenter == null) zoneCenter = Vec3.ZERO;
+        IGameManager gameManager = BattleRoyale.getGameManager();
         LootGenerator.LootContext lootContext = new LootGenerator.LootContext(
                 zoneTickContext.serverLevel,
                 new ChunkPos(new BlockPos((int) zoneCenter.x, (int) zoneCenter.y, (int) zoneCenter.z)),
-                GameManager.get().getGameId()
+                gameManager.getGameId()
         );
 
         lastLootEntities = new ArrayList<>(lootEntities);
         lootEntities.clear();
         lootEntities.addAll(LootGenerator.generateLootEntities(lootContext, entityConfig.entry));
 
-        if (EventPoster.postEvent(new EntityEvent(GameManager.get(), zoneTickContext, protocol, jsonTag,
+        if (EventPoster.postEvent(new EntityEvent(gameManager, zoneTickContext, protocol, jsonTag,
                 lootEntities, lastLootEntities, nbt,
                 lootContext, entityConfig.entry))) {
             BattleRoyale.LOGGER.debug("Entity Func canceled");
@@ -78,7 +80,7 @@ public class EntityFunc extends AbstractEventFunc {
         }
 
         // 集中生成并写入gameId
-        IGameIdWriteApi gameIdWriteApi = GameManager.get().getGameIdWriteApi();
+        IGameIdWriteApi gameIdWriteApi = gameManager.getGameIdWriteApi();
         int generatedCount = 0;
         int skippedCount = 0;
         for (Entity entity : lootEntities) {

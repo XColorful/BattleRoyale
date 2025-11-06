@@ -157,7 +157,7 @@ public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConf
 
         @Override
         public void applyDefault() {
-            GameManager.get().setGameruleConfigId(getConfigId());
+            BattleRoyale.getGameManager().setGameruleConfigId(getConfigId());
             this.brEntry.applyDefault();
             this.gameEntry.applyDefault();
         }

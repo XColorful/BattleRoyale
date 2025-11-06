@@ -59,7 +59,7 @@ public class PlaneSpawner extends AbstractSimpleSpawner<PlaneDetailEntry> {
                 ;
             }
             default -> {
-                ServerLevel serverLevel = GameManager.get().getServerLevel();
+                ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
                 if (serverLevel != null) {
                     ChatUtils.sendMessageToAllPlayers(serverLevel, "PlaneSpawner config error: unsupported detailType");
                 }

@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.game.spawn;
+package xiao.battleroyale.api.game.lobby;
 
 import xiao.battleroyale.api.game.IGameSubManager;
 import xiao.battleroyale.api.utilitity.ILobbyFuncApi;

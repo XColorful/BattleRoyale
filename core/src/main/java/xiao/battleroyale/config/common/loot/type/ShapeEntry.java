@@ -5,6 +5,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.loot.ILootData;
@@ -48,7 +49,7 @@ public class ShapeEntry extends AbstractLootEntry {
                     if (zoneContext != null && target != null) {
                         ISpatialZone spatialZone = shapeEntry.createSpatialZone();
                         spatialZone.calculateShape(zoneContext);
-                        GameManager gameManager = GameManager.get();
+                        IGameManager gameManager = BattleRoyale.getGameManager();
                         float gameTime = gameManager.getGameTime();
                         float maxGameTime = gameManager.getMaxGameTime();
                         if (spatialZone.isWithinZone(target.getBlockPos().getCenter(), gameTime / maxGameTime)) {

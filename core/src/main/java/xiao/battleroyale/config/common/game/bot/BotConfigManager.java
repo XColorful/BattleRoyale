@@ -81,7 +81,7 @@ public class BotConfigManager extends AbstractConfigSubManager<BotConfigManager.
 
         @Override
         public void applyDefault() {
-            GameManager.get().setBotConfigId(getConfigId());
+            BattleRoyale.getGameManager().setBotConfigId(getConfigId());
         }
     }
 

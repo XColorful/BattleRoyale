@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.game.effect.particle;
+package xiao.battleroyale.api.effect.particle;
 
 import xiao.battleroyale.api.config.sub.ConfigEntryTag;
 

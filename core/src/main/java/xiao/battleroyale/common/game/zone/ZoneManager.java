@@ -8,12 +8,11 @@ import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.api.event.game.tick.ZoneTickEvent;
 import xiao.battleroyale.api.event.game.tick.ZoneTickFinishEvent;
-import xiao.battleroyale.api.game.zone.IGameZoneReadApi;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.zone.IZoneManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -59,7 +58,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             return;
         }
 
@@ -95,7 +94,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
 
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             return;
         }
 
@@ -106,7 +105,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             return false;
         }
 
@@ -125,7 +124,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
      */
     public void stopGame(@Nullable ServerLevel serverLevel) {
         List<Integer> zoneIdList = new ArrayList<>();
-        for (IGameZone gameZone : this.zoneData.getCurrentTickZones(GameManager.get().getGameTime())) {
+        for (IGameZone gameZone : this.zoneData.getCurrentTickZones(BattleRoyale.getGameManager().getGameTime())) {
             zoneIdList.add(gameZone.getZoneId());
         }
         GameMessageManager.notifyZoneEnd(zoneIdList);
@@ -165,7 +164,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
      */
     @Override
     public void onGameTick(int gameTime) {
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         if (EventPoster.postEvent(new ZoneTickEvent(gameManager, gameTime))) {
             return;
         }
@@ -214,7 +213,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
     }
 
     public @Nullable ZoneContext getZoneContextInGame() {
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         ServerLevel serverLevel = gameManager.getServerLevel();
         if (!gameManager.isInGame() || serverLevel == null) {
             return null;
@@ -222,7 +221,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
         return new ZoneContext(serverLevel, GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), gameManager.getRandom(), gameManager.getGameTime());
     }
     public @Nullable ZoneContext getCommonZoneContext() {
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null) {
             return null;
@@ -275,7 +274,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
         return this.zoneData.getGameZonesList();
     }
     @Override public List<IGameZone> getCurrentGameZones() {
-        return getCurrentGameZones(GameManager.get().getGameTime());
+        return getCurrentGameZones(BattleRoyale.getGameManager().getGameTime());
     }
     @Override public List<IGameZone> getCurrentGameZones(int gameTime) {
         return this.zoneData.getCurrentTickZones(gameTime);

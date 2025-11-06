@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.game.effect.particle;
+package xiao.battleroyale.api.effect.particle;
 
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;

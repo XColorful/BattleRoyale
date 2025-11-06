@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -66,7 +67,7 @@ public class SpectateMessageManager extends AbstractMessageManager<SpectateMessa
 
     @Override
     protected void sendMessages() {
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
         List<GamePlayer> sendGamePlayer = new ArrayList<>(); // 只装一个
         List<Integer> unfinishedId = new ArrayList<>();
 

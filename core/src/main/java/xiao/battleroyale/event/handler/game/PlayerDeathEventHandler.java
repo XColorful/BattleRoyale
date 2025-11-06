@@ -3,6 +3,7 @@ package xiao.battleroyale.event.handler.game;
 import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -54,7 +55,7 @@ public class PlayerDeathEventHandler implements IEventHandler {
         if (livingEntity == null) {
             return;
         }
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(livingEntity.getUUID());
         if (gamePlayer == null) {
             return;

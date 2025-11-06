@@ -1,50 +1,29 @@
 package xiao.battleroyale.common.game.spawn;
 
 import com.google.gson.JsonObject;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.algorithm.CircleGridCalculator;
 import xiao.battleroyale.algorithm.Distribution;
 import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportEvent;
-import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.api.game.spawn.IGameLobbyManager;
-import xiao.battleroyale.api.game.spawn.IGameLobbyReadApi;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.api.game.spawn.ISpawnManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
-import xiao.battleroyale.common.game.GameUtilsFunction;
-import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
-import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
-import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.data.io.TempDataManager;
-import xiao.battleroyale.event.EventPoster;
-import xiao.battleroyale.event.handler.game.LobbyEventHandler;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.JsonUtils;
-import xiao.battleroyale.util.Vec3Utils;
 
 import java.util.List;
-import java.util.UUID;
 
 import static xiao.battleroyale.api.data.io.TempDataTag.PRE_CALCULATE;
 import static xiao.battleroyale.api.data.io.TempDataTag.SPAWN_MANAGER;
@@ -104,11 +83,12 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.isInGame()) {
             return;
         }
 
-        int spawnConfigId = GameManager.get().getSpawnConfigId();
+        int spawnConfigId = gameManager.getSpawnConfigId();
         SpawnConfig spawnConfig = (SpawnConfig) GameConfigManager.get().getConfigEntry(SpawnConfigManager.get().getNameKey(), spawnConfigId);
         if (spawnConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_spawn_config");
@@ -120,7 +100,7 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
             return;
         }
 
-        int gameId = GameManager.get().getGameruleConfigId();
+        int gameId = gameManager.getGameruleConfigId();
         GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId);
         if (gameruleConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
@@ -133,7 +113,8 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
 
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.isInGame()) {
             return;
         }
         if (!this.configPrepared) {
@@ -141,7 +122,7 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
         }
 
         this.gameSpawner.clear();
-        this.gameSpawner.init(GameManager.get().getRandom(), GameTeamManager.getPlayerLimit()); // 用玩家上限作为点位数量
+        this.gameSpawner.init(gameManager.getRandom(), GameTeamManager.getPlayerLimit()); // 用玩家上限作为点位数量
         if (!isReady()) {
             return;
         }
@@ -156,7 +137,7 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             return false;
         }
 

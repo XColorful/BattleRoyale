@@ -99,7 +99,7 @@ public class DebugManager {
         BattleRoyale.LOGGER.debug("[Debug]{}:{}", operation, fullMessage);
     }
     public static void sendDebugMessageWithGameTime(CommandSourceStack source, String operation, MutableComponent debugMessage) {
-        GameTimeFormat gameTimeFormat = new GameTimeFormat(GameManager.get().getGameTime());
+        GameTimeFormat gameTimeFormat = new GameTimeFormat(BattleRoyale.getGameManager().getGameTime());
         broadcastDebugPlayerGameAction(source, operation, gameTimeFormat);
         MutableComponent fullMessage = Component.translatable("battleroyale.message.debug")
                 .append(Component.literal(operation + ":"))

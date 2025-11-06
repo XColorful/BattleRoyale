@@ -115,7 +115,7 @@ public class SpawnConfigManager extends AbstractConfigSubManager<SpawnConfigMana
 
         @Override
         public void applyDefault() {
-            GameManager.get().setSpawnConfigId(getConfigId());
+            BattleRoyale.getGameManager().setSpawnConfigId(getConfigId());
         }
     }
 

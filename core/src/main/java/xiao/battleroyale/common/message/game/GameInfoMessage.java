@@ -2,6 +2,7 @@ package xiao.battleroyale.common.message.game;
 
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.message.game.GameTag;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.message.AbstractCommonMessage;
@@ -16,7 +17,7 @@ public class GameInfoMessage extends AbstractCommonMessage {
     public GameInfoMessage(@NotNull CompoundTag nbt, int updateTime) {
         super(nbt, updateTime);
         this.standingPlayerCount = 0;
-        this.gameId = GameManager.get().getGameId();
+        this.gameId = BattleRoyale.getGameManager().getGameId();
     }
 
     public void updateMessage(int standingPlayerCount, UUID gameId) {

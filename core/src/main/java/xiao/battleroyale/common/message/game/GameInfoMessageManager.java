@@ -6,8 +6,8 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.IGameSubManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.message.AbstractMessageManager;
@@ -47,13 +47,13 @@ public class GameInfoMessageManager extends AbstractMessageManager<GameInfoMessa
     protected void checkExpiredMessage() {
         updateAliveTotal();
 
-        if (!GameManager.get().isInGame()) {
+        if (!BattleRoyale.getGameManager().isInGame()) {
             super.checkExpiredMessage();
         }
     }
 
     protected void updateAliveTotal() {
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         boolean inGame = gameManager.isInGame();
         if (inGame) {
             int aliveTotal = GameTeamManager.getStandingGamePlayers().size();
