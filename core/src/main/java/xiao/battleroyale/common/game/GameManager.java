@@ -252,8 +252,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return true;
     }
 
-    private void generateGameId() {
-        setGameId(UUID.randomUUID());
+    private UUID generateGameId() {
+        return UUID.randomUUID();
     }
 
     public void setGameId(UUID gameId) {
@@ -268,16 +268,16 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      * 检测并加载游戏配置，不应该执行任何实际内容
      */
     public void initGameConfig(ServerLevel serverLevel) {
-        if (EventPoster.postEvent(new GameLoadEvent(this))) {
-            BattleRoyale.LOGGER.debug("GameLoadEvent canceled, skipped initGameConfig");
-            return;
-        }
-
         if (isInGame()) {
             return;
         }
         if (serverLevel == null) {
             BattleRoyale.LOGGER.warn("Passed ServerLevel in GameManager::initGameConfig is null");
+            return;
+        }
+
+        if (EventPoster.postEvent(new GameLoadEvent(this))) {
+            BattleRoyale.LOGGER.debug("GameLoadEvent canceled, skipped initGameConfig");
             return;
         }
         // 初始化时绑定ServerLevel及其LevelKey
@@ -304,15 +304,9 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (EventPoster.postEvent(new GameInitEvent(this))) {
-            BattleRoyale.LOGGER.debug("GameInitEvent canceled, skipped initGame");
-            return;
-        }
-
         if (isInGame()) {
             return;
         }
-
         if (!configPrepared || this.serverLevel != serverLevel) {
             BattleRoyale.LOGGER.info("GameManager isn't configPrepared, attempt to initGameConifg");
             initGameConfig(serverLevel);
@@ -322,11 +316,21 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             }
         }
 
+        if (EventPoster.postEvent(new GameInitEvent(this))) {
+            BattleRoyale.LOGGER.debug("GameInitEvent canceled, skipped initGame");
+            return;
+        }
+
+        UUID preGameId = getGameId();
+        UUID newGameId = generateGameId();
+        setGameId(newGameId);
         GameStarter.initGameSetup(this);
         GameSubManager.initGameSubManager(this, serverLevel);
-        if (isReady()) {
-            generateGameId(); // 手动刷新 gameId
+        if (!isReady()) {
+            setGameId(preGameId); // 回退GameId
+            return;
         }
+
         EventPoster.postEvent(new GameInitFinishEvent(this));
     }
 
@@ -335,11 +339,6 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (EventPoster.postEvent(new GameStartEvent(this))) {
-            BattleRoyale.LOGGER.debug("GameStartEvent canceled, skipped startGame");
-            return false;
-        }
-
         if (isInGame()) {
             return false;
         }
@@ -352,9 +351,14 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             }
         }
 
+        if (EventPoster.postEvent(new GameStartEvent(this))) {
+            BattleRoyale.LOGGER.debug("GameStartEvent canceled, skipped startGame");
+            return false;
+        }
+
         checkAndUpdateInvalidGamePlayer(this.serverLevel); // 供gameTime = 1时使用
         if (GameSubManager.startGameSubManager(this, this.serverLevel)) {
-            GameStarter.startGameSetup(this);
+            GameStarter.startGameSetup(this); // 子Manager成功了再启动(重置)GameManager
             this.inGame = true;
             GameInfoMessageManager.get().startGame(serverLevel);
             EventPoster.postEvent(new GameStartFinishEvent(this));
@@ -397,21 +401,25 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     public void onGameTick(int gameTime) {
         this.gameTime = gameTime;
-        if (EventPoster.postEvent(new GameTickEvent(this, gameTime))) {
-            BattleRoyale.LOGGER.debug("GameTickEvent canceled, skipped onGameTick (gameTime:{})", gameTime);
-            return;
-        }
 
         try {
+            if (EventPoster.postEvent(new GameTickEvent(this, gameTime))) {
+                BattleRoyale.LOGGER.debug("GameTickEvent canceled, skipped onGameTick (gameTime:{})", gameTime);
+                return;
+            }
+
             checkAndUpdateInvalidGamePlayer(this.serverLevel); // 为其他Manager预处理当前tick
 
             // 暂时认为各Manager要按顺序tick，因此不改成监听GameTickEvent事件来触发
             gameruleManager.onGameTick(gameTime);
             teamManager.onGameTick(gameTime); // 暂时没功能
             spawnManager.onGameTick(gameTime);
+            gameLobbyManager.onGameTick(gameTime);
             gameLootManager.onGameTick(gameTime);
             zoneManager.onGameTick(gameTime); // Zone可以提前触发stopGame，并且Zone需要延迟stopGame到tick结束
             statsManager.onGameTick(gameTime); // 基于事件主动记录，不用tick
+
+            EventPoster.postEvent(new GameTickFinishEvent(this, gameTime));
 
             if (gameTime % 200 == 0) {
                 finishGameIfShouldEnd(); // 每10秒保底检查游戏结束
@@ -425,8 +433,6 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
                 stopGame(this.serverLevel);
             }
         }
-
-        EventPoster.postEvent(new GameTickFinishEvent(this, gameTime));
     }
 
     /**
@@ -471,13 +477,13 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public void finishGame(boolean hasWinner) { // IGameManager接口
-        if (EventPoster.postEvent(new GameCompleteEvent(this, hasWinner))) {
-            BattleRoyale.LOGGER.debug("GameCompleteEvent canceled, skipped finishGame (gameTime:{}, hasWinner:{})", gameTime, hasWinner);
+        if (!isInGame()) {
+            BattleRoyale.LOGGER.debug("GameManager is not in game, skipped finishGame({})", hasWinner);
             return;
         }
 
-        if (!isInGame()) {
-            BattleRoyale.LOGGER.debug("GameManager is not in game, skipped finishGame({})", hasWinner);
+        if (EventPoster.postEvent(new GameCompleteEvent(this, hasWinner))) {
+            BattleRoyale.LOGGER.debug("GameCompleteEvent canceled, skipped finishGame (gameTime:{}, hasWinner:{})", gameTime, hasWinner);
             return;
         }
 
@@ -518,6 +524,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         gameLootManager.stopGame(serverLevel);
         zoneManager.stopGame(serverLevel);
         spawnManager.stopGame(serverLevel);
+        gameLobbyManager.stopGame(serverLevel);
         gameruleManager.stopGame(serverLevel);
         // ↑以上操作均不需要inGame判断
         this.inGame = false;

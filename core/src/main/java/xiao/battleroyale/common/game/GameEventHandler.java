@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +12,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
-import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.util.ChatUtils;
 
