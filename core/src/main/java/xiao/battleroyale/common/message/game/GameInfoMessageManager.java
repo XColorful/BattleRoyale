@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameSubManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
@@ -25,6 +26,16 @@ public class GameInfoMessageManager extends AbstractMessageManager<GameInfoMessa
 
     public static GameInfoMessageManager get() {
         return GameMessageManagerHolder.INSTANCE;
+    }
+
+    @Override public String getManagerName() {
+        return String.format("%s:GameInfoMessageManager", BattleRoyale.MOD_ID);
+    }
+    @Override public boolean registerGameEventHandler() {
+        return false;
+    }
+    @Override public boolean unregisterGameEventHandler() {
+        return false;
     }
 
     public static final int ALIVE_CHANNEL = -1;

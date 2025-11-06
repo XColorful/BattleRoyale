@@ -23,6 +23,7 @@ import xiao.battleroyale.api.event.game.tick.GameTickEvent;
 import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
 import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
+import xiao.battleroyale.api.game.IGameSubManager;
 import xiao.battleroyale.api.game.gamerule.IGameruleManager;
 import xiao.battleroyale.api.game.loot.IGameLootManager;
 import xiao.battleroyale.api.game.spawn.IGameLobbyManager;
@@ -35,6 +36,7 @@ import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.api.game.zone.IZoneManager;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
+import xiao.battleroyale.common.game.lobby.GameLobbyManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.stats.StatsManager;
@@ -105,45 +107,68 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         ZoneManager.init(mcSide);
     }
 
+    @Override public String getManagerName() {
+        return String.format("%s:GameManager", BattleRoyale.MOD_ID);
+    }
+
     private @NotNull IGameruleManager gameruleManager = GameruleManager.get();
     private @NotNull IGameLootManager gameLootManager = GameLootManager.get();
     private @NotNull ISpawnManager spawnManager = SpawnManager.get();
-    private @NotNull IGameLobbyManager gameLobbyManager = SpawnManager.get();
+    private @NotNull IGameLobbyManager gameLobbyManager = GameLobbyManager.get();
     private @NotNull IStatsManager statsManager = StatsManager.get();
     private @NotNull ITeamManager teamManager = TeamManager.get();
     private @NotNull IZoneManager zoneManager = ZoneManager.get();
+    private void registerNewManager(IGameSubManager previousManager, IGameSubManager newManager) {
+        if (previousManager.unregisterGameEventHandler()) {
+            BattleRoyale.LOGGER.debug("Unregister previous GameSubManager {} to game", previousManager.getManagerName());
+        } else {
+            BattleRoyale.LOGGER.debug("Failed to unregister previous GameSubManager {} to game", previousManager.getManagerName());
+        }
+        if (newManager.registerGameEventHandler()) {
+            BattleRoyale.LOGGER.debug("Register new GameSubManager {} to game", newManager.getManagerName());
+        } else {
+            BattleRoyale.LOGGER.warn("Failed to register new GameSubManager {} to game", newManager.getManagerName());
+        }
+    }
     @Override public boolean setGameruleManager(@NotNull IGameruleManager gameruleManager) {
         if (isInGame()) return false;
+        registerNewManager(this.gameruleManager, gameruleManager);
         this.gameruleManager = gameruleManager;
         return true;
     }
     @Override public boolean setGameLootManager(@NotNull IGameLootManager gameLootManager) {
         if (isInGame()) return false;
+        registerNewManager(this.gameLootManager, gameLootManager);
         this.gameLootManager = gameLootManager;
         return true;
     }
     @Override public boolean setSpawnManager(@NotNull ISpawnManager spawnManager) {
         if (isInGame()) return false;
+        registerNewManager(this.spawnManager, spawnManager);
         this.spawnManager = spawnManager;
         return true;
     }
     @Override public boolean setGameLobbyManager(@NotNull IGameLobbyManager gameLobbyManager) {
         if (isInGame()) return false;
+        registerNewManager(this.gameLobbyManager, gameLobbyManager);
         this.gameLobbyManager = gameLobbyManager;
         return true;
     }
     @Override public boolean setStatsManager(@NotNull IStatsManager statsManager) {
         if (isInGame()) return false;
+        registerNewManager(this.statsManager, statsManager);
         this.statsManager = statsManager;
         return true;
     }
     @Override public boolean setTeamManager(@NotNull ITeamManager teamManager) {
         if (isInGame()) return false;
+        registerNewManager(this.teamManager, teamManager);
         this.teamManager = teamManager;
         return true;
     }
     @Override public boolean setZoneManager(@NotNull IZoneManager zoneManager) {
         if (isInGame()) return false;
+        registerNewManager(this.zoneManager, zoneManager);
         this.zoneManager = zoneManager;
         return true;
     }

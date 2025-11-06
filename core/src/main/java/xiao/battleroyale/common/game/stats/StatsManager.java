@@ -49,6 +49,10 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
         ;
     }
 
+    @Override public String getManagerName() {
+        return String.format("%s:StatsManager", BattleRoyale.MOD_ID);
+    }
+
     public static final String STATS_SUB_PATH = "stats";
     public static final String STATS_PATH = Paths.get(MOD_DATA_PATH).resolve(STATS_SUB_PATH).toString();
     private static final String STATS_TAG = "stats";

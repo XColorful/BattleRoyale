@@ -131,7 +131,7 @@ public class TeamExternal {
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel == null || player == null) {
             return;
-        } else if (senderPlayer == null || !TeamUtils.isPlayerLeader(senderPlayer.getUUID())) { // 玩家未加载或不是队长
+        } else if (senderPlayer == null || !TeamUtils.isPlayerLeader(teamManager, senderPlayer.getUUID())) { // 玩家未加载或不是队长
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_valid_invite").withStyle(ChatFormatting.RED));
             return;
         }
@@ -178,7 +178,7 @@ public class TeamExternal {
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel == null || player == null) {
             return;
-        } else if (senderPlayer == null || !TeamUtils.isPlayerLeader(senderPlayer.getUUID())) { // 玩家未加载或不是队长
+        } else if (senderPlayer == null || !TeamUtils.isPlayerLeader(teamManager, senderPlayer.getUUID())) { // 玩家未加载或不是队长
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_valid_invite").withStyle(ChatFormatting.RED));
             return;
         }

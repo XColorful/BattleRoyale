@@ -6,6 +6,8 @@ import javax.annotation.Nullable;
 
 public interface IGameSubManager {
 
+    String getManagerName();
+
     void initGameConfig(ServerLevel serverLevel);
 
     boolean isPreparedForGame();
@@ -19,4 +21,8 @@ public interface IGameSubManager {
     void onGameTick(int gameTime);
 
     void stopGame(@Nullable ServerLevel serverLevel);
+
+    boolean registerGameEventHandler();
+
+    boolean unregisterGameEventHandler();
 }

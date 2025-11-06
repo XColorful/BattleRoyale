@@ -42,6 +42,10 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
         ;
     }
 
+    @Override public String getManagerName() {
+        return String.format("%s:GameruleManager", BattleRoyale.MOD_ID);
+    }
+
     private MinecraftEntry mcEntry;
     private final PlayerModeStorage gamemodeBackup = new PlayerModeStorage();
     private final McRuleStorage gameruleBackup = new McRuleStorage();

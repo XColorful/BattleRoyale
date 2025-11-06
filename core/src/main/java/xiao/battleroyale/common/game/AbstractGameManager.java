@@ -22,4 +22,14 @@ public abstract class AbstractGameManager implements IGameSubManager {
     public boolean isReady() {
         return this.ready;
     }
+
+    @Override
+    public boolean registerGameEventHandler() {
+        return false;
+    }
+
+    @Override
+    public boolean unregisterGameEventHandler() {
+        return false;
+    }
 }

@@ -10,6 +10,7 @@ public class GameSubManager {
         gameManager.getGameLootManager().initGameConfig(serverLevel);
         gameManager.getGameruleManager().initGameConfig(serverLevel);
         gameManager.getSpawnManager().initGameConfig(serverLevel);
+        gameManager.getGameLobbyManager().initGame(serverLevel);
         gameManager.getTeamManager().initGameConfig(serverLevel);
         gameManager.getZoneManager().initGameConfig(serverLevel);
         gameManager.getStatsManager().initGameConfig(serverLevel);
@@ -19,6 +20,7 @@ public class GameSubManager {
         return (gameManager.getGameLootManager().isPreparedForGame() // 判定的优先级最低
                 && gameManager.getGameruleManager().isPreparedForGame()
                 && gameManager.getSpawnManager().isPreparedForGame()
+                && gameManager.getGameLobbyManager().isPreparedForGame()
                 && gameManager.getTeamManager().isPreparedForGame()
                 && gameManager.getZoneManager().isPreparedForGame()
                 && gameManager.getStatsManager().isPreparedForGame());
@@ -29,7 +31,8 @@ public class GameSubManager {
         gameManager.getGameLootManager().initGame(serverLevel);
         gameManager.getTeamManager().initGame(serverLevel); // TeamManager先处理组队
         gameManager.getGameruleManager().initGame(serverLevel); // Gamerule记录游戏模式
-        gameManager.getSpawnManager().initGame(serverLevel); // SpawnManager会传送至大厅并更改游戏模式
+        gameManager.getSpawnManager().initGame(serverLevel);
+        gameManager.getGameLobbyManager().initGame(serverLevel); // GameLobbyManager会传送至大厅并更改游戏模式
         gameManager.getZoneManager().initGame(serverLevel);
     }
     protected static boolean startGameSubManager(IGameManager gameManager, ServerLevel serverLevel) {
@@ -47,6 +50,9 @@ public class GameSubManager {
             return false;
         } else if (!gameManager.getSpawnManager().startGame(serverLevel)) { // SpawnManager在onGameTick处理出生，提前处理过就行
             BattleRoyale.LOGGER.warn("SpawnManager failed to start game");
+            return false;
+        } else if (!gameManager.getGameLobbyManager().startGame(serverLevel)) {
+            BattleRoyale.LOGGER.warn("GameLobbyManager failed to start game");
             return false;
         } else if (!gameManager.getStatsManager().startGame(serverLevel)) {
             BattleRoyale.LOGGER.warn("StatsManager failed to start game");

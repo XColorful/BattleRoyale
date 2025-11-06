@@ -43,6 +43,10 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
         ;
     }
 
+    @Override public String getManagerName() {
+        return String.format("%s:ZoneManager", BattleRoyale.MOD_ID);
+    }
+
     protected final ZoneData zoneData = new ZoneData();
 
     private boolean stackZoneConfig = false;

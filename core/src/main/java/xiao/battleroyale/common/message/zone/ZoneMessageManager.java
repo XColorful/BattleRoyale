@@ -29,6 +29,16 @@ public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> impl
         return ZoneMessageManagerHolder.INSTANCE;
     }
 
+    @Override public String getManagerName() {
+        return String.format("%s:ZoneMessageManager", BattleRoyale.MOD_ID);
+    }
+    @Override public boolean registerGameEventHandler() {
+        return false;
+    }
+    @Override public boolean unregisterGameEventHandler() {
+        return false;
+    }
+
     @Override
     protected void sendMessageToPlayers(List<ServerPlayer> players, CompoundTag nbtMessage, @NotNull ServerLevel serverLevel) {
         ClientMessageZoneInfo message = new ClientMessageZoneInfo(nbtMessage);

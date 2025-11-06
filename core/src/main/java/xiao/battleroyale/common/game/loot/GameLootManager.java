@@ -49,6 +49,10 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
         cachedCenterOffset.addAll(BfsCalculator.calculateCenterOffset(64)); // 渣机也就20ms开销
     }
 
+    @Override public String getManagerName() {
+        return String.format("%s:GameLootManager", BattleRoyale.MOD_ID);
+    }
+
     @Override public boolean serverSideOnly() {
         return true;
     }

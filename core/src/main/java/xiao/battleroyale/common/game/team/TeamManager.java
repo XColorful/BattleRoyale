@@ -41,6 +41,10 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
         ;
     }
 
+    @Override public String getManagerName() {
+        return String.format("%s:TeamManager", BattleRoyale.MOD_ID);
+    }
+
     protected final TeamConfig teamConfig = new TeamConfig();
     public boolean shouldAutoJoin() { return this.teamConfig.autoJoinGame; }
     protected final TeamData teamData = new TeamData();
