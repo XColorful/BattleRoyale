@@ -11,7 +11,6 @@ import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;

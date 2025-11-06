@@ -2,9 +2,9 @@ package xiao.battleroyale.compat.pubgmc;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
@@ -20,8 +20,6 @@ import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.command.sub.LootCommand;
 import xiao.battleroyale.command.sub.ReloadCommand;
 import xiao.battleroyale.command.sub.TeamCommand;
-import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.data.io.TempDataManager;
 
 import static xiao.battleroyale.api.data.io.TempDataTag.PUBGMC_COMMAND;

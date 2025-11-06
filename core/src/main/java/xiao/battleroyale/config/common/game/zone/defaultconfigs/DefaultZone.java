@@ -3,7 +3,6 @@ package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.loot.ILootEntry;

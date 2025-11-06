@@ -13,7 +13,6 @@ import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;

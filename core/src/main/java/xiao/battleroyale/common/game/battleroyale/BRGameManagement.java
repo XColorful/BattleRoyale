@@ -14,7 +14,6 @@ import xiao.battleroyale.api.event.game.game.GameSpectateEvent;
 import xiao.battleroyale.api.event.game.game.GameSpectateResult;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.lobby.IGameLobbyManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.GameUtilsFunction;

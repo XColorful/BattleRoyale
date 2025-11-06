@@ -11,7 +11,9 @@ import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.event.handler.effect.BoostEventHandler;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class BoostManager implements IEffectManager {
 

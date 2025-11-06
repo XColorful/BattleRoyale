@@ -4,7 +4,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.algorithm.Distribution;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.util.ChatUtils;
 

@@ -10,14 +10,9 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.event.handler.loot.LootGenerationEventHandler;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class CommonLootManager {
 

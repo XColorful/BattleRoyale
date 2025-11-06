@@ -11,7 +11,6 @@ import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.gamerule.IGameruleManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.gamerule.storage.McRuleStorage;

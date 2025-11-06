@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.util.ChatUtils;
 
 public class TeamNotification {

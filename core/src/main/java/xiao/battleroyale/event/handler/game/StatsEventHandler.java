@@ -4,7 +4,6 @@ import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.common.game.GameTeamManager;
-import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.event.EventRegister;
 

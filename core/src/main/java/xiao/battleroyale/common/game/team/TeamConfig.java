@@ -1,16 +1,14 @@
 package xiao.battleroyale.common.game.team;
 
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
+import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
-import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 
 /**
  * record类

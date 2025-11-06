@@ -24,7 +24,6 @@ import xiao.battleroyale.api.loot.entity.IEntityLootData;
 import xiao.battleroyale.api.loot.item.IItemLootData;
 import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
 import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 

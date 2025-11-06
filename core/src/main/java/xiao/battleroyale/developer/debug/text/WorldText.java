@@ -25,7 +25,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.api.minecraft.InventoryIndex;
 import xiao.battleroyale.api.minecraft.InventoryIndex.SlotType;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.developer.debug.command.sub.get.GetWorld;
 
 import java.util.Arrays;

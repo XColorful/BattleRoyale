@@ -7,10 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.sub.IConfigAppliable;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
-import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.common.game.spawn.SpawnManager;
+import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.StringUtils;
 

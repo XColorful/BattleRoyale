@@ -8,7 +8,6 @@ import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;

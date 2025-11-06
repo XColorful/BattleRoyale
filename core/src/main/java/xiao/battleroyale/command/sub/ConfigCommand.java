@@ -12,7 +12,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.display.DisplayConfigManager;
 import xiao.battleroyale.config.client.render.RenderConfigManager;

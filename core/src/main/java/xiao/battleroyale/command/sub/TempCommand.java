@@ -9,13 +9,11 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.data.io.TempDataManager;
 
+import static xiao.battleroyale.api.data.io.TempDataTag.PUBGMC_COMMAND;
+import static xiao.battleroyale.api.data.io.TempDataTag.REGISTRY;
 import static xiao.battleroyale.command.CommandArg.*;
-import static xiao.battleroyale.api.data.io.TempDataTag.*;
 
 public class TempCommand {
 

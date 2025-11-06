@@ -6,7 +6,9 @@ import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import java.util.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class GameUtilsFunction {
 

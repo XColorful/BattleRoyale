@@ -8,15 +8,13 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameSubManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameZoneManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.AbstractMessageManager;
 import xiao.battleroyale.network.message.ClientMessageZoneInfo;
 import xiao.battleroyale.util.SendUtils;
 
-import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 
 public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> implements IGameSubManager {

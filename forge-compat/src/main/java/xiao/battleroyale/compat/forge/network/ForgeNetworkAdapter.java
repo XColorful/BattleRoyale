@@ -6,9 +6,9 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.network.message.IMessage;
 import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.MessageDirection;
+import xiao.battleroyale.api.network.message.IMessage;
 import xiao.battleroyale.compat.forge.BattleRoyaleForge;
 import xiao.battleroyale.network.NetworkHandler;
 

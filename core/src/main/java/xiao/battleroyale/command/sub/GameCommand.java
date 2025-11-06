@@ -4,17 +4,16 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameNotification;
 
 import static xiao.battleroyale.command.CommandArg.*;

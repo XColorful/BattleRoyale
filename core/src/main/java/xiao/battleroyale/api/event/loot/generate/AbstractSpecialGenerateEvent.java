@@ -1,7 +1,6 @@
 package xiao.battleroyale.api.event.loot.generate;
 
 import com.google.gson.JsonObject;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.common.loot.LootGenerator;

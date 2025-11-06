@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.message.AbstractMessageManager;

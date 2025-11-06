@@ -5,7 +5,6 @@ import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.api.event.ILivingDamageEvent;
-import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.event.EventRegister;
 
 /**

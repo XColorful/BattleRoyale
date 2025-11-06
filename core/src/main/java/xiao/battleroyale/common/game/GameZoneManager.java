@@ -3,7 +3,6 @@ package xiao.battleroyale.common.game;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.IGameZoneReadApi;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
-import xiao.battleroyale.common.game.zone.ZoneManager;
 
 import java.util.List;
 

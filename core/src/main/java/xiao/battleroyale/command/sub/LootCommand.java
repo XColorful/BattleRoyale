@@ -8,13 +8,13 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.loot.CommonLootManager;
 import xiao.battleroyale.data.io.TempDataManager;
 
 import java.util.UUID;
 
-import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.command.CommandArg.GENERATE;
+import static xiao.battleroyale.command.CommandArg.LOOT;
 
 public class LootCommand {
 

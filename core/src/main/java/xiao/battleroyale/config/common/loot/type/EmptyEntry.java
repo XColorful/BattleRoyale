@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.LootEntryTag;
-import xiao.battleroyale.api.loot.item.IItemLootEntry;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.data.EntityData;
 import xiao.battleroyale.common.loot.data.ItemData;
@@ -15,7 +14,6 @@ import xiao.battleroyale.util.JsonUtils;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class EmptyEntry extends AbstractLootEntry {
 

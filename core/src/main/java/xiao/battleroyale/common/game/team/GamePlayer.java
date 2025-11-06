@@ -5,7 +5,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.effect.EffectManager;
-import xiao.battleroyale.common.game.GameManager;
 
 import java.util.UUID;
 

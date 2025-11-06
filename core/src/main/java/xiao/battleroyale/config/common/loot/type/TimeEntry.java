@@ -7,7 +7,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;

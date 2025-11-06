@@ -6,7 +6,6 @@ import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.common.game.spawn.AbstractSimpleSpawner;
 import xiao.battleroyale.common.game.team.GameTeam;

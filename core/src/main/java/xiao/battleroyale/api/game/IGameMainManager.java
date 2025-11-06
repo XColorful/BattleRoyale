@@ -2,8 +2,8 @@ package xiao.battleroyale.api.game;
 
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.gamerule.IGameruleManager;
-import xiao.battleroyale.api.game.loot.IGameLootManager;
 import xiao.battleroyale.api.game.lobby.IGameLobbyManager;
+import xiao.battleroyale.api.game.loot.IGameLootManager;
 import xiao.battleroyale.api.game.process.IGameProcessManager;
 import xiao.battleroyale.api.game.spawn.ISpawnManager;
 import xiao.battleroyale.api.game.stats.IStatsManager;

@@ -2,7 +2,6 @@ package xiao.battleroyale.developer.debug;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.entity.Entity;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.effect.boost.BoostData;
 import xiao.battleroyale.common.effect.boost.BoostManager;
 import xiao.battleroyale.common.effect.firework.FireworkManager;
@@ -11,7 +10,6 @@ import xiao.battleroyale.common.effect.firework.PlayerTrackingFireworkTask;
 import xiao.battleroyale.common.effect.muteki.EntityMutekiTask;
 import xiao.battleroyale.common.effect.muteki.MutekiManager;
 import xiao.battleroyale.common.effect.particle.*;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.developer.debug.text.EffectText;

@@ -4,8 +4,6 @@ import net.minecraft.server.MinecraftServer;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.init.IModEvent;
-import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.common.game.loot.GameLootManager;
 
 /**
  * 核心模块事件和服务逻辑的统一处理类。

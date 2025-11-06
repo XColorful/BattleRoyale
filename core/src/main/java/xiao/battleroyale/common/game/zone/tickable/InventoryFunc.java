@@ -10,7 +10,6 @@ import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.common.loot.InventoryGenerator;

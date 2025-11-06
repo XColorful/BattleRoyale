@@ -5,7 +5,6 @@ import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.event.EventRegister;
 
 public class LoopEventHandler implements IEventHandler {

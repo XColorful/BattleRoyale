@@ -14,7 +14,6 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.effect.EffectManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;

@@ -10,7 +10,6 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.team.TeamManager;
 
 import static xiao.battleroyale.command.CommandArg.*;
 import static xiao.battleroyale.util.StringUtils.buildCommandString;

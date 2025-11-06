@@ -1,7 +1,6 @@
 package xiao.battleroyale.developer.debug;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -9,7 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.data.io.DevDataTag;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.data.io.DevDataManager;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils.GameTimeFormat;

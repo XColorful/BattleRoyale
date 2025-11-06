@@ -12,7 +12,6 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.api.game.spawn.ISpawnManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;

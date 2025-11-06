@@ -9,10 +9,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.event.game.team.*;
+import xiao.battleroyale.api.event.game.team.InvitePlayerCompleteEvent;
+import xiao.battleroyale.api.event.game.team.InvitePlayerEvent;
+import xiao.battleroyale.api.event.game.team.RequestPlayerCompleteEvent;
+import xiao.battleroyale.api.event.game.team.RequestPlayerEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.command.sub.TeamCommand;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.ChatUtils;
 

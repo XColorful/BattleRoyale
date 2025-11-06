@@ -2,7 +2,6 @@ package xiao.battleroyale.common.game;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
-import xiao.battleroyale.common.game.stats.StatsManager;
 
 import java.util.Map;
 

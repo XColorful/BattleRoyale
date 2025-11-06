@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.team.ITeamManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.util.ColorUtils;
 
 import java.util.*;

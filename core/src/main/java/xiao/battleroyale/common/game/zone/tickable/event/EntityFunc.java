@@ -13,7 +13,6 @@ import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.event.game.zone.EntityEvent;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.common.loot.LootGenerator;

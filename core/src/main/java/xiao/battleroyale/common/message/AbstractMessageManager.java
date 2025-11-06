@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.message.IMessageManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 

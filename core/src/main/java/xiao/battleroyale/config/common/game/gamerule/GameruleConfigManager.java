@@ -7,7 +7,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.GameruleConfigTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleSingleEntry;
 import xiao.battleroyale.command.CommandArg;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
@@ -20,7 +19,6 @@ import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.List;
 
 
 public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConfigManager.GameruleConfig> {

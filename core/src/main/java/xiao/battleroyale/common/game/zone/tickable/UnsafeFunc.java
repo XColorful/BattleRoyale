@@ -2,7 +2,6 @@ package xiao.battleroyale.common.game.zone.tickable;
 
 import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;

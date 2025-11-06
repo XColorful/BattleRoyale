@@ -3,7 +3,6 @@ package xiao.battleroyale.event.handler.game;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.event.EventRegister;
 
 /**

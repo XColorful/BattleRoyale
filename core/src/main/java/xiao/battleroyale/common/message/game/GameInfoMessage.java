@@ -4,7 +4,6 @@ import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.message.game.GameTag;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.message.AbstractCommonMessage;
 
 import java.util.UUID;

@@ -10,11 +10,9 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.api.game.process.IGameProcessManager;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -25,7 +23,6 @@ import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.*;
-import java.util.List;
 
 public class TeamManager extends AbstractGameManager implements ITeamManager {
 

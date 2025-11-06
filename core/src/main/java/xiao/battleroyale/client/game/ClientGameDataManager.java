@@ -3,8 +3,8 @@ package xiao.battleroyale.client.game;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.client.game.data.ClientGameData;
-import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
+import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.renderer.game.SpectatePlayerRenderer;
 
 import java.util.HashMap;
