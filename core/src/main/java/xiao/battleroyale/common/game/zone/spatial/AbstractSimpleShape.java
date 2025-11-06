@@ -451,7 +451,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
     @Nullable
     public Vec3 getPreviousCenterById(int zoneId, double progress) {
-        IGameZone gameZone = ZoneManager.get().getGameZone(zoneId);
+        IGameZone gameZone = BattleRoyale.getGameManager().getZoneManager().getGameZone(zoneId);
         if (gameZone == null) {
             BattleRoyale.LOGGER.warn("Failed to get previous gameZone center by zoneId: {}", zoneId);
             return null;
@@ -467,7 +467,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
 
     @Nullable
     public Vec3 getPreviousDimensionById(int zoneId, double progress) {
-        IGameZone gameZone = ZoneManager.get().getGameZone(zoneId);
+        IGameZone gameZone = BattleRoyale.getGameManager().getZoneManager().getGameZone(zoneId);
         if (gameZone == null) {
             BattleRoyale.LOGGER.warn("Failed to get previous gameZone dimension by zoneId: {}", zoneId);
             return null;
@@ -482,7 +482,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     }
 
     public double getPreviousRotateById(int zoneId, double progress) {
-        IGameZone gameZone = ZoneManager.get().getGameZone(zoneId);
+        IGameZone gameZone = BattleRoyale.getGameManager().getZoneManager().getGameZone(zoneId);
         if (gameZone == null) {
             BattleRoyale.LOGGER.warn("Failed to get previous gameZone rotation by zoneId: {}, defaulting to 0", zoneId);
             return 0;

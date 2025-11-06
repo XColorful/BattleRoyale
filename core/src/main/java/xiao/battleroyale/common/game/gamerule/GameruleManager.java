@@ -141,5 +141,5 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
         }
     }
 
-    public GameType getGameMode() { return gamemodeBackup.getGameMode(); }
+    @Override public GameType getGameMode() { return gamemodeBackup.getGameMode(); }
 }

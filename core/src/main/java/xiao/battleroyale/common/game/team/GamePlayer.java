@@ -110,7 +110,7 @@ public class GamePlayer {
         if (!isBot()) {
             return;
         }
-        TeamManager.get().onBotGamePlayerChanged(this, livingEntity.getUUID());
+        BattleRoyale.getGameManager().getTeamManager().onBotGamePlayerChanged(this, livingEntity.getUUID());
     }
 
     /**

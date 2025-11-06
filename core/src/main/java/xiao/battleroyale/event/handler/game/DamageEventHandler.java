@@ -109,7 +109,7 @@ public class DamageEventHandler implements IEventHandler {
                 // 把不参与游戏的[ServerPlayer玩家]tp回大厅
                 if (gameEntry.teleportInterfererToLobby
                         && damageSource.getEntity() instanceof ServerPlayer) {
-                    SpawnManager.get().teleportToLobby(interfererPlayer);
+                    BattleRoyale.getGameManager().getGameLobbyManager().teleportToLobby(interfererPlayer);
                     ServerLevel serverLevel = gameManager.getServerLevel();
                     if (serverLevel != null) {
                         ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.teleport_non_game_player_to_lobby", interfererPlayer.getName().getString());
@@ -127,7 +127,7 @@ public class DamageEventHandler implements IEventHandler {
                 if (livingEntity instanceof ServerPlayer interfererPlayer) {
                     // 把不参与游戏的[ServerPlayer玩家]tp回大厅
                     if (gameEntry.teleportInterfererToLobby) {
-                        SpawnManager.get().teleportToLobby(interfererPlayer);
+                        BattleRoyale.getGameManager().getGameLobbyManager().teleportToLobby(interfererPlayer);
                         ServerLevel serverLevel = gameManager.getServerLevel();
                         if (serverLevel != null) {
                             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.teleport_non_game_player_to_lobby", interfererPlayer.getName().getString());

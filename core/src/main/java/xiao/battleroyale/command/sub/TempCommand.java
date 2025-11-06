@@ -8,6 +8,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.data.io.TempDataManager;
@@ -50,7 +51,7 @@ public class TempCommand {
 
     private static int turnInitStackZoneConfig(CommandContext<CommandSourceStack> context) {
         boolean turn = BoolArgumentType.getBool(context, BOOL);
-        ZoneManager.get().setStackZoneConfig(turn);
+        BattleRoyale.getGameManager().getZoneManager().setStackZoneConfig(turn);
         if (turn) {
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.enable_init_stack_zone_config"), false);
         } else {

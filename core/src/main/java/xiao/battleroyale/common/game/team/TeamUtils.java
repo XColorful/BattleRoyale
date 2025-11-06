@@ -22,8 +22,7 @@ public class TeamUtils {
     /**
      * 返回非人机队伍数量
      */
-    public static int getNonBotTeamCount() {
-        TeamManager teamManager = TeamManager.get();
+    public static int getNonBotTeamCount(TeamManager teamManager) {
         int count = 0;
         Set<Integer> playerTeamId = new HashSet<>();
         for (GamePlayer gamePlayer : teamManager.getGamePlayers()) {
@@ -41,8 +40,7 @@ public class TeamUtils {
     /**
      * 返回未被淘汰的非人机队伍数量
      */
-    public static int getStandingPlayerTeamCount() {
-        TeamManager teamManager = TeamManager.get();
+    public static int getStandingPlayerTeamCount(TeamManager teamManager) {
         int count = 0;
         Set<Integer> playerTeamId = new HashSet<>();
         for (GamePlayer gamePlayer : teamManager.getStandingGamePlayers()) {
@@ -57,12 +55,11 @@ public class TeamUtils {
         return count;
     }
 
-    public static int getStandingTeamCount() {
-        return TeamManager.get().teamData.getTotalStandingTeamCount();
+    public static int getStandingTeamCount(TeamManager teamManager) {
+        return teamManager.teamData.getTotalStandingTeamCount();
     }
 
-    public static boolean isPlayerLeader(UUID playerUUID) {
-        TeamManager teamManager = TeamManager.get();
+    public static boolean isPlayerLeader(TeamManager teamManager, UUID playerUUID) {
         GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(playerUUID);
         if (gamePlayer == null) {
             return false;
@@ -75,8 +72,7 @@ public class TeamUtils {
      * 找到第一个未满员队伍
      * @return 可用的队伍，如无则返回 -1
      */
-    public static int findNotFullTeamId() {
-        TeamManager teamManager = TeamManager.get();
+    public static int findNotFullTeamId(TeamManager teamManager) {
         if (teamManager.teamData.getTotalPlayerCount() >= teamManager.teamConfig.playerLimit) {
             return -1;
         }
@@ -98,18 +94,16 @@ public class TeamUtils {
     /**
      * 判断是否有足够队伍开始游戏
      */
-    public static boolean hasEnoughPlayerTeamToStart() {
-        return hasEnoughPlayerToStart() && hasEnoughTeamToStart();
+    public static boolean hasEnoughPlayerTeamToStart(TeamManager teamManager) {
+        return hasEnoughPlayerToStart(teamManager) && hasEnoughTeamToStart(teamManager);
     }
-    public static boolean hasEnoughPlayerToStart() {
-        TeamManager teamManager = TeamManager.get();
+    public static boolean hasEnoughPlayerToStart(TeamManager teamManager) {
         int totalPlayerAndBots = teamManager.getTotalMembers();
         int minTeam = GameManager.get().getRequiredGameTeam();
         return totalPlayerAndBots >= minTeam // 真人玩家满足最小单人队限制
                 || teamManager.teamConfig.aiEnemy; // TODO 人机填充
     }
-    public static boolean hasEnoughTeamToStart() {
-        TeamManager teamManager = TeamManager.get();
+    public static boolean hasEnoughTeamToStart(TeamManager teamManager) {
         if (!GameManager.get().getGameEntry().allowRemainingBot) { // 不允许剩余人机打架 -> 开局不能直接只剩人机队
             List<GameTeam> gameTeams = teamManager.getGameTeams();
             for (GameTeam gameTeam : gameTeams) {
@@ -119,7 +113,7 @@ public class TeamUtils {
             }
             return false;
         } else { // 允许人机打架
-            int totalPlayerTeam = getNonBotTeamCount();
+            int totalPlayerTeam = getNonBotTeamCount(teamManager);
             int minTeam = GameManager.get().getRequiredGameTeam();
             return totalPlayerTeam >= minTeam // 满足最小队伍限制
                     || teamManager.teamConfig.aiEnemy; // TODO 人机填充
@@ -131,9 +125,7 @@ public class TeamUtils {
      * @param serverLevel 用于从 GamePlayer 获取 ServerPlayer 的维度
      * @param hideName 是否向其他队伍隐藏名称
      */
-    public static void buildVanillaTeamForAllGameTeams(@NotNull ServerLevel serverLevel, boolean hideName) {
-        TeamManager teamManager = TeamManager.get();
-
+    public static void buildVanillaTeamForAllGameTeams(TeamManager teamManager, @NotNull ServerLevel serverLevel, boolean hideName) {
         try {
             Scoreboard scoreboard = serverLevel.getScoreboard();
             for (GameTeam gameTeam : teamManager.getGameTeams()) {
@@ -161,8 +153,7 @@ public class TeamUtils {
      * 在传入的 ServerLevel 下为全体 GamePlayer 退出原版队伍
      * @param serverLevel 用于从 GamePlayer 获取 ServerPlayer 的维度
      */
-    public static void clearVanillaTeam(@NotNull ServerLevel serverLevel) {
-        TeamManager teamManager = TeamManager.get();
+    public static void clearVanillaTeam(TeamManager teamManager, @NotNull ServerLevel serverLevel) {
         Scoreboard scoreboard = serverLevel.getScoreboard();
         for (GamePlayer gamePlayer : teamManager.getGamePlayers()) {
             @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;

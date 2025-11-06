@@ -147,10 +147,10 @@ public class GameCommand {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) { // 向调用的玩家发送消息
             ServerPlayer player = context.getSource().getPlayerOrException();
-            SpawnManager.get().sendLobbyInfo(player);
+            BattleRoyale.getGameManager().getGameLobbyManager().sendLobbyInfo(player);
         } else { // 向全体玩家发送消息
             ServerLevel serverLevel = source.getLevel();
-            SpawnManager.get().sendLobbyInfo(serverLevel);
+            BattleRoyale.getGameManager().getGameLobbyManager().sendLobbyInfo(serverLevel);
         }
 
         return Command.SINGLE_SUCCESS;
@@ -160,7 +160,7 @@ public class GameCommand {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) {
             ServerPlayer player = context.getSource().getPlayerOrException();
-            TeamManager.get().teleportToLobby(player); // TeamManager 先处理游戏相关逻辑，再调用传送
+            BattleRoyale.getGameManager().getTeamManager().teleportToLobby(player); // TeamManager 先处理游戏相关逻辑，再调用传送
             return Command.SINGLE_SUCCESS;
         } else {
             return 0;

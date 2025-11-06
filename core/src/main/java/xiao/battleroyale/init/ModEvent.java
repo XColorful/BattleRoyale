@@ -2,6 +2,7 @@ package xiao.battleroyale.init;
 
 import net.minecraft.server.MinecraftServer;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.init.IModEvent;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
@@ -25,8 +26,9 @@ public class ModEvent implements IModEvent {
 
     @Override
     public void onServerStopping(MinecraftServer server) {
-        GameManager.get().onServerStopping();
-        GameLootManager.get().awaitTerminationOnShutdown();
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        gameManager.onServerStopping();
+        gameManager.getGameLootManager().awaitTerminationOnShutdown();
         BattleRoyale.setMinecraftServer(null);
     }
 }

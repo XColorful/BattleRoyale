@@ -171,7 +171,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
         }
 
         if (damageSource.getEntity() instanceof LivingEntity attackingEntity) {
-            GamePlayer attackingGamePlayer = TeamManager.get().getGamePlayerByUUID(attackingEntity.getUUID());
+            GamePlayer attackingGamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerByUUID(attackingEntity.getUUID());
             if (attackingGamePlayer != null) {
                 return;
             }

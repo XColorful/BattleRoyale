@@ -44,6 +44,10 @@ public interface IGameManager extends IGameMainManager, IGameSubManager, IGameCo
         return getZoneManager();
     }
     @Override default IGameLobbyReadApi getGameLobbyReadApi() {
-        return getSpawnManager();
+        return getGameLobbyManager();
     }
+
+    void onServerStopping();
+
+    void setDefaultLevel(String defaultLevelKey);
 }

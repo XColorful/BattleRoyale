@@ -6,6 +6,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.sub.IConfigAppliable;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
 import xiao.battleroyale.common.game.GameManager;
@@ -121,7 +122,8 @@ public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
 
     @Override
     public void applyDefault() {
-        GameManager.get().setDefaultLevel(defaultLevelKey);
-        SpawnManager.get().setLobby(lobbyCenterPos, lobbyDimension, lobbyMuteki, lobbyHeal, lobbyChangeGamemode, lobbyTeleportDropInventory, lobbyTeleportClearInventory);
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        gameManager.setDefaultLevel(defaultLevelKey);
+        gameManager.getGameLobbyManager().setLobby(lobbyCenterPos, lobbyDimension, lobbyMuteki, lobbyHeal, lobbyChangeGamemode, lobbyTeleportDropInventory, lobbyTeleportClearInventory);
     }
 }

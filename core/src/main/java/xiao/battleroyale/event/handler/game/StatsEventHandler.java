@@ -58,7 +58,7 @@ public class StatsEventHandler implements IEventHandler {
             return;
         }
 
-        StatsManager.get().onRecordDamage(damagedGamePlayer, event);
+        BattleRoyale.getGameManager().getStatsManager().onRecordDamage(damagedGamePlayer, event);
     }
 
     /**
@@ -84,11 +84,11 @@ public class StatsEventHandler implements IEventHandler {
 
         if (gamePlayer.isAlive()) { // GamePlayer.isAlive不代表Entity.isAlive
             BattleRoyale.LOGGER.debug("onLivingDeath, gamePlayer {} (UUID: {}) is alive", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
-            StatsManager.get().onRecordInstantRevive(gamePlayer, event);
+            BattleRoyale.getGameManager().getStatsManager().onRecordInstantRevive(gamePlayer, event);
         } else if (!gamePlayer.isEliminated()) { // 非Alive但未被淘汰则判定为倒地
-            StatsManager.get().onRecordDown(gamePlayer, event);
+            BattleRoyale.getGameManager().getStatsManager().onRecordDown(gamePlayer, event);
         } else { // 淘汰
-            StatsManager.get().onRecordKill(gamePlayer, event);
+            BattleRoyale.getGameManager().getStatsManager().onRecordKill(gamePlayer, event);
         }
     }
 }

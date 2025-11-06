@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.game.team.IGameTeamReadApi;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
@@ -281,7 +280,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
         TeamNotification.notifyPlayerJoinTeam(newGamePlayer, GameManager.get().getServerLevel());
     }
     public void sendPlayerTeamId(ServerPlayer player) {
-        TeamNotification.sendPlayerTeamId(player);
+        TeamNotification.sendPlayerTeamId(this, player);
     }
 
     // -------TeamExternal-------
@@ -296,7 +295,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.joinTeam(player);
+        TeamExternal.joinTeam(this, player);
     }
     /**
      * 玩家尝试创建一个指定的队伍 (已存在则改为申请)。
@@ -309,7 +308,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.joinTeamSpecific(player, teamId);
+        TeamExternal.joinTeamSpecific(this, player, teamId);
     }
     // 踢出队伍
     public void kickPlayer(ServerPlayer sender, ServerPlayer targetPlayer) {
@@ -318,7 +317,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.kickPlayer(sender, targetPlayer);
+        TeamExternal.kickPlayer(this, sender, targetPlayer);
     }
     // 邀请玩家
     public void invitePlayer(ServerPlayer sender, ServerPlayer targetPlayer) {
@@ -327,7 +326,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.invitePlayer(sender, targetPlayer);
+        TeamExternal.invitePlayer(this, sender, targetPlayer);
     }
     // 接收邀请
     public void acceptInvite(ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
@@ -336,7 +335,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.acceptInvite(player, senderPlayer);
+        TeamExternal.acceptInvite(this, player, senderPlayer);
     }
     // 拒绝邀请
     public void declineInvite(ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
@@ -345,7 +344,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.declineInvite(player, senderPlayer);
+        TeamExternal.declineInvite(this, player, senderPlayer);
     }
     // 申请入队
     public void requestPlayer(ServerPlayer sender, ServerPlayer targetPlayer) { // 申请者，目标玩家
@@ -354,7 +353,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.requestPlayer(sender, targetPlayer);
+        TeamExternal.requestPlayer(this, sender, targetPlayer);
     }
     // 接收申请
     public void acceptRequest(ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
@@ -363,7 +362,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.acceptRequest(teamLeader, requesterPlayer);
+        TeamExternal.acceptRequest(this, teamLeader, requesterPlayer);
     }
     // 拒绝申请
     public void declineRequest(ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
@@ -372,7 +371,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.declineRequest(teamLeader, requesterPlayer);
+        TeamExternal.declineRequest(this, teamLeader, requesterPlayer);
     }
     // 离开队伍
     /**
@@ -380,14 +379,14 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
      * 在游戏中调用该函数只淘汰不离队
      */
     public boolean leaveTeam(@NotNull ServerPlayer player) {
-        return TeamExternal.leaveTeam(player);
+        return TeamExternal.leaveTeam(this, player);
     }
     /**
      * 传送玩家至大厅，如果正在游戏中则淘汰
      * @param player 需传送的玩家
      */
     public void teleportToLobby(ServerPlayer player) {
-        TeamExternal.teleportToLobby(player);
+        TeamExternal.teleportToLobby(this, player);
     }
 
     // -------TeamManagement-------
@@ -403,19 +402,19 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamManagement.forceJoinTeam(player);
+        TeamManagement.forceJoinTeam(this, player);
     }
     /**
      * 清理掉离线GamePlayer，防止后续影响游戏结束的人数判定
      */
     private void removeOfflineGamePlayer() {
-        TeamManagement.removeOfflineGamePlayer(GameManager.get().getServerLevel());
+        TeamManagement.removeOfflineGamePlayer(this, BattleRoyale.getGameManager().getServerLevel());
     }
     /**
      * 防止游戏开始时有意外的无队伍GamePlayer
      */
     private void removeNoTeamPlayer() {
-        TeamManagement.removeNoTeamGamePlayer();
+        TeamManagement.removeNoTeamGamePlayer(this);
     }
     /**
      * 在游戏中强制淘汰玩家，不包含发送系统消息
@@ -427,7 +426,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return false;
         }
 
-        return TeamManagement.forceEliminatePlayerSilence(gamePlayer);
+        return TeamManagement.forceEliminatePlayerSilence(this, gamePlayer);
     }
     /**
      * 在游戏中强制淘汰玩家并向队友发送消息
@@ -438,7 +437,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamManagement.forceEliminatePlayerFromTeam(livingEntity);
+        TeamManagement.forceEliminatePlayerFromTeam(this, livingEntity);
     }
     /**
      * 游戏未开始时将玩家移出队伍
@@ -450,7 +449,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return false;
         }
 
-        return TeamManagement.removePlayerFromTeam(playerId);
+        return TeamManagement.removePlayerFromTeam(this, playerId);
     }
 
     // -------TeamUtils-------
@@ -459,29 +458,29 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
      * 返回非人机队伍数量
      */
     public int getNonBotTeamCount() {
-        return TeamUtils.getNonBotTeamCount();
+        return TeamUtils.getNonBotTeamCount(this);
     }
     /**
      * 返回未被淘汰的非人机队伍数量
      */
     public int getStandingPlayerTeamCount() {
-        return TeamUtils.getStandingPlayerTeamCount();
+        return TeamUtils.getStandingPlayerTeamCount(this);
     }
     public int getStandingTeamCount() {
-        return TeamUtils.getStandingTeamCount();
+        return TeamUtils.getStandingTeamCount(this);
     }
     /**
      * 找到第一个未满员队伍
      * @return 可用的队伍，如无则返回 -1
      */
     protected int findNotFullTeamId() {
-        return TeamUtils.findNotFullTeamId();
+        return TeamUtils.findNotFullTeamId(this);
     }
     /**
      * 判断是否有足够队伍开始游戏
      */
     protected boolean hasEnoughPlayerTeamToStart() {
-        return TeamUtils.hasEnoughPlayerTeamToStart();
+        return TeamUtils.hasEnoughPlayerTeamToStart(this);
     }
     /**
      * 在传入的 ServerLevel 下为全体 GamePlayer 构建原版队伍
@@ -499,7 +498,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamUtils.buildVanillaTeamForAllGameTeams(serverLevel, hideName);
+        TeamUtils.buildVanillaTeamForAllGameTeams(this, serverLevel, hideName);
     }
     /**
      * 在传入的 ServerLevel 下为全体 GamePlayer 退出原版队伍
@@ -511,6 +510,6 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamUtils.clearVanillaTeam(serverLevel);
+        TeamUtils.clearVanillaTeam(this, serverLevel);
     }
 }

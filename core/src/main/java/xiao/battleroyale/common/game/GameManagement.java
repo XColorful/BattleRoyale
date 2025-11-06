@@ -41,7 +41,7 @@ public class GameManagement {
         // 清理无效玩家
         if (!invalidPlayers.isEmpty()) {
             for (GamePlayer invalidPlayer : invalidPlayers) {
-                if (TeamManager.get().forceEliminatePlayerSilence(invalidPlayer)) { // 强制淘汰了玩家，不一定都在此处淘汰
+                if (BattleRoyale.getGameManager().getTeamManager().forceEliminatePlayerSilence(invalidPlayer)) { // 强制淘汰了玩家，不一定都在此处淘汰
                     ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", invalidPlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
                     BattleRoyale.LOGGER.info("Force eliminated GamePlayer {} (UUID: {})", invalidPlayer.getPlayerName(), invalidPlayer.getPlayerUUID());
                 }
@@ -116,7 +116,7 @@ public class GameManagement {
             }
         }
         for (GamePlayer teamMember : gameTeam.getTeamMembers()) {
-            if (TeamManager.get().forceEliminatePlayerSilence(teamMember)) {
+            if (BattleRoyale.getGameManager().getTeamManager().forceEliminatePlayerSilence(teamMember)) {
                 if (serverLevel != null) {
                     ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", teamMember.getPlayerName()).withStyle(ChatFormatting.GRAY));
                 }

@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameSubManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.GameManager;
@@ -44,7 +45,7 @@ public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> impl
 
     @Override
     public void notifyNbtChange(int nbtId) {
-        IGameZone gameZone = ZoneManager.get().getGameZone(nbtId);
+        IGameZone gameZone = BattleRoyale.getGameManager().getZoneManager().getGameZone(nbtId);
         if (gameZone == null) {
             addNbtMessage(nbtId, null);
         } else {

@@ -34,8 +34,7 @@ public class TeamNotification {
         }
     }
 
-    public static void sendPlayerTeamId(ServerPlayer player) {
-        TeamManager teamManager = TeamManager.get();
+    public static void sendPlayerTeamId(TeamManager teamManager, ServerPlayer player) {
         GamePlayer gamePlayer = teamManager.getGamePlayerByUUID(player.getUUID());
         if (gamePlayer == null) {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));

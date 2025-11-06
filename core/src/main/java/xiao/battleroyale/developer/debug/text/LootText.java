@@ -7,6 +7,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.api.game.loot.IGameLootManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
 import xiao.battleroyale.common.loot.CommonLootManager;
 import xiao.battleroyale.util.GameUtils.GameTimeFormat;
@@ -64,7 +65,7 @@ public class LootText {
     /**
      * 悬浮查看GameLootManager各个状态
      */
-    public static MutableComponent buildGameLoot(GameLootManager gameLootManager, Vec3 pos) {
+    public static MutableComponent buildGameLoot(IGameLootManager gameLootManager, Vec3 pos) {
         MutableComponent component = Component.empty();
         if (gameLootManager == null) {
             return component;

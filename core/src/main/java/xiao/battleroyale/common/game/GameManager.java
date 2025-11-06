@@ -25,6 +25,7 @@ import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
 import xiao.battleroyale.api.game.gamerule.IGameruleManager;
 import xiao.battleroyale.api.game.loot.IGameLootManager;
+import xiao.battleroyale.api.game.spawn.IGameLobbyManager;
 import xiao.battleroyale.api.game.spawn.ISpawnManager;
 import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.api.game.IGameManager;
@@ -107,6 +108,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     private @NotNull IGameruleManager gameruleManager = GameruleManager.get();
     private @NotNull IGameLootManager gameLootManager = GameLootManager.get();
     private @NotNull ISpawnManager spawnManager = SpawnManager.get();
+    private @NotNull IGameLobbyManager gameLobbyManager = SpawnManager.get();
     private @NotNull IStatsManager statsManager = StatsManager.get();
     private @NotNull ITeamManager teamManager = TeamManager.get();
     private @NotNull IZoneManager zoneManager = ZoneManager.get();
@@ -123,6 +125,11 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     @Override public boolean setSpawnManager(@NotNull ISpawnManager spawnManager) {
         if (isInGame()) return false;
         this.spawnManager = spawnManager;
+        return true;
+    }
+    @Override public boolean setGameLobbyManager(@NotNull IGameLobbyManager gameLobbyManager) {
+        if (isInGame()) return false;
+        this.gameLobbyManager = gameLobbyManager;
         return true;
     }
     @Override public boolean setStatsManager(@NotNull IStatsManager statsManager) {
@@ -148,6 +155,9 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
     @Override public @NotNull ISpawnManager getSpawnManager() {
         return spawnManager;
+    }
+    @Override public @NotNull IGameLobbyManager getGameLobbyManager() {
+        return gameLobbyManager;
     }
     @Override public @NotNull IStatsManager getStatsManager() {
         return statsManager;
@@ -252,9 +262,9 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (!GameStarter.initGameConfigSetup(this)) {
             return;
         }
-        GameSubManager.initGameConfigSubManager(serverLevel);
+        GameSubManager.initGameConfigSubManager(this, serverLevel);
 
-        if (GameSubManager.gameConfigAllReady()) {
+        if (GameSubManager.gameConfigAllReady(this)) {
             this.configPrepared = true;
             LogEventHandler.register(); // 后续玩家登录可根据配置直接加入队伍
             EventPoster.postEvent(new GameLoadFinishEvent(this));
@@ -288,7 +298,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         }
 
         GameStarter.initGameSetup(this);
-        GameSubManager.initGameSubManager(serverLevel);
+        GameSubManager.initGameSubManager(this, serverLevel);
         if (isReady()) {
             generateGameId(); // 手动刷新 gameId
         }
@@ -308,17 +318,17 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (isInGame()) {
             return false;
         }
-        if (!GameStarter.isStartReady() || this.serverLevel != serverLevel) {  // Team会变动，用isStartReady
+        if (!GameStarter.isStartReady(this) || this.serverLevel != serverLevel) {  // Team会变动，用isStartReady
             BattleRoyale.LOGGER.info("GameManager isn't startReady, attempt to initGame");
             initGame(serverLevel);
-            if (!GameStarter.isStartReady()) {
+            if (!GameStarter.isStartReady(this)) {
                 BattleRoyale.LOGGER.info("GameManager failed to auto initGame, cancel startGame");
                 return false;
             }
         }
 
         checkAndUpdateInvalidGamePlayer(this.serverLevel); // 供gameTime = 1时使用
-        if (GameSubManager.startGameSubManager(this.serverLevel)) {
+        if (GameSubManager.startGameSubManager(this, this.serverLevel)) {
             GameStarter.startGameSetup(this);
             this.inGame = true;
             GameInfoMessageManager.get().startGame(serverLevel);
@@ -371,12 +381,12 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             checkAndUpdateInvalidGamePlayer(this.serverLevel); // 为其他Manager预处理当前tick
 
             // 暂时认为各Manager要按顺序tick，因此不改成监听GameTickEvent事件来触发
-            GameruleManager.get().onGameTick(gameTime);
-            // TeamManager.get().onGameTick(gameTime); // 暂时没功能
-            SpawnManager.get().onGameTick(gameTime);
-            GameLootManager.get().onGameTick(gameTime);
-            ZoneManager.get().onGameTick(gameTime); // Zone可以提前触发stopGame，并且Zone需要延迟stopGame到tick结束
-            // StatsManager.get().onGameTick(gameTime); // 基于事件主动记录，不用tick
+            gameruleManager.onGameTick(gameTime);
+            teamManager.onGameTick(gameTime); // 暂时没功能
+            spawnManager.onGameTick(gameTime);
+            gameLootManager.onGameTick(gameTime);
+            zoneManager.onGameTick(gameTime); // Zone可以提前触发stopGame，并且Zone需要延迟stopGame到tick结束
+            statsManager.onGameTick(gameTime); // 基于事件主动记录，不用tick
 
             if (gameTime % 200 == 0) {
                 finishGameIfShouldEnd(); // 每10秒保底检查游戏结束
@@ -413,7 +423,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             return;
         }
 
-        if (TeamManager.get().getStandingTeamCount() <= winnerTeamTotal) {
+        if (teamManager.getStandingTeamCount() <= winnerTeamTotal) {
             BattleRoyale.LOGGER.debug("GameManager: standingTeam <= {}, finishGame with winner", winnerTeamTotal);
             finishGame(true);
             return;
@@ -480,29 +490,29 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
         EventPoster.postEvent(new GameStopEvent(this, serverLevel));
-        GameLootManager.get().stopGame(serverLevel);
-        ZoneManager.get().stopGame(serverLevel);
-        SpawnManager.get().stopGame(serverLevel);
-        GameruleManager.get().stopGame(serverLevel);
+        gameLootManager.stopGame(serverLevel);
+        zoneManager.stopGame(serverLevel);
+        spawnManager.stopGame(serverLevel);
+        gameruleManager.stopGame(serverLevel);
         // ↑以上操作均不需要inGame判断
         this.inGame = false;
         this.teleportAfterGame();
 
-        TeamManager.get().stopGame(serverLevel); // 最后处理TeamManager
+        teamManager.stopGame(serverLevel); // 最后处理TeamManager
         this.configPrepared = false;
 
         GameInfoMessageManager.get().stopGame(serverLevel); // 不在游戏中影响消息逻辑
         // this.ready = false; // 不使用ready标记，因为Team会变动
         // 取消事件监听
         GameStarter.unregisterGameEvent();
-        StatsManager.get().stopGame(serverLevel);
+        statsManager.stopGame(serverLevel);
 
         // 游戏中途若修改配置，在游戏结束后生效
         setGameLevelKey(ResourceKey.create(Registries.DIMENSION, BattleRoyale.getMcRegistry().createResourceLocation(this.gameLevelKeyString)));
         EventPoster.postEvent(new GameStopFinishEvent(this, serverLevel));
     }
 
-    public void onServerStopping() {
+    @Override public void onServerStopping() {
         EventPoster.postEvent(new ServerStopEvent(this));
         isStopping = true;
         stopGame(serverLevel);
@@ -616,7 +626,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public boolean isReady() {
-        return GameStarter.isReady();
+        return GameStarter.isReady(this);
     }
 
     @Override
@@ -729,7 +739,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
     // 传送至大厅
     @Override public boolean teleportToLobby(@NotNull LivingEntity livingEntity) {
-        return GameUtilsFunction.teleportToLobby(livingEntity);
+        return GameUtilsFunction.teleportToLobby(this, livingEntity);
     }
     // 观战游戏
     @Override public boolean spectateGame(ServerPlayer player) {

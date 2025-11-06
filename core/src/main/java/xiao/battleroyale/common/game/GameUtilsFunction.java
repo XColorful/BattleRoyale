@@ -13,6 +13,10 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.game.game.GameSpectateEvent;
 import xiao.battleroyale.api.event.game.game.GameSpectateResult;
+import xiao.battleroyale.api.game.IGameMainManager;
+import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.spawn.IGameLobbyManager;
+import xiao.battleroyale.api.game.spawn.ISpawnManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -129,12 +133,12 @@ public class GameUtilsFunction {
 
         return GameSpectateResult.GAME_PLAYER_SPECTATE;
     }
-    private static void changeFromSpectator(GameManager gameManager, @NotNull ServerPlayer player) {
+    private static void changeFromSpectator(IGameManager gameManager, @NotNull ServerPlayer player) {
         if (player.gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
-            player.setGameMode(GameruleManager.get().getGameMode()); // 默认为冒险模式
+            player.setGameMode(gameManager.getGameruleManager().getGameMode()); // 默认为冒险模式
             gameManager.teleportToLobby(player);
         } else {
-            player.setGameMode(GameruleManager.get().getGameMode());
+            player.setGameMode(gameManager.getGameruleManager().getGameMode());
         }
     }
 
@@ -157,19 +161,19 @@ public class GameUtilsFunction {
     }
 
     public static void healGamePlayers(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayers) {
-        SpawnManager spawnManager = SpawnManager.get();
+        IGameLobbyManager gameLobbyManager = BattleRoyale.getGameManager().getGameLobbyManager();
         List<GamePlayer> healGamePlayers = new ArrayList<>(gamePlayers); // 防止意外情况
         for (GamePlayer gamePlayer : healGamePlayers) {
             @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
             if (player != null) {
-                spawnManager.healPlayer(player);
+                gameLobbyManager.healPlayer(player);
                 GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
             }
         }
     }
 
-    public static boolean teleportToLobby(@NotNull LivingEntity livingEntity) {
-        return SpawnManager.get().teleportToLobby(livingEntity);
+    public static boolean teleportToLobby(IGameManager gameManager, @NotNull LivingEntity livingEntity) {
+        return gameManager.getGameLobbyManager().teleportToLobby(livingEntity);
     }
 
     /**

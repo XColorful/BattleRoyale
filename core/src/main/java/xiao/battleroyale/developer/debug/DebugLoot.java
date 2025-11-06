@@ -2,6 +2,7 @@ package xiao.battleroyale.developer.debug;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.loot.GameLootManager;
 import xiao.battleroyale.common.loot.CommonLootManager;
 import xiao.battleroyale.developer.debug.text.LootText;
@@ -33,6 +34,6 @@ public class DebugLoot {
      */
     public static final String GET_GAME_LOOT = "getGameLoot";
     public void getGameLoot(CommandSourceStack source, Vec3 pos) {
-        DebugManager.sendDebugMessageWithGameTime(source, GET_GAME_LOOT, LootText.buildGameLoot(GameLootManager.get(), pos));
+        DebugManager.sendDebugMessageWithGameTime(source, GET_GAME_LOOT, LootText.buildGameLoot(BattleRoyale.getGameManager().getGameLootManager(), pos));
     }
 }

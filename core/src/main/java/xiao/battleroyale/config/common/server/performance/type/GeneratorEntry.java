@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.server.performance.type;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.sub.IConfigAppliable;
 import xiao.battleroyale.api.server.performance.IPerformanceEntry;
 import xiao.battleroyale.api.server.performance.GeneratorEntryTag;
@@ -121,7 +122,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         LootGenerator.setRemoveInnocentEntity(removeInnocentEntity);
         LootGenerator.setLootBlockFilter(whiteListRegex, blackListRegex);
         CommonLootManager.setMaxChunksPerTick(maxNormalTickLootChunk);
-        GameLootManager.get().applyConfig(this);
+        BattleRoyale.getGameManager().getGameLootManager().applyConfig(this);
     }
 
     @NotNull

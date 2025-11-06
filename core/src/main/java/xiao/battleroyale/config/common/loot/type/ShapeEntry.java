@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.loot.ILootData;
@@ -43,7 +44,7 @@ public class ShapeEntry extends AbstractLootEntry {
             try {
                 boolean isInRange = false;
                 if (shapeEntry != null) {
-                    ZoneManager.ZoneContext zoneContext = ZoneManager.get().getCommonZoneContext();
+                    ZoneManager.ZoneContext zoneContext = BattleRoyale.getGameManager().getZoneManager().getCommonZoneContext();
                     if (zoneContext != null && target != null) {
                         ISpatialZone spatialZone = shapeEntry.createSpatialZone();
                         spatialZone.calculateShape(zoneContext);

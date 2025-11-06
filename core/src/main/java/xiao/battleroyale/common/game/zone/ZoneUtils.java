@@ -7,8 +7,7 @@ import java.util.function.Supplier;
 
 public class ZoneUtils {
 
-    public static boolean hasEnoughZoneToStart() {
-        ZoneManager zoneManager = ZoneManager.get();
+    public static boolean hasEnoughZoneToStart(ZoneManager zoneManager) {
         return zoneManager.zoneData.hasEnoughZoneToStart();
     }
 

@@ -40,7 +40,7 @@ public class LobbyEventHandler implements IEventHandler {
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
         if (eventType == EventType.LIVING_DAMAGE_EVENT){
-            if (SpawnManager.get().canMuteki(((ILivingDamageEvent) event).getEntity())) {
+            if (BattleRoyale.getGameManager().getGameLobbyManager().canMuteki(((ILivingDamageEvent) event).getEntity())) {
                 event.setCanceled(true);
             }
         } else {

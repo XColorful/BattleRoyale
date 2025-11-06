@@ -18,6 +18,8 @@ import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportEvent;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishEvent;
+import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.spawn.IGameLobbyManager;
 import xiao.battleroyale.api.game.spawn.IGameLobbyReadApi;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.api.game.spawn.ISpawnManager;
@@ -25,7 +27,6 @@ import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.GameUtilsFunction;
-import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -51,7 +52,7 @@ import static xiao.battleroyale.api.data.io.TempDataTag.SPAWN_MANAGER;
 /**
  * 管理玩家出生方式、传送相关的Manager
  */
-public class SpawnManager extends AbstractGameManager implements IGameLobbyReadApi, ISideOnly, ISpawnManager {
+public class SpawnManager extends AbstractGameManager implements IGameLobbyReadApi, ISideOnly, ISpawnManager, IGameLobbyManager {
 
     private static class SpawnManagerHolder {
         private static final SpawnManager INSTANCE = new SpawnManager();
@@ -227,7 +228,7 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
      * 只负责帮 GameManager 传送至大厅，不负责检查
      */
     public boolean teleportToLobby(@NotNull LivingEntity livingEntity) {
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         if (EventPoster.postEvent(new GameLobbyTeleportEvent(gameManager, livingEntity))) {
             BattleRoyale.LOGGER.debug("LobbyTeleportEvent canceled, skipped teleportToLobby (LivingEntity {})", livingEntity.getName().getString());
             return false;
@@ -243,7 +244,7 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
                 healPlayer(player);
             }
             if (changeGamemode) {
-                player.setGameMode(GameruleManager.get().getGameMode());
+                player.setGameMode(gameManager.getGameruleManager().getGameMode());
             }
             if (teleportDropInventory) {
                 player.getInventory().dropAll();
@@ -279,7 +280,7 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
         teleportToLobby(livingEntity);
     }
 
-    public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode, boolean teleportDropInventory, boolean teleportClearInventory) {
+    @Override public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode, boolean teleportDropInventory, boolean teleportClearInventory) {
         if (GameManager.get().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, SpawnManager skipped set lobby");
             return false;
@@ -304,21 +305,8 @@ public class SpawnManager extends AbstractGameManager implements IGameLobbyReadA
         BattleRoyale.LOGGER.debug("Successfully set lobby: center{}, dim{}", lobbyPos, lobbyDimension);
         return true;
     }
-
-    /**
-     * Compatibility to PUBGMC
-     */
-    public boolean setPubgmcLobby(Vec3 centerPos, double radius) {
-        if (GameManager.get().isInGame()) {
-            BattleRoyale.LOGGER.debug("GameManager is in game, SpawnManager skipped set lobby");
-            return false;
-        }
-        if (radius < 0) {
-            BattleRoyale.LOGGER.warn("SpawnManager: radius:{} has negative, reject to apply", radius);
-            return false;
-        }
-        setLobby(centerPos, new Vec3(radius, radius, radius), this.lobbyMuteki, this.lobbyHeal, this.changeGamemode, this.teleportDropInventory, this.teleportClearInventory);
-        return true;
+    @Override public boolean setLobby(Vec3 centerPos, double radius) {
+        return setLobby(centerPos, new Vec3(radius, radius, radius), this.lobbyMuteki, this.lobbyHeal, this.changeGamemode, this.teleportDropInventory, this.teleportClearInventory);
     }
 
     // --------GameApi--------

@@ -100,7 +100,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
     private boolean INSTANT_NEXT_BFS;
     private int MAX_CACHED_LOOT_CHUNK; // 最大记录的处理过区块数
     private int CLEAN_CACHED_CHUNK; // 每次清理删除多少区块
-    public void applyConfig(GeneratorEntry entry) {
+    @Override public void applyConfig(GeneratorEntry entry) {
         MAX_LOOT_CHUNK_PER_TICK = Math.min(Math.max(entry.maxGameTickLootChunk, 5), 100000); // 十万
         MAX_LOOT_DISTANCE = Math.min(Math.max(entry.maxGameLootDistance, 3), 128);
         if (MAX_LOOT_DISTANCE >= cachedCenterOffset.size()) { // cachedCenterOffest第一项为0距离
@@ -359,7 +359,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
     }
 
     // 这个方法只在服务器停止时调用，可以安全地阻塞
-    public void awaitTerminationOnShutdown() {
+    @Override public void awaitTerminationOnShutdown() {
         if (bfsExecutor != null) {
             try {
                 // 这里可以安全地等待，因为服务器主线程已停止

@@ -96,7 +96,7 @@ public class PubgmcCommand {
     private static int setLobbyWithCoordsAndRadius(CommandContext<CommandSourceStack> context) {
         Vec3 coords = Vec3Argument.getVec3(context, XYZ);
         double radius = DoubleArgumentType.getDouble(context, RADIUS);
-        if (SpawnManager.get().setPubgmcLobby(coords, radius)) {
+        if (BattleRoyale.getGameManager().getGameLobbyManager().setLobby(coords, radius)) {
             context.getSource().sendSuccess(() -> Component.translatable("commands.pubgmc.game.lobby.created"), false);
             BattleRoyale.LOGGER.info("Created lobby at {} (radius:{}) via pubgmc command", coords, radius);
             return Command.SINGLE_SUCCESS;

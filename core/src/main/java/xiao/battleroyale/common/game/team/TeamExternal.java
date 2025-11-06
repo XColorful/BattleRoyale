@@ -23,18 +23,17 @@ public class TeamExternal {
      * 玩家加入游戏，优先创建队伍，无法创建队伍则发送申请
      * @param player 需要加入队伍的玩家
      */
-    protected static void joinTeam(ServerPlayer player) {
-        TeamManager teamManager = TeamManager.get();
+    protected static void joinTeam(TeamManager teamManager, ServerPlayer player) {
         if (teamManager.removePlayerFromTeam(player.getUUID())) { // 加入队伍前离开当前队伍
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.YELLOW));
         }
 
         int newTeamId = teamManager.teamData.generateNextTeamId();
-        if (TeamManagement.createNewTeamAndJoin(player, newTeamId)) { // 默认尝试创建队伍
+        if (TeamManagement.createNewTeamAndJoin(teamManager, player, newTeamId)) { // 默认尝试创建队伍
             return;
         }
 
-        TeamManagement.addPlayerToTeamInternal(player, teamManager.findNotFullTeamId(), true); // 尝试申请加入
+        TeamManagement.addPlayerToTeamInternal(teamManager, player, teamManager.findNotFullTeamId(), true); // 尝试申请加入
     }
 
     /**
@@ -42,23 +41,19 @@ public class TeamExternal {
      * @param player 需要加入队伍的玩家
      * @param teamId 加入队伍的 teamId
      */
-    protected static void joinTeamSpecific(ServerPlayer player, int teamId) {
-        TeamManager teamManager = TeamManager.get();
-
+    protected static void joinTeamSpecific(TeamManager teamManager, ServerPlayer player, int teamId) {
         if (teamManager.removePlayerFromTeam(player.getUUID())) { // 加入队伍前离开当前队伍
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.YELLOW));
         }
 
-        if (TeamManagement.createNewTeamAndJoin(player, teamId)) { // 手动加入队伍
+        if (TeamManagement.createNewTeamAndJoin(teamManager, player, teamId)) { // 手动加入队伍
             return;
         }
 
-        TeamManagement.addPlayerToTeamInternal(player, teamId, true); // 无法创建则尝试申请加入
+        TeamManagement.addPlayerToTeamInternal(teamManager, player, teamId, true); // 无法创建则尝试申请加入
     }
 
-    protected static void kickPlayer(ServerPlayer sender, ServerPlayer targetPlayer) {
-        TeamManager teamManager = TeamManager.get();
-
+    protected static void kickPlayer(TeamManager teamManager, ServerPlayer sender, ServerPlayer targetPlayer) {
         if (sender == null) {
             return;
         } else if (targetPlayer == null) {
@@ -86,9 +81,7 @@ public class TeamExternal {
         }
     }
 
-    public static void invitePlayer(ServerPlayer sender, ServerPlayer targetPlayer) {
-        TeamManager teamManager = TeamManager.get();
-
+    public static void invitePlayer(TeamManager teamManager, ServerPlayer sender, ServerPlayer targetPlayer) {
         GamePlayer senderGamePlayer = teamManager.teamData.getGamePlayerByUUID(sender.getUUID());
         if (senderGamePlayer == null) {
             ChatUtils.sendComponentMessageToPlayer(sender, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
@@ -134,9 +127,7 @@ public class TeamExternal {
         ChatUtils.sendClickableMessageToPlayer(targetPlayer, message);
     }
 
-    public static void acceptInvite(ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
-        TeamManager teamManager = TeamManager.get();
-
+    public static void acceptInvite(TeamManager teamManager, ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel == null || player == null) {
             return;
@@ -180,12 +171,10 @@ public class TeamExternal {
         teamManager.pendingInvites.remove(senderUUID);
         ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.invite_accepted", invite.teamId()).withStyle(ChatFormatting.GREEN));
         ChatUtils.sendComponentMessageToPlayer(senderPlayer, Component.translatable("battleroyale.message.player_accept_request", playerName).withStyle(ChatFormatting.GREEN));
-        TeamManagement.addPlayerToTeamInternal(player, invite.teamId(), false); // 同意邀请，强制加入
+        TeamManagement.addPlayerToTeamInternal(teamManager, player, invite.teamId(), false); // 同意邀请，强制加入
     }
 
-    public static void declineInvite(ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
-        TeamManager teamManager = TeamManager.get();
-
+    public static void declineInvite(TeamManager teamManager, ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel == null || player == null) {
             return;
@@ -216,9 +205,7 @@ public class TeamExternal {
         ChatUtils.sendComponentMessageToPlayer(senderPlayer, Component.translatable("battleroyale.message.player_declined_invite", playerName).withStyle(ChatFormatting.RED));
     }
 
-    public static void requestPlayer(ServerPlayer sender, ServerPlayer targetPlayer) { // 申请者，目标玩家
-        TeamManager teamManager = TeamManager.get();
-
+    public static void requestPlayer(TeamManager teamManager, ServerPlayer sender, ServerPlayer targetPlayer) { // 申请者，目标玩家
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel == null || sender == null) {
             return;
@@ -274,9 +261,7 @@ public class TeamExternal {
         ChatUtils.sendClickableMessageToPlayer(targetPlayer, message);
     }
 
-    public static void acceptRequest(ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
-        TeamManager teamManager = TeamManager.get();
-
+    public static void acceptRequest(TeamManager teamManager, ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel == null || teamLeader == null) {
             return;
@@ -326,12 +311,10 @@ public class TeamExternal {
         teamManager.pendingRequests.remove(requesterUUID);
         ChatUtils.sendComponentMessageToPlayer(teamLeader, Component.translatable("battleroyale.message.request_accepted", requesterName).withStyle(ChatFormatting.GREEN));
         ChatUtils.sendComponentMessageToPlayer(requesterPlayer, Component.translatable("battleroyale.message.player_accept_request", teamLeader.getName().getString()).withStyle(ChatFormatting.GREEN));
-        TeamManagement.addPlayerToTeamInternal(requesterPlayer, targetTeam.getGameTeamId(), false); // 同意申请，强制加入
+        TeamManagement.addPlayerToTeamInternal(teamManager, requesterPlayer, targetTeam.getGameTeamId(), false); // 同意申请，强制加入
     }
 
-    public static void declineRequest(ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
-        TeamManager teamManager = TeamManager.get();
-
+    public static void declineRequest(TeamManager teamManager, ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
         ServerLevel serverLevel = GameManager.get().getServerLevel();
         if (serverLevel == null || teamLeader == null) {
             return;
@@ -378,9 +361,7 @@ public class TeamExternal {
      * 返回玩家是否还在队伍里
      * 在游戏中调用该函数只淘汰不离队
      */
-    public static boolean leaveTeam(@NotNull ServerPlayer player) {
-        TeamManager teamManager = TeamManager.get();
-
+    public static boolean leaveTeam(TeamManager teamManager, @NotNull ServerPlayer player) {
         UUID playerUUID = player.getUUID();
         GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(playerUUID);
         if (gamePlayer == null) {
@@ -401,12 +382,10 @@ public class TeamExternal {
      * 传送玩家至大厅，如果正在游戏中则淘汰
      * @param player 需传送的玩家
      */
-    public static void teleportToLobby(ServerPlayer player) {
+    public static void teleportToLobby(TeamManager teamManager, ServerPlayer player) {
         if (player == null || !player.isAlive()) {
             return;
         }
-
-        TeamManager teamManager = TeamManager.get();
 
         if (teamManager.teamData.hasStandingGamePlayer(player.getUUID())) { // 游戏进行中，且未被淘汰
             if (GameManager.get().teleportToLobby(player)) { // 若成功传送，则淘汰该玩家

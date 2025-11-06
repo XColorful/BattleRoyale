@@ -5,10 +5,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
@@ -21,7 +23,8 @@ import xiao.battleroyale.util.ChatUtils;
 public class GameEventHandler {
 
     protected static void onPlayerLoggedIn(@NotNull ServerLevel serverLevel, ServerPlayer player, boolean onlyGamePlayerSpectate) {
-        GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(player.getUUID());
+        ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
+        GamePlayer gamePlayer = teamManager.getGamePlayerByUUID(player.getUUID());
         if (gamePlayer != null) {
             if (serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) != null) { // 不一定在大逃杀游戏的维度
                 gamePlayer.setActiveEntity(true);
@@ -37,21 +40,22 @@ public class GameEventHandler {
         if (GameManager.get().isInGame()) {
             GameNotification.sendGameSpectateMessage(player, !onlyGamePlayerSpectate); // 提供游戏信息及观战指令
         } else { // 没开游戏就加入
-            if (TeamManager.get().shouldAutoJoin()) {
-                TeamManager.get().joinTeam(player);
+            if (teamManager.shouldAutoJoin()) {
+                teamManager.joinTeam(player);
                 GameManager.get().teleportToLobby(player); // 登录自动传到大厅
             }
         }
     }
 
     protected static void onPlayerLoggedOut(boolean isInGame, ServerPlayer player) {
+        ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
         if (!isInGame) {
-            if (TeamManager.get().leaveTeam(player)) { // 没开始游戏就等于离队
+            if (teamManager.leaveTeam(player)) { // 没开始游戏就等于离队
                 BattleRoyale.LOGGER.debug("Player {} logged out, leave GamePlayer", player.getName().getString());
             }
         }
 
-        GamePlayer gamePlayer = TeamManager.get().getGamePlayerByUUID(player.getUUID());
+        GamePlayer gamePlayer = teamManager.getGamePlayerByUUID(player.getUUID());
         if (gamePlayer != null) {
             gamePlayer.setActiveEntity(false);
             GameManager.get().finishGameIfShouldEnd(); // 玩家登出服务器时的防御检查
@@ -111,7 +115,7 @@ public class GameEventHandler {
         boolean teamEliminatedBefore = gamePlayer.getTeam().isTeamEliminated();
         boolean playerEliminatedBefore = gamePlayer.isEliminated();
         gamePlayer.setEliminated(true); // GamePlayer内部会自动让GameTeam更新eliminated
-        TeamManager.get().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer信息
+        BattleRoyale.getGameManager().getTeamManager().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer信息
         // 死亡事件会跳过非standingPlayer，放心kill
         if (!playerEliminatedBefore) { // 第一次淘汰才尝试kill，淘汰后被打倒的不管
             GameManager.get().sendEliminateMessage(gamePlayer);

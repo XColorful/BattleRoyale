@@ -283,7 +283,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
     // --------ZoneUtils--------
 
     public boolean hasEnoughZoneToStart() {
-        return ZoneUtils.hasEnoughZoneToStart();
+        return ZoneUtils.hasEnoughZoneToStart(this);
     }
 
     public void randomizeZoneTickOffset() {

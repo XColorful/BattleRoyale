@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.game;
 
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
@@ -81,20 +82,20 @@ public class GameStarter {
     /**
      * 由于Team会变动，开始游戏使用isStartReady检查
      */
-    protected static boolean isReady() {
+    protected static boolean isReady(IGameManager gameManager) {
         // return this.ready; // 不用ready标记，因为Team会变动
-        return GameLootManager.get().isReady()
-                && GameruleManager.get().isReady()
-                && SpawnManager.get().isReady()
-                // && TeamManager.get().isReady() // Team会变动
-                && ZoneManager.get().isReady()
-                && StatsManager.get().isReady();
+        return gameManager.getGameLootManager().isReady()
+                && gameManager.getGameruleManager().isReady()
+                && gameManager.getSpawnManager().isReady()
+                // && gameManager.getTeamManager().isReady() // Team会变动
+                && gameManager.getZoneManager().isReady()
+                && gameManager.getStatsManager().isReady();
     }
     /**
      * 开始游戏的检查
      */
-    protected static boolean isStartReady() {
-        return isReady() && TeamManager.get().isReady();
+    protected static boolean isStartReady(IGameManager gameManager) {
+        return isReady(gameManager) && gameManager.getTeamManager().isReady();
     }
 
     protected static void registerGameEvent() {
