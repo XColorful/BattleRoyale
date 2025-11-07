@@ -25,11 +25,11 @@ public abstract class AbstractGameManager implements IGameSubManager {
 
     @Override
     public boolean registerGameEventHandler() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean unregisterGameEventHandler() {
-        return false;
+        return true;
     }
 }
