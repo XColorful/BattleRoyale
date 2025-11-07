@@ -336,9 +336,9 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (!GameStarter.initGameConfigSetup(this)) {
             return;
         }
-        GameSubManager.initGameConfigSubManager(this, serverLevel);
+        GameStarter.initGameConfigSubManager(this, serverLevel);
 
-        if (GameSubManager.gameConfigAllReady(this)) {
+        if (GameStarter.gameConfigAllReady(this)) {
             this.configPrepared = true;
             LogEventHandler.register(); // 后续玩家登录可根据配置直接加入队伍
             EventPoster.postEvent(new GameLoadFinishEvent(this));
@@ -348,8 +348,9 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
 
     @Override
-    public boolean isPreparedForGame() {
-        return this.configPrepared && GameSubManager.gameConfigAllReady(this);
+    public boolean isConfigPrepared() {
+        return this.configPrepared
+                && GameStarter.gameConfigAllReady(this); // 防止游戏前GameSubManager改了但没自动读取配置
     }
 
     /**
@@ -361,10 +362,10 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (isInGame()) {
             return;
         }
-        if (!isPreparedForGame() || this.serverLevel != serverLevel) {
+        if (!isConfigPrepared() || this.serverLevel != serverLevel) {
             BattleRoyale.LOGGER.info("GameManager isn't configPrepared, attempt to initGameConifg");
             initGameConfig(serverLevel);
-            if (!isPreparedForGame()) {
+            if (!isConfigPrepared()) {
                 BattleRoyale.LOGGER.info("GameManager failed to auto initGameConifg, cancel initGame");
                 return;
             }
@@ -379,7 +380,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         UUID newGameId = generateGameId();
         setGameId(newGameId);
         GameStarter.initGameSetup(this);
-        GameSubManager.initGameSubManager(this, serverLevel);
+        GameStarter.initGameSubManager(this, serverLevel);
         if (!isReady()) {
             setGameId(preGameId); // 回退GameId
             return;
@@ -410,7 +411,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             return false;
         }
 
-        if (GameSubManager.startGameSubManager(this, this.serverLevel)) {
+        if (GameStarter.startGameSubManager(this, this.serverLevel)) {
             GameStarter.startGameSetup(this); // 子Manager成功了再启动(重置)GameManager
             this.inGame = true;
             GameInfoMessageManager.get().startGame(serverLevel);

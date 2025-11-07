@@ -10,7 +10,10 @@ public interface IGameSubManager {
 
     void initGameConfig(ServerLevel serverLevel);
 
-    boolean isPreparedForGame();
+    boolean isConfigPrepared();
+    @Deprecated default boolean isPreparedForGame() {
+        return isConfigPrepared();
+    }
 
     void initGame(ServerLevel serverLevel);
 

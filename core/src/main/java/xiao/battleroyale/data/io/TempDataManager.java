@@ -46,7 +46,7 @@ public class TempDataManager extends AbstractDataManager implements IGameSubMana
     }
 
     @Override
-    public boolean isPreparedForGame() {
+    public boolean isConfigPrepared() {
         return true;
     }
     @Override

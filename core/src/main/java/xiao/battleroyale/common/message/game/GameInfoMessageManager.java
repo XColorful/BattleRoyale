@@ -118,7 +118,7 @@ public class GameInfoMessageManager extends AbstractMessageManager<GameInfoMessa
     @Override
     public void initGameConfig(ServerLevel serverLevel) {}
     @Override
-    public boolean isPreparedForGame() { return true; }
+    public boolean isConfigPrepared() { return true; }
     @Override
     public void initGame(ServerLevel serverLevel) {}
     @Override

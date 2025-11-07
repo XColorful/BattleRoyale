@@ -9,7 +9,7 @@ public abstract class AbstractGameManager implements IGameSubManager {
     protected boolean ready = false;
 
     @Override
-    public boolean isPreparedForGame() {
+    public boolean isConfigPrepared() {
         return this.configPrepared;
     }
 

@@ -55,11 +55,64 @@ public class GameStarter {
         return true;
     }
     @ApiStatus.Internal
+    public static void initGameConfigSubManager(IGameManager gameManager, ServerLevel serverLevel) {
+        gameManager.getGameProcessManager().initGameConfig(serverLevel);
+        gameManager.getGameLootManager().initGameConfig(serverLevel);
+        gameManager.getGameruleManager().initGameConfig(serverLevel);
+        gameManager.getSpawnManager().initGameConfig(serverLevel);
+        gameManager.getGameLobbyManager().initGameConfig(serverLevel);
+        gameManager.getTeamManager().initGameConfig(serverLevel);
+        gameManager.getZoneManager().initGameConfig(serverLevel);
+        gameManager.getStatsManager().initGameConfig(serverLevel);
+    }
+    @ApiStatus.Internal
+    public static boolean gameConfigAllReady(IGameManager gameManager) {
+        if (!gameManager.getGameLootManager().isConfigPrepared()) {
+            BattleRoyale.LOGGER.debug("GameLootManager isn't config prepared");
+            return false;
+        } else if (!gameManager.getGameruleManager().isConfigPrepared()) {
+            BattleRoyale.LOGGER.debug("GameruleManager isn't config prepared");
+            return false;
+        } else if (!gameManager.getSpawnManager().isConfigPrepared()) {
+            BattleRoyale.LOGGER.debug("SpawnManager isn't config prepared");
+            return false;
+        } else if (!gameManager.getGameLobbyManager().isConfigPrepared()) {
+            BattleRoyale.LOGGER.debug("GameLobbyManager isn't config prepared");
+            return false;
+        } else if (!gameManager.getTeamManager().isConfigPrepared()) {
+            BattleRoyale.LOGGER.debug("TeamManager isn't config prepared");
+            return false;
+        } else if (!gameManager.getZoneManager().isConfigPrepared()) {
+            BattleRoyale.LOGGER.debug("ZoneManager isn't config prepared");
+            return false;
+        } else if (!gameManager.getStatsManager().isConfigPrepared()) {
+            BattleRoyale.LOGGER.debug("StatsManager isn't config prepared");
+            return false;
+        } else if (!gameManager.getGameProcessManager().isConfigPrepared()) {
+            BattleRoyale.LOGGER.debug("GameProcessManager isn't config prepared");
+            return false;
+        }
+        return true;
+    }
+
+    @ApiStatus.Internal
     public static void initGameSetup(GameManager gameManager) {
         // 清除游戏效果
         EffectManager.get().forceEnd();
         gameManager.configPrepared = false;
     }
+    @ApiStatus.Internal
+    public static void initGameSubManager(IGameManager gameManager, ServerLevel serverLevel) {
+        gameManager.getStatsManager().initGame(serverLevel); // 先清空stats
+        gameManager.getGameLootManager().initGame(serverLevel);
+        gameManager.getTeamManager().initGame(serverLevel); // TeamManager先处理组队
+        gameManager.getGameruleManager().initGame(serverLevel); // Gamerule记录游戏模式
+        gameManager.getSpawnManager().initGame(serverLevel);
+        gameManager.getGameLobbyManager().initGame(serverLevel); // GameLobbyManager会传送至大厅并更改游戏模式
+        gameManager.getZoneManager().initGame(serverLevel);
+        gameManager.getGameProcessManager().initGame(serverLevel);
+    }
+
     @ApiStatus.Internal
     public static void startGameSetup(GameManager gameManager) {
         // gameManager.ready = false; // 不使用ready标记，因为Team会变动
@@ -78,6 +131,35 @@ public class GameStarter {
             }
         }
         GameStatsManager.recordGamerule(gameManager);
+    }
+    @ApiStatus.Internal
+    public static boolean startGameSubManager(IGameManager gameManager, ServerLevel serverLevel) {
+        if (!gameManager.getGameLootManager().startGame(serverLevel)) { // 判定的优先级最高
+            BattleRoyale.LOGGER.warn("GameLootManager failed to start game");
+            return false;
+        } else if (!gameManager.getTeamManager().startGame(serverLevel)) { // 先执行 TeamManager 得到 StandingGamePlayers，并确保无队伍玩家均被清理
+            BattleRoyale.LOGGER.warn("TeamManager failed to start game");
+            return false;
+        } else if (!gameManager.getGameruleManager().startGame(serverLevel)) { // 依赖 TeamManager 的 StandingGamePlayers
+            BattleRoyale.LOGGER.warn("GameruleManager failed to start game");
+            return false;
+        } else if (!gameManager.getZoneManager().startGame(serverLevel)) { // 有圈则行
+            BattleRoyale.LOGGER.warn("ZoneManager failed to start game");
+            return false;
+        } else if (!gameManager.getSpawnManager().startGame(serverLevel)) { // SpawnManager在onGameTick处理出生，提前处理过就行
+            BattleRoyale.LOGGER.warn("SpawnManager failed to start game");
+            return false;
+        } else if (!gameManager.getGameLobbyManager().startGame(serverLevel)) {
+            BattleRoyale.LOGGER.warn("GameLobbyManager failed to start game");
+            return false;
+        } else if (!gameManager.getStatsManager().startGame(serverLevel)) {
+            BattleRoyale.LOGGER.warn("StatsManager failed to start game");
+            return false;
+        } else if (!gameManager.getGameProcessManager().startGame(serverLevel)) {
+            BattleRoyale.LOGGER.warn("GameProcessManager failed to start game");
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -69,7 +69,7 @@ public class GameCommand {
         }
 
         gameManager.initGameConfig(serverLevel);
-        if (gameManager.isPreparedForGame()) {
+        if (gameManager.isConfigPrepared()) {
             source.sendSuccess(() -> Component.translatable("battleroyale.message.load_game_configs").withStyle(ChatFormatting.GREEN), false);
             BattleRoyale.LOGGER.info("Game config loaded via command.");
             return Command.SINGLE_SUCCESS;
@@ -95,7 +95,7 @@ public class GameCommand {
             source.sendSuccess(() -> Component.translatable("battleroyale.message.game_init").withStyle(ChatFormatting.GREEN), false);
             BattleRoyale.LOGGER.info("Game initialized via command.");
             return Command.SINGLE_SUCCESS;
-        } else if (!gameManager.isPreparedForGame()) {
+        } else if (!gameManager.isConfigPrepared()) {
             source.sendFailure(Component.translatable("battleroyale.message.game_not_prepared").withStyle(ChatFormatting.YELLOW));
         } else {
             source.sendFailure(Component.translatable("battleroyale.message.game_init_fail").withStyle(ChatFormatting.RED));
