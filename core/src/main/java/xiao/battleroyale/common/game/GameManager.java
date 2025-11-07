@@ -78,7 +78,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return GameManagerHolder.INSTANCE;
     }
 
-    private GameManager() {
+    protected GameManager() {
         this.globalCenterOffset = Vec3.ZERO; // 延迟初始化，防止意外崩溃
         // 恢复全局偏移
         String offsetString = TempDataManager.get().getString(GAME_MANAGER, GLOBAL_OFFSET);
@@ -123,7 +123,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     private @NotNull IStatsManager statsManager = StatsManager.get();
     private @NotNull ITeamManager teamManager = TeamManager.get();
     private @NotNull IZoneManager zoneManager = ZoneManager.get();
-    private void registerNewManager(IGameSubManager previousManager, IGameSubManager newManager) {
+    protected void registerNewManager(IGameSubManager previousManager, IGameSubManager newManager) {
         if (previousManager.unregisterGameEventHandler()) {
             BattleRoyale.LOGGER.debug("Unregister previous GameSubManager {} to game", previousManager.getManagerName());
         } else {
@@ -208,24 +208,24 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return zoneManager;
     }
 
-    protected int gameTime = 0; // 游戏运行时维护当前游戏时间
-    protected int gameStep = 1;
+    private int gameTime = 0; // 游戏运行时维护当前游戏时间
+    private int gameStep = 1;
     private @NotNull UUID gameId;
     private boolean inGame;
     private String gameLevelKeyString = "";
     private @Nullable ResourceKey<Level> gameLevelKey;
-    protected @Nullable ServerLevel serverLevel;
-    protected final Set<GameTeam> winnerGameTeams = new HashSet<>();
-    protected final Set<GamePlayer> winnerGamePlayers = new HashSet<>();
-    protected boolean isStopping = false;
+    private @Nullable ServerLevel serverLevel;
+    private final Set<GameTeam> winnerGameTeams = new HashSet<>();
+    private final Set<GamePlayer> winnerGamePlayers = new HashSet<>();
+    private boolean isStopping = false;
     public boolean isOnServerStopping() {
         return isStopping;
     }
 
     // config
-    private int gameruleConfigId = 0;
-    private int spawnConfigId = 0;
-    private int botConfigId = 0;
+    protected int gameruleConfigId = 0;
+    protected int spawnConfigId = 0;
+    protected int botConfigId = 0;
     protected Vec3 globalCenterOffset;
     protected int maxGameTime = -1;
     protected int winnerTeamTotal = 1;
@@ -288,6 +288,30 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         this.gameId = gameId;
         TempDataManager.get().writeString(GAME_MANAGER, LAST_GAME_ID, this.gameId.toString());
     }
+    @Override public boolean clearWinnerGamePlayers() {
+        this.winnerGamePlayers.clear();
+        return true;
+    }
+    @Override public boolean clearWinnerGameTeams() {
+        this.winnerGameTeams.clear();
+        return true;
+    }
+    @Override public boolean addWinnerGamePlayer(GamePlayer gamePlayer) {
+        return this.winnerGamePlayers.add(gamePlayer);
+    }
+    @Override public boolean addWinnerGameTeam(GameTeam gameTeam) {
+        if (this.winnerGameTeams.size() >= this.winnerTeamTotal) {
+            BattleRoyale.LOGGER.warn("Already reached winner team total {}/{}, reject to add GameTeam {}", this.winnerGameTeams.size(), this.winnerTeamTotal, gameTeam.getGameTeamId());
+            return false;
+        }
+        return this.winnerGameTeams.add(gameTeam);
+    }
+    @Override public Set<GamePlayer> getWinnerGamePlayers() {
+        return Collections.unmodifiableSet(this.winnerGamePlayers);
+    }
+    @Override public Set<GameTeam> getWinnerGameTeams() {
+        return Collections.unmodifiableSet(this.winnerGameTeams);
+    }
 
     /**
      * 检测并加载游戏配置，不应该执行任何实际内容
@@ -323,6 +347,11 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         }
     }
 
+    @Override
+    public boolean isPreparedForGame() {
+        return this.configPrepared && GameSubManager.gameConfigAllReady(this);
+    }
+
     /**
      * 准备游戏，将玩家传送至大厅等
      * @param serverLevel 当前 serverLevel
@@ -332,10 +361,10 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (isInGame()) {
             return;
         }
-        if (!configPrepared || this.serverLevel != serverLevel) {
+        if (!isPreparedForGame() || this.serverLevel != serverLevel) {
             BattleRoyale.LOGGER.info("GameManager isn't configPrepared, attempt to initGameConifg");
             initGameConfig(serverLevel);
-            if (!configPrepared) {
+            if (!isPreparedForGame()) {
                 BattleRoyale.LOGGER.info("GameManager failed to auto initGameConifg, cancel initGame");
                 return;
             }
@@ -461,19 +490,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             return;
         }
 
-        if (hasWinner) {
-            for (GameTeam team : GameTeamManager.getGameTeams()) {
-                if (!team.isTeamEliminated()) {
-                    winnerGameTeams.add(team);
-                }
-            }
-            for (GameTeam team : winnerGameTeams) {
-                for (GamePlayer member : team.getTeamMembers()) {
-                    winnerGamePlayers.add(member);
-                    gameProcessManager.notifyWinner(this.serverLevel, member, this.gameEntry.winnerParticleId);
-                }
-            }
-        }
+        gameProcessManager.finishGameAddWinner(hasWinner);
         stopGame(this.serverLevel);
         if (hasWinner) {
             // 延迟2tick发送胜利队伍消息
@@ -481,7 +498,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
                 ResourceKey<Level> cachedGameLevelKey = this.serverLevel.dimension();
                 Consumer<ResourceKey<Level>> delayedTask = levelKey -> {
                     ServerLevel currentServerLevel = BattleRoyale.getMinecraftServer().getLevel(levelKey);
-                    gameProcessManager.sendWinnerResult(currentServerLevel, winnerGamePlayers, winnerGameTeams, this.gameTime);
+                    gameProcessManager.sendWinnerResult(currentServerLevel, getWinnerGamePlayers(), getWinnerGameTeams(), this.gameTime);
                     // 游戏正常结束后自动初始化游戏
                     if (this.gameEntry.initGameAfterGame && currentServerLevel != null) {
                         initGame(serverLevel);
@@ -490,7 +507,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
                 new DelayedEvent<>(delayedTask, cachedGameLevelKey, 1, "GameManager::sendWinnerResult");
             }
         }
-        EventPoster.postEvent(new GameCompleteFinishEvent(this, hasWinner, winnerGamePlayers, winnerGameTeams));
+        EventPoster.postEvent(new GameCompleteFinishEvent(this, hasWinner, getWinnerGamePlayers(), getWinnerGameTeams()));
     }
 
     /**
@@ -506,7 +523,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         gameruleManager.stopGame(serverLevel);
         // ↑以上操作均不需要inGame判断
         this.inGame = false;
-        gameProcessManager.teleportAfterGame(serverLevel, winnerGamePlayers, winnerGameTeams, gameEntry.teleportWinnerAfterGame, gameEntry.teleportAfterGame);
+        gameProcessManager.teleportAfterGame(serverLevel, getWinnerGamePlayers(), getWinnerGameTeams(), gameEntry.teleportWinnerAfterGame, gameEntry.teleportAfterGame);
 
         teamManager.stopGame(serverLevel); // 最后处理TeamManager
         this.configPrepared = false;
@@ -680,12 +697,12 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     public void onPlayerLoggedOut(ServerPlayer player) {
         gameProcessManager.onPlayerLoggedOut(isInGame(), player);
     }
-    public void onPlayerDown(@NotNull GamePlayer gamePlayer, @NotNull LivingEntity livingEntity, ILivingDeathEvent event) {
+    public void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, @NotNull LivingEntity livingEntity) {
         if (EventPoster.postEvent(new GamePlayerDownEvent(this, gamePlayer, livingEntity, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDownEvent canceled, skipped onPlayerDown (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
-        gameProcessManager.onPlayerDown(gamePlayer, livingEntity, this.gameEntry.removeInvalidTeam);
+        gameProcessManager.onPlayerDown(event, gamePlayer, livingEntity, this.gameEntry.removeInvalidTeam);
         EventPoster.postEvent(new GamePlayerDownFinishEvent(this, gamePlayer, livingEntity, event));
     }
     public void onPlayerRevived(@NotNull GamePlayer gamePlayer) {
@@ -696,12 +713,12 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         gameProcessManager.onPlayerRevived(gamePlayer);
         EventPoster.postEvent(new GamePlayerReviveFinishEvent(this, gamePlayer));
     }
-    public void onPlayerDeath(@NotNull GamePlayer gamePlayer, ILivingDeathEvent event) {
+    public void onPlayerDeath(@Nullable ILivingDeathEvent event, @NotNull GamePlayer gamePlayer) {
         if (EventPoster.postEvent(new GamePlayerDeathEvent(this, gamePlayer, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDeathEvent canceled, skipped onPlayerDeath (GamePlayer{})", gamePlayer.getNameWithId());
             return;
         }
-        gameProcessManager.onPlayerDeath(this.serverLevel, gamePlayer);
+        gameProcessManager.onPlayerDeath(event, this.serverLevel, gamePlayer);
         EventPoster.postEvent(new GamePlayerDeathFinishEvent(this, gamePlayer, event));
     }
 }

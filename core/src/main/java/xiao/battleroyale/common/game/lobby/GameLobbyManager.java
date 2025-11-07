@@ -46,7 +46,7 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
         return GameLobbyManagerHolder.INSTANCE;
     }
 
-    private GameLobbyManager() {}
+    protected GameLobbyManager() {}
 
     public static void init(McSide mcSide) {
         ;
@@ -56,14 +56,14 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
         return String.format("%s:GameLobbyManager", BattleRoyale.MOD_ID);
     }
 
-    private boolean initGameTeleport = true;
-    private Vec3 lobbyPos;
-    private Vec3 lobbyDimension;
-    private boolean lobbyMuteki = true;
-    private boolean lobbyHeal = true;
-    private boolean changeGamemode = true;
-    private boolean teleportDropInventory = false;
-    private boolean teleportClearInventory = false;
+    protected boolean initGameTeleport = true;
+    protected Vec3 lobbyPos;
+    protected Vec3 lobbyDimension;
+    protected boolean lobbyMuteki = true;
+    protected boolean lobbyHeal = true;
+    protected boolean changeGamemode = true;
+    protected boolean teleportDropInventory = false;
+    protected boolean teleportClearInventory = false;
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
@@ -229,7 +229,7 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
     /**
      * 类内部负责的传送，类内调用前进行检查
      */
-    private void teleportGamePlayerToLobby(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel) {
+    protected void teleportGamePlayerToLobby(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel) {
         UUID id = gamePlayer.getPlayerUUID();
         LivingEntity livingEntity = serverLevel.getPlayerByUUID(id);
         if (livingEntity == null) {

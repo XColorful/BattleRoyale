@@ -28,14 +28,14 @@ import static xiao.battleroyale.util.GameUtils.buildGamePlayerText;
 
 public class BRGameNotification {
 
-    protected static void notifyGamePlayerIsInactive(ServerLevel serverLevel, GamePlayer gamePlayer) {
+    public static void notifyGamePlayerIsInactive(ServerLevel serverLevel, GamePlayer gamePlayer) {
         if (serverLevel != null) {
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_leaved_from_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
         } else {
             BattleRoyale.LOGGER.warn("GameManager.serverLevel is null in notifyGamePlayerIsInactive(GamePlayer {})", gamePlayer.getPlayerName());
         }
     }
-    protected static void notifyGamePlayerIsActive(ServerLevel serverLevel, GamePlayer gamePlayer) {
+    public static void notifyGamePlayerIsActive(ServerLevel serverLevel, GamePlayer gamePlayer) {
         if (serverLevel != null) {
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_backed_to_level", gamePlayer.getPlayerName()).withStyle(ChatFormatting.DARK_GRAY));
         } else {
@@ -44,7 +44,7 @@ public class BRGameNotification {
     }
 
     // 发送胜利队伍消息
-    protected static void sendWinnerResult(@Nullable ServerLevel serverLevel, Set<GamePlayer> winnerGamePlayers, Set<GameTeam> winnerGameTeams, int gameTime) {
+    public static void sendWinnerResult(@Nullable ServerLevel serverLevel, Set<GamePlayer> winnerGamePlayers, Set<GameTeam> winnerGameTeams, int gameTime) {
         MutableComponent winnerComponent = Component.empty()
                 .append(Component.translatable("battleroyale.message.game_time", gameTime, new GameUtils.GameTimeFormat(gameTime).toFormattedString(true)));
         for (GameTeam team : winnerGameTeams) {
@@ -81,7 +81,7 @@ public class BRGameNotification {
      * 大吉大利！今晚吃鸡！
      * 附加烟花，粒子效果（人机不触发）
      */
-    protected static void notifyWinner(@Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer, int winnerParticleId) {
+    public static void notifyWinner(@Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer, int winnerParticleId) {
         if (serverLevel == null) {
             BattleRoyale.LOGGER.warn("Failed to notify winner {}", gamePlayer.getNameWithId());
             return;

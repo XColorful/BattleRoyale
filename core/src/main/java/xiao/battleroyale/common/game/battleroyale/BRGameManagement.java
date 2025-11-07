@@ -14,6 +14,7 @@ import xiao.battleroyale.api.event.game.game.GameSpectateEvent;
 import xiao.battleroyale.api.event.game.game.GameSpectateResult;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.lobby.IGameLobbyManager;
+import xiao.battleroyale.api.game.process.IGameProcessManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.GameUtilsFunction;
@@ -301,6 +302,24 @@ public class BRGameManagement {
             if (player != null) {
                 gameLobbyManager.healPlayer(player);
                 GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
+            }
+        }
+    }
+
+    public static void finishGameAddWinner(IGameProcessManager brGameProcessManager, boolean hasWinner) {
+        if (hasWinner) {
+            IGameManager gameManager = BattleRoyale.getGameManager();
+            for (GameTeam team : gameManager.getTeamManager().getGameTeams()) {
+                if (!team.isTeamEliminated()) {
+                    gameManager.addWinnerGameTeam(team);
+                }
+            }
+            int particleId = gameManager.getGameEntry().winnerParticleId;
+            for (GameTeam team : gameManager.getWinnerGameTeams()) {
+                for (GamePlayer member : team.getTeamMembers()) {
+                    gameManager.addWinnerGamePlayer(member);
+                    brGameProcessManager.notifyWinner(gameManager.getServerLevel(), member, particleId);
+                }
             }
         }
     }

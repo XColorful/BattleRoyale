@@ -39,7 +39,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
         return GameLootManagerHolder.INSTANCE;
     }
 
-    private GameLootManager() {
+    protected GameLootManager() {
     }
 
     public static void init(McSide mcSide) {
@@ -235,7 +235,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
      * 提交一个新的BFS任务到异步线程。
      * 解决了强制频率和立即触发的竞态问题。
      */
-    private void submitNewBfsTask() {
+    protected void submitNewBfsTask() {
         if (bfsExecutor == null || bfsExecutor.isShutdown()) {
             BattleRoyale.LOGGER.warn("GameLootManager: thread pool is null or shutdown, skipped submit new BFS task");
             return;
@@ -260,7 +260,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
     /**
      * 遍历存活玩家最后位置，BFS计算待处理区块（异步版本）
      */
-    private void bfsQueuedChunkAsync() {
+    protected void bfsQueuedChunkAsync() {
         IGameManager gameManager = BattleRoyale.getGameManager();
         if (EventPoster.postEvent(new GameLootBfsEvent(gameManager, gameManager.getGameTime(), lastBfsProcessedLoot))) {
             BattleRoyale.LOGGER.debug("GameLootBfsEvent canceled, skipped bfsQueuedChunkAsync");
@@ -335,7 +335,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
         EventPoster.postEvent(new GameLootBfsFinishEvent(gameManager, gameManager.getGameTime(), startTime, endTime, oldQueueSize));
     }
 
-    private int processLootGeneration() {
+    protected int processLootGeneration() {
         IGameManager gameManager = BattleRoyale.getGameManager();
         ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null) {
@@ -383,7 +383,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
         }
     }
 
-    private void shutdownBfsExecuter(String phaseName) {
+    protected void shutdownBfsExecuter(String phaseName) {
         if (bfsExecutor != null) {
             List<Runnable> unexecutedTasks = bfsExecutor.shutdownNow();
             if (!unexecutedTasks.isEmpty()) {
@@ -396,7 +396,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
     /**
      * 清空所有内部数据结构和状态。
      */
-    private void clear() {
+    protected void clear() {
         lastBfsTime = -BFS_FREQUENCY + 20 * 3; // 延迟3秒，等玩家传送到地图内开始提交BFS
         lastBfsProcessedLoot = 0;
         queuedChunksRef.get().clear();

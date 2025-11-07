@@ -34,7 +34,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
         return TeamManagerHolder.INSTANCE;
     }
 
-    private TeamManager() {}
+    protected TeamManager() {}
 
     public static void init(McSide mcSide) {
         ;
@@ -77,22 +77,14 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        this.teamConfig.playerLimit = brEntry.playerTotal;
-        this.teamConfig.teamSize = brEntry.teamSize;
-        this.teamConfig.aiTeammate = brEntry.aiTeammate;
-        this.teamConfig.aiEnemy = brEntry.aiEnemy;
-        this.teamConfig.autoJoinGame = brEntry.autoJoinGame;
-
-        this.teamConfig.setTeamMsgExpireTimeSeconds(gameEntry.teamMsgExpireTimeSeconds);
-        this.teamConfig.setTeamColors(gameEntry.teamColors);
-
+        this.teamConfig.updateWithConfig(brEntry, gameEntry);
         if (this.teamConfig.playerLimit < 1 || this.teamConfig.teamSize < 1) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.invalid_gamerule_config");
             BattleRoyale.LOGGER.warn("Invalid BattleroyaleEntry for TeamManager in initGameConfig");
             return;
         }
 
-        removeOfflineGamePlayer();
+        TeamManagement.removeOfflineGamePlayer(this, BattleRoyale.getGameManager().getServerLevel());
         clearOrUpdateTeamIfLimitChanged();
         this.configPrepared = true;
         BattleRoyale.LOGGER.debug("TeamManager complete initGameConfig");
@@ -146,13 +138,12 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        BattleRoyale.LOGGER.info("Attempt to start Game");
         IGameManager gameManager = BattleRoyale.getGameManager();
         if (gameManager.isInGame() || !isReady()) {
             return false;
         }
 
-        removeNoTeamPlayer(); // 确保玩家均有队伍
+        TeamManagement.removeNoTeamGamePlayer(this); // 确保玩家均有队伍
         if (!hasEnoughPlayerTeamToStart()) { // init之后可能都退出了队伍，开始游戏前再次检查
             return false;
         }
@@ -374,18 +365,6 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
 
         TeamManagement.forceJoinTeam(this, player);
     }
-    /**
-     * 清理掉离线GamePlayer，防止后续影响游戏结束的人数判定
-     */
-    private void removeOfflineGamePlayer() {
-        TeamManagement.removeOfflineGamePlayer(this, BattleRoyale.getGameManager().getServerLevel());
-    }
-    /**
-     * 防止游戏开始时有意外的无队伍GamePlayer
-     */
-    private void removeNoTeamPlayer() {
-        TeamManagement.removeNoTeamGamePlayer(this);
-    }
 
     public boolean forceEliminatePlayerSilence(GamePlayer gamePlayer) {
         if (!BattleRoyale.getGameManager().isInGame()) {
@@ -414,32 +393,19 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
 
     // -------TeamUtils-------
 
-    /**
-     * 返回非人机队伍数量
-     */
     public int getNonBotTeamCount() {
         return TeamUtils.getNonBotTeamCount(this);
     }
-    /**
-     * 返回未被淘汰的非人机队伍数量
-     */
     public int getStandingPlayerTeamCount() {
         return TeamUtils.getStandingPlayerTeamCount(this);
     }
     public int getStandingTeamCount() {
-        return TeamUtils.getStandingTeamCount(this);
+        return this.teamData.getTotalStandingTeamCount();
     }
-    /**
-     * 找到第一个未满员队伍
-     * @return 可用的队伍，如无则返回 -1
-     */
-    protected int findNotFullTeamId() {
+    public int findNotFullTeamId() {
         return TeamUtils.findNotFullTeamId(this);
     }
-    /**
-     * 判断是否有足够队伍开始游戏
-     */
-    protected boolean hasEnoughPlayerTeamToStart() {
+    public boolean hasEnoughPlayerTeamToStart() {
         return TeamUtils.hasEnoughPlayerTeamToStart(this);
     }
 

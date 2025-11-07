@@ -1,5 +1,6 @@
 package xiao.battleroyale.common.game;
 
+import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.ApiStatus;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
@@ -26,9 +27,10 @@ public class GameStarter {
     @ApiStatus.Internal
     public static boolean initGameConfigSetup(GameManager gameManager) {
         GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameManager.getGameruleConfigId());
+        ServerLevel serverLevel = gameManager.getServerLevel();
         if (gameruleConfig == null) {
-            if (gameManager.serverLevel != null) {
-                ChatUtils.sendTranslatableMessageToAllPlayers(gameManager.serverLevel, "battleroyale.message.missing_gamerule_config");
+            if (serverLevel != null) {
+                ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             } else {
                 BattleRoyale.LOGGER.error("GameManager.serverLevel is null in initGameConfigSetup: gameruleConfig == null");
             }
@@ -37,8 +39,8 @@ public class GameStarter {
         BattleroyaleEntry brEntry = gameruleConfig.getBattleRoyaleEntry();
         GameEntry gameEntry = gameruleConfig.getGameEntry();
         if (brEntry == null || gameEntry == null) {
-            if (gameManager.serverLevel != null) {
-                ChatUtils.sendTranslatableMessageToAllPlayers(gameManager.serverLevel, "battleroyale.message.missing_gamerule_config");
+            if (serverLevel != null) {
+                ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             } else {
                 BattleRoyale.LOGGER.error("GameManager.serverLevel is null in initGameConfigSetup: brEntry == null || gameEntry == null");
             }
@@ -61,15 +63,16 @@ public class GameStarter {
     @ApiStatus.Internal
     public static void startGameSetup(GameManager gameManager) {
         // gameManager.ready = false; // 不使用ready标记，因为Team会变动
-        gameManager.gameTime = 0; // 游戏结束后不手动重置
-        gameManager.winnerGameTeams.clear(); // 游戏结束后不手动重置
-        gameManager.winnerGamePlayers.clear(); // 游戏结束后不手动重置
+        gameManager.setGameTime(0); // 游戏结束后不手动重置
+        gameManager.clearWinnerGamePlayers(); // 游戏结束后不手动重置
+        gameManager.clearWinnerGameTeams(); // 游戏结束后不手动重置
         GameStarter.registerGameEvent();
         TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(gameManager.globalCenterOffset));
-        TempDataManager.get().startGame(gameManager.serverLevel); // 立即写入备份
+        ServerLevel serverLevel = gameManager.getServerLevel();
+        TempDataManager.get().startGame(serverLevel); // 立即写入备份
         if (gameManager.gameEntry.healAllAtStart) {
-            if (gameManager.serverLevel != null) {
-                gameManager.getGameProcessManager().healGamePlayers(gameManager.serverLevel, GameTeamManager.getGamePlayers());
+            if (serverLevel != null) {
+                gameManager.getGameProcessManager().healGamePlayers(serverLevel, GameTeamManager.getGamePlayers());
             } else {
                 BattleRoyale.LOGGER.debug("GameManager.serverLevel is null, failed to heal GamePlayers");
             }

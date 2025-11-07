@@ -36,7 +36,7 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
         return GameruleManagerHolder.INSTANCE;
     }
 
-    private GameruleManager() {}
+    protected GameruleManager() {}
 
     public static void init(McSide mcSide) {
         ;
@@ -46,11 +46,11 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
         return String.format("%s:GameruleManager", BattleRoyale.MOD_ID);
     }
 
-    private MinecraftEntry mcEntry;
-    private final PlayerModeStorage gamemodeBackup = new PlayerModeStorage();
-    private final McRuleStorage gameruleBackup = new McRuleStorage();
+    protected MinecraftEntry mcEntry;
+    protected final PlayerModeStorage gamemodeBackup = new PlayerModeStorage();
+    protected final McRuleStorage gameruleBackup = new McRuleStorage();
 
-    private boolean autoSaturation = true;
+    protected boolean autoSaturation = true;
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {

@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
 public interface IGameEventHandler {
@@ -13,9 +14,9 @@ public interface IGameEventHandler {
 
     void onPlayerLoggedOut(boolean isInGame, ServerPlayer player);
 
-    void onPlayerDown(@NotNull GamePlayer gamePlayer, LivingEntity livingEntity, boolean removeInvalidTeam);
+    void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, LivingEntity livingEntity, boolean removeInvalidTeam);
 
-    void onPlayerDeath(@Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer);
+    void onPlayerDeath(@Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer);
 
     void onPlayerRevived(@NotNull GamePlayer gamePlayer);
 }

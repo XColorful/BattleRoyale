@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -27,8 +28,8 @@ public class TeamManagement {
      * 适用于管理员指令或游戏初始化时的强制分配。
      * @param player 需要加入队伍的玩家
      */
-    protected static void forceJoinTeam(TeamManager teamManager, ServerPlayer player) {
-
+    @ApiStatus.Internal
+    public static void forceJoinTeam(TeamManager teamManager, ServerPlayer player) {
         if (teamManager.removePlayerFromTeam(player.getUUID())) { // 加入队伍前离开当前队伍
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.YELLOW));
         }
@@ -48,7 +49,8 @@ public class TeamManagement {
      * @param targetTeamId 目标队伍的 ID
      * @param request 如果为 true，则尝试直接加入（跳过队长确认）；如果为 false，则当队伍有在线成员时发送申请。
      */
-    protected static void addPlayerToTeamInternal(TeamManager teamManager, ServerPlayer player, int targetTeamId, boolean request) {
+    @ApiStatus.Internal
+    public static void addPlayerToTeamInternal(TeamManager teamManager, ServerPlayer player, int targetTeamId, boolean request) {
         IGameManager gameManager = BattleRoyale.getGameManager();
 
         UUID playerId = player.getUUID();
@@ -110,7 +112,8 @@ public class TeamManagement {
     /**
      * 清理掉离线GamePlayer，防止后续影响游戏结束的人数判定
      */
-    protected static void removeOfflineGamePlayer(TeamManager teamManager, ServerLevel serverLevel) {
+    @ApiStatus.Internal
+    public static void removeOfflineGamePlayer(TeamManager teamManager, ServerLevel serverLevel) {
         List<GamePlayer> offlineGamePlayers = new ArrayList<>();
         for (GamePlayer gamePlayer : teamManager.teamData.getGamePlayersList()) {
             if (!gamePlayer.isActiveEntity()) {
@@ -136,7 +139,8 @@ public class TeamManagement {
     /**
      * 防止游戏开始时有意外的无队伍GamePlayer
      */
-    protected static void removeNoTeamGamePlayer(TeamManager teamManager) {
+    @ApiStatus.Internal
+    public static void removeNoTeamGamePlayer(TeamManager teamManager) {
         List<GamePlayer> noTeamPlayers = new ArrayList<>();
         for (GamePlayer gamePlayer : teamManager.teamData.getGamePlayersList()) {
             if (gamePlayer.getTeam() == null) {
@@ -155,7 +159,8 @@ public class TeamManagement {
      * 强制淘汰玩家，不包含发送系统消息
      * 成功淘汰后发送大厅传送消息
      */
-    protected static boolean forceEliminatePlayerSilence(TeamManager teamManager, GamePlayer gamePlayer) {
+    @ApiStatus.Internal
+    public static boolean forceEliminatePlayerSilence(TeamManager teamManager, GamePlayer gamePlayer) {
         if (teamManager.teamData.eliminatePlayer(gamePlayer)) {
             // 强制淘汰后传送回大厅
             IGameManager gameManager = BattleRoyale.getGameManager();
@@ -180,7 +185,8 @@ public class TeamManagement {
     /**
      * 强制淘汰玩家并向队友发送消息
      */
-    protected static void forceEliminatePlayerFromTeam(TeamManager teamManager, LivingEntity livingEntity) {
+    @ApiStatus.Internal
+    public static void forceEliminatePlayerFromTeam(TeamManager teamManager, LivingEntity livingEntity) {
         @Nullable ServerPlayer player = livingEntity instanceof ServerPlayer serverPlayer ? serverPlayer : null;
 
         GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(livingEntity.getUUID());
@@ -233,7 +239,8 @@ public class TeamManagement {
      * 将玩家移出队伍
      * @return 是否移出队伍
      */
-    protected static boolean removePlayerFromTeam(TeamManager teamManager, @NotNull UUID playerId) {
+    @ApiStatus.Internal
+    public static boolean removePlayerFromTeam(TeamManager teamManager, @NotNull UUID playerId) {
         GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(playerId);
         if (gamePlayer == null) {
             return false;
@@ -276,7 +283,8 @@ public class TeamManagement {
      * @param teamId 队伍id
      * @return 是否加入队伍
      */
-    protected static boolean createNewTeamAndJoin(TeamManager teamManager, ServerPlayer player, int teamId) {
+    @ApiStatus.Internal
+    public static boolean createNewTeamAndJoin(TeamManager teamManager, ServerPlayer player, int teamId) {
         if (teamId < 1) {
             return false;
         }

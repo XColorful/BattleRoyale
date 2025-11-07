@@ -40,7 +40,7 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
         return SpawnManagerHolder.INSTANCE;
     }
 
-    private SpawnManager() {}
+    protected SpawnManager() {}
 
     public static void init(McSide mcSide) {
         if (!get().inProperSide(mcSide)) {

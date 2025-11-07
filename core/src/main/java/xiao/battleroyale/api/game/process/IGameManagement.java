@@ -30,4 +30,6 @@ public interface IGameManagement {
     boolean spectateGame(ServerPlayer player);
 
     void healGamePlayers(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayers);
+
+    void finishGameAddWinner(boolean hasWinner);
 }

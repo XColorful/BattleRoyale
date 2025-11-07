@@ -33,36 +33,36 @@ import java.util.Map;
 public class GameZone implements IGameZone {
 
     // common
-    private static final String COMMON_TAG = "common";
-    private static final String CREATE_TIME = COMMON_TAG + "-worldTime";
-    private static final String ZONE_NAME_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_NAME;
-    private static final String ZONE_COLOR_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_COLOR;
-    private static final String ZONE_DELAY_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_DELAY;
-    private static final String ZONE_TIME_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_TIME;
+    protected static final String COMMON_TAG = "common";
+    protected static final String CREATE_TIME = COMMON_TAG + "-worldTime";
+    protected static final String ZONE_NAME_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_NAME;
+    protected static final String ZONE_COLOR_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_COLOR;
+    protected static final String ZONE_DELAY_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_DELAY;
+    protected static final String ZONE_TIME_TAG = COMMON_TAG + "-" + ZoneConfigTag.ZONE_TIME;
     // func
-    private static final String FUNC_TAG = "func";
-    private static final String FUNC_TYPE_TAG = FUNC_TAG + "-" + ZoneFuncTag.TYPE_NAME;
-    private static final String FUNC_MOVE_DELAY_TAG = FUNC_TAG + "-" + ZoneFuncTag.MOVE_DELAY;
-    private static final String FUNC_MOVE_TIME_TAG = FUNC_TAG + "-" + ZoneFuncTag.MOVE_TIME;
-    private static final String FUNC_TICK_FREQUENCY_TAG = FUNC_TAG + "-" + ZoneFuncTag.TICK_FREQUENCY;
-    private static final String FUNC_TICK_OFFSET_TAG = FUNC_TAG + "-" + ZoneFuncTag.TICK_OFFSET;
+    protected static final String FUNC_TAG = "func";
+    protected static final String FUNC_TYPE_TAG = FUNC_TAG + "-" + ZoneFuncTag.TYPE_NAME;
+    protected static final String FUNC_MOVE_DELAY_TAG = FUNC_TAG + "-" + ZoneFuncTag.MOVE_DELAY;
+    protected static final String FUNC_MOVE_TIME_TAG = FUNC_TAG + "-" + ZoneFuncTag.MOVE_TIME;
+    protected static final String FUNC_TICK_FREQUENCY_TAG = FUNC_TAG + "-" + ZoneFuncTag.TICK_FREQUENCY;
+    protected static final String FUNC_TICK_OFFSET_TAG = FUNC_TAG + "-" + ZoneFuncTag.TICK_OFFSET;
     // shape
-    private static final String SHAPE_TAG = "shape";
-    private static final String SHAPE_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.TYPE_NAME;
-    private static final String SHAPE_START_CENTER_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.CENTER_TYPE;
-    private static final String SHAPE_START_CENTER_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.CENTER;
-    private static final String SHAPE_START_DIMENSION_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.DIMENSION_TYPE;
-    private static final String SHAPE_START_DIMENSION_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.DIMENSION;
-    private static final String SHAPE_START_ROTATION_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.ROTATION;
-    private static final String SHAPE_START_ROTATION_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.ROTATION_TYPE;
-    private static final String SHAPE_END_CENTER_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.CENTER_TYPE;
-    private static final String SHAPE_END_CENTER_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.CENTER;
-    private static final String SHAPE_END_DIMENSION_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.DIMENSION_TYPE;
-    private static final String SHAPE_END_DIMENSION_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.DIMENSION;
-    private static final String SHAPE_END_ROTATION_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.ROTATION;
-    private static final String SHAPE_END_ROTATION_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.ROTATION_TYPE;
-    private static final String SHAPE_HAS_BAD_SHAPE = SHAPE_TAG + "-hasBadShape";
-    private static final String SHAPE_SEGMENTS = SHAPE_TAG + "-" + ZoneShapeTag.SEGMENTS;
+    protected static final String SHAPE_TAG = "shape";
+    protected static final String SHAPE_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.TYPE_NAME;
+    protected static final String SHAPE_START_CENTER_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.CENTER_TYPE;
+    protected static final String SHAPE_START_CENTER_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.CENTER;
+    protected static final String SHAPE_START_DIMENSION_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.DIMENSION_TYPE;
+    protected static final String SHAPE_START_DIMENSION_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.DIMENSION;
+    protected static final String SHAPE_START_ROTATION_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.ROTATION;
+    protected static final String SHAPE_START_ROTATION_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.START + "-" + ZoneShapeTag.ROTATION_TYPE;
+    protected static final String SHAPE_END_CENTER_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.CENTER_TYPE;
+    protected static final String SHAPE_END_CENTER_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.CENTER;
+    protected static final String SHAPE_END_DIMENSION_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.DIMENSION_TYPE;
+    protected static final String SHAPE_END_DIMENSION_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.DIMENSION;
+    protected static final String SHAPE_END_ROTATION_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.ROTATION;
+    protected static final String SHAPE_END_ROTATION_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.ROTATION_TYPE;
+    protected static final String SHAPE_HAS_BAD_SHAPE = SHAPE_TAG + "-hasBadShape";
+    protected static final String SHAPE_SEGMENTS = SHAPE_TAG + "-" + ZoneShapeTag.SEGMENTS;
 
     public static final int FORCE_SYNC_FREQUENCY = 20 * 3; // 3秒强制通信
 
@@ -72,7 +72,6 @@ public class GameZone implements IGameZone {
     private final int preZoneDelayId;
     private int zoneDelay;
     private final int zoneTime;
-
     private final ITickableZone tickableZone;
     private final ISpatialZone spatialZone;
 
@@ -82,7 +81,7 @@ public class GameZone implements IGameZone {
     private double prevShapeProgress = -1;
 
     // 构造函数，由 Builder 调用
-    public GameZone(int zoneId, String zoneName, String zoneColor, int preZoneDelayId, int zoneDelay, int zoneTime,
+    protected GameZone(int zoneId, String zoneName, String zoneColor, int preZoneDelayId, int zoneDelay, int zoneTime,
                     ITickableZone tickableZone, ISpatialZone spatialZone) {
         this.zoneId = zoneId;
         this.zoneName = zoneName;
@@ -130,8 +129,7 @@ public class GameZone implements IGameZone {
 
     private boolean shouldTick(int gameTime) {
         return !checkShouldFinish(gameTime)
-                && isCreated() && isPresent() && !isFinished() // GameZone
-                && !ZoneManager.shouldStopGame; // 每tick多一个bool检查，少一个列表对象复制（直接用视图遍历）
+                && isCreated() && isPresent() && !isFinished(); // GameZone
     }
 
     private boolean checkShouldFinish(int gameTime) {
@@ -223,7 +221,7 @@ public class GameZone implements IGameZone {
     @Override
     public void setTickOffset(int tickOff) { tickableZone.setTickOffset(tickOff); }
 
-    private void addZoneDetailProperty() {
+    protected void addZoneDetailProperty() {
         Map<String, Integer> intWriter = new HashMap<>();
         Map<String, Boolean> boolWriter = new HashMap<>();
         Map<String, Double> doubleWriter = new HashMap<>();
@@ -257,7 +255,7 @@ public class GameZone implements IGameZone {
         GameStatsManager.recordZoneDouble(this.zoneId, doubleWriter);
         GameStatsManager.recordZoneString(this.zoneId, stringWriter);
     }
-    private void addFailedZoneProperty() {
+    protected void addFailedZoneProperty() {
         Map<String, Integer> intWriter = new HashMap<>();
         Map<String, String> stringWriter = new HashMap<>();
 

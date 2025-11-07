@@ -36,7 +36,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
         return ZoneManagerHolder.INSTANCE;
     }
 
-    private ZoneManager() {}
+    protected ZoneManager() {}
 
     public static void init(McSide mcSide) {
         ;
@@ -54,7 +54,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
     }
 
     private boolean isTicking = false;
-    protected static boolean shouldStopGame = false; // 让其对GameZone可见
+    private static boolean shouldStopGame = false;
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
@@ -94,7 +94,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
 
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (BattleRoyale.getGameManager().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame() || !this.configPrepared) {
             return;
         }
 
@@ -122,6 +122,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
     /**
      * 延迟处理区域清理，使游戏进行时高效遍历Zone，并防止并发问题
      */
+    @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
         List<Integer> zoneIdList = new ArrayList<>();
         for (IGameZone gameZone : this.zoneData.getCurrentTickZones(BattleRoyale.getGameManager().getGameTime())) {
@@ -136,22 +137,9 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
             shouldStopGame = false; // 防御一下
             BattleRoyale.LOGGER.debug("ZoneManager complete stopGame");
         }
-        // ↓这个lambda方式似乎并没有延迟处理，还是会触发onGameTick并发修改问题
-        // 应该是GameManager注册时间相关问题导致在新的onGameTick里触发的并发修改？不管了
-//        if (serverLevel != null) {
-//            serverLevel.getServer().execute(() -> {
-//                clear();
-//                BattleRoyale.LOGGER.debug("ZoneManager complete delayed stopGame");
-//            });
-//        } else { // 如果当前ZoneManager正在tick，延迟到tick结束就节约了复制列表的开销
-//            shouldStopGame = true;
-//        }
     }
 
-    /**
-     * 仅限类内lambda调用
-     */
-    public void clear(@Nullable ServerLevel serverLevel) {
+    protected void clear(@Nullable ServerLevel serverLevel) {
         ZoneMessageManager.get().stopGame(serverLevel);
         this.zoneData.endGame();
         this.zoneData.clear();
@@ -194,6 +182,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
                 }
             }
 
+            if (shouldStopGame) break; // 提前用一个bool检查使每tick少一次列表对象复制（直接用视图遍历）
             gameZone.gameTick(zoneContext);
 
             if (gameZone.isFinished()) { // 在tick过程中遇到最后一tick并执行后，标记为finished
@@ -283,13 +272,20 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
         return this.zoneData.getGameZoneById(zoneId);
     }
 
-    // --------ZoneUtils--------
-
     public boolean hasEnoughZoneToStart() {
-        return ZoneUtils.hasEnoughZoneToStart(this);
+        return this.zoneData.hasEnoughZoneToStart();
     }
 
     public void randomizeZoneTickOffset() {
-        ZoneUtils.randomizeZoneTickOffset(this);
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.isInGame()) {
+            return;
+        }
+        Supplier<Float> random = gameManager.getRandom();
+        for (IGameZone gameZone : this.zoneData.getGameZonesList()) {
+            if (gameZone.getTickOffset() < 0) {
+                gameZone.setTickOffset((int) (random.get() * gameZone.getTickFrequency()));
+            }
+        }
     }
 }

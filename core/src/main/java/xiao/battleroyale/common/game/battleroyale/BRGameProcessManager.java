@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.process.IGameProcessManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
@@ -30,7 +31,7 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
         return BRGameProcessManagerHolder.INSTANCE;
     }
 
-    private BRGameProcessManager() {}
+    protected BRGameProcessManager() {}
 
     public static void init(McSide mcSide) {
         ;
@@ -87,6 +88,7 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
         checkAndUpdateInvalidGamePlayer(gameManager.getServerLevel()); // 为其他Manager预处理当前tick
 
         // 暂时认为各Manager要按顺序tick，因此不改成监听GameTickEvent事件来触发
+        // BattleRoyale模式按如下顺序调度, 提前/推迟需GameSubManager自行监听GameTickEvent
         gameManager.getGameruleManager().onGameTick(gameTime);
         gameManager.getTeamManager().onGameTick(gameTime); // 暂时没功能
         gameManager.getSpawnManager().onGameTick(gameTime);
@@ -169,6 +171,9 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
     @Override public void healGamePlayers(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayers) {
         BRGameManagement.healGamePlayers(serverLevel, gamePlayers);
     }
+    @Override public void finishGameAddWinner(boolean hasWinner) {
+        BRGameManagement.finishGameAddWinner(this, hasWinner);
+    }
 
     // --------IGameNotification--------
 
@@ -199,11 +204,11 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
     @Override public void onPlayerLoggedOut(boolean isInGame, ServerPlayer player) {
         BRGameEventHandler.onPlayerLoggedOut(this, isInGame, player);
     }
-    @Override public void onPlayerDown(@NotNull GamePlayer gamePlayer, LivingEntity livingEntity, boolean removeInvalidTeam) {
-        BRGameEventHandler.onPlayerDown(this, gamePlayer, livingEntity, removeInvalidTeam);
+    @Override public void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, LivingEntity livingEntity, boolean removeInvalidTeam) {
+        BRGameEventHandler.onPlayerDown(this, event, gamePlayer, livingEntity, removeInvalidTeam);
     }
-    @Override public void onPlayerDeath(@Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
-        BRGameEventHandler.onPlayerDeath(this, serverLevel, gamePlayer);
+    @Override public void onPlayerDeath(@Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
+        BRGameEventHandler.onPlayerDeath(this, event, serverLevel, gamePlayer);
     }
     @Override public void onPlayerRevived(@NotNull GamePlayer gamePlayer) {
         BRGameEventHandler.onPlayerRevived(this, gamePlayer);

@@ -3,6 +3,7 @@ package xiao.battleroyale.common.game.team;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
+import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 
 import java.util.ArrayList;
@@ -10,9 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * record类
- */
 public class TeamConfig implements IStatsWriter {
     public int playerLimit = 0;
     public int teamSize = 0;
@@ -57,5 +55,16 @@ public class TeamConfig implements IStatsWriter {
         boolGamerule.put(BattleroyaleEntryTag.AI_ENEMY, aiEnemy);
         boolGamerule.put(BattleroyaleEntryTag.AUTO_JOIN, autoJoinGame);
         return boolGamerule;
+    }
+
+    public void updateWithConfig(BattleroyaleEntry brEntry, GameEntry gameEntry) {
+        this.playerLimit = brEntry.playerTotal;
+        this.teamSize = brEntry.teamSize;
+        this.aiTeammate = brEntry.aiTeammate;
+        this.aiEnemy = brEntry.aiEnemy;
+        this.autoJoinGame = brEntry.autoJoinGame;
+
+        this.setTeamMsgExpireTimeSeconds(gameEntry.teamMsgExpireTimeSeconds);
+        this.setTeamColors(gameEntry.teamColors);
     }
 }

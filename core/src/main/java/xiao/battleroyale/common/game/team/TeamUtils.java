@@ -16,9 +16,6 @@ import java.util.*;
 
 public class TeamUtils {
 
-    /**
-     * 返回非人机队伍数量
-     */
     @ApiStatus.Internal
     public static int getNonBotTeamCount(TeamManager teamManager) {
         int count = 0;
@@ -35,9 +32,6 @@ public class TeamUtils {
         return count;
     }
 
-    /**
-     * 返回未被淘汰的非人机队伍数量
-     */
     @ApiStatus.Internal
     public static int getStandingPlayerTeamCount(TeamManager teamManager) {
         int count = 0;
@@ -52,11 +46,6 @@ public class TeamUtils {
             }
         }
         return count;
-    }
-
-    @ApiStatus.Internal
-    public static int getStandingTeamCount(TeamManager teamManager) {
-        return teamManager.teamData.getTotalStandingTeamCount();
     }
 
     @ApiStatus.Internal

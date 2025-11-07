@@ -10,4 +10,12 @@ public interface ITeamManager extends IGameSubManager, IGameTeamReadApi, ITeamEx
     boolean shouldAutoJoin();
 
     void onBotGamePlayerChanged(GamePlayer gamePlayer, UUID uuid);
+
+    /**
+     * 找到第一个未满员队伍
+     * @return 可用的队伍，如无则返回 -1
+     */
+    int findNotFullTeamId();
+
+    boolean hasEnoughPlayerTeamToStart();
 }

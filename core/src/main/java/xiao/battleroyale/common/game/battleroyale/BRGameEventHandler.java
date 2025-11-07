@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.common.game.GameMessageManager;
@@ -68,7 +69,7 @@ public class BRGameEventHandler {
      * 没有队友时不允许倒地直接让PlayerRevive击杀掉
      * PlayerRevive只允许玩家倒地，因此人机玩家无法倒地
      */
-    protected static void onPlayerDown(BRGameProcessManager brGameProcessManager, @NotNull GamePlayer gamePlayer, LivingEntity livingEntity, boolean removeInvalidTeam) {
+    protected static void onPlayerDown(BRGameProcessManager brGameProcessManager, ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, LivingEntity livingEntity, boolean removeInvalidTeam) {
         // 不允许倒地的情况：队友没有Alive的
         GameTeam gameTeam = gamePlayer.getTeam();
         boolean hasAliveMember = false;
@@ -83,8 +84,8 @@ public class BRGameEventHandler {
             break;
         }
         if (!hasAliveMember) { // 没有存活队友就判定为无法救援，直接判死亡
-            BattleRoyale.LOGGER.debug("GamePlayer {} is down and has no alive member", gamePlayer.getPlayerName());
-            onPlayerDeath(brGameProcessManager, BattleRoyale.getGameManager().getServerLevel(), gamePlayer);
+            BattleRoyale.LOGGER.debug("GamePlayer {} is down and has no alive member, switch to onPlayerDeath", gamePlayer.getPlayerName());
+            BattleRoyale.getGameManager().onPlayerDeath(event, gamePlayer); //
             return;
         }
 
@@ -94,25 +95,25 @@ public class BRGameEventHandler {
             if (playerRevive.isBleeding(player)) {
                 gamePlayer.setAlive(false);
                 playerRevive.addBleedingPlayer(player);
-                BRGameNotification.sendDownMessage(BattleRoyale.getGameManager().getServerLevel(), gamePlayer);
+                brGameProcessManager.sendDownMessage(BattleRoyale.getGameManager().getServerLevel(), gamePlayer);
                 return;
             }
         }
 
         if (!gamePlayer.isAlive()) { // 倒地，但是不为存活状态
             BattleRoyale.LOGGER.debug("GamePlayer {} is down but not alive, switch to onPlayerDeath", gamePlayer.getPlayerName());
-            onPlayerDeath(brGameProcessManager, BattleRoyale.getGameManager().getServerLevel(), gamePlayer);
-            GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
+            BattleRoyale.getGameManager().onPlayerDeath(event, gamePlayer);
+            return;
         }
 
         // 没检测到PlayerRevive就认为是不死图腾救了
         // 实际貌似不会触发log，不清楚不死图腾原理
         // 只能认为不死图腾的功能不是自救，而是阻止倒地
         gamePlayer.setAlive(true); // 其实应该不需要设置
-        BattleRoyale.LOGGER.debug("Not detected PlayerRevive, should be revived by Totem of Undying");
+        BattleRoyale.LOGGER.debug("Not detected PlayerRevive, may be revived by Totem of Undying");
     }
 
-    protected static void onPlayerDeath(BRGameProcessManager brGameProcessManager, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
+    protected static void onPlayerDeath(BRGameProcessManager brGameProcessManager, @Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
         boolean teamEliminatedBefore = gamePlayer.getTeam().isTeamEliminated();
         boolean playerEliminatedBefore = gamePlayer.isEliminated();
         gamePlayer.setEliminated(true); // GamePlayer内部会自动让GameTeam更新eliminated
@@ -120,7 +121,7 @@ public class BRGameEventHandler {
         gameManager.getTeamManager().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer信息
         // 死亡事件会跳过非standingPlayer，放心kill
         if (!playerEliminatedBefore) { // 第一次淘汰才尝试kill，淘汰后被打倒的不管
-            BRGameNotification.sendEliminateMessage(BattleRoyale.getGameManager().getServerLevel(), gamePlayer);
+            brGameProcessManager.sendEliminateMessage(BattleRoyale.getGameManager().getServerLevel(), gamePlayer);
             PlayerRevive playerRevive = PlayerRevive.get();
             if (serverLevel != null) {
                 @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
@@ -139,7 +140,7 @@ public class BRGameEventHandler {
             BattleRoyale.LOGGER.info("Team {} has been eliminated, updating member to eliminated", gameTeam.getGameTeamId());
             for (GamePlayer member : gameTeam.getTeamMembers()) {
                 if (!member.isEliminated()) {
-                    onPlayerDeath(brGameProcessManager, serverLevel, member);
+                    gameManager.onPlayerDeath(null, member);
                 }
             }
             if (serverLevel != null) {

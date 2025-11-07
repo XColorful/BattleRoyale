@@ -77,7 +77,7 @@ public class BleedingHandler implements IEventHandler {
         // 没有设定倒地扣血量就判定为超过最大倒地次数
         if (currentDownTime > bleedDamage.size()) {
             BattleRoyale.LOGGER.debug("Player {} has downed {} time, can't bleed and kill", player.getName().getString(), currentDownTime);
-            gameManager.onPlayerDeath(gamePlayer, null);
+            gameManager.onPlayerDeath(null, gamePlayer);
             PlayerRevive.get().kill(player);
             GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
             return;
@@ -140,7 +140,7 @@ public class BleedingHandler implements IEventHandler {
                 float currentHealth = bleedPlayer.getHealth();
                 if (currentHealth <= damage) { // 此次扣血会致死
                     BattleRoyale.LOGGER.debug("Bleed damage will kill game player {}", gamePlayer.getPlayerName());
-                    BattleRoyale.getGameManager().onPlayerDeath(gamePlayer, null);
+                    BattleRoyale.getGameManager().onPlayerDeath(null, gamePlayer);
                     PlayerRevive.get().kill(bleedPlayer);
                     GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
                     return;
