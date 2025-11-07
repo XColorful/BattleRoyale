@@ -10,7 +10,6 @@ import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.common.loot.InventoryGenerator;
@@ -49,7 +48,7 @@ public class InventoryFunc extends AbstractSimpleFunc {
     @Override
     public void funcTick(ZoneTickContext zoneTickContext) {
         ServerLevel serverLevel = zoneTickContext.serverLevel;
-        UUID gameId = GameManager.get().getGameId();
+        UUID gameId = BattleRoyale.getGameManager().getGameId();
         List<ItemStack> lootItems = new ArrayList<>();
         IConfigSubManager<?> lootConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(LootConfigManager.get().getNameKey());
         @Nullable LootConfig lootConfig = lootConfigManager == null ? null

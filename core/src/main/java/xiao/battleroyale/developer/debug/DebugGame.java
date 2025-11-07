@@ -3,7 +3,6 @@ package xiao.battleroyale.developer.debug;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.entity.Entity;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.GameZoneManager;
 import xiao.battleroyale.common.game.team.GamePlayer;

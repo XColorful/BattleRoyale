@@ -6,7 +6,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import xiao.battleroyale.command.sub.*;
 
-import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.command.CommandArg.MOD_ID;
+import static xiao.battleroyale.command.CommandArg.MOD_NAME_SHORT;
 
 public class ClientCommand {
 

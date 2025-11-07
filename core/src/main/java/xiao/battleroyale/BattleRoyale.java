@@ -3,6 +3,7 @@ package xiao.battleroyale;
 import com.mojang.logging.LogUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import xiao.battleroyale.algorithm.AlgorithmFacade;
 import xiao.battleroyale.api.algorithm.IAlgorithmApi;
@@ -103,13 +104,31 @@ public class BattleRoyale {
     public static ICustomEventRegister getEventRegister() {
         return EventRegister.get();
     }
-    public static IGameManager getGameManager() {
-        return GameManager.get();
-    }
-    public static IModConfigManager getModConfigManager() {
-        return ModConfigManager.getApi();
-    }
     public static IAlgorithmApi getAlgorithmApi() {
         return AlgorithmFacade.get();
+    }
+    private static IGameManager gameManager = GameManager.get();
+    public static IGameManager getGameManager() {
+        return BattleRoyale.gameManager;
+    }
+    /**
+     * 使用该方法即完整替换游戏管理器, 自行实现所有API并调试
+     * @deprecated 除非需要深度定制, 否则不应该调用
+     */
+    @Deprecated(forRemoval=false)
+    public static void setGameManager(@NotNull IGameManager gameManager) {
+        BattleRoyale.gameManager = gameManager;
+    }
+    private static IModConfigManager modConfigManager = ModConfigManager.getApi();
+    public static IModConfigManager getModConfigManager() {
+        return modConfigManager;
+    }
+    /**
+     * 使用该方法即完整替换模组配置管理, 自行实现所有API并调试
+     * @deprecated 除非需要深度定制, 否则不应该调用
+     */
+    @Deprecated(forRemoval = false)
+    public static void setModConfigManager(@NotNull IModConfigManager modConfigManager) {
+        BattleRoyale.modConfigManager = modConfigManager;
     }
 }

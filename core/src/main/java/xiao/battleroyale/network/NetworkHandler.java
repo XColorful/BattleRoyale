@@ -2,9 +2,9 @@ package xiao.battleroyale.network;
 
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.network.message.IMessage;
 import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.MessageDirection;
+import xiao.battleroyale.api.network.message.IMessage;
 import xiao.battleroyale.network.message.ClientMessageGameInfo;
 import xiao.battleroyale.network.message.ClientMessageSpectateInfo;
 import xiao.battleroyale.network.message.ClientMessageTeamInfo;

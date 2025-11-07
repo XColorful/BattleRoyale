@@ -2,9 +2,9 @@ package xiao.battleroyale.client.init;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import xiao.battleroyale.api.client.init.IModEntityRender;
-import xiao.battleroyale.init.registry.ModBlocks;
-import xiao.battleroyale.client.renderer.block.LootSpawnerRenderer;
 import xiao.battleroyale.client.renderer.block.EntitySpawnerRenderer;
+import xiao.battleroyale.client.renderer.block.LootSpawnerRenderer;
+import xiao.battleroyale.init.registry.ModBlocks;
 
 public class ModEntityRender implements IModEntityRender {
 

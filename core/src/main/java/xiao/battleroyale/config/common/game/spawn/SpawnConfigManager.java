@@ -10,7 +10,6 @@ import xiao.battleroyale.api.game.spawn.ISpawnSingleEntry;
 import xiao.battleroyale.api.game.spawn.SpawnConfigTag;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.command.CommandArg;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
@@ -21,7 +20,6 @@ import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.List;
 
 
 public class SpawnConfigManager extends AbstractConfigSubManager<SpawnConfigManager.SpawnConfig> {
@@ -115,7 +113,7 @@ public class SpawnConfigManager extends AbstractConfigSubManager<SpawnConfigMana
 
         @Override
         public void applyDefault() {
-            GameManager.get().setSpawnConfigId(getConfigId());
+            BattleRoyale.getGameManager().setSpawnConfigId(getConfigId());
         }
     }
 
