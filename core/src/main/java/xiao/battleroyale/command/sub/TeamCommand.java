@@ -9,7 +9,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.server.level.ServerPlayer;
-import xiao.battleroyale.common.game.team.TeamManager;
+import xiao.battleroyale.BattleRoyale;
 
 import static xiao.battleroyale.command.CommandArg.*;
 import static xiao.battleroyale.util.StringUtils.buildCommandString;
@@ -75,76 +75,84 @@ public class TeamCommand {
 
     private static int joinTeam(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
-        TeamManager.get().joinTeam(player);
+        BattleRoyale.getGameManager().getTeamManager().joinTeam(player);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int joinTeamSpecific(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         int teamId = IntegerArgumentType.getInteger(context, TEAM_ID);
-        TeamManager.get().joinTeamSpecific(player, teamId);
+        BattleRoyale.getGameManager().getTeamManager().joinTeamSpecific(player, teamId);
         return Command.SINGLE_SUCCESS;
     }
 
     public static int leaveTeam(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
-        TeamManager.get().leaveTeam(player);
+        BattleRoyale.getGameManager().getTeamManager().leaveTeam(player);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int kickPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer sender = context.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = EntityArgument.getPlayer(context, PLAYER);
-        TeamManager.get().kickPlayer(sender, targetPlayer);
+        BattleRoyale.getGameManager().getTeamManager().kickPlayer(sender, targetPlayer);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int invitePlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer sender = context.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = EntityArgument.getPlayer(context, PLAYER);
-        TeamManager.get().invitePlayer(sender, targetPlayer);
+        BattleRoyale.getGameManager().getTeamManager().invitePlayer(sender, targetPlayer);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int acceptInvite(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         ServerPlayer senderPlayer = EntityArgument.getPlayer(context, SENDER);
-        TeamManager.get().acceptInvite(player, senderPlayer);
+        BattleRoyale.getGameManager().getTeamManager().acceptInvite(player, senderPlayer);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int declineInvite(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         ServerPlayer senderPlayer = EntityArgument.getPlayer(context, SENDER);
-        TeamManager.get().declineInvite(player, senderPlayer);
+        BattleRoyale.getGameManager().getTeamManager().declineInvite(player, senderPlayer);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int requestPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer sender = context.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = EntityArgument.getPlayer(context, PLAYER);
-        TeamManager.get().requestPlayer(sender, targetPlayer);
+        BattleRoyale.getGameManager().getTeamManager().requestPlayer(sender, targetPlayer);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int acceptRequest(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer teamLeader = context.getSource().getPlayerOrException();
         ServerPlayer senderPlayer = EntityArgument.getPlayer(context, REQUESTER);
-        TeamManager.get().acceptRequest(teamLeader, senderPlayer);
+        BattleRoyale.getGameManager().getTeamManager().acceptRequest(teamLeader, senderPlayer);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int declineRequest(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer teamLeader = context.getSource().getPlayerOrException();
         ServerPlayer senderPlayer = EntityArgument.getPlayer(context, REQUESTER);
-        TeamManager.get().declineRequest(teamLeader, senderPlayer);
+        BattleRoyale.getGameManager().getTeamManager().declineRequest(teamLeader, senderPlayer);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int queryPlayerTeamId(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
-        TeamManager.get().sendPlayerTeamId(player);
+        BattleRoyale.getGameManager().getTeamManager().sendPlayerTeamId(player);
         return Command.SINGLE_SUCCESS;
+    }
+
+    public static String joinCommand() {
+        return buildCommandString(
+                MOD_ID,
+                TEAM,
+                JOIN
+        );
     }
 
     public static String acceptInviteCommand(String senderName) {

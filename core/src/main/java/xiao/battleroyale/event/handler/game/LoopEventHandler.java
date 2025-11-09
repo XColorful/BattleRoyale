@@ -4,7 +4,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
-import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.event.EventRegister;
 
 public class LoopEventHandler implements IEventHandler {
@@ -34,10 +34,11 @@ public class LoopEventHandler implements IEventHandler {
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
         if (eventType == EventType.SERVER_TICK_EVENT) {
-            if (!GameManager.get().isInGame()) {
+            IGameManager gameManager = BattleRoyale.getGameManager();
+            if (!gameManager.isInGame()) {
                 unregister();
             }
-            GameManager.get().onGameTick();
+            gameManager.addGameTimeAndTick();
         } else {
             BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
         }

@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.loot.ILootObject;
 import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
-import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 
 import java.util.UUID;
 

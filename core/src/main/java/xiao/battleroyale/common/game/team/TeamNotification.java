@@ -7,10 +7,6 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.util.ChatUtils;
 
-/**
- * 该类仅用于抽离TeamManager的功能实现，简化TeamManager
- * 类似.h和.cpp的设计
- */
 public class TeamNotification {
 
     /**
@@ -34,9 +30,7 @@ public class TeamNotification {
         }
     }
 
-    public static void sendPlayerTeamId(ServerPlayer player) {
-        TeamManager teamManager = TeamManager.get();
-        GamePlayer gamePlayer = teamManager.getGamePlayerByUUID(player.getUUID());
+    public static void sendPlayerTeamId(@Nullable GamePlayer gamePlayer, ServerPlayer player) {
         if (gamePlayer == null) {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.not_in_a_team").withStyle(ChatFormatting.RED));
             return;

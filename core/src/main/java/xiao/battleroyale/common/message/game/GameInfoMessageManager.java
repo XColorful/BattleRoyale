@@ -5,8 +5,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.IGameSubManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.message.AbstractMessageManager;
@@ -27,6 +28,16 @@ public class GameInfoMessageManager extends AbstractMessageManager<GameInfoMessa
         return GameMessageManagerHolder.INSTANCE;
     }
 
+    @Override public String getManagerName() {
+        return String.format("%s:GameInfoMessageManager", BattleRoyale.MOD_ID);
+    }
+    @Override public boolean registerGameEventHandler() {
+        return false;
+    }
+    @Override public boolean unregisterGameEventHandler() {
+        return false;
+    }
+
     public static final int ALIVE_CHANNEL = -1;
     public static final String ALIVE_KEY = Integer.toString(ALIVE_CHANNEL);
     public static final int GAMEID_CHANNEL = -2;
@@ -36,13 +47,13 @@ public class GameInfoMessageManager extends AbstractMessageManager<GameInfoMessa
     protected void checkExpiredMessage() {
         updateAliveTotal();
 
-        if (!GameManager.get().isInGame()) {
+        if (!BattleRoyale.getGameManager().isInGame()) {
             super.checkExpiredMessage();
         }
     }
 
     protected void updateAliveTotal() {
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         boolean inGame = gameManager.isInGame();
         if (inGame) {
             int aliveTotal = GameTeamManager.getStandingGamePlayers().size();
@@ -107,7 +118,7 @@ public class GameInfoMessageManager extends AbstractMessageManager<GameInfoMessa
     @Override
     public void initGameConfig(ServerLevel serverLevel) {}
     @Override
-    public boolean isPreparedForGame() { return true; }
+    public boolean isConfigPrepared() { return true; }
     @Override
     public void initGame(ServerLevel serverLevel) {}
     @Override

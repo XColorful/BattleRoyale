@@ -2,10 +2,11 @@ package xiao.battleroyale.config.client.render.type;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.render.IRenderEntry;
 import xiao.battleroyale.api.client.render.RenderConfigTag;
+import xiao.battleroyale.api.client.render.game.level.IClientZoneRenderer;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
-import xiao.battleroyale.client.renderer.game.ZoneRenderer;
 import xiao.battleroyale.common.game.zone.spatial.CircleShape;
 import xiao.battleroyale.common.game.zone.spatial.EllipseShape;
 import xiao.battleroyale.common.game.zone.spatial.EllipsoidShape;
@@ -78,12 +79,14 @@ public class ZoneEntry implements IRenderEntry {
             ClientSingleZoneData.setClientColorString(this.fixedColor);
         }
         CircleShape.setCircleSegments(circleSegments);
-        ZoneRenderer.setCircleSegments(CircleShape.getCircleSegments());
+
+        IClientZoneRenderer zoneRenderer = BattleRoyale.getClientLevelRenderer().getClientZoneRenderer();
+        zoneRenderer.setCircleSegments(CircleShape.getCircleSegments());
         EllipseShape.setEllipseSegments(ellipsoidSegments);
-        ZoneRenderer.setEllipseSegments(EllipseShape.getEllipseSegments());
+        zoneRenderer.setEllipseSegments(EllipseShape.getEllipseSegments());
         SphereShape.setSphereSegments(sphereSegments);
-        ZoneRenderer.setSphereSegments(SphereShape.getSphereSegments());
+        zoneRenderer.setSphereSegments(SphereShape.getSphereSegments());
         EllipsoidShape.setEllipsoidSegments(ellipsoidSegments);
-        ZoneRenderer.setEllipsoidSegments(EllipsoidShape.getEllipsoidSegments());
+        zoneRenderer.setEllipsoidSegments(EllipsoidShape.getEllipsoidSegments());
     }
 }

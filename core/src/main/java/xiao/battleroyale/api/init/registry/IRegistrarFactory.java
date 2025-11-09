@@ -1,13 +1,13 @@
 package xiao.battleroyale.api.init.registry;
 
 import net.minecraft.core.Registry;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
  * 抽象注册器工厂：用于创建平台无关的注册对象集合 (IRegistrar)。

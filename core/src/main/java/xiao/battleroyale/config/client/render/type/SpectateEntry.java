@@ -2,9 +2,10 @@ package xiao.battleroyale.config.client.render.type;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.render.IRenderEntry;
 import xiao.battleroyale.api.client.render.RenderConfigTag;
-import xiao.battleroyale.client.renderer.game.SpectatePlayerRenderer;
+import xiao.battleroyale.api.client.render.game.level.IClientSpectateRenderer;
 import xiao.battleroyale.util.JsonUtils;
 
 public class SpectateEntry implements IRenderEntry {
@@ -75,16 +76,17 @@ public class SpectateEntry implements IRenderEntry {
 
     @Override
     public void applyDefault() {
-        SpectatePlayerRenderer.setEnableSpectateRender(enableSpectateRender);
+        IClientSpectateRenderer spectateRenderer = BattleRoyale.getClientLevelRenderer().getClientSpectateRenderer();
+        spectateRenderer.setEnableSpectateRender(enableSpectateRender);
         if (enableSpectateRender) {
-            SpectatePlayerRenderer.setUseClientColor(useClientColor);
+            spectateRenderer.setUseClientColor(useClientColor);
             if (useClientColor) {
-                SpectatePlayerRenderer.setClientColorString(fixedColor);
+                spectateRenderer.setClientColorString(fixedColor);
             }
-            SpectatePlayerRenderer.setRenderBeacon(renderBeacon);
-            SpectatePlayerRenderer.setRenderBoundingBox(renderBoundingBox);
-            SpectatePlayerRenderer.setTransparency(transparency);
-            SpectatePlayerRenderer.setScanFrequency(scanFrequency);
+            spectateRenderer.setRenderBeacon(renderBeacon);
+            spectateRenderer.setRenderBoundingBox(renderBoundingBox);
+            spectateRenderer.setTransparency(transparency);
+            spectateRenderer.setScanFrequency(scanFrequency);
         }
     }
 }

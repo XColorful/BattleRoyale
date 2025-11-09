@@ -5,7 +5,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.effect.EffectManager;
-import xiao.battleroyale.common.game.GameManager;
 
 import java.util.UUID;
 
@@ -41,7 +40,7 @@ public class GamePlayer {
     }
 
     public void reset() {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, reject to reset GamePlayer {}, team {}", playerName, getGameTeamId());
             return;
         }
@@ -110,7 +109,7 @@ public class GamePlayer {
         if (!isBot()) {
             return;
         }
-        TeamManager.get().onBotGamePlayerChanged(this, livingEntity.getUUID());
+        BattleRoyale.getGameManager().getTeamManager().onBotGamePlayerChanged(this, livingEntity.getUUID());
     }
 
     /**

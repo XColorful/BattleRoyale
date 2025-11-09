@@ -7,21 +7,20 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.event.handler.util.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
-/**
- * 该类仅用于抽离TeamManager的功能实现，简化TeamManager
- * 类似.h和.cpp的设计
- */
 public class TeamManagement {
 
     /**
@@ -29,19 +28,18 @@ public class TeamManagement {
      * 适用于管理员指令或游戏初始化时的强制分配。
      * @param player 需要加入队伍的玩家
      */
-    protected static void forceJoinTeam(ServerPlayer player) {
-        TeamManager teamManager = TeamManager.get();
-
+    @ApiStatus.Internal
+    public static void forceJoinTeam(TeamManager teamManager, ServerPlayer player) {
         if (teamManager.removePlayerFromTeam(player.getUUID())) { // 加入队伍前离开当前队伍
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.YELLOW));
         }
 
         int newTeamId = teamManager.findNotFullTeamId();
         if (newTeamId > 0) { // 有未满员队伍
-            TeamManagement.addPlayerToTeamInternal(player, teamManager.findNotFullTeamId(), false); // 直接强制加入
+            TeamManagement.addPlayerToTeamInternal(teamManager, player, teamManager.findNotFullTeamId(), false); // 直接强制加入
         } else {
             newTeamId = teamManager.teamData.generateNextTeamId();
-            TeamManagement.createNewTeamAndJoin(player, newTeamId); // 无未满员队伍则创建队伍
+            TeamManagement.createNewTeamAndJoin(teamManager, player, newTeamId); // 无未满员队伍则创建队伍
         }
     }
 
@@ -51,9 +49,9 @@ public class TeamManagement {
      * @param targetTeamId 目标队伍的 ID
      * @param request 如果为 true，则尝试直接加入（跳过队长确认）；如果为 false，则当队伍有在线成员时发送申请。
      */
-    protected static void addPlayerToTeamInternal(ServerPlayer player, int targetTeamId, boolean request) {
-        TeamManager teamManager = TeamManager.get();
-        GameManager gameManager = GameManager.get();
+    @ApiStatus.Internal
+    public static void addPlayerToTeamInternal(TeamManager teamManager, ServerPlayer player, int targetTeamId, boolean request) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
 
         UUID playerId = player.getUUID();
         GameTeam targetTeam = teamManager.teamData.getGameTeamById(targetTeamId);
@@ -114,8 +112,8 @@ public class TeamManagement {
     /**
      * 清理掉离线GamePlayer，防止后续影响游戏结束的人数判定
      */
-    protected static void removeOfflineGamePlayer(ServerLevel serverLevel) {
-        TeamManager teamManager = TeamManager.get();
+    @ApiStatus.Internal
+    public static void removeOfflineGamePlayer(TeamManager teamManager, ServerLevel serverLevel) {
         List<GamePlayer> offlineGamePlayers = new ArrayList<>();
         for (GamePlayer gamePlayer : teamManager.teamData.getGamePlayersList()) {
             if (!gamePlayer.isActiveEntity()) {
@@ -141,8 +139,8 @@ public class TeamManagement {
     /**
      * 防止游戏开始时有意外的无队伍GamePlayer
      */
-    protected static void removeNoTeamGamePlayer() {
-        TeamManager teamManager = TeamManager.get();
+    @ApiStatus.Internal
+    public static void removeNoTeamGamePlayer(TeamManager teamManager) {
         List<GamePlayer> noTeamPlayers = new ArrayList<>();
         for (GamePlayer gamePlayer : teamManager.teamData.getGamePlayersList()) {
             if (gamePlayer.getTeam() == null) {
@@ -161,20 +159,20 @@ public class TeamManagement {
      * 强制淘汰玩家，不包含发送系统消息
      * 成功淘汰后发送大厅传送消息
      */
-    protected static boolean forceEliminatePlayerSilence(GamePlayer gamePlayer) {
-        TeamManager teamManager = TeamManager.get();
-
+    @ApiStatus.Internal
+    public static boolean forceEliminatePlayerSilence(TeamManager teamManager, GamePlayer gamePlayer) {
         if (teamManager.teamData.eliminatePlayer(gamePlayer)) {
             // 强制淘汰后传送回大厅
-            ServerLevel serverLevel = GameManager.get().getServerLevel();
+            IGameManager gameManager = BattleRoyale.getGameManager();
+            ServerLevel serverLevel = gameManager.getServerLevel();
             if (serverLevel != null) {
                 @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
                 if (player != null) {
                     // TODO 生成战利品盒子
                     Consumer<ServerPlayer> delayedTask = isWinner -> {
-                        GameManager.get().sendLobbyTeleportMessage(player, false);
+                        gameManager.getGameLobbyManager().sendLobbyTeleportMessage(player, false);
                     };
-                    new DelayedEvent<>(delayedTask, player, 2, "TeamManager::GameManager.get().sendLobbyTeleportMessage");
+                    new DelayedEvent<>(delayedTask, player, 2, "TeamManager::GameManager.sendLobbyTeleportMessage");
                 }
             }
             teamManager.onTeamChangedInGame();
@@ -187,8 +185,8 @@ public class TeamManagement {
     /**
      * 强制淘汰玩家并向队友发送消息
      */
-    protected static void forceEliminatePlayerFromTeam(LivingEntity livingEntity) {
-        TeamManager teamManager = TeamManager.get();
+    @ApiStatus.Internal
+    public static void forceEliminatePlayerFromTeam(TeamManager teamManager, LivingEntity livingEntity) {
         @Nullable ServerPlayer player = livingEntity instanceof ServerPlayer serverPlayer ? serverPlayer : null;
 
         GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(livingEntity.getUUID());
@@ -208,11 +206,11 @@ public class TeamManagement {
             BattleRoyale.LOGGER.info("Force eliminated livingEntity {} (UUID: {}) from team {}", livingEntity.getName().getString(), livingEntity.getUUID(), gamePlayer.getGameTeamId());
         }
 
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel != null) {
             if (!playerEliminatedBefore) { // 从未被淘汰到被淘汰
-                gameManager.sendEliminateMessage(gamePlayer);
+                gameManager.getGameProcessManager().sendEliminateMessage(serverLevel, gamePlayer);
                 ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.forced_elimination", livingEntity.getName()).withStyle(ChatFormatting.RED));
                 if (gameManager.getGameEntry().forceEliminationTeleportToLobby) {
                     gameManager.teleportToLobby(livingEntity); // 不用TeamManager的teleportToLobby
@@ -241,9 +239,8 @@ public class TeamManagement {
      * 将玩家移出队伍
      * @return 是否移出队伍
      */
-    protected static boolean removePlayerFromTeam(@NotNull UUID playerId) {
-        TeamManager teamManager = TeamManager.get();
-
+    @ApiStatus.Internal
+    public static boolean removePlayerFromTeam(TeamManager teamManager, @NotNull UUID playerId) {
         GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(playerId);
         if (gamePlayer == null) {
             return false;
@@ -253,7 +250,7 @@ public class TeamManagement {
             return false;
         }
 
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         GameMessageManager.notifyLeavedMember(playerId, teamId); // 离队后通知不渲染队伍HUD
         GameMessageManager.notifyTeamChange(teamId); // 离队后通知队伍成员更新队伍HUD
 
@@ -286,9 +283,8 @@ public class TeamManagement {
      * @param teamId 队伍id
      * @return 是否加入队伍
      */
-    protected static boolean createNewTeamAndJoin(ServerPlayer player, int teamId) {
-        TeamManager teamManager = TeamManager.get();
-
+    @ApiStatus.Internal
+    public static boolean createNewTeamAndJoin(TeamManager teamManager, ServerPlayer player, int teamId) {
         if (teamId < 1) {
             return false;
         }
@@ -309,7 +305,7 @@ public class TeamManagement {
             return false;
         }
 
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         GameMessageManager.notifyTeamChange(newTeam.getGameTeamId()); // 新建队伍并加入，通知更新队伍HUD
         ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.joined_to_team", teamId).withStyle(ChatFormatting.GREEN));
 
