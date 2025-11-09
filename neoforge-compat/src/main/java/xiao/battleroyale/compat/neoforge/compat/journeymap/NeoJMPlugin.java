@@ -2,15 +2,18 @@ package xiao.battleroyale.compat.neoforge.compat.journeymap;
 
 import journeymap.api.v2.client.IClientAPI;
 import journeymap.api.v2.client.IClientPlugin;
-import journeymap.api.v2.client.display.PolygonOverlay;
 import journeymap.api.v2.client.JourneyMapPlugin;
-import journeymap.api.v2.client.event.MappingEvent;
+import journeymap.api.v2.client.display.PolygonOverlay;
 import journeymap.api.v2.client.event.DisplayUpdateEvent;
+import journeymap.api.v2.client.event.MappingEvent;
 import journeymap.api.v2.client.model.MapPolygon;
 import journeymap.api.v2.client.model.ShapeProperties;
 import journeymap.api.v2.common.event.ClientEventRegistry;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.compat.journeymap.*;
+import xiao.battleroyale.compat.journeymap.JMEventHandler;
+import xiao.battleroyale.compat.journeymap.JMPolygonOverlay;
+import xiao.battleroyale.compat.journeymap.JMShapeDrawer;
+import xiao.battleroyale.compat.journeymap.JMShapeProperties;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
