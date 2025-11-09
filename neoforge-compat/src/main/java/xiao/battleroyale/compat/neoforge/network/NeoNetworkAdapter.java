@@ -9,7 +9,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
-
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.MessageDirection;

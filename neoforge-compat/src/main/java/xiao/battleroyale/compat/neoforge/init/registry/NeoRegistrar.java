@@ -1,8 +1,8 @@
 package xiao.battleroyale.compat.neoforge.init.registry;
 
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.init.registry.IRegistrar;
 import xiao.battleroyale.api.init.registry.IRegistryObject;
