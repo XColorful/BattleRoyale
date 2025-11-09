@@ -22,7 +22,6 @@ import xiao.battleroyale.common.effect.firework.PlayerTrackingFireworkTask;
 import xiao.battleroyale.common.effect.muteki.EntityMutekiTask;
 import xiao.battleroyale.common.effect.muteki.MutekiManager;
 import xiao.battleroyale.common.effect.particle.*;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.effect.particle.ParticleDetailEntry;
@@ -30,11 +29,11 @@ import xiao.battleroyale.developer.debug.command.sub.get.GetEffect;
 import xiao.battleroyale.developer.debug.command.sub.get.GetGame;
 import xiao.battleroyale.util.ColorUtils;
 
-import static xiao.battleroyale.util.CommandUtils.*;
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static xiao.battleroyale.util.CommandUtils.*;
 
 public class EffectText {
 

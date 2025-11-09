@@ -7,9 +7,11 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
+import xiao.battleroyale.api.game.zone.IZoneManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.common.game.spawn.AbstractSimpleSpawner;
@@ -19,7 +21,6 @@ import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.detail.TeleportDetailEntry;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
-import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.StringUtils;
 
@@ -92,7 +93,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
                 success = TeleportSpawnerCalculator.calculatedDistributedPos(this, random, spawnPointsTotal, (int) (fixedSimulationCount + spawnPointsTotal * playerFactorContribution));
             }
             default -> {
-                ServerLevel serverLevel = GameManager.get().getServerLevel();
+                ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
                 if (serverLevel != null) {
                     ChatUtils.sendMessageToAllPlayers(serverLevel, "TeleportSpawner config error: unsupported detailType");
                 }
@@ -137,7 +138,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
      */
     @Override
     public void tick(int gameTime, List<GameTeam> gameTeams) {
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
         if (gameTime > this.hangTime) {
             this.finished = true;
             BattleRoyale.LOGGER.warn("GroundSpawner reached maximum spawn attempt time, force finished");
@@ -148,13 +149,15 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
         }
 
         // 由于所有点位在init()预计算，因此全部可视作 Fixed/提前确定 类型，全都需要应用偏移
-        Vec3 globalOffest = GameManager.get().getGlobalCenterOffset();
-        IGameZone gameZone = ZoneManager.get().getGameZone(preZoneCenterId);
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        Vec3 globalOffest = gameManager.getGlobalCenterOffset();
+        IZoneManager zoneManager = gameManager.getZoneManager();
+        IGameZone gameZone = zoneManager.getGameZone(preZoneCenterId);
         if (gameZone != null) {
             if (gameZone.isDetermined()) {
                 globalOffest = gameZone.getStartCenterPos();
             } else if (gameZone.getZoneDelay() <= gameTime) {
-                ZoneManager.ZoneContext zoneContext = ZoneManager.get().getZoneContextInGame();
+                ZoneManager.ZoneContext zoneContext = zoneManager.getZoneContextInGame();
                 if (zoneContext != null) {
                     BattleRoyale.LOGGER.debug("TeleportSpawner: attempt to calculate zone shape in advance (preZoneCenterId: {})", preZoneCenterId);
                     gameZone.calculateShape(zoneContext);

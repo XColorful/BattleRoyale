@@ -1,7 +1,7 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
 import net.minecraft.world.entity.LivingEntity;
-import xiao.battleroyale.common.game.stats.StatsManager;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
@@ -27,7 +27,7 @@ public class UnsafeFunc extends AbstractDamageFunc {
                         entity.hurt(ModDamageTypes.unsafeZone(zoneTickContext.serverLevel), this.damage);
                     }
                 } else {
-                    StatsManager.get().onRecordDamage(gamePlayer, ModDamageTypes.unsafeZone(zoneTickContext.serverLevel), (float) this.damage);
+                    BattleRoyale.getGameManager().getStatsManager().onRecordDamage(gamePlayer, ModDamageTypes.unsafeZone(zoneTickContext.serverLevel), (float) this.damage);
                 }
             }
         }

@@ -12,7 +12,7 @@ public class ModCreativeTabs {
             BattleRoyale.getRegistrarFactory().createCreativeTabs(BattleRoyale.MOD_ID);
 
     public static final IRegistryObject<CreativeModeTab> BLOCK_TAB = TABS.register("block", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.tab.battleroyale.block"))
+            .title(Component.translatable("itemGroup.tab.battleroyale"))
             .icon(() -> new ItemStack(ModBlocks.ZONE_CONTROLLER.get()))
             .displayItems(((itemDisplayParameters, output) -> {
                 output.accept(ModItems.LOOT_SPAWNER_ITEM.get());

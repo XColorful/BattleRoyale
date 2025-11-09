@@ -6,8 +6,8 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import xiao.battleroyale.api.event.EventType;
-import xiao.battleroyale.compat.forge.event.ForgeEvent;
 import xiao.battleroyale.compat.forge.event.ForgeClientTickEvent;
+import xiao.battleroyale.compat.forge.event.ForgeEvent;
 
 public class ClientTickNormal extends AbstractEventCommon {
 

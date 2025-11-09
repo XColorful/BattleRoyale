@@ -11,12 +11,11 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.ILivingDamageEvent;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
+import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.stats.game.SimpleRecord;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
@@ -32,7 +31,7 @@ import java.util.*;
 
 import static xiao.battleroyale.data.AbstractDataManager.MOD_DATA_PATH;
 
-public class StatsManager extends AbstractGameManager {
+public class StatsManager extends AbstractGameManager implements IStatsManager {
 
     private static class StatsManagerHolder {
         private static final StatsManager INSTANCE = new StatsManager();
@@ -42,44 +41,48 @@ public class StatsManager extends AbstractGameManager {
         return StatsManagerHolder.INSTANCE;
     }
 
-    private StatsManager() {}
+    protected StatsManager() {}
 
     public static void init(McSide mcSide) {
         ;
     }
 
+    @Override public String getManagerName() {
+        return String.format("%s:StatsManager", BattleRoyale.MOD_ID);
+    }
+
     public static final String STATS_SUB_PATH = "stats";
     public static final String STATS_PATH = Paths.get(MOD_DATA_PATH).resolve(STATS_SUB_PATH).toString();
-    private static final String STATS_TAG = "stats";
-    private static final String GAME_TAG = "game";
-    private static final String GAMERULE_TAG = "gamerule";
-    private static final String SPAWN_TAG = "spawn";
-    private static final String ZONE_TAG = "zone";
-    private static final String TIMELINE_TAG = "timeline";
-    private static final String RANK_TAG = "rank";
-    private static final String DETAIL_TAG = "detail";
+    protected static final String STATS_TAG = "stats";
+    protected static final String GAME_TAG = "game";
+    protected static final String GAMERULE_TAG = "gamerule";
+    protected static final String SPAWN_TAG = "spawn";
+    protected static final String ZONE_TAG = "zone";
+    protected static final String TIMELINE_TAG = "timeline";
+    protected static final String RANK_TAG = "rank";
+    protected static final String DETAIL_TAG = "detail";
 
     // player
-    private final Map<GamePlayer, GamePlayerStats> gamePlayerStats = new HashMap<>();
-    private final Map<DamageSource, DamageSourceStats> damageSourceStats = new HashMap<>();
+    protected final Map<GamePlayer, GamePlayerStats> gamePlayerStats = new HashMap<>();
+    protected final Map<DamageSource, DamageSourceStats> damageSourceStats = new HashMap<>();
     // game
-    private final SimpleRecord gameruleStats = new SimpleRecord();
-    private final Map<String, SimpleRecord> spawnStats = new TreeMap<>(); // key/singleId -> spawnRecord
-    private final Map<Integer, SimpleRecord> zoneStats = new HashMap<>(); // zoneId -> ZoneRecord
+    protected final SimpleRecord gameruleStats = new SimpleRecord();
+    protected final Map<String, SimpleRecord> spawnStats = new TreeMap<>(); // key/singleId -> spawnRecord
+    protected final Map<Integer, SimpleRecord> zoneStats = new HashMap<>(); // zoneId -> ZoneRecord
 
-    private int timeOrder = 0;
-    private int minRank = Integer.MAX_VALUE;
-    private int maxRank = Integer.MIN_VALUE;
+    protected int timeOrder = 0;
+    protected int minRank = Integer.MAX_VALUE;
+    protected int maxRank = Integer.MIN_VALUE;
     public static int DEFAULT_RANK = -1;
-    private String startSystemTime = ""; // 系统时间
-    private int totalPlayers = 0;
+    protected String startSystemTime = ""; // 系统时间
+    protected int totalPlayers = 0;
 
-    private boolean recordStats = false;
+    protected boolean recordStats = false;
     public boolean shouldRecordStats() { return recordStats; }
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
-        GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), GameManager.get().getGameruleConfigId());
+        GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), BattleRoyale.getGameManager().getGameruleConfigId());
         if (gameruleConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;
@@ -170,7 +173,7 @@ public class StatsManager extends AbstractGameManager {
         }
 
         if (damageSource.getEntity() instanceof LivingEntity attackingEntity) {
-            GamePlayer attackingGamePlayer = TeamManager.get().getGamePlayerByUUID(attackingEntity.getUUID());
+            GamePlayer attackingGamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerByUUID(attackingEntity.getUUID());
             if (attackingGamePlayer != null) {
                 return;
             }
@@ -313,11 +316,14 @@ public class StatsManager extends AbstractGameManager {
         String fileName = startSystemTime + "_" + totalPlayers + ".json";
         return Paths.get(STATS_PATH, fileName).toString();
     }
+    public String getStatsFilePath() {
+        return generateStateDirectory();
+    }
 
     /**
      * 将数据写入json
      */
-    private void saveStats() {
+    public void saveStats(String filePath) {
         // 按先排名，后游戏玩家id排序
         List<GamePlayerStats> gamePlayerStatsList = new ArrayList<>(gamePlayerStats.values());
         gamePlayerStatsList.sort(Comparator
@@ -325,12 +331,11 @@ public class StatsManager extends AbstractGameManager {
                 .thenComparingInt(s -> s.gameSingleId)
         );
 
-        String filePath = generateStateDirectory();
         JsonArray jsonArray = new JsonArray();
         addGameStats(jsonArray);
         JsonUtils.writeJsonToFile(filePath, jsonArray);
 
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
         if (serverLevel != null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.saved_game_stats");
         } else {

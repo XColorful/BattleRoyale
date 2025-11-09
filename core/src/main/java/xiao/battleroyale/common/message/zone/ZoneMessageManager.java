@@ -5,17 +5,16 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameSubManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameZoneManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.AbstractMessageManager;
 import xiao.battleroyale.network.message.ClientMessageZoneInfo;
 import xiao.battleroyale.util.SendUtils;
 
-import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 
 public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> implements IGameSubManager {
@@ -26,6 +25,16 @@ public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> impl
 
     public static ZoneMessageManager get() {
         return ZoneMessageManagerHolder.INSTANCE;
+    }
+
+    @Override public String getManagerName() {
+        return String.format("%s:ZoneMessageManager", BattleRoyale.MOD_ID);
+    }
+    @Override public boolean registerGameEventHandler() {
+        return false;
+    }
+    @Override public boolean unregisterGameEventHandler() {
+        return false;
     }
 
     @Override
@@ -44,11 +53,11 @@ public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> impl
 
     @Override
     public void notifyNbtChange(int nbtId) {
-        IGameZone gameZone = ZoneManager.get().getGameZone(nbtId);
+        IGameZone gameZone = BattleRoyale.getGameManager().getZoneManager().getGameZone(nbtId);
         if (gameZone == null) {
             addNbtMessage(nbtId, null);
         } else {
-            int gameTime = GameManager.get().getGameTime();
+            int gameTime = BattleRoyale.getGameManager().getGameTime();
             int zoneDelay = gameZone.getZoneDelay();
             double shapeProgress = gameZone.getShapeProgress(gameTime, zoneDelay);
             addNbtMessage(nbtId, gameZone.toNBT(shapeProgress));
@@ -73,7 +82,7 @@ public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> impl
     @Override
     public void initGameConfig(ServerLevel serverLevel) {}
     @Override
-    public boolean isPreparedForGame() { return true; }
+    public boolean isConfigPrepared() { return true; }
     @Override
     public void initGame(ServerLevel serverLevel) {}
     @Override

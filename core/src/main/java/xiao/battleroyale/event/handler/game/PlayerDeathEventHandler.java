@@ -3,7 +3,7 @@ package xiao.battleroyale.event.handler.game;
 import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
-import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.event.EventRegister;
@@ -54,7 +54,7 @@ public class PlayerDeathEventHandler implements IEventHandler {
         if (livingEntity == null) {
             return;
         }
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(livingEntity.getUUID());
         if (gamePlayer == null) {
             return;
@@ -67,9 +67,9 @@ public class PlayerDeathEventHandler implements IEventHandler {
 
         if (event.isCanceled()) { // 被不死图腾或PlayerRevive取消，GameManager内部检查是图腾还是倒地
             BattleRoyale.LOGGER.debug("Detected a canceled LivingDeathEvent in game");
-            gameManager.onPlayerDown(gamePlayer, livingEntity, event);
+            gameManager.onPlayerDown(event, gamePlayer, livingEntity);
         } else { // 死亡
-            gameManager.onPlayerDeath(gamePlayer, event);
+            gameManager.onPlayerDeath(event, gamePlayer);
         }
     }
 }
