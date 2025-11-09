@@ -1,6 +1,7 @@
 package xiao.battleroyale.block.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,7 +14,7 @@ import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.init.registry.ModBlocks;
 import xiao.battleroyale.init.registry.ModMenuTypes;
 import xiao.battleroyale.inventory.LootSpawnerMenu;
-import net.minecraft.core.NonNullList;
+
 import javax.annotation.Nullable;
 
 public class LootSpawnerBlockEntity extends AbstractLootContainerBlockEntity implements MenuProvider {

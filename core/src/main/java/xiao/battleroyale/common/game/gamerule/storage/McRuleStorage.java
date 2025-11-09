@@ -5,10 +5,10 @@ import net.minecraft.world.level.GameRules;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
+import xiao.battleroyale.api.game.gamerule.MinecraftEntryTag;
 import xiao.battleroyale.api.game.gamerule.storage.IRuleStorage;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
-import xiao.battleroyale.api.game.gamerule.MinecraftEntryTag;
 
 import java.util.HashMap;
 import java.util.List;

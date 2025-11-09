@@ -8,10 +8,9 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
-import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
-import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
@@ -64,7 +63,7 @@ public class DamageEventHandler implements IEventHandler {
         LivingEntity damagedEntity = event.getEntity(); // 被攻击方
         DamageSource damageSource = event.getSource(); // 攻击方
 
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
 
         GamePlayer targetGamePlayer = GameTeamManager.hasStandingGamePlayer(damagedEntity.getUUID()) ? GameTeamManager.getGamePlayerByUUID(damagedEntity.getUUID()) : null;
         if (targetGamePlayer != null && targetGamePlayer.isEliminated()) {
@@ -109,7 +108,7 @@ public class DamageEventHandler implements IEventHandler {
                 // 把不参与游戏的[ServerPlayer玩家]tp回大厅
                 if (gameEntry.teleportInterfererToLobby
                         && damageSource.getEntity() instanceof ServerPlayer) {
-                    SpawnManager.get().teleportToLobby(interfererPlayer);
+                    BattleRoyale.getGameManager().getGameLobbyManager().teleportToLobby(interfererPlayer);
                     ServerLevel serverLevel = gameManager.getServerLevel();
                     if (serverLevel != null) {
                         ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.teleport_non_game_player_to_lobby", interfererPlayer.getName().getString());
@@ -127,7 +126,7 @@ public class DamageEventHandler implements IEventHandler {
                 if (livingEntity instanceof ServerPlayer interfererPlayer) {
                     // 把不参与游戏的[ServerPlayer玩家]tp回大厅
                     if (gameEntry.teleportInterfererToLobby) {
-                        SpawnManager.get().teleportToLobby(interfererPlayer);
+                        BattleRoyale.getGameManager().getGameLobbyManager().teleportToLobby(interfererPlayer);
                         ServerLevel serverLevel = gameManager.getServerLevel();
                         if (serverLevel != null) {
                             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.teleport_non_game_player_to_lobby", interfererPlayer.getName().getString());

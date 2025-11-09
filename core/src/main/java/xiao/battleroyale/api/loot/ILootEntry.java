@@ -1,13 +1,13 @@
 package xiao.battleroyale.api.loot;
 
-import java.util.List;
-
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.sub.IConfigEntry;
 import xiao.battleroyale.common.loot.LootGenerator.LootContext;
+
+import java.util.List;
 
 public interface ILootEntry extends IConfigEntry {
 

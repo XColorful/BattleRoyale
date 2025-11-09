@@ -3,7 +3,6 @@ package xiao.battleroyale.event.handler.game;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.event.EventRegister;
 
 /**
@@ -51,7 +50,7 @@ public class LogEventHandler implements IEventHandler {
      */
     private void onPlayerLoggedIn(IPlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            GameManager.get().onPlayerLoggedIn(serverPlayer);
+            BattleRoyale.getGameManager().onPlayerLoggedIn(serverPlayer);
         }
     }
 
@@ -62,7 +61,7 @@ public class LogEventHandler implements IEventHandler {
      */
     private void onPlayerLoggedOut(IPlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            GameManager.get().onPlayerLoggedOut(serverPlayer);
+            BattleRoyale.getGameManager().onPlayerLoggedOut(serverPlayer);
         }
     }
 }

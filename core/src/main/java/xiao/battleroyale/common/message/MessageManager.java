@@ -10,7 +10,8 @@ import xiao.battleroyale.common.message.zone.ZoneMessageManager;
 import xiao.battleroyale.event.handler.message.MessageEventHandler;
 import xiao.battleroyale.util.ClassUtils;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 public class MessageManager {
 

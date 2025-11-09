@@ -4,7 +4,8 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.game.zone.*;
+import xiao.battleroyale.api.game.zone.IZoneSingleEntry;
+import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.api.game.zone.func.IZoneFuncEntry;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
@@ -22,7 +23,7 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Comparator;
 
 public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManager.ZoneConfig> {
 

@@ -1,8 +1,8 @@
 package xiao.battleroyale.compat.forge.event.events;
 
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import xiao.battleroyale.api.event.EventType;

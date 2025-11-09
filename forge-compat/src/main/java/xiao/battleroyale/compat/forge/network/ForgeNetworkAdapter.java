@@ -3,9 +3,9 @@ package xiao.battleroyale.compat.forge.network;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.*;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.network.message.IMessage;
 import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.MessageDirection;
+import xiao.battleroyale.api.network.message.IMessage;
 import xiao.battleroyale.compat.forge.BattleRoyaleForge;
 import xiao.battleroyale.network.NetworkHandler;
 

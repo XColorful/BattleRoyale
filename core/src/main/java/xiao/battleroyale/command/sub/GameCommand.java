@@ -4,19 +4,17 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameNotification;
-import xiao.battleroyale.common.game.spawn.SpawnManager;
-import xiao.battleroyale.common.game.team.TeamManager;
 
 import static xiao.battleroyale.command.CommandArg.*;
 import static xiao.battleroyale.util.StringUtils.buildCommandString;
@@ -63,7 +61,7 @@ public class GameCommand {
     private static int loadGameConfig(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         ServerLevel serverLevel = source.getLevel();
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
 
         if (gameManager.isInGame()) {
             source.sendFailure(Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
@@ -71,7 +69,7 @@ public class GameCommand {
         }
 
         gameManager.initGameConfig(serverLevel);
-        if (gameManager.isPreparedForGame()) {
+        if (gameManager.isConfigPrepared()) {
             source.sendSuccess(() -> Component.translatable("battleroyale.message.load_game_configs").withStyle(ChatFormatting.GREEN), false);
             BattleRoyale.LOGGER.info("Game config loaded via command.");
             return Command.SINGLE_SUCCESS;
@@ -85,7 +83,7 @@ public class GameCommand {
     public static int initGame(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         ServerLevel serverLevel = source.getLevel();
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
 
         if (gameManager.isInGame()) {
             source.sendFailure(Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
@@ -97,7 +95,7 @@ public class GameCommand {
             source.sendSuccess(() -> Component.translatable("battleroyale.message.game_init").withStyle(ChatFormatting.GREEN), false);
             BattleRoyale.LOGGER.info("Game initialized via command.");
             return Command.SINGLE_SUCCESS;
-        } else if (!gameManager.isPreparedForGame()) {
+        } else if (!gameManager.isConfigPrepared()) {
             source.sendFailure(Component.translatable("battleroyale.message.game_not_prepared").withStyle(ChatFormatting.YELLOW));
         } else {
             source.sendFailure(Component.translatable("battleroyale.message.game_init_fail").withStyle(ChatFormatting.RED));
@@ -109,7 +107,7 @@ public class GameCommand {
     public static int startGame(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         ServerLevel serverLevel = source.getLevel();
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
 
         if (gameManager.isInGame()) {
             source.sendFailure(Component.translatable("battleroyale.message.game_already_started").withStyle(ChatFormatting.RED));
@@ -130,7 +128,7 @@ public class GameCommand {
     public static int stopGame(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         ServerLevel serverLevel = source.getLevel();
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
 
         if (!gameManager.isInGame()) {
             source.sendFailure(Component.translatable("battleroyale.message.no_game_in_progress").withStyle(ChatFormatting.YELLOW));
@@ -147,10 +145,10 @@ public class GameCommand {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) { // 向调用的玩家发送消息
             ServerPlayer player = context.getSource().getPlayerOrException();
-            SpawnManager.get().sendLobbyInfo(player);
+            BattleRoyale.getGameManager().getGameLobbyManager().sendLobbyInfo(player);
         } else { // 向全体玩家发送消息
             ServerLevel serverLevel = source.getLevel();
-            SpawnManager.get().sendLobbyInfo(serverLevel);
+            BattleRoyale.getGameManager().getGameLobbyManager().sendLobbyInfo(serverLevel);
         }
 
         return Command.SINGLE_SUCCESS;
@@ -160,7 +158,7 @@ public class GameCommand {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) {
             ServerPlayer player = context.getSource().getPlayerOrException();
-            TeamManager.get().teleportToLobby(player); // TeamManager 先处理游戏相关逻辑，再调用传送
+            BattleRoyale.getGameManager().getGameProcessManager().teleportToLobbyInGame(player); // TeamManager 先处理游戏相关逻辑，再调用传送
             return Command.SINGLE_SUCCESS;
         } else {
             return 0;
@@ -170,7 +168,8 @@ public class GameCommand {
     private static int globalOffset(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         Vec3 offset = Vec3Argument.getVec3(context, XYZ);
-        if (GameManager.get().setGlobalCenterOffset(offset)) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.setGlobalCenterOffset(offset)) {
             if (source.isPlayer()) {
                 source.sendSuccess(() -> Component.translatable("battleroyale.message.set_global_offset", String.format("%.2f", offset.x), String.format("%.2f", offset.y), String.format("%.2f", offset.z)).withStyle(ChatFormatting.GREEN), false);
             }
@@ -182,7 +181,8 @@ public class GameCommand {
         }
     }
     private static int getGlobalOffset(CommandContext<CommandSourceStack> context) {
-        Vec3 offset = GameManager.get().getGlobalCenterOffset();
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        Vec3 offset = gameManager.getGlobalCenterOffset();
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) {
             source.sendSuccess(() -> Component.translatable("battleroyale.message.check_global_offset", offset.x, offset.y, offset.z).withStyle(ChatFormatting.GREEN), false);
@@ -200,10 +200,10 @@ public class GameCommand {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) { // 向调用的玩家发送消息
             ServerPlayer player = context.getSource().getPlayerOrException();
-            GameNotification.sendSelectedConfigsInfo(player);
+            GameNotification.sendSelectedConfigsInfo(BattleRoyale.getGameManager(), player);
         } else { // 向全体玩家发送消息
             ServerLevel serverLevel = source.getLevel();
-            GameNotification.sendSelectedConfigsInfo(serverLevel);
+            GameNotification.sendSelectedConfigsInfo(BattleRoyale.getGameManager(), serverLevel);
         }
 
         return Command.SINGLE_SUCCESS;
@@ -213,7 +213,7 @@ public class GameCommand {
         CommandSourceStack source = context.getSource();
         ServerPlayer player = source.getPlayerOrException();
 
-        if (GameManager.get().spectateGame(player)) {
+        if (BattleRoyale.getGameManager().spectateGame(player)) {
             source.sendSuccess(() -> Component.translatable("battleroyale.message.switch_gamemode_success"), false);
             return Command.SINGLE_SUCCESS;
         } else {
@@ -226,10 +226,10 @@ public class GameCommand {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) { // 向调用的玩家发送消息
             ServerPlayer player = context.getSource().getPlayerOrException();
-            GameNotification.sendGameIdInfo(player);
+            GameNotification.sendGameIdInfo(BattleRoyale.getGameManager(), player);
         } else {
             ServerLevel serverLevel = source.getLevel();
-            GameNotification.sendGameIdInfo(serverLevel);
+            GameNotification.sendGameIdInfo(BattleRoyale.getGameManager(), serverLevel);
         }
         return Command.SINGLE_SUCCESS;
     }

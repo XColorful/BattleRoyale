@@ -24,7 +24,6 @@ import xiao.battleroyale.api.loot.entity.IEntityLootData;
 import xiao.battleroyale.api.loot.item.IItemLootData;
 import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
 import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 
@@ -56,9 +55,6 @@ public class LootGenerator {
         HAS_BLOCK_FILTER = blockFilter.hasFilter();
     }
 
-    private static final IGameIdReadApi gameIdReadApi = GameManager.get().getGameIdReadApi();
-    private static final IGameIdWriteApi gameIdWriteApi = GameManager.get().getGameIdWriteApi();
-
     /**
      * 根据物资刷新配置生成
      * @param lootContext 物资刷新环境
@@ -72,6 +68,7 @@ public class LootGenerator {
             return lootItems;
         }
 
+        IGameIdWriteApi gameIdWriteApi = BattleRoyale.getGameManager().getGameIdWriteApi();
         for (ILootData data : lootData) {
             if (data.getDataType() == LootDataType.ITEM) {
                 IItemLootData itemData = (IItemLootData) data;
@@ -94,6 +91,7 @@ public class LootGenerator {
             return lootEntities;
         }
 
+        IGameIdWriteApi gameIdWriteApi = BattleRoyale.getGameManager().getGameIdWriteApi();
         for (ILootData data : lootData) {
             if (data.getDataType() == LootDataType.ENTITY) {
                 IEntityLootData entityLootData = (IEntityLootData) data;
@@ -131,6 +129,7 @@ public class LootGenerator {
             if (CLEAR_PREVIOUS_CONTENT) {
                 container.clearContent();
             }
+            IGameIdWriteApi gameIdWriteApi = BattleRoyale.getGameManager().getGameIdWriteApi();
             for (int i = 0; i < lootData.size() && i < container.getContainerSize(); i++) {
                 ILootData data = lootData.get(i);
                 if (data.getDataType() == LootDataType.ITEM) {
@@ -166,6 +165,7 @@ public class LootGenerator {
         int range = entityData.getRange();
         int attempts = entityData.getAttempts();
         int generatedCount = 0;
+        IGameIdWriteApi gameIdWriteApi = BattleRoyale.getGameManager().getGameIdWriteApi();
         for (int j = 0; j < count; j++) {
             Entity entity = entityData.getEntity(lootContext.serverLevel); // 每次getEntity会自动绑定新UUID
             if (entity == null) {
@@ -201,6 +201,7 @@ public class LootGenerator {
         if (CLEAR_PREVIOUS_CONTENT) {
             container.clearContent();
         }
+        IGameIdWriteApi gameIdWriteApi = BattleRoyale.getGameManager().getGameIdWriteApi();
         for (int i = 0; i < lootData.size() && i < container.getContainerSize(); i++) {
             ILootData data = lootData.get(i);
             if (data.getDataType() == LootDataType.ITEM) {
@@ -264,11 +265,11 @@ public class LootGenerator {
                     (HAS_BLOCK_FILTER && !blockFilter.shouldLoot(blockEntity))) {
                 return false;
             }
-            UUID blockGameId = gameIdReadApi.getGameId(blockEntity);
+            UUID blockGameId = BattleRoyale.getGameManager().getGameIdReadApi().getGameId(blockEntity);
             if (blockGameId == null || !blockGameId.equals(lootContext.gameId)) {
                 ILootEntry entry = config.entry;
                 generateVanillaLoot(lootContext, blockEntity, entry);
-                gameIdWriteApi.addGameId(blockEntity, lootContext.gameId);
+                BattleRoyale.getGameManager().getGameIdWriteApi().addGameId(blockEntity, lootContext.gameId);
                 // blockEntity.setChanged(); // addGameId内部已经标记
                 return true;
             }
@@ -304,7 +305,7 @@ public class LootGenerator {
         List<Entity> allEntitiesInChunk = lootContext.serverLevel.getEntitiesOfClass(Entity.class, chunkAABB, entity -> !(entity instanceof Player));
         List<Entity> oldEntities = new ArrayList<>();
         List<Entity> innocentEntities = new ArrayList<>();
-
+        IGameIdReadApi gameIdReadApi = BattleRoyale.getGameManager().getGameIdReadApi();;
         for (Entity entity : allEntitiesInChunk) {
             UUID entityGameId = gameIdReadApi.getGameId(entity);
             if (entityGameId != null) {

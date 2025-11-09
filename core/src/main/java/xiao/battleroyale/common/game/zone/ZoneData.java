@@ -1,7 +1,6 @@
 package xiao.battleroyale.common.game.zone;
 
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game.AbstractGameManagerData;
 import xiao.battleroyale.util.ClassUtils;
