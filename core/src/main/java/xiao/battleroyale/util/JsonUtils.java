@@ -1,7 +1,6 @@
 package xiao.battleroyale.util;
 
 import com.google.gson.*;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;

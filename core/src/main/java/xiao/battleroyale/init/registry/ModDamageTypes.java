@@ -7,8 +7,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import xiao.battleroyale.BattleRoyale;
 
-import java.util.Objects;
-
 public class ModDamageTypes {
 
     public static final ResourceKey<DamageType> SAFE_ZONE_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:safezone", BattleRoyale.MOD_ID)));

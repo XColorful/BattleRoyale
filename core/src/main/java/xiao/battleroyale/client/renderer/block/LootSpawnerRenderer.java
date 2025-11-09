@@ -7,7 +7,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3f;
-import xiao.battleroyale.block.AbstractLootBlock;
 import xiao.battleroyale.block.LootSpawner;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 

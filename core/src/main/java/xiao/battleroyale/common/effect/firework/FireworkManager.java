@@ -2,8 +2,6 @@ package xiao.battleroyale.common.effect.firework;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -16,7 +14,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.effect.IEffectManager;
 import xiao.battleroyale.event.handler.effect.FireworkEventHandler;
-import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.Vec3Utils;
 
 import java.util.ArrayList;
