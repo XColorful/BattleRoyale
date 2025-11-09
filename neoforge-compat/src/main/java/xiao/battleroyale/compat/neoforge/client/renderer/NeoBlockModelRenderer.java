@@ -9,7 +9,6 @@ import net.minecraft.world.level.EmptyBlockAndTintGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
-
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 
 public class NeoBlockModelRenderer implements IBlockModelRenderer {

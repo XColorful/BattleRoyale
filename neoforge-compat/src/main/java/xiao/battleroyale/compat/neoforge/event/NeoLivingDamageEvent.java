@@ -3,7 +3,6 @@ package xiao.battleroyale.compat.neoforge.event;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.event.ILivingDamageEvent;
