@@ -1,4 +1,4 @@
-package xiao.battleroyale.client.renderer.game;
+package xiao.battleroyale.client.renderer.game.level;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -11,7 +11,7 @@ import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
 import xiao.battleroyale.api.client.event.RenderLevelStage;
-import xiao.battleroyale.client.game.ClientGameDataManager;
+import xiao.battleroyale.api.client.render.game.level.IClientTeamRenderer;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
 import xiao.battleroyale.client.renderer.CustomRenderType;
@@ -19,7 +19,7 @@ import xiao.battleroyale.util.ColorUtils;
 
 import java.awt.*;
 
-public class TeamMemberRenderer {
+public class TeamMemberRenderer implements IClientTeamRenderer {
 
     private static class TeamMemberRendererHolder {
         private static final TeamMemberRenderer INSTANCE = new TeamMemberRenderer();
@@ -33,26 +33,30 @@ public class TeamMemberRenderer {
 
     private static final RenderType TEAM_MARKER_RENDER_TYPE = CustomRenderType.SolidTranslucentColor;
 
-    private static boolean enableTeamZone = true;
-    public static void setEnableTeamZone(boolean bool) { enableTeamZone = bool; }
-    private static boolean useClientColor = false;
-    public static void setUseClientColor(boolean use) { useClientColor = use; }
-    private static float R = 0f;
-    private static float G = 1f;
-    private static float B = 1f;
-    public static void setClientColorString(String colorString) {
+    private boolean enableTeamZone = true;
+    public void setEnableTeamZone(boolean bool) { enableTeamZone = bool; }
+    private boolean useClientColor = false;
+    public void setUseClientColor(boolean use) { useClientColor = use; }
+    private float R = 0f;
+    private float G = 1f;
+    private float B = 1f;
+    public void setClientColorString(String colorString) {
         Color color = ColorUtils.parseColorFromString(colorString);
         R = color.getRed() / 255.0F;
         G = color.getGreen() / 255.0F;
         B = color.getBlue() / 255.0F;
         BattleRoyale.LOGGER.debug("TeamZoneRender {} R{} G{} B{}", colorString, R, G, B);
     }
-    private static boolean renderBeacon = true;
-    public static void setRenderBeacon(boolean bool) { renderBeacon = bool; }
-    private static boolean renderBoundingBox = true;
-    public static void setRenderBoundingBox(boolean bool) { renderBoundingBox = bool; }
-    private static float A = 0.5f;
-    public static void setTransparency(float a) { A = a; }
+    private boolean renderBeacon = true;
+    public void setRenderBeacon(boolean bool) { renderBeacon = bool; }
+    private boolean renderBoundingBox = true;
+    public void setRenderBoundingBox(boolean bool) { renderBoundingBox = bool; }
+    private float A = 0.5f;
+    public void setTransparency(float a) { A = a; }
+
+    public String getRendererName() {
+        return String.format("%s:TeamMemberRenderer", BattleRoyale.MOD_ID);
+    }
 
     public void onRenderLevelStage(IRenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStage.AFTER_TRANSLUCENT_BLOCKS) {
@@ -71,7 +75,7 @@ public class TeamMemberRenderer {
             return;
         }
 
-        ClientTeamData teamData = ClientGameDataManager.get().getTeamData();
+        ClientTeamData teamData = BattleRoyale.getClientGameDataManager().getTeamData();
         if (!teamData.inTeam() || teamData.teamMemberInfoList.isEmpty()) {
             return;
         }

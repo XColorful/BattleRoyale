@@ -1,15 +1,16 @@
-package xiao.battleroyale.client.renderer.game;
+package xiao.battleroyale.client.renderer.game.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderGuiEventPost;
-import xiao.battleroyale.client.game.ClientGameDataManager;
+import xiao.battleroyale.api.client.render.game.gui.IClientGameInfoRenderer;
 import xiao.battleroyale.client.game.data.ClientGameData;
 import xiao.battleroyale.util.ColorUtils;
 
-public class GameInfoRenderer {
+public class GameInfoRenderer implements IClientGameInfoRenderer {
 
     private static class GameInfoRendererHolder {
         private static final GameInfoRenderer INSTANCE = new GameInfoRenderer();
@@ -21,18 +22,22 @@ public class GameInfoRenderer {
 
     private GameInfoRenderer() {}
 
-    private static boolean displayAlive = true;
-    public static void setDisplayAlive(boolean shouldDisplay) { displayAlive = shouldDisplay;}
+    private boolean displayAlive = true;
+    public void setDisplayAlive(boolean shouldDisplay) { displayAlive = shouldDisplay;}
 
-    private static double alive_xRatio = 0.85;
-    public static void setAliveXRatio(double ratio) { alive_xRatio = ratio; }
-    private static double alive_yRatio = 0.9;
-    public static void setAliveYRatio(double ratio) { alive_yRatio = ratio; }
+    private double alive_xRatio = 0.85;
+    public void setAliveXRatio(double ratio) { alive_xRatio = ratio; }
+    private double alive_yRatio = 0.9;
+    public void setAliveYRatio(double ratio) { alive_yRatio = ratio; }
 
-    private static int ALIVE_COLOR = ColorUtils.parseColorToInt("#FFFFFFFF");
-    public static void setAliveColor(String colorString) { ALIVE_COLOR = ColorUtils.parseColorToInt(colorString); }
-    private static int ALIVE_COUNT_COLOR = ColorUtils.parseColorToInt("#00FFFFFF");
-    public static void setAliveCountColor(String colorString) { ALIVE_COUNT_COLOR = ColorUtils.parseColorToInt(colorString); }
+    private int ALIVE_COLOR = ColorUtils.parseColorToInt("#FFFFFFFF");
+    public void setAliveColor(String colorString) { ALIVE_COLOR = ColorUtils.parseColorToInt(colorString); }
+    private int ALIVE_COUNT_COLOR = ColorUtils.parseColorToInt("#00FFFFFF");
+    public void setAliveCountColor(String colorString) { ALIVE_COUNT_COLOR = ColorUtils.parseColorToInt(colorString); }
+
+    public String getRendererName() {
+        return String.format("%s:GameInfoRenderer", BattleRoyale.MOD_ID);
+    }
 
     /*
     右上角
@@ -53,7 +58,7 @@ public class GameInfoRenderer {
         int posY = (int) (screenHeight * (0.5 - alive_yRatio / 2)); // 让配置项符合不旋转的直角坐标系
 
         // 生存: {人数}
-        ClientGameData gameData = ClientGameDataManager.get().getGameData();
+        ClientGameData gameData = BattleRoyale.getClientGameDataManager().getGameData();
         if (gameData.inGame()) {
             renderAliveTotal(posX, posY, gameData.standingPlayerCount(), guiGraphics, fontRenderer);
         }
