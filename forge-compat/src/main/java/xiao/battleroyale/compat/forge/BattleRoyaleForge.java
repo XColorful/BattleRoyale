@@ -15,7 +15,6 @@ import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.INetworkHook;
 import xiao.battleroyale.compat.forge.client.renderer.ForgeBlockModelRenderer;
 import xiao.battleroyale.compat.forge.compat.journeymap.JmApi;
-import xiao.battleroyale.compat.forge.event.ForgeEventPoster;
 import xiao.battleroyale.compat.forge.event.ForgeEventRegister;
 import xiao.battleroyale.compat.forge.init.registry.ForgeRegistrarFactory;
 import xiao.battleroyale.compat.forge.minecraft.ForgeRegistry;
