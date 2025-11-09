@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
-import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.config.client.ClientConfigManager;
 import xiao.battleroyale.config.client.display.DisplayConfigManager;
 import xiao.battleroyale.config.client.render.RenderConfigManager;
@@ -499,9 +499,10 @@ public class ConfigCommand {
 
     private static int setBotConfigId(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, ID);
-        if (GameManager.get().setBotConfigId(id)) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.setBotConfigId(id)) {
             BattleRoyale.LOGGER.info("Set bot config ID to {} via command", id);
-            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.bot_config_id_set", id, GameManager.get().getBotConfigName(id)), true);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.bot_config_id_set", id, gameManager.getBotConfigName(id)), true);
             return Command.SINGLE_SUCCESS;
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.invalid_bot_config_id", id));
@@ -539,9 +540,10 @@ public class ConfigCommand {
 
     private static int setGameruleConfigId(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, ID);
-        if (GameManager.get().setGameruleConfigId(id)) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.setGameruleConfigId(id)) {
             BattleRoyale.LOGGER.info("Set gamerule config ID to {} via command", id);
-            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.gamerule_config_id_set", id, GameManager.get().getGameruleConfigName(id)), true);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.gamerule_config_id_set", id, gameManager.getGameruleConfigName(id)), true);
             return Command.SINGLE_SUCCESS;
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.invalid_gamerule_config_id", id));
@@ -579,9 +581,10 @@ public class ConfigCommand {
 
     private static int setSpawnConfigId(CommandContext<CommandSourceStack> context) {
         int id = IntegerArgumentType.getInteger(context, ID);
-        if (GameManager.get().setSpawnConfigId(id)) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.setSpawnConfigId(id)) {
             BattleRoyale.LOGGER.info("Set spawn config ID to {} via command", id);
-            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.spawn_config_id_set", id, GameManager.get().getSpawnConfigName(id)), true);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.spawn_config_id_set", id, gameManager.getSpawnConfigName(id)), true);
             return Command.SINGLE_SUCCESS;
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.invalid_spawn_config_id", id));

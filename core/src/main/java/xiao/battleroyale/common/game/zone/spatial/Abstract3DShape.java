@@ -11,7 +11,6 @@ import xiao.battleroyale.api.game.zone.shape.end.EndRotationType;
 import xiao.battleroyale.api.game.zone.shape.start.StartCenterType;
 import xiao.battleroyale.api.game.zone.shape.start.StartDimensionType;
 import xiao.battleroyale.api.game.zone.shape.start.StartRotationType;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.GameZone;
@@ -106,7 +105,7 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
     public void calculateShape(@NotNull ZoneContext zoneContext) {
         if (!determined) {
             // GameManager全局修改，仅用在Fixed类型
-            Vec3 globalCenterOffset = GameManager.get().getGlobalCenterOffset();
+            Vec3 globalCenterOffset = BattleRoyale.getGameManager().getGlobalCenterOffset();
 
             // start center
             switch (startEntry.startCenterType) {

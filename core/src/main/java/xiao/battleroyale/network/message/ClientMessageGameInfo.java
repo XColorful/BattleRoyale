@@ -3,8 +3,8 @@ package xiao.battleroyale.network.message;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.message.IMessage;
-import xiao.battleroyale.client.game.ClientGameDataManager;
 
 import java.util.function.Consumer;
 
@@ -29,7 +29,7 @@ public class ClientMessageGameInfo implements IMessage<ClientMessageGameInfo> {
     @Override
     public void handle(ClientMessageGameInfo message, Consumer<Runnable> handler) {
         handler.accept(() -> {
-            ClientGameDataManager.get().updateGameInfo(message.gameSyncNbt);
+            BattleRoyale.getClientGameDataManager().updateGameInfo(message.gameSyncNbt);
         });
     }
 }

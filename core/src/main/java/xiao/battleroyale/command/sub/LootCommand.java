@@ -7,13 +7,14 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.loot.CommonLootManager;
 import xiao.battleroyale.data.io.TempDataManager;
 
 import java.util.UUID;
 
-import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.command.CommandArg.GENERATE;
+import static xiao.battleroyale.command.CommandArg.LOOT;
 
 public class LootCommand {
 
@@ -27,12 +28,13 @@ public class LootCommand {
 
     public static int generateAllLoadedLoot(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
-        if (!GameManager.get().isInGame()) {
-            GameManager.get().setGameId(UUID.randomUUID());
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (!gameManager.isInGame()) {
+            gameManager.setGameId(UUID.randomUUID());
             BattleRoyale.LOGGER.info("Generated random UUID for GameManager via command");
             TempDataManager.get().saveTempData();
         }
-        UUID currentWorldGameId = GameManager.get().getGameId();
+        UUID currentWorldGameId = gameManager.getGameId();
 
         int totalChunks = CommonLootManager.get().startGenerationTask(source, currentWorldGameId);
 

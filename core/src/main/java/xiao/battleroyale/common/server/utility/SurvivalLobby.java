@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.utilitity.ILobbyReadApi;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
@@ -90,7 +89,7 @@ public class SurvivalLobby implements ILobbyReadApi {
 
         if (dropInventory) {
             if (dropGameItemOnly) {
-                IGameIdReadApi gameIdReadApi = GameManager.get().getGameIdReadApi();
+                IGameIdReadApi gameIdReadApi = BattleRoyale.getGameManager().getGameIdReadApi();
                 Inventory inventory = player.getInventory();
                 int keepCount = 0;
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
@@ -114,7 +113,7 @@ public class SurvivalLobby implements ILobbyReadApi {
 
         if (clearInventory) {
             if (clearGameItemOnly) { // 仅清理带GameId的物品
-                IGameIdReadApi gameIdReadApi = GameManager.get().getGameIdReadApi();
+                IGameIdReadApi gameIdReadApi = BattleRoyale.getGameManager().getGameIdReadApi();
                 Inventory inventory = player.getInventory();
                 int keepCount = 0;
                 for (int i = 0; i < inventory.getContainerSize(); i++) {

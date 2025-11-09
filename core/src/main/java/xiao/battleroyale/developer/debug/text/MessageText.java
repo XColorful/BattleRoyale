@@ -4,9 +4,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.*;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.client.game.IClientGameDataManager;
 import xiao.battleroyale.api.network.message.team.GameTeamTag;
 import xiao.battleroyale.api.network.message.zone.GameZoneTag;
-import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
@@ -48,7 +48,7 @@ public class MessageText {
 
         return component;
     }
-    public static MutableComponent buildMessagesSimpleLocal(ClientGameDataManager clientGameDataManager) {
+    public static MutableComponent buildMessagesSimpleLocal(IClientGameDataManager clientGameDataManager) {
         MutableComponent component = Component.empty();
 
         component.append(buildZoneMessagesSimpleLocal(clientGameDataManager))
@@ -83,22 +83,22 @@ public class MessageText {
                 .append(buildRunnableIntBracketWithColor(messageSize, command, messageSize > 0 ? ChatFormatting.GRAY : ChatFormatting.DARK_GRAY))
                 .append(Component.literal(displayName).withStyle(messageSize > 0 ? ChatFormatting.GRAY : ChatFormatting.DARK_GRAY));
     }
-    public static MutableComponent buildZoneMessagesSimpleLocal(ClientGameDataManager clientGameDataManager) {
+    public static MutableComponent buildZoneMessagesSimpleLocal(IClientGameDataManager clientGameDataManager) {
         int size = clientGameDataManager.getActiveZones().size();
         String command = GetMessage.getLocalZoneMessagesCommand(0, 10);
         return buildMessagesCommonSimpleLocal(size, command, "ZoneMessages");
     }
-    public static MutableComponent buildTeamMessagesSimpleLocal(ClientGameDataManager clientGameDataManager) {
+    public static MutableComponent buildTeamMessagesSimpleLocal(IClientGameDataManager clientGameDataManager) {
         int size = clientGameDataManager.getTeamData().teamMemberInfoList.size(); // 单队信息
         String command = GetMessage.getLocalTeamMessagesCommand(0, 100); // 队内玩家singleId范围
         return buildMessagesCommonSimpleLocal(size, command, "TeamMembers");
     }
-    public static MutableComponent buildGameMessagesSimpleLocal(ClientGameDataManager clientGameDataManager) {
+    public static MutableComponent buildGameMessagesSimpleLocal(IClientGameDataManager clientGameDataManager) {
         int size = clientGameDataManager.getGameData().lastMessageNbt.keySet().size();
         String command = GetMessage.getLocalGameMessagesCommand(-10, 0);
         return buildMessagesCommonSimpleLocal(size, command, "GameMessages");
     }
-    public static MutableComponent buildSpectateMessagesSimpleLocal(ClientGameDataManager clientGameDataManager) {
+    public static MutableComponent buildSpectateMessagesSimpleLocal(IClientGameDataManager clientGameDataManager) {
         int size = clientGameDataManager.getGameData().getSpectateData().lastMessageNbt.keySet().size();
         String command = GetMessage.getLocalSpectateMessagesCommand(-10, 0);
         return buildMessagesCommonSimpleLocal(size, command, "SpectateMessages");
@@ -333,7 +333,7 @@ public class MessageText {
     public static MutableComponent buildZoneMessagesDetailLocal(List<ClientSingleZoneData> zoneData) {
         MutableComponent component = Component.empty();
 
-        component.append(buildHoverableText("zoneExpireTick", String.valueOf(ClientGameDataManager.ZONE_EXPIRE_TICK)));
+        component.append(buildHoverableText("zoneExpireTick", String.valueOf(BattleRoyale.getClientGameDataManager().getZoneExpireTick())));
         for (ClientSingleZoneData data : zoneData) {
             component.append(Component.literal(" "))
                     .append(buildZoneMessageSimpleLocal(data));
@@ -363,7 +363,7 @@ public class MessageText {
         // clientTeamData含队伍信息
         // teamMemberInfoList是过滤后的列表
 
-        component.append(buildHoverableText("teamExpireTick", String.valueOf(ClientGameDataManager.TEAM_EXPIRE_TICK)));
+        component.append(buildHoverableText("teamExpireTick", String.valueOf(BattleRoyale.getClientGameDataManager().getTeamExpireTick())));
         TextColor textColor = TextColor.fromRgb(clientTeamData.teamColor.getRGB());
         for (TeamMemberInfo memberInfo : teamMemberInfoList) {
             // [teamId][singleId]Name
@@ -394,7 +394,7 @@ public class MessageText {
     public static MutableComponent buildGameMessagesDetailLocal(List<String> keyList) { // 输入keyList已经保证key均能转换整数
         MutableComponent component = Component.empty();
 
-        component.append(buildHoverableText("gameExpireTick", String.valueOf(ClientGameDataManager.GAME_EXPIRE_TICK)));
+        component.append(buildHoverableText("gameExpireTick", String.valueOf(BattleRoyale.getClientGameDataManager().getGameExpireTick())));
         for (String key : keyList) {
             int nbtId;
             try {
@@ -429,7 +429,7 @@ public class MessageText {
     public static MutableComponent buildSpectateMessagesDetailLocal(List<String> keyList) { // 输入keyList已经保证key均能转换整数
         MutableComponent component = Component.empty();
 
-        component.append(buildHoverableText("gameExpireTick", String.valueOf(ClientGameDataManager.GAME_EXPIRE_TICK)));
+        component.append(buildHoverableText("gameExpireTick", String.valueOf(BattleRoyale.getClientGameDataManager().getGameExpireTick())));
         for (String key : keyList) {
             int nbtId;
             try {

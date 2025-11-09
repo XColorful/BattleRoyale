@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.event.game.zone.AirdropEvent;
-import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.common.loot.LootGenerator;
@@ -60,17 +60,18 @@ public class AirdropFunc extends AbstractEventFunc {
 
         Vec3 zoneCenter = zoneTickContext.spatialZone.getCenterPos(zoneTickContext.progress);
         if (zoneCenter == null) zoneCenter = Vec3.ZERO;
+        IGameManager gameManager = BattleRoyale.getGameManager();
         LootContext lootContext = new LootContext(
                 zoneTickContext.serverLevel,
                 new ChunkPos(new BlockPos((int) zoneCenter.x, (int) zoneCenter.y, (int) zoneCenter.z)),
-                GameManager.get().getGameId()
+                gameManager.getGameId()
         );
 
         lastLootItems = new ArrayList<>(lootItems);
         lootItems.clear();
         lootItems.addAll(LootGenerator.generateLootItem(lootContext, airdropConfig.entry));
 
-        EventPoster.postEvent(new AirdropEvent(GameManager.get(), zoneTickContext, protocol, jsonTag,
+        EventPoster.postEvent(new AirdropEvent(gameManager, zoneTickContext, protocol, jsonTag,
                 lootItems, lastLootItems, nbt,
                 lootContext, airdropConfig.entry));
     }

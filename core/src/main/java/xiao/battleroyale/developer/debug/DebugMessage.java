@@ -2,8 +2,8 @@ package xiao.battleroyale.developer.debug;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.nbt.CompoundTag;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.message.zone.GameZoneTag;
-import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientGameData;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.client.game.data.ClientTeamData;
@@ -41,7 +41,7 @@ public class DebugMessage {
         DebugManager.sendDebugMessage(source, GET_MESSAGES, MessageText.buildMessagesSimple());
     }
     public void getMessagesLocal(CommandSourceStack source) {
-        DebugManager.sendDebugMessage(source, GET_MESSAGES, MessageText.buildMessagesSimpleLocal(ClientGameDataManager.get()));
+        DebugManager.sendDebugMessage(source, GET_MESSAGES, MessageText.buildMessagesSimpleLocal(BattleRoyale.getClientGameDataManager()));
     }
 
     /**
@@ -56,7 +56,7 @@ public class DebugMessage {
         DebugManager.sendDebugMessage(source, GET_ZONE_MESSAGES, MessageText.buildZoneMessagesDetail(ZoneMessageManager.get(), idList));
     }
     public void getZoneMessagesLocal(CommandSourceStack source, int min, int max) {
-        List<ClientSingleZoneData> zoneData = ClientGameDataManager.get().getActiveZones().entrySet().stream()
+        List<ClientSingleZoneData> zoneData = BattleRoyale.getClientGameDataManager().getActiveZones().entrySet().stream()
                 .filter(entry -> entry.getKey() >= min && entry.getKey() <= max)
                 .map(Map.Entry::getValue)
                 .sorted(Comparator.comparingInt(data -> data.id))
@@ -72,7 +72,7 @@ public class DebugMessage {
         DebugManager.sendDebugMessage(source, GET_TEAM_MESSAGES, MessageText.buildTeamMessagesDetail(TeamMessageManager.get(), idList));
     }
     public void getTeamMessagesLocal(CommandSourceStack source, int min, int max) {
-        ClientTeamData teamData = ClientGameDataManager.get().getTeamData();
+        ClientTeamData teamData = BattleRoyale.getClientGameDataManager().getTeamData();
         List<TeamMemberInfo> teamMemberInfoList = teamData.teamMemberInfoList.stream()
                 .filter(data -> data.playerId >= min && data.playerId <= max)
                 .toList();
@@ -87,7 +87,7 @@ public class DebugMessage {
         DebugManager.sendDebugMessage(source, GET_GAME_MESSAGES, MessageText.buildGameMessagesDetail(GameInfoMessageManager.get(), idList));
     }
     public void getGameMessagesLocal(CommandSourceStack source, int min, int max) {
-        CompoundTag messageNbt = ClientGameDataManager.get().getGameData().lastMessageNbt;
+        CompoundTag messageNbt = BattleRoyale.getClientGameDataManager().getGameData().lastMessageNbt;
         List<String> keyList = messageNbt.keySet().stream()
                 .filter(keyString -> {
                     try {
@@ -110,7 +110,7 @@ public class DebugMessage {
         DebugManager.sendDebugMessage(source, GET_SPECTATE_MESSAGES, MessageText.buildSpectateMessagesDetail(SpectateMessageManager.get(), idList));
     }
     public void getSpectateMessagesLocal(CommandSourceStack source, int min, int max) {
-        CompoundTag messageNbt = ClientGameDataManager.get().getGameData().getSpectateData().lastMessageNbt;
+        CompoundTag messageNbt = BattleRoyale.getClientGameDataManager().getGameData().getSpectateData().lastMessageNbt;
         List<String> keyList = messageNbt.keySet().stream()
                 .filter(keyString -> {
                     try {
@@ -133,7 +133,7 @@ public class DebugMessage {
         DebugManager.sendDebugMessage(source, GET_ZONE_MESSAGE, MessageText.buildZoneMessageDetail(ZoneMessageManager.get().getMessage(nbtId), nbtId));
     }
     public void getZoneMessageLocal(CommandSourceStack source, int nbtId) {
-        ClientSingleZoneData zoneData = ClientGameDataManager.get().getActiveZones().get(nbtId);
+        ClientSingleZoneData zoneData = BattleRoyale.getClientGameDataManager().getActiveZones().get(nbtId);
         CompoundTag lastMessageNbt = zoneData != null ? zoneData.lastMessageNbt : null;
         int lastUpdateTick = zoneData != null ? (int) zoneData.getLastUpdateTick() : Integer.MIN_VALUE;
         DebugManager.sendLocalDebugMessage(source, GET_ZONE_MESSAGE, MessageText.buildZoneMessageDetailLocal(lastMessageNbt, nbtId, lastUpdateTick));
@@ -155,7 +155,7 @@ public class DebugMessage {
         getZoneMessage(source, targetId);
     }
     public void getZoneMessageLocal(CommandSourceStack source, String name) {
-        Map<Integer, ClientSingleZoneData> clientZoneData = ClientGameDataManager.get().getActiveZones();
+        Map<Integer, ClientSingleZoneData> clientZoneData = BattleRoyale.getClientGameDataManager().getActiveZones();
         int targetId = Integer.MIN_VALUE;
         for (Map.Entry<Integer, ClientSingleZoneData> entry : clientZoneData.entrySet()) {
             if (entry.getValue().name.equals(name)) {
@@ -170,7 +170,7 @@ public class DebugMessage {
         DebugManager.sendDebugMessage(source, GET_TEAM_MESSAGE, MessageText.buildTeamMessageDetail(TeamMessageManager.get().getMessage(nbtId), nbtId));
     }
     public void getTeamMessageLocal(CommandSourceStack source, int playerId) {
-        ClientTeamData teamData = ClientGameDataManager.get().getTeamData();
+        ClientTeamData teamData = BattleRoyale.getClientGameDataManager().getTeamData();
         TeamMemberInfo teamMemberInfo = null;
         for (TeamMemberInfo memberInfo : teamData.teamMemberInfoList) {
             if (memberInfo.playerId == playerId) {
@@ -185,7 +185,7 @@ public class DebugMessage {
         DebugManager.sendDebugMessage(source, GET_GAME_MESSAGE, MessageText.buildGameMessageDetail(GameInfoMessageManager.get().getMessage(nbtId), nbtId));
     }
     public void getGameMessageLocal(CommandSourceStack source, int nbtId) {
-        ClientGameData gameData = ClientGameDataManager.get().getGameData();
+        ClientGameData gameData = BattleRoyale.getClientGameDataManager().getGameData();
         CompoundTag messageNbt = gameData.lastMessageNbt;
         CompoundTag nbt = null;
         String nbtIdString = Integer.toString(nbtId);
@@ -201,7 +201,7 @@ public class DebugMessage {
         DebugManager.sendDebugMessage(source, GET_SPECTATE_MESSAGE, MessageText.buildSpectateMessageDetail(SpectateMessageManager.get().getMessage(nbtId), nbtId));
     }
     public void getSpectateMessageLocal(CommandSourceStack source, int nbtId) {
-        ClientGameData.ClientSpectateData spectateData = ClientGameDataManager.get().getGameData().getSpectateData();
+        ClientGameData.ClientSpectateData spectateData = BattleRoyale.getClientGameDataManager().getGameData().getSpectateData();
         CompoundTag messageNbt = spectateData.lastMessageNbt;
         CompoundTag nbt = null;
         String nbtIdString = Integer.toString(nbtId);
