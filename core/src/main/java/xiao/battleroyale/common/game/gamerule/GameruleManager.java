@@ -8,8 +8,9 @@ import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.gamerule.IGameruleManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.gamerule.storage.McRuleStorage;
@@ -25,7 +26,7 @@ import xiao.battleroyale.util.GameUtils;
 
 import java.util.List;
 
-public class GameruleManager extends AbstractGameManager {
+public class GameruleManager extends AbstractGameManager implements IGameruleManager {
 
     private static class GameruleManagerHolder {
         private static final GameruleManager INSTANCE = new GameruleManager();
@@ -35,25 +36,30 @@ public class GameruleManager extends AbstractGameManager {
         return GameruleManagerHolder.INSTANCE;
     }
 
-    private GameruleManager() {}
+    protected GameruleManager() {}
 
     public static void init(McSide mcSide) {
         ;
     }
 
-    private MinecraftEntry mcEntry;
-    private final PlayerModeStorage gamemodeBackup = new PlayerModeStorage();
-    private final McRuleStorage gameruleBackup = new McRuleStorage();
+    @Override public String getManagerName() {
+        return String.format("%s:GameruleManager", BattleRoyale.MOD_ID);
+    }
 
-    private boolean autoSaturation = true;
+    protected MinecraftEntry mcEntry;
+    protected final PlayerModeStorage gamemodeBackup = new PlayerModeStorage();
+    protected final McRuleStorage gameruleBackup = new McRuleStorage();
+
+    protected boolean autoSaturation = true;
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.isInGame()) {
             return;
         }
 
-        int gameId = GameManager.get().getGameruleConfigId();
+        int gameId = gameManager.getGameruleConfigId();
         GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId);
         if (gameruleConfig == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
@@ -77,7 +83,7 @@ public class GameruleManager extends AbstractGameManager {
 
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             return;
         }
         if (!this.configPrepared) {
@@ -95,7 +101,7 @@ public class GameruleManager extends AbstractGameManager {
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             return false;
         }
 
@@ -123,7 +129,7 @@ public class GameruleManager extends AbstractGameManager {
     @Override
     public void onGameTick(int gameTime) {
         if (autoSaturation && gameTime % 200 == 0) {
-            ServerLevel serverLevel = GameManager.get().getServerLevel();
+            ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
             if (serverLevel == null) {
                 return;
             }
@@ -140,5 +146,5 @@ public class GameruleManager extends AbstractGameManager {
         }
     }
 
-    public GameType getGameMode() { return gamemodeBackup.getGameMode(); }
+    @Override public GameType getGameMode() { return gamemodeBackup.getGameMode(); }
 }

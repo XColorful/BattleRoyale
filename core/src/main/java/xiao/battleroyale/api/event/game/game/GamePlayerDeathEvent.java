@@ -10,10 +10,8 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 
 public class GamePlayerDeathEvent extends AbstractGameEvent {
 
-    protected @NotNull
-    final GamePlayer gamePlayer;
-    protected @Nullable
-    final ILivingDeathEvent livingDeathEvent;
+    protected @NotNull final GamePlayer gamePlayer;
+    protected @Nullable final ILivingDeathEvent livingDeathEvent;
 
 
     public GamePlayerDeathEvent(IGameManager gameManager, @NotNull GamePlayer gamePlayer, @Nullable ILivingDeathEvent event) {

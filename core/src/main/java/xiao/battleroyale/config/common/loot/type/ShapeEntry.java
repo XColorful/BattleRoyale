@@ -4,12 +4,13 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
@@ -43,11 +44,11 @@ public class ShapeEntry extends AbstractLootEntry {
             try {
                 boolean isInRange = false;
                 if (shapeEntry != null) {
-                    ZoneManager.ZoneContext zoneContext = ZoneManager.get().getCommonZoneContext();
+                    ZoneManager.ZoneContext zoneContext = BattleRoyale.getGameManager().getZoneManager().getCommonZoneContext();
                     if (zoneContext != null && target != null) {
                         ISpatialZone spatialZone = shapeEntry.createSpatialZone();
                         spatialZone.calculateShape(zoneContext);
-                        GameManager gameManager = GameManager.get();
+                        IGameManager gameManager = BattleRoyale.getGameManager();
                         float gameTime = gameManager.getGameTime();
                         float maxGameTime = gameManager.getMaxGameTime();
                         if (spatialZone.isWithinZone(target.getBlockPos().getCenter(), gameTime / maxGameTime)) {
