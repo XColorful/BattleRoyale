@@ -9,10 +9,12 @@ import xiao.battleroyale.api.event.game.zone.ZoneCompleteEvent;
 import xiao.battleroyale.api.event.game.zone.ZoneCreatedEvent;
 import xiao.battleroyale.api.game.zone.ZoneConfigTag;
 import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
+import xiao.battleroyale.api.game.zone.gamezone.IAdditionalZone;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
+import xiao.battleroyale.api.game.zone.special.ZoneSpecialTag;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
@@ -20,6 +22,7 @@ import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
+import xiao.battleroyale.config.common.game.zone.zonespecial.ZoneSpecialType;
 import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.NBTUtils;
 import xiao.battleroyale.util.StringUtils;
@@ -63,6 +66,9 @@ public class GameZone implements IGameZone {
     protected static final String SHAPE_END_ROTATION_TYPE_TAG = SHAPE_TAG + "-" + ZoneShapeTag.END + "-" + ZoneShapeTag.ROTATION_TYPE;
     protected static final String SHAPE_HAS_BAD_SHAPE = SHAPE_TAG + "-hasBadShape";
     protected static final String SHAPE_SEGMENTS = SHAPE_TAG + "-" + ZoneShapeTag.SEGMENTS;
+    // special
+    protected static final String SPECIAL_TAG = "special";
+    protected static final String SPECIAL_TYPE_TAG = SPECIAL_TAG + "-" + ZoneSpecialTag.TYPE_NAME;
 
     public static final int FORCE_SYNC_FREQUENCY = 20 * 3; // 3秒强制通信
 
@@ -74,6 +80,7 @@ public class GameZone implements IGameZone {
     private final int zoneTime;
     private final ITickableZone tickableZone;
     private final ISpatialZone spatialZone;
+    private final @Nullable IAdditionalZone additionalZone;
 
     private boolean created = false;
     private boolean present = false;
@@ -82,7 +89,7 @@ public class GameZone implements IGameZone {
 
     // 构造函数，由 Builder 调用
     protected GameZone(int zoneId, String zoneName, String zoneColor, int preZoneDelayId, int zoneDelay, int zoneTime,
-                    ITickableZone tickableZone, ISpatialZone spatialZone) {
+                       ITickableZone tickableZone, ISpatialZone spatialZone, @Nullable IAdditionalZone additionalZone) {
         this.zoneId = zoneId;
         this.zoneName = zoneName;
         this.zoneColor = zoneColor;
@@ -91,6 +98,7 @@ public class GameZone implements IGameZone {
         this.zoneTime = zoneTime;
         this.tickableZone = tickableZone;
         this.spatialZone = spatialZone;
+        this.additionalZone = additionalZone;
     }
 
     @Override
@@ -249,6 +257,8 @@ public class GameZone implements IGameZone {
         doubleWriter.put(SHAPE_END_ROTATION_TAG, getEndRotateDegree());
         boolWriter.put(SHAPE_HAS_BAD_SHAPE, hasBadShape());
         intWriter.put(SHAPE_SEGMENTS, getSegments());
+        // special
+        stringWriter.put(SPECIAL_TYPE_TAG, getSpecialType().getName());
 
         GameStatsManager.recordZoneInt(this.zoneId, intWriter);
         GameStatsManager.recordZoneBool(this.zoneId, boolWriter);
@@ -332,4 +342,10 @@ public class GameZone implements IGameZone {
     public int getShapeMoveDelay() { return tickableZone.getShapeMoveDelay(); }
     @Override
     public int getShapeMoveTime() { return tickableZone.getShapeMoveTime(); }
+
+    // IAdditionalZone
+    @Override
+    public ZoneSpecialType getSpecialType() {
+        return additionalZone != null ? additionalZone.getSpecialType() : ZoneSpecialType.NULL;
+    }
 }
