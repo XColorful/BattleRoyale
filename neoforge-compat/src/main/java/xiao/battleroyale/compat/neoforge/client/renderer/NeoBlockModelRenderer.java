@@ -7,10 +7,8 @@ import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
-
 import net.neoforged.neoforge.client.model.data.ModelData;
-
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 
 public class NeoBlockModelRenderer implements IBlockModelRenderer {

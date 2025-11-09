@@ -1,17 +1,24 @@
 package xiao.battleroyale.compat.neoforge.event;
 
+import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.common.NeoForge;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.ICustomEventData;
 import xiao.battleroyale.api.event.IEventPoster;
 import xiao.battleroyale.compat.neoforge.event.game.finish.*;
 import xiao.battleroyale.compat.neoforge.event.game.game.*;
-import xiao.battleroyale.compat.neoforge.event.game.spawn.*;
+import xiao.battleroyale.compat.neoforge.event.game.spawn.GameLobbyTeleportEvent;
+import xiao.battleroyale.compat.neoforge.event.game.spawn.GameLobbyTeleportFinishEvent;
 import xiao.battleroyale.compat.neoforge.event.game.starter.*;
-import xiao.battleroyale.compat.neoforge.event.game.team.*;
+import xiao.battleroyale.compat.neoforge.event.game.team.InvitePlayerCompleteEvent;
+import xiao.battleroyale.compat.neoforge.event.game.team.InvitePlayerEvent;
+import xiao.battleroyale.compat.neoforge.event.game.team.RequestPlayerCompleteEvent;
+import xiao.battleroyale.compat.neoforge.event.game.team.RequestPlayerEvent;
 import xiao.battleroyale.compat.neoforge.event.game.tick.*;
-import xiao.battleroyale.compat.neoforge.event.game.zone.*;
-import net.neoforged.bus.api.Event;
+import xiao.battleroyale.compat.neoforge.event.game.zone.AirdropEvent;
+import xiao.battleroyale.compat.neoforge.event.game.zone.CustomZoneEvent;
+import xiao.battleroyale.compat.neoforge.event.game.zone.ZoneCompleteEvent;
+import xiao.battleroyale.compat.neoforge.event.game.zone.ZoneCreatedEvent;
 
 public class NeoEventPoster implements IEventPoster {
 

@@ -1,9 +1,9 @@
 package xiao.battleroyale.compat.neoforge.client.event;
 
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 import xiao.battleroyale.api.client.event.RenderLevelStage;
 import xiao.battleroyale.client.event.ClientGameEventHandler;
 import xiao.battleroyale.client.event.ClientRenderEventHandler;
