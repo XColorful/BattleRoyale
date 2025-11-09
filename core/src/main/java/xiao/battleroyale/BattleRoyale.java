@@ -66,9 +66,11 @@ public class BattleRoyale {
 
         gameManager = GameManager.get();
         modConfigManager = ModConfigManager.getApi();
-        clientGameDataManager = ClientGameDataManager.get();
-        clientGuiRenderer = ClientGuiRenderer.get();
-        clientLevelRenderer = ClientLevelRenderer.get();
+        if (mcSide.isClientSide()) {
+            clientGameDataManager = ClientGameDataManager.get();
+            clientGuiRenderer = ClientGuiRenderer.get();
+            clientLevelRenderer = ClientLevelRenderer.get();
+        }
 
         NetworkHandler.initialize(networkAdapter);
         NetworkHook.initialize(networkHook);
