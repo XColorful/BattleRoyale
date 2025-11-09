@@ -1,4 +1,4 @@
-package xiao.battleroyale.client.renderer.game;
+package xiao.battleroyale.client.renderer.game.level;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -10,11 +10,12 @@ import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
 import xiao.battleroyale.api.client.event.RenderLevelStage;
-import xiao.battleroyale.client.game.ClientGameDataManager;
+import xiao.battleroyale.api.client.game.sub.IClientZoneDataManager;
+import xiao.battleroyale.api.client.render.game.level.IClientZoneRenderer;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.client.renderer.CustomRenderType;
 
-public class ZoneRenderer {
+public class ZoneRenderer implements IClientZoneRenderer {
 
     private static class ZoneRendererHolder {
         private static final ZoneRenderer INSTANCE = new ZoneRenderer();
@@ -24,24 +25,28 @@ public class ZoneRenderer {
         return ZoneRendererHolder.INSTANCE;
     }
 
-    private ZoneRenderer() {}
+    protected ZoneRenderer() {}
 
     public static final RenderType TRANSLUCENT_ZONE = CustomRenderType.SolidTranslucentColor;
     public static final RenderType OPAQUE_ZONE = CustomRenderType.SolidOpaqueColor;
-    private static int CIRCLE_SEGMENTS = 64;
-    private static int ELLIPSE_SEGMENTS = 64;
+    private int CIRCLE_SEGMENTS = 64;
+    private int ELLIPSE_SEGMENTS = 64;
     public static final float POINTING_POLYGON_ANGLE = (float) (Math.PI / 2.0);
-    private static int SPHERE_SEGMENTS = 64;
-    private static int ELLIPSOID_SEGMENTS = 64;
+    private int SPHERE_SEGMENTS = 64;
+    private int ELLIPSOID_SEGMENTS = 64;
 
-    public static int getCircleSegments() { return CIRCLE_SEGMENTS; }
-    public static void setCircleSegments(int segments) { CIRCLE_SEGMENTS = Math.max(32, segments); }
-    public static int getEllipseSegments() { return ELLIPSE_SEGMENTS; }
-    public static void setEllipseSegments(int segments) { ELLIPSE_SEGMENTS = Math.max(32, segments); }
-    public static int getSphereSegments() { return SPHERE_SEGMENTS; }
-    public static void setSphereSegments(int segments) { SPHERE_SEGMENTS = segments; }
-    public static int getEllipsoidSegments() { return ELLIPSOID_SEGMENTS; }
-    public static void setEllipsoidSegments(int segments) { ELLIPSOID_SEGMENTS = segments; }
+    public int getCircleSegments() { return CIRCLE_SEGMENTS; }
+    public void setCircleSegments(int segments) { CIRCLE_SEGMENTS = Math.max(32, segments); }
+    public int getEllipseSegments() { return ELLIPSE_SEGMENTS; }
+    public void setEllipseSegments(int segments) { ELLIPSE_SEGMENTS = Math.max(32, segments); }
+    public int getSphereSegments() { return SPHERE_SEGMENTS; }
+    public void setSphereSegments(int segments) { SPHERE_SEGMENTS = segments; }
+    public int getEllipsoidSegments() { return ELLIPSOID_SEGMENTS; }
+    public void setEllipsoidSegments(int segments) { ELLIPSOID_SEGMENTS = segments; }
+
+    public String getRendererName() {
+        return String.format("%s:ZoneRenderer", BattleRoyale.MOD_ID);
+    }
 
     public void onRenderLevelStage(IRenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStage.AFTER_TRANSLUCENT_BLOCKS) {
@@ -51,7 +56,8 @@ public class ZoneRenderer {
     }
 
     public void onAfterTranslucentBlocks(IRenderLevelStageEvent event) {
-        if (!ClientGameDataManager.get().hasZoneRender()) {
+        IClientZoneDataManager clientZoneDataManager = BattleRoyale.getClientGameDataManager();
+        if (!clientZoneDataManager.hasClientZone()) {
             return;
         }
 
@@ -65,7 +71,7 @@ public class ZoneRenderer {
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         Vec3 cameraPos = event.getCamera_getPosition();
 
-        for (ClientSingleZoneData zoneData : ClientGameDataManager.get().getActiveZones().values()) {
+        for (ClientSingleZoneData zoneData : clientZoneDataManager.getActiveZones().values()) {
             if (zoneData == null || zoneData.center == null || zoneData.dimension == null) continue;
 
             Matrix4f currentZoneMatrix = new Matrix4f(baseModelView);

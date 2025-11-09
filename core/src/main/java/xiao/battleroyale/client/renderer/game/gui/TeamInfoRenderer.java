@@ -1,9 +1,11 @@
-package xiao.battleroyale.client.renderer.game;
+package xiao.battleroyale.client.renderer.game.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderGuiEventPost;
+import xiao.battleroyale.api.client.render.game.gui.IClientTeamInfoRenderer;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
@@ -13,7 +15,7 @@ import xiao.battleroyale.util.ColorUtils;
 import java.awt.*;
 import java.util.List;
 
-public class TeamInfoRenderer {
+public class TeamInfoRenderer implements IClientTeamInfoRenderer {
 
     private static class TeamInfoRendererHolder {
         private static final TeamInfoRenderer INSTANCE = new TeamInfoRenderer();
@@ -25,19 +27,19 @@ public class TeamInfoRenderer {
 
     private TeamInfoRenderer() {}
 
-    private static boolean displayTeam = true;
-    public static void setDisplayTeam(boolean shouldDisplay) { displayTeam = shouldDisplay; }
+    private boolean displayTeam = true;
+    public void setDisplayTeam(boolean shouldDisplay) { displayTeam = shouldDisplay; }
 
-    private static long OFFLINE_TIME_LIMIT = ClientGameDataManager.TEAM_EXPIRE_TICK / 2;
-    public static void setOfflineTimeLimit(int time) { OFFLINE_TIME_LIMIT = time; }
+    private long OFFLINE_TIME_LIMIT = ClientGameDataManager.TEAM_EXPIRE_TICK / 2;
+    public void setOfflineTimeLimit(int time) { OFFLINE_TIME_LIMIT = time; }
     public static int OFFLINE_COLOR = ColorUtils.parseColorToInt("#585858FF");
     public static int BLEEDING_COLOR = ColorUtils.parseColorToInt("#FF0000FF");
     public static int HEALTH_BACKGROUND_COLOR = ColorUtils.parseColorToInt("#777777FF");
 
-    private static double xRatio = -0.9;
-    public static void setXRatio(double ratio) { xRatio = ratio; }
-    private static double yRatio = -0.9;
-    public static void setYRatio(double ratio) { yRatio = ratio; }
+    private double xRatio = -0.9;
+    public void setXRatio(double ratio) { xRatio = ratio; }
+    private double yRatio = -0.9;
+    public void setYRatio(double ratio) { yRatio = ratio; }
 
     /*
     左上角
@@ -52,6 +54,9 @@ public class TeamInfoRenderer {
     private static final int BOOST_BAR_HEIGHT = 1;
     private static final int LINE_OFFSET = 9;
 
+    public String getRendererName() {
+        return String.format("%s:TeamInfoRenderer", BattleRoyale.MOD_ID);
+    }
 
     public void onRenderGuiEvent(IRenderGuiEventPost event) {
         Minecraft mc = Minecraft.getInstance();
@@ -66,7 +71,7 @@ public class TeamInfoRenderer {
 
         int posX = (int) (screenWidth * (0.5 + xRatio / 2));
         int posY = (int) (screenHeight * (0.5 - yRatio / 2)); // 让配置项符合不旋转的直角坐标系
-        ClientTeamData teamData = ClientGameDataManager.get().getTeamData();
+        ClientTeamData teamData = BattleRoyale.getClientGameDataManager().getTeamData();
         if (!teamData.inTeam()) {
             return;
         }

@@ -1,4 +1,4 @@
-package xiao.battleroyale.client.renderer.game;
+package xiao.battleroyale.client.renderer.game.level;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -11,7 +11,7 @@ import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
 import xiao.battleroyale.api.client.event.RenderLevelStage;
-import xiao.battleroyale.client.game.ClientGameDataManager;
+import xiao.battleroyale.api.client.render.game.level.IClientSpectateRenderer;
 import xiao.battleroyale.client.game.data.ClientGameData.ClientSpectateData;
 import xiao.battleroyale.client.renderer.CustomRenderType;
 import xiao.battleroyale.util.ClassUtils;
@@ -20,7 +20,7 @@ import xiao.battleroyale.util.ColorUtils;
 import java.awt.*;
 import java.util.UUID;
 
-public class SpectatePlayerRenderer {
+public class SpectatePlayerRenderer implements IClientSpectateRenderer {
 
     private static class SpectatePlayerRendererHolder {
         private static final SpectatePlayerRenderer INSTANCE = new SpectatePlayerRenderer();
@@ -33,31 +33,35 @@ public class SpectatePlayerRenderer {
     private SpectatePlayerRenderer() {}
 
     private static final RenderType SPECTATE_PLAYER_RENDER_TYPE = CustomRenderType.SolidTranslucentColor;
-    private static boolean enableSpectateRender = true;
-    public static void setEnableSpectateRender(boolean bool) { enableSpectateRender = bool; }
-    private static boolean useClientColor = false;
-    public static void setUseClientColor(boolean use) { useClientColor = use; }
-    private static float R = 0f;
-    private static float G = 1f;
-    private static float B = 1f;
-    public static void setClientColorString(String colorString) {
+    private boolean enableSpectateRender = true;
+    public void setEnableSpectateRender(boolean bool) { enableSpectateRender = bool; }
+    private boolean useClientColor = false;
+    public void setUseClientColor(boolean use) { useClientColor = use; }
+    private float R = 0f;
+    private float G = 1f;
+    private float B = 1f;
+    public void setClientColorString(String colorString) {
         Color color = ColorUtils.parseColorFromString(colorString);
         R = color.getRed() / 255.0F;
         G = color.getGreen() / 255.0F;
         B = color.getBlue() / 255.0F;
         BattleRoyale.LOGGER.debug("SpectatePlayerRenderer {} R{} G{} B{}", colorString, R, G, B);
     }
-    private static boolean renderBeacon = true;
-    public static void setRenderBeacon(boolean bool) { renderBeacon = bool; }
-    private static boolean renderBoundingBox = true;
-    public static void setRenderBoundingBox(boolean bool) { renderBoundingBox = bool; }
-    private static float A = 0.5F;
-    public static void setTransparency(float a) { A = Math.min(Math.max(0, a), 1); }
+    private boolean renderBeacon = true;
+    public void setRenderBeacon(boolean bool) { renderBeacon = bool; }
+    private boolean renderBoundingBox = true;
+    public void setRenderBoundingBox(boolean bool) { renderBoundingBox = bool; }
+    private float A = 0.5F;
+    public void setTransparency(float a) { A = Math.min(Math.max(0, a), 1); }
 
     private static final ClassUtils.ArraySet<UUID> cachedSpectatePlayerUUID = new ClassUtils.ArraySet<>();
-    private static int scanFrequency = 20 * 3; // 3秒扫一次
-    public static void setScanFrequency(int frequency) { scanFrequency = Math.max(frequency, 1); }
-    public static int getScanFrequency() { return scanFrequency; }
+    private int scanFrequency = 20 * 3; // 3秒扫一次
+    public void setScanFrequency(int frequency) { scanFrequency = Math.max(frequency, 1); }
+    public int getScanFrequency() { return scanFrequency; }
+
+    public String getRendererName() {
+        return String.format("%s:SpectatePlayerRenderer", BattleRoyale.MOD_ID);
+    }
 
     public void scanSpectatePlayers() {
         Minecraft mc = Minecraft.getInstance();
@@ -65,7 +69,7 @@ public class SpectatePlayerRenderer {
             return;
         }
 
-        ClientSpectateData spectateData = ClientGameDataManager.get().getGameData().getSpectateData();
+        ClientSpectateData spectateData = BattleRoyale.getClientGameDataManager().getGameData().getSpectateData();
         if (spectateData.uuidToColor.isEmpty()) {
             return;
         }
@@ -97,7 +101,7 @@ public class SpectatePlayerRenderer {
             return;
         }
 
-        ClientSpectateData spectateData = ClientGameDataManager.get().getGameData().getSpectateData();
+        ClientSpectateData spectateData = BattleRoyale.getClientGameDataManager().getGameData().getSpectateData();
         if (spectateData.uuidToColor.isEmpty()) {
             return;
         }

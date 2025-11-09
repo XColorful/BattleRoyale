@@ -2,8 +2,9 @@ package xiao.battleroyale.config.client.display.type;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.display.DisplayConfigTag;
-import xiao.battleroyale.client.renderer.game.GameInfoRenderer;
+import xiao.battleroyale.api.client.render.game.gui.IClientGameInfoRenderer;
 import xiao.battleroyale.util.JsonUtils;
 
 public class GameEntry extends AbstractHudEntry {
@@ -54,12 +55,13 @@ public class GameEntry extends AbstractHudEntry {
 
     @Override
     public void applyDefault() {
-        GameInfoRenderer.setDisplayAlive(display);
+        IClientGameInfoRenderer gameInfoRenderer = BattleRoyale.getClientGuiRenderer().getClientGameInfoRenderer();
+        gameInfoRenderer.setDisplayAlive(display);
         if (display) {
-            GameInfoRenderer.setAliveXRatio(xRatio);
-            GameInfoRenderer.setAliveYRatio(yRatio);
-            GameInfoRenderer.setAliveColor(aliveColor);
-            GameInfoRenderer.setAliveCountColor(aliveCountColor);
+            gameInfoRenderer.setAliveXRatio(xRatio);
+            gameInfoRenderer.setAliveYRatio(yRatio);
+            gameInfoRenderer.setAliveColor(aliveColor);
+            gameInfoRenderer.setAliveCountColor(aliveCountColor);
         }
     }
 }

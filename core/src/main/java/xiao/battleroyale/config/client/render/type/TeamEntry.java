@@ -2,9 +2,10 @@ package xiao.battleroyale.config.client.render.type;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.render.IRenderEntry;
 import xiao.battleroyale.api.client.render.RenderConfigTag;
-import xiao.battleroyale.client.renderer.game.TeamMemberRenderer;
+import xiao.battleroyale.api.client.render.game.level.IClientTeamRenderer;
 import xiao.battleroyale.util.JsonUtils;
 
 public class TeamEntry implements IRenderEntry {
@@ -71,15 +72,16 @@ public class TeamEntry implements IRenderEntry {
 
     @Override
     public void applyDefault() {
-        TeamMemberRenderer.setEnableTeamZone(enableTeamZone);
+        IClientTeamRenderer teamRenderer = BattleRoyale.getClientLevelRenderer().getClientTeamRenderer();
+        teamRenderer.setEnableTeamZone(enableTeamZone);
         if (enableTeamZone) {
-            TeamMemberRenderer.setUseClientColor(useClientColor);
+            teamRenderer.setUseClientColor(useClientColor);
             if (useClientColor) {
-                TeamMemberRenderer.setClientColorString(fixedColor);
+                teamRenderer.setClientColorString(fixedColor);
             }
-            TeamMemberRenderer.setRenderBeacon(renderBeacon);
-            TeamMemberRenderer.setRenderBoundingBox(renderBoundingBox);
-            TeamMemberRenderer.setTransparency(transparency);
+            teamRenderer.setRenderBeacon(renderBeacon);
+            teamRenderer.setRenderBoundingBox(renderBoundingBox);
+            teamRenderer.setTransparency(transparency);
         }
     }
 }

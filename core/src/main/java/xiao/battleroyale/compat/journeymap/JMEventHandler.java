@@ -8,7 +8,6 @@ import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IClientTickEvent;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
-import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.event.EventRegister;
 
 public class JMEventHandler implements IEventHandler {
@@ -50,7 +49,7 @@ public class JMEventHandler implements IEventHandler {
 
     private void onClientTick(IClientTickEvent event) {
         IJmApi jmApi = BattleRoyale.getCompatApi().jmApi();
-        if (!ClientGameDataManager.get().getGameData().inGame()) { // 不在游戏中
+        if (!BattleRoyale.getClientGameDataManager().getGameData().inGame()) { // 不在游戏中
             if (!JMShapeDrawer.isCleared) {
                 jmApi.removeAll(MOD_JM_ID);
                 JMShapeDrawer.isCleared = true;
