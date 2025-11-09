@@ -5,7 +5,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.api.game.spawn.type.shape.SpawnShapeTag;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.config.common.game.spawn.type.detail.AbstractDetailEntry;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
@@ -64,7 +63,7 @@ public abstract class AbstractSimpleSpawner<T extends AbstractDetailEntry<T>> im
 
     @Override
     public void clear() {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, reject to clear Spawner (type:{})", getSpawnerTypeString());
             return;
         }

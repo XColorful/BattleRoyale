@@ -2,9 +2,9 @@ package xiao.battleroyale.compat.pubgmc;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
@@ -20,8 +20,6 @@ import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.command.sub.LootCommand;
 import xiao.battleroyale.command.sub.ReloadCommand;
 import xiao.battleroyale.command.sub.TeamCommand;
-import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.data.io.TempDataManager;
 
 import static xiao.battleroyale.api.data.io.TempDataTag.PUBGMC_COMMAND;
@@ -96,7 +94,7 @@ public class PubgmcCommand {
     private static int setLobbyWithCoordsAndRadius(CommandContext<CommandSourceStack> context) {
         Vec3 coords = Vec3Argument.getVec3(context, XYZ);
         double radius = DoubleArgumentType.getDouble(context, RADIUS);
-        if (SpawnManager.get().setPubgmcLobby(coords, radius)) {
+        if (BattleRoyale.getGameManager().getGameLobbyManager().setLobby(coords, radius)) {
             context.getSource().sendSuccess(() -> Component.translatable("commands.pubgmc.game.lobby.created"), false);
             BattleRoyale.LOGGER.info("Created lobby at {} (radius:{}) via pubgmc command", coords, radius);
             return Command.SINGLE_SUCCESS;
@@ -130,7 +128,7 @@ public class PubgmcCommand {
         Vec2 xzCoords = Vec2Argument.getVec2(context, XZ);
         Vec3 offset = new Vec3(xzCoords.x, 0, xzCoords.y);
         double side = DoubleArgumentType.getDouble(context, SIDE);
-        if (GameManager.get().setGlobalCenterOffset(offset)) {
+        if (BattleRoyale.getGameManager().setGlobalCenterOffset(offset)) {
             if (source.isPlayer()) {
                 source.sendSuccess(() -> Component.translatable("battleroyale.message.set_global_offset", String.format("%.2f", offset.x), String.format("%.2f", offset.y), String.format("%.2f", offset.z)).withStyle(ChatFormatting.GREEN), false);
             }
@@ -146,7 +144,7 @@ public class PubgmcCommand {
     private static int deleteMap(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         Vec3 offset = Vec3.ZERO;
-        if (GameManager.get().setGlobalCenterOffset(offset)) {
+        if (BattleRoyale.getGameManager().setGlobalCenterOffset(offset)) {
             if (source.isPlayer()) {
                 source.sendSuccess(() -> Component.translatable("battleroyale.message.set_global_offset", String.format("%.2f", offset.x), String.format("%.2f", offset.y), String.format("%.2f", offset.z)).withStyle(ChatFormatting.GREEN), false);
             }

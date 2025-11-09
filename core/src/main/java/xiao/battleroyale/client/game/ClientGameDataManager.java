@@ -2,15 +2,18 @@ package xiao.battleroyale.client.game;
 
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.client.game.IClientGameDataManager;
+import xiao.battleroyale.api.client.render.game.level.IClientSpectateRenderer;
+import xiao.battleroyale.api.event.IClientTickEvent;
 import xiao.battleroyale.client.game.data.ClientGameData;
-import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
-import xiao.battleroyale.client.renderer.game.SpectatePlayerRenderer;
+import xiao.battleroyale.client.game.data.ClientTeamData;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClientGameDataManager {
+public class ClientGameDataManager implements IClientGameDataManager {
 
     private static class ClientGameDataManagerHolder {
         private static final ClientGameDataManager INSTANCE = new ClientGameDataManager();
@@ -20,13 +23,13 @@ public class ClientGameDataManager {
         return ClientGameDataManagerHolder.INSTANCE;
     }
 
-    private ClientGameDataManager() {
+    protected ClientGameDataManager() {
         ;
     }
 
     // zone
     private final Map<Integer, ClientSingleZoneData> activeZones = new HashMap<>(); // zoneId -> zondData
-    public boolean hasZoneRender() { return !activeZones.isEmpty(); }
+    public boolean hasClientZone() { return !activeZones.isEmpty(); }
     public Map<Integer, ClientSingleZoneData> getActiveZones() { return this.activeZones; }
     // team
     private final ClientTeamData teamData = new ClientTeamData();
@@ -40,12 +43,21 @@ public class ClientGameDataManager {
     public static final long ZONE_EXPIRE_TICK = 20 * 15;
     public static final long TEAM_EXPIRE_TICK = 20 * 30; // 初始参考值
     public static final long GAME_EXPIRE_TICK = 20 * 15;
+    public long getZoneExpireTick() {
+        return ZONE_EXPIRE_TICK;
+    }
+    public long getTeamExpireTick() {
+        return TEAM_EXPIRE_TICK;
+    }
+    public long getGameExpireTick() {
+        return GAME_EXPIRE_TICK;
+    }
     private static long currentTick = 0; // 所有递增和引用操作，都通过enqueueWork确保在主线程进行，从而避免多线程竞态条件
     public static long getCurrentTick() { return currentTick; }
 
-    public void onClientTick() {
+    public void onClientTick(IClientTickEvent event) {
         currentTick++; // 主线程递增
-        boolean hasZone = hasZoneRender();
+        boolean hasZone = hasClientZone();
         boolean hasTeam = hasTeamInfo();
         boolean hasGame = hasGameInfo();
         if (!hasZone && !hasTeam && !hasGame) {
@@ -65,8 +77,9 @@ public class ClientGameDataManager {
             if (currentTick - gameData.getLastUpdateTick() > GAME_EXPIRE_TICK) {
                 gameData.clear();
             } else {
-                if (currentTick % SpectatePlayerRenderer.getScanFrequency() == 0) {
-                    SpectatePlayerRenderer.get().scanSpectatePlayers();
+                IClientSpectateRenderer spectateRenderer = BattleRoyale.getClientLevelRenderer().getClientSpectateRenderer();
+                if (currentTick % spectateRenderer.getScanFrequency() == 0) {
+                    spectateRenderer.scanSpectatePlayers();
                 }
             }
         }
@@ -76,7 +89,7 @@ public class ClientGameDataManager {
     /*
     * 推迟到主线程
      */
-    public void updateZoneInfo(@NotNull CompoundTag syncPacketNbt) {
+    public void updateClientZone(@NotNull CompoundTag syncPacketNbt) {
         if (syncPacketNbt.isEmpty()) {
             activeZones.clear();
         } else {

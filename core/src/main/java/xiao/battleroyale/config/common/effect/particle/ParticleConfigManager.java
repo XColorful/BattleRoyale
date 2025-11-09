@@ -5,9 +5,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.game.effect.particle.IParticleEntry;
-import xiao.battleroyale.api.game.effect.particle.IParticleSingleEntry;
-import xiao.battleroyale.api.game.effect.particle.ParticleConfigTag;
+import xiao.battleroyale.api.effect.particle.IParticleEntry;
+import xiao.battleroyale.api.effect.particle.IParticleSingleEntry;
+import xiao.battleroyale.api.effect.particle.ParticleConfigTag;
 import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.effect.particle.FixedParticleData;
 import xiao.battleroyale.common.effect.particle.ParticleData;
@@ -21,7 +21,6 @@ import xiao.battleroyale.util.JsonUtils;
 import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.List;
 
 public class ParticleConfigManager extends AbstractConfigSubManager<ParticleConfigManager.ParticleConfig> {
 

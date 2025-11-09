@@ -2,7 +2,6 @@ package xiao.battleroyale.common.game.zone.spatial;
 
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;

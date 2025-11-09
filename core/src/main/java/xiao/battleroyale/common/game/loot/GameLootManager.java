@@ -6,9 +6,13 @@ import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.event.game.tick.*;
+import xiao.battleroyale.api.event.game.tick.GameLootBfsEvent;
+import xiao.battleroyale.api.event.game.tick.GameLootBfsFinishEvent;
+import xiao.battleroyale.api.event.game.tick.GameLootEvent;
+import xiao.battleroyale.api.event.game.tick.GameLootFinishEvent;
+import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.loot.IGameLootManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.loot.LootGenerator;
@@ -25,7 +29,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class GameLootManager extends AbstractGameManager implements ISideOnly {
+public class GameLootManager extends AbstractGameManager implements ISideOnly, IGameLootManager {
 
     private static class GameLootManagerHolder {
         private static final GameLootManager INSTANCE = new GameLootManager();
@@ -35,7 +39,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
         return GameLootManagerHolder.INSTANCE;
     }
 
-    private GameLootManager() {
+    protected GameLootManager() {
     }
 
     public static void init(McSide mcSide) {
@@ -46,6 +50,10 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
         // 预计算
         cachedCenterOffset.clear();
         cachedCenterOffset.addAll(BfsCalculator.calculateCenterOffset(64)); // 渣机也就20ms开销
+    }
+
+    @Override public String getManagerName() {
+        return String.format("%s:GameLootManager", BattleRoyale.MOD_ID);
     }
 
     @Override public boolean serverSideOnly() {
@@ -99,7 +107,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
     private boolean INSTANT_NEXT_BFS;
     private int MAX_CACHED_LOOT_CHUNK; // 最大记录的处理过区块数
     private int CLEAN_CACHED_CHUNK; // 每次清理删除多少区块
-    public void applyConfig(GeneratorEntry entry) {
+    @Override public void applyConfig(GeneratorEntry entry) {
         MAX_LOOT_CHUNK_PER_TICK = Math.min(Math.max(entry.maxGameTickLootChunk, 5), 100000); // 十万
         MAX_LOOT_DISTANCE = Math.min(Math.max(entry.maxGameLootDistance, 3), 128);
         if (MAX_LOOT_DISTANCE >= cachedCenterOffset.size()) { // cachedCenterOffest第一项为0距离
@@ -149,7 +157,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             return false;
         }
         return ready;
@@ -160,7 +168,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
      * 无法获取游戏维度则使用配置项最大值
      */
     public int getSimulationDistance() {
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+        ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
         if (serverLevel != null) {
             return Math.min(serverLevel.getServer().getPlayerList().getSimulationDistance(), MAX_LOOT_DISTANCE);
         }
@@ -172,7 +180,8 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
      * @param gameTime 当前游戏tick数
      */
     public void onGameTick(int gameTime) {
-        if (EventPoster.postEvent(new GameLootEvent(GameManager.get(), gameTime))) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (EventPoster.postEvent(new GameLootEvent(gameManager, gameTime))) {
             return;
         }
 
@@ -218,7 +227,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
             BattleRoyale.LOGGER.debug("Cleaned {} cached center chunks. Remaining: {}", chunksToRemove, cachedPlayerCenterChunks.size());
         }
 
-        EventPoster.postEvent(new GameLootFinishEvent(GameManager.get(), gameTime,
+        EventPoster.postEvent(new GameLootFinishEvent(gameManager, gameTime,
                 lastProcessedCount, clearedCachedChunk, clearedPlayerCenterChunk));
     }
 
@@ -226,7 +235,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
      * 提交一个新的BFS任务到异步线程。
      * 解决了强制频率和立即触发的竞态问题。
      */
-    private void submitNewBfsTask() {
+    protected void submitNewBfsTask() {
         if (bfsExecutor == null || bfsExecutor.isShutdown()) {
             BattleRoyale.LOGGER.warn("GameLootManager: thread pool is null or shutdown, skipped submit new BFS task");
             return;
@@ -244,15 +253,15 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
             BattleRoyale.LOGGER.debug("Previous BFS task was cancelled, submitting a new one.");
         }
 
-        lastBfsTime = GameManager.get().getGameTime(); // 确保主线程下一tick能识别到
+        lastBfsTime = BattleRoyale.getGameManager().getGameTime(); // 确保主线程下一tick能识别到
         bfsTaskFuture = bfsExecutor.submit(this::bfsQueuedChunkAsync);
     }
 
     /**
      * 遍历存活玩家最后位置，BFS计算待处理区块（异步版本）
      */
-    private void bfsQueuedChunkAsync() {
-        GameManager gameManager = GameManager.get();
+    protected void bfsQueuedChunkAsync() {
+        IGameManager gameManager = BattleRoyale.getGameManager();
         if (EventPoster.postEvent(new GameLootBfsEvent(gameManager, gameManager.getGameTime(), lastBfsProcessedLoot))) {
             BattleRoyale.LOGGER.debug("GameLootBfsEvent canceled, skipped bfsQueuedChunkAsync");
             return;
@@ -326,8 +335,9 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
         EventPoster.postEvent(new GameLootBfsFinishEvent(gameManager, gameManager.getGameTime(), startTime, endTime, oldQueueSize));
     }
 
-    private int processLootGeneration() {
-        ServerLevel serverLevel = GameManager.get().getServerLevel();
+    protected int processLootGeneration() {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null) {
             return 0;
         }
@@ -337,7 +347,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
         Queue<ChunkPos> currentQueue = queuedChunksRef.get();
         while (!currentQueue.isEmpty() && processedCount < MAX_LOOT_CHUNK_PER_TICK) {
             ChunkPos chunkPos = currentQueue.poll();
-            int newlyProcessedLoot = LootGenerator.refreshLootInChunk(new LootContext(serverLevel, chunkPos, GameManager.get().getGameId()));
+            int newlyProcessedLoot = LootGenerator.refreshLootInChunk(new LootContext(serverLevel, chunkPos, gameManager.getGameId()));
             if (newlyProcessedLoot != LootGenerator.CHUNK_NOT_LOADED) {
                 processedChunkCache.add(chunkPos);
                 lastBfsProcessedLoot += newlyProcessedLoot;
@@ -358,7 +368,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
     }
 
     // 这个方法只在服务器停止时调用，可以安全地阻塞
-    public void awaitTerminationOnShutdown() {
+    @Override public void awaitTerminationOnShutdown() {
         if (bfsExecutor != null) {
             try {
                 // 这里可以安全地等待，因为服务器主线程已停止
@@ -373,7 +383,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
         }
     }
 
-    private void shutdownBfsExecuter(String phaseName) {
+    protected void shutdownBfsExecuter(String phaseName) {
         if (bfsExecutor != null) {
             List<Runnable> unexecutedTasks = bfsExecutor.shutdownNow();
             if (!unexecutedTasks.isEmpty()) {
@@ -386,7 +396,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly {
     /**
      * 清空所有内部数据结构和状态。
      */
-    private void clear() {
+    protected void clear() {
         lastBfsTime = -BFS_FREQUENCY + 20 * 3; // 延迟3秒，等玩家传送到地图内开始提交BFS
         lastBfsProcessedLoot = 0;
         queuedChunksRef.get().clear();

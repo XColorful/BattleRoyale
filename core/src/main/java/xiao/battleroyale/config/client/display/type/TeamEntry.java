@@ -2,8 +2,9 @@ package xiao.battleroyale.config.client.display.type;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.display.DisplayConfigTag;
-import xiao.battleroyale.client.renderer.game.TeamInfoRenderer;
+import xiao.battleroyale.api.client.render.game.gui.IClientTeamInfoRenderer;
 import xiao.battleroyale.util.JsonUtils;
 
 public class TeamEntry extends AbstractHudEntry {
@@ -50,11 +51,12 @@ public class TeamEntry extends AbstractHudEntry {
 
     @Override
     public void applyDefault() {
-        TeamInfoRenderer.setDisplayTeam(display);
+        IClientTeamInfoRenderer teamInfoRenderer = BattleRoyale.getClientGuiRenderer().getClientTeamInfoRenderer();
+        teamInfoRenderer.setDisplayTeam(display);
         if (display) {
-            TeamInfoRenderer.setXRatio(xRatio);
-            TeamInfoRenderer.setYRatio(yRatio);
-            TeamInfoRenderer.setOfflineTimeLimit(offlineTime);
+            teamInfoRenderer.setXRatio(xRatio);
+            teamInfoRenderer.setYRatio(yRatio);
+            teamInfoRenderer.setOfflineTimeLimit(offlineTime);
         }
     }
 }

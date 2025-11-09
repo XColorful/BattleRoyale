@@ -4,8 +4,8 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.client.display.IDisplaySingleEntry;
 import xiao.battleroyale.api.client.display.DisplayConfigTag;
+import xiao.battleroyale.api.client.display.IDisplaySingleEntry;
 import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
@@ -19,7 +19,6 @@ import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.List;
 
 public class DisplayConfigManager extends AbstractConfigSubManager<DisplayConfigManager.DisplayConfig> {
 

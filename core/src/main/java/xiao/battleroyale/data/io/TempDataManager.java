@@ -2,6 +2,7 @@ package xiao.battleroyale.data.io;
 
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameSubManager;
 import xiao.battleroyale.data.AbstractDataManager;
 
@@ -15,6 +16,16 @@ public class TempDataManager extends AbstractDataManager implements IGameSubMana
 
     public static TempDataManager get() {
         return TempDataManagerHolder.INSTANCE;
+    }
+
+    @Override public String getManagerName() {
+        return String.format("%s:TempDataManager", BattleRoyale.MOD_ID);
+    }
+    @Override public boolean registerGameEventHandler() {
+        return false;
+    }
+    @Override public boolean unregisterGameEventHandler() {
+        return false;
     }
 
     private TempDataManager() {
@@ -35,7 +46,7 @@ public class TempDataManager extends AbstractDataManager implements IGameSubMana
     }
 
     @Override
-    public boolean isPreparedForGame() {
+    public boolean isConfigPrepared() {
         return true;
     }
     @Override

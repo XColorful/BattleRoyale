@@ -8,7 +8,6 @@ import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.util.ClassUtils.ArrayMap;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 /**

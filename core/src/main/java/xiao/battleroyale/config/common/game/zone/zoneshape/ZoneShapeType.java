@@ -3,7 +3,6 @@ package xiao.battleroyale.config.common.game.zone.zoneshape;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
-import xiao.battleroyale.common.game.zone.spatial.EllipsoidShape;
 
 import java.util.HashMap;
 import java.util.Map;

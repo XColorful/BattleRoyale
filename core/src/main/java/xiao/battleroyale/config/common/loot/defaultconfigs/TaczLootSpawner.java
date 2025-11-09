@@ -11,8 +11,8 @@ import xiao.battleroyale.config.common.loot.type.WeightEntry.WeightedEntry;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 import static xiao.battleroyale.api.minecraft.EquipmentLevel.*;
+import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class TaczLootSpawner {
 
