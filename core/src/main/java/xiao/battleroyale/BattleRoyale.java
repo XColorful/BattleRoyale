@@ -63,6 +63,13 @@ public class BattleRoyale {
         BattleRoyale.mcSide = mcSide;
         BattleRoyale.registrarFactory = factory;
         BattleRoyale.mcRegistry = mcRegistry;
+
+        gameManager = GameManager.get();
+        modConfigManager = ModConfigManager.getApi();
+        clientGameDataManager = ClientGameDataManager.get();
+        clientGuiRenderer = ClientGuiRenderer.get();
+        clientLevelRenderer = ClientLevelRenderer.get();
+
         NetworkHandler.initialize(networkAdapter);
         NetworkHook.initialize(networkHook);
         EventRegister.initialize(eventRegister);
@@ -114,65 +121,45 @@ public class BattleRoyale {
         return AlgorithmFacade.get();
     }
 
-
-    private static IGameManager gameManager = GameManager.get();
+    private static IGameManager gameManager;
+    private static IModConfigManager modConfigManager;
+    private static IClientGameDataManager clientGameDataManager;
+    private static IClientGuiRenderer clientGuiRenderer;
+    private static IClientLevelRenderer clientLevelRenderer;
     public static IGameManager getGameManager() {
         return BattleRoyale.gameManager;
     }
+    public static IModConfigManager getModConfigManager() {
+        return modConfigManager;
+    }
+    public static IClientGameDataManager getClientGameDataManager() {
+        return BattleRoyale.clientGameDataManager;
+    }
+    public static IClientGuiRenderer getClientGuiRenderer() {
+        return clientGuiRenderer;
+    }
+    public static IClientLevelRenderer getClientLevelRenderer() {
+        return BattleRoyale.clientLevelRenderer;
+    }
     /**
-     * 使用该方法即完整替换游戏管理器, 自行实现所有API并调试
      * @deprecated 除非需要深度定制, 否则不应该调用
      */
     @Deprecated(forRemoval=false)
     public static void setGameManager(@NotNull IGameManager gameManager) {
         BattleRoyale.gameManager = gameManager;
     }
-    private static IModConfigManager modConfigManager = ModConfigManager.getApi();
-    public static IModConfigManager getModConfigManager() {
-        return modConfigManager;
-    }
-    /**
-     * 使用该方法即完整替换模组配置管理, 自行实现所有API并调试
-     * @deprecated 除非需要深度定制, 否则不应该调用
-     */
     @Deprecated(forRemoval = false)
     public static void setModConfigManager(@NotNull IModConfigManager modConfigManager) {
         BattleRoyale.modConfigManager = modConfigManager;
     }
-
-
-    private static IClientGameDataManager clientGameDataManager = ClientGameDataManager.get();
-    public static IClientGameDataManager getClientGameDataManager() {
-        return BattleRoyale.clientGameDataManager;
-    }
-    /**
-     * 使用该方法即完整替换客户端游戏数据管理器, 自行实现所有API并调试
-     * @deprecated 除非需要深度定制, 否则不应该调用
-     */
     @Deprecated(forRemoval = false)
     public static void setClientGameDataManager(@NotNull IClientGameDataManager clientGameDataManager) {
         BattleRoyale.clientGameDataManager = clientGameDataManager;
     }
-    private static IClientGuiRenderer clientGuiRenderer = ClientGuiRenderer.get();
-    public static IClientGuiRenderer getClientGuiRenderer() {
-        return clientGuiRenderer;
-    }
-    /**
-     * 使用该方法即完整替换客户端GUI渲染
-     * @deprecated 除非需要深度定制, 否则不应该调用
-     */
     @Deprecated(forRemoval = false)
     public static void setClientGuiRenderer(@NotNull IClientGuiRenderer clientGuiRenderer) {
         BattleRoyale.clientGuiRenderer = clientGuiRenderer;
     }
-    private static IClientLevelRenderer clientLevelRenderer = ClientLevelRenderer.get();
-    public static IClientLevelRenderer getClientLevelRenderer() {
-        return BattleRoyale.clientLevelRenderer;
-    }
-    /**
-     * 使用该方法即完整替换客户端世界渲染
-     * @deprecated 除非需要深度定制, 否则不应该调用
-     */
     @Deprecated(forRemoval = false)
     public static void setClientLevelRenderer(@NotNull IClientLevelRenderer clientLevelRenderer) {
         BattleRoyale.clientLevelRenderer = clientLevelRenderer;
