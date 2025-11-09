@@ -2,17 +2,15 @@ package xiao.battleroyale.compat.forge.init.registry;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
-
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-
 import xiao.battleroyale.api.init.registry.IMenuTypeFactory;
 import xiao.battleroyale.api.init.registry.IRegistrar;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;

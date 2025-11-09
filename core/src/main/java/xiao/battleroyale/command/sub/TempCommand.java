@@ -8,12 +8,12 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import xiao.battleroyale.common.game.GameManager;
-import xiao.battleroyale.common.game.zone.ZoneManager;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.data.io.TempDataManager;
 
+import static xiao.battleroyale.api.data.io.TempDataTag.PUBGMC_COMMAND;
+import static xiao.battleroyale.api.data.io.TempDataTag.REGISTRY;
 import static xiao.battleroyale.command.CommandArg.*;
-import static xiao.battleroyale.api.data.io.TempDataTag.*;
 
 public class TempCommand {
 
@@ -50,7 +50,7 @@ public class TempCommand {
 
     private static int turnInitStackZoneConfig(CommandContext<CommandSourceStack> context) {
         boolean turn = BoolArgumentType.getBool(context, BOOL);
-        ZoneManager.get().setStackZoneConfig(turn);
+        BattleRoyale.getGameManager().getZoneManager().setStackZoneConfig(turn);
         if (turn) {
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.enable_init_stack_zone_config"), false);
         } else {
@@ -61,7 +61,7 @@ public class TempCommand {
 
     private static int changeGameStep(CommandContext<CommandSourceStack> context) {
         int gameStep = IntegerArgumentType.getInteger(context, INTERVAL);
-        if (GameManager.get().setGameStep(gameStep)) {
+        if (BattleRoyale.getGameManager().setGameStep(gameStep)) {
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.set_game_step_success", gameStep), false);
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.set_game_step_fail", gameStep));

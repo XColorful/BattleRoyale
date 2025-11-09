@@ -20,7 +20,6 @@ import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.List;
 
 public class RenderConfigManager extends AbstractConfigSubManager<RenderConfigManager.RenderConfig> {
 

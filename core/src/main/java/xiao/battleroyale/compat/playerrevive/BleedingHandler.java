@@ -7,7 +7,7 @@ import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.api.event.IServerTickEvent;
-import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -62,7 +62,8 @@ public class BleedingHandler implements IEventHandler {
         if (!isRegistered) {
             register();
         }
-        BattleRoyale.LOGGER.debug("GameTime:{} addBleedingPlayer", GameManager.get().getGameTime());
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        BattleRoyale.LOGGER.debug("GameTime:{} addBleedingPlayer", gameManager.getGameTime());
         UUID playerUUID = player.getUUID();
         GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(playerUUID);
         if (gamePlayer == null) {
@@ -73,7 +74,7 @@ public class BleedingHandler implements IEventHandler {
         // 没有设定倒地扣血量就判定为超过最大倒地次数
         if (currentDownTime > bleedDamage.size()) {
             BattleRoyale.LOGGER.debug("Player {} has downed {} time, can't bleed and kill", player.getName().getString(), currentDownTime);
-            GameManager.get().onPlayerDeath(gamePlayer, null);
+            gameManager.onPlayerDeath(null, gamePlayer);
             PlayerRevive.get().kill(player);
             GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
             return;
@@ -98,7 +99,7 @@ public class BleedingHandler implements IEventHandler {
         bleedingPlayerData.entrySet().removeIf(data -> {
             BleedData bleedData = data.getValue();
             if (bleedData.isRevived()) { // 被救起
-                GameManager.get().onPlayerRevived(bleedData.gamePlayer);
+                BattleRoyale.getGameManager().onPlayerRevived(bleedData.gamePlayer);
                 return true;
             }
             if (!bleedData.isBleeding()) {
@@ -135,7 +136,7 @@ public class BleedingHandler implements IEventHandler {
                 float currentHealth = bleedPlayer.getHealth();
                 if (currentHealth <= damage) { // 此次扣血会致死
                     BattleRoyale.LOGGER.debug("Bleed damage will kill game player {}", gamePlayer.getPlayerName());
-                    GameManager.get().onPlayerDeath(gamePlayer, null);
+                    BattleRoyale.getGameManager().onPlayerDeath(null, gamePlayer);
                     PlayerRevive.get().kill(bleedPlayer);
                     GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
                     return;

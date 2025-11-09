@@ -3,8 +3,8 @@ package xiao.battleroyale.network.message;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.message.IMessage;
-import xiao.battleroyale.client.game.ClientGameDataManager;
 
 import java.util.function.Consumer;
 
@@ -33,7 +33,7 @@ public class ClientMessageZoneInfo implements IMessage<ClientMessageZoneInfo> {
     @Override
     public void handle(ClientMessageZoneInfo message, Consumer<Runnable> handler) {
         handler.accept(() -> {
-            ClientGameDataManager.get().updateZoneInfo(message.zoneSyncNbt);
+            BattleRoyale.getClientGameDataManager().updateClientZone(message.zoneSyncNbt);
         });
     }
 }

@@ -4,10 +4,14 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import xiao.battleroyale.algorithm.AlgorithmFacade;
 import xiao.battleroyale.api.algorithm.IAlgorithmApi;
+import xiao.battleroyale.api.client.game.IClientGameDataManager;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
+import xiao.battleroyale.api.client.render.game.IClientGuiRenderer;
+import xiao.battleroyale.api.client.render.game.IClientLevelRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.journeymap.IJmApi;
 import xiao.battleroyale.api.config.IModConfigManager;
@@ -19,7 +23,10 @@ import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
 import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.INetworkHook;
+import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.renderer.BlockModelRenderer;
+import xiao.battleroyale.client.renderer.game.ClientGuiRenderer;
+import xiao.battleroyale.client.renderer.game.ClientLevelRenderer;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.event.EventPoster;
@@ -116,13 +123,71 @@ public class BattleRoyale {
     public static ICustomEventRegister getEventRegister() {
         return EventRegister.get();
     }
-    public static IGameManager getGameManager() {
-        return GameManager.get();
-    }
-    public static IModConfigManager getModConfigManager() {
-        return ModConfigManager.getApi();
-    }
     public static IAlgorithmApi getAlgorithmApi() {
         return AlgorithmFacade.get();
+    }
+
+
+    private static IGameManager gameManager = GameManager.get();
+    public static IGameManager getGameManager() {
+        return BattleRoyale.gameManager;
+    }
+    /**
+     * 使用该方法即完整替换游戏管理器, 自行实现所有API并调试
+     * @deprecated 除非需要深度定制, 否则不应该调用
+     */
+    @Deprecated(forRemoval=false)
+    public static void setGameManager(@NotNull IGameManager gameManager) {
+        BattleRoyale.gameManager = gameManager;
+    }
+    private static IModConfigManager modConfigManager = ModConfigManager.getApi();
+    public static IModConfigManager getModConfigManager() {
+        return modConfigManager;
+    }
+    /**
+     * 使用该方法即完整替换模组配置管理, 自行实现所有API并调试
+     * @deprecated 除非需要深度定制, 否则不应该调用
+     */
+    @Deprecated(forRemoval = false)
+    public static void setModConfigManager(@NotNull IModConfigManager modConfigManager) {
+        BattleRoyale.modConfigManager = modConfigManager;
+    }
+
+
+    private static IClientGameDataManager clientGameDataManager = ClientGameDataManager.get();
+    public static IClientGameDataManager getClientGameDataManager() {
+        return BattleRoyale.clientGameDataManager;
+    }
+    /**
+     * 使用该方法即完整替换客户端游戏数据管理器, 自行实现所有API并调试
+     * @deprecated 除非需要深度定制, 否则不应该调用
+     */
+    @Deprecated(forRemoval = false)
+    public static void setClientGameDataManager(@NotNull IClientGameDataManager clientGameDataManager) {
+        BattleRoyale.clientGameDataManager = clientGameDataManager;
+    }
+    private static IClientGuiRenderer clientGuiRenderer = ClientGuiRenderer.get();
+    public static IClientGuiRenderer getClientGuiRenderer() {
+        return clientGuiRenderer;
+    }
+    /**
+     * 使用该方法即完整替换客户端GUI渲染
+     * @deprecated 除非需要深度定制, 否则不应该调用
+     */
+    @Deprecated(forRemoval = false)
+    public static void setClientGuiRenderer(@NotNull IClientGuiRenderer clientGuiRenderer) {
+        BattleRoyale.clientGuiRenderer = clientGuiRenderer;
+    }
+    private static IClientLevelRenderer clientLevelRenderer = ClientLevelRenderer.get();
+    public static IClientLevelRenderer getClientLevelRenderer() {
+        return BattleRoyale.clientLevelRenderer;
+    }
+    /**
+     * 使用该方法即完整替换客户端世界渲染
+     * @deprecated 除非需要深度定制, 否则不应该调用
+     */
+    @Deprecated(forRemoval = false)
+    public static void setClientLevelRenderer(@NotNull IClientLevelRenderer clientLevelRenderer) {
+        BattleRoyale.clientLevelRenderer = clientLevelRenderer;
     }
 }

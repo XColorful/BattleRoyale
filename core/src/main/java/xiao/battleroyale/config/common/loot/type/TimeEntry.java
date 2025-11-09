@@ -7,7 +7,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ILootData;
 import xiao.battleroyale.api.loot.ILootEntry;
 import xiao.battleroyale.api.loot.LootEntryTag;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;
@@ -32,7 +31,7 @@ public class TimeEntry extends AbstractLootEntry {
 
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootContext lootContext, @Nullable T target) {
-        int gameTime = GameManager.get().getGameTime();
+        int gameTime = BattleRoyale.getGameManager().getGameTime();
         if (entry != null) {
             if (start <= gameTime && gameTime <= end) {
                 try {

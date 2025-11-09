@@ -8,11 +8,11 @@ import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.api.event.game.tick.ZoneTickEvent;
 import xiao.battleroyale.api.event.game.tick.ZoneTickFinishEvent;
-import xiao.battleroyale.api.game.zone.IGameZoneReadApi;
+import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.zone.IZoneManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -26,7 +26,7 @@ import xiao.battleroyale.util.ChatUtils;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi {
+public class ZoneManager extends AbstractGameManager implements IZoneManager {
 
     private static class ZoneManagerHolder {
         private static final ZoneManager INSTANCE = new ZoneManager();
@@ -36,10 +36,14 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
         return ZoneManagerHolder.INSTANCE;
     }
 
-    private ZoneManager() {}
+    protected ZoneManager() {}
 
     public static void init(McSide mcSide) {
         ;
+    }
+
+    @Override public String getManagerName() {
+        return String.format("%s:ZoneManager", BattleRoyale.MOD_ID);
     }
 
     protected final ZoneData zoneData = new ZoneData();
@@ -50,11 +54,11 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
     }
 
     private boolean isTicking = false;
-    protected static boolean shouldStopGame = false; // 让其对GameZone可见
+    private static boolean shouldStopGame = false;
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             return;
         }
 
@@ -90,7 +94,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
 
     @Override
     public void initGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame() || !this.configPrepared) {
             return;
         }
 
@@ -101,7 +105,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        if (GameManager.get().isInGame()) {
+        if (BattleRoyale.getGameManager().isInGame()) {
             return false;
         }
 
@@ -118,9 +122,10 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
     /**
      * 延迟处理区域清理，使游戏进行时高效遍历Zone，并防止并发问题
      */
+    @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
         List<Integer> zoneIdList = new ArrayList<>();
-        for (IGameZone gameZone : this.zoneData.getCurrentTickZones(GameManager.get().getGameTime())) {
+        for (IGameZone gameZone : this.zoneData.getCurrentTickZones(BattleRoyale.getGameManager().getGameTime())) {
             zoneIdList.add(gameZone.getZoneId());
         }
         GameMessageManager.notifyZoneEnd(zoneIdList);
@@ -132,22 +137,9 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
             shouldStopGame = false; // 防御一下
             BattleRoyale.LOGGER.debug("ZoneManager complete stopGame");
         }
-        // ↓这个lambda方式似乎并没有延迟处理，还是会触发onGameTick并发修改问题
-        // 应该是GameManager注册时间相关问题导致在新的onGameTick里触发的并发修改？不管了
-//        if (serverLevel != null) {
-//            serverLevel.getServer().execute(() -> {
-//                clear();
-//                BattleRoyale.LOGGER.debug("ZoneManager complete delayed stopGame");
-//            });
-//        } else { // 如果当前ZoneManager正在tick，延迟到tick结束就节约了复制列表的开销
-//            shouldStopGame = true;
-//        }
     }
 
-    /**
-     * 仅限类内lambda调用
-     */
-    public void clear(@Nullable ServerLevel serverLevel) {
+    protected void clear(@Nullable ServerLevel serverLevel) {
         ZoneMessageManager.get().stopGame(serverLevel);
         this.zoneData.endGame();
         this.zoneData.clear();
@@ -160,7 +152,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
      */
     @Override
     public void onGameTick(int gameTime) {
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         if (EventPoster.postEvent(new ZoneTickEvent(gameManager, gameTime))) {
             return;
         }
@@ -190,6 +182,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
                 }
             }
 
+            if (shouldStopGame) break; // 提前用一个bool检查使每tick少一次列表对象复制（直接用视图遍历）
             gameZone.gameTick(zoneContext);
 
             if (gameZone.isFinished()) { // 在tick过程中遇到最后一tick并执行后，标记为finished
@@ -209,7 +202,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
     }
 
     public @Nullable ZoneContext getZoneContextInGame() {
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         ServerLevel serverLevel = gameManager.getServerLevel();
         if (!gameManager.isInGame() || serverLevel == null) {
             return null;
@@ -217,7 +210,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
         return new ZoneContext(serverLevel, GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), gameManager.getRandom(), gameManager.getGameTime());
     }
     public @Nullable ZoneContext getCommonZoneContext() {
-        GameManager gameManager = GameManager.get();
+        IGameManager gameManager = BattleRoyale.getGameManager();
         ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null) {
             return null;
@@ -270,7 +263,7 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
         return this.zoneData.getGameZonesList();
     }
     @Override public List<IGameZone> getCurrentGameZones() {
-        return getCurrentGameZones(GameManager.get().getGameTime());
+        return getCurrentGameZones(BattleRoyale.getGameManager().getGameTime());
     }
     @Override public List<IGameZone> getCurrentGameZones(int gameTime) {
         return this.zoneData.getCurrentTickZones(gameTime);
@@ -279,13 +272,20 @@ public class ZoneManager extends AbstractGameManager implements IGameZoneReadApi
         return this.zoneData.getGameZoneById(zoneId);
     }
 
-    // --------ZoneUtils--------
-
     public boolean hasEnoughZoneToStart() {
-        return ZoneUtils.hasEnoughZoneToStart();
+        return this.zoneData.hasEnoughZoneToStart();
     }
 
     public void randomizeZoneTickOffset() {
-        ZoneUtils.randomizeZoneTickOffset(this);
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.isInGame()) {
+            return;
+        }
+        Supplier<Float> random = gameManager.getRandom();
+        for (IGameZone gameZone : this.zoneData.getGameZonesList()) {
+            if (gameZone.getTickOffset() < 0) {
+                gameZone.setTickOffset((int) (random.get() * gameZone.getTickFrequency()));
+            }
+        }
     }
 }

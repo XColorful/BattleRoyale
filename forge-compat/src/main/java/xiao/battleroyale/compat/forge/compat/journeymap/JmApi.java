@@ -1,7 +1,7 @@
 package xiao.battleroyale.compat.forge.compat.journeymap;
 
 import xiao.battleroyale.api.compat.journeymap.IJmApi;
-import xiao.battleroyale.compat.journeymap.*;
+import xiao.battleroyale.compat.journeymap.JMPolygonOverlay;
 
 public class JmApi implements IJmApi {
 
