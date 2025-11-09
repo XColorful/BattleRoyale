@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import xiao.battleroyale.common.message.game.SpectateMessage;
 import xiao.battleroyale.developer.debug.DebugManager;
 import xiao.battleroyale.developer.debug.DebugMessage;
 import xiao.battleroyale.developer.debug.LocalDebugManager;

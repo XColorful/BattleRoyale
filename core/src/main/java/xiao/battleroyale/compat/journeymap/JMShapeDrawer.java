@@ -9,7 +9,6 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.compat.journeymap.IJmApi;
-import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.compat.journeymap.draw.Shape2D;
 import xiao.battleroyale.compat.journeymap.draw.Shape3D;
@@ -35,7 +34,7 @@ public class JMShapeDrawer {
         cachedDimension = dimension;
         jmAPI.removeAll(JMEventHandler.MOD_JM_ID);
 
-        for (ClientSingleZoneData zoneData : ClientGameDataManager.get().getActiveZones().values()) {
+        for (ClientSingleZoneData zoneData : BattleRoyale.getClientGameDataManager().getActiveZones().values()) {
             if (zoneData == null || zoneData.center == null || zoneData.dimension == null) continue;
 
             Color color = new Color(zoneData.r, zoneData.g, zoneData.b, zoneData.a);

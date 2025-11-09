@@ -25,7 +25,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.api.minecraft.InventoryIndex;
 import xiao.battleroyale.api.minecraft.InventoryIndex.SlotType;
-import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.developer.debug.command.sub.get.GetWorld;
 
 import java.util.Arrays;
@@ -103,7 +102,7 @@ public class WorldText {
             gameIdTag = fullNbt.get(LootNBTTag.GAME_ID_TAG);
         }
         if (gameId != null && gameIdTag != null) {
-            UUID currentGameId = GameManager.get().getGameId();
+            UUID currentGameId = BattleRoyale.getGameManager().getGameId();
             component.append(Component.literal("|").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)))
                     .append(buildHoverableTextWithColor(LootNBTTag.GAME_ID_TAG,
                             gameIdTag.getAsString(),

@@ -1,10 +1,11 @@
 package xiao.battleroyale.api.loot;
 
-import java.util.List;
-import java.util.function.Supplier;
+import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
-import com.google.gson.JsonObject;
+
+import java.util.List;
+import java.util.function.Supplier;
 
 public interface ILootAction<T> {
     /**
