@@ -15,10 +15,12 @@ import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.api.game.zone.special.ZoneSpecialTag;
+import xiao.battleroyale.api.network.message.zone.GameZoneTag;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
+import xiao.battleroyale.common.game.zone.additional.ZoneSpecialHandler;
 import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
@@ -200,7 +202,7 @@ public class GameZone implements IGameZone {
 
     @Override
     public CompoundTag toNBT(double shapeProgress) {
-        return NBTUtils.serializeZoneToNBT(
+        CompoundTag baseTag = NBTUtils.serializeZoneToNBT(
                 this.zoneId,
                 this.zoneName,
                 this.zoneColor,
@@ -208,6 +210,11 @@ public class GameZone implements IGameZone {
                 this.spatialZone,
                 shapeProgress
         );
+        if (additionalZone != null) {
+            baseTag.putString(GameZoneTag.SPECIAL, getSpecialType().getName());
+            baseTag.put(GameZoneTag.ADDITIONAL_TAG, addMessageTag(this));
+        }
+        return baseTag;
     }
 
     @Override
@@ -345,7 +352,11 @@ public class GameZone implements IGameZone {
 
     // IAdditionalZone
     @Override
-    public ZoneSpecialType getSpecialType() {
-        return additionalZone != null ? additionalZone.getSpecialType() : ZoneSpecialType.NULL;
+    public ZoneSpecialHandler getSpecialHandlerType() {
+        return additionalZone != null ? additionalZone.getSpecialHandlerType() : ZoneSpecialHandler.NULL;
+    }
+    @Override
+    public @NotNull CompoundTag addMessageTag(IGameZone gameZone) {
+        return additionalZone != null ? additionalZone.addMessageTag(this) : new CompoundTag();
     }
 }

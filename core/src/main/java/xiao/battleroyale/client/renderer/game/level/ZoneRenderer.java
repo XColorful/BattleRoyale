@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
@@ -44,6 +45,15 @@ public class ZoneRenderer implements IClientZoneRenderer {
     public int getEllipsoidSegments() { return ELLIPSOID_SEGMENTS; }
     public void setEllipsoidSegments(int segments) { ELLIPSOID_SEGMENTS = segments; }
 
+    private @Nullable Matrix4f currentZoneMatrix;
+    private @Nullable VertexConsumer consumer;
+    public @Nullable Matrix4f getCurrentZoneMatrix() {
+        return currentZoneMatrix;
+    }
+    public @Nullable VertexConsumer getVertexConsumer() {
+        return consumer;
+    }
+
     public String getRendererName() {
         return String.format("%s:ZoneRenderer", BattleRoyale.MOD_ID);
     }
@@ -74,7 +84,7 @@ public class ZoneRenderer implements IClientZoneRenderer {
         for (ClientSingleZoneData zoneData : clientZoneDataManager.getActiveZones().values()) {
             if (zoneData == null || zoneData.center == null || zoneData.dimension == null) continue;
 
-            Matrix4f currentZoneMatrix = new Matrix4f(baseModelView);
+            currentZoneMatrix = new Matrix4f(baseModelView);
             // 平移到区域中心，并抵消相机位置
             currentZoneMatrix.translate(
                     (float) (zoneData.center.x - cameraPos.x),
@@ -90,7 +100,7 @@ public class ZoneRenderer implements IClientZoneRenderer {
             float a = zoneData.a;
 
             // 对光影没用，对原版云有用
-            VertexConsumer consumer = bufferSource.getBuffer(a < 0.999F ? TRANSLUCENT_ZONE : OPAQUE_ZONE);
+            consumer = bufferSource.getBuffer(a < 0.999F ? TRANSLUCENT_ZONE : OPAQUE_ZONE);
 
             switch (zoneData.shapeType) {
                 // 2D shape
@@ -126,6 +136,12 @@ public class ZoneRenderer implements IClientZoneRenderer {
                     ;
                 }
             }
+            if (zoneData.specialHandler != null) {
+                zoneData.specialHandler.additionalZoneRender(this);
+            }
+
+            this.currentZoneMatrix = null;
+            this.consumer = null;
         }
         bufferSource.endBatch();
     }
