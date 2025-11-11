@@ -1,6 +1,5 @@
 package xiao.battleroyale.event.handler.effect;
 
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
@@ -37,7 +36,7 @@ public class ParticleEventHandler implements IEventHandler {
         if (eventType == EventType.SERVER_TICK_EVENT) {
             ParticleManager.get().onTick();
         } else {
-            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
+            onReceiveWrongEvent(eventType);
         }
     }
 }

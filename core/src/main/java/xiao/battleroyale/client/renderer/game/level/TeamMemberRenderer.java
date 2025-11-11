@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
@@ -54,6 +55,15 @@ public class TeamMemberRenderer implements IClientTeamRenderer {
     private float A = 0.5f;
     public void setTransparency(float a) { A = a; }
 
+    private @Nullable Matrix4f currentZoneMatrix;
+    private @Nullable VertexConsumer consumer;
+    public @Nullable Matrix4f getCurrentZoneMatrix() {
+        return currentZoneMatrix;
+    }
+    public @Nullable VertexConsumer getVertexConsumer() {
+        return consumer;
+    }
+
     public String getRendererName() {
         return String.format("%s:TeamMemberRenderer", BattleRoyale.MOD_ID);
     }
@@ -80,12 +90,11 @@ public class TeamMemberRenderer implements IClientTeamRenderer {
             return;
         }
 
-        Matrix4f baseModelView = event.getModelViewMatrix();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         Vec3 cameraPos = event.getCamera_getPosition();
         float partialTicks = event.getPartialTick();
 
-        VertexConsumer consumer = bufferSource.getBuffer(TEAM_MARKER_RENDER_TYPE);
+        VertexConsumer currentConsumer = bufferSource.getBuffer(TEAM_MARKER_RENDER_TYPE);
 
         int worldMaxBuildHeight = mc.level.getMaxBuildHeight();
 
@@ -121,16 +130,13 @@ public class TeamMemberRenderer implements IClientTeamRenderer {
 
                 float cylinderHeight = (float) (worldMaxBuildHeight - interpolatedPos.y - teammateHeight);
 
-                Matrix4f matrix = new Matrix4f(baseModelView);
                 // 将坐标系的原点平移到玩家的脚底中心
-                matrix.translate(
-                        (float) (interpolatedPos.x - cameraPos.x),
-                        (float) (interpolatedPos.y - cameraPos.y),
-                        (float) (interpolatedPos.z - cameraPos.z));
+                currentZoneMatrix = ZoneRenderer.createCenterOffsetMatrix(event, interpolatedPos, cameraPos);
+                consumer = currentConsumer;
 
                 if (renderBoundingBox) {
                     // 渲染长方体
-                    Matrix4f boundingBoxMatrix = new Matrix4f(matrix);
+                    Matrix4f boundingBoxMatrix = new Matrix4f(currentZoneMatrix);
                     // 向上平移长方体高度的一半，使其中心与玩家身体中心对齐
                     boundingBoxMatrix.translate(0, teammateHeight / 2.0F, 0);
                     Shape3D.drawFilledCuboid(boundingBoxMatrix, consumer, r, g, b, a,
@@ -138,12 +144,15 @@ public class TeamMemberRenderer implements IClientTeamRenderer {
                 }
                 if (renderBeacon) {
                     // 渲染圆柱体
-                    Matrix4f beaconMatrix = new Matrix4f(matrix);
+                    Matrix4f beaconMatrix = new Matrix4f(currentZoneMatrix);
                     // 向上平移到长方体的顶部
                     beaconMatrix.translate(0, teammateHeight, 0);
                     Shape2D.drawFilledPolygonCylinder(beaconMatrix, consumer, r, g, b, a,
                             baseWidth / 2.0F, cylinderHeight, 16, 0);
                 }
+
+                currentZoneMatrix = null;
+                consumer = null;
             }
         }
         bufferSource.endBatch();
