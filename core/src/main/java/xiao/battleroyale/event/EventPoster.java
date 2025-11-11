@@ -4,6 +4,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.ICustomEvent;
 import xiao.battleroyale.api.event.ICustomEventPoster;
+import xiao.battleroyale.event.client.ClientRenderEventHandler;
 import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.event.loot.LootGenerateEventsHandler;
 
@@ -72,6 +73,8 @@ public class EventPoster implements ICustomEventPoster {
                  ENTITY_EVENT -> GameZoneEventsHandler.get().handleEvent(customEvent);
             // generate
             case CUSTOM_GENERATE_EVENT -> LootGenerateEventsHandler.get().handleEvent(customEvent);
+            // client
+            case SPECIAL_ZONE_RENDER_EVENT -> ClientRenderEventHandler.get().handleEvent(customEvent);
             default -> {
                 BattleRoyale.LOGGER.error("Attempted to post event {} which has no assigned Event Handler! This is a serious configuration error.", customEventType);
             }

@@ -47,5 +47,7 @@ public enum CustomEventType {
     AIRDROP_EVENT,
     ENTITY_EVENT,
     // generate
-    CUSTOM_GENERATE_EVENT
+    CUSTOM_GENERATE_EVENT,
+    // client
+    SPECIAL_ZONE_RENDER_EVENT
 }

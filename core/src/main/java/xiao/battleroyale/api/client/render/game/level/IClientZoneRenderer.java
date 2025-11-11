@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.client.render.game.level;
 
-public interface IClientZoneRenderer extends IClientTranslucentRender {
+public interface IClientZoneRenderer extends IClientSimpleZoneRenderer {
 
     int getCircleSegments();
     void setCircleSegments(int segments);
