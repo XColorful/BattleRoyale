@@ -39,7 +39,7 @@ public class LogEventHandler implements IEventHandler {
         switch (eventType) {
             case PLAYER_LOGGED_IN_EVENT -> onPlayerLoggedIn((IPlayerLoggedInEvent) event);
             case PLAYER_LOGGED_OUT_EVENT -> onPlayerLoggedOut((IPlayerLoggedOutEvent) event);
-            default -> BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
+            default -> onReceiveWrongEvent(eventType);
         }
     }
 

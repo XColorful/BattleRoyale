@@ -11,6 +11,8 @@ import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
+import xiao.battleroyale.api.game.zone.special.IZoneSpecialEntry;
+import xiao.battleroyale.api.game.zone.special.ZoneSpecialTag;
 import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.game.zone.GameZoneBuilder;
 import xiao.battleroyale.config.AbstractConfigSubManager;
@@ -20,6 +22,7 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.defaultconfigs.DefaultZoneConfigGenerator;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
+import xiao.battleroyale.config.common.game.zone.zonespecial.ZoneSpecialType;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
@@ -57,6 +60,7 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
         public final int zoneTime;
         public final IZoneFuncEntry zoneFuncEntry;
         public final IZoneShapeEntry zoneShapeEntry;
+        public @Nullable IZoneSpecialEntry zoneSpecialEntry;
 
         public ZoneConfig(int zoneId, String zoneName, String zoneColor, int zoneDelay, int zoneTime, IZoneFuncEntry zoneFuncEntry, IZoneShapeEntry zoneShapeEntry) {
             this(zoneId, zoneName, zoneColor, false, -1, zoneDelay, zoneTime, zoneFuncEntry, zoneShapeEntry);
@@ -65,15 +69,19 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
             this(zoneId, zoneName, zoneColor, false, preZoneDelayId, zoneDelay, zoneTime, zoneFuncEntry, zoneShapeEntry);
         }
         public ZoneConfig(int zoneId, String zoneName, String zoneColor, boolean isDefault, int preZoneDelayId, int zoneDelay, int zoneTime, IZoneFuncEntry zoneFuncEntry, IZoneShapeEntry zoneShapeEntry) {
+            this(zoneId, zoneName, zoneColor, isDefault, preZoneDelayId, zoneDelay, zoneTime, zoneFuncEntry, zoneShapeEntry, null);
+        }
+        public ZoneConfig(int zoneId, String zoneName, String zoneColor, boolean isDefault, int preZoneDelayId, int zoneDelay, int zoneTime, IZoneFuncEntry zoneFuncEntry, IZoneShapeEntry zoneShapeEntry, IZoneSpecialEntry zoneSpecialEntry) {
             super(zoneId, zoneName, zoneColor, isDefault);
             this.preZoneDelayId = preZoneDelayId;
             this.zoneDelay = zoneDelay;
             this.zoneTime = zoneTime;
             this.zoneFuncEntry = zoneFuncEntry;
             this.zoneShapeEntry = zoneShapeEntry;
+            this.zoneSpecialEntry = zoneSpecialEntry;
         }
         @Override public @NotNull ZoneConfig copy() {
-            return new ZoneConfig(id, name, color, isDefault, preZoneDelayId, zoneDelay, zoneTime, zoneFuncEntry.copy(), zoneShapeEntry.copy());
+            return new ZoneConfig(id, name, color, isDefault, preZoneDelayId, zoneDelay, zoneTime, zoneFuncEntry.copy(), zoneShapeEntry.copy(), zoneSpecialEntry.copy());
         }
 
         public int getZoneId() {
@@ -99,6 +107,9 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
         }
         public IZoneShapeEntry getZoneShapeEntry() {
             return zoneShapeEntry;
+        }
+        public @Nullable IZoneSpecialEntry getZoneSpecialEntry() {
+            return zoneSpecialEntry;
         }
 
         @Nullable
@@ -132,6 +143,9 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
             }
             if (zoneShapeEntry != null) {
                 jsonObject.add(ZoneConfigTag.ZONE_SHAPE, zoneShapeEntry.toJson());
+            }
+            if (zoneSpecialEntry != null) {
+                jsonObject.add(ZoneConfigTag.ZONE_SPECIAL, zoneSpecialEntry.toJson());
             }
             return jsonObject;
         }
@@ -167,6 +181,21 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
                 }
             } catch (Exception e) {
                 BattleRoyale.LOGGER.error("Failed to deserialize ZoneShapeEntry: {}", e.getMessage());
+                return null;
+            }
+        }
+
+        public static IZoneSpecialEntry deserializeZoneSpecialEntry(JsonObject jsonObject) {
+            try {
+                ZoneSpecialType zoneSpecialType = ZoneSpecialType.fromName(JsonUtils.getJsonString(jsonObject, ZoneSpecialTag.TYPE_NAME, ""));
+                if (zoneSpecialType != null) {
+                    return zoneSpecialType.getDeserializer().apply(jsonObject);
+                } else {
+                    BattleRoyale.LOGGER.error("Skipped invalid ZoneSpecialEntry");
+                    return null;
+                }
+            } catch (Exception e) {
+                BattleRoyale.LOGGER.error("Failed to deserialize ZoneSpecialEntry: {}", e.getMessage());
                 return null;
             }
         }
@@ -214,6 +243,7 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
             int zoneId = JsonUtils.getJsonInt(configObject, ZoneConfigTag.ZONE_ID, -1);
             JsonObject zoneFuncObject = JsonUtils.getJsonObject(configObject, ZoneConfigTag.ZONE_FUNC, null);
             JsonObject zoneShapeObject = JsonUtils.getJsonObject(configObject, ZoneConfigTag.ZONE_SHAPE, null);
+            JsonObject zoneSpecialObject = JsonUtils.getJsonObject(configObject, ZoneConfigTag.ZONE_SPECIAL, null);
             if (zoneId < 0 || zoneFuncObject == null || zoneShapeObject == null) {
                 BattleRoyale.LOGGER.warn("Skipped invalid zone config in {}", filePath);
                 return null;
@@ -226,12 +256,13 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
             int zoneTime = JsonUtils.getJsonInt(configObject, ZoneConfigTag.ZONE_TIME, 0);
             IZoneFuncEntry zoneFuncEntry = ZoneConfig.deserializeZoneFuncEntry(zoneFuncObject);
             IZoneShapeEntry zoneShapeEntry = ZoneConfig.deserializeZoneShapeEntry(zoneShapeObject);
+            IZoneSpecialEntry zoneSpecialEntry = zoneSpecialObject != null ? ZoneConfig.deserializeZoneSpecialEntry(zoneSpecialObject) : null; // 显式允许null
             if (zoneFuncEntry == null || zoneShapeEntry == null) {
                 BattleRoyale.LOGGER.error("Failed to deserialize zone entry for id: {} in {}", zoneId, filePath);
                 return null;
             }
 
-            return new ZoneConfig(zoneId, zoneName, zoneColor, isDefault, preZoneDelayId, zoneDelay, zoneTime, zoneFuncEntry, zoneShapeEntry);
+            return new ZoneConfig(zoneId, zoneName, zoneColor, isDefault, preZoneDelayId, zoneDelay, zoneTime, zoneFuncEntry, zoneShapeEntry, zoneSpecialEntry);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(), filePath, e.getMessage());
             return null;

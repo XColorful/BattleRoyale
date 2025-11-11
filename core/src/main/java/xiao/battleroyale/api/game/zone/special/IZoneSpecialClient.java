@@ -1,0 +1,13 @@
+package xiao.battleroyale.api.game.zone.special;
+
+import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
+import xiao.battleroyale.api.client.render.game.level.IClientSimpleZoneRenderer;
+import xiao.battleroyale.client.game.data.ClientSingleZoneData;
+
+/**
+ * 所有区域特殊功能, 未重载则无功能
+ */
+public interface IZoneSpecialClient {
+
+    default void additionalZoneRender(IRenderLevelStageEvent event, IClientSimpleZoneRenderer clientZoneRenderer, ClientSingleZoneData zoneData) {}
+}
