@@ -41,7 +41,7 @@ public class StatsEventHandler implements IEventHandler {
         switch (eventType) {
             case LIVING_DAMAGE_EVENT -> onRecordDamage((ILivingDamageEvent) event);
             case LIVING_DEATH_EVENT -> onLivingDeath((ILivingDeathEvent) event);
-            default -> BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
+            default -> onReceiveWrongEvent(eventType);
         }
     }
 
