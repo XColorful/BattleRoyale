@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.client.render.game.level;
 
-public interface IClientTeamRenderer extends IClientTranslucentRender {
+public interface IClientTeamRenderer extends IClientSimpleZoneRenderer {
 
     void setEnableTeamZone(boolean bool);
 
