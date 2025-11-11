@@ -1,6 +1,5 @@
 package xiao.battleroyale.event.handler.loot;
 
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
@@ -40,7 +39,7 @@ public class LootGenerationEventHandler implements IEventHandler {
                 unregister();
             }
         } else {
-            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
+            onReceiveWrongEvent(eventType);
         }
     }
 }

@@ -43,7 +43,7 @@ public class LobbyEventHandler implements IEventHandler {
                 event.setCanceled(true);
             }
         } else {
-            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
+            onReceiveWrongEvent(eventType);
         }
     }
 }

@@ -40,7 +40,7 @@ public class LoopEventHandler implements IEventHandler {
             }
             gameManager.addGameTimeAndTick();
         } else {
-            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
+            onReceiveWrongEvent(eventType);
         }
     }
 }

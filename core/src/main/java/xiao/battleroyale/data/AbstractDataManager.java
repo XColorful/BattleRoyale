@@ -182,7 +182,7 @@ public abstract class AbstractDataManager {
                 JsonObject jsonObject = entry.getValue();
                 Path filePath = Paths.get(DATA_PATH, fileName + ".json");
                 try {
-                    String jsonString = JsonUtils.toJson(jsonObject);
+                    String jsonString = JsonUtils.toJsonString(jsonObject);
                     if (!Files.exists(filePath.getParent())) {
                         Files.createDirectories(filePath.getParent());
                     }

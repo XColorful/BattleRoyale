@@ -3,11 +3,15 @@ package xiao.battleroyale.client.game.data;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.zone.gamezone.IAdditionalZone;
 import xiao.battleroyale.api.network.message.zone.GameZoneTag;
 import xiao.battleroyale.client.game.ClientGameDataManager;
+import xiao.battleroyale.common.game.zone.additional.ZoneSpecialHandler;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
+import xiao.battleroyale.config.common.game.zone.zonespecial.ZoneSpecialType;
 import xiao.battleroyale.util.ColorUtils;
 
 import java.awt.*;
@@ -33,6 +37,7 @@ public class ClientSingleZoneData extends AbstractClientExpireData {
     public double rotateDegree = 0;
     public int segments = 3; // 供多边形和星形使用
     public double progress; // [0, 1]
+    public @Nullable IAdditionalZone specialHandler;
 
     public ClientSingleZoneData(int id) {
         this.id = id;
@@ -55,12 +60,14 @@ public class ClientSingleZoneData extends AbstractClientExpireData {
         this.b = this.color.getBlue() / 255.0F;
         this.a = this.color.getAlpha() / 255.0F;
 
+        // zoneFunc
         String funcTypeName = nbt.getString(GameZoneTag.FUNC);
         this.funcType = ZoneFuncType.fromName(funcTypeName);
         if (this.funcType == null) {
             BattleRoyale.LOGGER.warn("Unknown ZoneFuncType: {}", funcTypeName);
         }
 
+        // zoneShape
         String shapeTypeName = nbt.getString(GameZoneTag.SHAPE);
         this.shapeType = ZoneShapeType.fromName(shapeTypeName);
         if (this.shapeType == null) {
@@ -73,13 +80,26 @@ public class ClientSingleZoneData extends AbstractClientExpireData {
                 // case CIRCLE, ELLIPSE, SPHERE, ELLIPSOID:
             }
         }
-
         CompoundTag centerTag = nbt.getCompound(GameZoneTag.CENTER);
         this.center = new Vec3(centerTag.getDouble("x"), centerTag.getDouble("y"), centerTag.getDouble("z"));
         CompoundTag dimTag = nbt.getCompound(GameZoneTag.DIMENSION);
         this.dimension = new Vec3(dimTag.getDouble("x"), dimTag.getDouble("y"), dimTag.getDouble("z"));
         this.rotateDegree = nbt.contains(GameZoneTag.ROTATE) ? nbt.getDouble(GameZoneTag.ROTATE) : 0;
         this.progress = nbt.getDouble(GameZoneTag.SHAPE_PROGRESS);
+
+        // zoneSpecial
+        if (nbt.contains(GameZoneTag.SPECIAL) && nbt.contains(GameZoneTag.ADDITIONAL_TAG)) {
+            String specialTypeName = nbt.getString(GameZoneTag.SPECIAL);
+            ZoneSpecialHandler specialHandlerType = ZoneSpecialHandler.fromSpecialType(ZoneSpecialType.fromName(specialTypeName));
+            if (specialHandlerType != null) {
+                CompoundTag tag = nbt.getCompound(GameZoneTag.ADDITIONAL_TAG);
+                this.specialHandler = specialHandlerType.getBuilder().apply(tag);
+            } else {
+                this.specialHandler = null;
+            }
+        } else {
+            this.specialHandler = null;
+        }
 
         this.lastUpdateTick = ClientGameDataManager.getCurrentTick(); // 推迟到主线程
     }

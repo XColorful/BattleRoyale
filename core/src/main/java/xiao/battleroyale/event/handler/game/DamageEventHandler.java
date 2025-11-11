@@ -49,7 +49,7 @@ public class DamageEventHandler implements IEventHandler {
         if (eventType == EventType.LIVING_DAMAGE_EVENT) {
             checkDamage((ILivingDamageEvent) event);
         } else {
-            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
+            onReceiveWrongEvent(eventType);
         }
     }
 

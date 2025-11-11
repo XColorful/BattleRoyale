@@ -12,6 +12,7 @@ public final class ZoneConfigTag extends ConfigEntryTag {
     public static final String ZONE_TIME = "zoneTime";
     public static final String ZONE_FUNC = "zoneFunc";
     public static final String ZONE_SHAPE = "zoneShape";
+    public static final String ZONE_SPECIAL = "zoneSpecial";
 
     private ZoneConfigTag() {}
 }
