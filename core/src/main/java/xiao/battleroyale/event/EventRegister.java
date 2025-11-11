@@ -2,6 +2,7 @@ package xiao.battleroyale.event;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
+import xiao.battleroyale.event.client.ClientRenderEventHandler;
 import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.event.loot.LootGenerateEventsHandler;
 
@@ -101,6 +102,8 @@ public class EventRegister implements ICustomEventRegister {
                  ENTITY_EVENT -> GameZoneEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             // generate
             case CUSTOM_GENERATE_EVENT -> LootGenerateEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
+            // client
+            case SPECIAL_ZONE_RENDER_EVENT -> ClientRenderEventHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             default -> {
                 BattleRoyale.LOGGER.debug("Attempted to register handler for unassigned CustomEventType: {}. Registration aborted.", customEventType);
                 yield false;
@@ -158,6 +161,8 @@ public class EventRegister implements ICustomEventRegister {
                  ENTITY_EVENT -> GameZoneEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
             // generate
             case CUSTOM_GENERATE_EVENT -> LootGenerateEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
+            // client
+            case SPECIAL_ZONE_RENDER_EVENT -> ClientRenderEventHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
             default -> {
                 BattleRoyale.LOGGER.debug("Attempted to unregister handler for unassigned CustomEventType: {}. Unregistration aborted.", customEventType);
                 yield false;
