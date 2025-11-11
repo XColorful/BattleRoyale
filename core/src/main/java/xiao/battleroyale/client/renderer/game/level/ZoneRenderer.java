@@ -158,6 +158,6 @@ public class ZoneRenderer implements IClientZoneRenderer {
      * MC各版本通用
      */
     public static Matrix4f createCenterOffsetMatrix(IRenderLevelStageEvent event, Vec3 worldCenter, Vec3 cameraPos) {
-        return createCenterOffsetMatrix(event.getModelViewMatrix(), worldCenter, cameraPos);
+        return createCenterOffsetMatrix(new Matrix4f(), worldCenter, cameraPos);
     }
 }
