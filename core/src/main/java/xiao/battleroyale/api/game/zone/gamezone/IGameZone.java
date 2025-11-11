@@ -6,7 +6,7 @@ import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 /**
  * 游戏进行时实际用于计算的对象
  */
-public interface IGameZone extends ITickableZone, ISpatialZone {
+public interface IGameZone extends ITickableZone, ISpatialZone, IAdditionalZone {
 
     /**
      * 用 List<ZoneConfig> 创建 <Integer, IGameZone> 时保留获取正确id的方式

@@ -80,6 +80,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public int messageExpireTime;
     public int messageSyncFreq;
 
+    public static GameEntry DEFAULT_INSTANCE = new GameEntry();
     public GameEntry() {
         this(true, 300, DEFAULT_TEAM_COLORS, true, true,
                 20 * 60, 20 * 10, false,

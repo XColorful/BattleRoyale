@@ -1,6 +1,5 @@
 package xiao.battleroyale.event.handler.server;
 
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.common.server.utility.SurvivalLobby;
 import xiao.battleroyale.event.EventRegister;
@@ -41,7 +40,7 @@ public class SurvivalLobbyEventHandler implements IEventHandler {
                 event.setCanceled(true);
             }
         } else {
-            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
+            onReceiveWrongEvent(eventType);
         }
     }
 }
