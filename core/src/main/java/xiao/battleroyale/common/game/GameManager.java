@@ -211,7 +211,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     private int gameTime = 0; // 游戏运行时维护当前游戏时间
     private int gameStep = 1;
     private @NotNull UUID gameId;
-    private boolean inGame;
+    private boolean inGame = false;
     private String gameLevelKeyString = "";
     private @Nullable ResourceKey<Level> gameLevelKey;
     private @Nullable ServerLevel serverLevel;
@@ -231,6 +231,9 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     protected int winnerTeamTotal = 1;
     protected int requiredGameTeam = 2;
     protected GameEntry gameEntry;
+    protected void setGameEntry(GameEntry gameEntry) {
+        this.gameEntry = gameEntry.copy();
+    }
 
     @Override public int getGameTime() {
         return this.gameTime;
@@ -250,6 +253,11 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return requiredGameTeam;
     }
     @Override public GameEntry getGameEntry() {
+        if (gameEntry == null) {
+            // 没开过游戏就关闭时会触发, 外部调用不必要null检查
+            BattleRoyale.LOGGER.warn("GameManager.GameEntry is null, getGameEntry() return new default GameEntry (ignore this if never load game)");
+            return GameEntry.DEFAULT_INSTANCE;
+        }
         return gameEntry;
     }
     @Override public boolean setGlobalCenterOffset(Vec3 offset) {
@@ -501,7 +509,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
                     ServerLevel currentServerLevel = BattleRoyale.getMinecraftServer().getLevel(levelKey);
                     gameProcessManager.sendWinnerResult(currentServerLevel, getWinnerGamePlayers(), getWinnerGameTeams(), this.gameTime);
                     // 游戏正常结束后自动初始化游戏
-                    if (this.gameEntry.initGameAfterGame && currentServerLevel != null) {
+                    if (getGameEntry().initGameAfterGame && currentServerLevel != null) {
                         initGame(serverLevel);
                     }
                 };
@@ -524,6 +532,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         gameruleManager.stopGame(serverLevel);
         // ↑以上操作均不需要inGame判断
         this.inGame = false;
+        GameEntry gameEntry = getGameEntry();
         gameProcessManager.teleportAfterGame(serverLevel, getWinnerGamePlayers(), getWinnerGameTeams(), gameEntry.teleportWinnerAfterGame, gameEntry.teleportAfterGame);
 
         teamManager.stopGame(serverLevel); // 最后处理TeamManager
@@ -679,7 +688,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
     // 发送观战消息
     @Override public void sendGameSpectateMessage(@NotNull ServerPlayer player) {
-        gameProcessManager.sendGameSpectateMessage(player, !gameEntry.onlyGamePlayerSpectate);
+        gameProcessManager.sendGameSpectateMessage(player, !getGameEntry().onlyGamePlayerSpectate);
     }
 
 
@@ -692,7 +701,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             return;
         }
 
-        gameProcessManager.onPlayerLoggedIn(this.serverLevel, player, this.gameEntry.onlyGamePlayerSpectate);
+        gameProcessManager.onPlayerLoggedIn(this.serverLevel, player, getGameEntry().onlyGamePlayerSpectate);
     }
     // 玩家退出服务器
     public void onPlayerLoggedOut(ServerPlayer player) {
@@ -703,7 +712,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             BattleRoyale.LOGGER.debug("GamePlayerDownEvent canceled, skipped onPlayerDown (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
-        gameProcessManager.onPlayerDown(event, gamePlayer, livingEntity, this.gameEntry.removeInvalidTeam);
+        gameProcessManager.onPlayerDown(event, gamePlayer, livingEntity, getGameEntry().removeInvalidTeam);
         EventPoster.postEvent(new GamePlayerDownFinishEvent(this, gamePlayer, livingEntity, event));
     }
     public void onPlayerRevived(@NotNull GamePlayer gamePlayer) {

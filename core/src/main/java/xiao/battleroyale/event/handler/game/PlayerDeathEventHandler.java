@@ -40,7 +40,7 @@ public class PlayerDeathEventHandler implements IEventHandler {
         if (eventType == EventType.LIVING_DEATH_EVENT) {
             onLivingDeath((ILivingDeathEvent) event);
         } else {
-            BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
+            onReceiveWrongEvent(eventType);
         }
     }
     /**

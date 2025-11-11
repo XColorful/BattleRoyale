@@ -19,7 +19,11 @@ public class JsonUtils {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public static <T> T fromJson(String jsonString, Class<T> clazz) {
+    @Nullable
+    public static <T> T fromJsonString(String jsonString, Class<T> clazz) {
+        if (jsonString == null || jsonString.isEmpty()) {
+            return null;
+        }
         try {
             return GSON.fromJson(jsonString, clazz);
         } catch (Exception e) {
@@ -28,7 +32,10 @@ public class JsonUtils {
         }
     }
 
-    public static String toJson(Object object) {
+    public static String toJsonString(Object object) {
+        if (object == null) {
+            return "null";
+        }
         return GSON.toJson(object);
     }
 
