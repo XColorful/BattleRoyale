@@ -49,9 +49,10 @@ public class GameStarter {
         gameManager.maxGameTime = brEntry.maxGameTime;
         gameManager.winnerTeamTotal = brEntry.winnerTeamTotal;
         gameManager.requiredGameTeam = brEntry.requiredTeamToStart;
-        gameManager.gameEntry = gameEntry.copy();
-        BleedingHandler.setBleedDamage(gameManager.gameEntry.downDamageList);
-        BleedingHandler.setBleedCooldown(gameManager.gameEntry.downDamageFrequency);
+        gameManager.setGameEntry(gameEntry);
+        gameEntry = gameManager.getGameEntry();
+        BleedingHandler.setBleedDamage(gameEntry.downDamageList);
+        BleedingHandler.setBleedCooldown(gameEntry.downDamageFrequency);
         return true;
     }
     @ApiStatus.Internal
@@ -123,7 +124,7 @@ public class GameStarter {
         TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(gameManager.globalCenterOffset));
         ServerLevel serverLevel = gameManager.getServerLevel();
         TempDataManager.get().startGame(serverLevel); // 立即写入备份
-        if (gameManager.gameEntry.healAllAtStart) {
+        if (gameManager.getGameEntry().healAllAtStart) {
             if (serverLevel != null) {
                 gameManager.getGameProcessManager().healGamePlayers(serverLevel, GameTeamManager.getGamePlayers());
             } else {
