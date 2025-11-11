@@ -5,19 +5,21 @@ import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
+import xiao.battleroyale.api.client.render.game.level.IClientSimpleZoneRenderer;
 import xiao.battleroyale.api.event.client.render.SpecialZoneRenderEvent;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
+import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.JsonUtils;
 
 public class AdditionalRender extends AbstractZoneSpecial {
 
     protected String protocol;
-    protected @NotNull JsonObject jsonTag;
 
     public AdditionalRender(String protocol, @NotNull JsonObject jsonTag) {
+        super(jsonTag);
         this.protocol = protocol;
-        this.jsonTag = jsonTag;
     }
 
     @Override
@@ -50,8 +52,8 @@ public class AdditionalRender extends AbstractZoneSpecial {
     }
 
     @Override
-    public void additionalZoneRender(Object clientZoneRenderer) {
+    public void additionalZoneRender(IRenderLevelStageEvent event, IClientSimpleZoneRenderer clientZoneRenderer, ClientSingleZoneData zoneData) {
         if (BattleRoyale.getMcSide().isServerSide()) return;
-        EventPoster.postEvent(new SpecialZoneRenderEvent(BattleRoyale.getClientGameDataManager(), clientZoneRenderer));
+        EventPoster.postEvent(new SpecialZoneRenderEvent(BattleRoyale.getClientGameDataManager(), protocol, jsonTag.deepCopy(), event, clientZoneRenderer, zoneData));
     }
 }

@@ -24,7 +24,6 @@ import xiao.battleroyale.common.game.zone.additional.ZoneSpecialHandler;
 import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
-import xiao.battleroyale.config.common.game.zone.zonespecial.ZoneSpecialType;
 import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.NBTUtils;
 import xiao.battleroyale.util.StringUtils;

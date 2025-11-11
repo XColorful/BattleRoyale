@@ -32,6 +32,7 @@ import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.event.EventRegister;
+import xiao.battleroyale.event.custom.CustomEventHandler;
 import xiao.battleroyale.network.NetworkHandler;
 import xiao.battleroyale.network.NetworkHook;
 import xiao.battleroyale.resource.ResourceLoader;
@@ -75,6 +76,7 @@ public class BattleRoyale {
         NetworkHandler.initialize(networkAdapter);
         NetworkHook.initialize(networkHook);
         EventRegister.initialize(eventRegister);
+        CustomEventHandler.registerAll(getEventRegister());
         BlockModelRenderer.initialize(blockModelRenderer);
         BattleRoyale.compatApi = compatApi;
 
