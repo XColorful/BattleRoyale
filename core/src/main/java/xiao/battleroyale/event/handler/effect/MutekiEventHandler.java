@@ -1,6 +1,5 @@
 package xiao.battleroyale.event.handler.effect;
 
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
@@ -43,7 +42,7 @@ public class MutekiEventHandler implements IEventHandler {
                     event.setCanceled(true);
                 }
             }
-            default -> BattleRoyale.LOGGER.warn("{} received wrong event type: {}", getEventHandlerName(), eventType);
+            default -> onReceiveWrongEvent(eventType);
         }
     }
 }

@@ -19,5 +19,8 @@ public final class GameZoneTag {
 
     public static final String SHAPE_PROGRESS = "prog";
 
+    public static final String SPECIAL = "speci";
+    public static final String ADDITIONAL_TAG = "addtag";
+
     private GameZoneTag() {};
 }
