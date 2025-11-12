@@ -15,27 +15,23 @@ public class SpecialRenderProtocol {
     public final double heightOffset;
     public final double side;
     public final boolean _3dDistance;
+    public final String distDimStr;
     public final double distMul;
     public final double distAdd;
-    public final double splitDistance;
     public final @Nullable String innerColor;
     public final @Nullable String outsideColor;
     public final boolean hasCustomColor;
 
 
     @ApiStatus.Internal
-    public SpecialRenderProtocol(boolean hideInSpectate, double heightOffset, double side, boolean _3dDistance, double distMul, double distAdd) {
-        this(hideInSpectate, heightOffset, side, _3dDistance, distMul, distAdd, -1, null, null);
-    }
-    @ApiStatus.Internal
-    public SpecialRenderProtocol(boolean hideInSpectate, double heightOffset, double side, boolean _3dDistance, double distMul, double distAdd, double splitDistance, @Nullable String innerColor, @Nullable String outsideColor) {
+    public SpecialRenderProtocol(boolean hideInSpectate, double heightOffset, double side, boolean _3dDistance, String distDimStr, double distMul, double distAdd, @Nullable String innerColor, @Nullable String outsideColor) {
         this.hideInSpectate = hideInSpectate;
         this.heightOffset = heightOffset;
         this.side = side;
         this._3dDistance = _3dDistance;
+        this.distDimStr = distDimStr;
         this.distMul = distMul;
         this.distAdd = distAdd;
-        this.splitDistance = splitDistance;
         this.innerColor = innerColor;
         this.outsideColor = outsideColor;
         this.hasCustomColor = this.innerColor != null || this.outsideColor != null;
