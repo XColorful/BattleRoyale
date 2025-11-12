@@ -41,9 +41,9 @@ public class AdditionalRender extends AbstractZoneSpecial {
     }
 
     public static @Nullable AdditionalRender fromTag(@NotNull CompoundTag tag) {
-        String protocol = tag.getString(AdditionalRenderTag.PROTOCOL);
+        String protocol = tag.getString(AdditionalRenderTag.PROTOCOL).get();
         if (protocol.isEmpty()) return null;
-        String jsonString = tag.getString(AdditionalRenderTag.JSON_TAG_STRING);
+        String jsonString = tag.getString(AdditionalRenderTag.JSON_TAG_STRING).get();
         JsonObject jsonTag = JsonUtils.fromJsonString(jsonString, JsonObject.class);
         if (jsonTag == null) {
             return null;
