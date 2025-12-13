@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 import static xiao.battleroyale.developer.gm.command.CommandArg.*;
 
 public class GameMasterCommand {
@@ -42,7 +43,7 @@ public class GameMasterCommand {
     private static LiteralArgumentBuilder<CommandSourceStack> get(String rootName, boolean useFullName) {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(rootName);
         // TODO 删除测试
-        root.requires(source -> source.hasPermission(4)); // root.requires(GameMasterCommand::isGameMasterCall);
+        root.requires(source -> checkCommandLevel(source, 4)); // root.requires(GameMasterCommand::isGameMasterCall);
 
         // GM
         LiteralArgumentBuilder<CommandSourceStack> gmCommand = Commands.literal(useFullName ? GAME_MASTER : GAME_MASTER_SHORT);

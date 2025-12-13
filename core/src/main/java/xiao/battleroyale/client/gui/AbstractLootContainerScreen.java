@@ -3,14 +3,13 @@ package xiao.battleroyale.client.gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import xiao.battleroyale.inventory.AbstractLootMenu;
 
 public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> extends AbstractContainerScreen<L> {
-    protected ResourceLocation TEXTURE;
+    protected Identifier TEXTURE;
     protected int textureOffX = 0;
     protected int textureOffY = 0;
     protected int textureWidth = 256;
@@ -58,11 +57,11 @@ public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> ex
 
     protected abstract void adjustTexture();
 
-    protected void adjustTexture(ResourceLocation rl) {
+    protected void adjustTexture(Identifier rl) {
         adjustTexture(rl, 256, 256);
     }
 
-    protected void adjustTexture(ResourceLocation rl, int textureWidth, int textureHeight) {
+    protected void adjustTexture(Identifier rl, int textureWidth, int textureHeight) {
         this.TEXTURE = rl;
         this.textureWidth = textureWidth;
         this.textureHeight = textureHeight;

@@ -19,6 +19,7 @@ import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.common.effect.EffectManager;
 
 import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 
 public class FireworkCommand {
 
@@ -69,7 +70,7 @@ public class FireworkCommand {
         fireworkCommand.then(coordBase);
         fireworkCommand.then(playerBase);
         fireworkCommand.then(Commands.literal(CLEAR)
-                .requires(source -> source.hasPermission(3))
+                .requires(source -> checkCommandLevel(source, 3))
                 .executes(FireworkCommand::executeClearFireworks));
 
         return fireworkCommand;

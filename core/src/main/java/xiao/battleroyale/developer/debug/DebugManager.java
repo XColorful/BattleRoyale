@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static xiao.battleroyale.command.CommandPermission.MAX_PERMISSION_LEVEL;
+import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
+
 public class DebugManager {
 
     private static class DebugManagerHolder {
@@ -34,7 +37,7 @@ public class DebugManager {
         reloadDebugPlayer();
     }
 
-    private static int DEBUG_PERMISSION_LEVEL = 4;
+    private static int DEBUG_PERMISSION_LEVEL = MAX_PERMISSION_LEVEL;
     public static void setDebugPermissionLevel(int permissionLevel) { DEBUG_PERMISSION_LEVEL = permissionLevel; }
 
     private static final Map<UUID, String> debugPlayers = new HashMap<>();
@@ -44,7 +47,7 @@ public class DebugManager {
         debugPlayers.putAll(loadedDebugPlayers);
     }
     public static boolean hasDebugPermission(CommandSourceStack source) {
-        if (source.hasPermission(DEBUG_PERMISSION_LEVEL)) {
+        if (checkCommandLevel(source, DEBUG_PERMISSION_LEVEL)) {
             return true;
         }
         if (source.source instanceof ServerPlayer player) { // 用source.getEntity()不能防止命令方块篡改来源

@@ -24,6 +24,7 @@ import xiao.battleroyale.data.io.TempDataManager;
 
 import static xiao.battleroyale.api.data.io.TempDataTag.PUBGMC_COMMAND;
 import static xiao.battleroyale.api.data.io.TempDataTag.REGISTRY;
+import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 import static xiao.battleroyale.compat.pubgmc.CommandArg.*;
 
 public class PubgmcCommand {
@@ -42,7 +43,7 @@ public class PubgmcCommand {
                         .executes(PubgmcCommand::lobbyInfo))
                 .then(Commands.literal(LEAVE)
                         .executes(PubgmcCommand::leaveGame))
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> checkCommandLevel(source, 2))
                 .then(Commands.literal(INIT)
                         .executes(PubgmcCommand::initGame))
                 .then(Commands.literal(START)
@@ -74,7 +75,7 @@ public class PubgmcCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> getLoot() {
         return Commands.literal(GENERATOR)
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> checkCommandLevel(source, 2))
                 .then(Commands.literal(GENERATE)
                         .executes(PubgmcCommand::generatorGenerate));
     }

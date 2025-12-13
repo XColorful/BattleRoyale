@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -104,7 +104,7 @@ public class DebugWorld {
         Optional<ResourceKey<Biome>> biomeKeyOptional = biomeHolder.unwrapKey();
         ResourceKey<Biome> biomeRK = biomeKeyOptional.orElse(null);
 
-        ResourceLocation biomeRL = biomeRK != null ? biomeRK.location() : null;
+        Identifier biomeRL = biomeRK != null ? biomeRK.identifier() : null;
         DebugManager.sendDebugMessage(source, GET_BIOME, WorldText.buildBiome(blockPos, biomeRL, biomeRK));
     }
 
@@ -122,7 +122,7 @@ public class DebugWorld {
                 .map(key -> ResourceKey.create(Registries.STRUCTURE, key))
                 .toList();
 
-        Map<ResourceLocation, ResourceKey<Structure>> structures = new HashMap<>();
+        Map<Identifier, ResourceKey<Structure>> structures = new HashMap<>();
 
         for (ResourceKey<Structure> structureKey : allStructuresKeys) {
             Predicate<Holder<Structure>> filter = (holder) -> holder.is(structureKey);
@@ -130,7 +130,7 @@ public class DebugWorld {
             StructureStart structureStart = structureManager.getStructureWithPieceAt(blockPos, filter);
 
             if (structureStart != StructureStart.INVALID_START) {
-                structures.put(structureKey.location(), structureKey);
+                structures.put(structureKey.identifier(), structureKey);
             }
         }
 

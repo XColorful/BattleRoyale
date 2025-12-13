@@ -1,7 +1,7 @@
 package xiao.battleroyale.config.common.effect.particle;
 
 import com.google.gson.JsonObject;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ import xiao.battleroyale.util.StringUtils;
 
 public class ParticleDetailEntry implements IParticleEntry {
 
-    public ResourceLocation particleType;
+    public Identifier particleType;
     public int count;
     public int initDelay;
     public int interval;
@@ -25,7 +25,7 @@ public class ParticleDetailEntry implements IParticleEntry {
     public boolean exactOffset;
     public @Nullable ParticleParameterEntry parameter;
 
-    public ParticleDetailEntry(ResourceLocation particleType, int count, int initDelay, int interval, int repeat,
+    public ParticleDetailEntry(Identifier particleType, int count, int initDelay, int interval, int repeat,
                                @Nullable Vec3 offset, @Nullable Vec3 offsetRange, boolean exactOffset,
                                @Nullable ParticleParameterEntry parameter) {
         this.particleType = particleType;
@@ -75,7 +75,7 @@ public class ParticleDetailEntry implements IParticleEntry {
     }
 
     public static ParticleDetailEntry fromJson(JsonObject jsonObject) {
-        ResourceLocation particleRL = BattleRoyale.getMcRegistry().createResourceLocation(JsonUtils.getJsonString(jsonObject, ParticleConfigTag.TYPE, ""));
+        Identifier particleRL = BattleRoyale.getMcRegistry().createResourceLocation(JsonUtils.getJsonString(jsonObject, ParticleConfigTag.TYPE, ""));
         if (particleRL == null || BattleRoyale.getMcRegistry().getParticleType(particleRL) == null) {
             return null;
         }

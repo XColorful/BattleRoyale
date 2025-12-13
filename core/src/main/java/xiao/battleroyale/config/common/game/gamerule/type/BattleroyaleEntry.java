@@ -14,7 +14,7 @@ import xiao.battleroyale.util.StringUtils;
 
 public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
 
-    public static final String OVERWORLD_LEVEL_KEY = Level.OVERWORLD.location().toString();
+    public static final String OVERWORLD_LEVEL_KEY = Level.OVERWORLD.identifier().toString();
     public String defaultLevelKey;
     public int playerTotal;
     public int teamSize;

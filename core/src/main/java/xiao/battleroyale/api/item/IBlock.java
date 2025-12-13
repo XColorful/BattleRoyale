@@ -1,11 +1,11 @@
 package xiao.battleroyale.api.item;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public interface IBlock {
-    ResourceLocation getBlockId(ItemStack block);
+    Identifier getBlockId(ItemStack block);
 
-    void setBlockId(ItemStack block, @Nullable ResourceLocation blockId);
+    void setBlockId(ItemStack block, @Nullable Identifier blockId);
 }

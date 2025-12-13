@@ -16,6 +16,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.effect.EffectManager;
 
 import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 
 public class ParticleCommand {
 
@@ -27,7 +28,7 @@ public class ParticleCommand {
 
         // /battleroyale particle [~ ~ ~] [ID] [COOLDOWN]
         RequiredArgumentBuilder<CommandSourceStack, Integer> cooldownArg_pos = Commands.argument(COOLDOWN, IntegerArgumentType.integer(0));
-        cooldownArg_pos.requires(source -> source.hasPermission(3))
+        cooldownArg_pos.requires(source -> checkCommandLevel(source, 3))
                 .executes(ParticleCommand::particleAtPosWithIdAndCooldown);
 
         RequiredArgumentBuilder<CommandSourceStack, Integer> particleIdArg_pos = Commands.argument(ID, IntegerArgumentType.integer(0));
@@ -39,7 +40,7 @@ public class ParticleCommand {
 
         // /battleroyale particle [ID] [COOLDOWN]
         RequiredArgumentBuilder<CommandSourceStack, Integer> cooldownArg = Commands.argument(COOLDOWN, IntegerArgumentType.integer(0));
-        cooldownArg.requires(source -> source.hasPermission(3))
+        cooldownArg.requires(source -> checkCommandLevel(source, 3))
                 .executes(ParticleCommand::particleWithIdAndCooldown);
 
         RequiredArgumentBuilder<CommandSourceStack, Integer> particleIdArg = Commands.argument(ID, IntegerArgumentType.integer(0));

@@ -3,7 +3,7 @@ package xiao.battleroyale.config.common.game.zone.zonefunc;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
@@ -43,7 +43,7 @@ public class EffectFuncEntry extends AbstractFuncEntry {
     public EffectFunc build() {
         List<Effect> effects = new ArrayList<>();
         for (EffectEntry effectEntry : effectEntries) {
-            ResourceLocation rl = BattleRoyale.getMcRegistry().createResourceLocation(effectEntry.rlString);
+            Identifier rl = BattleRoyale.getMcRegistry().createResourceLocation(effectEntry.rlString);
             if (rl == null) {
                 continue;
             }
@@ -55,7 +55,7 @@ public class EffectFuncEntry extends AbstractFuncEntry {
         }
         return new EffectFunc(moveDelay, moveTime, tickFreq, tickOffset, effects);
     }
-    public record Effect(@NotNull ResourceLocation effectRL, @NotNull MobEffect type, int duration, int level) {}
+    public record Effect(@NotNull Identifier effectRL, @NotNull MobEffect type, int duration, int level) {}
 
     @Override
     public JsonObject toJson() {

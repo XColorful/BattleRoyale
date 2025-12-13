@@ -18,6 +18,7 @@ import xiao.battleroyale.common.effect.boost.BoostData;
 import java.util.Collection;
 
 import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 
 public class BoostCommand {
 
@@ -40,7 +41,7 @@ public class BoostCommand {
 
         // boost clear [players] / boost clear
         LiteralArgumentBuilder<CommandSourceStack> clearCommand = Commands.literal(CLEAR)
-                .requires(source -> source.hasPermission(3));
+                .requires(source -> checkCommandLevel(source, 3));
 
         // boost clear=
         clearCommand.executes(BoostCommand::clearAllBoost);

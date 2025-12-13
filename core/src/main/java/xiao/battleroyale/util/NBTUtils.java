@@ -8,7 +8,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -136,7 +136,7 @@ public class NBTUtils {
             }
 
             // 尝试根据 blockId 获取方块，否则回退到空气方块的默认状态
-            ResourceLocation rl = BattleRoyale.getMcRegistry().createResourceLocation(blockId);
+            Identifier rl = BattleRoyale.getMcRegistry().createResourceLocation(blockId);
             Block block = (rl != null) ? BattleRoyale.getMcRegistry().getBlock(rl) : null;
             return block != null ? block.defaultBlockState() : Blocks.AIR.defaultBlockState();
         }

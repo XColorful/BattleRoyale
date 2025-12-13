@@ -2,20 +2,17 @@ package xiao.battleroyale.common.effect.particle;
 
 import net.minecraft.core.particles.*;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.config.common.effect.particle.ParticleDetailEntry;
 import xiao.battleroyale.config.common.effect.particle.ParticleParameterEntry;
 import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.NBTUtils;
 import xiao.battleroyale.util.Vec3Utils;
-
-import java.awt.*;
 
 /**
  * 单个数据
@@ -44,7 +41,7 @@ public class ParticleData {
             return;
         }
 
-        ResourceLocation particleRL = this.particle.particleType;
+        Identifier particleRL = this.particle.particleType;
         ParticleType<?> typeObj = BattleRoyale.getMcRegistry().getParticleType(particleRL);
         if (typeObj == null) {
             BattleRoyale.LOGGER.warn("Unknown particle ResourceLocation: {}", particleRL);

@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -77,7 +77,7 @@ public class WorldText {
 
         // Vanilla
         Block block = serverLevel.getBlockState(blockPos).getBlock();
-        ResourceLocation blockRL = BattleRoyale.getMcRegistry().getBlockRl(block);
+        Identifier blockRL = BattleRoyale.getMcRegistry().getBlockRl(block);
         String blockName = block.getName().getString();
         component.append(buildHoverableText(blockName, blockRL != null ? blockRL.toString() : "null"))
                 .append(buildHoverableTextWithColor("BlockEntity",
@@ -209,7 +209,7 @@ public class WorldText {
         return component;
     }
 
-    public static MutableComponent buildBiome(BlockPos blockPos, ResourceLocation biomeRL, ResourceKey<Biome> biomeRK) {
+    public static MutableComponent buildBiome(BlockPos blockPos, Identifier biomeRL, ResourceKey<Biome> biomeRK) {
         MutableComponent component = Component.empty();
 
         component.append(buildRunnableVec(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ())))
@@ -228,13 +228,13 @@ public class WorldText {
         return component;
     }
 
-    public static MutableComponent buildStructures(BlockPos blockPos, Map<ResourceLocation, ResourceKey<Structure>> structures) {
+    public static MutableComponent buildStructures(BlockPos blockPos, Map<Identifier, ResourceKey<Structure>> structures) {
         MutableComponent component = Component.empty();
 
         component.append(buildRunnableVec(new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ())));
 
-        for (Map.Entry<ResourceLocation, ResourceKey<Structure>> entry : structures.entrySet()) {
-            ResourceLocation rl = entry.getKey();
+        for (Map.Entry<Identifier, ResourceKey<Structure>> entry : structures.entrySet()) {
+            Identifier rl = entry.getKey();
             ResourceKey<Structure> rk = entry.getValue();
             component.append(Component.literal("\n"))
                     .append(Component.literal("structure"))
@@ -262,7 +262,7 @@ public class WorldText {
                 .append(Component.literal("\n"))
                 .append(Component.literal("LevelKey:"))
                 .append(serverLevel != null ?
-                        buildHoverableText(levelKey.location().toString(), buildLevelKeyHover(levelKey)).withStyle(ChatFormatting.GREEN)
+                        buildHoverableText(levelKey.identifier().toString(), buildLevelKeyHover(levelKey)).withStyle(ChatFormatting.GREEN)
                         : Component.literal("null").withStyle(ChatFormatting.DARK_GRAY));
 
         return component;
@@ -285,6 +285,6 @@ public class WorldText {
                 .append(Component.literal(levelKey.registry().toString()))
                 .append(Component.literal("\n"))
                 .append(Component.literal("Location:").withStyle(ChatFormatting.GRAY))
-                .append(Component.literal(levelKey.location().toString()).withStyle(ChatFormatting.GREEN));
+                .append(Component.literal(levelKey.identifier().toString()).withStyle(ChatFormatting.GREEN));
     }
 }

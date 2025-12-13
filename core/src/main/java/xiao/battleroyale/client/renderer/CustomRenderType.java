@@ -5,15 +5,16 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.OutputTarget;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xiao.battleroyale.BattleRoyale;
 
 public class CustomRenderType {
 
-    private static final ResourceLocation WHITE_TEXTURE = BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:textures/white.png", BattleRoyale.MOD_ID));
+    private static final Identifier WHITE_TEXTURE = BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:textures/white.png", BattleRoyale.MOD_ID));
 
     // 先加载
     public static final RenderPipeline SOLID_OPAQUE_COLOR_PIPELINE = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
@@ -42,36 +43,34 @@ public class CustomRenderType {
 
 
     private static RenderType createSolidTranslucent() {
-        RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setLightmapState(RenderStateShard.NO_LIGHTMAP)
-                .setOverlayState(RenderStateShard.NO_OVERLAY)
-                .setOutputState(RenderStateShard.MAIN_TARGET)
-                .createCompositeState(false);
+        RenderSetup builder = RenderSetup.builder(SOLID_TRANSLUCENT_COLOR_PIPELINE)
+                // .useLightmap() // 默认为false
+                // .useOverlay() // 默认为false
+                .setOutputTarget(OutputTarget.MAIN_TARGET)
+                .setOutline(RenderSetup.OutlineProperty.NONE) // 默认值 (无描边)
+                .bufferSize(RenderType.BIG_BUFFER_SIZE) // TRANSIENT_BUFFER_SIZE (1536) 随便来个椭球就爆了, SMALL_BUFFER_SIZE形状一多就会导致1帧内两次draw call
+                // .sortOnUpload() // 默认为false
+                .createRenderSetup();
 
         return RenderType.create(
                 "solid_translucent_color",
-                256,
-                false,
-                false,
-                SOLID_TRANSLUCENT_COLOR_PIPELINE,
-                state
+                builder
         );
     }
 
-    private static RenderType createSolidOpaque() {
-        RenderType.CompositeState state = RenderType.CompositeState.builder()
-                .setLightmapState(RenderStateShard.NO_LIGHTMAP)
-                .setOverlayState(RenderStateShard.NO_OVERLAY)
-                .setOutputState(RenderStateShard.MAIN_TARGET)
-                .createCompositeState(true);
+    private static RenderType createSolidOpaque() {// 1. 创建 RenderSetup.builder()
+        RenderSetup builder = RenderSetup.builder(SOLID_OPAQUE_COLOR_PIPELINE)
+                // .useLightmap() // 默认为false
+                // .useOverlay() // 默认为false
+                .setOutputTarget(OutputTarget.MAIN_TARGET)
+                .setOutline(RenderSetup.OutlineProperty.NONE) // 默认值 (无描边)
+                .bufferSize(RenderType.BIG_BUFFER_SIZE) // TRANSIENT_BUFFER_SIZE (1536) 随便来个椭球就爆了, SMALL_BUFFER_SIZE形状一多就会导致1帧内两次draw call
+                .sortOnUpload()
+                .createRenderSetup();
 
         return RenderType.create(
                 "solid_opaque_color",
-                256,
-                false,
-                false,
-                SOLID_OPAQUE_COLOR_PIPELINE,
-                state
+                builder
         );
     }
 }

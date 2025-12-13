@@ -3,7 +3,7 @@ package xiao.battleroyale.compat.neoforge.network;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -23,11 +23,11 @@ public class NeoNetworkAdapter implements INetworkAdapter {
 
     private record RegisteredPacket<T extends IMessage<T>>(
             Class<T> messageType,
-            ResourceLocation id,
+            Identifier id,
             MessageDirection direction
     ) {}
 
-    private record NeoPayload<T extends IMessage<T>>(ResourceLocation id, T message) implements CustomPacketPayload {
+    private record NeoPayload<T extends IMessage<T>>(Identifier id, T message) implements CustomPacketPayload {
 
         @Override
         public Type<? extends CustomPacketPayload> type() {
@@ -39,7 +39,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
         }
 
         @SuppressWarnings("unchecked")
-        public static <T extends IMessage<T>> NeoPayload<T> decode(Class<T> clazz, ResourceLocation id, FriendlyByteBuf buffer) {
+        public static <T extends IMessage<T>> NeoPayload<T> decode(Class<T> clazz, Identifier id, FriendlyByteBuf buffer) {
             try {
                 Method decodeMethod = clazz.getDeclaredMethod("decode", FriendlyByteBuf.class);
                 T message = (T) decodeMethod.invoke(null, buffer);
@@ -60,7 +60,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
     @Override
     public <T extends IMessage<T>> void registerMessage(int id, Class<T> clazz, MessageDirection direction) {
         String path = clazz.getSimpleName().toLowerCase();
-        ResourceLocation packetId = ResourceLocation.tryParse(String.format("%s:%s", modId, path));
+        Identifier packetId = Identifier.tryParse(String.format("%s:%s", modId, path));
 
         if (packetId == null) {
             BattleRoyale.LOGGER.error("Failed to create ResourceLocation for message class: {}", clazz.getName());
@@ -114,7 +114,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
     }
 
     private <T extends IMessage<T>> void registerPacketInternal(PayloadRegistrar registrar, RegisteredPacket<T> rp) {
-        ResourceLocation id = rp.id;
+        Identifier id = rp.id;
         Class<T> messageClass = rp.messageType;
 
         CustomPacketPayload.Type<NeoPayload<T>> payloadType = new CustomPacketPayload.Type<>(id);

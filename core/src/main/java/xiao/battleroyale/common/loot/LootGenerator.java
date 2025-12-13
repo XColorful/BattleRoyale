@@ -3,7 +3,7 @@ package xiao.battleroyale.common.loot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Container;
@@ -391,7 +391,7 @@ public class LootGenerator {
         private List<Pattern> whiteListPatterns = new ArrayList<>();
         private List<Pattern> blackListPatterns = new ArrayList<>();
         public boolean shouldLoot(BlockEntity blockEntity) {
-            ResourceLocation rl = BattleRoyale.getMcRegistry().getBlockRl(blockEntity.getBlockState().getBlock());
+            Identifier rl = BattleRoyale.getMcRegistry().getBlockRl(blockEntity.getBlockState().getBlock());
             String blockId = rl != null ? rl.toString() : "";
 
             // 如果白名单不为空，则必须匹配至少一个白名单项

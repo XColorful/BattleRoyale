@@ -14,6 +14,7 @@ import xiao.battleroyale.data.io.TempDataManager;
 import static xiao.battleroyale.api.data.io.TempDataTag.PUBGMC_COMMAND;
 import static xiao.battleroyale.api.data.io.TempDataTag.REGISTRY;
 import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 
 public class TempCommand {
 
@@ -30,7 +31,7 @@ public class TempCommand {
                 .then(Commands.literal(GAME_STEP)
                         .then(Commands.argument(INTERVAL, IntegerArgumentType.integer())
                                 .executes(TempCommand::changeGameStep)))
-                .requires(source -> source.hasPermission(3))
+                .requires(source -> checkCommandLevel(source, 3))
                 .then(Commands.literal(CLEAR)
                                 .executes(TempCommand::clearAllTempData)
                 );

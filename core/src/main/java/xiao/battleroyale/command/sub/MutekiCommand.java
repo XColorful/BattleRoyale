@@ -18,6 +18,7 @@ import xiao.battleroyale.common.effect.muteki.MutekiManager;
 import java.util.Collection;
 
 import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 
 public class MutekiCommand {
 
@@ -37,7 +38,7 @@ public class MutekiCommand {
 
         // muteki clear
         LiteralArgumentBuilder<CommandSourceStack> clearCommand = Commands.literal(CLEAR)
-                .requires(source -> source.hasPermission(3));
+                .requires(source -> checkCommandLevel(source, 3));
         clearCommand.executes(MutekiCommand::clearAllMuteki);
 
         // muteki clear <players>
