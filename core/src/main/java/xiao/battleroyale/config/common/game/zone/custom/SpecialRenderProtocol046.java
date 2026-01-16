@@ -20,7 +20,7 @@ public class SpecialRenderProtocol046 {
     protected static SpecialRenderProtocol fromTag(@NotNull JsonObject jsonTag) {
         try {
             boolean hideInSpectate = JsonUtils.getJsonBool(jsonTag, HIDE_IN_SPECTATE, true);
-            double heightOffset = JsonUtils.getJsonDouble(jsonTag, HEIGHT_OFFSET, 0.5);
+            double heightOffset = JsonUtils.getJsonDouble(jsonTag, HEIGHT_OFFSET, 0.25);
             double side = JsonUtils.getJsonDouble(jsonTag, SIDE, 0.5);
             boolean _3dDistance = JsonUtils.getJsonBool(jsonTag, _3D_DISTANCE, false);
             String distDimStr = JsonUtils.getJsonString(jsonTag, SPLIT_DISTANCE_DIMENSION, "x");
