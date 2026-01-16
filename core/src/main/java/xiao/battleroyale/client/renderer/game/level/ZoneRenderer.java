@@ -99,32 +99,32 @@ public class ZoneRenderer implements IClientZoneRenderer {
             switch (zoneData.shapeType) {
                 // 2D shape
                 case CIRCLE ->
-                        Shape2D.drawFilledPolygonCylinder(finalMatrix, consumer, r, g, b, a,
+                        Shape2D.drawFilledPolygonCylinder(currentZoneMatrix, consumer, r, g, b, a,
                                 (float) zoneData.dimension.x, (float) zoneData.dimension.y, CIRCLE_SEGMENTS, 0);
                 case SQUARE, RECTANGLE ->
-                        Shape2D.drawFilledRectangleBox(finalMatrix, consumer, r, g, b, a,
+                        Shape2D.drawFilledRectangleBox(currentZoneMatrix, consumer, r, g, b, a,
                                 (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y);
                 case HEXAGON -> // 平顶正六边形
-                        Shape2D.drawFilledPolygonCylinder(finalMatrix, consumer, r, g, b, a,
+                        Shape2D.drawFilledPolygonCylinder(currentZoneMatrix, consumer, r, g, b, a,
                                 (float) zoneData.dimension.x, (float) zoneData.dimension.y, 6, 0);
                 case POLYGON -> // 尖顶正多边形
-                        Shape2D.drawFilledPolygonCylinder(finalMatrix, consumer, r, g, b, a,
+                        Shape2D.drawFilledPolygonCylinder(currentZoneMatrix, consumer, r, g, b, a,
                                 (float) zoneData.dimension.x, (float) zoneData.dimension.y, zoneData.segments, POINTING_POLYGON_ANGLE);
                 case ELLIPSE ->
-                        Shape2D.drawFilledEllipseCylinder(finalMatrix, consumer, r, g, b, a,
+                        Shape2D.drawFilledEllipseCylinder(currentZoneMatrix, consumer, r, g, b, a,
                                 (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y, ELLIPSE_SEGMENTS);
                 case STAR -> // 尖顶星形
-                        Shape2D.drawFilledStarCylinder(finalMatrix, consumer, r, g, b, a,
+                        Shape2D.drawFilledStarCylinder(currentZoneMatrix, consumer, r, g, b, a,
                                 (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y, zoneData.segments, POINTING_POLYGON_ANGLE);
                 // 3D shape
                 case SPHERE ->
-                        Shape3D.drawFilledSphere(finalMatrix, consumer, r, g, b, a,
+                        Shape3D.drawFilledSphere(currentZoneMatrix, consumer, r, g, b, a,
                                 (float) zoneData.dimension.y, SPHERE_SEGMENTS);
                 case CUBE, CUBOID ->
-                        Shape3D.drawFilledCuboid(finalMatrix, consumer, r, g, b, a,
+                        Shape3D.drawFilledCuboid(currentZoneMatrix, consumer, r, g, b, a,
                                 (float) zoneData.dimension.x, (float) zoneData.dimension.y, (float) zoneData.dimension.z);
                 case ELLIPSOID ->
-                        Shape3D.drawFilledEllipsoid(finalMatrix, consumer, r, g, b, a,
+                        Shape3D.drawFilledEllipsoid(currentZoneMatrix, consumer, r, g, b, a,
                                 (float) zoneData.dimension.x, (float) zoneData.dimension.y, (float) zoneData.dimension.z, ELLIPSOID_SEGMENTS);
                 default -> {
                     ;
