@@ -36,7 +36,7 @@ import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.api.game.zone.IZoneManager;
 import xiao.battleroyale.common.effect.EffectManager;
-import xiao.battleroyale.common.game.battleroyale.BRGameProcessManager;
+import xiao.battleroyale.common.game.process.battleroyale.BRGameProcessManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.lobby.GameLobbyManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
