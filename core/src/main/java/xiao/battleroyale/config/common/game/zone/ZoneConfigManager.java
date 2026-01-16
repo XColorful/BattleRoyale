@@ -71,7 +71,7 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
         public ZoneConfig(int zoneId, String zoneName, String zoneColor, boolean isDefault, int preZoneDelayId, int zoneDelay, int zoneTime, IZoneFuncEntry zoneFuncEntry, IZoneShapeEntry zoneShapeEntry) {
             this(zoneId, zoneName, zoneColor, isDefault, preZoneDelayId, zoneDelay, zoneTime, zoneFuncEntry, zoneShapeEntry, null);
         }
-        public ZoneConfig(int zoneId, String zoneName, String zoneColor, boolean isDefault, int preZoneDelayId, int zoneDelay, int zoneTime, IZoneFuncEntry zoneFuncEntry, IZoneShapeEntry zoneShapeEntry, IZoneSpecialEntry zoneSpecialEntry) {
+        public ZoneConfig(int zoneId, String zoneName, String zoneColor, boolean isDefault, int preZoneDelayId, int zoneDelay, int zoneTime, IZoneFuncEntry zoneFuncEntry, IZoneShapeEntry zoneShapeEntry, @Nullable IZoneSpecialEntry zoneSpecialEntry) {
             super(zoneId, zoneName, zoneColor, isDefault);
             this.preZoneDelayId = preZoneDelayId;
             this.zoneDelay = zoneDelay;

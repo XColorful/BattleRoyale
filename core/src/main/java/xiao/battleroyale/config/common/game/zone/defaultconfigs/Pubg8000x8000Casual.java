@@ -1,6 +1,7 @@
 package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
@@ -12,6 +13,7 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.CircleEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.SquareEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
+import xiao.battleroyale.config.common.game.zone.zonespecial.SpecialRenderEntry;
 
 import java.nio.file.Paths;
 
@@ -167,8 +169,8 @@ public class Pubg8000x8000Casual {
                 .addDimensionScale(SHRINK_SCALE); // 缩小
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry, false);
         ZoneConfig zoneConfig = new ZoneConfig(forecastPhase, "Phase" + phase + "Forecast", "#00FF0033",
-                forecastPhase - prePhaseMinus * 10, PRE_ZONE_TIME, ZONE_TIME,
-                noFuncEntry, circleEntry);
+                false, forecastPhase - prePhaseMinus * 10, PRE_ZONE_TIME, ZONE_TIME,
+                noFuncEntry, circleEntry, buildRenderEntry());
         zoneConfigJson.add(zoneConfig.toJson());
 
         // Shrink zone
@@ -226,6 +228,20 @@ public class Pubg8000x8000Casual {
                 forecastPhase, MOVE_DELAY, 80,
                 messageFuncEntry, squareEntry);
         zoneConfigJson.add(zoneConfig.toJson());
+    }
+
+    // 渲染
+    public static SpecialRenderEntry buildRenderEntry() {
+        JsonObject jsonTag = new JsonObject();
+        jsonTag.addProperty("hideInSpectate", true);
+        jsonTag.addProperty("heightOffset", 0.26);
+        jsonTag.addProperty("side", 0.5);
+        jsonTag.addProperty("3dDistance", false);
+        jsonTag.addProperty("distDim", "x");
+        jsonTag.addProperty("distMul", 1.0);
+        jsonTag.addProperty("distAdd", 0);
+        jsonTag.addProperty("innerColor", "#FFFFFF11");
+        return new SpecialRenderEntry("cbr:direct", jsonTag);
     }
 
     private static void addPhase1(JsonArray zoneConfigJson) {
