@@ -107,8 +107,13 @@ public class SpecialRenderHandler implements ICustomEventHandler {
             } else { // 平面距离
                 distance = n;
             }
-            distance = distance * renderProtocol.distMul + renderProtocol.distAdd; // distMul为0则为固定距离
-            boolean isInRange = distance <= renderProtocol.splitDistance;
+            double splitDistance = switch (renderProtocol.distDimStr) {
+                case "x" -> zoneData.dimension.x;
+                case "y" -> zoneData.dimension.y;
+                case "z" -> zoneData.dimension.z;
+                default -> 0;
+            };
+            boolean isInRange = distance <= splitDistance * renderProtocol.distMul + renderProtocol.distAdd;
             float r, g, b, a;
             String colorString = !renderProtocol.hasCustomColor ? null
                     : isInRange ? renderProtocol.innerColor : renderProtocol.outsideColor;

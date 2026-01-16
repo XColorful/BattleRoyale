@@ -1,4 +1,4 @@
-package xiao.battleroyale.common.game.battleroyale;
+package xiao.battleroyale.common.game.process.battleroyale;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

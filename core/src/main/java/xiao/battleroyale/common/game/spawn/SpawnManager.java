@@ -79,6 +79,9 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
     }
 
     private IGameSpawner gameSpawner;
+    @Override public IGameSpawner getGameSpawner() {
+        return gameSpawner;
+    }
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
