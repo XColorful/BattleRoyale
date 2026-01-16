@@ -231,7 +231,7 @@ public class CbrgLootSpawner {
 
     private static ILootEntry commonAREntry() {
         MultiEntry m249Ammo = gunAmmoBuilder("m249", "cbrg", "ammo_556", 40);
-        MultiEntry dp28Ammo = gunAmmoBuilder("rpk", "cbrg", "ammo_762", 40);
+        MultiEntry dp28Ammo = gunAmmoBuilder("classicr", "dp28", "cbrg", "ammo_762", 40);
 
         MultiEntry beryl_m762Ammo = gunAmmoBuilder("cbrg", "beryl_m762", "cbrg", "ammo_762", 30);
 
@@ -267,9 +267,12 @@ public class CbrgLootSpawner {
 
     private static ILootEntry rareAREntry() {
         MultiEntry grozaAmmo = gunAmmoBuilder("cbrg", "groza", "cbrg", "ammo_762", 20);
-        // FAMAS
+        MultiEntry famasAmmo = gunAmmoBuilder("rainforest", "famas", "cbrg", "ammo_556", 20);
+        MultiEntry mg3Ammo = gunAmmoBuilder("cib", "mg3", "cbrg", "ammo_762", 20);
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(5, grozaAmmo)
+                new WeightedEntry(5, grozaAmmo),
+                new WeightedEntry(5, famasAmmo),
+                new WeightedEntry(5, mg3Ammo)
         ));
     }
 
@@ -322,7 +325,7 @@ public class CbrgLootSpawner {
         MultiEntry sksAmmo = gunSemiAmmoBuilder("sks_tactical", "cbrg", "ammo_762", 10);
         // VSS
 
-        // Mini14
+        MultiEntry mini14Ammo = gunSemiAmmoBuilder("ccrp", "m14_hbar", "cbrg", "ammo_556", 15);
         MultiEntry mk12Ammo = gunSemiAmmoBuilder("spr15hb", "cbrg", "ammo_556", 15);
         
         MultiEntry qbuAmmo = gunSemiAmmoBuilder("cib", "qbu88", "cbrg", "ammo_556", 15);
@@ -330,6 +333,7 @@ public class CbrgLootSpawner {
                 new WeightedEntry(10, dragunovAmmo),
                 new WeightedEntry(10, slrAmmo),
                 new WeightedEntry(15, sksAmmo),
+                new WeightedEntry(20, mini14Ammo),
                 new WeightedEntry(20, mk12Ammo),
                 new WeightedEntry(20, qbuAmmo)
         ));
@@ -367,7 +371,7 @@ public class CbrgLootSpawner {
     }
 
     private static ILootEntry commonSMGEntry() {
-        MultiEntry js9Ammo = gunAmmoBuilder("gz", "t5smg", "cbrg", "ammo_9mm", 25);
+        MultiEntry js9Ammo = gunAmmoBuilder("cib", "js9", "cbrg", "ammo_9mm", 25);
 
         MultiEntry pp19_bizonAmmo = gunAmmoBuilder("cib", "pp19", "cbrg", "ammo_9mm", 25);
         MultiEntry tommy_gunAmmo = gunAmmoBuilder("classicr", "m1a1_smg", "cbrg", "ammo_9mm", 25);
