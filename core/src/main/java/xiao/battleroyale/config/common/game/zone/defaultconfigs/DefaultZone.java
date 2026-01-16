@@ -12,6 +12,7 @@ import xiao.battleroyale.config.common.game.zone.zonefunc.*;
 import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry.EffectFuncEntryBuilder;
 import xiao.battleroyale.config.common.game.zone.zonefunc.event.EventFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.*;
+import xiao.battleroyale.config.common.game.zone.zonespecial.SpecialRenderEntry;
 import xiao.battleroyale.config.common.loot.type.EmptyEntry;
 import xiao.battleroyale.config.common.loot.type.ItemEntry;
 import xiao.battleroyale.config.common.loot.type.LootEntryType;
@@ -44,6 +45,7 @@ public class DefaultZone {
         zoneConfigJson.add(generateZoneNotification14());
         zoneConfigJson.add(generateZoneEvent15());
         zoneConfigJson.add(generateInitialEquipment16());
+        zoneConfigJson.add(generateClientRender17());
         writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
@@ -409,6 +411,31 @@ public class DefaultZone {
         ZoneConfig zoneConfig = new ZoneConfig(16, "Initial elytra equipment", "#FFAA00AA",
                 80, 20,
                 inventoryFuncEntry, squareEntry);
+
+        return zoneConfig.toJson();
+    }
+
+    private static JsonObject generateClientRender17() {
+        NoFuncEntry noFuncEntry = new NoFuncEntry(0, 0);
+        CircleEntry circleEntry = new CircleEntry(new StartEntry().addFixedCenter(new Vec3(0, -60, 0)).addFixedDimension(new Vec3(10, 1, 10)),
+                new EndEntry().addFixedCenter(new Vec3(0, -60, 0)).addFixedDimension(new Vec3(10, 1, 10)),
+                false);
+
+        JsonObject jsonTag = new JsonObject();
+        jsonTag.addProperty("hideInSpectate", true);
+        jsonTag.addProperty("heightOffset", 0.25);
+        jsonTag.addProperty("side", 0.5);
+        jsonTag.addProperty("3dDistance", false);
+        jsonTag.addProperty("distDim", "x");
+        jsonTag.addProperty("distMul", 1.0);
+        jsonTag.addProperty("distAdd", 0);
+        jsonTag.addProperty("innerColor", "#00FF0011");
+
+        SpecialRenderEntry specialRenderEntry = new SpecialRenderEntry("cbr:direct", jsonTag);
+
+        ZoneConfig zoneConfig = new ZoneConfig(17, "Client special render", "#FFFFFF22",
+                false, 0, 80, 12000,
+                noFuncEntry, circleEntry, specialRenderEntry);
 
         return zoneConfig.toJson();
     }
