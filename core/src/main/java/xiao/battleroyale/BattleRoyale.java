@@ -82,6 +82,7 @@ public class BattleRoyale {
         CustomEventHandler.registerAll(getEventRegister());
         BlockModelRenderer.initialize(blockModelRenderer);
         BattleRoyale.compatApi = compatApi;
+        Object ignored = getEventPoster();
 
         ModConfigManager.init(mcSide);
         GameManager.init(mcSide);
