@@ -1,5 +1,3 @@
-[English](#English)
-
 > 🌐 Language / 语言
 > - [**Jump to English Section**](#English)
 > - [**回到中文顶部**](#)
