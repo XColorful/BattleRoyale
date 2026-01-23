@@ -1,3 +1,5 @@
+[English](#English)
+
 # 区域配置
 
 游戏开始时，区域配置按“先zoneDelay，后zoneId”的方式排序

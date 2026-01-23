@@ -1,3 +1,5 @@
+[English](#English)
+
 # 备份配置
 _/battleroyale backup [loot/game/effect/client/server] [subType]_
 

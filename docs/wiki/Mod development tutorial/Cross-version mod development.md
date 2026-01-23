@@ -1,3 +1,5 @@
+[English](#English)
+
 # 跨版本模组开发
 
 > **本模组及文档（Github Wiki）即可作为教程的实例示范**

@@ -1,3 +1,5 @@
+[English](#English)
+
 # 指令说明
 
 以 _/battleroyale_ 开头

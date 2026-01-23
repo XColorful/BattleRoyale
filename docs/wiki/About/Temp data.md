@@ -1,3 +1,5 @@
+[English](#English)
+
 # 临时数据
 
 临时数据位于 _./minecraft/battleroyale/temp_ 下的所有json文件

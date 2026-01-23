@@ -1,3 +1,5 @@
+[English](#English)
+
 # 重载配置
 _/battleroyale reload [loot/game/effect/client/server] [subType]_
 

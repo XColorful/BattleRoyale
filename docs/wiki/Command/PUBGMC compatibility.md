@@ -1,3 +1,5 @@
+[English](#English)
+
 # PUBGMC兼容
 
 模组默认不包含PUBGMC兼容指令，需要在 _./minecraft/battleroyale/temp/registry.json_ 里添加"pubgmcCommand": true

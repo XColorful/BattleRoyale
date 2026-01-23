@@ -1,3 +1,5 @@
+[English](#English)
+
 # 大逃杀统计数据
 
 位于 _./minecraft/battleroyale/stats_ 下的所有json文件

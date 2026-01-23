@@ -1,3 +1,5 @@
+[English](#English)
+
 # 人机配置
 
 暂无功能

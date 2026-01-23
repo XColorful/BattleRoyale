@@ -1,3 +1,5 @@
+[English](#English)
+
 # 临时数据
 _/battleroyale temp [pubgmc/initStackZoneConfig/gameStep/clear] [boolean]_
 

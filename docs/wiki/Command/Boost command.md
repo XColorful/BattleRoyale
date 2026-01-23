@@ -1,3 +1,5 @@
+[English](#English)
+
 # 能量指令
 _/battleroyale boost [player/clear] [amount/player]_
 

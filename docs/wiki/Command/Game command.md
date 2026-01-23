@@ -1,3 +1,5 @@
+[English](#English)
+
 # 大逃杀指令
 _/battleroyale game [load/init/start/stop/lobby/toLobby/offset/selected/spectate] [xyz]_
 

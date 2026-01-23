@@ -1,3 +1,5 @@
+[English](#English)
+
 # 粒子指令
 _/battleroyale particle [~ ~ ~/id/clear] [id/all] [cooldown]_
 

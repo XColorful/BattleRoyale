@@ -1,3 +1,5 @@
+[English](#English)
+
 # 创建自定义事件处理器
 
 1. 查看[自定义事件类型](https://github.com/XColorful/BattleRoyale/wiki/Event-API#自定义事件类型)

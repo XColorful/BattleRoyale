@@ -1,3 +1,5 @@
+[English](#English)
+
 # 事件API
 
 事件机制简述：

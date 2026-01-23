@@ -1,3 +1,5 @@
+[English](#English)
+
 # 粒子配置
 
 ## 单个配置

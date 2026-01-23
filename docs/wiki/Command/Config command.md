@@ -1,3 +1,5 @@
+[English](#English)
+
 # 切换配置
 _/battleroyale config [loot/game/effect/client/server] [subType] [id/switch] [fileName]_
 

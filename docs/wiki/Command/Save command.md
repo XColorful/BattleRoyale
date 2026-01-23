@@ -1,3 +1,5 @@
+[English](#English)
+
 # 保存配置
 _/battleroyale save [loot/game/effect/client/server] [subType]_
 

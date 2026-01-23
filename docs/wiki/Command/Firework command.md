@@ -1,3 +1,5 @@
+[English](#English)
+
 # 烟花指令
 _/battleroyale firework [player/~ ~ ~/clear] [amount] [interval] [vRange] [hRange]_
 

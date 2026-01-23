@@ -1,3 +1,5 @@
+[English](#English)
+
 # 实用指令
 _/battleroyale utility [survivallobby/tosurvivallobby]_
 

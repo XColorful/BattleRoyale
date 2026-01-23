@@ -1,3 +1,5 @@
+[English](#English)
+
 # 手动刷新
 _/battleroyale loot generate_
 

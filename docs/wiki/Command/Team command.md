@@ -1,3 +1,5 @@
+[English](#English)
+
 # 队伍管理
 _/battleroyale team [join/leave/kick/invite/request/accept/decline/id] [player/senderName/requesterName/teamId]_
 

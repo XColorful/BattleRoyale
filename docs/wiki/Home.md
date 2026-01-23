@@ -1,3 +1,5 @@
+[English](#English)
+
 # 自定义大逃杀wiki
 
 ## 开发者工具

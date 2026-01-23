@@ -1,3 +1,5 @@
+[English](#English)
+
 # 通用刷新配置
 
 lootId：

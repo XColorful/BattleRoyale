@@ -1,3 +1,5 @@
+[English](#English)
+
 # 备份数据
 
 备份数据位于 _./minecraft/battleroyale/backup_ 下的所有json文件

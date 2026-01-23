@@ -1,3 +1,5 @@
+[English](#English)
+
 # 性能配置
 
 ## 单个配置

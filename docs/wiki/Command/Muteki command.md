@@ -1,3 +1,5 @@
+[English](#English)
+
 # 无敌指令
 _/battleroyale muteki [player/clear] [time/player]_
 

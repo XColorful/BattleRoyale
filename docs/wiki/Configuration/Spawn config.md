@@ -1,3 +1,5 @@
+[English](#English)
+
 # 出生配置
 
 ## 单个配置

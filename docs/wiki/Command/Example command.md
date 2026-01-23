@@ -1,3 +1,5 @@
+[English](#English)
+
 # 生成配置
 _/battleroyale example [loot/game/effect/client/server] [subType]_
 

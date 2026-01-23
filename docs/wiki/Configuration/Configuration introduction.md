@@ -1,3 +1,5 @@
+[English](#English)
+
 # 配置文件说明
 
 配置文件目录位于 _./minecraft/config/battleroyale_

@@ -1,3 +1,5 @@
+[English](#English)
+
 # 显示配置
 
 ## 单个配置

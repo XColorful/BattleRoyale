@@ -1,3 +1,5 @@
+[English](#English)
+
 # 实用配置
 
 ## 单个配置
