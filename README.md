@@ -1,6 +1,6 @@
 # 自定义大逃杀 | Custom BattleRoyale
 
-[中文](#自定义大逃杀) | [English](#custom%20battleroyale)
+[中文](#自定义大逃杀) | [English](#custom-battleroyale)
 
 [![1:1艾伦格](pic/Erangle%20Pochinki%2016：9.png)](https://space.bilibili.com/300364311)
 
