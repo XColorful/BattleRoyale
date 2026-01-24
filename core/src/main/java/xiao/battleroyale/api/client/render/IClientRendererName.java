@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.client.render.game;
+package xiao.battleroyale.api.client.render;
 
 public interface IClientRendererName {
 

@@ -12,7 +12,7 @@ import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
 import xiao.battleroyale.api.client.event.RenderLevelStage;
-import xiao.battleroyale.api.client.render.game.level.IClientTeamRenderer;
+import xiao.battleroyale.api.client.render.level.IClientTeamRenderer;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
 import xiao.battleroyale.client.renderer.CustomRenderType;

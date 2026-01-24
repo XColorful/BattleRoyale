@@ -12,7 +12,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
 import xiao.battleroyale.api.client.event.RenderLevelStage;
 import xiao.battleroyale.api.client.game.sub.IClientZoneDataManager;
-import xiao.battleroyale.api.client.render.game.level.IClientZoneRenderer;
+import xiao.battleroyale.api.client.render.level.IClientZoneRenderer;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.client.renderer.CustomRenderType;
 

@@ -1,9 +1,9 @@
-package xiao.battleroyale.api.client.render.game;
+package xiao.battleroyale.api.client.render;
 
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.client.render.game.level.IClientSpectateRenderer;
-import xiao.battleroyale.api.client.render.game.level.IClientTeamRenderer;
-import xiao.battleroyale.api.client.render.game.level.IClientZoneRenderer;
+import xiao.battleroyale.api.client.render.level.IClientSpectateRenderer;
+import xiao.battleroyale.api.client.render.level.IClientTeamRenderer;
+import xiao.battleroyale.api.client.render.level.IClientZoneRenderer;
 
 public interface IClientLevelRenderer {
 

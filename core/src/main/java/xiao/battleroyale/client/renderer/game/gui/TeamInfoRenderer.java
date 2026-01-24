@@ -5,7 +5,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderGuiEventPost;
-import xiao.battleroyale.api.client.render.game.gui.IClientTeamInfoRenderer;
+import xiao.battleroyale.api.client.render.gui.IClientTeamInfoRenderer;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;

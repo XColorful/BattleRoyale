@@ -12,7 +12,7 @@ import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
 import xiao.battleroyale.api.client.event.RenderLevelStage;
-import xiao.battleroyale.api.client.render.game.level.IClientSpectateRenderer;
+import xiao.battleroyale.api.client.render.level.IClientSpectateRenderer;
 import xiao.battleroyale.client.game.data.ClientGameData.ClientSpectateData;
 import xiao.battleroyale.client.renderer.CustomRenderType;
 import xiao.battleroyale.util.ClassUtils;

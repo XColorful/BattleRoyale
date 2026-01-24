@@ -1,8 +1,8 @@
-package xiao.battleroyale.api.client.render.game;
+package xiao.battleroyale.api.client.render;
 
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.client.render.game.gui.IClientGameInfoRenderer;
-import xiao.battleroyale.api.client.render.game.gui.IClientTeamInfoRenderer;
+import xiao.battleroyale.api.client.render.gui.IClientGameInfoRenderer;
+import xiao.battleroyale.api.client.render.gui.IClientTeamInfoRenderer;
 
 public interface IClientGuiRenderer {
 

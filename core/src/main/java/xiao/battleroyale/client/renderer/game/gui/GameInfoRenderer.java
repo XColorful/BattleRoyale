@@ -6,7 +6,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderGuiEventPost;
-import xiao.battleroyale.api.client.render.game.gui.IClientGameInfoRenderer;
+import xiao.battleroyale.api.client.render.gui.IClientGameInfoRenderer;
 import xiao.battleroyale.client.game.data.ClientGameData;
 import xiao.battleroyale.util.ColorUtils;
 

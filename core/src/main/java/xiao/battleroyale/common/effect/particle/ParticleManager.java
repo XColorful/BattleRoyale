@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.effect.IEffectManager;
+import xiao.battleroyale.api.effect.type.IParticleManager;
 import xiao.battleroyale.event.handler.effect.ParticleEventHandler;
 
 import java.util.Collections;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ParticleManager implements IEffectManager {
+public class ParticleManager implements IParticleManager {
 
     private ParticleManager() {}
 

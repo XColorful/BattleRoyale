@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.client.render.game.gui;
+package xiao.battleroyale.api.client.render.gui;
 
 public interface IClientGameInfoRenderer extends IClientGuiRender {
 

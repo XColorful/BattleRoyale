@@ -2,9 +2,9 @@ package xiao.battleroyale.client.renderer.game;
 
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.client.render.game.IClientGuiRenderer;
-import xiao.battleroyale.api.client.render.game.gui.IClientGameInfoRenderer;
-import xiao.battleroyale.api.client.render.game.gui.IClientTeamInfoRenderer;
+import xiao.battleroyale.api.client.render.IClientGuiRenderer;
+import xiao.battleroyale.api.client.render.gui.IClientGameInfoRenderer;
+import xiao.battleroyale.api.client.render.gui.IClientTeamInfoRenderer;
 import xiao.battleroyale.client.renderer.game.gui.GameInfoRenderer;
 import xiao.battleroyale.client.renderer.game.gui.TeamInfoRenderer;
 

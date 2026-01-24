@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.client.render.game.level;
+package xiao.battleroyale.api.client.render.level;
 
 public interface IClientSpectateRenderer extends IClientSimpleZoneRenderer {
 

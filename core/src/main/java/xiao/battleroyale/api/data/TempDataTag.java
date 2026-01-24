@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.data.io;
+package xiao.battleroyale.api.data;
 
 public class TempDataTag {
 

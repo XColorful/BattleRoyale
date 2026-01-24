@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.client.display.DisplayConfigTag;
-import xiao.battleroyale.api.client.render.game.gui.IClientTeamInfoRenderer;
+import xiao.battleroyale.api.client.render.gui.IClientTeamInfoRenderer;
 import xiao.battleroyale.util.JsonUtils;
 
 public class TeamEntry extends AbstractHudEntry {

@@ -66,8 +66,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static xiao.battleroyale.api.data.io.TempDataTag.*;
-
 public class GameManager extends AbstractGameManager implements IGameManager, IStatsWriter {
 
     private static class GameManagerHolder {

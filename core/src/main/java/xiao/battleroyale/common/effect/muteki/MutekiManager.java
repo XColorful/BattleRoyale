@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.effect.IEffectManager;
+import xiao.battleroyale.api.effect.type.IMutekiManager;
 import xiao.battleroyale.event.handler.effect.MutekiEventHandler;
 import xiao.battleroyale.util.ChatUtils;
 
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class MutekiManager implements IEffectManager {
+public class MutekiManager implements IMutekiManager {
 
     private MutekiManager() {}
 

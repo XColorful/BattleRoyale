@@ -5,7 +5,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.effect.IEffectManager;
+import xiao.battleroyale.api.effect.type.IBoostManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -15,7 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class BoostManager implements IEffectManager {
+// TODO 用IBoostManager使BoostManager等一系列EffectManager具体类与模组解耦
+public class BoostManager implements IBoostManager {
 
     private BoostManager() {}
 

@@ -24,8 +24,8 @@ import xiao.battleroyale.util.JsonUtils;
 
 import java.util.List;
 
-import static xiao.battleroyale.api.data.io.TempDataTag.PRE_CALCULATE;
-import static xiao.battleroyale.api.data.io.TempDataTag.SPAWN_MANAGER;
+import static xiao.battleroyale.api.data.TempDataTag.PRE_CALCULATE;
+import static xiao.battleroyale.api.data.TempDataTag.SPAWN_MANAGER;
 
 /**
  * 管理玩家出生方式、传送相关的Manager

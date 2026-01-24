@@ -3,7 +3,6 @@ package xiao.battleroyale.client.init;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.MenuType;
 import xiao.battleroyale.api.client.init.IClientSetup;
-import xiao.battleroyale.api.client.init.ScreenRegistration;
 import xiao.battleroyale.client.gui.LootSpawnerScreen;
 import xiao.battleroyale.init.registry.ModMenuTypes;
 import xiao.battleroyale.inventory.LootSpawnerMenu;

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.client.render.IRenderEntry;
 import xiao.battleroyale.api.config.client.render.RenderConfigTag;
-import xiao.battleroyale.api.client.render.game.level.IClientSpectateRenderer;
+import xiao.battleroyale.api.client.render.level.IClientSpectateRenderer;
 import xiao.battleroyale.util.JsonUtils;
 
 public class SpectateEntry implements IRenderEntry {
