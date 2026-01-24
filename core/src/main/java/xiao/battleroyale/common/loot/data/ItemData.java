@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.loot.item.IItemLootData;
+import xiao.battleroyale.api.loot.data.IItemLootData;
 
 public class ItemData implements IItemLootData {
     private final @Nullable Item item;

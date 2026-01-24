@@ -3,7 +3,7 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.config.common.loot.ILootEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.SphereEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;

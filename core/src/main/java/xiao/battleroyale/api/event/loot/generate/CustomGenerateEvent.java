@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.event.CustomEventType;
-import xiao.battleroyale.api.loot.ILootData;
+import xiao.battleroyale.api.loot.data.ILootData;
 import xiao.battleroyale.common.loot.LootGenerator;
 
 import java.util.List;
