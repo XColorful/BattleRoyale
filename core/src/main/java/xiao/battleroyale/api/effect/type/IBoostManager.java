@@ -25,4 +25,7 @@ public interface IBoostManager extends IEffectSubManager {
     int healCooldownDefault();
     int effectCooldown();
     int effectCooldownDefault();
+
+    void setHealCooldown(int cooldown);
+    void setEffectCooldown(int cooldown);
 }

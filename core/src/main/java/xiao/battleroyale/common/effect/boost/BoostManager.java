@@ -29,11 +29,14 @@ public class BoostManager implements IBoostManager {
 
     private static final int SYNC_FREQUENCY = 20 * 5; // 客户端本地会递减Boost，不用频繁通知
     private static int HEAL_COOLDOWN = 160;
-    public static void setHealCooldown(int cooldown) { HEAL_COOLDOWN = cooldown; }
     private static int EFFECT_COOLDOWN = 20;
-    public static void setEffectCooldown(int cooldown) { EFFECT_COOLDOWN = cooldown; }
 
     private final Map<UUID, BoostData> boostData = new HashMap<>();
+
+    @Override
+    public Map<UUID, BoostData> getBoostData() { return boostData; }
+    @Override
+    public BoostData getBoostData(UUID uuid) { return boostData.get(uuid); }
 
     @Override public int syncFrequency() { return SYNC_FREQUENCY; }
     @Override public int healCooldown() { return HEAL_COOLDOWN; }
@@ -41,8 +44,10 @@ public class BoostManager implements IBoostManager {
     @Override public int effectCooldown() { return EFFECT_COOLDOWN; }
     @Override public int effectCooldownDefault() { return 20; }
 
-    public Map<UUID, BoostData> getBoostData() { return boostData; }
-    public BoostData getBoostData(UUID uuid) { return boostData.get(uuid); }
+    @Override
+    public void setHealCooldown(int cooldown) { HEAL_COOLDOWN = cooldown; }
+    @Override
+    public void setEffectCooldown(int cooldown) { EFFECT_COOLDOWN = cooldown; }
 
     /**
      * 消耗boost，给予效果
