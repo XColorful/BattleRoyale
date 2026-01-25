@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.item.builder;
+package xiao.battleroyale.api.item;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
