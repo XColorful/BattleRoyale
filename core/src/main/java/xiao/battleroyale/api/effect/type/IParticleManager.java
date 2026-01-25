@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.effect.type;
 
-import xiao.battleroyale.api.effect.IEffectManager;
+import xiao.battleroyale.api.effect.IEffectSubManager;
 
-public interface IParticleManager extends IEffectManager {
+public interface IParticleManager extends IEffectSubManager {
 }

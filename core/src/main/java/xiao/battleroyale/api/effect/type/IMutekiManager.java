@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.effect.type;
 
-import xiao.battleroyale.api.effect.IEffectManager;
+import xiao.battleroyale.api.effect.IEffectSubManager;
 
-public interface IMutekiManager extends IEffectManager {
+public interface IMutekiManager extends IEffectSubManager {
 }
