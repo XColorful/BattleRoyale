@@ -69,9 +69,9 @@
 ### 指令
 > _./command_
 
-- [客户端指令](./command/client-command.md)：
+- [客户端指令](./command/client-command.md)
 - [指令参数名列表](./command/command-arg.md)：同时作为ConfigManager和ConfigSubManager必须使用的NameKey
-- [服务端指令](./command/server-command.md)：
+- [服务端指令](./command/server-command.md)
 - 命令：
 	- BackupCommand：[备份指令](/docs/wiki/Command/Backup%20command.md)
 	- BoostCommand：[能量指令](/docs/wiki/Command/Boost%20command.md)
@@ -178,7 +178,7 @@
 - [MessageManager](./common/message/message-manager.md)：网络消息管理器（全能易用门面）
 - Game：游戏
 	- [GameInfoMessageManager](./common/message/game/game-info-message-manager.md)：游戏信息消息管理器
-	> GameInfoMessage：游戏信息消息
+	> - GameInfoMessage：游戏信息消息
 	- [SpectateMessageManager](./common/message/game/spectate-message-manager.md)：观战消息管理器
 	> - SpectateMessage：观战消息
 - Team：队伍
@@ -232,7 +232,7 @@
     > - 自定义区域配置：
     > 	- [特殊渲染协议](./config/common/game/zone/custom/special-render-protocol.md)：[方向渲染](/docs/wiki/Configuration/Zone%20special%20client.md#方向渲染)
     > - 生成区域配置：
-    > 	- CFHC区域配置
+    > 	- CFHC区域
     > 	- 鞘翅附加区
     > 	- 模组封面
     > 	- PUBG区域
@@ -303,7 +303,7 @@
 	- ~~ModEntities：模组实体~~（暂未使用）
 	- ModItems：模组物品
 	- ModMenuTypes：模组 GUI 类型（物资刷新方块 GUI 界面）
-	- ModSounds：
+	- ModSounds：模组声音（暂未使用）
 - CommandRegistry：指令注册
 - CommonSetup：双端初始化
 - CompatInit：联动模组初始化
@@ -338,11 +338,354 @@
 - ColorUtils：处理颜色字符串、游戏内颜色等
 - CommandUtils：向指令添加元素更便捷
 - GameUtils：游戏时间、游戏玩家相关
-- JsonUtils：各种数据类型的Json序列化便捷封装
+- JsonUtils：各种数据类型的 JSON 序列化便捷封装
 - ListUtils：列表操作
-- NBTUtils：NBT序列化
+- NBTUtils：NBT 序列化
 - SendUtils：封装网络消息的发送，使网络处理器（`NetworkHandler`）与项目主体解耦
 - StringUtils：解析/转换各种格式字符串、构建字符串
 - Vec3Utils：向量随机偏移、向量加减/线性插值等
 
 # English
+
+> This document serves as a navigation index for the project architecture
+
+## Design Philosophy and Principles
+
+Core architectural ideas and development principles
+
+- [Design Philosophy](./design/design-philosophy.md)
+- [Development Principles](./design/development-principles.md)
+
+## Project Structure
+
+Module division based on the `xiao.battleroyale` top-level package
+
+### Algorithm
+> _./algorithm_
+
+- [Algorithm Facade](./algorithm/algorithm-facade.md): Algorithm interface for external mod calls
+  - [Distribution Algorithm](./algorithm/distribution.md): Golden spiral distribution, double center grid distribution, grid sampling
+
+### API
+> _./api_
+
+- [API Index](./api/api-index.md): Filter by interface classification and responsibility introduction, and link to content under _./docs/api_ to view detailed parameters
+
+### Block
+> _./block_
+
+- Normal Block: Ordinary grass block passing by
+  - None
+- Block Entity: Extraordinary block with functions
+  - [Loot Block](./block/loot-block.md): Loot spawner block, entity spawner block
+  - [Config Block](./block/config-block.md): Zone controller
+
+### Client
+> _./client_
+
+- Client Event:
+	- [Client Game Event Handler](./client/event/client-game-event-handler.md)
+	- [Client Render Event Handler](./client/event/client-render-event-handler.md)
+- Game Related:
+	- [Client Game Data Manager](./client/game/client-game-data-manager.md)
+		- [Client Game Info Data](./client/game/data/client-game-data.md)
+		- [Client Single Zone Data](./client/game/data/client-single-zone-data.md)
+		- [Client Team Data](./client/game/data/client-team-data.md)
+- GUI Interface:
+	- [Loot Spawner GUI](./client/gui/loot-spawner-gui.md)
+- Client Initialization:
+	- [Client Setup](./client/init/client-setup.md): GUI registration
+	- [Mod Entity Render](./client/init/mod-entity-render.md): Register `BlockEntity` renderer
+- Render:
+	- [Block Model Renderer](./client/renderer/block-model-renderer.md): Render `BlockEntity`
+		- [Entity Spawner Renderer](./client/renderer/block/entity-spawner-renderer.md)
+		- [Loot Spawner Renderer](./client/renderer/block/loot-spawner-renderer.md)
+    - [Client GUI Renderer](./client/renderer/client-gui-renderer.md)
+	    - [Game Info Renderer](./client/renderer/gui/game-info-renderer.md)
+	    - [Team Info Renderer](./client/renderer/gui/team-info-renderer.md)
+	- [Client Level Renderer](./client/renderer/client-level-renderer.md)
+		- [2D Zone Shape](./client/renderer/level/shape-2d.md)
+        - [3D Zone Shape](./client/renderer/level/shape-3d.md)
+        - [Spectate Player Renderer](./client/renderer/level/spectate-player-renderer.md)
+        - [Team Member Renderer](./client/renderer/level/team-member-renderer.md)
+        - [Zone Renderer](./client/renderer/level/zone-renderer.md)
+	- [Custom Render Type](./client/renderer/custom-render-type.md): Register translucent, transparent render types
+
+### Command
+> _./command_
+
+- [Client Command](./command/client-command.md)
+- [Command Argument List](./command/command-arg.md): Also used as NameKey required by ConfigManager and ConfigSubManager
+- [Server Command](./command/server-command.md)
+- Commands:
+	- BackupCommand: [Backup Command](/docs/wiki/Command/Backup%20command.md#English)
+	- BoostCommand: [Boost Command](/docs/wiki/Command/Boost%20command.md#English)
+	- ConfigCommand: [Config Command](/docs/wiki/Command/Config%20command.md#English)
+	- ExampleCommand: [Example Command](/docs/wiki/Command/Example%20command.md#English)
+	- FireworkCommand: [Firework Command](/docs/wiki/Command/Firework%20command.md#English)
+	- GameCommand: [Game Command](/docs/wiki/Command/Game%20command.md#English)
+	- LootCommand: [Loot Command](/docs/wiki/Command/Loot%20command.md#English)
+	- MutekiCommand: [Muteki Command](/docs/wiki/Command/Muteki%20command.md#English)
+	- ParticleCommand: [Particle Command](/docs/wiki/Command/Particle%20command.md#English)
+	- ReloadCommand: [Reload Command](/docs/wiki/Command/Reload%20command.md#English)
+	- SaveCommand: [Save Command](/docs/wiki/Command/Save%20command.md#English)
+	- TeamCommand: [Team Command](/docs/wiki/Command/Team%20command.md#English)
+	- TempCommand: [Temp Data Command](/docs/wiki/Command/Temp%20data%20command.md#English)
+	- UtilityCommand: [Utility Command](/docs/wiki/Command/Utility%20command.md#English)
+
+### Common Mechanism
+> _./common_
+
+### Effect
+> _./common/effect_
+
+- [EffectManager](./common/effect/effect-manager.md): Effect manager (almighty easy-to-use facade)
+	- [BoostManager](./common/effect/boost/boost-manager.md): Boost manager
+	- [FireworkManager](./common/effect/firework/firework-manager.md): Firework manager
+	- [MutekiManager](./common/effect/muteki/muteki-manager.md): Muteki (Invincible) manager
+	- [ParticleManager](./common/effect/particle/particle-manager.md): Particle manager
+
+### Game
+> _./common/game_
+
+- [GameManager](./common/game/game-manager.md): Game manager (almighty easy-to-use facade)
+> - [GameIdHelper](./common/game/game-id-helper.md): Game ID read/write
+> - [GameUtilsFunction](./common/game/game-utils-function.md): Game utility function, teleport with no fall damage
+- Gamerule:
+	- [GameruleManager](./common/game/gamerule/gamerule-manager.md): Game rule manager
+- Lobby:
+	- [GameLobbyManager](./common/game/lobby/game-lobby-manager.md): Game lobby manager
+- Loot:
+	- [BfsCalculator](./common/game/loot/bfs-calculator.md): BFS pre-calculator
+	- [GameLootManager](./common/game/loot/game-loot-manager.md): Game loot generation manager
+- Process: Game process
+	- BattleRoyale: Battle Royale game process
+		- [BRGameProcessManager](./common/game/process/battleroyale/br-game-process-manager.md): Game process manager (Battle Royale game)
+- Spawn:
+	- [SpawnManager](./common/game/spawn/spawn-manager.md): Spawn manager
+	- Vanilla: Vanilla spawn method
+		- [TeleportSpawner](./common/game/spawn/vanilla/teleport-spawner.md): Teleport
+- Stats:
+	- [StatsManager](./common/game/stats/stats-manager.md): Statistics manager
+- Team:
+	- [GamePlayer](./common/game/team/game-player.md): Game player class
+	- [GameTeam](./common/game/team/game-team.md): Game team class
+	- [TeamManager](./common/game/team/team-manager.md): Team manager
+	- [TeamData](./common/game/team/team-data.md): Store game team data, encapsulate complex data maintenance internally
+- Zone:
+	- [GameZone](./common/game/zone/game-zone.md): Game zone class
+	- [ZoneData](./common/game/zone/zone-data.md): Store game zone data, encapsulate convenience functions internally
+	- [ZoneManager](./common/game/zone/zone-manager.md): Zone manager
+	- Additional: Zone additional data
+		- [AdditionalRender](./common/game/zone/additional/additional-render.md): Send and receive client additional rendering network messages and send client events
+	- Spatial: Zone range determination
+		- 2D determination shape:
+	    > - [CircleShape](./common/game/zone/spatial/circle-shape.md): [Circle](/docs/wiki/Configuration/Zone%202D%20shape.md#Circle)
+	    > - [EllipseShape](./common/game/zone/spatial/ellipse-shape.md): [Ellipse](/docs/wiki/Configuration/Zone%202D%20shape.md#Ellipse)
+	    > - [HexagonShape](./common/game/zone/spatial/hexagon-shape.md): [Hexagon](/docs/wiki/Configuration/Zone%202D%20shape.md#Flat%20top%20regular%20hexagon)
+	    > - [PolygonShape](./common/game/zone/spatial/polygon-shape.md): [Polygon](/docs/wiki/Configuration/Zone%202D%20shape.md#Spike%20regular%20polygon)
+        > - [RectangleShape](./common/game/zone/spatial/rectangle-shape.md): [Rectangle](/docs/wiki/Configuration/Zone%202D%20shape.md#Rectangle)
+        > - [SquareShape](./common/game/zone/spatial/square-shape.md): [Square](/docs/wiki/Configuration/Zone%202D%20shape.md#Square)
+        > - [StarShape](./common/game/zone/spatial/star-shape.md): [Star](/docs/wiki/Configuration/Zone%202D%20shape.md#Star)
+		- 3D determination shape:
+        > - [CubeShape](./common/game/zone/spatial/cube-shape.md): [Cube](/docs/wiki/Configuration/Zone%203D%20shape.md#Cube)
+        > - [CuboidShape](./common/game/zone/spatial/cuboid-shape.md): [Cuboid](/docs/wiki/Configuration/Zone%203D%20shape.md#Cuboid)
+        > - [EllipsoidShape](./common/game/zone/spatial/ellipsoid-shape.md): [Ellipsoid](/docs/wiki/Configuration/Zone%203D%20shape.md#Ellipsoid)
+        > - [SphereShape](./common/game/zone/spatial/sphere-shape.md): [Sphere](/docs/wiki/Configuration/Zone%203D%20shape.md#Sphere)
+	- Tickable: Zone function Tick
+		- Simple function:
+        > - [BoostFunc](./common/game/zone/tickable/boost-func.md): [Boost Zone](/docs/wiki/Configuration/Zone%20simple%20function.md#Boost%20zone)
+        > - [EffectFunc](./common/game/zone/tickable/effect-func.md): [Effect Zone](/docs/wiki/Configuration/Zone%20simple%20function.md#Effect%20zone)
+        > - [FireworkFunc](./common/game/zone/tickable/firework-func.md): [Firework Zone](/docs/wiki/Configuration/Zone%20simple%20function.md#Firework%20zone)
+        > - [InventoryFunc](./common/game/zone/tickable/inventory-func.md): [Inventory Zone](/docs/wiki/Configuration/Zone%20simple%20function.md#Inventory%20zone)
+        > - [MessageFunc](./common/game/zone/tickable/message-func.md): [Message Zone](/docs/wiki/Configuration/Zone%20simple%20function.md#Message%20zone)
+        > - [MutekiFunc](./common/game/zone/tickable/muteki-func.md): [Muteki Zone](/docs/wiki/Configuration/Zone%20simple%20function.md#Muteki%20zone)
+        > - [NoFunc](./common/game/zone/tickable/no-func.md): [No Function Zone](/docs/wiki/Configuration/Zone%20simple%20function.md#No%20function%20zone)
+        > - [ParticleFunc](./common/game/zone/tickable/particle-func.md): [Particle Zone](/docs/wiki/Configuration/Zone%20simple%20function.md#Particle%20zone)
+        > - [SafeFunc](./common/game/zone/tickable/safe-func.md): [Safe Zone](/docs/wiki/Configuration/Zone%20simple%20function.md#Safe%20zone)
+        > - [UnsafeFunc](./common/game/zone/tickable/unsafe-func.md): [Unsafe Zone](/docs/wiki/Configuration/Zone%20simple%20function.md#Unsafe%20zone)
+		- Special function:
+	        - Event zone:
+	        > - [AirdropEvent](./common/game/zone/tickable/event/airdrop-func.md): [Airdrop Zone](/docs/wiki/Configuration/Zone%20special%20function.md#Airdrop%20zone)
+	        > - [EntityFunc](./common/game/zone/tickable/event/entity-func.md): [Entity Loot Zone](/docs/wiki/Configuration/Zone%20special%20function.md#Entity%20loot%20zone)
+	        > - [EventFunc](./common/game/zone/tickable/event/event-func.md): [Common Event Zone](/docs/wiki/Configuration/Zone%20special%20function.md#Common%20event%20zone)
+
+### Loot
+> _./common/loot_
+
+- [CommonLootManager](./common/loot/common-loot-manager.md): Common loot generation manager
+- [InventoryGenerator](./common/loot/inventory-generator.md): Inventory loot generation mechanism
+- [LootGenerator](./common/loot/loot-generator.md): Loot generation mechanism
+
+### Network Message
+> _./common/message_
+
+- [MessageManager](./common/message/message-manager.md): Network message manager (almighty easy-to-use facade)
+- Game:
+	- [GameInfoMessageManager](./common/message/game/game-info-message-manager.md): Game info message manager
+	> - GameInfoMessage: Game info message
+	- [SpectateMessageManager](./common/message/game/spectate-message-manager.md): Spectate message manager
+	> - SpectateMessage: Spectate message
+- Team:
+	- [TeamMessageManager](./common/message/team/team-message-manager.md): Team message manager
+	> - TeamMessage: Team member message
+- Zone:
+	- [ZoneMessageManager](./common/message/zone/zone-message-manager.md): Zone message manager
+	> - ZoneMessage: Zone message
+
+### Server
+> _./common/server_
+
+- Performance:
+	- [PerformanceManager](./common/server/performance/performance-manager.md): Performance manager
+- Utility:
+	- [SurvivalLobby](./common/server/utility/survival-lobby.md): Survival lobby
+	- UtilityManager: Utility function manager
+
+### Mod Compat
+> _./compat_
+
+[Mod Compat](./compat/compat-index.md):
+- [Custom BattleRoyale Addon](./compat/cbraddon/cbr-addon.md)
+- [JourneyMap](./compat/journeymap/journeymap.md)
+- [PlayerRevive](./compat/playerrevive/player-revive.md)
+- [PUBGMC](./compat/pubgmc/pubgmc.md)
+- [Timeless and Classics Zero Guns](./compat/tacz/tacz.md)
+
+### Config
+> _./config_
+
+[Mod Config](./config/mod-config.md):
+> - [FolderConfigData](./config/folder-config-data.md): Config folder data, stores config of a single folder
+- Client: Client config
+  - [Display Config Manager](./config/client/display/display-config-manager.md): Manage [Display config](/docs/wiki/Configuration/Display%20config.md#English)
+  - [Render Config Manager](./config/client/render/render-config-manager.md): Manage [Render config](/docs/wiki/Configuration/Render%20config.md#English)
+- Common: Two-side config
+  - [Effect Config Manager](./config/common/effect/effect-config-manager):
+    - [Particle Config Manager](./config/common/effect/particle/particle-config-manager.md): Manage [Particle config](/docs/wiki/Configuration/Particle%20config.md#English)
+  - [Game Config Manager](./config/common/game/game-config-manager.md):
+    - [Gamerule Config Manager](./config/common/game/gamerule/gamerule-config-manager.md): Manage [Gamerule config](/docs/wiki/Configuration/Gamerule%20config.md#English)
+    > - Generate gamerule config:
+    > 	- CFHC gamerule
+    > 	- PUBG gamerule
+    - [Spawn Config Manager](./config/common/game/spawn/spawn-config-manager.md): Manage [Spawn config](/docs/wiki/Configuration/Spawn%20config.md#English)
+    > - Generate spawn config:
+    > 	- CFHC spawn config
+    > 	- PUBG zone spawn config (teleport)
+    > - Spawn config type
+    - [Zone Config Manager](./config/common/game/zone/zone-config-manager.md): Manage [Zone config](/docs/wiki/Configuration/Zone%20config.md#English)
+    > - Custom zone config:
+    > 	- [Special Render Protocol](./config/common/game/zone/custom/special-render-protocol.md): [Direction render](/docs/wiki/Configuration/Zone%20special%20client.md#Direction%20render)
+    > - Generate zone config:
+    > 	- CFHC zone
+    > 	- Elytra additional zone
+    > 	- Mod cover
+    > 	- PUBG zone
+    > 	- UHC zone
+    > - Zone config type
+  - [Loot Config Manager](./config/common/loot/loot-config-manager.md): Manage [General loot config](/docs/wiki/Configuration/General%20loot%20config.md#English)
+	  - ~~airdrop: Airdrop config~~
+	  - ~~airdrop_special: Special airdrop~~
+	  - entity_spawner: Entity spawner config
+	  - loot_spawner: Loot spawner config
+	  - ~~secret_room~~ (Not used yet)
+  > - Generate loot config:
+  > 	- CBRG (TaCZ gun pack) loot config
+  > 	- CFHC loot config
+  > 	- Horse vehicle loot config
+  > 	- TaCZ loot config
+  > - Loot config type
+  - [Server Config Manager](./config/common/server/server-config-manager.md):
+	  - [Performance Config Manager](./config/common/server/performance/performance-config-manager.md): Manage [Performance config](/docs/wiki/Configuration/Performance%20config.md#English)
+      > - Generate performance config:
+      > 	- CFHC performance config
+	  - [Utility Config Manager](./config/common/server/utility/utility-config-manager.md): Manage [Utility config](/docs/wiki/Configuration/Utility%20config.md#English)
+
+### Mod Data
+> _./data_
+
+[Data Manager](./data/data-manager.md)
+- IO: Readable and writable data
+	- [Developer Tool Data](./data/io/dev-data.md)
+	- Game Master Data
+	- [Temp Data](./data/io/temp-data.md)
+
+### Developer Related
+
+- Debug:
+	- Command:
+	> - [Debug Command](./developer/debug/command/debug-command.md)
+	> - [Local Debug Command](./developer/debug/command/local-debug-command.md)
+	- Debug display text
+- Game Master:
+	- Command:
+	> - [Game Manager Command](./developer/gm/command/gm-command.md)
+
+### Event
+> _./event_
+
+- Built-in Custom Extension Event Handler: _./event/custom_
+	- Client:
+		- [SpecialRenderHandler](./event/custom/client/special-render-handler.md): Client special render handler
+- [Built-in Event Handler Index](./event/handler/handler-index.md): _./event/handler_
+	- Effect: Effect
+	- Game: Game
+	- Loot: Loot
+	- Message: Network message
+	- Server: Server
+	- Util: Utility
+- [Event Handler Framework](./event/event-handler.md): _./event/AbstractEventHandler_
+- [Event Poster](./event/event-poster.md)
+- [Event Register](./event/event-register.md)
+
+### Initialization
+> _./init_
+
+- Registry: Mod registry
+	- ModBlocks: Mod blocks
+	- ModCreativeTabs: Creative mode tabs
+	- ModDamageTypes: Mod damage types ([Safe Zone](/docs/wiki/Configuration/Zone%20simple%20function.md#Safe%20zone)/[Unsafe Zone](/docs/wiki/Configuration/Zone%20simple%20function.md#Unsafe%20zone) damage)
+	- ~~ModEntities: Mod entities~~ (Not used yet)
+	- ModItems: Mod items
+	- ModMenuTypes: Mod GUI types (Loot spawner block GUI interface)
+	- ModSounds: Mod sounds (Not used yet)
+- CommandRegistry: Command registration
+- CommonSetup: Common initialization
+- CompatInit: Compat mod initialization
+- ModEvent: Mod event
+
+### Inventory
+> _./inventory_
+
+- Loot spawner GUI interface
+
+### Network
+> _./network_
+
+- Network Message:
+  - S2C Game Info
+  - S2C Spectate Info
+  - S2C Team Info
+  - S2C Zone Info
+- NetworkHandler: Network handler (register network messages, send messages)
+- NetworkHook: Network hook, open block entity GUI (loot spawner block)
+
+### Resource
+> _./resource_
+
+- Resource Loader: (Not used yet)
+
+### Utility
+> _./util_
+
+- ChatUtils: Encapsulate how to send chat messages, titles, etc. to players
+- ClassUtils: Basic data classes, used to simplify algorithms and optimize performance
+- ColorUtils: Handle color strings, in-game colors, etc.
+- CommandUtils: Add elements to commands more conveniently
+- GameUtils: Game time, game player related
+- JsonUtils: Convenient encapsulation of JSON serialization for various data types
+- ListUtils: List operations
+- NBTUtils: NBT serialization
+- SendUtils: Encapsulate the sending of network messages, decoupling `NetworkHandler` from the project main body
+- StringUtils: Parse/convert various format strings, build strings
+- Vec3Utils: Vector random offset, vector addition/subtraction/linear interpolation, etc.
