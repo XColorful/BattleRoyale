@@ -207,7 +207,7 @@
 > ./api/event/loot
 
 - Generate：物资刷新
-	- CustomGenerateEvent：物资刷新通用事件，由[通用时间刷新](/docs/wiki/Configuration/General%20loot%20config.md#通用事件刷新)词条发送
+	- CustomGenerateEvent：物资刷新通用事件，由[通用事件刷新](/docs/wiki/Configuration/General%20loot%20config.md#通用事件刷新)词条发送
 
 ## 初始化
 
