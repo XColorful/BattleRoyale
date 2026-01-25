@@ -35,9 +35,12 @@ public class FireworkManager implements IFireworkManager {
     private final List<FixedFireworkTask> fixedTasks = new ArrayList<>();
     private final List<PlayerTrackingFireworkTask> playerTrackingTasks = new ArrayList<>();
 
+    @Override
     public List<FixedFireworkTask> getFixedTasks() { return fixedTasks; }
+    @Override
     public List<PlayerTrackingFireworkTask> getPlayerTrackingTasks() { return playerTrackingTasks; }
 
+    @Override
     public void onTick() {
         RandomSource random = null;
         if (!fixedTasks.isEmpty()) {
@@ -133,26 +136,31 @@ public class FireworkManager implements IFireworkManager {
         spawnFireworkAtExactPos(level, spawnPos);
     }
 
+    @Override
     public void addFixedPositionFireworkTask(ServerLevel level, Vec3 pos, int amount, int interval, float vRange, float hRange) {
         fixedTasks.add(new FixedFireworkTask(level, pos, amount, interval, vRange, hRange));
         FireworkEventHandler.register();
     }
 
+    @Override
     public void addPlayerTrackingFireworkTask(ServerLevel level, UUID playerUUID, int amount, int interval, float vRange, float hRange) {
         playerTrackingTasks.add(new PlayerTrackingFireworkTask(level, playerUUID, amount, interval, vRange, hRange));
         FireworkEventHandler.register();
     }
 
+    @Override
     public void clear() {
         forceEnd();
     }
 
+    @Override
     public void forceEnd() {
         fixedTasks.clear();
         playerTrackingTasks.clear();
         FireworkEventHandler.unregister();
     }
 
+    @Override
     public boolean shouldEnd() {
         return fixedTasks.isEmpty() && playerTrackingTasks.isEmpty();
     }

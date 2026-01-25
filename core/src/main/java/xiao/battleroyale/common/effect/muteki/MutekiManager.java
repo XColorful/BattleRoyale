@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.effect.type.IMutekiManager;
@@ -29,13 +30,19 @@ public class MutekiManager implements IMutekiManager {
     }
 
     private static int MAX_MUTEKI_TIME = 20 * 10;
-    public static int getMaxMutekiTime() { return MAX_MUTEKI_TIME; }
-    public static void setMaxMutekiTime(int time) { MAX_MUTEKI_TIME = time; }
     private final Map<UUID, EntityMutekiTask> mutekiTasks = new HashMap<>();
 
-    public Map<UUID, EntityMutekiTask> getMutekiTasks() { return mutekiTasks; }
-    public static int getMaxMutekiTimeDefault() { return 20 * 10; }
+    @Override
+    public int getMaxMutekiTime() { return MAX_MUTEKI_TIME; }
+    @Override
+    public int getMaxMutekiTimeDefault() { return 20 * 10; }
+    @Override
+    public void setMaxMutekiTime(int time) { MAX_MUTEKI_TIME = time; }
 
+    @Override
+    public Map<UUID, EntityMutekiTask> getMutekiTasks() { return mutekiTasks; }
+
+    @Override
     public void onTick() {
         mutekiTasks.entrySet().removeIf(entry -> {
             EntityMutekiTask task = entry.getValue();
@@ -52,7 +59,8 @@ public class MutekiManager implements IMutekiManager {
         }
     }
 
-    public void notifyMutekiEnd(EntityMutekiTask task) {
+    @Override
+    public void notifyMutekiEnd(@NotNull EntityMutekiTask task) {
         if (task.notice && task.serverLevel != null) {
             @Nullable ServerPlayer player = task.serverLevel.getEntity(task.entityUUID) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
             if (player != null) {
@@ -62,20 +70,22 @@ public class MutekiManager implements IMutekiManager {
         BattleRoyale.LOGGER.info("LivingEntity {} (UUID:{}) muteki time finished", task.name, task.entityUUID);
     }
 
-    public boolean canMuteki(LivingEntity livingEntity) {
+    public boolean canMuteki(@NotNull LivingEntity livingEntity) {
         return mutekiTasks.containsKey(livingEntity.getUUID());
     }
 
+    @Override
     public void addMutekiEntity(ServerLevel serverLevel, LivingEntity livingEntity, int duration) {
         addAndGetTask(serverLevel, livingEntity, duration);
     }
     
+    @Override
     public void addMutekiEntityNotify(ServerLevel serverLevel, ServerPlayer player, int duration) {
         EntityMutekiTask task = addAndGetTask(serverLevel, player, duration);
         task.notice = true;
     }
     
-    private EntityMutekiTask addAndGetTask(ServerLevel serverLevel, LivingEntity livingEntity, int duration) {
+    private @NotNull EntityMutekiTask addAndGetTask(ServerLevel serverLevel, LivingEntity livingEntity, int duration) {
         UUID uuid = livingEntity.getUUID();
         EntityMutekiTask task;
         duration = Math.min(duration, MAX_MUTEKI_TIME);
@@ -100,6 +110,7 @@ public class MutekiManager implements IMutekiManager {
         MutekiEventHandler.unregister();
     }
 
+    @Override
     public boolean clear(UUID uuid) {
         EntityMutekiTask task = mutekiTasks.remove(uuid);
         if (task != null) {

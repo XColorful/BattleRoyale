@@ -16,6 +16,7 @@ import xiao.battleroyale.api.compat.journeymap.IJmApi;
 import xiao.battleroyale.api.compat.tacz.ITaczEventRegister;
 import xiao.battleroyale.api.compat.tacz.ITaczGunOperator;
 import xiao.battleroyale.api.config.IModConfigManager;
+import xiao.battleroyale.api.effect.IEffectManager;
 import xiao.battleroyale.api.event.ICustomEventPoster;
 import xiao.battleroyale.api.event.ICustomEventRegister;
 import xiao.battleroyale.api.event.IEventRegister;
@@ -28,6 +29,7 @@ import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.renderer.BlockModelRenderer;
 import xiao.battleroyale.client.renderer.game.ClientGuiRenderer;
 import xiao.battleroyale.client.renderer.game.ClientLevelRenderer;
+import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.event.EventPoster;
@@ -67,6 +69,7 @@ public class BattleRoyale {
 
         gameManager = GameManager.get();
         modConfigManager = ModConfigManager.getApi();
+        effectManager = EffectManager.get();
         if (mcSide.isClientSide()) {
             clientGameDataManager = ClientGameDataManager.get();
             clientGuiRenderer = ClientGuiRenderer.get();
@@ -128,6 +131,7 @@ public class BattleRoyale {
 
     private static IGameManager gameManager;
     private static IModConfigManager modConfigManager;
+    private static IEffectManager effectManager;
     private static IClientGameDataManager clientGameDataManager;
     private static IClientGuiRenderer clientGuiRenderer;
     private static IClientLevelRenderer clientLevelRenderer;
@@ -136,6 +140,9 @@ public class BattleRoyale {
     }
     public static IModConfigManager getModConfigManager() {
         return modConfigManager;
+    }
+    public static IEffectManager getEffectManager() {
+        return effectManager;
     }
     public static IClientGameDataManager getClientGameDataManager() {
         return BattleRoyale.clientGameDataManager;
@@ -156,6 +163,10 @@ public class BattleRoyale {
     @Deprecated(forRemoval = false)
     public static void setModConfigManager(@NotNull IModConfigManager modConfigManager) {
         BattleRoyale.modConfigManager = modConfigManager;
+    }
+    @Deprecated(forRemoval = false)
+    public static void setEffectManager(@NotNull IEffectManager effectManager) {
+        BattleRoyale.effectManager = effectManager;
     }
     @Deprecated(forRemoval = false)
     public static void setClientGameDataManager(@NotNull IClientGameDataManager clientGameDataManager) {

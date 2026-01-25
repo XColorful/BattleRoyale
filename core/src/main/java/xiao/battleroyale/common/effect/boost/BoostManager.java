@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-// TODO 用IBoostManager使BoostManager等一系列EffectManager具体类与模组解耦
 public class BoostManager implements IBoostManager {
 
     private BoostManager() {}
@@ -36,11 +35,11 @@ public class BoostManager implements IBoostManager {
 
     private final Map<UUID, BoostData> boostData = new HashMap<>();
 
-    public int syncFrequency() { return SYNC_FREQUENCY; }
-    public int healCooldown() { return HEAL_COOLDOWN; }
-    public int healCooldownDefault() { return 160; }
-    public int effectCooldown() { return EFFECT_COOLDOWN; }
-    public int effectCooldownDefault() { return 20; }
+    @Override public int syncFrequency() { return SYNC_FREQUENCY; }
+    @Override public int healCooldown() { return HEAL_COOLDOWN; }
+    @Override public int healCooldownDefault() { return 160; }
+    @Override public int effectCooldown() { return EFFECT_COOLDOWN; }
+    @Override public int effectCooldownDefault() { return 20; }
 
     public Map<UUID, BoostData> getBoostData() { return boostData; }
     public BoostData getBoostData(UUID uuid) { return boostData.get(uuid); }
@@ -48,6 +47,7 @@ public class BoostManager implements IBoostManager {
     /**
      * 消耗boost，给予效果
      */
+    @Override
     public void onTick() {
         boostData.entrySet().removeIf(entry -> {
             BoostData data = entry.getValue();
@@ -105,6 +105,7 @@ public class BoostManager implements IBoostManager {
      * 通常是使用物品时触发，立即更新冷却
      * 检查是否为GamePlayer并通知GameManager同步消息
      */
+    @Override
     public void addBoost(UUID entityUUID, int amount, ServerLevel serverLevel) {
         BoostData data = getOrCreateData(entityUUID, serverLevel);
         int preLevel = BoostData.getBoostLevel(data.boost());
@@ -121,6 +122,7 @@ public class BoostManager implements IBoostManager {
         BoostEventHandler.register();
     }
 
+    @Override
     public int getBoost(UUID entityUUID) {
         BoostData data = boostData.get(entityUUID);
         if (data != null) {
@@ -142,6 +144,7 @@ public class BoostManager implements IBoostManager {
         forceEnd();
     }
 
+    @Override
     public void clear(UUID entityUUID) {
         BoostData data = boostData.remove(entityUUID);
         if (data != null) {
