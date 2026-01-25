@@ -1,4 +1,4 @@
-package xiao.battleroyale.client.renderer.game;
+package xiao.battleroyale.client.renderer;
 
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
@@ -6,9 +6,9 @@ import xiao.battleroyale.api.client.render.IClientLevelRenderer;
 import xiao.battleroyale.api.client.render.level.IClientSpectateRenderer;
 import xiao.battleroyale.api.client.render.level.IClientTeamRenderer;
 import xiao.battleroyale.api.client.render.level.IClientZoneRenderer;
-import xiao.battleroyale.client.renderer.game.level.SpectatePlayerRenderer;
-import xiao.battleroyale.client.renderer.game.level.TeamMemberRenderer;
-import xiao.battleroyale.client.renderer.game.level.ZoneRenderer;
+import xiao.battleroyale.client.renderer.level.SpectatePlayerRenderer;
+import xiao.battleroyale.client.renderer.level.TeamMemberRenderer;
+import xiao.battleroyale.client.renderer.level.ZoneRenderer;
 
 public class ClientLevelRenderer implements IClientLevelRenderer {
 

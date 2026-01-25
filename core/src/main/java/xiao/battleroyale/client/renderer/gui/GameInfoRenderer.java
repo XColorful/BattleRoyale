@@ -1,4 +1,4 @@
-package xiao.battleroyale.client.renderer.game.gui;
+package xiao.battleroyale.client.renderer.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

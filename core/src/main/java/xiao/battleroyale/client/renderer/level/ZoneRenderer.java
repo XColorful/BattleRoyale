@@ -1,4 +1,4 @@
-package xiao.battleroyale.client.renderer.game.level;
+package xiao.battleroyale.client.renderer.level;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;

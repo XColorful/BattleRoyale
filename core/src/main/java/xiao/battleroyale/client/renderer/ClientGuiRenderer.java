@@ -1,12 +1,12 @@
-package xiao.battleroyale.client.renderer.game;
+package xiao.battleroyale.client.renderer;
 
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.render.IClientGuiRenderer;
 import xiao.battleroyale.api.client.render.gui.IClientGameInfoRenderer;
 import xiao.battleroyale.api.client.render.gui.IClientTeamInfoRenderer;
-import xiao.battleroyale.client.renderer.game.gui.GameInfoRenderer;
-import xiao.battleroyale.client.renderer.game.gui.TeamInfoRenderer;
+import xiao.battleroyale.client.renderer.gui.GameInfoRenderer;
+import xiao.battleroyale.client.renderer.gui.TeamInfoRenderer;
 
 public class ClientGuiRenderer implements IClientGuiRenderer {
 
