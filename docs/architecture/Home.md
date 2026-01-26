@@ -11,6 +11,16 @@
 - [设计哲学](./design/design-philosophy.md)
 - [开发准则](./design/development-principles.md)
 
+## 模组扩展教程
+> 一般步骤为：
+> 1. 获取相关API
+> 2. （可选）在推荐目录下创建相关文件
+> 3. 参考模组已有实现
+> 4. 实现新功能
+
+- ⭐往游戏流程中添加额外行为：[创建自定义事件处理器](./event/custom/create-custom-event-handler.md)
+- 🤔深度定制游戏处理流程：[替换游戏子管理器](./common/game/replace-game-sub-manager.md)
+
 ## 项目结构
 
 基于`xiao.battleroyale`顶层包的模块划分
@@ -25,6 +35,7 @@
 > _./api_
 
 - [API索引](./api/api-index.md)：通过接口分类和职责介绍进行筛选，并传送至 _./docs/api_ 下内容以查看详细参数
+- [事件API](./api/event-api.md)：模组的自定义事件类型、模组的事件机制及其注册监听方式
 
 ### 方块
 > _./block_
@@ -107,6 +118,8 @@
 - [GameManager](./common/game/game-manager.md)：游戏管理器（全能易用门面）
 > - [GameIdHelper](./common/game/game-id-helper.md)：游戏ID读写
 > - [GameUtilsFunction](./common/game/game-utils-function.md)：游戏实用功能，无摔传送
+
+🤔深度定制游戏处理流程：[替换游戏子管理器](./common/game/replace-game-sub-manager.md)
 - Gamerule：游戏规则
 	- [GameruleManager](./common/game/gamerule/gamerule-manager.md)：游戏规则管理器
 - Lobby：大厅
@@ -283,7 +296,10 @@
 ### 事件
 > _./event_
 
+> [事件API](./api/event-api.md)
+
 - 内置自定义扩展事件处理器：_./event/custom_
+	- ⭐往游戏流程中添加额外行为：[创建自定义事件处理器](./event/custom/create-custom-event-handler.md)
 	- 客户端：
 		- [SpecialRenderHandler](./event/custom/client/special-render-handler.md)：客户端特殊渲染处理器
 - [内置事件处理器索引](./event/handler/handler-index.md)：_./event/handler_
@@ -360,6 +376,16 @@ Core architectural ideas and development principles
 - [Design Philosophy](./design/design-philosophy.md#English)
 - [Development Principles](./design/development-principles.md#English)
 
+## Mod Addon Tutorial
+> General steps are:
+> 1. Obtain the relevant API
+> 2. (Optional) Create the relevant files in the recommended directory
+> 3. Refer to the existing implementation in the mod
+> 4. Implement new feature
+
+- ⭐Add extra behaviors to the game process: [Create CustomEvent handler](./event/custom/create-custom-event-handler.md#English)
+- 🤔Deeply customized game processing flow: [Replace GameSubManager](./common/game/replace-game-sub-manager.md#English)
+
 ## Project Structure
 
 Module division based on the `xiao.battleroyale` top-level package
@@ -374,6 +400,7 @@ Module division based on the `xiao.battleroyale` top-level package
 > _./api_
 
 - [API Index](./api/api-index.md#English): Filter by interface classification and responsibility introduction, and link to content under _./docs/api_ to view detailed parameters
+- [Event API](./api/event-api.md#English): Mod's custom event types, mod's event mechanism, and its registration and listening methods
 
 ### Block
 > _./block_
@@ -456,6 +483,8 @@ Module division based on the `xiao.battleroyale` top-level package
 - [GameManager](./common/game/game-manager.md#English): Game manager (almighty easy-to-use facade)
 > - [GameIdHelper](./common/game/game-id-helper.md#English): Game ID read/write
 > - [GameUtilsFunction](./common/game/game-utils-function.md#English): Game utility function, teleport with no fall damage
+
+🤔Deeply customized game processing flow: [Replace GameSubManager](./common/game/replace-game-sub-manager.md#English)
 - Gamerule:
 	- [GameruleManager](./common/game/gamerule/gamerule-manager.md#English): Game rule manager
 - Lobby:
@@ -622,17 +651,20 @@ Module division based on the `xiao.battleroyale` top-level package
 
 - Debug:
 	- Command:
-	> - [Debug Command](./developer/debug/command/debug-command.md#English)
-	> - [Local Debug Command](./developer/debug/command/local-debug-command.md#English)
+	> - [Debug command](./developer/debug/command/debug-command.md#English)
+	> - [Local debug command](./developer/debug/command/local-debug-command.md#English)
 	- Debug display text
 - Game Master:
 	- Command:
-	> - [Game Manager Command](./developer/gm/command/gm-command.md#English)
+	> - [Game Manager command](./developer/gm/command/gm-command.md#English)
 
 ### Event
 > _./event_
 
+> [Event API](./api/event-api.md#English)
+
 - Built-in Custom Extension Event Handler: _./event/custom_
+	- ⭐Add extra behaviors to the game process: [Create CustomEvent handler](./event/custom/create-custom-event-handler.md#English)
 	- Client:
 		- [SpecialRenderHandler](./event/custom/client/special-render-handler.md#English): Client special render handler
 - [Built-in Event Handler Index](./event/handler/handler-index.md#English): _./event/handler_

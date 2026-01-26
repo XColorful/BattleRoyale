@@ -17,6 +17,7 @@
 |区域管理器|`IZoneManager`|持续更新游戏区域|
 
 ### 游戏子管理器
+> 🤔深度定制游戏处理流程：[替换游戏子管理器](./replace-game-sub-manager.md)
 
 主管理器及子管理器都实现的接口
 > 用指令调用主管理器执行某功能，主管理器应调度所有子管理器也执行相应功能
@@ -86,6 +87,7 @@ The game framework is designed with a **Main Manager** orchestrating various **S
 |Zone Manager|`IZoneManager`|Continuously updates game zones.|
 
 ### Game Sub-Manager
+> 🤔Deeply customized game processing flow: [Replace GameSubManager](./replace-game-sub-manager.md#English)
 
 The common interface implemented by both the Main Manager and all Sub-Managers.
 

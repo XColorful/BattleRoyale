@@ -2,8 +2,8 @@
 
 # 自定义大逃杀API
 
-- [事件API](https://github.com/XColorful/BattleRoyale/wiki/Event-API)
+（已移动至[API索引](https://github.com/XColorful/BattleRoyale/blob/HEAD/docs/architecture/api/api-index.md)）
 
 # English
 
-- [Event API](https://github.com/XColorful/BattleRoyale/wiki/Event-API#English)
+(Already moved to [API Index](https://github.com/XColorful/BattleRoyale/blob/HEAD/docs/architecture/api/api-index.md#English))

@@ -132,6 +132,8 @@
 ### 模组事件
 > _./api/event_
 
+> [事件API](./event-api.md)
+
 - [EventType](/docs/api/event/EventType.md)：模组事件类型
 - [IEvent](/docs/api/event/IEvent.md)：模组事件接口
 > - ILivingDamageEvent：Forge/NeoForge 生物受击事件
@@ -358,6 +360,7 @@
 - TempDataTag: Temporary data tag
 
 ## Event
+> [Event API](./event-api.md#English)
 
 - [EventPriority](/docs/api/event/EventPriority.md): Event priority, same as Forge/NeoForge
 
