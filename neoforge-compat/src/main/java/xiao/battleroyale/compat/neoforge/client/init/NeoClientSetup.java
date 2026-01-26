@@ -6,7 +6,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.init.IClientSetup;
-import xiao.battleroyale.api.client.init.ScreenRegistration;
 import xiao.battleroyale.client.init.ClientSetup;
 
 public class NeoClientSetup {
@@ -16,7 +15,7 @@ public class NeoClientSetup {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
-        for (ScreenRegistration<?, ?> registration : CLIENT_SETUP.getScreenRegistrations()) {
+        for (IClientSetup.ScreenRegistration<?, ?> registration : CLIENT_SETUP.getScreenRegistrations()) {
             try {
                 event.register(
                         (MenuType) registration.menuType(),
