@@ -2,7 +2,7 @@ package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.config.common.loot.ILootEntry;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.InventoryFuncEntry;

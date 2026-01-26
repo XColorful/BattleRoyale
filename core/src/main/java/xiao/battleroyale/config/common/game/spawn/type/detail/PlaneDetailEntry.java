@@ -2,7 +2,7 @@ package xiao.battleroyale.config.common.game.spawn.type.detail;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
+import xiao.battleroyale.api.config.common.game.spawn.type.detail.SpawnDetailTag;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.util.JsonUtils;
 

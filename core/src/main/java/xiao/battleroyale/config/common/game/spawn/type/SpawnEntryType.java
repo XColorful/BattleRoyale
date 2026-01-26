@@ -1,8 +1,8 @@
 package xiao.battleroyale.config.common.game.spawn.type;
 
 import com.google.gson.JsonObject;
-import xiao.battleroyale.api.game.spawn.ISpawnEntry;
-import xiao.battleroyale.api.game.spawn.type.SpawnTypeTag;
+import xiao.battleroyale.api.config.common.game.spawn.ISpawnEntry;
+import xiao.battleroyale.api.config.common.game.spawn.type.SpawnTypeTag;
 
 import java.util.HashMap;
 import java.util.Map;

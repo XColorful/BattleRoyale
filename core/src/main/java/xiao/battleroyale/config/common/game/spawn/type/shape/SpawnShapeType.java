@@ -1,6 +1,6 @@
 package xiao.battleroyale.config.common.game.spawn.type.shape;
 
-import xiao.battleroyale.api.game.spawn.type.shape.SpawnShapeTag;
+import xiao.battleroyale.api.config.common.game.spawn.type.shape.SpawnShapeTag;
 
 import java.util.HashMap;
 import java.util.Map;
