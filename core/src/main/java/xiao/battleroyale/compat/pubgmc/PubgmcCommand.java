@@ -22,9 +22,9 @@ import xiao.battleroyale.command.sub.ReloadCommand;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.data.io.TempDataManager;
 
-import static xiao.battleroyale.api.data.io.TempDataTag.PUBGMC_COMMAND;
-import static xiao.battleroyale.api.data.io.TempDataTag.REGISTRY;
 import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
+import static xiao.battleroyale.api.data.TempDataTag.PUBGMC_COMMAND;
+import static xiao.battleroyale.api.data.TempDataTag.REGISTRY;
 import static xiao.battleroyale.compat.pubgmc.CommandArg.*;
 
 public class PubgmcCommand {

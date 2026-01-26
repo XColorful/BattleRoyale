@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.game.IClientGameDataManager;
-import xiao.battleroyale.api.client.render.game.level.IClientSpectateRenderer;
+import xiao.battleroyale.api.client.render.level.IClientSpectateRenderer;
 import xiao.battleroyale.api.event.IClientTickEvent;
 import xiao.battleroyale.client.game.data.ClientGameData;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;

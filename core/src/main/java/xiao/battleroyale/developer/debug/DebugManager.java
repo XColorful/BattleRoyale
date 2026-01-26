@@ -7,7 +7,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.data.io.DevDataTag;
+import xiao.battleroyale.api.data.DevDataTag;
 import xiao.battleroyale.data.io.DevDataManager;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils.GameTimeFormat;

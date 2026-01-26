@@ -12,6 +12,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.effect.muteki.MutekiManager;
 
@@ -27,7 +28,7 @@ public class MutekiCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         LiteralArgumentBuilder<CommandSourceStack> mutekiCommand = Commands.literal(MUTEKI);
 
-        RequiredArgumentBuilder<CommandSourceStack, Integer> timeArgument = Commands.argument(TIME, IntegerArgumentType.integer(1, MutekiManager.getMaxMutekiTime()));
+        RequiredArgumentBuilder<CommandSourceStack, Integer> timeArgument = Commands.argument(TIME, IntegerArgumentType.integer(1, BattleRoyale.getEffectManager().getMutekiManager().getMaxMutekiTime()));
         RequiredArgumentBuilder<CommandSourceStack, EntitySelector> playerArgument = Commands.argument(PLAYER, EntityArgument.players());
 
         // muteki <players> <time>

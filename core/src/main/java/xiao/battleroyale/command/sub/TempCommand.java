@@ -11,8 +11,8 @@ import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.data.io.TempDataManager;
 
-import static xiao.battleroyale.api.data.io.TempDataTag.PUBGMC_COMMAND;
-import static xiao.battleroyale.api.data.io.TempDataTag.REGISTRY;
+import static xiao.battleroyale.api.data.TempDataTag.PUBGMC_COMMAND;
+import static xiao.battleroyale.api.data.TempDataTag.REGISTRY;
 import static xiao.battleroyale.command.CommandArg.*;
 import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 

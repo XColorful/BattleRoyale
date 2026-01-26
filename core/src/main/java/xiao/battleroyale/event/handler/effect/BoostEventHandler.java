@@ -1,9 +1,9 @@
 package xiao.battleroyale.event.handler.effect;
 
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
-import xiao.battleroyale.common.effect.boost.BoostManager;
 import xiao.battleroyale.event.EventRegister;
 
 public class BoostEventHandler implements IEventHandler {
@@ -33,7 +33,7 @@ public class BoostEventHandler implements IEventHandler {
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
         if (eventType == EventType.SERVER_TICK_EVENT){
-            BoostManager.get().onTick();
+            BattleRoyale.getEffectManager().getBoostManager().onTick();
         } else {
             onReceiveWrongEvent(eventType);
         }

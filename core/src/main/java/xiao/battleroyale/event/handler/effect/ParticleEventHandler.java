@@ -1,9 +1,9 @@
 package xiao.battleroyale.event.handler.effect;
 
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
-import xiao.battleroyale.common.effect.particle.ParticleManager;
 import xiao.battleroyale.event.EventRegister;
 
 public class ParticleEventHandler implements IEventHandler {
@@ -34,7 +34,7 @@ public class ParticleEventHandler implements IEventHandler {
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
         if (eventType == EventType.SERVER_TICK_EVENT) {
-            ParticleManager.get().onTick();
+            BattleRoyale.getEffectManager().getParticleManager().onTick();
         } else {
             onReceiveWrongEvent(eventType);
         }
