@@ -1,6 +1,6 @@
 package xiao.battleroyale.config.common.game.spawn.type.detail;
 
-import xiao.battleroyale.api.game.spawn.type.detail.SpawnDetailTag;
+import xiao.battleroyale.api.config.common.game.spawn.type.detail.SpawnDetailTag;
 
 import java.util.HashMap;
 import java.util.Map;

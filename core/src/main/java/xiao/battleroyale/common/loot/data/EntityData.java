@@ -6,7 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.loot.entity.IEntityLootData;
+import xiao.battleroyale.api.loot.data.IEntityLootData;
 import xiao.battleroyale.config.common.loot.type.EntityEntry;
 
 import javax.annotation.Nullable;

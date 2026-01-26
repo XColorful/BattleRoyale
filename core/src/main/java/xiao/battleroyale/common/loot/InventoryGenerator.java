@@ -3,7 +3,7 @@ package xiao.battleroyale.common.loot;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.config.common.loot.ILootEntry;
 
 import java.util.List;
 

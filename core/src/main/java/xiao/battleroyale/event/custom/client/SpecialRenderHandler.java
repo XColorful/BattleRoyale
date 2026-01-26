@@ -12,8 +12,8 @@ import xiao.battleroyale.api.event.ICustomEvent;
 import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.event.client.render.SpecialZoneRenderEvent;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
-import xiao.battleroyale.client.renderer.game.level.Shape3D;
-import xiao.battleroyale.client.renderer.game.level.ZoneRenderer;
+import xiao.battleroyale.client.renderer.level.Shape3D;
+import xiao.battleroyale.client.renderer.level.ZoneRenderer;
 import xiao.battleroyale.config.common.game.zone.custom.SpecialRenderProtocol;
 import xiao.battleroyale.util.ColorUtils;
 

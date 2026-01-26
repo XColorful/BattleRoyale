@@ -1,7 +1,7 @@
 package xiao.battleroyale.api.game.gamerule.storage;
 
 import net.minecraft.server.level.ServerLevel;
-import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
+import xiao.battleroyale.api.config.common.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
