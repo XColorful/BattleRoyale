@@ -6,6 +6,8 @@
 
 # 自定义大逃杀
 
+😎[wiki](https://github.com/XColorful/BattleRoyale/wiki) | 📄[docs](https://github.com/XColorful/BattleRoyale/tree/HEAD/docs)
+
 本模组旨在打造拥有**高度自定义且极致兼容**的**区域、物资刷新和游戏规则**，与多种玩法混合打造数量丰富的游戏模式，包括但不限于大逃杀玩法。同时本模组也可用作 PUBGMC mod 的高版本增强版。
 
 ---
@@ -46,6 +48,8 @@
 
 # Custom BattleRoyale
 
+😎[wiki](https://github.com/XColorful/BattleRoyale/wiki#English) | 📄[docs](https://github.com/XColorful/BattleRoyale/tree/HEAD/docs)
+
 This mod is designed to create game modes with **highly customizable and extremely compatible** **zones, loot generation, and game rules**, blending with various gameplay styles to offer a rich selection of game modes, including but not limited to Battle Royale. This mod can also serve as an enhanced, higher-version alternative to the PUBGMC mod.
 
 ---
@@ -83,3 +87,5 @@ This mod is designed to create game modes with **highly customizable and extreme
 - PlayerRevive: Sets the number of downs and adds consistent health loss for non-eliminated game players.
 - Optional PUBGMC Command Compatibility: Allows command blocks using PUBGMC commands to work without modification.
 - TaCZ: Provides out-of-the-box loot configuration example, and can disables guns in the PlayerRevive downed state
+
+## 
