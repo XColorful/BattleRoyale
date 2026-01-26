@@ -1,10 +1,10 @@
 package xiao.battleroyale.event.handler.effect;
 
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.api.event.ILivingDamageEvent;
-import xiao.battleroyale.common.effect.muteki.MutekiManager;
 import xiao.battleroyale.event.EventRegister;
 
 public class MutekiEventHandler implements IEventHandler {
@@ -36,9 +36,9 @@ public class MutekiEventHandler implements IEventHandler {
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
         switch (eventType) {
-            case SERVER_TICK_EVENT -> MutekiManager.get().onTick();
+            case SERVER_TICK_EVENT -> BattleRoyale.getEffectManager().getMutekiManager().onTick();
             case LIVING_DAMAGE_EVENT -> {
-                if (MutekiManager.get().canMuteki(((ILivingDamageEvent) event).getEntity())) {
+                if (BattleRoyale.getEffectManager().getMutekiManager().canMuteki(((ILivingDamageEvent) event).getEntity())) {
                     event.setCanceled(true);
                 }
             }

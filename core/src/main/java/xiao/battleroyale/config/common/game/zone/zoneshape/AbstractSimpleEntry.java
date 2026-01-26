@@ -2,8 +2,8 @@ package xiao.battleroyale.config.common.game.zone.zoneshape;
 
 import com.google.gson.JsonObject;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.game.zone.shape.IZoneShapeEntry;
-import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
+import xiao.battleroyale.api.config.common.game.zone.shape.IZoneShapeEntry;
+import xiao.battleroyale.api.config.common.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.util.JsonUtils;
 
 public abstract class AbstractSimpleEntry implements IZoneShapeEntry {

@@ -2,7 +2,7 @@ package xiao.battleroyale.config.common.game.zone.zonefunc;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
+import xiao.battleroyale.api.config.common.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.common.game.zone.tickable.MutekiFunc;
 import xiao.battleroyale.util.JsonUtils;

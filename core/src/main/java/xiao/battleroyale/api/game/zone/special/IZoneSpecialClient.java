@@ -1,7 +1,7 @@
 package xiao.battleroyale.api.game.zone.special;
 
 import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
-import xiao.battleroyale.api.client.render.game.level.IClientSimpleZoneRenderer;
+import xiao.battleroyale.api.client.render.level.IClientSimpleZoneRenderer;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 
 /**

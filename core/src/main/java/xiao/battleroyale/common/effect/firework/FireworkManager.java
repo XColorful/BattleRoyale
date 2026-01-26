@@ -14,7 +14,7 @@ import net.minecraft.world.item.component.FireworkExplosion;
 import net.minecraft.world.item.component.Fireworks;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.effect.IEffectManager;
+import xiao.battleroyale.api.effect.type.IFireworkManager;
 import xiao.battleroyale.event.handler.effect.FireworkEventHandler;
 import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.Vec3Utils;
@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class FireworkManager implements IEffectManager {
+public class FireworkManager implements IFireworkManager {
 
     private FireworkManager() {}
 
@@ -39,9 +39,12 @@ public class FireworkManager implements IEffectManager {
     private final List<FixedFireworkTask> fixedTasks = new ArrayList<>();
     private final List<PlayerTrackingFireworkTask> playerTrackingTasks = new ArrayList<>();
 
+    @Override
     public List<FixedFireworkTask> getFixedTasks() { return fixedTasks; }
+    @Override
     public List<PlayerTrackingFireworkTask> getPlayerTrackingTasks() { return playerTrackingTasks; }
 
+    @Override
     public void onTick() {
         RandomSource random = null;
         if (!fixedTasks.isEmpty()) {
@@ -149,26 +152,31 @@ public class FireworkManager implements IEffectManager {
         spawnFireworkAtExactPos(level, spawnPos);
     }
 
+    @Override
     public void addFixedPositionFireworkTask(ServerLevel level, Vec3 pos, int amount, int interval, float vRange, float hRange) {
         fixedTasks.add(new FixedFireworkTask(level, pos, amount, interval, vRange, hRange));
         FireworkEventHandler.register();
     }
 
+    @Override
     public void addPlayerTrackingFireworkTask(ServerLevel level, UUID playerUUID, int amount, int interval, float vRange, float hRange) {
         playerTrackingTasks.add(new PlayerTrackingFireworkTask(level, playerUUID, amount, interval, vRange, hRange));
         FireworkEventHandler.register();
     }
 
+    @Override
     public void clear() {
         forceEnd();
     }
 
+    @Override
     public void forceEnd() {
         fixedTasks.clear();
         playerTrackingTasks.clear();
         FireworkEventHandler.unregister();
     }
 
+    @Override
     public boolean shouldEnd() {
         return fixedTasks.isEmpty() && playerTrackingTasks.isEmpty();
     }

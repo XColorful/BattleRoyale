@@ -2,7 +2,7 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.config.common.loot.ILootEntry;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.type.EntityEntry;
 import xiao.battleroyale.config.common.loot.type.NoneEntry;
