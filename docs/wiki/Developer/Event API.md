@@ -2,7 +2,7 @@
 
 # 事件API
 
-（已移至[事件API](https://github.com/XColorful/BattleRoyale/blob/HEAD/docs/architecture/api/event-api.md)）
+（已移动至[事件API](https://github.com/XColorful/BattleRoyale/blob/HEAD/docs/architecture/api/event-api.md)）
 
 # English
 

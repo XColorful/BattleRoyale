@@ -2,7 +2,7 @@
 
 # 替换游戏子管理器
 
-（已移至[替换游戏子管理器](https://github.com/XColorful/BattleRoyale/blob/HEAD/docs/architecture/common/game/replace-game-sub-manager.md)）
+（已移动至[替换游戏子管理器](https://github.com/XColorful/BattleRoyale/blob/HEAD/docs/architecture/common/game/replace-game-sub-manager.md)）
 
 # English
 

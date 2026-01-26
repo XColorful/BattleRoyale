@@ -2,25 +2,6 @@
 
 # 自定义大逃杀wiki
 
-## 开发者工具
-
-- [开发者文档](https://github.com/XColorful/BattleRoyale/wiki/Developer-Doc)
-
-### 模组机制
-
-- [自定义大逃杀API](https://github.com/XColorful/BattleRoyale/wiki/CBR-API)
-- [游戏框架](https://github.com/XColorful/BattleRoyale/wiki/Game-Framework)
-- [模组配置框架](https://github.com/XColorful/BattleRoyale/wiki/Mod-Config-Framework)
-
-### 添加扩展功能
-
-- [创建自定义事件处理器](https://github.com/XColorful/BattleRoyale/wiki/Create-CustomEvent-Handler)
-- [替换游戏子管理器](https://github.com/XColorful/BattleRoyale/wiki/Replace-GameSubManager)
-
-### 开发者指令
-
-- [调试指令](https://github.com/XColorful/BattleRoyale/wiki/Debug-command)
-
 ## 配置文件
 
 [配置文件说明](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction)
@@ -125,25 +106,6 @@
 - [跨版本模组开发](https://github.com/XColorful/BattleRoyale/wiki/Cross-version-mod-development)
 
 # English
-
-## Developer tools
-
-- [Developer Doc](https://github.com/XColorful/BattleRoyale/wiki/Developer-Doc#English)
-
-### Mod mechanism
-
-- [Custom BattleRoyale API](https://github.com/XColorful/BattleRoyale/wiki/CBR-API#English)
-- [Game Framework](https://github.com/XColorful/BattleRoyale/wiki/Game-Framework#English)
-- [Mod Config Framework](https://github.com/XColorful/BattleRoyale/wiki/Mod-Config-Framework#English)
-
-### Add extension feature
-
-- [Create CustomEvent Handler](https://github.com/XColorful/BattleRoyale/wiki/Create-CustomEvent-Handler#English)
-- [Replace GameSubManager](https://github.com/XColorful/BattleRoyale/wiki/Replace-GameSubManager#English)
-
-### Developer command
-
-- [Debug command](https://github.com/XColorful/BattleRoyale/wiki/Debug-command#English)
 
 ## Configuration
 
