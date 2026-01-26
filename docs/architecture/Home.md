@@ -103,6 +103,7 @@
 ### 游戏
 > _./common/game_
 
+[游戏框架](./common/game/game-framework.md)：
 - [GameManager](./common/game/game-manager.md)：游戏管理器（全能易用门面）
 > - [GameIdHelper](./common/game/game-id-helper.md)：游戏ID读写
 > - [GameUtilsFunction](./common/game/game-utils-function.md)：游戏实用功能，无摔传送
@@ -448,6 +449,7 @@ Module division based on the `xiao.battleroyale` top-level package
 ### Game
 > _./common/game_
 
+[Game framework](./common/game/game-framework.md):
 - [GameManager](./common/game/game-manager.md): Game manager (almighty easy-to-use facade)
 > - [GameIdHelper](./common/game/game-id-helper.md): Game ID read/write
 > - [GameUtilsFunction](./common/game/game-utils-function.md): Game utility function, teleport with no fall damage
