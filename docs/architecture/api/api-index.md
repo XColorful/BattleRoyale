@@ -37,7 +37,7 @@
 - [ISideOnly](/docs/api/common/ISideOnly.md)：提供是否运行在正确的端上的判定
 
 ### 效果
-> ./api/effect
+> _./api/effect_
 
 - [IEffectManager](/docs/api/effect/IEffectManager.md)：效果管理器（全能易用门面）
 > - [IEffectMainManager](/docs/api/effect/IEffectMainManager.md)：效果主管理器，提供子管理器及热插拔
@@ -48,7 +48,7 @@
 	- [IParticleManager](/docs/api/effect/type/IParticleManager.md)：粒子管理器（持续生成粒子）
 
 ### 游戏
-> ./api/game
+> _./api/game_
 
 - [IGameManager](/docs/api/game/IGameManager.md)：游戏管理器（全能易用门面）
 	> - [IGameMainManager](/docs/api/game/IGameMainManager.md)：主游戏管理器，提供子管理器及热插拔
@@ -73,7 +73,7 @@
 		- [IZoneManager](/docs/api/game/zone/IZoneManager.md)：区域管理器
 
 ### 物资
-> ./api/loot
+> _./api/loot_
 
 - [ILootObject](/docs/api/loot/ILootObject.md)：物资对象，可刷新物资和读写游戏ID（UUID）
 
@@ -130,7 +130,7 @@
 - [ICustomEventPoster](/docs/api/event/ICustomEventPoster.md)：自定义事件发布器
 
 ### 模组事件
-> ./api/event
+> _./api/event_
 
 - [EventType](/docs/api/event/EventType.md)：模组事件类型
 - [IEvent](/docs/api/event/IEvent.md)：模组事件接口
@@ -141,19 +141,19 @@
 > - IServerTickEvent：服务端 tick 事件
 
 ### 自定义事件
-> ./api/event
+> _./api/event_
 
 - [CustomEventType](/docs/api/event/CustomEventType.md)：自定义事件类型
 - [ICustomEvent](/docs/api/event/ICustomEvent.md)：自定义事件接口
 
 #### 自定义客户端事件
-> ./api/event/client
+> _./api/event/client_
 
 - Render：渲染
 	- [SpecialZoneRenderEvent](/docs/api/event/client/render/SpecialZoneRenderEvent.md)：客户端特殊渲染事件
 
 #### 自定义游戏事件
-> ./api/event/game
+> _./api/event/game_
 
 - [AbstractGameEvent](/docs/api/event/game/AbstractGameEvent.md)：游戏事件，默认可取消
 - [AbstractGameStatsEvent](/docs/api/event/game/AbstractGameStatsEvent.md)：游戏记录事件，不可取消
@@ -204,7 +204,7 @@
 	- [ZoneCreatedEvent](/docs/api/event/game/zone/ZoneCreatedEvent.md)：区域创建事件
 
 #### 自定义物资事件
-> ./api/event/loot
+> _./api/event/loot_
 
 - Generate：物资刷新
 	- CustomGenerateEvent：物资刷新通用事件，由[通用事件刷新](/docs/wiki/Configuration/General%20loot%20config.md#通用事件刷新)词条发送
@@ -280,7 +280,7 @@
 - [ISideOnly](/docs/api/common/ISideOnly.md): Provides determination of whether running on the correct side
 
 ### Effect
-> ./api/effect
+> _./api/effect_
 
 - [IEffectManager](/docs/api/effect/IEffectManager.md): Effect manager (almighty easy-to-use facade)
 > - [IEffectMainManager](/docs/api/effect/IEffectMainManager.md): Main effect manager, provides sub-managers and hot-swapping
@@ -291,7 +291,7 @@
 	- [IParticleManager](/docs/api/effect/type/IParticleManager.md): Particle manager (continuous generate particle)
 
 ### Game
-> ./api/game
+> _./api/game_
 
 - [IGameManager](/docs/api/game/IGameManager.md): Game manager (almighty easy-to-use facade)
 	> - [IGameMainManager](/docs/api/game/IGameMainManager.md): Main game manager, provides sub-managers and hot-swapping
@@ -316,7 +316,7 @@
 		- [IZoneManager](/docs/api/game/zone/IZoneManager.md): Zone manager
 
 ### Loot
-> ./api/loot
+> _./api/loot_
 
 - [ILootObject](/docs/api/loot/ILootObject.md): Loot object, can generate loot and read/write Game ID (UUID)
 
@@ -373,7 +373,7 @@ Post Event:
 - [ICustomEventPoster](/docs/api/event/ICustomEventPoster.md): Custom event poster
 
 ### Mod Event
-> ./api/event
+> _./api/event_
 
 - [EventType](/docs/api/event/EventType.md): Mod event type
 - [IEvent](/docs/api/event/IEvent.md): Mod event interface
@@ -384,19 +384,19 @@ Post Event:
 > - IServerTickEvent: Server tick event
 
 ### Custom Event
-> ./api/event
+> _./api/event_
 
 - [CustomEventType](/docs/api/event/CustomEventType.md): Custom event type
 - [ICustomEvent](/docs/api/event/ICustomEvent.md): Custom event interface
 
 #### Custom Client Event
-> ./api/event/client
+> _./api/event/client_
 
 - Render: Render
 	- [SpecialZoneRenderEvent](/docs/api/event/client/render/SpecialZoneRenderEvent.md): Client special zone render event
 
 #### Custom Game Event
-> ./api/event/game
+> _./api/event/game_
 
 - [AbstractGameEvent](/docs/api/event/game/AbstractGameEvent.md): Game event, cancellable by default
 - [AbstractGameStatsEvent](/docs/api/event/game/AbstractGameStatsEvent.md): Game stats event, not cancellable
@@ -447,7 +447,7 @@ Post Event:
 	- [ZoneCreatedEvent](/docs/api/event/game/zone/ZoneCreatedEvent.md): Zone created event
 
 #### Custom Loot Event
-> ./api/event/loot
+> _./api/event/loot_
 
 - Generate: Loot generation
 	- CustomGenerateEvent: Loot generation common event, sent by [Common event loot](/docs/wiki/Configuration/General%20loot%20config.md#Common%20event%20loot) entry
