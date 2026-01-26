@@ -30,7 +30,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.item.builder.BlockItemBuilder;
+import xiao.battleroyale.api.item.BlockItemBuilder;
 import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
