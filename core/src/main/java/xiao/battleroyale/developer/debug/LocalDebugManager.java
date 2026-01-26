@@ -1,7 +1,7 @@
 package xiao.battleroyale.developer.debug;
 
 import net.minecraft.commands.CommandSourceStack;
-import xiao.battleroyale.api.data.io.DevDataTag;
+import xiao.battleroyale.api.data.DevDataTag;
 import xiao.battleroyale.data.io.DevDataManager;
 
 public class LocalDebugManager {

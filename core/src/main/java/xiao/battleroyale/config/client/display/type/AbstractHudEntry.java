@@ -1,8 +1,8 @@
 package xiao.battleroyale.config.client.display.type;
 
 import com.google.gson.JsonObject;
-import xiao.battleroyale.api.client.display.DisplayConfigTag;
-import xiao.battleroyale.api.client.render.IRenderEntry;
+import xiao.battleroyale.api.config.client.display.DisplayConfigTag;
+import xiao.battleroyale.api.config.client.render.IRenderEntry;
 
 public abstract class AbstractHudEntry implements IRenderEntry {
 

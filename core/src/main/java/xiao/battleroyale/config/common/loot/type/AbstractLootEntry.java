@@ -1,8 +1,8 @@
 package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
-import xiao.battleroyale.api.loot.ILootEntry;
-import xiao.battleroyale.api.loot.LootEntryTag;
+import xiao.battleroyale.api.config.common.loot.ILootEntry;
+import xiao.battleroyale.api.config.common.loot.LootEntryTag;
 
 public abstract class AbstractLootEntry implements ILootEntry {
 

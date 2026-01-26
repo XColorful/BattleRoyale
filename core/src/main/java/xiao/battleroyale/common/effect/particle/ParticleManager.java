@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.effect.IEffectManager;
+import xiao.battleroyale.api.effect.type.IParticleManager;
 import xiao.battleroyale.event.handler.effect.ParticleEventHandler;
 
 import java.util.Collections;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ParticleManager implements IEffectManager {
+public class ParticleManager implements IParticleManager {
 
     private ParticleManager() {}
 
@@ -29,13 +29,16 @@ public class ParticleManager implements IEffectManager {
     private final Map<String, FixedParticleChannel> fixedParticles = new HashMap<>(); // channelString -> channel
     private static boolean registered = false;
 
+    @Override
     public Map<UUID, EntityParticleTask> getEntityParticles() {
         return Collections.unmodifiableMap(entityParticles);
     }
+    @Override
     public Map<String, FixedParticleChannel> getFixedParticles() {
         return Collections.unmodifiableMap(fixedParticles);
     }
 
+    @Override
     public void onTick() {
         entityParticles.entrySet().removeIf(entry -> {
             EntityParticleTask task = entry.getValue();
@@ -91,6 +94,7 @@ public class ParticleManager implements IEffectManager {
         }
     }
 
+    @Override
     public boolean addEntityParticle(UUID entityUUID, String channelKey, ParticleData particleData, int cooldown) {
         EntityParticleChannel channel = getOrCreateChannel(entityUUID, channelKey);
         if (channel.addParticle(particleData, cooldown)) {
@@ -102,6 +106,7 @@ public class ParticleManager implements IEffectManager {
         }
         return false;
     }
+    @Override
     public boolean addFixedParticle(String channelKey, FixedParticleData particleData, int cooldown) {
         FixedParticleChannel channel = getOrCreateChannel(fixedParticles, channelKey);
         if (channel.addParticle(particleData, cooldown)) {
@@ -128,15 +133,18 @@ public class ParticleManager implements IEffectManager {
     public void clear() {
         forceEnd();
     }
+    @Override
     public void clear(UUID entityUUID) {
         entityParticles.remove(entityUUID);
     }
+    @Override
     public void clear(UUID entityUUID, String channelKey) {
         EntityParticleTask task = entityParticles.get(entityUUID);
         if (task != null) {
             task.channels.remove(channelKey);
         }
     }
+    @Override
     public void clear(String channelKey) {
         fixedParticles.remove(channelKey);
     }

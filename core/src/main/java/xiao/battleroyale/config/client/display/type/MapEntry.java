@@ -2,8 +2,8 @@ package xiao.battleroyale.config.client.display.type;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.client.display.DisplayConfigTag;
-import xiao.battleroyale.api.client.render.IRenderEntry;
+import xiao.battleroyale.api.config.client.display.DisplayConfigTag;
+import xiao.battleroyale.api.config.client.render.IRenderEntry;
 import xiao.battleroyale.compat.journeymap.JourneyMap;
 import xiao.battleroyale.util.JsonUtils;
 

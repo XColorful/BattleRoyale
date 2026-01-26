@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
-import xiao.battleroyale.api.data.io.DevDataTag;
+import xiao.battleroyale.api.data.DevDataTag;
 import xiao.battleroyale.data.io.DevDataManager;
 import xiao.battleroyale.developer.gm.command.sub.*;
 import xiao.battleroyale.developer.gm.command.sub.original.*;
