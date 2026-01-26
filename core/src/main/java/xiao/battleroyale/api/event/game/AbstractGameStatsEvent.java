@@ -9,7 +9,7 @@ public abstract class AbstractGameStatsEvent extends AbstractGameEvent {
     }
 
     @Override
-    public boolean isCancelable() {
+    public final boolean isCancelable() {
         return false;
     }
 }

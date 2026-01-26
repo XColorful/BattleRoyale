@@ -1,8 +1,8 @@
 package xiao.battleroyale.config.common.game.zone.zonefunc;
 
 import com.google.gson.JsonObject;
-import xiao.battleroyale.api.game.zone.func.IZoneFuncEntry;
-import xiao.battleroyale.api.game.zone.func.ZoneFuncTag;
+import xiao.battleroyale.api.config.common.game.zone.func.IZoneFuncEntry;
+import xiao.battleroyale.api.config.common.game.zone.func.ZoneFuncTag;
 
 public abstract class AbstractFuncEntry implements IZoneFuncEntry {
 

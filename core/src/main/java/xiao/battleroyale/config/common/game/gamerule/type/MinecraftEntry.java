@@ -2,8 +2,8 @@ package xiao.battleroyale.config.common.game.gamerule.type;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.game.gamerule.IGameruleEntry;
-import xiao.battleroyale.api.game.gamerule.MinecraftEntryTag;
+import xiao.battleroyale.api.config.common.game.gamerule.IGameruleEntry;
+import xiao.battleroyale.api.config.common.game.gamerule.MinecraftEntryTag;
 import xiao.battleroyale.util.JsonUtils;
 
 public class MinecraftEntry implements IGameruleEntry {

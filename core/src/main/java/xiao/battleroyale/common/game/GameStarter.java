@@ -19,8 +19,8 @@ import xiao.battleroyale.event.handler.game.PlayerDeathEventHandler;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.StringUtils;
 
-import static xiao.battleroyale.api.data.io.TempDataTag.GAME_MANAGER;
-import static xiao.battleroyale.api.data.io.TempDataTag.GLOBAL_OFFSET;
+import static xiao.battleroyale.api.data.TempDataTag.GAME_MANAGER;
+import static xiao.battleroyale.api.data.TempDataTag.GLOBAL_OFFSET;
 
 public class GameStarter {
 

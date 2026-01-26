@@ -2,13 +2,15 @@ package xiao.battleroyale.developer.debug;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.entity.Entity;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.effect.type.IBoostManager;
+import xiao.battleroyale.api.effect.type.IFireworkManager;
+import xiao.battleroyale.api.effect.type.IMutekiManager;
+import xiao.battleroyale.api.effect.type.IParticleManager;
 import xiao.battleroyale.common.effect.boost.BoostData;
-import xiao.battleroyale.common.effect.boost.BoostManager;
-import xiao.battleroyale.common.effect.firework.FireworkManager;
 import xiao.battleroyale.common.effect.firework.FixedFireworkTask;
 import xiao.battleroyale.common.effect.firework.PlayerTrackingFireworkTask;
 import xiao.battleroyale.common.effect.muteki.EntityMutekiTask;
-import xiao.battleroyale.common.effect.muteki.MutekiManager;
 import xiao.battleroyale.common.effect.particle.*;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -40,9 +42,10 @@ public class DebugEffect {
      */
     public static final String GET_PARTICLES = "getParticles";
     public void getParticles(CommandSourceStack source, int min, int max) {
-        List<FixedParticleChannel> allFixedChannels = new ArrayList<>(ParticleManager.get().getFixedParticles().values());
+        IParticleManager particleManager = BattleRoyale.getEffectManager().getParticleManager();
+        List<FixedParticleChannel> allFixedChannels = new ArrayList<>(particleManager.getFixedParticles().values());
         allFixedChannels.sort(Comparator.comparing(channel -> channel.channelKey));
-        List<EntityParticleTask> allEntityTasks = new ArrayList<>(ParticleManager.get().getEntityParticles().values());
+        List<EntityParticleTask> allEntityTasks = new ArrayList<>(particleManager.getEntityParticles().values());
         allEntityTasks.sort(Comparator.comparing(task -> task.entityUUID));
 
         List<FixedParticleChannel> fixedChannelSubList = getSubListSafely(allFixedChannels, min, max);
@@ -56,7 +59,8 @@ public class DebugEffect {
      */
     public static final String GET_PARTICLE = "getParticle";
     public void getParticle(CommandSourceStack source, String channel, int min, int max) {
-        FixedParticleChannel fixedChannel = ParticleManager.get().getFixedParticles().get(channel);
+        IParticleManager particleManager = BattleRoyale.getEffectManager().getParticleManager();
+        FixedParticleChannel fixedChannel = particleManager.getFixedParticles().get(channel);
         List<FixedParticleData> fullFixedParticles = fixedChannel != null ? new ArrayList<>(fixedChannel.particles) : new ArrayList<>();
 
         fullFixedParticles.sort(Comparator.comparingLong(data -> data.worldTime));
@@ -65,7 +69,8 @@ public class DebugEffect {
         DebugManager.sendDebugMessage(source, GET_PARTICLE, EffectText.buildFixedParticle(fixedParticles));
     }
     public void getParticle(CommandSourceStack source, Entity entity, String channel, int min, int max) {
-        EntityParticleTask entityTask = entity != null ? ParticleManager.get().getEntityParticles().get(entity.getUUID()) : null;
+        IParticleManager particleManager = BattleRoyale.getEffectManager().getParticleManager();
+        EntityParticleTask entityTask = entity != null ? particleManager.getEntityParticles().get(entity.getUUID()) : null;
         EntityParticleChannel entityChannel = entityTask != null ? entityTask.channels.get(channel) : null;
         List<ParticleData> fullParticles = entityChannel != null ? new ArrayList<>(entityChannel.particles) : new ArrayList<>();
         fullParticles.sort(Comparator.comparingLong(data -> data.worldTime));
@@ -79,8 +84,9 @@ public class DebugEffect {
      */
     public static final String GET_FIREWORKS = "getFireworks";
     public void getFireworks(CommandSourceStack source, int min, int max) {
-        List<FixedFireworkTask> fixedTasks = getSubListSafely(FireworkManager.get().getFixedTasks(), min, max);
-        List<PlayerTrackingFireworkTask> playerTasks = getSubListSafely(FireworkManager.get().getPlayerTrackingTasks(), min, max);
+        IFireworkManager fireworkManager = BattleRoyale.getEffectManager().getFireworkManager();
+        List<FixedFireworkTask> fixedTasks = getSubListSafely(fireworkManager.getFixedTasks(), min, max);
+        List<PlayerTrackingFireworkTask> playerTasks = getSubListSafely(fireworkManager.getPlayerTrackingTasks(), min, max);
 
         DebugManager.sendDebugMessage(source, GET_FIREWORKS, EffectText.buildFireworkTasks(source.getLevel(), fixedTasks, playerTasks));
     }
@@ -90,11 +96,12 @@ public class DebugEffect {
      */
     public static final String GET_FIREWORK = "getFirework";
     public void getFirework(CommandSourceStack source, int singleId) {
+        IFireworkManager fireworkManager = BattleRoyale.getEffectManager().getFireworkManager();
         GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(singleId);
         List<PlayerTrackingFireworkTask> playerTasks = new ArrayList<>();
         if (gamePlayer != null) {
             UUID targetUUID = gamePlayer.getPlayerUUID();
-            for (PlayerTrackingFireworkTask task : FireworkManager.get().getPlayerTrackingTasks()) {
+            for (PlayerTrackingFireworkTask task : fireworkManager.getPlayerTrackingTasks()) {
                 if (task.getPlayerUUID().equals(targetUUID)) {
                     playerTasks.add(task);
                 }
@@ -104,9 +111,10 @@ public class DebugEffect {
         DebugManager.sendDebugMessage(source, GET_FIREWORK, EffectText.buildPlayerFireworkTasks(source.getLevel(), playerTasks));
     }
     public void getFirework(CommandSourceStack source, Entity entity) {
+        IFireworkManager fireworkManager = BattleRoyale.getEffectManager().getFireworkManager();
         List<PlayerTrackingFireworkTask> playerTasks = new ArrayList<>();
         UUID targetUUID = entity.getUUID();
-        for (PlayerTrackingFireworkTask task : FireworkManager.get().getPlayerTrackingTasks()) {
+        for (PlayerTrackingFireworkTask task : fireworkManager.getPlayerTrackingTasks()) {
             if (task.getPlayerUUID().equals(targetUUID)) {
                 playerTasks.add(task);
             }
@@ -120,7 +128,8 @@ public class DebugEffect {
      */
     public static final String GET_MUTEKIS = "getMutekis";
     public void getMutekis(CommandSourceStack source, int min, int max) {
-        List<EntityMutekiTask> fullMutekiTasks = new ArrayList<>(MutekiManager.get().getMutekiTasks().values());
+        IMutekiManager mutekiManager = BattleRoyale.getEffectManager().getMutekiManager();
+        List<EntityMutekiTask> fullMutekiTasks = new ArrayList<>(mutekiManager.getMutekiTasks().values());
         fullMutekiTasks.sort(Comparator.comparingLong(EntityMutekiTask::getWorldTime));
         List<EntityMutekiTask> mutekiTasks = getSubListSafely(fullMutekiTasks, min, max);
 
@@ -132,13 +141,15 @@ public class DebugEffect {
      */
     public static final String GET_MUTEKI = "getMuteki";
     public void getMuteki(CommandSourceStack source, int singleId) {
+        IMutekiManager mutekiManager = BattleRoyale.getEffectManager().getMutekiManager();
         GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(singleId);
-        EntityMutekiTask mutekiTask = gamePlayer != null ? MutekiManager.get().getMutekiTasks().get(gamePlayer.getPlayerUUID()) : null;
+        EntityMutekiTask mutekiTask = gamePlayer != null ? mutekiManager.getMutekiTasks().get(gamePlayer.getPlayerUUID()) : null;
 
         DebugManager.sendDebugMessage(source, GET_MUTEKI, EffectText.buildMutekiTask(source.getLevel(), mutekiTask));
     }
     public void getMuteki(CommandSourceStack source, Entity entity) {
-        EntityMutekiTask mutekiTask = MutekiManager.get().getMutekiTasks().get(entity.getUUID());
+        IMutekiManager mutekiManager = BattleRoyale.getEffectManager().getMutekiManager();
+        EntityMutekiTask mutekiTask = mutekiManager.getMutekiTasks().get(entity.getUUID());
 
         DebugManager.sendDebugMessage(source, GET_MUTEKI, EffectText.buildMutekiTask(source.getLevel(), mutekiTask));
     }
@@ -148,7 +159,8 @@ public class DebugEffect {
      */
     public static final String GET_BOOSTS = "getBoosts";
     public void getBoosts(CommandSourceStack source, int min, int max) {
-        List<BoostData> fullBoostData = new ArrayList<>(BoostManager.get().getBoostData().values());
+        IBoostManager boostManager = BattleRoyale.getEffectManager().getBoostManager();
+        List<BoostData> fullBoostData = new ArrayList<>(boostManager.getBoostData().values());
         fullBoostData.sort(Comparator.comparingLong(data -> data.worldTime));
         List<BoostData> boostData = getSubListSafely(fullBoostData, min, max);
 
@@ -160,13 +172,15 @@ public class DebugEffect {
      */
     public static final String GET_BOOST = "getBoost";
     public void getBoost(CommandSourceStack source, int singleId) {
+        IBoostManager boostManager = BattleRoyale.getEffectManager().getBoostManager();
         GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(singleId);
-        BoostData data = gamePlayer != null ? BoostManager.get().getBoostData(gamePlayer.getPlayerUUID()) : null;
+        BoostData data = gamePlayer != null ? boostManager.getBoostData(gamePlayer.getPlayerUUID()) : null;
 
         DebugManager.sendDebugMessage(source, GET_BOOST, EffectText.buildBoost(source.getLevel(), data));
     }
     public void getBoost(CommandSourceStack source, Entity entity) {
-        BoostData data = BoostManager.get().getBoostData(entity.getUUID());
+        IBoostManager boostManager = BattleRoyale.getEffectManager().getBoostManager();
+        BoostData data = boostManager.getBoostData(entity.getUUID());
 
         DebugManager.sendDebugMessage(source, GET_BOOST, EffectText.buildBoost(source.getLevel(), data));
     }
