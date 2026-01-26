@@ -10,6 +10,8 @@ import xiao.battleroyale.api.loot.data.IItemLootData;
 import xiao.battleroyale.api.minecraft.ComponentsTag;
 import xiao.battleroyale.common.loot.LootGenerator;
 
+import java.util.Optional;
+
 public class ItemData implements IItemLootData {
     private final @Nullable Item item;
     private final @NotNull CompoundTag nbt;
