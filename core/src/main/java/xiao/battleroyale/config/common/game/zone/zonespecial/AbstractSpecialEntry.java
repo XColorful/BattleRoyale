@@ -1,8 +1,8 @@
 package xiao.battleroyale.config.common.game.zone.zonespecial;
 
 import com.google.gson.JsonObject;
-import xiao.battleroyale.api.game.zone.special.IZoneSpecialEntry;
-import xiao.battleroyale.api.game.zone.special.ZoneSpecialTag;
+import xiao.battleroyale.api.config.common.game.zone.special.IZoneSpecialEntry;
+import xiao.battleroyale.api.config.common.game.zone.special.ZoneSpecialTag;
 
 public abstract class AbstractSpecialEntry implements IZoneSpecialEntry {
 

@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
-import xiao.battleroyale.api.loot.ILootEntry;
+import xiao.battleroyale.api.config.common.loot.ILootEntry;
 import xiao.battleroyale.api.minecraft.InventoryIndex;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.*;
