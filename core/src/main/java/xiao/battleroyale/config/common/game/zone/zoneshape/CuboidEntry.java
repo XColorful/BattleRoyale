@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
-import xiao.battleroyale.api.game.zone.shape.ZoneShapeTag;
+import xiao.battleroyale.api.config.common.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.common.game.zone.spatial.CuboidShape;
 
 import javax.annotation.Nullable;

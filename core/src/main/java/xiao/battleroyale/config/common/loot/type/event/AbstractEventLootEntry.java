@@ -3,7 +3,7 @@ package xiao.battleroyale.config.common.loot.type.event;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.loot.LootEntryTag;
+import xiao.battleroyale.api.config.common.loot.LootEntryTag;
 import xiao.battleroyale.config.common.loot.type.AbstractLootEntry;
 
 public abstract class AbstractEventLootEntry extends AbstractLootEntry {

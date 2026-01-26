@@ -25,7 +25,7 @@ import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.IGameSubManager;
-import xiao.battleroyale.api.game.gamerule.BattleroyaleEntryTag;
+import xiao.battleroyale.api.config.common.game.gamerule.BattleroyaleEntryTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleManager;
 import xiao.battleroyale.api.game.lobby.IGameLobbyManager;
 import xiao.battleroyale.api.game.loot.IGameLootManager;
@@ -66,7 +66,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static xiao.battleroyale.api.data.io.TempDataTag.*;
+import static xiao.battleroyale.api.data.TempDataTag.*;
 
 public class GameManager extends AbstractGameManager implements IGameManager, IStatsWriter {
 
