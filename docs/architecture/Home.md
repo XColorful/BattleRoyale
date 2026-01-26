@@ -211,8 +211,11 @@
 ### 配置
 > _./config_
 
-[模组配置](./config/mod-config.md)：
+[模组配置框架](./config/mod-config-framework.md)：
+- [ModConfigManager](./config/mod-config-manager.md)：模组配置管理器（全能易用门面）
 > - [FolderConfigData](./config/folder-config-data.md)：配置文件夹数据，存放单个文件夹的配置
+> - [AbstractConfigManager](./config/config-manager.md)：主配置管理器
+> - [AbstractConfigSubManager](./config/config-sub-manager.md)：子配置管理器
 - Client：客户端配置
   - [显示配置管理器](./config/client/display/display-config-manager.md)：管理[显示配置](/docs/wiki/Configuration/Display%20config.md)
   - [渲染配置管理器](./config/client/render/render-config-manager.md)：管理[渲染配置](/docs/wiki/Configuration/Render%20config.md)
@@ -557,8 +560,11 @@ Module division based on the `xiao.battleroyale` top-level package
 ### Config
 > _./config_
 
-[Mod Config](./config/mod-config.md#English):
+[Mod Config Framework](./config/mod-config-framework.md#English):
+- [ModConfigManager](./config/mod-config-manager.md#English): Mod config manager (almighty easy-to-use facade)
 > - [FolderConfigData](./config/folder-config-data.md#English): Config folder data, stores config of a single folder
+> - [AbstractConfigManager](./config/config-manager.md#English): Main Config Manager
+> - [AbstractConfigSubManager](./config/config-sub-manager.md#English): Sub Config Manager
 - Client: Client config
   - [Display Config Manager](./config/client/display/display-config-manager.md#English): Manage [Display config](/docs/wiki/Configuration/Display%20config.md#English)
   - [Render Config Manager](./config/client/render/render-config-manager.md#English): Manage [Render config](/docs/wiki/Configuration/Render%20config.md#English)
