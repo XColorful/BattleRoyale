@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
 import xiao.battleroyale.api.client.game.IClientGameDataManager;
-import xiao.battleroyale.api.client.render.game.level.IClientSimpleZoneRenderer;
+import xiao.battleroyale.api.client.render.level.IClientSimpleZoneRenderer;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 

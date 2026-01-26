@@ -2,8 +2,8 @@ package xiao.battleroyale.config.client.render.type;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.client.render.IRenderEntry;
-import xiao.battleroyale.api.client.render.RenderConfigTag;
+import xiao.battleroyale.api.config.client.render.IRenderEntry;
+import xiao.battleroyale.api.config.client.render.RenderConfigTag;
 import xiao.battleroyale.client.renderer.block.EntitySpawnerRenderer;
 import xiao.battleroyale.client.renderer.block.LootContainerRenderer;
 import xiao.battleroyale.util.JsonUtils;

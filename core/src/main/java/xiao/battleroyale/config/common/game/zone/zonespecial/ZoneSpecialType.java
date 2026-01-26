@@ -2,8 +2,8 @@ package xiao.battleroyale.config.common.game.zone.zonespecial;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.ApiStatus;
-import xiao.battleroyale.api.game.zone.special.IZoneSpecialEntry;
-import xiao.battleroyale.api.game.zone.special.ZoneSpecialTag;
+import xiao.battleroyale.api.config.common.game.zone.special.IZoneSpecialEntry;
+import xiao.battleroyale.api.config.common.game.zone.special.ZoneSpecialTag;
 
 import java.util.HashMap;
 import java.util.Map;

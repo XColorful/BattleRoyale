@@ -13,14 +13,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.effect.type.IBoostManager;
+import xiao.battleroyale.api.effect.type.IMutekiManager;
 import xiao.battleroyale.command.sub.MutekiCommand;
 import xiao.battleroyale.common.effect.boost.BoostData;
-import xiao.battleroyale.common.effect.boost.BoostManager;
 import xiao.battleroyale.common.effect.firework.AbstractFireworkTask;
 import xiao.battleroyale.common.effect.firework.FixedFireworkTask;
 import xiao.battleroyale.common.effect.firework.PlayerTrackingFireworkTask;
 import xiao.battleroyale.common.effect.muteki.EntityMutekiTask;
-import xiao.battleroyale.common.effect.muteki.MutekiManager;
 import xiao.battleroyale.common.effect.particle.*;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -381,20 +381,21 @@ public class EffectText {
                 .append(Component.literal(" "));
 
         // config
-        int c1 = MutekiManager.getMaxMutekiTime();
-        int c1_ = MutekiManager.getMaxMutekiTimeDefault();
+        IMutekiManager mutekiManager = BattleRoyale.getEffectManager().getMutekiManager();
+        int c1 = mutekiManager.getMaxMutekiTime();
+        int c1_ = mutekiManager.getMaxMutekiTimeDefault();
         component.append(buildHoverableTextWithColor("mutekiConfig",
-                Component.empty()
-                        .append(Component.literal("maxMutekiTime").withStyle(c1 > c1_ ? ChatFormatting.AQUA : c1 == c1_ ? ChatFormatting.GRAY : ChatFormatting.RED))
-                        .append(Component.literal(":" + c1))
-                        .append(Component.literal("\n"))
-                        .append(Component.literal("defaultTime"))
-                        .append(Component.literal(":" + MutekiCommand.DEFAULT_TIME)),
-                ChatFormatting.GRAY
+                        Component.empty()
+                                .append(Component.literal("maxMutekiTime").withStyle(c1 > c1_ ? ChatFormatting.AQUA : c1 == c1_ ? ChatFormatting.GRAY : ChatFormatting.RED))
+                                .append(Component.literal(":" + c1))
+                                .append(Component.literal("\n"))
+                                .append(Component.literal("defaultTime"))
+                                .append(Component.literal(":" + MutekiCommand.DEFAULT_TIME)),
+                        ChatFormatting.GRAY
                 )
         );
         component.append(Component.literal(" "));
-
+        
         // muteki
         component.append(buildHoverableTextWithColor("mutekiTask",
                 Component.empty()
@@ -480,7 +481,7 @@ public class EffectText {
         // config
         int c1 = BoostData.getBoostLimit();
         int c1_ = BoostData.boostLimitDefault();
-        BoostManager boostManager = BoostManager.get();
+        IBoostManager boostManager = BattleRoyale.getEffectManager().getBoostManager();
         int c2 = boostManager.healCooldown();
         int c2_ = boostManager.healCooldownDefault();
         int c3 = boostManager.effectCooldown();

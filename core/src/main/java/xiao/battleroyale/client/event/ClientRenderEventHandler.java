@@ -3,8 +3,8 @@ package xiao.battleroyale.client.event;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.event.IRenderGuiEventPost;
 import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
-import xiao.battleroyale.api.client.render.game.IClientGuiRenderer;
-import xiao.battleroyale.api.client.render.game.IClientLevelRenderer;
+import xiao.battleroyale.api.client.render.IClientGuiRenderer;
+import xiao.battleroyale.api.client.render.IClientLevelRenderer;
 
 public class ClientRenderEventHandler {
 

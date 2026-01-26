@@ -1,9 +1,9 @@
 package xiao.battleroyale.event.handler.effect;
 
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
-import xiao.battleroyale.common.effect.firework.FireworkManager;
 import xiao.battleroyale.event.EventRegister;
 
 public class FireworkEventHandler implements IEventHandler {
@@ -33,7 +33,7 @@ public class FireworkEventHandler implements IEventHandler {
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
         if (eventType == EventType.SERVER_TICK_EVENT){
-            FireworkManager.get().onTick();
+            BattleRoyale.getEffectManager().getFireworkManager().onTick();
         } else {
             onReceiveWrongEvent(eventType);
         }

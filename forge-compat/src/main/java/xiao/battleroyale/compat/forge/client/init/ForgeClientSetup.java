@@ -8,7 +8,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.init.IClientSetup;
-import xiao.battleroyale.api.client.init.ScreenRegistration;
 import xiao.battleroyale.client.init.ClientSetup;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT, modid = BattleRoyale.MOD_ID)
@@ -20,7 +19,7 @@ public class ForgeClientSetup {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            for (ScreenRegistration<?, ?> registration : CLIENT_SETUP.getScreenRegistrations()) {
+            for (IClientSetup.ScreenRegistration<?, ?> registration : CLIENT_SETUP.getScreenRegistrations()) {
                 try {
                     MenuScreens.register(
                             (MenuType) registration.menuType(),
