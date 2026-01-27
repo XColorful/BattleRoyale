@@ -73,11 +73,11 @@ public class MessageEntry extends AbstractLootEntry {
                 }
                 @Nullable ServerPlayer player = lootContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
                 if (player != null) {
-                    ChatUtils.sendMessageToPlayer(player, message);
+                    ChatUtils.sendComponentMessageToPlayer(player, message);
                 }
             }
         } else {
-            ChatUtils.sendMessageToAllPlayers(lootContext.serverLevel, message);
+            ChatUtils.sendComponentMessageToAllPlayers(lootContext.serverLevel, message);
         }
         return Collections.emptyList();
     }

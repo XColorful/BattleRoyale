@@ -71,7 +71,7 @@ public class BRGameNotification {
                     .append(teamComponent));
         }
         if (serverLevel != null) {
-            ChatUtils.sendMessageToAllPlayers(serverLevel, winnerComponent);
+            ChatUtils.sendComponentMessageToAllPlayers(serverLevel, winnerComponent);
         } else {
             BattleRoyale.LOGGER.debug("GameManager.serverLevel is null, winner result: {}", winnerComponent);
         }
