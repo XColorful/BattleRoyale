@@ -1,0 +1,12 @@
+# Mod: Custom BattleRoyale
+# Dev Flow: Base on 1.20.1 (Forge), then porting/merging to latest.
+
+# Docs (Reference these for logic/rules):
+- Philosophy: /docs/architecture/design/design-philosophy.md
+- Principles: /docs/architecture/design/development-principles.md
+- Architecture: /docs/architecture
+- User Wiki: /docs/wiki
+
+# Structure:
+- Core (Logic): core/src/main/java/xiao/battleroyale
+- Forge API (Compat): forge-compat/src/main/java/xiao/battleroyale/compat/forge
