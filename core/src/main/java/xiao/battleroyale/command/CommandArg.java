@@ -83,6 +83,15 @@ public class CommandArg {
 
     public static final String SURVIVAL_LOBBY = "survivallobby";
     public static final String TO_SURVIVAL_LOBBY = "tosurvivallobby";
+    public static final String LOOT_CONFIG = "lootconfig";
+    public static final String TYPE = "type";
+    public static final String SLOT = "slot";
+    public static final String BLOCK = "block";
+    public static final String CHUNK = "chunk";
+    public static final String REPEAT = "repeat";
+    public static final String BASE_WEIGHT = "baseWeight";
+    public static final String CHUNK_RADIUS = "chunkRadius";
+    public static final String AUTO_RELOAD = "autoReload";
 
     public static final String BOOL = "boolean";
 }

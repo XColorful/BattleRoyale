@@ -4,10 +4,17 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.common.server.utility.ConfigGenerator;
 import xiao.battleroyale.common.server.utility.SurvivalLobby;
 
 import static xiao.battleroyale.command.CommandArg.*;
@@ -24,6 +31,31 @@ public class UtilityCommand {
                         .executes(UtilityCommand::toSurvivalLobby));
 
         // 需要权限
+        utilityCommand.then(Commands.literal(LOOT_CONFIG)
+                .requires(source -> source.hasPermission(3))
+                .then(Commands.argument(ID, IntegerArgumentType.integer())
+                        .then(Commands.argument(TYPE, StringArgumentType.string())
+                                .suggests((context, builder) -> {
+                                    builder.suggest(SLOT);
+                                    builder.suggest(BLOCK);
+                                    builder.suggest(CHUNK);
+                                    return builder.buildFuture();
+                                })
+                                .then(Commands.argument(XYZ, Vec3Argument.vec3())
+                                        .executes(UtilityCommand::autoLootConfigSimple)
+                                        .then(Commands.argument(REPEAT, IntegerArgumentType.integer(1))
+                                                .then(Commands.argument(BASE_WEIGHT, IntegerArgumentType.integer(1))
+                                                        .then(Commands.argument(CHUNK_RADIUS, IntegerArgumentType.integer(0))
+                                                                .then(Commands.argument(AUTO_RELOAD, BoolArgumentType.bool())
+                                                                        .executes(UtilityCommand::autoLootConfig)
+                                                                )
+                                                        )
+                                                )
+                                        )
+                                )
+                        )
+                )
+        );
 
         return utilityCommand;
     }
@@ -31,7 +63,7 @@ public class UtilityCommand {
     private static int survivalLobby(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) {
-            ServerPlayer player = context.getSource().getPlayerOrException();
+            ServerPlayer player = source.getPlayerOrException();
             SurvivalLobby.get().sendLobbyInfo(player);
         } else {
             ServerLevel serverLevel = source.getLevel();
@@ -39,11 +71,38 @@ public class UtilityCommand {
         }
         return Command.SINGLE_SUCCESS;
     }
+
     private static int toSurvivalLobby(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) {
-            ServerPlayer player = context.getSource().getPlayerOrException();
+            ServerPlayer player = source.getPlayerOrException();
             SurvivalLobby.get().teleportToLobby(player);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            return 0;
+        }
+    }
+
+    private static int autoLootConfigSimple(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        return autoLootConfig(context, 1, 1, 0, true);
+    }
+    private static int autoLootConfig(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        int repeat = IntegerArgumentType.getInteger(context, REPEAT);
+        int weight = IntegerArgumentType.getInteger(context, BASE_WEIGHT);
+        int radius = IntegerArgumentType.getInteger(context, CHUNK_RADIUS);
+        boolean autoReload = BoolArgumentType.getBool(context, AUTO_RELOAD);
+        return autoLootConfig(context, repeat, weight, radius, autoReload);
+    }
+    private static int autoLootConfig(CommandContext<CommandSourceStack> context, int repeat, int weight, int radius, boolean autoReload) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        @Nullable ServerPlayer player = source.isPlayer() ? source.getPlayerOrException() : null;
+        int id = IntegerArgumentType.getInteger(context, ID);
+        String type = StringArgumentType.getString(context, TYPE);
+        Vec3 pos =  Vec3Argument.getVec3(context, XYZ);
+        if (ConfigGenerator.autoLootConfig(player, context.getSource().getLevel(),
+                id,
+                type, pos,
+                repeat, weight, radius, autoReload)) {
             return Command.SINGLE_SUCCESS;
         } else {
             return 0;

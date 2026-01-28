@@ -1,7 +1,7 @@
 [English](#English)
 
 # 实用指令
-_/battleroyale utility [survivallobby/tosurvivallobby]_
+_/battleroyale utility [survivallobby/tosurvivallobby/lootconfig] [id] [type] [...]_
 
 ## 生存模式大厅
 _/battleroyale utility [survivallobby/tosurvivallobby]_
@@ -19,6 +19,125 @@ _/battleroyale utility tosurvivallobby_
 
 - 若无法通过[生存模式大厅](https://github.com/XColorful/BattleRoyale/wiki/Utility-config#生存模式大厅)的 _levelKey_ 获取到维度，则不传送
 - 若[生存模式大厅](https://github.com/XColorful/BattleRoyale/wiki/Utility-config#生存模式大厅)禁用 _allowGamePlayerTeleport_ ，则需要先[离开队伍](https://github.com/XColorful/BattleRoyale/wiki/Team-command#离开队伍)
+
+## 生成配置文件
+_/battleroyale utility [lootconfig] [id] [type] [...]_
+
+### 生成物资刷新配置文件
+_/battleroyale utility lootconfig [id] [slot/block/chunk] [xyz] [repeat] [baseWeight] [chunkRadius] [autoReload]_
+
+_/battleroyale utility lootconfig [xyz] [id] [slot/block/chunk] [xyz] [repeat] [baseWeight] [chunkRadius] [autoReload]_
+
+需要权限等级3
+
+新建[物资刷新器配置文件](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction#物资刷新配置)：
+- id：刷新配置唯一id
+- type：以单个物品槽/方块/区块为刷新单位
+- repeat：[重复刷新](https://github.com/XColorful/BattleRoyale/wiki/General-loot-config#重复刷新)次数
+- baseWeight：[加权刷新](https://github.com/XColorful/BattleRoyale/wiki/General-loot-config#加权刷新)默认权重
+- chunkRadius：区块扫描半径（0表示仅当前区块）
+- autoReload：生成完配置后自动执行[重载物资刷新器配置](https://github.com/XColorful/BattleRoyale/wiki/Reload-command#物资刷新器)，并[切换物资刷新配置文件](https://github.com/XColorful/BattleRoyale/wiki/Config-command#物资刷新配置)
+
+以单个物品槽为单位：
+- _/battleroyale utility lootconfig ~ ~ ~ 0 slot 1 1 0 true_
+```json
+[
+	{
+		"lootId": 0,
+		"name": "lootConfig-20260128_110543-slot",
+		"color": "#FFFFFFAA",
+		"entry": {
+			"lootType": "repeat",
+			"min": 1,
+			"max": 1,
+			"entry": {
+				"lootType": "weight",
+				"entries": [
+					{
+						"weight": 1.0,
+						"entry": {
+							"lootType": "item",
+							"item": "minecraft:grass_block",
+							"count": 64,
+							"nbt": "{}"
+						}
+					},
+					{
+						"weight": 1.0,
+						"entry": {
+							// ...
+						}
+					},
+					{
+						"weight": 1.0,
+						"entry": {
+							// ...
+						}
+					}
+					// ...
+				]
+			}
+		}
+	}
+]
+```
+
+以单个方块/区块槽为单位：
+- _/battleroyale utility lootconfig ~ ~ ~ 0 block 1 1 0 true_
+- _/battleroyale utility lootconfig ~ ~ ~ 0 chunk 1 1 0 true_
+```json
+[
+	{
+		"lootId": 0,
+		"name": "lootConfig-20260128_110743-block",
+		"color": "#FFFFFFAA",
+		"entry": {
+			"lootType": "repeat",
+			"min": 1,
+			"max": 1,
+			"entry": {
+				"lootType": "weight",
+				"entries": [
+					{
+						"weight": 1.0,
+						"entry": {
+							"lootType": "multi",
+							"entries": [
+								{
+									"lootType": "item",
+									"item": "minecraft:grass_block",
+									"count": 64,
+									"nbt": "{}"
+								},
+								{
+									"lootType": "item",
+									"item": "minecraft:enchanted_golden_apple",
+									"count": 64,
+									"nbt": "{}"
+								},
+								{
+									// ...
+								}
+							]
+						}
+					},
+					{
+						"weight": 1.0,
+						"entry": {
+							"lootType": "multi",
+							"entries": [
+								{
+									// ...
+								}
+							]
+						}
+					}
+				]
+			}
+		}
+	}
+]
+```
 
 # English
 _/battleroyale utility [survivallobby/tosurvivallobby]_
@@ -39,3 +158,123 @@ _/battleroyale utility tosurvivallobby_
 
 - If the dimension cannot be obtained via the _levelKey_ in [Survival mode lobby](https://github.com/XColorful/BattleRoyale/wiki/Utility-config#Survival-mode-lobby), teleportation will not occur
 - If _allowGamePlayerTeleport_ is disabled in [Survival mode lobby](https://github.com/XColorful/BattleRoyale/wiki/Utility-config#Survival-mode-lobby), you must first [Leave the team](https://github.com/XColorful/BattleRoyale/wiki/Team-command#Leave-the-team)
+
+## Generate configuration file
+_/battleroyale utility [lootconfig] [id] [type] [...]_
+
+### Generate loot spawner configuration
+_/battleroyale utility lootconfig [id] [slot/block/chunk] [xyz] [repeat] [baseWeight] [chunkRadius] [autoReload]_
+
+_/battleroyale utility lootconfig [xyz] [id] [slot/block/chunk] [xyz] [repeat] [baseWeight] [chunkRadius] [autoReload]_
+
+Require permission level 3
+
+Create a new [Loot spawner config](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction#Loot):
+- id: unique loot id
+- type: Units of generation (Single Slot / Block / Chunk).
+- repeat: Number of times for [Repeat loot](https://github.com/XColorful/BattleRoyale/wiki/General-loot-config#Repeat-loot).
+- baseWeight: Default weight for [Weighted loot](https://github.com/XColorful/BattleRoyale/wiki/General-loot-config#Weighted-loot).
+- chunkRadius: Radius for scanning chunks (0 means only the current chunk).
+- autoReload: Automatically execute [Reload Loot spawner config](https://github.com/XColorful/BattleRoyale/wiki/Reload-command#Loot-spawner) and [Switch Loot spawner config](https://github.com/XColorful/BattleRoyale/wiki/Config-command#Loot-config) after generation.
+
+By Single Item Slot:
+- _/battleroyale utility lootconfig ~ ~ ~ 0 slot 1 1 0 true_
+- _/battleroyale utility lootconfig ~ ~ ~ 0 slot 1 1 0 true_
+```json
+[
+	{
+		"lootId": 0,
+		"name": "lootConfig-20260128_110543-slot",
+		"color": "#FFFFFFAA",
+		"entry": {
+			"lootType": "repeat",
+			"min": 1,
+			"max": 1,
+			"entry": {
+				"lootType": "weight",
+				"entries": [
+					{
+						"weight": 1.0,
+						"entry": {
+							"lootType": "item",
+							"item": "minecraft:grass_block",
+							"count": 64,
+							"nbt": "{}"
+						}
+					},
+					{
+						"weight": 1.0,
+						"entry": {
+							// ...
+						}
+					},
+					{
+						"weight": 1.0,
+						"entry": {
+							// ...
+						}
+					}
+					// ...
+				]
+			}
+		}
+	}
+]
+```
+
+By Block or Chunk:
+- _/battleroyale utility lootconfig ~ ~ ~ 0 block 1 1 0 true_
+- _/battleroyale utility lootconfig ~ ~ ~ 0 chunk 1 1 0 true_
+```json
+[
+	{
+		"lootId": 0,
+		"name": "lootConfig-20260128_110743-block",
+		"color": "#FFFFFFAA",
+		"entry": {
+			"lootType": "repeat",
+			"min": 1,
+			"max": 1,
+			"entry": {
+				"lootType": "weight",
+				"entries": [
+					{
+						"weight": 1.0,
+						"entry": {
+							"lootType": "multi",
+							"entries": [
+								{
+									"lootType": "item",
+									"item": "minecraft:grass_block",
+									"count": 64,
+									"nbt": "{}"
+								},
+								{
+									"lootType": "item",
+									"item": "minecraft:enchanted_golden_apple",
+									"count": 64,
+									"nbt": "{}"
+								},
+								{
+									// ...
+								}
+							]
+						}
+					},
+					{
+						"weight": 1.0,
+						"entry": {
+							"lootType": "multi",
+							"entries": [
+								{
+									// ...
+								}
+							]
+						}
+					}
+				]
+			}
+		}
+	}
+]
+```

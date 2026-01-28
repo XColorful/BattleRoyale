@@ -313,6 +313,8 @@
   "battleroyale.message.teleport_non_game_player_to_lobby": "Teleported non game player %s to lobby",
   "battleroyale.message.down_fire_not_enabled": "Downed player damage is not enabled in BattleRoyale gamerule config",
   "battleroyale.message.only_game_player_spectate": "Non game player spectate is not enabled in Game config",
+  "battleroyale.message.utility_lootconfig_generation_success": "Generated loot spawner config: %s",
+  "battleroyale.message.utility_lootconfig_generation_failed": "Failed to generate loot spawner config, please check whether the container around has items",
 
   "battleroyale.label.alive": "Alive",
 

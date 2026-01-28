@@ -271,7 +271,7 @@
   "battleroyale.message.teleport": "[传送]",
   "battleroyale.message.has_won_the_game": "取得了胜利",
   "battleroyale.message.game_time": "游戏时长: %s(%s)",
-  "battleroyale.message.has_game_in_progress": "当前有正在进行的大逃杀游戏：",
+  "battleroyale.message.has_game_in_progress": "当前有正在进行的大逃杀游戏:",
   "battleroyale.message.spectate": "[观战]",
   "battleroyale.message.player_is_spectating": "玩家 %s 正在观战 %s",
   "battleroyale.message.is_downed": "倒地了",
@@ -313,6 +313,8 @@
   "battleroyale.message.teleport_non_game_player_to_lobby": "已将非游戏玩家 %s 传送至大厅",
   "battleroyale.message.down_fire_not_enabled": "大逃杀规则配置未启用倒地玩家伤害",
   "battleroyale.message.only_game_player_spectate": "游戏配置未启用非游戏玩家观战",
+  "battleroyale.message.utility_lootconfig_generation_success": "已生成物资刷新方块配置: %s",
+  "battleroyale.message.utility_lootconfig_generation_failed": "无法生成物资刷新方块配置，请检查周围容器内是否有物品",
 
   "battleroyale.label.alive": "生存",
 
