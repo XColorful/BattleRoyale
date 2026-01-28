@@ -2,7 +2,7 @@ package xiao.battleroyale.config.client;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.command.CommandArg;
+import xiao.battleroyale.api.config.client.IClientConfigManager;
 import xiao.battleroyale.config.AbstractConfigManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.config.client.display.DisplayConfigManager;
@@ -10,7 +10,7 @@ import xiao.battleroyale.config.client.render.RenderConfigManager;
 
 import java.nio.file.Paths;
 
-public class ClientConfigManager extends AbstractConfigManager {
+public class ClientConfigManager extends AbstractConfigManager implements IClientConfigManager {
 
     public static final String CLIENT_CONFIG_SUB_PATH = "client";
     public static final String CLIENT_CONFIG_PATH = Paths.get(ModConfigManager.MOD_CONFIG_PATH).resolve(CLIENT_CONFIG_SUB_PATH).toString();
@@ -24,7 +24,6 @@ public class ClientConfigManager extends AbstractConfigManager {
     }
 
     private ClientConfigManager() {
-        super(CommandArg.CLIENT);
     }
 
     public static void init(McSide mcSide) {
