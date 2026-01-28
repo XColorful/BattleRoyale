@@ -182,6 +182,7 @@
 ### 物资
 > _./common/loot_
 
+- [CommonInventoryManager](./common/loot/common-inventory-manager.md)：通用背包刷新管理器
 - [CommonLootManager](./common/loot/common-loot-manager.md)：通用物资刷新管理器
 - [InventoryGenerator](./common/loot/inventory-generator.md)：背包物资刷新机制
 - [LootGenerator](./common/loot/loot-generator.md)：物资刷新机制
@@ -547,6 +548,7 @@ Module division based on the `xiao.battleroyale` top-level package
 ### Loot
 > _./common/loot_
 
+- [CommonInventoryManager](./common/loot/common-inventory-manager.md): Common inventory manager
 - [CommonLootManager](./common/loot/common-loot-manager.md#English): Common loot generation manager
 - [InventoryGenerator](./common/loot/inventory-generator.md#English): Inventory loot generation mechanism
 - [LootGenerator](./common/loot/loot-generator.md#English): Loot generation mechanism

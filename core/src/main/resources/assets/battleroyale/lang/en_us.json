@@ -25,6 +25,10 @@
   "battleroyale.message.loot_generation_finished": "Generated loot: %s",
   "battleroyale.message.loot_pos_success": "Generated loot at %s",
   "battleroyale.message.loot_unavailable": "Loot unavailable",
+  "battleroyale.message.reset_inventory_finished": "Reset inventory: %s",
+  "battleroyale.message.inventory_loot_generation_finished": "Generated inventory: %s",
+  "battleroyale.message.inventory_loot_unavailable": "Inventory loot unavailable",
+  "battleroyale.message.inventory_loot_failed": "Inventory loot failed",
 
   "battleroyale.message.no_loot_spawner_config_available": "No loot spawner config available",
   "battleroyale.message.no_entity_spawner_config_available": "No entity spawner config available",

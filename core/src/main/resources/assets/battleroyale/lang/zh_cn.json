@@ -25,6 +25,10 @@
   "battleroyale.message.loot_generation_finished": "刷新物资及实体刷新方块共%s个",
   "battleroyale.message.loot_pos_success": "刷新物资及实体刷新方块 %s",
   "battleroyale.message.loot_unavailable": "物资刷新不可用",
+  "battleroyale.message.reset_inventory_finished": "已重置背包共%s个",
+  "battleroyale.message.inventory_loot_generation_finished": "刷新背包共%s个",
+  "battleroyale.message.inventory_loot_unavailable": "背包刷新不可用",
+  "battleroyale.message.inventory_loot_failed": "未能刷新背包",
 
   "battleroyale.message.no_loot_spawner_config_available": "当前没有已加载的物资刷新方块配置",
   "battleroyale.message.no_entity_spawner_config_available": "当前没有已加载的实体刷新方块配置",

@@ -1,16 +1,26 @@
 package xiao.battleroyale.command.sub;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.loot.ICommonInventoryManager;
+import xiao.battleroyale.api.minecraft.InventoryIndex;
 import xiao.battleroyale.common.loot.LootStatus;
+import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.StringUtils;
+
+import java.util.List;
 
 import static xiao.battleroyale.command.CommandArg.*;
 
@@ -19,6 +29,8 @@ public class LootCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         LiteralArgumentBuilder<CommandSourceStack> loot = Commands.literal(LOOT);
 
+        // 执行刷新
+
         // loot generate
         loot.then(Commands.literal(GENERATE)
                 .executes(LootCommand::lootGeneration)
@@ -26,14 +38,12 @@ public class LootCommand {
         // loot stop
         loot.then(Commands.literal(STOP)
                 .executes(LootCommand::stopLootGeneration));
-
         // loot chunk [<x> <y> <z>]
         loot.then(Commands.literal(CHUNK)
                 .executes(context -> lootChunk(context, context.getSource().getPosition()))
                 .then(Commands.argument(XYZ, Vec3Argument.vec3())
                         .executes(context -> lootChunk(context, Vec3Argument.getVec3(context, XYZ))))
         );
-
         // loot pos [<x> <y> <z>]
         loot.then(Commands.literal(POS)
                 .executes(context -> lootPos(context, context.getSource().getPosition()))
@@ -41,7 +51,30 @@ public class LootCommand {
                         .executes(context -> lootPos(context, Vec3Argument.getVec3(context, XYZ))))
         );
 
-        // loot [@e] lootId skipNonEmpty dropBeforeReplace first last
+        // 背包刷新
+
+        // loot player lootId generate
+        // loot player lootId skipNonEmpty dropBeforeReplace first last
+        loot.then(Commands.argument(PLAYER, EntityArgument.players())
+                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                        .then(Commands.literal(RESET)
+                                .executes(LootCommand::resetInventoryWithLoot)
+                        )
+                        .then(Commands.literal(GENERATE)
+                                .then(Commands.argument(SKIP_NON_EMPTY, BoolArgumentType.bool())
+                                        .then(Commands.argument(DROP_BEFORE_REPLACE, BoolArgumentType.bool())
+                                                .then(Commands.argument(FIRST_SLOT_INDEX, IntegerArgumentType.integer(InventoryIndex.HOTBAR_START, InventoryIndex.OFFHAND_END))
+                                                        .then(Commands.argument(LAST_SLOT_INDEX, IntegerArgumentType.integer(InventoryIndex.HOTBAR_START, InventoryIndex.OFFHAND_END))
+                                                                .executes(LootCommand::generatePlayerInventoryLoot)
+                                                        )
+                                                )
+                                        )
+                                )
+                        )
+
+                )
+        );
+
         return loot;
     }
 
@@ -89,5 +122,44 @@ public class LootCommand {
             source.sendFailure(Component.translatable("battleroyale.message.loot_unavailable"));
         }
         return 0;
+    }
+
+    public static int resetInventoryWithLoot(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        List<ServerPlayer> players = net.minecraft.commands.arguments.EntityArgument.getPlayers(context, PLAYER).stream().toList();
+        int lootId = IntegerArgumentType.getInteger(context, ID);
+
+        ICommonInventoryManager inventoryManager = BattleRoyale.getCommonInventoryManager();
+
+        int count = inventoryManager.resetInventoryWithLoot(source, source.getLevel(), players, lootId);
+        if (count >= 0) {
+            source.sendSuccess(() -> Component.translatable("battleroyale.message.reset_inventory_finished", count), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            source.sendFailure(Component.translatable("battleroyale.message.inventory_loot_failed"));
+            return 0;
+        }
+    }
+
+    public static int generatePlayerInventoryLoot(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        List<ServerPlayer> players = net.minecraft.commands.arguments.EntityArgument.getPlayers(context, PLAYER).stream().toList();
+        int lootId = IntegerArgumentType.getInteger(context, ID);
+        boolean skipNonEmpty = BoolArgumentType.getBool(context, SKIP_NON_EMPTY);
+        boolean dropBeforeReplace = BoolArgumentType.getBool(context, DROP_BEFORE_REPLACE);
+        int firstIndex = IntegerArgumentType.getInteger(context, FIRST_SLOT_INDEX);
+        int lastIndex = IntegerArgumentType.getInteger(context, LAST_SLOT_INDEX);
+
+        ICommonInventoryManager inventoryManager = BattleRoyale.getCommonInventoryManager();
+
+        int count = inventoryManager.inventoryLootGeneration(source, source.getLevel(),
+                players, lootId, firstIndex, lastIndex, skipNonEmpty, dropBeforeReplace);
+        if (count >= 0) {
+            source.sendSuccess(() -> Component.translatable("battleroyale.message.inventory_loot_generation_finished", count), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            source.sendFailure(Component.translatable("battleroyale.message.inventory_loot_failed"));
+            return 0;
+        }
     }
 }

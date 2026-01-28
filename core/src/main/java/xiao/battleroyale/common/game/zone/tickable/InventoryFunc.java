@@ -61,8 +61,7 @@ public class InventoryFunc extends AbstractSimpleFunc {
                 LivingEntity livingEntity = (LivingEntity) zoneTickContext.serverLevel.getEntity(gamePlayer.getPlayerUUID());
                 if (livingEntity != null) {
                     Vec3 playerLastPos = gamePlayer.getLastPos();
-                    ChunkPos chunkPos = new ChunkPos(BlockPos.containing(playerLastPos));
-                    LootGenerator.LootContext lootContext = new LootGenerator.LootContext(serverLevel, chunkPos, gameId);
+                    LootGenerator.LootContext lootContext = new LootGenerator.LootContext(serverLevel, playerLastPos, gameId);
 
                     lootItems.clear();
                     // 先刷写在区域配置里的

@@ -62,9 +62,11 @@ public class CommonLootManager implements ICommonLootManager {
     @Override
     public LootStatus lootStatusCheck(CommandSourceStack source) {
         LootStatus status = this.lootStatusCheck();
-        switch(status) {
-            case PROCESSING -> source.sendFailure(Component.translatable("battleroyale.message.loot_generation_in_progress"));
-            case REJECT -> source.sendFailure(Component.translatable("battleroyale.message.game_cancel_loot"));
+        if (source != null) {
+            switch(status) {
+                case PROCESSING -> source.sendFailure(Component.translatable("battleroyale.message.loot_generation_in_progress"));
+                case REJECT -> source.sendFailure(Component.translatable("battleroyale.message.game_cancel_loot"));
+            }
         }
         return status;
     }
@@ -95,7 +97,7 @@ public class CommonLootManager implements ICommonLootManager {
     public int lootChunk(@Nullable CommandSourceStack source, ServerLevel serverLevel, Vec3 pos) {
         LootStatus status = source != null ? lootStatusCheck(source) : lootStatusCheck();
         return switch (status) {
-            case AVAILABLE -> LootGenerator.refreshLootInChunk(new LootGenerator.LootContext(serverLevel, new ChunkPos(BlockPos.containing(pos.x, pos.y, pos.z)), UUID.randomUUID()));
+            case AVAILABLE -> LootGenerator.refreshLootInChunk(new LootGenerator.LootContext(serverLevel, pos, UUID.randomUUID()));
             case PROCESSING -> -2; // 避免跟0冲突
             case REJECT -> -1;
             default -> -2;

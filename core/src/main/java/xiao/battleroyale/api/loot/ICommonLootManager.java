@@ -7,11 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.common.loot.LootStatus;
 
-public interface ICommonLootManager extends ILootManager {
-
-    // 非极端情况下可以不考虑先检查后执行，至少等MC服务端做成多线程
-    LootStatus lootStatusCheck();
-    LootStatus lootStatusCheck(CommandSourceStack source);
+public interface ICommonLootManager extends ILootManager, ILootStatus {
 
     int chunksToProcessSize();
     int processedChunkTrackerSize();

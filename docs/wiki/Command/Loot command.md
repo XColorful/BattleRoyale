@@ -1,7 +1,7 @@
 [English](#English)
 
 # 手动刷新
-_/battleroyale loot [generate/stop/chunk/pos] [xyz]_
+_/battleroyale loot [generate/stop/chunk/pos/player] [xyz/reset/generate/...]_
 
 需要权限等级2
 - **游戏进行时无法执行**
@@ -37,8 +37,30 @@ _/battleroyale loot stop_
 
 立即结束当前执行的[刷新物资](#刷新物资)并结算
 
+## 背包刷新
+_/battleroyale loot [player] [id] [reset/generate] [...]_
+
+> 效果同[背包区](https://github.com/XColorful/BattleRoyale/wiki/Zone-simple-function#背包区)
+
+### 重置背包
+_/battleroyale loot [player] [id] reset_
+
+- id：[物资刷新器配置](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction#物资刷新配置)唯一id
+- 清空玩家背包
+- 对每位玩家分别用物资刷新配置生成物品列表
+- 每次刷新的游戏ID相同
+- 填充至玩家背包
+
+### 背包物品刷新
+_/battleroyale loot [player] [id] generate [skipNonEmpty] [dropBeforeReplace] [firstSlotIndex] [lastSlotIndex]_
+
+- id：[物资刷新器配置](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction#物资刷新配置)唯一id
+- 参数同[背包区](https://github.com/XColorful/BattleRoyale/wiki/Zone-simple-function#背包区)
+- 对每位玩家分别用物资刷新配置生成物品列表
+- 每次刷新的游戏ID相同
+
 # English
-_/battleroyale loot [generate/stop/chunk/pos] [xyz]_
+_/battleroyale loot [generate/stop/chunk/pos/player] [xyz/reset/generate/...]_
 
 Require permission level 2
 - **Cannot be executed while the game is in progress**
@@ -73,3 +95,25 @@ Executes [Generate loot](#Generate-loot) for the specific block at the coordinat
 _/battleroyale loot stop_
 
 Immediately terminates the current [Generate loot](#Generate-loot) task and performs final calculations.
+
+## Inventory loot
+_/battleroyale loot [player] [id] [reset/generate] [...]_
+
+> Same effect as [Inventory Zone](https://github.com/XColorful/BattleRoyale/wiki/Zone-simple-function#Inventory-Zone)
+
+### Reset inventory
+_/battleroyale loot [player] [id] reset_
+
+- id: Unique id of [Loot spawner config](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction#Loot)
+- Clears the player's inventory
+- Generates item lists separately for each player using the loot spawner config
+- The game id remains the same for each generation
+- Populates the player's inventory
+
+### Inventory item generation
+_/battleroyale loot [player] [id] generate [skipNonEmpty] [dropBeforeReplace] [firstSlotIndex] [lastSlotIndex]_
+
+- id: Unique id of [Loot spawner config](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction#Loot)
+- Parameters are consistent with [Inventory zone](https://github.com/XColorful/BattleRoyale/wiki/Zone-simple-function#Inventory-zone)
+- Generates item lists separately for each player using the loot spawner config
+- The game id remains the same for each generation

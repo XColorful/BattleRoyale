@@ -63,7 +63,7 @@ public class EntityFunc extends AbstractEventFunc {
         IGameManager gameManager = BattleRoyale.getGameManager();
         LootGenerator.LootContext lootContext = new LootGenerator.LootContext(
                 zoneTickContext.serverLevel,
-                new ChunkPos(BlockPos.containing(zoneCenter)),
+                zoneCenter,
                 gameManager.getGameId()
         );
 

@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.loot.ILootEntry;
@@ -368,6 +369,9 @@ public class LootGenerator {
         public final ChunkPos chunkPos;
         public final UUID gameId;
         public final Supplier<Float> random;
+        public LootContext(@NotNull ServerLevel serverLevel, Vec3 pos, UUID gameId) {
+            this(serverLevel, new ChunkPos(BlockPos.containing(pos)), gameId);
+        }
         public LootContext(@NotNull ServerLevel serverLevel, ChunkPos chunkPos, UUID gameId) {
             this.serverLevel = serverLevel;
             this.chunkPos = chunkPos;

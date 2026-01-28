@@ -47,6 +47,7 @@ public class CommandArg {
     public static final String FILE = "fileName";
 
     public static final String GENERATE = "generate";
+    public static final String RESET = "reset";
     
     public static final String JOIN = "join";
     public static final String LEAVE = "leave";
@@ -93,6 +94,10 @@ public class CommandArg {
     public static final String CHUNK_RADIUS = "chunkRadius";
     public static final String AUTO_RELOAD = "autoReload";
     public static final String POS = "pos";
+    public static final String SKIP_NON_EMPTY = "skipNonEmpty";
+    public static final String DROP_BEFORE_REPLACE = "dropBeforeReplace";
+    public static final String FIRST_SLOT_INDEX = "firstSlotIndex";
+    public static final String LAST_SLOT_INDEX = "lastSlotIndex";
 
     public static final String BOOL = "boolean";
 }
