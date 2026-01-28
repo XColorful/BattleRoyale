@@ -11,6 +11,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.effect.type.IMutekiManager;
 import xiao.battleroyale.event.handler.effect.MutekiEventHandler;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.GameUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +63,7 @@ public class MutekiManager implements IMutekiManager {
     @Override
     public void notifyMutekiEnd(@NotNull EntityMutekiTask task) {
         if (task.notice && task.serverLevel != null) {
-            @Nullable ServerPlayer player = task.serverLevel.getEntity(task.entityUUID) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+            @Nullable ServerPlayer player = GameUtils.getServerPlayerOrNull(task.serverLevel, task.entityUUID);
             if (player != null) {
                 ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.muteki_end").withStyle(ChatFormatting.YELLOW));
             }

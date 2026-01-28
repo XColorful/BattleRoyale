@@ -22,6 +22,7 @@ import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.detail.TeleportDetailEntry;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.StringUtils;
 
 import java.util.*;
@@ -212,13 +213,13 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
 
                 // 传送玩家
                 GamePlayer gamePlayer = standingPlayers.get(i);
-                LivingEntity livingEntity = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-                if (livingEntity != null) {
+                LivingEntity player = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
+                if (player != null) {
                     if ((!indexAdded || !teamTogether) && targetSpawnPos.y != queuedHeight) { // (没添加过计数就添加一次，不是队伍统一传送就添加一次) && 成功找到地面
                         spawnPointIndex++;
                         indexAdded = true;
                     }
-                    GameUtilsFunction.safeTeleport(livingEntity, serverLevel, targetSpawnPos, 0, 0); // TeleportSpawner传送
+                    GameUtilsFunction.safeTeleport(player, serverLevel, targetSpawnPos, 0, 0); // TeleportSpawner传送
                     addSpawnStats(gamePlayer, targetSpawnPos);
                     gamePlayer.setLastPos(targetSpawnPos); // 立即更新，防止下一tick找不到又躲了逻辑位置
                     teleportedPlayerId.add(gamePlayer.getGameSingleId());

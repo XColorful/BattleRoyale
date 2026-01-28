@@ -15,6 +15,7 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.event.handler.util.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.GameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +30,10 @@ public class TeamManagement {
      * @param player 需要加入队伍的玩家
      */
     @ApiStatus.Internal
-    public static void forceJoinTeam(TeamManager teamManager, ServerPlayer player) {
+    public static void forceJoinTeam(TeamManager teamManager, LivingEntity player) {
+        @Nullable ServerPlayer serverPlayer = player instanceof ServerPlayer ? (ServerPlayer) player : null;
         if (teamManager.removePlayerFromTeam(player.getUUID())) { // 加入队伍前离开当前队伍
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.YELLOW));
+            if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.YELLOW));
         }
 
         int newTeamId = teamManager.findNotFullTeamId();
@@ -50,8 +52,9 @@ public class TeamManagement {
      * @param request 如果为 true，则尝试直接加入（跳过队长确认）；如果为 false，则当队伍有在线成员时发送申请。
      */
     @ApiStatus.Internal
-    public static void addPlayerToTeamInternal(TeamManager teamManager, ServerPlayer player, int targetTeamId, boolean request) {
+    public static void addPlayerToTeamInternal(TeamManager teamManager, LivingEntity player, int targetTeamId, boolean request) {
         IGameManager gameManager = BattleRoyale.getGameManager();
+        @Nullable ServerPlayer serverPlayer = player instanceof ServerPlayer ? (ServerPlayer) player : null;
 
         UUID playerId = player.getUUID();
         GameTeam targetTeam = teamManager.teamData.getGameTeamById(targetTeamId);
@@ -59,10 +62,10 @@ public class TeamManagement {
         if (targetTeam == null || serverLevel == null) { // 队伍不存在直接跳过
             return;
         } else if (teamManager.teamData.getGamePlayerByUUID(playerId) != null) { // 不自动离开队伍
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.already_in_team").withStyle(ChatFormatting.YELLOW));
+            if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.already_in_team").withStyle(ChatFormatting.YELLOW));
             return;
         } else if (targetTeam.getTeamMembers().size() >= teamManager.teamConfig.teamSize) { // 队伍满员
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.team_full", targetTeamId).withStyle(ChatFormatting.RED));
+            if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.team_full", targetTeamId).withStyle(ChatFormatting.RED));
             return;
         }
 
@@ -70,17 +73,17 @@ public class TeamManagement {
             // 新建 GamePlayer
             int newPlayerId = teamManager.teamData.generateNextPlayerId();
             if (newPlayerId < 1) { // 达到人数上限
-                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.reached_player_limit", teamManager.teamConfig.playerLimit).withStyle(ChatFormatting.RED));
+                if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.reached_player_limit", teamManager.teamConfig.playerLimit).withStyle(ChatFormatting.RED));
                 return;
             }
             String playerName = player.getName().getString();
             GamePlayer gamePlayer = new GamePlayer(player.getUUID(), playerName, newPlayerId, false, targetTeam);
             if (!teamManager.teamData.addPlayerToTeam(gamePlayer, targetTeam)) {
                 BattleRoyale.LOGGER.debug("Failed to add player {} to team {}", playerName, targetTeamId);
-                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.failed_to_join_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
+                if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.failed_to_join_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.RED));
                 return;
             }
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.joined_to_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.GREEN));
+            if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.joined_to_team", targetTeam.getGameTeamId()).withStyle(ChatFormatting.GREEN));
             TeamNotification.notifyPlayerJoinTeam(gamePlayer, serverLevel); // 通知队伍成员有新玩家加入
             GameMessageManager.notifyTeamChange(targetTeam.getGameTeamId()); // 玩家加入队伍，通知更新队伍HUD
 
@@ -101,8 +104,9 @@ public class TeamManagement {
             }
 
         } else { // 改为发送邀请
-            if (serverLevel.getPlayerByUUID(targetTeam.getLeaderUUID()) instanceof ServerPlayer targetPlayer) {
-                teamManager.requestPlayer(player, targetPlayer);
+            ServerPlayer targetPlayer = GameUtils.getServerPlayerOrNull(serverLevel, targetTeam.getLeaderUUID());
+            if (targetPlayer != null) {
+                if (serverPlayer != null) teamManager.requestPlayer(serverPlayer, targetPlayer);
             } else {
                 BattleRoyale.LOGGER.warn("TeamManagement: team {} leader is not ServerPlayer, decline to add {} to team", targetTeam.getGameTeamId(), player.getName().getString());
             }
@@ -121,7 +125,7 @@ public class TeamManagement {
                 continue;
             }
             if (serverLevel != null) {
-                @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+                @Nullable LivingEntity player = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
                 if (player == null) {
                     offlineGamePlayers.add(gamePlayer);
                 }
@@ -166,13 +170,15 @@ public class TeamManagement {
             IGameManager gameManager = BattleRoyale.getGameManager();
             ServerLevel serverLevel = gameManager.getServerLevel();
             if (serverLevel != null) {
-                @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+                @Nullable LivingEntity player = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
                 if (player != null) {
-                    // TODO 生成战利品盒子
-                    Consumer<ServerPlayer> delayedTask = isWinner -> {
-                        gameManager.getGameLobbyManager().sendLobbyTeleportMessage(player, false);
-                    };
-                    new DelayedEvent<>(delayedTask, player, 2, "TeamManager::GameManager.sendLobbyTeleportMessage");
+                    // TODO 生成战利品盒子，不一定要ServerPlayer
+                    if (player instanceof ServerPlayer serverPlayer) {
+                        Consumer<ServerPlayer> delayedTask = isWinner -> {
+                            gameManager.getGameLobbyManager().sendLobbyTeleportMessage(serverPlayer, false);
+                        };
+                        new DelayedEvent<>(delayedTask, serverPlayer, 2, "TeamManager::GameManager.sendLobbyTeleportMessage");
+                    }
                 }
             }
             teamManager.onTeamChangedInGame();
@@ -240,18 +246,18 @@ public class TeamManagement {
      * @return 是否移出队伍
      */
     @ApiStatus.Internal
-    public static boolean removePlayerFromTeam(TeamManager teamManager, @NotNull UUID playerId) {
-        GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(playerId);
+    public static boolean removePlayerFromTeam(TeamManager teamManager, @NotNull UUID playerUUID) {
+        GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(playerUUID);
         if (gamePlayer == null) {
             return false;
         }
         int teamId = gamePlayer.getGameTeamId(); // 缓存teamId
-        if (!teamManager.teamData.removePlayer(playerId)) {
+        if (!teamManager.teamData.removePlayer(playerUUID)) {
             return false;
         }
 
         IGameManager gameManager = BattleRoyale.getGameManager();
-        GameMessageManager.notifyLeavedMember(playerId, teamId); // 离队后通知不渲染队伍HUD
+        GameMessageManager.notifyLeavedMember(playerUUID, teamId); // 离队后通知不渲染队伍HUD
         GameMessageManager.notifyTeamChange(teamId); // 离队后通知队伍成员更新队伍HUD
 
         // 移除原版Team
@@ -260,12 +266,12 @@ public class TeamManagement {
                 ServerLevel serverLevel = gameManager.getServerLevel();
                 if (serverLevel != null) {
                     Scoreboard scoreboard = serverLevel.getScoreboard();
-                    @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(playerId) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+                    @Nullable LivingEntity player = GameUtils.getLivingEntity(serverLevel, playerUUID);
                     if (player != null) {
                         String playerName = player.getName().getString();
                         scoreboard.removePlayerFromTeam(playerName);
                     } else {
-                        BattleRoyale.LOGGER.debug("Failed to get ServerPlayer by UUID {} in TeamManagement::removePlayerFromTeam, skipped leave vanilla team", playerId);
+                        BattleRoyale.LOGGER.debug("Failed to get ServerPlayer by UUID {} in TeamManagement::removePlayerFromTeam, skipped leave vanilla team", playerUUID);
                     }
                 } else {
                     BattleRoyale.LOGGER.debug("GameManager.serverLevel is null in TeamManagement::removePlayerFromTeam, skipped leave vanilla team");
@@ -279,25 +285,26 @@ public class TeamManagement {
 
     /**
      * 创建并加入队伍
-     * @param player 需要加入队伍的 ServerPlayer
+     * @param player 需要加入队伍的玩家
      * @param teamId 队伍id
      * @return 是否加入队伍
      */
     @ApiStatus.Internal
-    public static boolean createNewTeamAndJoin(TeamManager teamManager, ServerPlayer player, int teamId) {
+    public static boolean createNewTeamAndJoin(TeamManager teamManager, LivingEntity player, int teamId) {
+        @Nullable ServerPlayer serverPlayer = player instanceof ServerPlayer ? (ServerPlayer) player : null;
         if (teamId < 1) {
             return false;
         }
         int newPlayerId = teamManager.teamData.generateNextPlayerId();
         if (newPlayerId < 1) {
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.reached_player_limit").withStyle(ChatFormatting.RED));
+            if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.reached_player_limit").withStyle(ChatFormatting.RED));
             return false;
         }
         String playerName = player.getName().getString();
         GameTeam newTeam = new GameTeam(teamId, teamManager.teamConfig.getTeamColor(teamId));
         if (!teamManager.teamData.addGameTeam(newTeam)) {
             BattleRoyale.LOGGER.debug("Failed to create new team {} and let {} join", teamId, playerName);
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.failed_to_join_team", teamId).withStyle(ChatFormatting.RED));
+            if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.failed_to_join_team", teamId).withStyle(ChatFormatting.RED));
             return false;
         }
         GamePlayer gamePlayer = new GamePlayer(player.getUUID(), playerName, newPlayerId, false, newTeam);
@@ -307,7 +314,7 @@ public class TeamManagement {
 
         IGameManager gameManager = BattleRoyale.getGameManager();
         GameMessageManager.notifyTeamChange(newTeam.getGameTeamId()); // 新建队伍并加入，通知更新队伍HUD
-        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.joined_to_team", teamId).withStyle(ChatFormatting.GREEN));
+        if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.joined_to_team", teamId).withStyle(ChatFormatting.GREEN));
 
         // 加入原版Team
         if (gameManager.getGameEntry().buildVanillaTeam) {

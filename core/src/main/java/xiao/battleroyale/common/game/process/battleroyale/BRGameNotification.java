@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -86,7 +87,8 @@ public class BRGameNotification {
             BattleRoyale.LOGGER.warn("Failed to notify winner {}", gamePlayer.getNameWithId());
             return;
         }
-        @Nullable ServerPlayer notifiedPlayer = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+        @Nullable LivingEntity notifiedPlayer = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
+        @Nullable ServerPlayer notifiedServerPlayer = notifiedPlayer instanceof ServerPlayer serverPlayer ? serverPlayer : null;
         if (notifiedPlayer == null) {
             BattleRoyale.LOGGER.info("Skipped to notify winner game player {}", gamePlayer.getNameWithId());
             return;
@@ -105,10 +107,10 @@ public class BRGameNotification {
                 .append(Component.translatable("battleroyale.message.has_won_the_game")
                         .withStyle(ChatFormatting.WHITE));
 
-        ChatUtils.sendTitlesToPlayer(notifiedPlayer, winnerTitle, teamWinMessage, 10, 80, 20);
+        if (notifiedServerPlayer != null) ChatUtils.sendTitlesToPlayer(notifiedServerPlayer, winnerTitle, teamWinMessage, 10, 80, 20);
 
         // 暂时硬编码
-        EffectManager.get().spawnPlayerFirework(notifiedPlayer, 16, 4, 1.0F, 16.0F);
+        if (notifiedServerPlayer != null) EffectManager.get().spawnPlayerFirework(notifiedServerPlayer, 16, 4, 1.0F, 16.0F);
         EffectManager.get().addGameParticle(serverLevel, notifiedPlayer.position(), winnerParticleId, 0);
     }
 

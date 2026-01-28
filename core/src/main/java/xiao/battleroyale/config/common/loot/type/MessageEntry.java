@@ -17,6 +17,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.ColorUtils;
+import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.Collections;
@@ -71,7 +72,7 @@ public class MessageEntry extends AbstractLootEntry {
                 if (gamePlayer == null) {
                     continue;
                 }
-                @Nullable ServerPlayer player = lootContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+                @Nullable ServerPlayer player = GameUtils.getServerPlayerOrNull(lootContext.serverLevel, gamePlayer.getPlayerUUID());
                 if (player != null) {
                     ChatUtils.sendComponentMessageToPlayer(player, message);
                 }

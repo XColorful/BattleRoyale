@@ -97,7 +97,7 @@ public class EffectManager implements IEffectManager {
      * @param hRange 水平偏移半径
      */
     @Override
-    public void spawnPlayerFirework(@Nullable ServerPlayer player, int amount, int interval, float vRange, float hRange) {
+    public void spawnPlayerFirework(@Nullable LivingEntity player, int amount, int interval, float vRange, float hRange) {
         if (player == null) {
             return;
         }

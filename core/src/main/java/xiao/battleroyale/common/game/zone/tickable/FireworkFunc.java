@@ -1,11 +1,13 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
+import xiao.battleroyale.util.GameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +39,7 @@ public class FireworkFunc extends AbstractSimpleFunc {
             boolean isWithinZone = zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress);
             if (isWithinZone != outside) {
                 if (trackPlayer) {
-                    @Nullable ServerPlayer player = zoneTickContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+                    @Nullable LivingEntity player = GameUtils.getLivingEntity(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID());
                     if (player != null) {
                         EffectManager.get().spawnPlayerFirework(player, amount, interval, vRange, hRange);
                     }
