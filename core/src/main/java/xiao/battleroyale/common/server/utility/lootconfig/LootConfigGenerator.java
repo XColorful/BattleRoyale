@@ -43,7 +43,7 @@ public class LootConfigGenerator {
                                          int lootId, String name,
                                          String type, Vec3 centerPos,
                                          int repeat, int weight, int radius) {
-        ChunkPos centerChunk = new ChunkPos(new BlockPos((int) centerPos.x, (int) centerPos.y, (int) centerPos.z));
+        ChunkPos centerChunk = new ChunkPos(BlockPos.containing(centerPos.x, centerPos.y, centerPos.z));
         List<ChunkPos> chunks = new ArrayList<>();
         List<List<Offset2D>> layers = BfsCalculator.calculateCenterOffset(radius);
         for (List<Offset2D> layer : layers) {
