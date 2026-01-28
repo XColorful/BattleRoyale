@@ -29,6 +29,7 @@
 > _./algorithm_
 
 - [算法门面](./algorithm/algorithm-facade.md)：算法接口，供模组外部调用
+  - [BfsCalculator](algorithm/bfs-calculator.md)：BFS预计算器
   - [分布算法](./algorithm/distribution.md)：黄金螺旋分布、双圆心网格分布、网格采样
 
 ### API
@@ -125,7 +126,6 @@
 - Lobby：大厅
 	- [GameLobbyManager](./common/game/lobby/game-lobby-manager.md)：游戏大厅管理器
 - Loot：物资
-	- [BfsCalculator](./common/game/loot/bfs-calculator.md)：BFS预计算器
 	- [GameLootManager](./common/game/loot/game-loot-manager.md)：游戏物资刷新管理器
 - Process：游戏进程
 	- BattleRoyale：大逃杀游戏进程
@@ -394,6 +394,7 @@ Module division based on the `xiao.battleroyale` top-level package
 > _./algorithm_
 
 - [Algorithm Facade](./algorithm/algorithm-facade.md#English): Algorithm interface for external mod calls
+  - [BfsCalculator](algorithm/bfs-calculator.md#English): BFS pre-calculator
   - [Distribution Algorithm](./algorithm/distribution.md#English): Golden spiral distribution, double center grid distribution, grid sampling
 
 ### API
@@ -490,7 +491,6 @@ Module division based on the `xiao.battleroyale` top-level package
 - Lobby:
 	- [GameLobbyManager](./common/game/lobby/game-lobby-manager.md#English): Game lobby manager
 - Loot:
-	- [BfsCalculator](./common/game/loot/bfs-calculator.md#English): BFS pre-calculator
 	- [GameLootManager](./common/game/loot/game-loot-manager.md#English): Game loot generation manager
 - Process: Game process
 	- BattleRoyale: Battle Royale game process

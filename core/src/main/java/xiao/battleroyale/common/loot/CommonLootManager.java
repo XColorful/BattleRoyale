@@ -8,6 +8,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.algorithm.BfsCalculator;
+import xiao.battleroyale.algorithm.BfsCalculator.Offset2D;
 import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.event.handler.loot.LootGenerationEventHandler;
@@ -67,37 +69,22 @@ public class CommonLootManager {
         MinecraftServer server = this.currentGenerationLevel.getServer();
         int simulationDistance = server.getPlayerList().getSimulationDistance();
 
-        Set<ChunkPos> uniquePlayerChunkPositions = new HashSet<>();
+        // 获取所有中心区块
+        Set<ChunkPos> centers = new HashSet<>();
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             if (player != null && player.level() == this.currentGenerationLevel) {
-                uniquePlayerChunkPositions.add(new ChunkPos(player.blockPosition()));
+                centers.add(new ChunkPos(player.blockPosition()));
             }
         }
 
-        // 初始化 BFS 队列和最终待处理队列
-        // BFS 队列用于控制扩散层次，chunksToProcess 是最终按优先级排序的队列
-        Queue<ChunkPos> bfsQueue = new ArrayDeque<>(uniquePlayerChunkPositions);
-        this.processedChunkTracker.addAll(uniquePlayerChunkPositions); // 将玩家所在区块加入已追踪集合
-        this.chunksToProcess.addAll(uniquePlayerChunkPositions); // 优先将玩家所在区块添加到最终处理队列
+        List<List<Offset2D>> offsets = new ArrayList<>(BfsCalculator.calculateCenterOffset(simulationDistance));
 
-        // BFS 遍历，限制层数，确保在 simulationDistance 范围内
-        for (int i = 0; i < simulationDistance; i++) {
-            int currentLevelSize = bfsQueue.size();
-            if (currentLevelSize == 0) break;
-
-            for (int j = 0; j < currentLevelSize; j++) {
-                ChunkPos currentChunk = bfsQueue.poll();
-                ChunkPos[] neighbors = new ChunkPos[]{
-                        new ChunkPos(currentChunk.x + 1, currentChunk.z),
-                        new ChunkPos(currentChunk.x - 1, currentChunk.z),
-                        new ChunkPos(currentChunk.x, currentChunk.z + 1),
-                        new ChunkPos(currentChunk.x, currentChunk.z - 1)
-                };
-
-                for (ChunkPos neighbor : neighbors) {
-                    if (this.processedChunkTracker.add(neighbor)) {
-                        bfsQueue.add(neighbor);
-                        this.chunksToProcess.add(neighbor);
+        for (List<Offset2D> layer : offsets) { // 从距离0的区块开始，确保距离d的区块一定比d+1先入队
+            for (ChunkPos center : centers) { // 玩家中心
+                for (Offset2D offset : layer) { // 遍历当前距离
+                    ChunkPos target = new ChunkPos(center.x + offset.x(), center.z + offset.z());
+                    if (this.processedChunkTracker.add(target)) {
+                        this.chunksToProcess.add(target);
                     }
                 }
             }
