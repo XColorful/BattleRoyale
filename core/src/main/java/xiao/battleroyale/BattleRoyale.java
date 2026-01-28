@@ -22,6 +22,7 @@ import xiao.battleroyale.api.event.ICustomEventRegister;
 import xiao.battleroyale.api.event.IEventRegister;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
+import xiao.battleroyale.api.loot.ICommonLootManager;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
 import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.INetworkHook;
@@ -31,6 +32,7 @@ import xiao.battleroyale.client.renderer.ClientGuiRenderer;
 import xiao.battleroyale.client.renderer.ClientLevelRenderer;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.GameManager;
+import xiao.battleroyale.common.loot.CommonLootManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.event.EventRegister;
@@ -70,6 +72,7 @@ public class BattleRoyale {
         gameManager = GameManager.get();
         modConfigManager = ModConfigManager.getApi();
         effectManager = EffectManager.get();
+        commonLootManager = CommonLootManager.get();
         if (mcSide.isClientSide()) {
             clientGameDataManager = ClientGameDataManager.get();
             clientGuiRenderer = ClientGuiRenderer.get();
@@ -132,6 +135,7 @@ public class BattleRoyale {
     private static IGameManager gameManager;
     private static IModConfigManager modConfigManager;
     private static IEffectManager effectManager;
+    private static ICommonLootManager commonLootManager;
     private static IClientGameDataManager clientGameDataManager;
     private static IClientGuiRenderer clientGuiRenderer;
     private static IClientLevelRenderer clientLevelRenderer;
@@ -143,6 +147,9 @@ public class BattleRoyale {
     }
     public static IEffectManager getEffectManager() {
         return effectManager;
+    }
+    public static ICommonLootManager getCommonLootManager() {
+        return commonLootManager;
     }
     public static IClientGameDataManager getClientGameDataManager() {
         return BattleRoyale.clientGameDataManager;
@@ -167,6 +174,10 @@ public class BattleRoyale {
     @Deprecated(forRemoval = false)
     public static void setEffectManager(@NotNull IEffectManager effectManager) {
         BattleRoyale.effectManager = effectManager;
+    }
+    @Deprecated(forRemoval = false)
+    public static void setCommonLootManager(@NotNull ICommonLootManager commonLootManager) {
+        BattleRoyale.commonLootManager = commonLootManager;
     }
     @Deprecated(forRemoval = false)
     public static void setClientGameDataManager(@NotNull IClientGameDataManager clientGameDataManager) {

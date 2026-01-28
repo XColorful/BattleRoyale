@@ -20,8 +20,11 @@
   "battleroyale.message.secret_room_lootid_switched": "Switched to secret room config %s: %s",
 
   "battleroyale.message.loot_generation_started": "Start generating loots (chunk total: %s)",
+  "battleroyale.message.loot_generation_stopped": "Stopped executing loot generation",
   "battleroyale.message.loot_generation_in_progress": "There's loot generation in progress",
   "battleroyale.message.loot_generation_finished": "Generated loot: %s",
+  "battleroyale.message.loot_pos_success": "Generated loot at %s",
+  "battleroyale.message.loot_unavailable": "Loot unavailable",
 
   "battleroyale.message.no_loot_spawner_config_available": "No loot spawner config available",
   "battleroyale.message.no_entity_spawner_config_available": "No entity spawner config available",

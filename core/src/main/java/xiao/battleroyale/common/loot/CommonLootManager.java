@@ -1,22 +1,26 @@
 package xiao.battleroyale.common.loot;
 
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.algorithm.BfsCalculator;
 import xiao.battleroyale.algorithm.BfsCalculator.Offset2D;
 import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.loot.ICommonLootManager;
 import xiao.battleroyale.event.handler.loot.LootGenerationEventHandler;
 
 import java.util.*;
 
-public class CommonLootManager {
+public class CommonLootManager implements ICommonLootManager {
 
     private static class CommonLootManagerHolder {
         private static final CommonLootManager INSTANCE = new CommonLootManager();
@@ -38,33 +42,88 @@ public class CommonLootManager {
     private int totalLootRefreshedInBatch = 0;
     private CommandSourceStack initiatingCommandSource = null;
 
-    public static int getMaxChunksPerTick() { return MAX_CHUNKS_PER_TICK; }
+    public int getMaxLootChunkPerTick() { return MAX_CHUNKS_PER_TICK; }
     public int chunksToProcessSize() { return chunksToProcess.size(); }
     public int processedChunkTrackerSize() { return processedChunkTracker.size(); }
     public @Nullable UUID getCurrentGenerationGameId() { return currentGenerationGameId; }
     public @Nullable ServerLevel getCurrentGenerationLevel() { return currentGenerationLevel; }
     public int totalLootRefreshedInBatch() { return totalLootRefreshedInBatch; }
 
-    /**
-     * 由 LootCommand 调用，初始化并开始战利品刷新任务。
-     * @param source 发起指令的命令源
-     * @param gameId 当前游戏的唯一ID
-     * @return 队列中的总区块数；如果已有任务正在进行，则返回 0；如果游戏已在进行，则返回 -1。
-     */
-    public int startGenerationTask(CommandSourceStack source, UUID gameId) {
+    @Override
+    public LootStatus lootStatusCheck() {
         if (BattleRoyale.getGameManager().isInGame()) {
-            source.sendFailure(Component.translatable("battleroyale.message.game_cancel_loot"));
-            return -1;
+            return LootStatus.REJECT;
+        } else if (this.currentGenerationGameId != null || !this.chunksToProcess.isEmpty()) {
+            return LootStatus.PROCESSING;
+        } else {
+            return LootStatus.AVAILABLE;
         }
-
-        if (this.currentGenerationGameId != null || !this.chunksToProcess.isEmpty()) {
-            return 0;
+    }
+    @Override
+    public LootStatus lootStatusCheck(CommandSourceStack source) {
+        LootStatus status = this.lootStatusCheck();
+        switch(status) {
+            case PROCESSING -> source.sendFailure(Component.translatable("battleroyale.message.loot_generation_in_progress"));
+            case REJECT -> source.sendFailure(Component.translatable("battleroyale.message.game_cancel_loot"));
         }
+        return status;
+    }
 
+    @Override
+    public LootStatus lootPos(@Nullable CommandSourceStack source, ServerLevel serverLevel, Vec3 pos) {
+        LootStatus status = source != null ? lootStatusCheck(source) : lootStatusCheck();
+        switch (status) {
+            case AVAILABLE -> {
+                BlockPos blockPos = BlockPos.containing(pos.x, pos.y, pos.z);
+                BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);
+                if (blockEntity == null) {
+                    return LootStatus.UNAVAILABLE;
+                }
+                return LootGenerator.refreshLootObject(new LootGenerator.LootContext(serverLevel, new ChunkPos(blockPos), UUID.randomUUID()), blockEntity)
+                        ? LootStatus.AVAILABLE : LootStatus.UNAVAILABLE;
+            }
+            case PROCESSING, REJECT -> {
+                return status;
+            }
+            default -> {
+                return status;
+            }
+        }
+    }
+
+    @Override
+    public int lootChunk(@Nullable CommandSourceStack source, ServerLevel serverLevel, Vec3 pos) {
+        LootStatus status = source != null ? lootStatusCheck(source) : lootStatusCheck();
+        return switch (status) {
+            case AVAILABLE -> LootGenerator.refreshLootInChunk(new LootGenerator.LootContext(serverLevel, new ChunkPos(BlockPos.containing(pos.x, pos.y, pos.z)), UUID.randomUUID()));
+            case PROCESSING -> -2; // 避免跟0冲突
+            case REJECT -> -1;
+            default -> -2;
+        };
+    }
+
+    // 延迟刷新，保留source以通知
+    @Override
+    public int lootGeneration(CommandSourceStack source, ServerLevel serverLevel) {
+        return switch (lootStatusCheck(source)) {
+            case AVAILABLE -> lootGeneration(source, serverLevel, UUID.randomUUID());
+            case PROCESSING -> 0;
+            case REJECT -> -1;
+            default -> -2;
+        };
+    }
+
+    /**
+     * 初始化并开始战利品刷新任务。
+     * @param source 发起指令的命令源
+     * @param gameId 物资刷新的游戏ID
+     * @return 队列中的总区块数
+     */
+    private int lootGeneration(CommandSourceStack source, ServerLevel serverLevel, UUID gameId) {
         resetLootInfo();
         this.initiatingCommandSource = source;
         this.currentGenerationGameId = gameId;
-        this.currentGenerationLevel = source.getLevel();
+        this.currentGenerationLevel = serverLevel;
 
         MinecraftServer server = this.currentGenerationLevel.getServer();
         int simulationDistance = server.getPlayerList().getSimulationDistance();
@@ -92,7 +151,7 @@ public class CommonLootManager {
 
         LootGenerationEventHandler.register();
 
-        BattleRoyale.LOGGER.info("Loot generation task initialized for {} chunks.", this.chunksToProcess.size());
+        BattleRoyale.LOGGER.info("Loot generation task initialized for {} chunks, loot gameId: {}", this.chunksToProcess.size(), gameId);
         return this.chunksToProcess.size();
     }
 
@@ -100,12 +159,18 @@ public class CommonLootManager {
      * 处理每个服务器 Tick 的战利品生成逻辑。
      * 由 LootGenerationEventHandler 调用。
      * @param event TickEvent.ServerTickEvent
-     * @return 如果任务完成或中断，返回 true；否则返回 false。
+     * @return 如果任务完成或中断，返回 true
      */
-    public boolean onTick(IServerTickEvent event) {
+    @Override
+    public boolean onLootTick(IServerTickEvent event) {
+        if (currentGenerationLevel == null) {
+            return true;
+        }
+
         IGameManager gameManager = BattleRoyale.getGameManager();
-        if (currentGenerationLevel == null || gameManager.isInGame() && !this.currentGenerationGameId.equals(gameManager.getGameId())) {
-            if (initiatingCommandSource != null) {
+        boolean isInGame = gameManager.isInGame();
+        if (isInGame || chunksToProcess.isEmpty()) { // 游戏中(强制中断)或已结束
+            if (isInGame && initiatingCommandSource != null) {
                 initiatingCommandSource.sendFailure(Component.translatable("battleroyale.message.game_stop_loot"));
             }
             sendLootRefreshResult();
@@ -113,25 +178,35 @@ public class CommonLootManager {
             return true;
         }
 
-        if (chunksToProcess.isEmpty()) {
-            if (initiatingCommandSource != null) {
-                sendLootRefreshResult();
-            }
-            resetLootInfo();
-            return true;
-        }
-
         // 处理本 Tick 的区块
         int processedChunkThisTick = 0;
-        while (!chunksToProcess.isEmpty() && processedChunkThisTick < MAX_CHUNKS_PER_TICK) {
-            ChunkPos chunkPos = chunksToProcess.poll();
-            int newlyProcessedLoot = LootGenerator.refreshLootInChunk(new LootGenerator.LootContext(currentGenerationLevel, chunkPos, currentGenerationGameId));
-            if (newlyProcessedLoot != LootGenerator.CHUNK_NOT_LOADED) {
-                totalLootRefreshedInBatch += newlyProcessedLoot;
-                processedChunkThisTick++;
+        synchronized (lock) {
+            while (!chunksToProcess.isEmpty() && processedChunkThisTick < MAX_CHUNKS_PER_TICK) {
+                ChunkPos chunkPos = chunksToProcess.poll();
+                int newlyProcessedLoot = LootGenerator.refreshLootInChunk(new LootGenerator.LootContext(currentGenerationLevel, chunkPos, currentGenerationGameId));
+                if (newlyProcessedLoot != LootGenerator.CHUNK_NOT_LOADED) {
+                    totalLootRefreshedInBatch += newlyProcessedLoot;
+                    processedChunkThisTick++;
+                }
             }
         }
         return false;
+    }
+    private static final Object lock = new Object();
+
+    @Override
+    public boolean stopLootGeneration(CommandSourceStack source) {
+        try {
+            synchronized (lock) {
+                sendLootRefreshResult();
+                resetLootInfo();
+                BattleRoyale.LOGGER.debug("Stopped loot generation task");
+                return true;
+            }
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.error("Failed to stop loot generation task.", e);
+            return false;
+        }
     }
 
     private void resetLootInfo() {

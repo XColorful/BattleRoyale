@@ -20,8 +20,11 @@
   "battleroyale.message.secret_room_lootid_switched": "切换至神秘点位配置%s: %s",
 
   "battleroyale.message.loot_generation_started": "开始执行物资刷新 (区块数: %s)",
+  "battleroyale.message.loot_generation_stopped": "已停止执行的物资刷新",
   "battleroyale.message.loot_generation_in_progress": "当前正在执行物资刷新",
   "battleroyale.message.loot_generation_finished": "刷新物资及实体刷新方块共%s个",
+  "battleroyale.message.loot_pos_success": "刷新物资及实体刷新方块 %s",
+  "battleroyale.message.loot_unavailable": "物资刷新不可用",
 
   "battleroyale.message.no_loot_spawner_config_available": "当前没有已加载的物资刷新方块配置",
   "battleroyale.message.no_entity_spawner_config_available": "当前没有已加载的实体刷新方块配置",

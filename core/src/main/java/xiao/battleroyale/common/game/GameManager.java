@@ -294,6 +294,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             return;
         }
         this.gameId = gameId;
+        BattleRoyale.LOGGER.info("GameManager gameId set to {}", gameId);
         TempDataManager.get().writeString(GAME_MANAGER, LAST_GAME_ID, this.gameId.toString());
     }
     @Override public boolean clearWinnerGamePlayers() {

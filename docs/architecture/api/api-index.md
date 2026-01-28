@@ -75,6 +75,8 @@
 ### 物资
 > _./api/loot_
 
+- [ILootManager](/docs/api/loot/ILootManager)：物资刷新器通用接口
+> - [ICommonLootManager](/docs/api/loot/ICommonLootManager)：手动物资刷新器接口
 - [ILootObject](/docs/api/loot/ILootObject.md)：物资对象，可刷新物资和读写游戏ID（UUID）
 
 ## 模组联动
@@ -320,6 +322,8 @@
 ### Loot
 > _./api/loot_
 
+- [ILootManager](/docs/api/loot/ILootManager): Loot manager common interface
+> - [ICommonLootManager](/docs/api/loot/ICommonLootManager): Manual loot manager interface
 - [ILootObject](/docs/api/loot/ILootObject.md): Loot object, can generate loot and read/write Game ID (UUID)
 
 ## Mod Compat

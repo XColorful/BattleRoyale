@@ -92,6 +92,7 @@ public class CommandArg {
     public static final String BASE_WEIGHT = "baseWeight";
     public static final String CHUNK_RADIUS = "chunkRadius";
     public static final String AUTO_RELOAD = "autoReload";
+    public static final String POS = "pos";
 
     public static final String BOOL = "boolean";
 }

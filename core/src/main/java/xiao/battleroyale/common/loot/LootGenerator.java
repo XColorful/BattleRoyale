@@ -308,7 +308,7 @@ public class LootGenerator {
         List<Entity> allEntitiesInChunk = lootContext.serverLevel.getEntitiesOfClass(Entity.class, chunkAABB, entity -> !(entity instanceof Player));
         List<Entity> oldEntities = new ArrayList<>();
         List<Entity> innocentEntities = new ArrayList<>();
-        IGameIdReadApi gameIdReadApi = BattleRoyale.getGameManager().getGameIdReadApi();;
+        IGameIdReadApi gameIdReadApi = BattleRoyale.getGameManager().getGameIdReadApi();
         for (Entity entity : allEntitiesInChunk) {
             UUID entityGameId = gameIdReadApi.getGameId(entity);
             if (entityGameId != null) {
