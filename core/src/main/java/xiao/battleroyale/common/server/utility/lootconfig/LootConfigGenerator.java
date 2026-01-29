@@ -1,11 +1,13 @@
 package xiao.battleroyale.common.server.utility.lootconfig;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -120,7 +122,7 @@ public class LootConfigGenerator {
             BattleRoyale.LOGGER.warn("Failed to get ResourceLocation from ItemStack {}", itemStack.toString());
         }
         gameIdWriteApi.removeGameId(itemStack); // 移除gameId避免配置文件臃肿
-        CompoundTag nbt = itemStack.getTag();
+        CompoundTag nbt = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         String nbtString = nbt != null ? nbt.toString() : "{}";
         return new ItemEntry(rlString, nbtString, itemStack.getCount());
     }

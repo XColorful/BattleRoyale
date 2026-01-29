@@ -64,7 +64,7 @@ public class ZoneController extends BaseEntityBlock {
                     if (gameConfigManager == null) {
                         ChatUtils.sendMessageToPlayer((ServerPlayer) player, "Unexpected exception occurred during autoLootConfig: GameConfigManager is null");
                         BattleRoyale.LOGGER.warn("GameConfigManager is null");
-                        return InteractionResult.FAIL;
+                        return ItemInteractionResult.FAIL;
                     }
                     String zoneConfigNameKey = ZoneConfigManager.get().getNameKey();
                     if (gameConfigManager.switchConfigFile(zoneConfigNameKey)) {
