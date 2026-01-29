@@ -28,7 +28,7 @@ public class SendUtils {
 //            if (!gamePlayer.isActiveEntity()) {
 //                continue;
 //            }
-            @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+            @Nullable ServerPlayer player = GameUtils.getServerPlayerOrNull(serverLevel, gamePlayer.getPlayerUUID());
             if (player == null) {
                 continue;
             }
@@ -41,7 +41,7 @@ public class SendUtils {
 //            if (!gamePlayer.isActiveEntity()) {
 //                continue;
 //            }
-            @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+            @Nullable ServerPlayer player = GameUtils.getServerPlayerOrNull(serverLevel, gamePlayer.getPlayerUUID());
             if (player == null) {
                 continue;
             }

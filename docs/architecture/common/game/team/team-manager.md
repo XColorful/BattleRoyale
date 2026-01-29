@@ -39,6 +39,8 @@
 - invitePlayer：邀请玩家加入队伍
 - requestPlayer：申请加入其他玩家队伍
 - leaveTeam：离开队伍
+- addToTeam：将生物加入指定队伍
+- buildTeamForAll：为选定生物组建队伍
 > 游戏中离开队伍通常视为被淘汰，但**不**应从`游戏玩家`列表清除`GamePlayer`
 
 [![ITeamExternal](/docs/api/game/team/ITeamExternal.md)](/docs/api/game/team/ITeamExternal.md)
@@ -90,6 +92,8 @@
 - invitePlayer: Invites a player to join the team. 
 - requestPlayer: Requests to join another player's team.  
 - leaveTeam: Leaves the team.
+- addToTeam: Add a living entity to the specified team
+- buildTeamForAll: Build teams for selected living entities
 > Leaving a team during the game is usually treated as elimination, but the `GamePlayer` object should **not** be cleared from the list of `Game Players`.
 
 [![ITeamExternal](/docs/api/game/team/ITeamExternal.md)](/docs/api/game/team/ITeamExternal.md)

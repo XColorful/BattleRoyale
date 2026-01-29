@@ -1,10 +1,10 @@
 package xiao.battleroyale.event.handler.loot;
 
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.api.event.IServerTickEvent;
-import xiao.battleroyale.common.loot.CommonLootManager;
 import xiao.battleroyale.event.EventRegister;
 
 public class LootGenerationEventHandler implements IEventHandler {
@@ -34,7 +34,7 @@ public class LootGenerationEventHandler implements IEventHandler {
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
         if (eventType == EventType.SERVER_TICK_EVENT) {
-            boolean taskCompletedOrInterrupted = CommonLootManager.get().onTick((IServerTickEvent) event);
+            boolean taskCompletedOrInterrupted = BattleRoyale.getCommonLootManager().onLootTick((IServerTickEvent) event);
             if (taskCompletedOrInterrupted) {
                 unregister();
             }

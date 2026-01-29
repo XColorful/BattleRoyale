@@ -4,9 +4,9 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.common.server.performance.IPerformanceConfigManager;
 import xiao.battleroyale.api.config.common.server.performance.IPerformanceSingleEntry;
 import xiao.battleroyale.api.config.common.server.performance.PerformanceConfigTag;
-import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
@@ -18,7 +18,9 @@ import xiao.battleroyale.util.JsonUtils;
 import java.nio.file.Path;
 import java.util.Comparator;
 
-public class PerformanceConfigManager extends AbstractConfigSubManager<PerformanceConfigManager.PerformanceConfig> {
+public class PerformanceConfigManager
+        extends AbstractConfigSubManager<PerformanceConfigManager.PerformanceConfig>
+        implements IPerformanceConfigManager<PerformanceConfigManager.PerformanceConfig> {
 
     private static class PerformanceConfigManagerHolder {
         private static final PerformanceConfigManager INSTANCE = new PerformanceConfigManager();
@@ -29,7 +31,6 @@ public class PerformanceConfigManager extends AbstractConfigSubManager<Performan
     }
 
     private PerformanceConfigManager() {
-        super(CommandArg.PERFORMANCE);
         allFolderConfigData.put(DEFAULT_PERFORMANCE_CONFIG_FOLDER, new FolderConfigData<>());
     }
 

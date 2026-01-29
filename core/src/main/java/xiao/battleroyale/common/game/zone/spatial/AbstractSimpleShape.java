@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.game.zone.spatial;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -202,9 +203,9 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                         BattleRoyale.LOGGER.error("Failed to generate shape rotation: failed to get game player by id: {}", playerId);
                         return;
                     }
-                    @Nullable ServerPlayer player = zoneContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+                    @Nullable LivingEntity player = GameUtils.getLivingEntity(zoneContext.serverLevel, gamePlayer.getPlayerUUID());
                     if (player == null) {
-                        BattleRoyale.LOGGER.info("Failed to generate shape rotation: can't find ServerPlayer {} (UUID:{})", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
+                        BattleRoyale.LOGGER.info("Failed to generate shape rotation: can't find LivingEntity {} (UUID:{})", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
                         return;
                     }
                     startRotateDegree = player.getYRot();
@@ -297,9 +298,9 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                         BattleRoyale.LOGGER.error("Failed to generate end rotation: failed to get game player by id: {}", playerId);
                         return;
                     }
-                    @Nullable ServerPlayer player = zoneContext.serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+                    @Nullable LivingEntity player = GameUtils.getLivingEntity(zoneContext.serverLevel, gamePlayer.getPlayerUUID());
                     if (player == null) {
-                        BattleRoyale.LOGGER.info("Failed to generate end rotation: can't find ServerPlayer {} (UUID:{})", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
+                        BattleRoyale.LOGGER.info("Failed to generate end rotation: can't find LivingEntity {} (UUID:{})", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
                         return;
                     }
                     endRotateDegree = player.getYRot();

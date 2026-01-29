@@ -1,7 +1,6 @@
-package xiao.battleroyale.common.game.loot;
+package xiao.battleroyale.algorithm;
 
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.loot.GameLootManager.Offset2D;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,12 +9,16 @@ import java.util.Set;
 
 public class BfsCalculator {
 
+    public record Offset2D(int x, int z) {}
+
     private static final List<List<Offset2D>> calculatedCenterOffset = new ArrayList<>();
 
     /**
      * 计算距离中心 [0, distance] 个区块距离的偏移
      * 返回列表中.get(distance)即距离distance区块的偏移列表
      * 例如列表索引0应有{(0,0)}，索引1应有{(1,0),(0,1),(0,-1),(-1,0)}
+     * 从西向东，先南后北 (Minecraft里-z是北)
+     * 从左到右，从下到上 (-x -> +x, +z -> -z)
      */
     public static List<List<Offset2D>> calculateCenterOffset(int distance) {
         if (distance < calculatedCenterOffset.size()) {
@@ -43,8 +46,8 @@ public class BfsCalculator {
         for (int i = startDistance; i <= distance; i++) {
             List<Offset2D> currentDistanceOffsets = new ArrayList<>();
             // 遍历所有可能的x和z坐标，其曼哈顿距离等于i
-            for (int x = -i; x <= i; x++) {
-                int z = i - Math.abs(x);
+            for (int x = -i; x <= i; x++) { // 从西(-x)向东(+x)
+                int z = i - Math.abs(x); // z > 0
                 Offset2D offset1 = new Offset2D(x, z);
                 if (visited.add(offset1)) {
                     currentDistanceOffsets.add(offset1);

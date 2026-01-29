@@ -79,12 +79,12 @@ public class DebugManager {
 
     public static void broadcastDebugPlayerAction(CommandSourceStack source, String operation) {
         if (source.source instanceof ServerPlayer player) {
-            ChatUtils.sendMessageToAllPlayers(source.getLevel(), Component.literal("[Debug]" + player.getName().getString() + ":" + operation).withStyle(ChatFormatting.DARK_GRAY));
+            ChatUtils.sendComponentMessageToAllPlayers(source.getLevel(), Component.literal("[Debug]" + player.getName().getString() + ":" + operation).withStyle(ChatFormatting.DARK_GRAY));
         }
     }
     public static void broadcastDebugPlayerGameAction(CommandSourceStack source, String operation, GameTimeFormat gameTimeFormat) {
         if (source.source instanceof ServerPlayer player) {
-            ChatUtils.sendMessageToAllPlayers(source.getLevel(),
+            ChatUtils.sendComponentMessageToAllPlayers(source.getLevel(),
                     Component.literal("[Debug]" + player.getName().getString() + ":" + operation + gameTimeFormat.toSpaceFullString(true)).withStyle(ChatFormatting.DARK_GRAY));
         }
     }

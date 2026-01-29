@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.common.game.zone.IZoneConfigManager;
 import xiao.battleroyale.api.config.common.game.zone.IZoneSingleEntry;
 import xiao.battleroyale.api.config.common.game.zone.ZoneConfigTag;
 import xiao.battleroyale.api.config.common.game.zone.func.IZoneFuncEntry;
@@ -13,7 +14,6 @@ import xiao.battleroyale.api.config.common.game.zone.shape.IZoneShapeEntry;
 import xiao.battleroyale.api.config.common.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.api.config.common.game.zone.special.IZoneSpecialEntry;
 import xiao.battleroyale.api.config.common.game.zone.special.ZoneSpecialTag;
-import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.game.zone.GameZoneBuilder;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
@@ -28,7 +28,9 @@ import xiao.battleroyale.util.JsonUtils;
 import java.nio.file.Path;
 import java.util.Comparator;
 
-public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManager.ZoneConfig> {
+public class ZoneConfigManager
+        extends AbstractConfigSubManager<ZoneConfigManager.ZoneConfig>
+        implements IZoneConfigManager<ZoneConfigManager.ZoneConfig> {
 
     private static class ZoneConfigManagerHolder {
         private static final ZoneConfigManager INSTANCE = new ZoneConfigManager();
@@ -39,7 +41,6 @@ public class ZoneConfigManager extends AbstractConfigSubManager<ZoneConfigManage
     }
 
     private ZoneConfigManager() {
-        super(CommandArg.ZONE);
         allFolderConfigData.put(DEFAULT_ZONE_CONFIG_FOLDER, new FolderConfigData<>());
     }
 

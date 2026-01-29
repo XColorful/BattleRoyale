@@ -3,6 +3,7 @@ package xiao.battleroyale.common.game.zone.tickable.event;
 import com.google.gson.JsonObject;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.game.zone.CustomZoneEvent;
 import xiao.battleroyale.api.game.IGameManager;
@@ -10,6 +11,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.event.EventPoster;
+import xiao.battleroyale.util.GameUtils;
 
 public class EventFunc extends AbstractEventFunc {
 
@@ -28,7 +30,7 @@ public class EventFunc extends AbstractEventFunc {
         IGameManager gameManager = BattleRoyale.getGameManager();
         for (GamePlayer gamePlayer : zoneTickContext.gamePlayers) {
             if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
-                LivingEntity livingEntity = (LivingEntity) zoneTickContext.serverLevel.getEntity(gamePlayer.getPlayerUUID());
+                @Nullable LivingEntity livingEntity = GameUtils.getLivingEntity(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID());
                 EventPoster.postEvent(new CustomZoneEvent(gameManager, zoneTickContext, this.protocol, this.jsonTag, gamePlayer, livingEntity));
             }
         }

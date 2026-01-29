@@ -130,7 +130,7 @@ public class JMShapeDrawer {
             BlockPos p = points.get(i);
             Vector4f vec = new Vector4f((float) (p.getX() - center.x), 0, (float) (p.getZ() - center.z), 1.0f);
             vec.mul(rotationMatrix);
-            points.set(i, new BlockPos((int) (vec.x() + center.x), p.getY(), (int) (vec.z() + center.z)));
+            points.set(i, BlockPos.containing(vec.x() + center.x, p.getY(), vec.z() + center.z));
         }
     }
 }

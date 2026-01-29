@@ -1,7 +1,9 @@
 package xiao.battleroyale.common.game.team;
 
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.util.ChatUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +47,8 @@ public class GameTeam {
                 return member;
             }
         }
+        ChatUtils.sendComponentMessageToAllPlayers(BattleRoyale.getGameManager().getServerLevel(),
+                Component.literal(String.format("An unexpected error occurred: GameTeam %s has no leader", gameTeamId)));
         BattleRoyale.LOGGER.error("GameTeam has no leader, gameTeamId:{}, gameTeamColor:{}", gameTeamId, gameTeamColor);
         for (GamePlayer gamePlayer : teamMembers) BattleRoyale.LOGGER.error("GamePlayer {}, playerUUID: {}", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
         return new GamePlayer(UUID.randomUUID(), "", 0, false, this);

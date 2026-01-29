@@ -1,13 +1,16 @@
 package xiao.battleroyale.common.game.team;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.game.team.InvitePlayerCompleteEvent;
 import xiao.battleroyale.api.event.game.team.InvitePlayerEvent;
@@ -18,6 +21,9 @@ import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.ChatUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class TeamExternal {
@@ -380,5 +386,150 @@ public class TeamExternal {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.leaved_current_team").withStyle(ChatFormatting.GREEN));
         }
         return teamManager.getGamePlayerByUUID(playerUUID) == null;
+    }
+
+    public static boolean addToTeam(TeamManager teamManager, @Nullable CommandSourceStack source, LivingEntity player, int teamId) {
+        GamePlayer gamePlayer = teamManager.getGamePlayerByUUID(player.getUUID());
+
+        // 已经在队伍里
+        if (gamePlayer != null) {
+            if (gamePlayer.getGameTeamId() == teamId) { // 已经在目标队伍里
+                if (source != null) source.sendFailure(Component.translatable("battleroyale.message.player_already_in_team", player.getName()));
+                return false;
+            }
+            // 先退队
+            if (!teamManager.removePlayerFromTeam(gamePlayer.getPlayerUUID())) { // 无法退队
+                BattleRoyale.LOGGER.warn("AddToTeam: Failed to remove LivingEntity {} (GamePlayer {}) from team", player.getName().getString(), gamePlayer.getNameWithId());
+                if (source != null) source.sendFailure(Component.translatable("battleroyale.message.not_added_to_team", player.getName(), teamId));
+                return false;
+            }
+        }
+
+        if (teamManager.teamData.getGameTeamById(teamId) == null) {
+            TeamManagement.createNewTeamAndJoin(teamManager, player, teamId); // 手动强制新建队伍
+        } else {
+            TeamManagement.addPlayerToTeamInternal(teamManager, player, teamId, false); // 手动强制入队
+        }
+
+        gamePlayer = teamManager.getGamePlayerByUUID(player.getUUID());
+        boolean added = gamePlayer != null && gamePlayer.getGameTeamId() == teamId; // 判断是否是目标队伍的GamePlayer
+        if (added) {
+            if (source != null) {
+                String playerName = gamePlayer.getPlayerName();
+                int playerTeamId = gamePlayer.getGameTeamId();
+                source.sendSuccess(() -> Component.translatable("battleroyale.message.added_to_team", playerName, playerTeamId), true);
+            }
+            return true;
+        } else {
+            if (source != null) source.sendFailure(Component.translatable("battleroyale.message.not_added_to_team", player.getName(), teamId));
+            return false;
+        }
+    }
+
+    public static int buildTeamForAll(TeamManager teamManager, @Nullable CommandSourceStack source, List<LivingEntity> players, int targetTeamSize, boolean forceRebuild) {
+        int expectedBuildTotal = players.size();
+        int buildTotal = 0;
+        List<LivingEntity> pendingPlayers = new ArrayList<>();
+        for (LivingEntity player : players) {
+            GamePlayer gamePlayer = teamManager.getGamePlayerByUUID(player.getUUID());
+            // 不强制重建 + 已经在队伍里
+            if (!forceRebuild && gamePlayer != null) {
+                BattleRoyale.LOGGER.debug("BuildTeam: Skipped LivingEntity {} (GamePlayer {})", player.getName().getString(), gamePlayer.getNameWithId());
+                continue;
+            }
+            // 强制重建
+            if (gamePlayer != null) { // 先退之前队伍
+                if (!teamManager.removePlayerFromTeam(gamePlayer.getPlayerUUID())) { // 无法退队
+                    BattleRoyale.LOGGER.warn("BuildTeam: Failed to remove LivingEntity {} (GamePlayer {}) from team", player.getName().getString(), gamePlayer.getNameWithId());
+                    continue;
+                }
+            }
+            pendingPlayers.add(player);
+        }
+        int pendingBuildTotal = pendingPlayers.size();
+        BattleRoyale.LOGGER.debug("BuildTeam: expected build for {} players, and {} pending to build team", expectedBuildTotal, pendingPlayers.size());
+        if (pendingPlayers.isEmpty()) {
+            if (source != null) {
+                source.sendFailure(Component.translatable("battleroyale.message.no_player_pending_to_build_team"));
+                source.sendFailure(Component.translatable("battleroyale.message.build_team_expected_pending_actual", expectedBuildTotal, pendingBuildTotal, 0));
+            }
+            return 0;
+        }
+
+        // 随机顺序，每次调用都重新组队
+        Collections.shuffle(pendingPlayers, BattleRoyale.COMMON_RANDOM);
+
+        // ----所有待处理玩家均为无队伍玩家----
+
+        // ----开始组建队伍----
+
+        int lastTeamId = 0;
+        for (LivingEntity player : pendingPlayers) {
+            // 无法创建新GamePlayer (已达到最大玩家)
+            // 宣传招聘不保证没有内幕
+//            if (teamManager.teamData.getTotalPlayerCount() < teamManager.teamData.getMaxPlayersLimit()) {
+//                break;
+//            }
+            // 能拿到票一定能进场
+            int playerSingleId = teamManager.teamData.generateNextPlayerId();
+            if (playerSingleId < 1) {
+                break;
+            }
+
+            @Nullable GameTeam lastGameTeam = teamManager.getGameTeamById(lastTeamId);
+            int currentTeamLimit = Math.min(targetTeamSize, teamManager.teamData.getTeamSizeLimit()); // 实时获取队伍人数限制
+            // 上一个队伍存在且未满员，优先加入上一个队伍
+            int newTeamId = lastGameTeam != null && lastGameTeam.getTeamMemberCount() < currentTeamLimit
+                    ? lastGameTeam.getGameTeamId()
+                    : teamManager.teamData.generateNextTeamId(); // 其余情况准备创建新队伍
+            // 无法创建新队伍
+            if (newTeamId < 1) {
+                break;
+            }
+
+            // 加入新队伍
+            if (teamManager.getGameTeamById(newTeamId) != null) {
+                TeamManagement.addPlayerToTeamInternal(teamManager, player, newTeamId, false); // 手动强制组建队伍
+            } else {
+                TeamManagement.createNewTeamAndJoin(teamManager, player, newTeamId); // 手动强制组建队伍
+            }
+
+            // 加入队伍失败则不视为已经无法加入
+            GamePlayer gamePlayer = teamManager.getGamePlayerByUUID(player.getUUID());
+            if (gamePlayer != null) {
+                lastTeamId = gamePlayer.getGameTeamId();
+                if (lastTeamId == newTeamId) { // 按预期加入
+                    BattleRoyale.LOGGER.debug("BuildTeam: build team for player {} (GamePlayer {})", player.getName().getString(), gamePlayer.getNameWithId());
+                    buildTotal++;
+                } else if (lastTeamId < 1) { // 队伍异常
+                    BattleRoyale.LOGGER.warn("BuildTeam: Encountered an error (lastTeamId {} < 1) in BuildTeam for player {} (GamePlayer {}), this will not counted as a success build", lastTeamId, player.getName().getString(), gamePlayer.getNameWithId());
+                } else {
+                    BattleRoyale.LOGGER.warn("BuildTeam: build team for player {} (GamePlayer {}) but has an unexpected teamId (Expect: {}, Actual: {})", player.getName().getString(), gamePlayer.getNameWithId(), newTeamId, lastTeamId);
+                    buildTotal++;
+                }
+            } else {
+                BattleRoyale.LOGGER.debug("BuildTeam: Failed to build team for player {}", player.getName().getString());
+                lastTeamId = 0;
+            }
+        }
+
+        // ----组建完成----
+
+        int actualBuildTotal = buildTotal;
+        if (source != null) {
+            Component statsComponent = Component.translatable("battleroyale.message.build_team_expected_pending_actual", expectedBuildTotal, pendingBuildTotal, actualBuildTotal);
+
+            if (actualBuildTotal == expectedBuildTotal) { // 完美完成，全部组建队伍
+                source.sendSuccess(() -> Component.translatable("battleroyale.message.build_team_success").withStyle(ChatFormatting.GREEN), true);
+            } else if (actualBuildTotal > 0) { // 部分完成
+                source.sendSuccess(() -> Component.translatable("battleroyale.message.build_team_success"), true);
+                source.sendSuccess(() -> statsComponent, true);
+            } else { // 没有组建队伍
+                source.sendSuccess(() -> Component.translatable("battleroyale.message.build_team_failed").withStyle(ChatFormatting.RED), true);
+                source.sendSuccess(() -> statsComponent, true);
+            }
+        }
+
+        return actualBuildTotal;
     }
 }

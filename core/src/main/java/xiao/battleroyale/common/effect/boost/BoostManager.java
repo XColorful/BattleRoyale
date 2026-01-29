@@ -10,6 +10,7 @@ import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.event.handler.effect.BoostEventHandler;
+import xiao.battleroyale.util.GameUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,10 +64,10 @@ public class BoostManager implements IBoostManager {
             int boostLevel = BoostData.getBoostLevel(boost);
             // 回血
             if (--data.healCooldown <= 0) {
-                if (data.serverLevel == null
-                        || !(data.serverLevel.getEntity(data.uuid) instanceof LivingEntity livingEntity)) {
-                    return true;
-                }
+                if (data.serverLevel == null) return true;
+                LivingEntity livingEntity = GameUtils.getLivingEntity(data.serverLevel, data.uuid);
+                if (livingEntity == null) return true; // TODO 离线是否直接清除？
+
                 double healAmount = 0;
                 switch (boostLevel) {
                     case BoostData.BOOST_LV4 -> healAmount = 0.8F;
@@ -79,10 +80,10 @@ public class BoostManager implements IBoostManager {
             }
             // 加速
             if (--data.effectCooldown <= 0) {
-                if (data.serverLevel == null
-                        || !(data.serverLevel.getEntity(data.uuid) instanceof LivingEntity livingEntity)) {
-                    return true;
-                }
+                if (data.serverLevel == null) return true;
+                LivingEntity livingEntity = GameUtils.getLivingEntity(data.serverLevel, data.uuid);
+                if (livingEntity == null) return true; // TODO 离线是否直接清除？
+
                 int boostEffect = boostLevel - 3;
                 if (boostEffect >= 0) {
                     livingEntity.addEffect(new MobEffectInstance(MobEffects.SPEED, EFFECT_COOLDOWN, boostEffect, false, false));
