@@ -25,7 +25,7 @@ public class DebugLoot {
      */
     public static final String GET_COMMON_LOOT = "getCommonLoot";
     public void getCommonLoot(CommandSourceStack source) {
-        DebugManager.sendDebugMessage(source, GET_COMMON_LOOT, LootText.buildCommonLoot(CommonLootManager.get()));
+        DebugManager.sendDebugMessage(source, GET_COMMON_LOOT, LootText.buildCommonLoot(BattleRoyale.getCommonLootManager()));
     }
 
     /**

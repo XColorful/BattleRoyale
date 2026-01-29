@@ -32,8 +32,8 @@ public class TempCommand {
                                 .executes(TempCommand::changeGameStep)))
                 .requires(source -> source.hasPermission(3))
                 .then(Commands.literal(CLEAR)
-                                .executes(TempCommand::clearAllTempData)
-                );
+                                .executes(TempCommand::clearAllTempData))
+                .requires(source -> source.hasPermission(3));
     }
 
     private static int turnPubgmcCompatibility(CommandContext<CommandSourceStack> context) {

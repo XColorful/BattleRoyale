@@ -5,9 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.game.bot.BotConfigTag;
+import xiao.battleroyale.api.config.common.game.bot.IBotConfigManager;
 import xiao.battleroyale.api.config.common.game.bot.IBotEntry;
 import xiao.battleroyale.api.config.common.game.bot.IBotSingleEntry;
-import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
@@ -19,7 +19,9 @@ import java.nio.file.Path;
 import java.util.Comparator;
 
 
-public class BotConfigManager extends AbstractConfigSubManager<BotConfigManager.BotConfig> {
+public class BotConfigManager
+        extends AbstractConfigSubManager<BotConfigManager.BotConfig>
+        implements IBotConfigManager<BotConfigManager.BotConfig> {
 
     private static class BotConfigManagerHolder {
         private static final BotConfigManager INSTANCE = new BotConfigManager();
@@ -30,7 +32,6 @@ public class BotConfigManager extends AbstractConfigSubManager<BotConfigManager.
     }
 
     private BotConfigManager() {
-        super(CommandArg.BOT);
         allFolderConfigData.put(DEFAULT_BOT_CONFIG_FOLDER, new FolderConfigData<>());
     }
 

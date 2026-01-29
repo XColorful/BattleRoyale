@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.GameUtils;
 
 public class TeamNotification {
 
@@ -23,7 +24,7 @@ public class TeamNotification {
             if (member == newGamePlayer) {
                 continue;
             }
-            @Nullable ServerPlayer teamPlayer = serverLevel.getPlayerByUUID(member.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+            @Nullable ServerPlayer teamPlayer = GameUtils.getServerPlayerOrNull(serverLevel, member.getPlayerUUID());
             if (teamPlayer != null) {
                 ChatUtils.sendComponentMessageToPlayer(teamPlayer, Component.translatable("battleroyale.message.player_joined_team", newPlayerName).withStyle(ChatFormatting.GREEN));
             }

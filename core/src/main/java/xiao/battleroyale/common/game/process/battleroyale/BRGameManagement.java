@@ -24,6 +24,7 @@ import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.event.handler.util.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.GameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,8 +60,8 @@ public class BRGameManagement {
         }
     }
     private static void updateInvalidGamePlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {
-        Entity entity = serverLevel.getEntity(gamePlayer.getPlayerUUID());
-        if (!(entity instanceof LivingEntity livingEntity)) { // 不在线或者不在游戏运行的 serverLevel
+        LivingEntity livingEntity = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
+        if (livingEntity == null) { // 不在线或者不在游戏运行的 serverLevel
             if (gamePlayer.isActiveEntity()) {
                 BRGameNotification.notifyGamePlayerIsInactive(serverLevel, gamePlayer);
             }
@@ -88,8 +89,8 @@ public class BRGameManagement {
         }
     }
     private static void updateInvalidBotPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {
-        Entity entity = serverLevel.getEntity(gamePlayer.getPlayerUUID());
-        if (!(entity instanceof LivingEntity livingEntity)) {
+        LivingEntity livingEntity = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
+        if (livingEntity == null) {
             if (gamePlayer.isActiveEntity()) {
                 BRGameNotification.notifyGamePlayerIsInactive(serverLevel, gamePlayer);
             }
@@ -169,20 +170,20 @@ public class BRGameManagement {
 
         // 胜利玩家
         for (GamePlayer winnerGamePlayer : winnerGamePlayers) {
-            LivingEntity livingEntity = serverLevel.getPlayerByUUID(winnerGamePlayer.getPlayerUUID());
-            if (livingEntity == null) {
+            LivingEntity player = GameUtils.getLivingEntity(serverLevel, winnerGamePlayer.getPlayerUUID());
+            if (player == null) {
                 continue;
             }
 
             if (teleportWinnerAfterGame) { // 传送
-                BattleRoyale.getGameManager().teleportToLobby(livingEntity); // 传送胜利玩家回大厅
+                BattleRoyale.getGameManager().teleportToLobby(player); // 传送胜利玩家回大厅
             } else { // 不传送，改为发送传送消息
                 Consumer<LivingEntity> delayedTask = isWinner -> {
-                    if (livingEntity instanceof ServerPlayer player) {
-                        BattleRoyale.getGameManager().getGameLobbyManager().sendLobbyTeleportMessage(player, true);
+                    if (player instanceof ServerPlayer serverPlayer) {
+                        BattleRoyale.getGameManager().getGameLobbyManager().sendLobbyTeleportMessage(serverPlayer, true);
                     }
                 };
-                new DelayedEvent<>(delayedTask, livingEntity, 2, "GameManager::sendLobbyTeleportMessage");
+                new DelayedEvent<>(delayedTask, player, 2, "GameManager::sendLobbyTeleportMessage");
             }
         }
 
@@ -193,20 +194,20 @@ public class BRGameManagement {
                 continue;
             }
 
-            LivingEntity livingEntity = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID());
-            if (livingEntity == null) {
+            LivingEntity player = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
+            if (player == null) {
                 continue;
             }
 
             if (teleportAfterGame) {
-                BattleRoyale.getGameManager().teleportToLobby(livingEntity); // 非胜利存活玩家直接回大厅
+                BattleRoyale.getGameManager().teleportToLobby(player); // 非胜利存活玩家直接回大厅
             } else {
                 Consumer<LivingEntity> delayedTask = isWinner -> {
-                    if (livingEntity instanceof ServerPlayer player) {
-                        BattleRoyale.getGameManager().getGameLobbyManager().sendLobbyTeleportMessage(player, false);
+                    if (player instanceof ServerPlayer serverPlayer) {
+                        BattleRoyale.getGameManager().getGameLobbyManager().sendLobbyTeleportMessage(serverPlayer, false);
                     }
                 };
-                new DelayedEvent<>(delayedTask, livingEntity, 2, "GameManager::sendLobbyTeleportMessage");
+                new DelayedEvent<>(delayedTask, player, 2, "GameManager::sendLobbyTeleportMessage");
             }
         }
     }
@@ -284,7 +285,7 @@ public class BRGameManagement {
         GamePlayer standingGamePlayer = GameTeamManager.getRandomStandingGamePlayer();
         if (standingGamePlayer != null) {
             float yaw = 0, pitch = 0;
-            @Nullable ServerPlayer targetPlayer = serverLevel.getPlayerByUUID(standingGamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+            @Nullable LivingEntity targetPlayer = GameUtils.getLivingEntity(serverLevel, standingGamePlayer.getPlayerUUID());
             if (targetPlayer != null) {
                 yaw = targetPlayer.getYRot();
                 pitch = targetPlayer.getXRot();
@@ -298,7 +299,7 @@ public class BRGameManagement {
         IGameLobbyManager gameLobbyManager = BattleRoyale.getGameManager().getGameLobbyManager();
         List<GamePlayer> healGamePlayers = new ArrayList<>(gamePlayers); // 防止意外情况
         for (GamePlayer gamePlayer : healGamePlayers) {
-            @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+            @Nullable LivingEntity player = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
             if (player != null) {
                 gameLobbyManager.healPlayer(player);
                 GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());

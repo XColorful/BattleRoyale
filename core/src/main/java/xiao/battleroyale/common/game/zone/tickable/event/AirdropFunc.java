@@ -63,7 +63,7 @@ public class AirdropFunc extends AbstractEventFunc {
         IGameManager gameManager = BattleRoyale.getGameManager();
         LootContext lootContext = new LootContext(
                 zoneTickContext.serverLevel,
-                new ChunkPos(new BlockPos((int) zoneCenter.x, (int) zoneCenter.y, (int) zoneCenter.z)),
+                zoneCenter,
                 gameManager.getGameId()
         );
 

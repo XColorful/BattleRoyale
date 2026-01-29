@@ -2,6 +2,7 @@ package xiao.battleroyale.common.game.team;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.Team;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.util.ColorUtils;
+import xiao.battleroyale.util.GameUtils;
 
 import java.util.*;
 
@@ -116,7 +118,7 @@ public class TeamUtils {
 
     /**
      * 在传入的 ServerLevel 下为全体 GamePlayer 构建原版队伍
-     * @param serverLevel 用于从 GamePlayer 获取 ServerPlayer 的维度
+     * @param serverLevel 用于从 GamePlayer 获取 LivingEntity 的维度
      * @param hideName 是否向其他队伍隐藏名称
      */
     public static void buildVanillaTeamForAllGameTeams(ITeamManager teamManager, @NotNull ServerLevel serverLevel, boolean hideName) {
@@ -125,7 +127,7 @@ public class TeamUtils {
             for (GameTeam gameTeam : teamManager.getGameTeams()) {
                 PlayerTeam vanillaTeam = getClearedVanillaTeam(scoreboard, hideName, gameTeam);
                 for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) { // 原版队伍没有队长，直接遍历
-                    @Nullable ServerPlayer memberPlayer = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+                    @Nullable LivingEntity memberPlayer = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
                     if (memberPlayer == null) {
                         BattleRoyale.LOGGER.warn("Failed to get GamePlayer[{}][{}]{}, skipped build vanilla team", gamePlayer.getGameTeamId(), gamePlayer.getGameSingleId(), gamePlayer.getPlayerName());
                         continue;
@@ -150,7 +152,7 @@ public class TeamUtils {
     public static void clearVanillaTeam(TeamManager teamManager, @NotNull ServerLevel serverLevel) {
         Scoreboard scoreboard = serverLevel.getScoreboard();
         for (GamePlayer gamePlayer : teamManager.getGamePlayers()) {
-            @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+            @Nullable LivingEntity player = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
             if (player == null) {
                 BattleRoyale.LOGGER.warn("Failed to get GamePlayer[{}][{}]{}, skipped clear vanilla team", gamePlayer.getGameTeamId(), gamePlayer.getGameSingleId(), gamePlayer.getPlayerName());
                 continue;

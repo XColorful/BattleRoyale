@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.client.display.DisplayConfigTag;
+import xiao.battleroyale.api.config.client.display.IDisplayConfigManager;
 import xiao.battleroyale.api.config.client.display.IDisplaySingleEntry;
-import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
@@ -20,7 +20,9 @@ import xiao.battleroyale.util.JsonUtils;
 import java.nio.file.Path;
 import java.util.Comparator;
 
-public class DisplayConfigManager extends AbstractConfigSubManager<DisplayConfigManager.DisplayConfig> {
+public class DisplayConfigManager
+        extends AbstractConfigSubManager<DisplayConfigManager.DisplayConfig>
+        implements IDisplayConfigManager<DisplayConfigManager.DisplayConfig> {
 
     private static class DisplayConfigManagerHolder {
         private static final DisplayConfigManager INSTANCE = new DisplayConfigManager();
@@ -31,7 +33,6 @@ public class DisplayConfigManager extends AbstractConfigSubManager<DisplayConfig
     }
 
     private DisplayConfigManager() {
-        super(CommandArg.DISPLAY);
         allFolderConfigData.put(DEFAULT_DISPLAY_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
