@@ -1,9 +1,9 @@
 [English](#English)
 
 # 队伍管理
-_/battleroyale team [join/leave/kick/invite/request/accept/decline/id] [player/senderName/requesterName/teamId]_
+_/battleroyale team [join/leave/kick/invite/request/accept/decline/id/add/build] [player/senderName/requesterName/teamId] [teamId/size] [forceRebuild]_
 
-所有指令均不需要权限
+非[权限指令](#权限指令)均不需要权限
 
 ## 加入队伍
 _/battleroyale team join [teamId]_
@@ -89,10 +89,29 @@ _/battleroyale team id_
 
 - 查看队伍id
 
-# English
-_/battleroyale team [join/leave/kick/invite/request/accept/decline/id] [player/senderName/requesterName/teamId]_
+## 权限指令
+_/battleroyale team [add/build] [player] [teamId/size] [forceRebuild]_
 
-All commands don't require permission level
+需要权限等级2
+
+### 加进队伍
+_/battleroyale team add [player] [teamId]_
+
+将生物实体加入指定队伍
+- 若该生物已在队伍中则先退队再尝试加入
+
+### 组建队伍
+_/battleroyale team build [player] [size] [forceRebuild]_
+
+将所选实体随机打乱后按规模组建队伍
+- 自动过滤非生物实体
+- size：组建的队伍规模，不超过实际限制
+- forceRebuild：强制重新组建队伍
+
+# English
+_/battleroyale team [join/leave/kick/invite/request/accept/decline/id/add/build] [player/senderName/requesterName/teamId] [teamId/size] [forceRebuild]_
+
+All commands other than [Permission Command](#Permission-command) do not require permissions
 
 ## Join a team
 _/battleroyale team join [teamId]_
@@ -177,3 +196,22 @@ _/battleroyale team leave_
 _/battleroyale team id_
 
 - Check the team id
+
+## Permission command
+_/battleroyale team [add/build] [player] [teamId/size] [forceRebuild]_
+
+Require permission level 2
+
+### 加进队伍
+_/battleroyale team add [player] [teamId]_
+
+Add a living entity to the specified team
+- If the entity is already in a team, it will leave the current team before attempting to join
+
+### 组建队伍
+_/battleroyale team build [player] [size] [forceRebuild]_
+
+Build teams based on size after shuffling selected entities randomly
+- Automatically filter out non-living entities
+- size: The size of the teams to be built, not exceeding the actual limit
+- forceRebuild: Forcibly rebuild teams

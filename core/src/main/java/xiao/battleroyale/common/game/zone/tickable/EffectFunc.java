@@ -6,6 +6,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry.Effect;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
+import xiao.battleroyale.util.GameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +26,8 @@ public class EffectFunc extends AbstractSimpleFunc {
         for (GamePlayer gamePlayer : playersToProcess) {
             if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
                 if (gamePlayer.isActiveEntity()) {
-                    LivingEntity entity = (LivingEntity) zoneTickContext.serverLevel.getEntity(gamePlayer.getPlayerUUID());
-                    if (entity != null && entity.isAlive()) {
+                    LivingEntity livingEntity = GameUtils.getLivingEntity(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID());
+                    if (livingEntity != null && livingEntity.isAlive()) {
                         for (Effect effect : effects) {
                             MobEffectInstance effectInstance = new MobEffectInstance(
                                     effect.type(),
@@ -35,7 +36,7 @@ public class EffectFunc extends AbstractSimpleFunc {
                                     false,
                                     false
                             );
-                            entity.addEffect(effectInstance);
+                            livingEntity.addEffect(effectInstance);
                         }
                         // success stats record
                     } else {

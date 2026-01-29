@@ -4,9 +4,9 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.client.render.IRenderConfigManager;
 import xiao.battleroyale.api.config.client.render.IRenderSingleEntry;
 import xiao.battleroyale.api.config.client.render.RenderConfigTag;
-import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
@@ -21,7 +21,9 @@ import xiao.battleroyale.util.JsonUtils;
 import java.nio.file.Path;
 import java.util.Comparator;
 
-public class RenderConfigManager extends AbstractConfigSubManager<RenderConfigManager.RenderConfig> {
+public class RenderConfigManager
+        extends AbstractConfigSubManager<RenderConfigManager.RenderConfig>
+        implements IRenderConfigManager<RenderConfigManager.RenderConfig> {
 
     private static class RenderConfigManagerHolder {
         private static final RenderConfigManager INSTANCE = new RenderConfigManager();
@@ -32,7 +34,6 @@ public class RenderConfigManager extends AbstractConfigSubManager<RenderConfigMa
     }
 
     private RenderConfigManager() {
-        super(CommandArg.RENDER);
         allFolderConfigData.put(DEFAULT_RENDER_CONFIG_FOLDER, new FolderConfigData<>());
     }
 

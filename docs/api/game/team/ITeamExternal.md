@@ -12,5 +12,7 @@ public interface ITeamExternal {
 	void acceptRequest(ServerPlayer teamLeader, ServerPlayer senderPlayer);
 	void declineRequest(ServerPlayer teamLeader, ServerPlayer senderPlayer);
 	boolean leaveTeam(ServerPlayer player);
+	boolean addToTeam(@Nullable CommandSourceStack source, LivingEntity player, int teamId);
+	int buildTeamForAll(@Nullable CommandSourceStack source, List<LivingEntity> players, int targetSize, boolean forceRebuild);
 }
 ```

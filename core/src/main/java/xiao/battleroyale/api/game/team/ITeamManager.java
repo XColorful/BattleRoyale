@@ -5,7 +5,8 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 
 import java.util.UUID;
 
-public interface ITeamManager extends IGameSubManager, IGameTeamReadApi, ITeamExternal, ITeamManagement, ITeamPreManagement, ITeamNotification, IVanillaTeam {
+public interface ITeamManager extends IGameSubManager, IGameTeamReadApi,
+        ITeamExternal, ITeamManagement, ITeamPreManagement, ITeamNotification, IVanillaTeam {
 
     boolean shouldAutoJoin();
 
