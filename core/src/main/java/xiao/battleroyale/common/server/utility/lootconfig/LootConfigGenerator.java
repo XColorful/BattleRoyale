@@ -3,7 +3,7 @@ package xiao.battleroyale.common.server.utility.lootconfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -113,7 +113,7 @@ public class LootConfigGenerator {
             return new ItemEntry(ItemData.EMPTY_RL, "{}", 0);
         }
 
-        ResourceLocation rl = BattleRoyale.getMcRegistry().getItemRl(itemStack.getItem());
+        Identifier rl = BattleRoyale.getMcRegistry().getItemRl(itemStack.getItem());
         String rlString;
         if (rl != null) {
             rlString = rl.toString();

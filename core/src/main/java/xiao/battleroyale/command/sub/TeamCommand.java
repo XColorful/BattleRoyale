@@ -18,6 +18,7 @@ import xiao.battleroyale.BattleRoyale;
 import java.util.List;
 
 import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 import static xiao.battleroyale.util.StringUtils.buildCommandString;
 
 public class TeamCommand {
@@ -78,7 +79,7 @@ public class TeamCommand {
                         .executes(TeamCommand::queryPlayerTeamId)
                 )
                 .then(Commands.literal(ADD)
-                        .requires(source -> source.hasPermission(2))
+                        .requires(source -> checkCommandLevel(source, 2))
                         .then(Commands.argument(PLAYER, EntityArgument.entity())
                                 .then(Commands.argument(TEAM_ID, IntegerArgumentType.integer(1))
                                         .executes(TeamCommand::addToTeam)
@@ -86,7 +87,7 @@ public class TeamCommand {
                         )
                 )
                 .then(Commands.literal(BUILD)
-                        .requires(source -> source.hasPermission(2))
+                        .requires(source -> checkCommandLevel(source, 2))
                         .then(Commands.argument(PLAYER, EntityArgument.entities())
                                 .then(Commands.argument(SIZE, IntegerArgumentType.integer(1))
                                         .executes(context -> buildTeamForAll(context, false))

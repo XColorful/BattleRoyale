@@ -18,6 +18,7 @@ import xiao.battleroyale.common.server.utility.ConfigGenerator;
 import xiao.battleroyale.common.server.utility.SurvivalLobby;
 
 import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 
 public class UtilityCommand {
 
@@ -32,7 +33,7 @@ public class UtilityCommand {
 
         // 需要权限
         utilityCommand.then(Commands.literal(LOOT_CONFIG)
-                .requires(source -> source.hasPermission(3))
+                .requires(source -> checkCommandLevel(source, 3))
                 .then(Commands.argument(ID, IntegerArgumentType.integer())
                         .then(Commands.argument(TYPE, StringArgumentType.string())
                                 .suggests((context, builder) -> {

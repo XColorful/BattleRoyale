@@ -34,7 +34,7 @@ public class TempCommand {
                 .requires(source -> checkCommandLevel(source, 3))
                 .then(Commands.literal(CLEAR)
                                 .executes(TempCommand::clearAllTempData))
-                .requires(source -> source.hasPermission(3));
+                .requires(source -> checkCommandLevel(source, 3));
     }
 
     private static int turnPubgmcCompatibility(CommandContext<CommandSourceStack> context) {
