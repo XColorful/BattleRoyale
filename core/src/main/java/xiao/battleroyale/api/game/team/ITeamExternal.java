@@ -1,6 +1,11 @@
 package xiao.battleroyale.api.game.team;
 
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * 玩家指令调用
@@ -38,4 +43,18 @@ public interface ITeamExternal {
      * 在游戏中调用该函数只淘汰不离队
      */
     boolean leaveTeam(ServerPlayer player);
+
+    /**
+     * 强制将玩家加入队伍
+     */
+    boolean addToTeam(@Nullable CommandSourceStack source, LivingEntity player, int teamId);
+
+    /**
+     * 强制为玩家创建队伍
+     * @param players 玩家列表
+     * @param targetSize 期望队伍人数上限
+     * @param forceRebuild 是否强制退出原先队伍
+     * @return 成功操作的玩家数量
+     */
+    int buildTeamForAll(@Nullable CommandSourceStack source, List<LivingEntity> players, int targetSize, boolean forceRebuild);
 }

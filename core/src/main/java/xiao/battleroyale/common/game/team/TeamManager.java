@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.game.team;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -348,6 +349,12 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
     }
     public boolean leaveTeam(@NotNull ServerPlayer player) {
         return TeamExternal.leaveTeam(this, player);
+    }
+    public boolean addToTeam(@Nullable CommandSourceStack source, LivingEntity player, int teamId) {
+        return TeamExternal.addToTeam(this, source, player, teamId);
+    }
+    public int buildTeamForAll(@Nullable CommandSourceStack source, List<LivingEntity> players, int targetSize, boolean forceRebuild) {
+        return TeamExternal.buildTeamForAll(this, source, players, targetSize, forceRebuild);
     }
 
     // -------TeamManagement-------

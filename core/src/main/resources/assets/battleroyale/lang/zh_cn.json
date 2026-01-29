@@ -165,6 +165,13 @@
   "battleroyale.message.not_enough_team_to_start": "当前没有足够队伍开始游戏",
   "battleroyale.message.team_removed": "已移除队伍%s",
   "battleroyale.message.removed_from_team": "已被移出队伍",
+  "battleroyale.message.not_include_living_entity": "未包含生物实体",
+  "battleroyale.message.added_to_team": "已将玩家%s加入队伍%s",
+  "battleroyale.message.not_added_to_team": "未能将玩家 %s 加入队伍%s",
+  "battleroyale.message.no_player_pending_to_build_team": "没有玩家待组建队伍",
+  "battleroyale.message.build_team_success": "已组建队伍",
+  "battleroyale.message.build_team_failed": "未能组建队伍",
+  "battleroyale.message.build_team_expected_pending_actual": "组建队伍: 预期总数 %s, 待处理 %s, 实际组建 %s",
 
   "battleroyale.message.player_kicked_from_team": "玩家 %s 已被踢出您的队伍",
   "battleroyale.message.kicked_by_leader": "玩家 %s 将您踢出了队伍",

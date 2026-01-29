@@ -165,6 +165,13 @@
   "battleroyale.message.not_enough_team_to_start": "Not enough teams to start game",
   "battleroyale.message.team_removed": "Removed team %s",
   "battleroyale.message.removed_from_team": "Removed from team",
+  "battleroyale.message.not_include_living_entity": "Not include living entity",
+  "battleroyale.message.added_to_team": "Add player %s to team %s",
+  "battleroyale.message.not_added_to_team": "Failed to add %s to team %s",
+  "battleroyale.message.no_player_pending_to_build_team": "No player pending to build team",
+  "battleroyale.message.build_team_success": "Build team success",
+  "battleroyale.message.build_team_failed": "Failed to build team",
+  "battleroyale.message.build_team_expected_pending_actual": "Build team: Expected %s, Pending %s, Actual %s",
 
   "battleroyale.message.player_kicked_from_team": "%s has been kicked from your team",
   "battleroyale.message.kicked_by_leader": "%s kicked you from your team",

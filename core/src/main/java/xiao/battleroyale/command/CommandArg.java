@@ -60,6 +60,10 @@ public class CommandArg {
     public static final String SENDER = "senderName";
     public static final String REQUESTER = "requesterName";
     public static final String TEAM_ID = "teamId";
+    public static final String ADD = "add";
+    public static final String BUILD = "build";
+    public static final String SIZE = "size";
+    public static final String FORCE_REBUILD = "forceRebuild";
 
     public static final String XYZ = "xyz";
     public static final String AMOUNT = "amount";
