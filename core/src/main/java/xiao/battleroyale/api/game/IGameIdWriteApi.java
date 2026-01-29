@@ -11,4 +11,8 @@ public interface IGameIdWriteApi {
     void addGameId(ItemStack itemStack, UUID gameId);
     void addGameId(Entity entity, UUID gameId);
     void addGameId(BlockEntity blockEntity, UUID gameId);
+
+    void removeGameId(ItemStack itemStack);
+    void removeGameId(Entity entity);
+    void removeGameId(BlockEntity blockEntity);
 }

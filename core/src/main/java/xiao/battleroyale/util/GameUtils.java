@@ -6,6 +6,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +15,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
 import java.util.List;
+import java.util.UUID;
 
 import static xiao.battleroyale.util.CommandUtils.buildIntBracketWithColor;
 import static xiao.battleroyale.util.CommandUtils.buildIntBracketWithFullColor;
@@ -102,7 +105,7 @@ public class GameUtils {
     }
 
     public static void clearGamePlayerInventory(@NotNull ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
-        @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+        @Nullable ServerPlayer player = getServerPlayerOrNull(serverLevel, gamePlayer.getPlayerUUID());
         if (player == null) {
             BattleRoyale.LOGGER.debug("Failed to clear GamePlayer ({}) inventory by UUID: {}", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
             return;
@@ -130,5 +133,15 @@ public class GameUtils {
                 .append(buildIntBracketWithColor(gamePlayer.getGameTeamId(), color))
                 .append(buildIntBracketWithFullColor(gamePlayer.getGameSingleId(), color))
                 .append(Component.literal(gamePlayer.getPlayerName()).withStyle(nameColor));
+    }
+
+    public static @Nullable Entity getEntity(ServerLevel serverLevel, UUID entityUUID) {
+        return serverLevel.getEntity(entityUUID);
+    }
+    public static @Nullable LivingEntity getLivingEntity(ServerLevel serverLevel, UUID entityUUID) {
+        return serverLevel.getEntity(entityUUID) instanceof LivingEntity livingEntity ? livingEntity : null;
+    }
+    public static @Nullable ServerPlayer getServerPlayerOrNull(ServerLevel serverLevel, UUID entityUUID) {
+        return serverLevel.getPlayerByUUID(entityUUID) instanceof ServerPlayer serverPlayer ? serverPlayer : null ;
     }
 }

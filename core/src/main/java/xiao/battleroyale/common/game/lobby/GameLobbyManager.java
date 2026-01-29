@@ -29,6 +29,7 @@ import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.event.handler.game.LobbyEventHandler;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.Vec3Utils;
 
 import java.util.List;
@@ -230,8 +231,7 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
      * 类内部负责的传送，类内调用前进行检查
      */
     protected void teleportGamePlayerToLobby(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel) {
-        UUID id = gamePlayer.getPlayerUUID();
-        LivingEntity livingEntity = serverLevel.getPlayerByUUID(id);
+        LivingEntity livingEntity = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
         if (livingEntity == null) {
             return;
         }

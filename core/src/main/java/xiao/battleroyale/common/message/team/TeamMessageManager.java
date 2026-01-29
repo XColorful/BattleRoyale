@@ -12,6 +12,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.message.AbstractMessageManager;
 import xiao.battleroyale.network.message.ClientMessageTeamInfo;
+import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.SendUtils;
 
 import java.util.*;
@@ -122,7 +123,7 @@ public class TeamMessageManager extends AbstractMessageManager<TeamMessage> {
                 if (GameTeamManager.getGamePlayerByUUID(playerUUID) != null) { // 属于离队玩家，但是仍然是游戏玩家，则是加入了其他队伍，不需要通知取消渲染
                     continue;
                 }
-                @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(playerUUID) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+                @Nullable ServerPlayer player = GameUtils.getServerPlayerOrNull(serverLevel, playerUUID);
                 if (player != null) {
                     players.add(player);
                 }

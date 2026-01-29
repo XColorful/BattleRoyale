@@ -1,11 +1,13 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.init.registry.ModDamageTypes;
+import xiao.battleroyale.util.GameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ public class SafeFunc extends AbstractDamageFunc {
         for (GamePlayer gamePlayer : playersToProcess) {
             if (!zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
                 if (gamePlayer.isActiveEntity()) { // 造成一次毒圈伤害
-                    LivingEntity entity = (LivingEntity) zoneTickContext.serverLevel.getEntity(gamePlayer.getPlayerUUID());
+                    @Nullable LivingEntity entity = GameUtils.getLivingEntity(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID());
                     if (entity != null && entity.isAlive()) {
                         entity.hurt(ModDamageTypes.safeZone(zoneTickContext.serverLevel), this.damage);
                     }

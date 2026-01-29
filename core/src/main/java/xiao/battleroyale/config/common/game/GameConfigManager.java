@@ -2,7 +2,7 @@ package xiao.battleroyale.config.common.game;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.command.CommandArg;
+import xiao.battleroyale.api.config.common.game.IGameConfigManager;
 import xiao.battleroyale.config.AbstractConfigManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
@@ -12,7 +12,7 @@ import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 
 import java.nio.file.Paths;
 
-public class GameConfigManager extends AbstractConfigManager {
+public class GameConfigManager extends AbstractConfigManager implements IGameConfigManager {
 
     public static final String GAME_CONFIG_SUB_PATH = "game";
     public static final String GAME_CONFIG_PATH = Paths.get(ModConfigManager.MOD_CONFIG_PATH).resolve(GAME_CONFIG_SUB_PATH).toString();
@@ -26,7 +26,6 @@ public class GameConfigManager extends AbstractConfigManager {
     }
 
     private GameConfigManager() {
-        super(CommandArg.GAME);
     }
 
     public static void init(McSide mcSide) {
