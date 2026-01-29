@@ -112,7 +112,10 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
      * 移除游戏UUID
      */
     @Override public void removeGameId(ItemStack itemStack) {
-        itemStack.getOrCreateTag().remove(LootNBTTag.GAME_ID_TAG);
+        CustomData customData = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+        CompoundTag tag = customData.copyTag();
+        tag.remove(LootNBTTag.GAME_ID_TAG);
+        itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
     }
     @Override public void removeGameId(Entity entity) {
         entity.getPersistentData().remove(LootNBTTag.GAME_ID_TAG);
@@ -122,7 +125,18 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
      * 此方法不适用于本模组的方块
      */
     @Override public void removeGameId(BlockEntity blockEntity) {
-        blockEntity.getPersistentData().remove(LootNBTTag.GAME_ID_TAG);
+        CustomData customData = blockEntity.components().getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+        CompoundTag tag = customData.copyTag();
+        tag.remove(LootNBTTag.GAME_ID_TAG);
+        DataComponentPatch patch = DataComponentPatch.builder()
+                .set(DataComponents.CUSTOM_DATA, CustomData.of(tag))
+                .build();
+        PatchedDataComponentMap newComponents = PatchedDataComponentMap.fromPatch(
+                blockEntity.components(),
+                patch
+        );
+        blockEntity.setComponents(newComponents);
+
         blockEntity.setChanged();
     }
 }
