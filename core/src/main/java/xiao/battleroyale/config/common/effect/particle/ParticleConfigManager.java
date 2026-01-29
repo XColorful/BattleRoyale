@@ -5,10 +5,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.common.effect.particle.IParticleConfigManager;
 import xiao.battleroyale.api.config.common.effect.particle.IParticleEntry;
 import xiao.battleroyale.api.config.common.effect.particle.IParticleSingleEntry;
 import xiao.battleroyale.api.config.common.effect.particle.ParticleConfigTag;
-import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.common.effect.particle.FixedParticleData;
 import xiao.battleroyale.common.effect.particle.ParticleData;
 import xiao.battleroyale.config.AbstractConfigSubManager;
@@ -22,7 +22,9 @@ import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.Comparator;
 
-public class ParticleConfigManager extends AbstractConfigSubManager<ParticleConfigManager.ParticleConfig> {
+public class ParticleConfigManager
+        extends AbstractConfigSubManager<ParticleConfigManager.ParticleConfig>
+        implements IParticleConfigManager<ParticleConfigManager.ParticleConfig> {
 
     private static class ParticleConfigManagerHolder {
         private static final ParticleConfigManager INSTANCE = new ParticleConfigManager();
@@ -33,7 +35,6 @@ public class ParticleConfigManager extends AbstractConfigSubManager<ParticleConf
     }
 
     private ParticleConfigManager() {
-        super(CommandArg.PARTICLE);
         allFolderConfigData.put(DEFAULT_PARTICLE_CONFIG_FOLDER_ID, new FolderConfigData<>());
     }
 

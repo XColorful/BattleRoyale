@@ -158,7 +158,7 @@ public class PubgmcCommand {
     }
 
     private static int generatorGenerate(CommandContext<CommandSourceStack> context) {
-        return LootCommand.generateAllLoadedLoot(context);
+        return LootCommand.lootGeneration(context);
     }
 
     private static int leaveGame(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {

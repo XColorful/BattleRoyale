@@ -31,6 +31,8 @@ _/battleroyale temp gameStep [inverval]_
 ## 清理数据
 _/battleroyale temp clear_
 
+需要权限等级3
+
 ### 删除所有临时数据
 _/battleroyale temp clear_
 
@@ -66,6 +68,8 @@ Increases the BattleRoyale game time by _inverval_ per game tick.
 
 ## Clear data
 _/battleroyale temp clear_
+
+Requires permission level 3
 
 ### Delete all temporary data
 _/battleroyale temp clear_

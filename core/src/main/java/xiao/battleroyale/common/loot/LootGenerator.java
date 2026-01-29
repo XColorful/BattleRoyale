@@ -19,6 +19,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.loot.ILootEntry;
@@ -309,13 +310,13 @@ public class LootGenerator {
     }
     private static void clearOldLoot(LootContext lootContext) {
         int minY = lootContext.serverLevel.dimensionType().minY();
-        BlockPos minPos = new BlockPos(lootContext.chunkPos.getMinBlockX(), minY, lootContext.chunkPos.getMinBlockZ());
-        BlockPos maxPos = new BlockPos(lootContext.chunkPos.getMaxBlockX() + 1, minY + lootContext.serverLevel.dimensionType().height(), lootContext.chunkPos.getMaxBlockZ() + 1);
+        BlockPos minPos = BlockPos.containing(lootContext.chunkPos.getMinBlockX(), minY, lootContext.chunkPos.getMinBlockZ());
+        BlockPos maxPos = BlockPos.containing(lootContext.chunkPos.getMaxBlockX() + 1, minY, lootContext.chunkPos.getMaxBlockZ() + 1);
         AABB chunkAABB = new AABB(minPos.getX(), minPos.getY(), minPos.getZ(), maxPos.getX(), maxPos.getY(), maxPos.getZ());
         List<Entity> allEntitiesInChunk = lootContext.serverLevel.getEntitiesOfClass(Entity.class, chunkAABB, entity -> !(entity instanceof Player));
         List<Entity> oldEntities = new ArrayList<>();
         List<Entity> innocentEntities = new ArrayList<>();
-        IGameIdReadApi gameIdReadApi = BattleRoyale.getGameManager().getGameIdReadApi();;
+        IGameIdReadApi gameIdReadApi = BattleRoyale.getGameManager().getGameIdReadApi();
         for (Entity entity : allEntitiesInChunk) {
             UUID entityGameId = gameIdReadApi.getGameId(entity);
             if (entityGameId != null) {
@@ -382,6 +383,9 @@ public class LootGenerator {
         public final ChunkPos chunkPos;
         public final UUID gameId;
         public final Supplier<Float> random;
+        public LootContext(@NotNull ServerLevel serverLevel, Vec3 pos, UUID gameId) {
+            this(serverLevel, new ChunkPos(BlockPos.containing(pos)), gameId);
+        }
         public LootContext(@NotNull ServerLevel serverLevel, ChunkPos chunkPos, UUID gameId) {
             this.serverLevel = serverLevel;
             this.chunkPos = chunkPos;

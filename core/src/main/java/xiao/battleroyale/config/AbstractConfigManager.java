@@ -10,19 +10,10 @@ import java.util.List;
 
 public abstract class AbstractConfigManager implements IConfigManager {
 
-    protected final String nameKey;
-    public AbstractConfigManager(String nameKey) {
-        this.nameKey = nameKey;
+    public AbstractConfigManager() {
     }
 
     protected final ArrayMap<String, IConfigSubManager<?>> subManagers = new ArrayMap<>(IConfigSubManager::getNameKey);
-
-    /**
-     * IManagerName
-     */
-    @Override public String getNameKey() {
-        return this.nameKey;
-    }
 
     // IConfigManager
     @Override public boolean registerSubManager(IConfigSubManager<?> subManager) {

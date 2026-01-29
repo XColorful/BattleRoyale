@@ -4,12 +4,12 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.common.game.spawn.ISpawnConfigManager;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.api.config.common.game.spawn.ISpawnEntry;
 import xiao.battleroyale.api.config.common.game.spawn.ISpawnSingleEntry;
 import xiao.battleroyale.api.config.common.game.spawn.SpawnConfigTag;
 import xiao.battleroyale.api.config.common.game.spawn.type.SpawnTypeTag;
-import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
@@ -22,7 +22,9 @@ import java.nio.file.Path;
 import java.util.Comparator;
 
 
-public class SpawnConfigManager extends AbstractConfigSubManager<SpawnConfigManager.SpawnConfig> {
+public class SpawnConfigManager
+        extends AbstractConfigSubManager<SpawnConfigManager.SpawnConfig>
+        implements ISpawnConfigManager<SpawnConfigManager.SpawnConfig> {
 
     private static class SpawnConfigMangerHolder {
         private static final SpawnConfigManager INSTANCE = new SpawnConfigManager();
@@ -33,7 +35,6 @@ public class SpawnConfigManager extends AbstractConfigSubManager<SpawnConfigMana
     }
 
     private SpawnConfigManager() {
-        super(CommandArg.SPAWN);
         allFolderConfigData.put(DEFAULT_SPAWN_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
