@@ -4,6 +4,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.algorithm.BfsCalculator;
+import xiao.battleroyale.algorithm.BfsCalculator.Offset2D;
 import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.game.tick.GameLootBfsEvent;
@@ -49,7 +51,9 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
         }
         // 预计算
         cachedCenterOffset.clear();
-        cachedCenterOffset.addAll(BfsCalculator.calculateCenterOffset(64)); // 渣机也就20ms开销
+        for (List<Offset2D> level : BfsCalculator.calculateCenterOffset(64)) { // 渣机也就20ms开销
+            cachedCenterOffset.add(new ArrayList<>(level));
+        }
     }
 
     @Override public String getManagerName() {
@@ -58,6 +62,10 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
 
     @Override public boolean serverSideOnly() {
         return true;
+    }
+
+    @Override public @Nullable UUID getCurrentGenerationGameId() {
+        return currentGameId;
     }
 
     public int getMaxLootChunkPerTick() { return MAX_LOOT_CHUNK_PER_TICK; }
@@ -112,7 +120,9 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
         MAX_LOOT_DISTANCE = Math.min(Math.max(entry.maxGameLootDistance, 3), 128);
         if (MAX_LOOT_DISTANCE >= cachedCenterOffset.size()) { // cachedCenterOffest第一项为0距离
             cachedCenterOffset.clear();
-            cachedCenterOffset.addAll(BfsCalculator.calculateCenterOffset(MAX_LOOT_DISTANCE));
+            for (List<Offset2D> level : BfsCalculator.calculateCenterOffset(MAX_LOOT_DISTANCE)) {
+                cachedCenterOffset.add(new ArrayList<>(level));
+            }
         }
         TOLERANT_CENTER_DISTANCE = Math.min(Math.max(entry.tolerantCenterDistance, 0), 10);
         MAX_CACHED_CENTER = Math.min(Math.max(entry.maxCachedCenter, 0), 50000); // 五万
@@ -123,6 +133,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
         CLEAN_CACHED_CHUNK = Math.min(Math.max(entry.cleanCachedChunk, 10), 10000); // 一万
     }
 
+    private @Nullable UUID currentGameId;
     private int lastBfsTime = Integer.MIN_VALUE / 2;
     private int lastBfsProcessedLoot = 0;
     // 原子地引用当前待处理队列
@@ -130,7 +141,6 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
     private final ClassUtils.QueueSet<ChunkPos> processedChunkCache = new ClassUtils.QueueSet<>();
     private final ClassUtils.QueueSet<ChunkPos> cachedPlayerCenterChunks = new ClassUtils.QueueSet<>();
     private static final List<List<Offset2D>> cachedCenterOffset = new ArrayList<>();
-    public record Offset2D(int x, int z) {}
 
     private ExecutorService bfsExecutor;
     private Future<?> bfsTaskFuture;
@@ -304,7 +314,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
                 ChunkPos playerChunkPos = new ChunkPos((int) (lastPos.x() / 16), (int) (lastPos.z() / 16));
 
                 for (Offset2D offset2D : centerOffset) {
-                    ChunkPos newChunkPos = new ChunkPos(playerChunkPos.x + offset2D.x, playerChunkPos.z + offset2D.z);
+                    ChunkPos newChunkPos = new ChunkPos(playerChunkPos.x + offset2D.x(), playerChunkPos.z + offset2D.z());
                     if (!visitedInBfs.add(newChunkPos) || processedChunkCache.contains(newChunkPos)) {
                         continue;
                     }
@@ -347,7 +357,8 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
         Queue<ChunkPos> currentQueue = queuedChunksRef.get();
         while (!currentQueue.isEmpty() && processedCount < MAX_LOOT_CHUNK_PER_TICK) {
             ChunkPos chunkPos = currentQueue.poll();
-            int newlyProcessedLoot = LootGenerator.refreshLootInChunk(new LootContext(serverLevel, chunkPos, gameManager.getGameId()));
+            currentGameId = gameManager.getGameId();
+            int newlyProcessedLoot = LootGenerator.refreshLootInChunk(new LootContext(serverLevel, chunkPos, currentGameId));
             if (newlyProcessedLoot != LootGenerator.CHUNK_NOT_LOADED) {
                 processedChunkCache.add(chunkPos);
                 lastBfsProcessedLoot += newlyProcessedLoot;

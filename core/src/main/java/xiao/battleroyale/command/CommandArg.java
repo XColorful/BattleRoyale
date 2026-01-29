@@ -47,6 +47,7 @@ public class CommandArg {
     public static final String FILE = "fileName";
 
     public static final String GENERATE = "generate";
+    public static final String RESET = "reset";
     
     public static final String JOIN = "join";
     public static final String LEAVE = "leave";
@@ -59,6 +60,10 @@ public class CommandArg {
     public static final String SENDER = "senderName";
     public static final String REQUESTER = "requesterName";
     public static final String TEAM_ID = "teamId";
+    public static final String ADD = "add";
+    public static final String BUILD = "build";
+    public static final String SIZE = "size";
+    public static final String FORCE_REBUILD = "forceRebuild";
 
     public static final String XYZ = "xyz";
     public static final String AMOUNT = "amount";
@@ -83,6 +88,20 @@ public class CommandArg {
 
     public static final String SURVIVAL_LOBBY = "survivallobby";
     public static final String TO_SURVIVAL_LOBBY = "tosurvivallobby";
+    public static final String LOOT_CONFIG = "lootconfig";
+    public static final String TYPE = "type";
+    public static final String SLOT = "slot";
+    public static final String BLOCK = "block";
+    public static final String CHUNK = "chunk";
+    public static final String REPEAT = "repeat";
+    public static final String BASE_WEIGHT = "baseWeight";
+    public static final String CHUNK_RADIUS = "chunkRadius";
+    public static final String AUTO_RELOAD = "autoReload";
+    public static final String POS = "pos";
+    public static final String SKIP_NON_EMPTY = "skipNonEmpty";
+    public static final String DROP_BEFORE_REPLACE = "dropBeforeReplace";
+    public static final String FIRST_SLOT_INDEX = "firstSlotIndex";
+    public static final String LAST_SLOT_INDEX = "lastSlotIndex";
 
     public static final String BOOL = "boolean";
 }

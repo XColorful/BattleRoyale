@@ -30,7 +30,7 @@ public class ServerCommand {
         root.then(BackupCommand.get()
                 .requires(source -> checkCommandLevel(source, 2)));
         root.then(TeamCommand.get()
-        ); // 队伍管理全都不需要权限
+        ); // 个别指令需要权限
         root.then(GameCommand.get()
         ); // 部分指令不需要权限
         root.then(FireworkCommand.get()

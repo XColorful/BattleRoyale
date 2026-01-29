@@ -77,7 +77,7 @@ _/generator generate_
 ### 刷新物资
 _/generator generate_
 
-执行[执行刷新](https://github.com/XColorful/BattleRoyale/wiki/Game-command#执行刷新)
+执行[刷新物资](https://github.com/XColorful/BattleRoyale/wiki/Loot-command#刷新物资)
 
 # English
 
@@ -156,4 +156,4 @@ _/generator generate_
 ### Generate loot
 _/generator generate_
 
-Execute [Execute loot](https://github.com/XColorful/BattleRoyale/wiki/Game-command#Execute-loot)
+Execute [Generate loot](https://github.com/XColorful/BattleRoyale/wiki/Loot-command#Generate-loot)

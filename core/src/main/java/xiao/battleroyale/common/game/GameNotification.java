@@ -56,7 +56,7 @@ public class GameNotification {
         }
 
         UUID gameId = gameManager.getGameId();
-        ChatUtils.sendMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.current_game_id", gameId));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.current_game_id", gameId));
     }
 
     public static void sendGameIdInfo(IGameManager gameManager, ServerPlayer player) {

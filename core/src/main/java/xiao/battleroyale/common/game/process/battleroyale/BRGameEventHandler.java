@@ -18,6 +18,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.GameUtils;
 
 public class BRGameEventHandler {
 
@@ -25,7 +26,7 @@ public class BRGameEventHandler {
         ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
         GamePlayer gamePlayer = teamManager.getGamePlayerByUUID(player.getUUID());
         if (gamePlayer != null) {
-            if (serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) != null) { // 不一定在大逃杀游戏的维度
+            if (GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID()) != null) { // 不一定在大逃杀游戏的维度
                 gamePlayer.setActiveEntity(true);
             }
             IGameManager gameManager = BattleRoyale.getGameManager();
@@ -124,7 +125,7 @@ public class BRGameEventHandler {
             brGameProcessManager.sendEliminateMessage(BattleRoyale.getGameManager().getServerLevel(), gamePlayer);
             PlayerRevive playerRevive = PlayerRevive.get();
             if (serverLevel != null) {
-                @Nullable ServerPlayer player = serverLevel.getPlayerByUUID(gamePlayer.getPlayerUUID()) instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+                @Nullable LivingEntity player = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
                 if (player != null && playerRevive.isBleeding(player)) {
                     BattleRoyale.LOGGER.debug("Detected GamePlayer {} PlayerRevive.isBleeding, force kill", gamePlayer.getPlayerName());
                     playerRevive.kill(player);
