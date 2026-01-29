@@ -53,7 +53,7 @@ public class GamePlayer {
     public boolean isAlive() { return isAlive; }
     public boolean isEliminated() { return isEliminated; }
     public int getGameSingleId() { return gameSingleId; }
-    public int getGameTeamId() { return team.getGameTeamId(); }
+    public int getGameTeamId() { return team != null ? team.getGameTeamId() : -1; }
     public String getGameTeamColor() { return gameTeamColor; }
     public boolean isActiveEntity() { return isActiveEntity; }
     public Vec3 getLastPos() { return lastPos; }

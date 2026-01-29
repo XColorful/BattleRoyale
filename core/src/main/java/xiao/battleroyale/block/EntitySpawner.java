@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -23,6 +24,7 @@ import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
+import xiao.battleroyale.util.ChatUtils;
 
 import java.util.List;
 
@@ -68,7 +70,7 @@ public class EntitySpawner extends AbstractLootBlock {
                     int currentConfigId = entitySpawnerBlockEntity.getConfigId();
                     List<LootConfig> allConfigs = LootConfigManager.get().getConfigEntryList(LootConfigTypeEnum.ENTITY_SPAWNER);
                     if (allConfigs == null || allConfigs.isEmpty()) {
-                        player.sendSystemMessage(Component.translatable("battleroyale.message.no_entity_spawner_config_available"));
+                        ChatUtils.sendComponentMessageToPlayer((ServerPlayer) player, Component.translatable("battleroyale.message.no_entity_spawner_config_available"));
                         return ItemInteractionResult.SUCCESS;
                     }
 
@@ -80,7 +82,7 @@ public class EntitySpawner extends AbstractLootBlock {
                         }
                     }
                     entitySpawnerBlockEntity.setConfigId(nextConfig.getConfigId());
-                    player.sendSystemMessage(Component.translatable("battleroyale.message.entity_spawner_lootid_switched", nextConfig.getConfigId(), nextConfig.name));
+                    ChatUtils.sendComponentMessageToPlayer((ServerPlayer) player, Component.translatable("battleroyale.message.entity_spawner_lootid_switched", nextConfig.getConfigId(), nextConfig.name));
                     return ItemInteractionResult.SUCCESS;
                 }
             }

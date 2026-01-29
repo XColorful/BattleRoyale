@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
@@ -28,6 +29,7 @@ import xiao.battleroyale.config.common.effect.particle.ParticleDetailEntry;
 import xiao.battleroyale.developer.debug.command.sub.get.GetEffect;
 import xiao.battleroyale.developer.debug.command.sub.get.GetGame;
 import xiao.battleroyale.util.ColorUtils;
+import xiao.battleroyale.util.GameUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -87,7 +89,7 @@ public class EffectText {
                 .append(Component.literal("]"));
 
         // Name / UUID
-        Entity entity = serverLevel.getEntity(entityTask.entityUUID);
+        Entity entity = GameUtils.getEntity(serverLevel, entityTask.entityUUID);
         if (entity != null) {
             component.append(buildHoverableText(entity.getName().getString(), entity.getUUID().toString()));
         } else {
@@ -169,7 +171,7 @@ public class EffectText {
                     .append(Component.literal("]"));
 
             // Name
-            if (entity != null && serverLevel.getEntity(entity.getUUID()) != null) {
+            if (entity != null && GameUtils.getEntity(serverLevel, entity.getUUID()) != null) {
                 component.append(buildHoverableTextWithColor(
                         entity.getName().getString(),
                         entity.getUUID().toString(),
@@ -230,7 +232,7 @@ public class EffectText {
         }
 
         // Name
-        Entity entity = serverLevel.getEntity(playerUUID);
+        Entity entity = GameUtils.getEntity(serverLevel, playerUUID);
         if (entity != null) {
             component.append(buildRunnableText(entity.getName().getString(), GetEffect.getFireworkByEntityCommand(entity), ChatFormatting.GRAY));
         }
@@ -295,7 +297,7 @@ public class EffectText {
 
         if (!playerTasks.isEmpty()) {
             UUID playerUUID = playerTasks.get(0).getPlayerUUID();
-            Entity entity = serverLevel.getEntity(playerUUID);
+            Entity entity = GameUtils.getEntity(serverLevel, playerUUID);
             if (entity != null) {
                 component.append(Component.literal(" "));
                 GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(playerUUID);
@@ -354,7 +356,7 @@ public class EffectText {
         }
 
         // Name
-        Entity entity = serverLevel.getEntity(mutekiTask.getEntityUUID());
+        Entity entity = GameUtils.getEntity(serverLevel, mutekiTask.getEntityUUID());
         if (entity != null) {
             String command = GetEffect.getMutekiCommand(entity);
             component.append(buildRunnableText(
@@ -455,7 +457,7 @@ public class EffectText {
         }
 
         // Name
-        Entity entity = serverLevel.getEntity(data.uuid);
+        Entity entity = GameUtils.getEntity(serverLevel, data.uuid);
         if (entity != null) {
             String command = GetEffect.getBoostCommand(entity);
             component.append(buildRunnableText(

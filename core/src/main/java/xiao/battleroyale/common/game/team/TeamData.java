@@ -102,7 +102,7 @@ public class TeamData extends AbstractGameManagerData {
             BattleRoyale.LOGGER.info("Failed to generate next playerId: No available player IDs left. Max players: {}", maxPlayersLimit);
             return -1;
         }
-        return availablePlayerIds.iterator().next();
+        return availablePlayerIds.iterator().next(); // 只Peek集合中第一个元素，尚未移除
     }
 
     /**
@@ -115,7 +115,7 @@ public class TeamData extends AbstractGameManagerData {
             BattleRoyale.LOGGER.info("Failed to generate next teamId: No available team IDs left. Max players: {}", maxPlayersLimit);
             return -1;
         }
-        return availableTeamIds.iterator().next();
+        return availableTeamIds.iterator().next(); // 只Peek集合中第一个元素，尚未移除
     }
 
     @Override

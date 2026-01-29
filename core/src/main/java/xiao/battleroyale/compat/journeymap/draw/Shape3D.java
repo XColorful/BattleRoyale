@@ -27,7 +27,7 @@ public class Shape3D {
             float angle = i * TWO_PI_DIV_SEGMENTS;
             double x = center.x + radius * Math.cos(angle);
             double z = center.z + radius * Math.sin(angle);
-            points.add(new BlockPos((int) x, (int) y, (int) z));
+            points.add(BlockPos.containing(x, y, z));
         }
 
         rotatePoints(points, center, rotateDegree);
@@ -41,10 +41,10 @@ public class Shape3D {
     public static void drawFilledCuboid(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                         Vec3 center, float halfWidth, float halfDepth, float rotateDegree, double y) {
         List<BlockPos> points = new ArrayList<>();
-        points.add(new BlockPos((int) (center.x - halfWidth), (int) y, (int) (center.z - halfDepth)));
-        points.add(new BlockPos((int) (center.x + halfWidth), (int) y, (int) (center.z - halfDepth)));
-        points.add(new BlockPos((int) (center.x + halfWidth), (int) y, (int) (center.z + halfDepth)));
-        points.add(new BlockPos((int) (center.x - halfWidth), (int) y, (int) (center.z + halfDepth)));
+        points.add(BlockPos.containing(center.x - halfWidth, y, center.z - halfDepth));
+        points.add(BlockPos.containing(center.x + halfWidth, y, center.z - halfDepth));
+        points.add(BlockPos.containing(center.x + halfWidth, y, center.z + halfDepth));
+        points.add(BlockPos.containing(center.x - halfWidth, y, center.z + halfDepth));
 
         rotatePoints(points, center, rotateDegree);
 
@@ -63,7 +63,7 @@ public class Shape3D {
             float angle = i * TWO_PI_DIV_SEGMENTS;
             double x = center.x + halfA * Math.cos(angle);
             double z = center.z + halfB * Math.sin(angle);
-            points.add(new BlockPos((int) x, (int) y, (int) z));
+            points.add(BlockPos.containing(x, y, z));
         }
 
         rotatePoints(points, center, rotateDegree);
