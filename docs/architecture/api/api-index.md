@@ -75,6 +75,10 @@
 ### 物资
 > _./api/loot_
 
+- [IInventoryManager](/docs/api/loot/IInventoryManager.md)：背包刷新器通用接口
+> - [ICommonInventoryManager](/docs/api/loot/ICommonInventoryManager.md)：手动背包刷新器接口
+- [ILootManager](/docs/api/loot/ILootManager.md)：物资刷新器通用接口
+> - [ICommonLootManager](/docs/api/loot/ICommonLootManager.md)：手动物资刷新器接口
 - [ILootObject](/docs/api/loot/ILootObject.md)：物资对象，可刷新物资和读写游戏ID（UUID）
 
 ## 模组联动
@@ -320,6 +324,11 @@
 ### Loot
 > _./api/loot_
 
+- [IInventoryManager](/docs/api/loot/IInventoryManager.md): Inventory manager common interface
+> - [ICommonInventoryManager](/docs/api/loot/ICommonInventoryManager.md): Manual inventory manager interface
+- [ILootManager](/docs/api/loot/ILootManager.md)：物资刷新器通用接口
+- [ILootManager](/docs/api/loot/ILootManager.md): Loot manager common interface
+> - [ICommonLootManager](/docs/api/loot/ICommonLootManager.md): Manual loot manager interface
 - [ILootObject](/docs/api/loot/ILootObject.md): Loot object, can generate loot and read/write Game ID (UUID)
 
 ## Mod Compat

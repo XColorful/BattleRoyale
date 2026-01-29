@@ -82,4 +82,22 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
         blockEntity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
         blockEntity.setChanged();
     }
+
+    /**
+     * 移除游戏UUID
+     */
+    @Override public void removeGameId(ItemStack itemStack) {
+        itemStack.getOrCreateTag().remove(LootNBTTag.GAME_ID_TAG);
+    }
+    @Override public void removeGameId(Entity entity) {
+        entity.getPersistentData().remove(LootNBTTag.GAME_ID_TAG);
+    }
+    /**
+     * 移除游戏UUID
+     * 此方法不适用于本模组的方块
+     */
+    @Override public void removeGameId(BlockEntity blockEntity) {
+        blockEntity.getPersistentData().remove(LootNBTTag.GAME_ID_TAG);
+        blockEntity.setChanged();
+    }
 }

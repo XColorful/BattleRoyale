@@ -27,6 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.IConfigManager;
 import xiao.battleroyale.block.entity.ZoneControllerBlockEntity;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
@@ -64,8 +65,15 @@ public class ZoneController extends BaseEntityBlock {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof ZoneControllerBlockEntity zoneControllerBlockEntity) {
                 if (player.isCrouching()) { // 切换配置
-                    if (GameConfigManager.get().switchConfigFile(ZoneConfigManager.get().getNameKey())) {
-                        String currentFileName = GameConfigManager.get().getCurrentSelectedFileName(ZoneConfigManager.get().getNameKey());
+                    IConfigManager gameConfigManager = BattleRoyale.getModConfigManager().getConfigManager(GameConfigManager.get().getNameKey());
+                    if (gameConfigManager == null) {
+                        ChatUtils.sendMessageToPlayer((ServerPlayer) player, "Unexpected exception occurred during autoLootConfig: GameConfigManager is null");
+                        BattleRoyale.LOGGER.warn("GameConfigManager is null");
+                        return InteractionResult.FAIL;
+                    }
+                    String zoneConfigNameKey = ZoneConfigManager.get().getNameKey();
+                    if (gameConfigManager.switchConfigFile(zoneConfigNameKey)) {
+                        String currentFileName = gameConfigManager.getCurrentSelectedFileName(zoneConfigNameKey);
                         BattleRoyale.LOGGER.info("{} switch zone config file to {} via zone_controller", player.getName(), currentFileName);
                         ChatUtils.sendTranslatableMessageToPlayer((ServerPlayer) player, "battleroyale.message.switch_zone_config_file", currentFileName);
                     } else {

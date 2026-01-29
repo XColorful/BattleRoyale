@@ -18,6 +18,7 @@ import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
+import xiao.battleroyale.util.GameUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -58,11 +59,10 @@ public class InventoryFunc extends AbstractSimpleFunc {
         for (GamePlayer gamePlayer : zoneTickContext.gamePlayers) {
             if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
 
-                LivingEntity livingEntity = (LivingEntity) zoneTickContext.serverLevel.getEntity(gamePlayer.getPlayerUUID());
+                @Nullable LivingEntity livingEntity = GameUtils.getLivingEntity(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID());
                 if (livingEntity != null) {
                     Vec3 playerLastPos = gamePlayer.getLastPos();
-                    ChunkPos chunkPos = new ChunkPos(new BlockPos((int) playerLastPos.x, (int) playerLastPos.y, (int) playerLastPos.z));
-                    LootGenerator.LootContext lootContext = new LootGenerator.LootContext(serverLevel, chunkPos, gameId);
+                    LootGenerator.LootContext lootContext = new LootGenerator.LootContext(serverLevel, playerLastPos, gameId);
 
                     lootItems.clear();
                     // 先刷写在区域配置里的

@@ -29,7 +29,7 @@ public interface IEffectGiver {
      * @param vRange 使中心点往上随机偏移
      * @param hRange 水平偏移半径
      */
-    void spawnPlayerFirework(@Nullable ServerPlayer player, int amount, int interval, float vRange, float hRange);
+    void spawnPlayerFirework(@Nullable LivingEntity player, int amount, int interval, float vRange, float hRange);
 
     /**
      * 使指定实体免伤

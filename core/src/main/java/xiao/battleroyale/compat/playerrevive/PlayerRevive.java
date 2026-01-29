@@ -1,5 +1,7 @@
 package xiao.battleroyale.compat.playerrevive;
 
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
@@ -50,6 +52,12 @@ public class PlayerRevive extends AbstractCompatMod {
         revivingPlayers = IBleeding.getMethod("revivingPlayers");
     }
 
+    public boolean isBleeding(LivingEntity livingEntity) {
+        if (!(livingEntity instanceof Player player)) { // PlayerRevive只支持Player
+            return false;
+        }
+        return isBleeding(player);
+    }
     public boolean isBleeding(Player player) {
         if (!isLoaded()) {
             return false;
@@ -62,6 +70,11 @@ public class PlayerRevive extends AbstractCompatMod {
         return false;
     }
 
+    public void revive(LivingEntity livingEntity) {
+        if (livingEntity instanceof Player player) { // PlayerRevive只支持Player
+            revive(player);
+        }
+    }
     public void revive(Player player) {
         if (!isLoaded()) {
             return;
@@ -74,6 +87,11 @@ public class PlayerRevive extends AbstractCompatMod {
         }
     }
 
+    public void kill(LivingEntity livingEntity) {
+        if (livingEntity instanceof Player player) { // PlayerRevive只支持Player
+            kill(player);
+        }
+    }
     public void kill(Player player) {
         if (!isLoaded()) {
             return;

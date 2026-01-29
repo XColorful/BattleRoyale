@@ -20,8 +20,15 @@
   "battleroyale.message.secret_room_lootid_switched": "切换至神秘点位配置%s: %s",
 
   "battleroyale.message.loot_generation_started": "开始执行物资刷新 (区块数: %s)",
+  "battleroyale.message.loot_generation_stopped": "已停止执行的物资刷新",
   "battleroyale.message.loot_generation_in_progress": "当前正在执行物资刷新",
   "battleroyale.message.loot_generation_finished": "刷新物资及实体刷新方块共%s个",
+  "battleroyale.message.loot_pos_success": "刷新物资及实体刷新方块 %s",
+  "battleroyale.message.loot_unavailable": "物资刷新不可用",
+  "battleroyale.message.reset_inventory_finished": "已重置背包共%s个",
+  "battleroyale.message.inventory_loot_generation_finished": "刷新背包共%s个",
+  "battleroyale.message.inventory_loot_unavailable": "背包刷新不可用",
+  "battleroyale.message.inventory_loot_failed": "未能刷新背包",
 
   "battleroyale.message.no_loot_spawner_config_available": "当前没有已加载的物资刷新方块配置",
   "battleroyale.message.no_entity_spawner_config_available": "当前没有已加载的实体刷新方块配置",
@@ -158,6 +165,13 @@
   "battleroyale.message.not_enough_team_to_start": "当前没有足够队伍开始游戏",
   "battleroyale.message.team_removed": "已移除队伍%s",
   "battleroyale.message.removed_from_team": "已被移出队伍",
+  "battleroyale.message.not_include_living_entity": "未包含生物实体",
+  "battleroyale.message.added_to_team": "已将玩家%s加入队伍%s",
+  "battleroyale.message.not_added_to_team": "未能将玩家 %s 加入队伍%s",
+  "battleroyale.message.no_player_pending_to_build_team": "没有玩家待组建队伍",
+  "battleroyale.message.build_team_success": "已组建队伍",
+  "battleroyale.message.build_team_failed": "未能组建队伍",
+  "battleroyale.message.build_team_expected_pending_actual": "组建队伍: 预期总数 %s, 待处理 %s, 实际组建 %s",
 
   "battleroyale.message.player_kicked_from_team": "玩家 %s 已被踢出您的队伍",
   "battleroyale.message.kicked_by_leader": "玩家 %s 将您踢出了队伍",
@@ -271,7 +285,7 @@
   "battleroyale.message.teleport": "[传送]",
   "battleroyale.message.has_won_the_game": "取得了胜利",
   "battleroyale.message.game_time": "游戏时长: %s(%s)",
-  "battleroyale.message.has_game_in_progress": "当前有正在进行的大逃杀游戏：",
+  "battleroyale.message.has_game_in_progress": "当前有正在进行的大逃杀游戏:",
   "battleroyale.message.spectate": "[观战]",
   "battleroyale.message.player_is_spectating": "玩家 %s 正在观战 %s",
   "battleroyale.message.is_downed": "倒地了",
@@ -313,6 +327,8 @@
   "battleroyale.message.teleport_non_game_player_to_lobby": "已将非游戏玩家 %s 传送至大厅",
   "battleroyale.message.down_fire_not_enabled": "大逃杀规则配置未启用倒地玩家伤害",
   "battleroyale.message.only_game_player_spectate": "游戏配置未启用非游戏玩家观战",
+  "battleroyale.message.utility_lootconfig_generation_success": "已生成物资刷新方块配置: %s",
+  "battleroyale.message.utility_lootconfig_generation_failed": "无法生成物资刷新方块配置，请检查周围容器内是否有物品",
 
   "battleroyale.label.alive": "生存",
 

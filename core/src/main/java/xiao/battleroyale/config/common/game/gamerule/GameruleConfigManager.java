@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.game.gamerule.GameruleConfigTag;
+import xiao.battleroyale.api.config.common.game.gamerule.IGameruleConfigManager;
 import xiao.battleroyale.api.config.common.game.gamerule.IGameruleSingleEntry;
-import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
@@ -21,7 +21,9 @@ import java.nio.file.Path;
 import java.util.Comparator;
 
 
-public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConfigManager.GameruleConfig> {
+public class GameruleConfigManager
+        extends AbstractConfigSubManager<GameruleConfigManager.GameruleConfig>
+        implements IGameruleConfigManager<GameruleConfigManager.GameruleConfig> {
 
     private static class GameruleConfigManagerHolder {
         private static final GameruleConfigManager INSTANCE = new GameruleConfigManager();
@@ -32,7 +34,6 @@ public class GameruleConfigManager extends AbstractConfigSubManager<GameruleConf
     }
 
     private GameruleConfigManager() {
-        super(CommandArg.GAMERULE);
         allFolderConfigData.put(DEFAULT_GAMERULE_CONFIG_FOLDER, new FolderConfigData<>());
     }
 

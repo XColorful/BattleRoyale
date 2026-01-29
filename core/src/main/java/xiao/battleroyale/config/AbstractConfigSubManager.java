@@ -18,9 +18,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     protected final int DEFAULT_CONFIG_FOLDER = 0;
     protected final Map<Integer, FolderConfigData<T>> allFolderConfigData = new HashMap<>(); // folderId -> 文件夹下配置
 
-    protected final String nameKey;
-    public AbstractConfigSubManager(String nameKey) {
-        this.nameKey = nameKey;
+    public AbstractConfigSubManager() {
         allFolderConfigData.put(DEFAULT_CONFIG_FOLDER, new FolderConfigData<>());
     }
 
@@ -52,13 +50,6 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         getConfigFolderData(folderId).fileConfigsByFileName.clear();
         getConfigFolderData(folderId).currentConfigs.clear();
         getConfigFolderData(folderId).setConfigFileName("");
-    }
-
-    /**
-     * IManagerName
-     */
-    @Override public String getNameKey() {
-        return this.nameKey;
     }
 
     /**

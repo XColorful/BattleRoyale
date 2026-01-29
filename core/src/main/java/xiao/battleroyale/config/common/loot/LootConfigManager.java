@@ -6,11 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.config.common.loot.ILootEntry;
-import xiao.battleroyale.api.config.common.loot.LootConfigTag;
-import xiao.battleroyale.api.config.common.loot.LootEntryTag;
+import xiao.battleroyale.api.config.common.loot.*;
 import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
-import xiao.battleroyale.command.CommandArg;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
@@ -25,7 +22,9 @@ import java.util.Comparator;
 
 import static xiao.battleroyale.config.common.loot.LootConfigTypeEnum.*;
 
-public class LootConfigManager extends AbstractConfigSubManager<LootConfigManager.LootConfig> {
+public class LootConfigManager
+        extends AbstractConfigSubManager<LootConfigManager.LootConfig>
+        implements ILootConfigManager<LootConfigManager.LootConfig> {
 
     public static final String LOOT_CONFIG_SUB_PATH = "loot";
     public static final String LOOT_CONFIG_PATH = Paths.get(ModConfigManager.MOD_CONFIG_PATH).resolve(LOOT_CONFIG_SUB_PATH).toString();
@@ -48,7 +47,6 @@ public class LootConfigManager extends AbstractConfigSubManager<LootConfigManage
 
 
     private LootConfigManager() {
-        super(CommandArg.LOOT);
         allFolderConfigData.put(LOOT_SPAWNER, new FolderConfigData<>());
         allFolderConfigData.put(ENTITY_SPAWNER, new FolderConfigData<>());
         allFolderConfigData.put(AIRDROP, new FolderConfigData<>());
@@ -66,7 +64,7 @@ public class LootConfigManager extends AbstractConfigSubManager<LootConfigManage
     /**
      * 目前generateLootData需要手动调用this.entry.generateLootData(Random)
      */
-    public static class LootConfig extends AbstractSingleConfig {
+    public static class LootConfig extends AbstractSingleConfig implements ILootSingleEntry {
         public static final String CONFIG_TYPE = "LootConfig";
 
         public final ILootEntry entry;

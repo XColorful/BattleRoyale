@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.api.game.loot.IGameLootManager;
-import xiao.battleroyale.common.loot.CommonLootManager;
+import xiao.battleroyale.api.loot.ICommonLootManager;
 import xiao.battleroyale.util.GameUtils.GameTimeFormat;
 import xiao.battleroyale.util.StringUtils;
 
@@ -22,7 +22,7 @@ public class LootText {
     /**
      * 悬浮查看CommonLootManager各个状态
      */
-    public static MutableComponent buildCommonLoot(CommonLootManager commonLootManager) {
+    public static MutableComponent buildCommonLoot(ICommonLootManager commonLootManager) {
         MutableComponent component = Component.empty();
         if (commonLootManager == null) {
             return component;
@@ -31,7 +31,7 @@ public class LootText {
         // config
         MutableComponent configComponent = Component.empty()
                 .append(Component.literal("MaxChunkPerTick"))
-                .append(Component.literal(":" + CommonLootManager.getMaxChunksPerTick()));
+                .append(Component.literal(":" + commonLootManager.getMaxLootChunkPerTick()));
         component.append(buildHoverableText("config", configComponent));
         component.append(Component.literal(" "));
         
