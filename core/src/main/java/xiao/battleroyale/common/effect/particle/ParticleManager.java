@@ -6,6 +6,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.effect.type.IParticleManager;
 import xiao.battleroyale.event.handler.effect.ParticleEventHandler;
+import xiao.battleroyale.util.GameUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,7 +58,7 @@ public class ParticleManager implements IParticleManager {
                             return true;
                         }
                         serverLevel.set(particleData.serverLevel);
-                        livingEntity.set((LivingEntity) serverLevel.get().getEntity(entityUUID));
+                        livingEntity.set(GameUtils.getLivingEntity(serverLevel.get(), entityUUID));
                     }
                     if (livingEntity.get() == null) {
                         return true;
