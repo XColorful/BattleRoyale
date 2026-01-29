@@ -306,8 +306,9 @@ public class LootGenerator {
         return refreshedCount;
     }
     private static void clearOldLoot(LootContext lootContext) {
-        BlockPos minPos = BlockPos.containing(lootContext.chunkPos.getMinBlockX(), lootContext.serverLevel.getMinBuildHeight(), lootContext.chunkPos.getMinBlockZ());
-        BlockPos maxPos = BlockPos.containing(lootContext.chunkPos.getMaxBlockX() + 1, lootContext.serverLevel.getMaxBuildHeight(), lootContext.chunkPos.getMaxBlockZ() + 1);
+        int minY = lootContext.serverLevel.dimensionType().minY();
+        BlockPos minPos = BlockPos.containing(lootContext.chunkPos.getMinBlockX(), minY, lootContext.chunkPos.getMinBlockZ());
+        BlockPos maxPos = BlockPos.containing(lootContext.chunkPos.getMaxBlockX() + 1, minY, lootContext.chunkPos.getMaxBlockZ() + 1);
         AABB chunkAABB = new AABB(minPos.getX(), minPos.getY(), minPos.getZ(), maxPos.getX(), maxPos.getY(), maxPos.getZ());
         List<Entity> allEntitiesInChunk = lootContext.serverLevel.getEntitiesOfClass(Entity.class, chunkAABB, entity -> !(entity instanceof Player));
         List<Entity> oldEntities = new ArrayList<>();
