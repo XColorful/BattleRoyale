@@ -15,6 +15,7 @@
 - 低心智负担：得益于清晰的同构逻辑，重复性工作当然由 AI 快速产出
 
 在 AI 辅助开发的背景下，如有逻辑简单、结构清晰（但手动编写费力）的方案，不妨权衡其可读性与易维护性
+> 注：现已重构成每个事件由单一 Manager 类内部持有5个优先级代理的结构，兼顾了文件整洁与 AI 批量生成的效率
 
 ### 照葫芦画瓢
 
@@ -103,6 +104,7 @@ Why are there a large number of isomorphic event classes (5 events × 5 prioriti
 - Low cognitive burden: Thanks to the clear isomorphic logic, repetitive work is naturally produced quickly by AI.
 
 In the context of AI-assisted development, if there is a solution that is logically simple and structurally clear (but tedious to write manually), it is worth weighing its readability and ease of maintenance.
+> Note: Now refactored into a structure where each event is managed by a single Manager class holding five internal priority proxies, balancing file cleanliness with the efficiency of AI batch generation.
 
 ### Pattern replication
 

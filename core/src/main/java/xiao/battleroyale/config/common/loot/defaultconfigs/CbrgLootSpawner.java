@@ -278,7 +278,7 @@ public class CbrgLootSpawner {
         MultiEntry m24Ammo = gunSemiAmmoBuilder("m700", "cbrg", "ammo_762", 15);
         MultiEntry mosin_nagantAmmo = gunSemiAmmoBuilder("classicr", "kar98", "cbrg", "ammo_762", 15);
         MultiEntry kar98kAmmo = gunSemiAmmoBuilder("hamster", "mosin9130", "cbrg", "ammo_762", 15);
-        MultiEntry win94Ammo = gunSemiAmmoBuilder("hamster", "win1894", "cbrg", "ammo_762", 15);
+        MultiEntry win94Ammo = gunSemiAmmoBuilder("hamster", "win1894", "cbrg", "ammo_45acp", 15);
 
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(15, m24Ammo),
@@ -401,7 +401,7 @@ public class CbrgLootSpawner {
 
     private static ILootEntry commonPistolEntry() {
         MultiEntry p18cAmmo = gunAmmoBuilder("cib", "g18c", "cbrg", "ammo_9mm", 15);
-        MultiEntry skorpionAmmo = gunAmmoBuilder("cz75", "cbrg", "ammo_45acp", 15);
+        MultiEntry skorpionAmmo = gunAmmoBuilder("cz75", "cbrg", "ammo_9mm", 15);
 
         MultiEntry deagleAmmo = gunSemiAmmoBuilder("deagle", "cbrg", "ammo_45acp", 7);
         MultiEntry sawedAmmo = gunSemiAmmoBuilder("db_short", "cbrg", "ammo_12g", 2); // 默认不用连发
@@ -410,7 +410,7 @@ public class CbrgLootSpawner {
         // R45
 
         MultiEntry p1911Ammo = gunSemiAmmoBuilder("m1911", "cbrg", "ammo_45acp", 7);
-        MultiEntry p92Ammo = gunSemiAmmoBuilder("p320", "cbrg", "ammo_45acp", 12);
+        MultiEntry p92Ammo = gunSemiAmmoBuilder("p320", "cbrg", "ammo_9mm", 12);
 
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(5, p18cAmmo),
