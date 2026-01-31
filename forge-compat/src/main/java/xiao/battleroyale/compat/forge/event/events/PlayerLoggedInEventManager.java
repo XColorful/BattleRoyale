@@ -1,31 +1,87 @@
 package xiao.battleroyale.compat.forge.event.events;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import xiao.battleroyale.api.event.EventPriority;
+import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEventHandler;
+import xiao.battleroyale.compat.forge.event.ForgeEvent;
+import xiao.battleroyale.compat.forge.event.ForgePlayerLoggedInEvent;
 
 public class PlayerLoggedInEventManager {
 
     public static boolean register(IEventHandler eventHandler, EventPriority priority, boolean receiveCanceled) {
-        boolean registered = false;
-        switch (priority) {
-            case HIGHEST -> registered = PlayerLoggedInHighest.get().addEventHander(eventHandler, receiveCanceled);
-            case HIGH -> registered = PlayerLoggedInHigh.get().addEventHander(eventHandler,receiveCanceled);
-            case NORMAL -> registered = PlayerLoggedInNormal.get().addEventHander(eventHandler, receiveCanceled);
-            case LOW -> registered = PlayerLoggedInLow.get().addEventHander(eventHandler, receiveCanceled);
-            case LOWEST -> registered = PlayerLoggedInLowest.get().addEventHander(eventHandler, receiveCanceled);
-        }
-        return registered;
+        return getProxy(priority).addEventHander(eventHandler, receiveCanceled);
     }
 
     public static boolean unregister(IEventHandler eventHandler, EventPriority priority, boolean receiveCanceled) {
-        boolean unregistered = false;
-        switch (priority) {
-            case HIGHEST -> unregistered = PlayerLoggedInHighest.get().removeEventHandler(eventHandler, receiveCanceled);
-            case HIGH -> unregistered = PlayerLoggedInHigh.get().removeEventHandler(eventHandler,receiveCanceled);
-            case NORMAL -> unregistered = PlayerLoggedInNormal.get().removeEventHandler(eventHandler, receiveCanceled);
-            case LOW -> unregistered = PlayerLoggedInLow.get().removeEventHandler(eventHandler, receiveCanceled);
-            case LOWEST -> unregistered = PlayerLoggedInLowest.get().removeEventHandler(eventHandler, receiveCanceled);
+        return getProxy(priority).removeEventHandler(eventHandler, receiveCanceled);
+    }
+
+    private static AbstractEventCommon getProxy(EventPriority priority) {
+        return switch (priority) {
+            case HIGHEST -> Highest.INSTANCE;
+            case HIGH -> High.INSTANCE;
+            case NORMAL -> Normal.INSTANCE;
+            case LOW -> Low.INSTANCE;
+            case LOWEST -> Lowest.INSTANCE;
+        };
+    }
+
+    private static abstract class PlayerLoggedInProxy extends AbstractEventCommon {
+        public PlayerLoggedInProxy() {
+            super(EventType.PLAYER_LOGGED_IN_EVENT);
         }
-        return unregistered;
+
+        @Override
+        protected void registerToForge() {
+            MinecraftForge.EVENT_BUS.register(this);
+        }
+
+        @Override
+        protected void unregisterToForge() {
+            MinecraftForge.EVENT_BUS.unregister(this);
+        }
+
+        @Override
+        protected ForgeEvent getForgeEventType(Event event) {
+            return new ForgePlayerLoggedInEvent(event);
+        }
+
+        protected void handle(PlayerEvent.PlayerLoggedInEvent event) {
+            super.onEvent(event);
+        }
+    }
+
+    public static class Highest extends PlayerLoggedInProxy {
+        static final Highest INSTANCE = new Highest();
+        @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGHEST, receiveCanceled = true)
+        public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
+    }
+
+    public static class High extends PlayerLoggedInProxy {
+        static final High INSTANCE = new High();
+        @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGH, receiveCanceled = true)
+        public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
+    }
+
+    public static class Normal extends PlayerLoggedInProxy {
+        static final Normal INSTANCE = new Normal();
+        @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.NORMAL, receiveCanceled = true)
+        public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
+    }
+
+    public static class Low extends PlayerLoggedInProxy {
+        static final Low INSTANCE = new Low();
+        @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOW, receiveCanceled = true)
+        public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
+    }
+
+    public static class Lowest extends PlayerLoggedInProxy {
+        static final Lowest INSTANCE = new Lowest();
+        @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST, receiveCanceled = true)
+        public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
     }
 }
