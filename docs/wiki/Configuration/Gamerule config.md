@@ -76,6 +76,7 @@
 - doTimeSet：是否使 _timeSet_ 生效
 - timeSet：等价于游戏开始时执行一次 _/time set [int]_
 - 其余选项等价于原版指令 _/gamerule 配置 [true/false]_
+> 注：0.4.7及以前，"tntExplosionDropDecay"是"tntExplodes"
 ```json
 "minecraft": {
 	"adventureMode": true,
@@ -87,7 +88,7 @@
 	"doDaylightCycle": false,
 	"doWeatherCycle": false,
 	"fallDamage": false,
-	"tntExplodes": false,
+	"tntExplosionDropDecay": false,
 	"spectatorGenerateChunks": false,
 	"clearInventory": true,
 	"keepInventory": false,
@@ -258,6 +259,7 @@
 - doTimeSet: Whether to make _timeSet_ effective
 - timeSet: equivalent to executing _/time set [int]_ once at the start of the game
 - The rest of the options are equivalent to the vanilla command _/gamerule OPTION [true/false]_
+> Note: In version 0.4.7 and earlier, "tntExplosionDropDecay" was named "tntExplodes".
 ```json
 "minecraft": {
 	"adventureMode": true,
@@ -269,7 +271,7 @@
 	"doDaylightCycle": false,
 	"doWeatherCycle": false,
 	"fallDamage": false,
-	"tntExplodes": false,
+	"tntExplosionDropDecay": false,
 	"spectatorGenerateChunks": false,
 	"clearInventory": true,
 	"keepInventory": false,
