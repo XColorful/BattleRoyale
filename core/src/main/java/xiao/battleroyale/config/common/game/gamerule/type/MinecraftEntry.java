@@ -90,7 +90,9 @@ public class MinecraftEntry implements IGameruleEntry {
         boolean doDaylightCycle = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.DO_DAYLIGHT_CYCLE, false);
         boolean doWeatherCycle = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.DO_WEATHER_CYCLE, false);
         boolean fallDamage = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.FALL_DAMAGE, true);
-        boolean tntExplodes = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.TNT_EXPLOSION_DROP_DECAY, false);
+        @SuppressWarnings("deprecation")
+        boolean tntExplodes = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.TNT_EXPLOSION_DROP_DECAY, false)
+                || JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.TNT_EXPLOSION_DROP_DECAY_OLD, false); // 0.4.7及以前
         boolean spectatorGenerateChunks = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.SPECTATOR_GENERATE_CHUNKS, false);
         boolean clearInventory = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.CLEAR_INVENTORY, true);
         boolean keepInventory = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.KEEP_INVENTORY, false);
