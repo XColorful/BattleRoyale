@@ -3,7 +3,7 @@ package xiao.battleroyale.compat.neoforge.event.events;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import xiao.battleroyale.api.event.EventPriority;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEventHandler;
@@ -50,40 +50,38 @@ public class NeoServerTickEventManager {
             return new NeoServerTickEvent(event);
         }
 
-        protected void handle(TickEvent.ServerTickEvent event) {
-            if (event.phase == TickEvent.Phase.END) {
-                super.onEvent(event);
-            }
+        protected void handle(ServerTickEvent.Post event) {
+            super.onEvent(event);
         }
     }
 
     public static class Highest extends NeoServerTickProxy {
         static final Highest INSTANCE = new Highest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGHEST, receiveCanceled = true)
-        public void onEvent(TickEvent.ServerTickEvent e) { handle(e); }
+        public void onEvent(ServerTickEvent.Post e) { handle(e); }
     }
 
     public static class High extends NeoServerTickProxy {
         static final High INSTANCE = new High();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGH, receiveCanceled = true)
-        public void onEvent(TickEvent.ServerTickEvent e) { handle(e); }
+        public void onEvent(ServerTickEvent.Post e) { handle(e); }
     }
 
     public static class Normal extends NeoServerTickProxy {
         static final Normal INSTANCE = new Normal();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.NORMAL, receiveCanceled = true)
-        public void onEvent(TickEvent.ServerTickEvent e) { handle(e); }
+        public void onEvent(ServerTickEvent.Post e) { handle(e); }
     }
 
     public static class Low extends NeoServerTickProxy {
         static final Low INSTANCE = new Low();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOW, receiveCanceled = true)
-        public void onEvent(TickEvent.ServerTickEvent e) { handle(e); }
+        public void onEvent(ServerTickEvent.Post e) { handle(e); }
     }
 
     public static class Lowest extends NeoServerTickProxy {
         static final Lowest INSTANCE = new Lowest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST, receiveCanceled = true)
-        public void onEvent(TickEvent.ServerTickEvent e) { handle(e); }
+        public void onEvent(ServerTickEvent.Post e) { handle(e); }
     }
 }
