@@ -15,6 +15,8 @@ public class NeoEventRegister implements IEventRegister {
         switch (eventType) {
             case SERVER_TICK_EVENT -> registered = NeoServerTickEventManager.register(eventHandler, priority, receiveCanceled);
             case CLIENT_TICK_EVENT -> registered = NeoClientTickEventManager.register(eventHandler, priority, receiveCanceled);
+            case LIVING_ATTACK_EVENT -> registered = NeoLivingAttackEventManager.register(eventHandler, priority, receiveCanceled);
+            case LIVING_HURT_EVENT -> registered = NeoLivingHurtEventManager.register(eventHandler, priority, receiveCanceled);
             case LIVING_DAMAGE_EVENT -> registered = NeoLivingDamageEventManager.register(eventHandler, priority, receiveCanceled);
             case LIVING_DEATH_EVENT -> registered = NeoLivingDeathEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_IN_EVENT -> registered = NeoPlayerLoggedInEventManager.register(eventHandler, priority, receiveCanceled);
@@ -36,6 +38,8 @@ public class NeoEventRegister implements IEventRegister {
         switch (eventType) {
             case SERVER_TICK_EVENT -> unregistered = NeoServerTickEventManager.unregister(eventHandler, priority, receiveCanceled);
             case CLIENT_TICK_EVENT -> unregistered = NeoClientTickEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case LIVING_ATTACK_EVENT -> unregistered = NeoLivingAttackEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case LIVING_HURT_EVENT -> unregistered = NeoLivingHurtEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LIVING_DAMAGE_EVENT -> unregistered = NeoLivingDamageEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LIVING_DEATH_EVENT -> unregistered = NeoLivingDeathEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_IN_EVENT -> unregistered = NeoPlayerLoggedInEventManager.unregister(eventHandler, priority, receiveCanceled);
