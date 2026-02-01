@@ -1,10 +1,7 @@
 package xiao.battleroyale.event.handler.game;
 
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.event.EventType;
-import xiao.battleroyale.api.event.IEvent;
-import xiao.battleroyale.api.event.IEventHandler;
-import xiao.battleroyale.api.event.ILivingDamageEvent;
+import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.event.EventRegister;
 
 /**
@@ -29,17 +26,17 @@ public class LobbyEventHandler implements IEventHandler {
     }
 
     public static void register() {
-        EventRegister.register(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
+        EventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
     }
 
     public static void unregister() {
-        EventRegister.unregister(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
+        EventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
     }
 
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
-        if (eventType == EventType.LIVING_DAMAGE_EVENT){
-            if (BattleRoyale.getGameManager().getGameLobbyManager().canMuteki(((ILivingDamageEvent) event).getEntity())) {
+        if (eventType == EventType.LIVING_ATTACK_EVENT){
+            if (BattleRoyale.getGameManager().getGameLobbyManager().canMuteki(((ILivingAttackEvent) event).getEntity())) {
                 event.setCanceled(true);
             }
         } else {

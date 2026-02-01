@@ -12,7 +12,7 @@ import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.Gamer
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.data.io.TempDataManager;
-import xiao.battleroyale.event.handler.game.DamageEventHandler;
+import xiao.battleroyale.event.handler.game.AttackEventHandler;
 import xiao.battleroyale.event.handler.game.LogEventHandler;
 import xiao.battleroyale.event.handler.game.LoopEventHandler;
 import xiao.battleroyale.event.handler.game.PlayerDeathEventHandler;
@@ -183,13 +183,13 @@ public class GameStarter {
     }
 
     protected static void registerGameEvent() {
-        DamageEventHandler.register();
+        AttackEventHandler.register();
         LoopEventHandler.register();
         PlayerDeathEventHandler.register();
         BleedingHandler.get().clear();
     }
     protected static void unregisterGameEvent() {
-        DamageEventHandler.unregister();
+        AttackEventHandler.unregister();
         LoopEventHandler.unregister();
         PlayerDeathEventHandler.unregister();
         LogEventHandler.unregister();
