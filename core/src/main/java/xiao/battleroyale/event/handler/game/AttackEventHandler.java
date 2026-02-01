@@ -20,34 +20,34 @@ import xiao.battleroyale.util.ChatUtils;
 /**
  * 伤害数值调整
  */
-public class DamageEventHandler implements IEventHandler {
+public class AttackEventHandler implements IEventHandler {
 
-    private DamageEventHandler() {}
+    private AttackEventHandler() {}
 
-    private static class DamageEventHandlerHolder {
-        private static final DamageEventHandler INSTANCE = new DamageEventHandler();
+    private static class AttackEventHandlerHolder {
+        private static final AttackEventHandler INSTANCE = new AttackEventHandler();
     }
 
-    public static DamageEventHandler get() {
-        return DamageEventHandlerHolder.INSTANCE;
+    public static AttackEventHandler get() {
+        return AttackEventHandlerHolder.INSTANCE;
     }
 
     @Override public String getEventHandlerName() {
-        return "DamageEventHandler";
+        return "AttackEventHandler";
     }
 
     public static void register() {
-        EventRegister.register(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGH, false);
+        EventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGH, false);
     }
 
     public static void unregister() {
-        EventRegister.unregister(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGH, false);
+        EventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGH, false);
     }
 
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
-        if (eventType == EventType.LIVING_DAMAGE_EVENT) {
-            checkDamage((ILivingDamageEvent) event);
+        if (eventType == EventType.LIVING_ATTACK_EVENT) {
+            checkDamage((ILivingAttackEvent) event);
         } else {
             onReceiveWrongEvent(eventType);
         }
@@ -59,7 +59,7 @@ public class DamageEventHandler implements IEventHandler {
      * 通知队伍更新成员信息
      * @param event 实体受到伤害事件
      */
-    private void checkDamage(ILivingDamageEvent event) {
+    private void checkDamage(ILivingAttackEvent event) {
         LivingEntity damagedEntity = event.getEntity(); // 被攻击方
         DamageSource damageSource = event.getSource(); // 攻击方
 
