@@ -80,6 +80,10 @@ public class LootConfigManager
             return new LootConfig(id, name, color, isDefault, entry.copy());
         }
 
+        @Override public ILootEntry getLootEntry() {
+            return this.entry;
+        }
+
         @Override
         public String getType() {
             return CONFIG_TYPE;
@@ -205,13 +209,10 @@ public class LootConfigManager
         }
     }
 
-    /**
-     * 根据刷新实体/方块自身lootId的通用获取接口
-     */
-    @Nullable
-    public LootConfig getLootConfig(BlockEntity be, int id) {
+    @Override
+    public @Nullable LootConfig getLootConfig(BlockEntity be) {
         if (be instanceof AbstractLootBlockEntity lootBlockEntity) {
-            return this.getConfigEntry(lootBlockEntity.getConfigFolderId(), id);
+            return this.getConfigEntry(lootBlockEntity.getConfigFolderId(), lootBlockEntity.getConfigId());
         }
         BattleRoyale.LOGGER.warn("unsupported BlockEntity type");
         return null;

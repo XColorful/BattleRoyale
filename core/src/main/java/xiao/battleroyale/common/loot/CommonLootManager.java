@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.algorithm.BfsCalculator;
 import xiao.battleroyale.algorithm.BfsCalculator.Offset2D;
+import xiao.battleroyale.api.config.common.loot.ILootConfigManager;
 import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.loot.ICommonLootManager;
@@ -183,9 +184,10 @@ public class CommonLootManager implements ICommonLootManager {
         // 处理本 Tick 的区块
         int processedChunkThisTick = 0;
         synchronized (lock) {
+            ILootConfigManager<?> lootConfigManager = LootGenerator.getILootConfigManager();
             while (!chunksToProcess.isEmpty() && processedChunkThisTick < MAX_CHUNKS_PER_TICK) {
                 ChunkPos chunkPos = chunksToProcess.poll();
-                int newlyProcessedLoot = LootGenerator.refreshLootInChunk(new LootGenerator.LootContext(currentGenerationLevel, chunkPos, currentGenerationGameId));
+                int newlyProcessedLoot = LootGenerator.refreshLootInChunk(lootConfigManager, new LootGenerator.LootContext(currentGenerationLevel, chunkPos, currentGenerationGameId));
                 if (newlyProcessedLoot != LootGenerator.CHUNK_NOT_LOADED) {
                     totalLootRefreshedInBatch += newlyProcessedLoot;
                     processedChunkThisTick++;
