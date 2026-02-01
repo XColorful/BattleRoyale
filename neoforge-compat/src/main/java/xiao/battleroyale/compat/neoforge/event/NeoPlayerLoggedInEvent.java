@@ -11,8 +11,8 @@ public class NeoPlayerLoggedInEvent extends NeoEvent implements IPlayerLoggedInE
 
     public NeoPlayerLoggedInEvent(Event event) {
         super(event);
-        if (event instanceof PlayerEvent.PlayerLoggedInEvent playerLoggedInEvent) {
-            this.playerLoggedInEvent = playerLoggedInEvent;
+        if (event instanceof PlayerEvent.PlayerLoggedInEvent eventIn) {
+            this.playerLoggedInEvent = eventIn;
         } else {
             throw new RuntimeException("Expected PlayerLoggedInEvent but received: " + event.getClass().getName());
         }

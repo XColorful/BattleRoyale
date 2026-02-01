@@ -13,13 +13,14 @@ public class NeoLivingDamageEvent extends NeoEvent implements ILivingDamageEvent
 
     public NeoLivingDamageEvent(Event event) {
         super(event);
-        if (event instanceof LivingDamageEvent.Post livingDamageEvent) {
-            this.livingDamageEvent = livingDamageEvent;
+        if (event instanceof LivingDamageEvent.Post eventIn) {
+            this.livingDamageEvent = eventIn;
         } else {
             throw new RuntimeException("Expected LivingDamageEvent but received: " + event.getClass().getName());
         }
     }
 
+    @Deprecated
     @Override
     public void setCanceled(boolean cancel) {
         super.setCanceled(cancel);
