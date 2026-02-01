@@ -9,11 +9,11 @@ import xiao.battleroyale.api.event.ILivingDamageEvent;
 
 public class NeoLivingDamageEvent extends NeoEvent implements ILivingDamageEvent {
 
-    protected LivingDamageEvent.Pre livingDamageEvent;
+    protected LivingDamageEvent.Post livingDamageEvent;
 
     public NeoLivingDamageEvent(Event event) {
         super(event);
-        if (event instanceof LivingDamageEvent.Pre livingDamageEvent) {
+        if (event instanceof LivingDamageEvent.Post livingDamageEvent) {
             this.livingDamageEvent = livingDamageEvent;
         } else {
             throw new RuntimeException("Expected LivingDamageEvent but received: " + event.getClass().getName());
@@ -22,9 +22,6 @@ public class NeoLivingDamageEvent extends NeoEvent implements ILivingDamageEvent
 
     @Override
     public void setCanceled(boolean cancel) {
-        if (cancel) {
-            livingDamageEvent.setNewDamage(0);
-        }
         super.setCanceled(cancel);
     }
 
