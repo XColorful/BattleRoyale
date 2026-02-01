@@ -10,8 +10,8 @@ public class NeoServerTickEvent extends NeoEvent implements IServerTickEvent {
 
     public NeoServerTickEvent(Event event) {
         super(event);
-        if (event instanceof TickEvent.ServerTickEvent serverTickEvent) {
-            this.serverTickEvent = serverTickEvent;
+        if (event instanceof TickEvent.ServerTickEvent eventIn) {
+            this.serverTickEvent = eventIn;
         } else {
             throw new RuntimeException("Expected ServerTickEvent but received: " + event.getClass().getName());
         }
