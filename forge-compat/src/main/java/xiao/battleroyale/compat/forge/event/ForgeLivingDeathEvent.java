@@ -11,8 +11,8 @@ public class ForgeLivingDeathEvent extends ForgeEvent implements ILivingDeathEve
 
     public ForgeLivingDeathEvent(Event event) {
         super(event);
-        if (event instanceof LivingDeathEvent livingDeathEvent) {
-            this.livingDeathEvent = livingDeathEvent;
+        if (event instanceof LivingDeathEvent eventIn) {
+            this.livingDeathEvent = eventIn;
         } else {
             throw new RuntimeException("Expected LivingDeathEvent but received: " + event.getClass().getName());
         }

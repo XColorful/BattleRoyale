@@ -11,8 +11,8 @@ public class ForgePlayerLoggedOutEvent extends ForgeEvent implements IPlayerLogg
 
     public ForgePlayerLoggedOutEvent(Event event) {
         super(event);
-        if (event instanceof PlayerEvent.PlayerLoggedOutEvent playerLoggedOutEvent) {
-            this.playerLoggedOutEvent = playerLoggedOutEvent;
+        if (event instanceof PlayerEvent.PlayerLoggedOutEvent eventIn) {
+            this.playerLoggedOutEvent = eventIn;
         } else {
             throw new RuntimeException("Expected PlayerLoggedOutEvent but received: " + event.getClass().getName());
         }
