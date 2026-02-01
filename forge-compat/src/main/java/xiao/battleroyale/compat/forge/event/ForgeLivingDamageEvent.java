@@ -21,6 +21,11 @@ public class ForgeLivingDamageEvent extends ForgeEvent implements ILivingDamageE
     }
 
     @Override
+    public void setCanceled(boolean cancel) {
+        super.setCanceled(cancel);
+    }
+
+    @Override
     public @NotNull LivingEntity getEntity() {
         return livingDamageEvent.getEntity();
     }
