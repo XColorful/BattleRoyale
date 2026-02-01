@@ -16,7 +16,8 @@ public class ForgeEvent implements IEvent {
     }
 
     public void setCanceled(boolean cancel) {
-        this.event.setCanceled(cancel);
+        if (event.isCancelable())
+            this.event.setCanceled(cancel);
     }
 
     public Object getEvent() {

@@ -26,16 +26,16 @@ public class SurvivalLobbyEventHandler implements IEventHandler {
     }
 
     public static void register() {
-        EventRegister.register(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGHEST, false);
+        EventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGHEST, false);
     }
 
     public static void unregister() {
-        EventRegister.unregister(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.HIGHEST, false);
+        EventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGHEST, false);
     }
 
     @Override
     public void handleEvent(EventType eventType, IEvent event){
-        if (eventType == EventType.LIVING_DAMAGE_EVENT){
+        if (eventType == EventType.LIVING_ATTACK_EVENT){
             if (SurvivalLobby.get().canMuteki(((ILivingDamageEvent) event).getEntity())) {
                 event.setCanceled(true);
             }
