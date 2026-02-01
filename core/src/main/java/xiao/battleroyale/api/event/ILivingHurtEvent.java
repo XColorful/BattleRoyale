@@ -11,4 +11,6 @@ public interface ILivingHurtEvent extends IEvent {
     @NotNull DamageSource getSource();
 
     float getDamageAmount();
+
+    void setDamageAmount(float amount);
 }
