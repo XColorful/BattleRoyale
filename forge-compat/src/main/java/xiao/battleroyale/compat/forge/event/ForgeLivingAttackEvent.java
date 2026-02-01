@@ -5,9 +5,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.event.ILivingAttachEvent;
+import xiao.battleroyale.api.event.ILivingAttackEvent;
 
-public class ForgeLivingAttackEvent extends ForgeEvent implements ILivingAttachEvent {
+public class ForgeLivingAttackEvent extends ForgeEvent implements ILivingAttackEvent {
 
     protected LivingAttackEvent livingAttackEvent;
 
