@@ -28,9 +28,17 @@ public interface IConfigSubManager<T extends IConfigSingleEntry> extends IManage
         T configEntry = getConfigEntry(folderId, id);
         return configEntry != null ? configEntry.getName() : "";
     }
+    void setLastAppliedConfigId(int configId);
+    void setLastAppliedConfigId(int folderId, int configId);
+    int getLastAppliedConfigId();
+    int getLastAppliedConfigId(int folderId);
 
     String getFolderType();
     String getFolderType(int folderId);
+
+    default List<Integer> getAllFolderId() {
+        return List.of(0);
+    }
 
     @Deprecated default String getConfigEntryFileName() {
         return getCurrentSelectedFileName();

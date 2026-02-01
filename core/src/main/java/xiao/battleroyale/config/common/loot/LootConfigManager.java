@@ -47,11 +47,11 @@ public class LootConfigManager
 
 
     private LootConfigManager() {
-        allFolderConfigData.put(LOOT_SPAWNER, new FolderConfigData<>());
-        allFolderConfigData.put(ENTITY_SPAWNER, new FolderConfigData<>());
-        allFolderConfigData.put(AIRDROP, new FolderConfigData<>());
-        allFolderConfigData.put(AIRDROP_SPECIAL, new FolderConfigData<>());
-        allFolderConfigData.put(SECRET_ROOM, new FolderConfigData<>());
+        allFolderConfigData.put(LOOT_SPAWNER, new FolderConfigData<>(LOOT_SPAWNER));
+        allFolderConfigData.put(ENTITY_SPAWNER, new FolderConfigData<>(ENTITY_SPAWNER));
+        allFolderConfigData.put(AIRDROP, new FolderConfigData<>(AIRDROP));
+        allFolderConfigData.put(AIRDROP_SPECIAL, new FolderConfigData<>(AIRDROP_SPECIAL));
+        allFolderConfigData.put(SECRET_ROOM, new FolderConfigData<>(SECRET_ROOM));
     }
 
     public static void init(McSide mcSide) {

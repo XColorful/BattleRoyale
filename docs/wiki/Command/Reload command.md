@@ -117,7 +117,7 @@ _/battleroyale reload client display_
 从 _./minecraft/config/battleroyale/client/display_ 重新读取配置文件
 
 ### 全部服务端配置
-_/battleroyale reload server [performance/utility]_
+_/battleroyale reload server [performance/profile/utility]_
 
 从 _./minecraft/config/battleroyale/server_ 重新读取配置文件
 
@@ -128,6 +128,11 @@ _/battleroyale reload server_
 _/battleroyale reload server performance_
 
 从 _./minecraft/config/battleroyale/server/performance_ 重新读取配置文件
+
+#### 预设配置
+_/battleroyale reload server profile_
+
+从 _./minecraft/config/battleroyale/server/profile_ 重新读取配置文件
 
 #### 实用配置
 _/battleroyale reload server utility_
@@ -251,7 +256,7 @@ _/battleroyale reload client display_
 Re-read config files from _./minecraft/config/battleroyale/client/display_
 
 ### All server config
-_/battleroyale reload server [performance/utility]_
+_/battleroyale reload server [performance/profile/utility]_
 
 Re-read config files from _./minecraft/config/battleroyale/server_
 
@@ -262,6 +267,11 @@ Process all sub commands
 _/battleroyale reload server performance_
 
 Re-read config files from _./minecraft/config/battleroyale/server/performance_
+
+#### Profile config
+_/battleroyale reload server profile_
+
+Re-read configs files from _./minecraft/config/battleroyale/server/profile_
 
 #### Utility config
 _/battleroyale reload server utility_

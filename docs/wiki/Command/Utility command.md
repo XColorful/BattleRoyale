@@ -1,7 +1,7 @@
 [English](#English)
 
 # 实用指令
-_/battleroyale utility [survivallobby/tosurvivallobby/lootconfig] [id] [type] [...]_
+_/battleroyale utility [survivallobby/tosurvivallobby/lootconfig/profile] [id/save/load] [type/id] [.../overwrite]_
 
 ## 生存模式大厅
 _/battleroyale utility [survivallobby/tosurvivallobby]_
@@ -139,8 +139,24 @@ _/battleroyale utility lootconfig [xyz] [id] [slot/block/chunk] [xyz] [repeat] [
 ]
 ```
 
+## 预设配置
+_/battleroyale utility profile [save/load] [id] [overwrite]_
+
+### 保存配置预设
+_/battleroyale utility profile save [id] [overwrite]_
+
+将当前配置保存至 _./minecraft/config/battleroyale/server/profile_ 下
+- id：预设配置唯一id
+- overwrite：是否保存在当前配置下
+
+### 应用预设配置
+_/battleroyale utility profile load [id]_
+
+自动切换至预设的配置文件及选用配置
+- id：预设配置唯一id
+
 # English
-_/battleroyale utility [survivallobby/tosurvivallobby]_
+_/battleroyale utility [survivallobby/tosurvivallobby/lootconfig/profile] [id/save/load] [type/id] [.../overwrite]_
 
 ## Survival mode lobby
 _/battleroyale utility [survivallobby/tosurvivallobby]_
@@ -278,3 +294,19 @@ By Block or Chunk:
 	}
 ]
 ```
+
+## Profile config
+_/battleroyale utility profile [save/load] [id] [overwrite]_
+
+### Save config profile
+_/battleroyale utility profile save [id] [overwrite]_
+
+Save the current configuration to _./minecraft/config/battleroyale/server/profile_
+- id: unique profile id
+- overwrite: Whether to overwrite the current configuration
+
+### Apply profile config
+_/battleroyale utility profile load [id]_
+
+Automatically switch to the preset configuration file and apply the selected configuration
+- id: unique profile id

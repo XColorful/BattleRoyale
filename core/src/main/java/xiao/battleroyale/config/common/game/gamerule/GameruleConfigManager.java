@@ -34,7 +34,7 @@ public class GameruleConfigManager
     }
 
     private GameruleConfigManager() {
-        allFolderConfigData.put(DEFAULT_GAMERULE_CONFIG_FOLDER, new FolderConfigData<>());
+        allFolderConfigData.put(DEFAULT_GAMERULE_CONFIG_FOLDER, new FolderConfigData<>(DEFAULT_GAMERULE_CONFIG_FOLDER));
     }
 
     public static void init() {
@@ -69,9 +69,6 @@ public class GameruleConfigManager
 
         public int getGameId() {
             return id;
-        }
-        public String getGameName() {
-            return name;
         }
         public String getColor() {
             return color;

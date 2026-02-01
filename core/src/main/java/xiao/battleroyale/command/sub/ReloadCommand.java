@@ -23,6 +23,7 @@ import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
+import xiao.battleroyale.config.common.server.profile.ProfileConfigManager;
 import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
 
 import javax.annotation.Nullable;
@@ -66,6 +67,8 @@ public class ReloadCommand {
                         .executes(context -> reloadServerConfigs(context, null))
                         .then(Commands.literal(PERFORMANCE)
                                 .executes(context -> reloadServerConfigs(context, PERFORMANCE)))
+                        .then(Commands.literal(PROFILE)
+                                .executes(context -> reloadServerConfigs(context, PROFILE)))
                         .then(Commands.literal(UTILITY)
                                 .executes(context -> reloadServerConfigs(context, UTILITY))));
     }
@@ -255,6 +258,10 @@ public class ReloadCommand {
                 case PERFORMANCE:
                     subManagerNameKey = PerformanceConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.performance_config_reloaded";
+                    break;
+                case PROFILE:
+                    subManagerNameKey = ProfileConfigManager.get().getNameKey();
+                    messageKey = "battleroyale.message.profile_config_reloaded";
                     break;
                 case UTILITY:
                     subManagerNameKey = UtilityConfigManager.get().getNameKey();
