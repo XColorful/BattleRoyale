@@ -25,19 +25,19 @@ public class MutekiEventHandler implements IEventHandler {
 
     public static void register() {
         EventRegister.register(get(), EventType.SERVER_TICK_EVENT);
-        EventRegister.register(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
+        EventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
     }
 
     public static void unregister() {
         EventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
-        EventRegister.unregister(get(), EventType.LIVING_DAMAGE_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
+        EventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
     }
 
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
         switch (eventType) {
             case SERVER_TICK_EVENT -> BattleRoyale.getEffectManager().getMutekiManager().onTick();
-            case LIVING_DAMAGE_EVENT -> {
+            case LIVING_ATTACK_EVENT -> {
                 if (BattleRoyale.getEffectManager().getMutekiManager().canMuteki(((ILivingDamageEvent) event).getEntity())) {
                     event.setCanceled(true);
                 }
