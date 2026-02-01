@@ -15,6 +15,8 @@ public class ForgeEventRegister implements IEventRegister {
         switch (eventType) {
             case SERVER_TICK_EVENT -> registered = ServerTickEventManager.register(eventHandler, priority, receiveCanceled);
             case CLIENT_TICK_EVENT -> registered = ClientTickEventManager.register(eventHandler, priority, receiveCanceled);
+            case LIVING_ATTACK_EVENT -> registered = LivingAttackEventManager.register(eventHandler, priority, receiveCanceled);
+            case LIVING_HURT_EVENT -> registered = LivingHurtEventManager.register(eventHandler, priority, receiveCanceled);
             case LIVING_DAMAGE_EVENT -> registered = LivingDamageEventManager.register(eventHandler, priority, receiveCanceled);
             case LIVING_DEATH_EVENT -> registered = LivingDeathEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_IN_EVENT -> registered = PlayerLoggedInEventManager.register(eventHandler, priority, receiveCanceled);
@@ -36,6 +38,8 @@ public class ForgeEventRegister implements IEventRegister {
         switch (eventType) {
             case SERVER_TICK_EVENT -> unregistered = ServerTickEventManager.unregister(eventHandler, priority, receiveCanceled);
             case CLIENT_TICK_EVENT -> unregistered = ClientTickEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case LIVING_ATTACK_EVENT -> unregistered = LivingAttackEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case LIVING_HURT_EVENT -> unregistered = LivingHurtEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LIVING_DAMAGE_EVENT -> unregistered = LivingDamageEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LIVING_DEATH_EVENT -> unregistered = LivingDeathEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_IN_EVENT -> unregistered = PlayerLoggedInEventManager.unregister(eventHandler, priority, receiveCanceled);
