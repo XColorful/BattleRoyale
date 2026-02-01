@@ -34,4 +34,9 @@ public class NeoLivingHurtEvent extends NeoEvent implements ILivingHurtEvent {
     public float getDamageAmount() {
         return livingHurtEvent.getAmount();
     }
+
+    @Override
+    public void setDamageAmount(float amount) {
+        this.livingHurtEvent.setAmount(amount);
+    }
 }
