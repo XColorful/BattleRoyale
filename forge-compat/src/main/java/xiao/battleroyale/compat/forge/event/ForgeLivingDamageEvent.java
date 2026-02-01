@@ -13,8 +13,8 @@ public class ForgeLivingDamageEvent extends ForgeEvent implements ILivingDamageE
 
     public ForgeLivingDamageEvent(Event event) {
         super(event);
-        if (event instanceof LivingDamageEvent livingDamageEvent) {
-            this.livingDamageEvent = livingDamageEvent;
+        if (event instanceof LivingDamageEvent eventIn) {
+            this.livingDamageEvent = eventIn;
         } else {
             throw new RuntimeException("Expected LivingDamageEvent but received: " + event.getClass().getName());
         }
