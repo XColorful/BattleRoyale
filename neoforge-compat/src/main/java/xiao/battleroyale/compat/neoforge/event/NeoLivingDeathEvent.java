@@ -11,8 +11,8 @@ public class NeoLivingDeathEvent extends NeoEvent implements ILivingDeathEvent {
 
     public NeoLivingDeathEvent(Event event) {
         super(event);
-        if (event instanceof LivingDeathEvent livingDeathEvent) {
-            this.livingDeathEvent = livingDeathEvent;
+        if (event instanceof LivingDeathEvent eventIn) {
+            this.livingDeathEvent = eventIn;
         } else {
             throw new RuntimeException("Expected LivingDeathEvent but received: " + event.getClass().getName());
         }
