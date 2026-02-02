@@ -26,6 +26,7 @@ import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
+import xiao.battleroyale.config.common.server.profile.ProfileConfigManager;
 import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
 
 import static xiao.battleroyale.command.CommandArg.*;
@@ -80,7 +81,7 @@ public class ConfigCommand {
                 .then(Commands.literal(GAME)
                         .then(Commands.literal(BOT)
                                 .then(Commands.argument(ID, IntegerArgumentType.integer(0))
-                                        .executes(ConfigCommand::setBotConfigId))
+                                        .executes(ConfigCommand::applyBotConfig))
                                 .then(Commands.literal(SWITCH)
                                         .executes(ConfigCommand::switchNextBotConfig)
                                         .then(Commands.argument(FILE, StringArgumentType.string())
@@ -90,7 +91,7 @@ public class ConfigCommand {
                         )
                         .then(Commands.literal(GAMERULE)
                                 .then(Commands.argument(ID, IntegerArgumentType.integer(0))
-                                        .executes(ConfigCommand::setGameruleConfigId))
+                                        .executes(ConfigCommand::applyGameruleConfig))
                                 .then(Commands.literal(SWITCH)
                                         .executes(ConfigCommand::switchNextGameruleConfig)
                                         .then(Commands.argument(FILE, StringArgumentType.string())
@@ -100,7 +101,7 @@ public class ConfigCommand {
                         )
                         .then(Commands.literal(SPAWN)
                                 .then(Commands.argument(ID, IntegerArgumentType.integer(0))
-                                        .executes(ConfigCommand::setSpawnConfigId)
+                                        .executes(ConfigCommand::applySpawnConfig)
                                 )
                                 .then(Commands.literal(SWITCH)
                                         .executes(ConfigCommand::switchNextSpawnConfig)
@@ -136,6 +137,14 @@ public class ConfigCommand {
                                         .executes(ConfigCommand::switchNextPerformanceConfig)
                                         .then(Commands.argument(FILE, StringArgumentType.string())
                                                 .executes(ConfigCommand::switchPerformanceConfig)
+                                        )
+                                )
+                        )
+                        .then(Commands.literal(PROFILE)
+                                .then(Commands.literal(SWITCH)
+                                        .executes(ConfigCommand::switchNextProfileConfig)
+                                        .then(Commands.argument(FILE, StringArgumentType.string())
+                                                .executes(ConfigCommand::switchProfileConfig)
                                         )
                                 )
                         )
@@ -327,6 +336,7 @@ public class ConfigCommand {
         IConfigSingleEntry renderConfig = renderConfigManager.getConfigEntry(id);
         if (renderConfig != null) {
             renderConfig.applyDefault();
+            renderConfigManager.setLastAppliedConfigId(renderConfig.getConfigId());
             BattleRoyale.LOGGER.info("Applied render config {} via command", id);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.render_config_applied", id, renderConfig.getName()), true);
             return Command.SINGLE_SUCCESS;
@@ -371,6 +381,7 @@ public class ConfigCommand {
         IConfigSingleEntry displayConfig = displayConfigManager.getConfigEntry(id);
         if (displayConfig != null) {
             displayConfig.applyDefault();
+            displayConfigManager.setLastAppliedConfigId(displayConfig.getConfigId());
             BattleRoyale.LOGGER.info("Applied display config {} via command", id);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.display_config_applied", id, displayConfig.getName()), true);
             return Command.SINGLE_SUCCESS;
@@ -416,6 +427,7 @@ public class ConfigCommand {
         IConfigSingleEntry performanceConfig = performanceConfigManager.getConfigEntry(id);
         if (performanceConfig != null) {
             performanceConfig.applyDefault();
+            performanceConfigManager.setLastAppliedConfigId(performanceConfig.getConfigId());
             BattleRoyale.LOGGER.info("Applied performance config {} via command", id);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.performance_config_applied", id, performanceConfig.getName()), true);
             return Command.SINGLE_SUCCESS;
@@ -452,6 +464,34 @@ public class ConfigCommand {
             return 0;
         }
     }
+    private static int switchNextProfileConfig(CommandContext<CommandSourceStack> context) {
+        IConfigSubManager<?> profileConfigManager = getConfigSubManager(context, ServerConfigManager.get().getNameKey(), ProfileConfigManager.get().getNameKey());
+        if (profileConfigManager == null) return 0;
+
+        if (profileConfigManager.switchConfigFile()) {
+            String currentFileName = profileConfigManager.getCurrentSelectedFileName();
+            BattleRoyale.LOGGER.info("Switch profile config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_profile_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_profile_config_available"));
+            return 0;
+        }
+    }
+    private static int switchProfileConfig(CommandContext<CommandSourceStack> context) {
+        IConfigSubManager<?> profileConfigManager = getConfigSubManager(context, ServerConfigManager.get().getNameKey(), ProfileConfigManager.get().getNameKey());
+        if (profileConfigManager == null) return 0;
+
+        String currentFileName = StringArgumentType.getString(context, FILE);
+        if (profileConfigManager.switchConfigFile(currentFileName)) {
+            BattleRoyale.LOGGER.info("Switch profile config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_profile_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_profile_config_file", currentFileName));
+            return 0;
+        }
+    }
     private static int applyUtilityConfig(CommandContext<CommandSourceStack> context) {
         IConfigSubManager<?> utilityConfigManager = getConfigSubManager(context, ServerConfigManager.get().getNameKey(), UtilityConfigManager.get().getNameKey());
         if (utilityConfigManager == null) return 0;
@@ -460,6 +500,7 @@ public class ConfigCommand {
         IConfigSingleEntry utilityConfig = utilityConfigManager.getConfigEntry(id);
         if (utilityConfig != null) {
             utilityConfig.applyDefault();
+            utilityConfigManager.setLastAppliedConfigId(utilityConfig.getConfigId());
             BattleRoyale.LOGGER.info("Applied utility config {} via command", id);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.utility_config_applied", id, utilityConfig.getName()), true);
             return Command.SINGLE_SUCCESS;
@@ -497,16 +538,21 @@ public class ConfigCommand {
         }
     }
 
-    private static int setBotConfigId(CommandContext<CommandSourceStack> context) {
+    private static int applyBotConfig(CommandContext<CommandSourceStack> context) {
+        IConfigSubManager<?> botConfigManager = getConfigSubManager(context, GameConfigManager.get().getNameKey(), BotConfigManager.get().getNameKey());
+        if (botConfigManager == null) return 0;
+
         int id = IntegerArgumentType.getInteger(context, ID);
-        IGameManager gameManager = BattleRoyale.getGameManager();
-        if (gameManager.setBotConfigId(id)) {
+        IConfigSingleEntry botConfig = botConfigManager.getConfigEntry(id);
+        if (botConfig != null) {
+            botConfig.applyDefault();
+            botConfigManager.setLastAppliedConfigId(botConfig.getConfigId());
             BattleRoyale.LOGGER.info("Set bot config ID to {} via command", id);
-            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.bot_config_id_set", id, gameManager.getBotConfigName(id)), true);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.bot_config_id_set", id, botConfig.getName()), true);
             return Command.SINGLE_SUCCESS;
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.invalid_bot_config_id", id));
-            return 0; // Command failed
+            return 0;
         }
     }
     private static int switchNextBotConfig(CommandContext<CommandSourceStack> context) {
@@ -538,12 +584,17 @@ public class ConfigCommand {
         }
     }
 
-    private static int setGameruleConfigId(CommandContext<CommandSourceStack> context) {
+    private static int applyGameruleConfig(CommandContext<CommandSourceStack> context) {
+        IConfigSubManager<?> gameruleConfigManager = getConfigSubManager(context, GameConfigManager.get().getNameKey(), GameruleConfigManager.get().getNameKey());
+        if (gameruleConfigManager == null) return 0;
+
         int id = IntegerArgumentType.getInteger(context, ID);
-        IGameManager gameManager = BattleRoyale.getGameManager();
-        if (gameManager.setGameruleConfigId(id)) {
+        IConfigSingleEntry gameruleConfig = gameruleConfigManager.getConfigEntry(id);
+        if (gameruleConfig != null) {
+            gameruleConfig.applyDefault();
+            gameruleConfigManager.setLastAppliedConfigId(gameruleConfig.getConfigId());
             BattleRoyale.LOGGER.info("Set gamerule config ID to {} via command", id);
-            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.gamerule_config_id_set", id, gameManager.getGameruleConfigName(id)), true);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.gamerule_config_id_set", id, gameruleConfig.getName()), true);
             return Command.SINGLE_SUCCESS;
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.invalid_gamerule_config_id", id));
@@ -579,12 +630,15 @@ public class ConfigCommand {
         }
     }
 
-    private static int setSpawnConfigId(CommandContext<CommandSourceStack> context) {
+    private static int applySpawnConfig(CommandContext<CommandSourceStack> context) {
+        IConfigSubManager<?> spawnConfigManager = getConfigSubManager(context, GameConfigManager.get().getNameKey(), SpawnConfigManager.get().getNameKey());
+        if (spawnConfigManager == null) return 0;
+
         int id = IntegerArgumentType.getInteger(context, ID);
-        IGameManager gameManager = BattleRoyale.getGameManager();
-        if (gameManager.setSpawnConfigId(id)) {
+        IConfigSingleEntry spawnConfig = spawnConfigManager.getConfigEntry(id);
+        if (spawnConfig != null) {
             BattleRoyale.LOGGER.info("Set spawn config ID to {} via command", id);
-            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.spawn_config_id_set", id, gameManager.getSpawnConfigName(id)), true);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.spawn_config_id_set", id, spawnConfig.getName()), true);
             return Command.SINGLE_SUCCESS;
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.invalid_spawn_config_id", id));

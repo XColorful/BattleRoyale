@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.server.utility.ConfigGenerator;
 import xiao.battleroyale.common.server.utility.SurvivalLobby;
 
@@ -54,6 +55,22 @@ public class UtilityCommand {
                                                 )
                                         )
                                 )
+                        )
+                )
+        );
+
+        utilityCommand.then(Commands.literal(PROFILE)
+                .requires(source -> source.hasPermission(2))
+                .then(Commands.literal(SAVE)
+                        .then(Commands.argument(ID, IntegerArgumentType.integer())
+                                .then(Commands.argument(OVERWRITE, BoolArgumentType.bool())
+                                        .executes(UtilityCommand::saveProfile)
+                                )
+                        )
+                )
+                .then(Commands.literal(LOAD)
+                        .then(Commands.argument(ID, IntegerArgumentType.integer())
+                                .executes(UtilityCommand::loadProfile)
                         )
                 )
         );
@@ -108,5 +125,21 @@ public class UtilityCommand {
         } else {
             return 0;
         }
+    }
+
+    private static int saveProfile(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        int id = IntegerArgumentType.getInteger(context, ID);
+        boolean overwrite = BoolArgumentType.getBool(context, OVERWRITE);
+
+        int saved = BattleRoyale.getServerManager().getProfileManager().saveCurrentProfile(source, source.getLevel(), id, overwrite);
+        return saved >= 0 ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int loadProfile(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        int id = IntegerArgumentType.getInteger(context, ID);
+
+        int loaded = BattleRoyale.getServerManager().getProfileManager().loadProfile(source, source.getLevel(), id);
+        return loaded >= 0 ? Command.SINGLE_SUCCESS : 0;
     }
 }

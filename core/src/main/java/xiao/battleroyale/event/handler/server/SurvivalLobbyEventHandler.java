@@ -36,7 +36,7 @@ public class SurvivalLobbyEventHandler implements IEventHandler {
     @Override
     public void handleEvent(EventType eventType, IEvent event){
         if (eventType == EventType.LIVING_ATTACK_EVENT){
-            if (SurvivalLobby.get().canMuteki(((ILivingDamageEvent) event).getEntity())) {
+            if (SurvivalLobby.get().canMuteki(((ILivingAttackEvent) event).getEntity())) {
                 event.setCanceled(true);
             }
         } else {

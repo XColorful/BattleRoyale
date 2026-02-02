@@ -15,8 +15,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.game.IGameIdReadApi;
-import xiao.battleroyale.api.utilitity.ILobbyReadApi;
+import xiao.battleroyale.api.server.utilitity.ILobbyReadApi;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
@@ -36,7 +37,7 @@ public class SurvivalLobby implements ILobbyReadApi {
 
     private SurvivalLobby() {}
 
-    public static void init() {
+    public static void init(McSide mcSide) {
         ;
     }
 

@@ -35,7 +35,7 @@ public class SpawnConfigManager
     }
 
     private SpawnConfigManager() {
-        allFolderConfigData.put(DEFAULT_SPAWN_CONFIG_FOLDER, new FolderConfigData<>());
+        allFolderConfigData.put(DEFAULT_SPAWN_CONFIG_FOLDER, new FolderConfigData<>(DEFAULT_SPAWN_CONFIG_FOLDER));
     }
 
     public static void init() {
