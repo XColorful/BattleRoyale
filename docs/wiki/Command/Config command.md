@@ -46,9 +46,10 @@ _/battleroyale config client [render/display] switch [fileName]_
 - 显示配置文件：_/battleroyale config client display switch [fileName]_
 
 ### 服务端配置
-_/battleroyale config server [performance/utility] switch [fileName]_
+_/battleroyale config server [performance/profile/utility] switch [fileName]_
 
 - 性能配置文件：_/battleroyale config server performance switch [fileName]_
+- 预设配置文件：_/battleroyale config server profile switch [fileName]_
 - 实用配置文件：_/battleroyale config server utility switch [fileName]_
 
 ## 切换大逃杀选中配置
@@ -128,9 +129,10 @@ _/battleroyale config client [render/display] switch [fileName]_
 - Display config file: _/battleroyale config client display switch [fileName]_
 
 ### Server config
-_/battleroyale config server [performance/utility] switch [fileName]_
+_/battleroyale config server [performance/profile/utility] switch [fileName]_
 
 - Performance config file: _/battleroyale config server performance switch [fileName]_
+- Profile config file: _/battleroyale config server profile switch [fileName]_
 - Utility config file: _/battleroyale config server utility switch [fileName]_
 
 ## Switch BattleRoyale selected config

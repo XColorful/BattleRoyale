@@ -120,7 +120,7 @@ _/battleroyale example example display_
 在 _./minecraft/config/battleroyale/client/display_ 下写入配置文件
 
 ### 全部服务端配置
-_/battleroyale example server [performance/utility]_
+_/battleroyale example server [performance/profile/utility]_
 
 在 _./minecraft/config/battleroyale/server_ 下写入配置文件
 
@@ -131,6 +131,11 @@ _/battleroyale example server_
 _/battleroyale example server performance_
 
 在 _./minecraft/config/battleroyale/server/performance_ 下写入配置文件
+
+#### 预设配置
+_/battleroyale example server profile_
+
+在 _./minecraft/config/battleroyale/server/profile_ 下写入配置文件
 
 #### 实用配置
 _/battleroyale example server utility_
@@ -228,7 +233,6 @@ _/battleroyale example effect [particle]_
 Writes configuration files under _./minecraft/config/battleroyale/effect/_.
 
 _/battleroyale example effect_
-
 Processes all subcommands.
 
 #### Particle config
@@ -257,7 +261,7 @@ _/battleroyale example client display_
 Writes configuration files under _./minecraft/config/battleroyale/client/display/_.
 
 ### All server config
-_/battleroyale example server [performance/utility]_
+_/battleroyale example server [performance/profile/utility]_
 
 Writes configuration files under _./minecraft/config/battleroyale/server/_.
 
@@ -265,13 +269,16 @@ _/battleroyale example server_
 Processes all subcommands.
 
 #### Performance config
-
 _/battleroyale example server performance_
 
 Writes configuration files under _./minecraft/config/battleroyale/server/performance/_.
 
-#### Utility config
+#### Profile config
+_/battleroyale example server profile_
 
+Writes configuration files under _./minecraft/config/battleroyale/server/profile/_.
+
+#### Utility config
 _/battleroyale example server utility_
 
 Writes configuration files under

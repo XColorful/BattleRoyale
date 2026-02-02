@@ -35,7 +35,7 @@ public class ParticleConfigManager
     }
 
     private ParticleConfigManager() {
-        allFolderConfigData.put(DEFAULT_PARTICLE_CONFIG_FOLDER_ID, new FolderConfigData<>());
+        allFolderConfigData.put(DEFAULT_PARTICLE_CONFIG_FOLDER_ID, new FolderConfigData<>(DEFAULT_PARTICLE_CONFIG_FOLDER_ID));
     }
 
     public static void init() {

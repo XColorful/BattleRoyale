@@ -22,6 +22,7 @@ public class CommandArg {
     public static final String DISPLAY = "display";
     public static final String SERVER = "server";
     public static final String PERFORMANCE = "performance";
+    public static final String PROFILE = "profile";
     public static final String UTILITY = "utility";
     public static final String EXAMPLE = "example";
     public static final String SAVE = "save";
@@ -102,6 +103,7 @@ public class CommandArg {
     public static final String DROP_BEFORE_REPLACE = "dropBeforeReplace";
     public static final String FIRST_SLOT_INDEX = "firstSlotIndex";
     public static final String LAST_SLOT_INDEX = "lastSlotIndex";
+    public static final String OVERWRITE = "overwrite";
 
     public static final String BOOL = "boolean";
 }
