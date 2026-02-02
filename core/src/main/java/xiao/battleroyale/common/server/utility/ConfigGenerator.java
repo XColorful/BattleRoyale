@@ -11,6 +11,7 @@ import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.StringUtils;
 
 import javax.annotation.Nullable;
 import java.nio.file.Paths;
@@ -25,7 +26,7 @@ public class ConfigGenerator {
                                          int lootId,
                                          String type, Vec3 centerPos,
                                          int repeat, int weight, int radius, boolean autoReload) {
-        String startSystemTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String startSystemTime = StringUtils.getTimestampString();
         String configEntryName = String.format("lootConfig-%s-%s", startSystemTime, type);
         LootConfig lootConfig = LootConfigGenerator.autoLootConfig(serverLevel,
                 lootId, configEntryName,

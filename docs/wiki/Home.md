@@ -29,6 +29,7 @@
 ### 服务端配置
 
 - [性能配置](https://github.com/XColorful/BattleRoyale/wiki/Performance-config)
+- [预设配置](https://github.com/XColorful/BattleRoyale/wiki/Profile-config)
 - [实用配置](https://github.com/XColorful/BattleRoyale/wiki/Utility-config)
 
 ## 指令
@@ -134,6 +135,7 @@
 ### Server
 
 - [Performance](https://github.com/XColorful/BattleRoyale/wiki/Performance-config#English)
+- [Profile](https://github.com/XColorful/BattleRoyale/wiki/Profile-config#English)
 - [Utility](https://github.com/XColorful/BattleRoyale/wiki/Utility-config#English)
 
 ## Command

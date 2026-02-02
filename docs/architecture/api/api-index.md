@@ -244,10 +244,14 @@
 - [INetworkAdapter](/docs/api/network/INetworkAdapter.md)：抽象由平台实现的注册网络消息、向玩家发送消息
 - [INetworkHook](/docs/api/network/INetworkHook.md)：网络钩子，用于打开容器GUI
 
-## 实用
+## 服务端
+> _./api/server_
 
-- [ILobbyFuncApi](/docs/api/utility/ILobbyFuncApi.md)：大厅功能API，适用于游戏大厅和生存大厅
-- [ILobbyReadApi](/docs/api/utility/ILobbyReadApi.md)：大厅只读API，适用于游戏大厅和生存大厅
+### 实用
+> _./api/server/utility_
+
+- [ILobbyFuncApi](/docs/api/server/utility/ILobbyFuncApi.md)：大厅功能API，适用于游戏大厅和生存大厅
+- [ILobbyReadApi](/docs/api/server/utility/ILobbyReadApi.md)：大厅只读API，适用于游戏大厅和生存大厅
 
 # English
 
@@ -493,7 +497,11 @@ Post Event:
 - [INetworkAdapter](/docs/api/network/INetworkAdapter.md): Abstract registration of network messages and sending messages to players implemented by platform
 - [INetworkHook](/docs/api/network/INetworkHook.md): Network hook, used to open container GUI
 
-## Utility
+## Server
+> _./api/server_
 
-- [ILobbyFuncApi](/docs/api/utility/ILobbyFuncApi.md): Lobby function API, applicable to game lobby and survival lobby
-- [ILobbyReadApi](/docs/api/utility/ILobbyReadApi.md): Lobby read-only API, applicable to game lobby and survival lobby
+### Utility
+> _./api/server/utility_
+
+- [ILobbyFuncApi](/docs/api/server/utility/ILobbyFuncApi.md): Lobby function API, applicable to game lobby and survival lobby
+- [ILobbyReadApi](/docs/api/server/utility/ILobbyReadApi.md): Lobby read-only API, applicable to game lobby and survival lobby
