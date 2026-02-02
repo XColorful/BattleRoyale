@@ -56,6 +56,7 @@ public class SubReloadConfigs {
                 fileNameString = entry.getKey();
                 if (context.switchConfigFile(folderId, fileNameString)) { // 先切换到配置再覆盖应用默认
                     configEntry.applyDefault();
+                    context.setLastAppliedConfigId(folderId, configEntry.getConfigId());
                     BattleRoyale.LOGGER.info("Applied default config, fileName:{}, configId:{}, type:{}", fileNameString, configEntry.getConfigId(), configEntry.getType());
                     return true;
                 } else {

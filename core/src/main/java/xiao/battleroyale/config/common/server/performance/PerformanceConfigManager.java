@@ -31,7 +31,7 @@ public class PerformanceConfigManager
     }
 
     private PerformanceConfigManager() {
-        allFolderConfigData.put(DEFAULT_PERFORMANCE_CONFIG_FOLDER, new FolderConfigData<>());
+        allFolderConfigData.put(DEFAULT_PERFORMANCE_CONFIG_FOLDER, new FolderConfigData<>(DEFAULT_PERFORMANCE_CONFIG_FOLDER));
     }
 
     public static void init() {

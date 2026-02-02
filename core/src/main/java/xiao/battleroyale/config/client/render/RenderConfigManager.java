@@ -34,7 +34,7 @@ public class RenderConfigManager
     }
 
     private RenderConfigManager() {
-        allFolderConfigData.put(DEFAULT_RENDER_CONFIG_FOLDER, new FolderConfigData<>());
+        allFolderConfigData.put(DEFAULT_RENDER_CONFIG_FOLDER, new FolderConfigData<>(DEFAULT_RENDER_CONFIG_FOLDER));
     }
 
     public static void init() {

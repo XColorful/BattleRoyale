@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 
 import javax.annotation.Nullable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
 public class StringUtils {
@@ -97,5 +99,9 @@ public class StringUtils {
             return "";
         }
         return Component.Serializer.toJson(component);
+    }
+
+    public static String getTimestampString() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
     }
 }
