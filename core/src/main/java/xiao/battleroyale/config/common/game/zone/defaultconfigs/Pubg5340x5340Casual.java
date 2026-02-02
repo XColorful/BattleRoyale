@@ -96,10 +96,14 @@ public class Pubg5340x5340Casual {
     }
 
     public static void generateBorderCircle(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME) {
+        generateBorderCircle(zoneConfigJson, halfWidth, GAME_TIME, 0);
+    }
+
+    public static void generateBorderCircle(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME, double randomRange) {
         SafeFuncEntry safeFuncEntry = new SafeFuncEntry(0, 0, 200, 0, 666); // 固定边界的检查频率低一些
 
         StartEntry startEntry = new StartEntry();
-        startEntry.addFixedCenter(new Vec3(0, -64, 0));
+        startEntry.addFixedCenter(new Vec3(0, -64, 0)).addCenterRange(randomRange);
         startEntry.addFixedDimension(new Vec3(halfWidth, 384, halfWidth));
 
         EndEntry endEntry = new EndEntry();
