@@ -15,6 +15,8 @@ import xiao.battleroyale.BattleRoyale;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
 public class StringUtils {
@@ -150,5 +152,9 @@ public class StringUtils {
             BattleRoyale.LOGGER.error("Failed to serialize Component to JSON string: {}", component.getString(), e);
             return "";
         }
+    }
+
+    public static String getTimestampString() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
     }
 }

@@ -16,11 +16,11 @@
 ### 物资刷新配置
 
 位于 _./minecraft/config/battleroyale/loot_ 下的子文件夹：
-- airdrop：补给箱配置文件
-- airdrop_special：特殊补给箱配置文件
-- entity_spawner：实体生成器配置文件
-- loot_spawner：物资刷新器配置文件
-- secret_room：暂未使用
+0. loot_spawner：物资刷新器配置文件
+1. entity_spawner：实体生成器配置文件
+2. airdrop：补给箱配置文件
+3. airdrop_special：特殊补给箱配置文件
+4. secret_room：暂未使用
 
 以上刷新配置均使用[通用刷新配置](https://github.com/XColorful/BattleRoyale/wiki/General-loot-config)
 
@@ -48,6 +48,7 @@
 位于 _./minecraft/config/battleroyale/server_ 下的子文件夹：
 
 - performance：[性能配置](https://github.com/XColorful/BattleRoyale/wiki/Performance-config)
+- profile：[预设配置](https://github.com/XColorful/BattleRoyale/wiki/Profile-config)
 - utility：[实用配置](https://github.com/XColorful/BattleRoyale/wiki/Utility-config)
 
 # English
@@ -66,11 +67,11 @@ A config file can contain multiple configs, surrounded by square brackets, each 
 ### Loot
 
 Located in subfolders under _./minecraft/config/battleroyale/loot_
-- airdrop
-- airdrop_special
-- entity_spawner: for battleroyale:entity_spawner
-- loot_spawner: for battleroyale:loot_spawner
-- secret_room: currently has no idea
+0. loot_spawner: for battleroyale:loot_spawner
+1. entity_spawner: for battleroyale:entity_spawner
+2. airdrop
+3. airdrop_special
+4. secret_room: currently has no idea
 
 All of them use the [General loot](https://github.com/XColorful/BattleRoyale/wiki/General-loot-config#English)
 
@@ -98,4 +99,5 @@ Located in subfolders under _./minecraft/config/battleroyale/client_
 Located in subfolders under _./minecraft/config/battleroyale/server_
 
 - [performance](https://github.com/XColorful/BattleRoyale/wiki/Performance-config#English)
+- [profile](https://github.com/XColorful/BattleRoyale/wiki/Profile-config#English)
 - [utility](https://github.com/XColorful/BattleRoyale/wiki/Utility-config#English)

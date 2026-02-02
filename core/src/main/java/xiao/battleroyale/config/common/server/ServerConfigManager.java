@@ -6,6 +6,7 @@ import xiao.battleroyale.api.config.common.server.IServerConfigManager;
 import xiao.battleroyale.config.AbstractConfigManager;
 import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
+import xiao.battleroyale.config.common.server.profile.ProfileConfigManager;
 import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
 
 import java.nio.file.Paths;
@@ -32,6 +33,7 @@ public class ServerConfigManager extends AbstractConfigManager implements IServe
         }
         BattleRoyale.getModConfigManager().registerConfigManager(get());
         PerformanceConfigManager.init();
+        ProfileConfigManager.init();
         UtilityConfigManager.init();
     }
 }

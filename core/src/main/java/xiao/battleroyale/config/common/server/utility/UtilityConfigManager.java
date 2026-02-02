@@ -31,7 +31,7 @@ public class UtilityConfigManager
     }
 
     private UtilityConfigManager() {
-        allFolderConfigData.put(DEFAULT_UTILITY_CONFIG_FOLDER, new FolderConfigData<>());
+        allFolderConfigData.put(DEFAULT_UTILITY_CONFIG_FOLDER, new FolderConfigData<>(DEFAULT_UTILITY_CONFIG_FOLDER));
     }
 
     public static void init() {

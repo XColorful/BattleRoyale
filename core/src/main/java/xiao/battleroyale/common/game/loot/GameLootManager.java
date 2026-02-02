@@ -8,6 +8,7 @@ import xiao.battleroyale.algorithm.BfsCalculator;
 import xiao.battleroyale.algorithm.BfsCalculator.Offset2D;
 import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.config.common.loot.ILootConfigManager;
 import xiao.battleroyale.api.event.game.tick.GameLootBfsEvent;
 import xiao.battleroyale.api.event.game.tick.GameLootBfsFinishEvent;
 import xiao.battleroyale.api.event.game.tick.GameLootEvent;
@@ -355,10 +356,11 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
         int processedCount = 0;
         // 从原子引用的队列中获取
         Queue<ChunkPos> currentQueue = queuedChunksRef.get();
+        ILootConfigManager<?> lootConfigManager = LootGenerator.getILootConfigManager();
         while (!currentQueue.isEmpty() && processedCount < MAX_LOOT_CHUNK_PER_TICK) {
             ChunkPos chunkPos = currentQueue.poll();
             currentGameId = gameManager.getGameId();
-            int newlyProcessedLoot = LootGenerator.refreshLootInChunk(new LootContext(serverLevel, chunkPos, currentGameId));
+            int newlyProcessedLoot = LootGenerator.refreshLootInChunk(lootConfigManager, new LootContext(serverLevel, chunkPos, currentGameId));
             if (newlyProcessedLoot != LootGenerator.CHUNK_NOT_LOADED) {
                 processedChunkCache.add(chunkPos);
                 lastBfsProcessedLoot += newlyProcessedLoot;
