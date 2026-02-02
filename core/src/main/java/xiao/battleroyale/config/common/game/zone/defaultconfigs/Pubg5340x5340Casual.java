@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.MessageFuncEntry;
+import xiao.battleroyale.config.common.game.zone.zonefunc.MutekiFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.CircleEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
@@ -128,6 +129,20 @@ public class Pubg5340x5340Casual {
         zoneConfig = new ZoneConfig(1, "Game Start Message", "#FFAA00AA",
                 0, 80,
                 messageFuncEntry, circleEntry);
+        zoneConfigJson.add(zoneConfig.toJson());
+
+        // 黄色无敌区
+        int muteki_zoneTime = 20 * 15;
+        MutekiFuncEntry mutekiFuncEntry = new MutekiFuncEntry(0, muteki_zoneTime, 20, -1,
+                30);
+        circleEntry = new CircleEntry(
+                new StartEntry().addPreviousCenter(0, 0).addPreviousDimension(0, 0).addRelativeDimension(new Vec3(-5, 0, -5)),
+                new EndEntry().addPreviousCenter(0, 0).addPreviousDimension(0, 0).addRelativeDimension(new Vec3(-5, 64-384, -5)),
+                false
+        );
+        zoneConfig = new ZoneConfig(4, "15s Muteki Time", "#FFD700AA", // 2和3是鞘翅区
+                0, muteki_zoneTime,
+                mutekiFuncEntry, circleEntry);
         zoneConfigJson.add(zoneConfig.toJson());
     }
 
