@@ -114,7 +114,7 @@ _/battleroyale backup client display_
 将已加载的显示配置备份至 _./minecraft/battleroyale/backup/client/display_ 下
 
 ### 全部服务端配置
-_/battleroyale backup server [performance/utility]_
+_/battleroyale backup server [performance/profile/utility]_
 
 将已加载的服务端配置备份至 _./minecraft/battleroyale/backup/server_ 下
 
@@ -125,6 +125,11 @@ _/battleroyale backup server_
 _/battleroyale backup server performance_
 
 将已加载的性能配置备份至 _./minecraft/battleroyale/backup/server/performance_ 下
+
+#### 预设配置
+_/battleroyale backup server profile_
+
+将已加载的预设配置备份至 _./minecraft/battleroyale/backup/server/profile_ 下
 
 #### 实用配置
 _/battleroyale backup server utility_
@@ -241,7 +246,7 @@ _/battleroyale backup client display_
 Backup loaded display config to _./minecraft/battleroyale/backup/client/display_
 
 ### All server config
-_/battleroyale backup server [performance/utility]_
+_/battleroyale backup server [performance/profile/utility]_
 
 Backup loaded server configs to _./minecraft/battleroyale/backup/server_
 
@@ -252,6 +257,11 @@ Process all sub commands
 _/battleroyale backup server performance_
 
 Backup loaded performance config to _./minecraft/battleroyale/backup/server/performance_
+
+#### Profile config
+_/battleroyale backup server profile_
+
+Backup loaded profile config to _./minecraft/battleroyale/backup/server/profile_
 
 #### Utility config
 _/battleroyale backup server utility_

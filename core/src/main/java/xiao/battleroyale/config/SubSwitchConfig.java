@@ -55,6 +55,7 @@ public class SubSwitchConfig {
             if (!selectedFileConfigs.isEmpty()) {
                 T configEntry = selectedFileConfigs.listGet(0);
                 configEntry.applyDefault();
+                context.setLastAppliedConfigId(folderId, configEntry.getConfigId());
                 BattleRoyale.LOGGER.debug("Applied first config while switching config file, fileName:{}, configId:{}, type:{}", fileName, configEntry.getConfigId(), configEntry.getType());
             }
             return true;

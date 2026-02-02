@@ -47,11 +47,11 @@ public class LootConfigManager
 
 
     private LootConfigManager() {
-        allFolderConfigData.put(LOOT_SPAWNER, new FolderConfigData<>());
-        allFolderConfigData.put(ENTITY_SPAWNER, new FolderConfigData<>());
-        allFolderConfigData.put(AIRDROP, new FolderConfigData<>());
-        allFolderConfigData.put(AIRDROP_SPECIAL, new FolderConfigData<>());
-        allFolderConfigData.put(SECRET_ROOM, new FolderConfigData<>());
+        allFolderConfigData.put(LOOT_SPAWNER, new FolderConfigData<>(LOOT_SPAWNER));
+        allFolderConfigData.put(ENTITY_SPAWNER, new FolderConfigData<>(ENTITY_SPAWNER));
+        allFolderConfigData.put(AIRDROP, new FolderConfigData<>(AIRDROP));
+        allFolderConfigData.put(AIRDROP_SPECIAL, new FolderConfigData<>(AIRDROP_SPECIAL));
+        allFolderConfigData.put(SECRET_ROOM, new FolderConfigData<>(SECRET_ROOM));
     }
 
     public static void init(McSide mcSide) {
@@ -78,6 +78,10 @@ public class LootConfigManager
         }
         @Override public @NotNull LootConfig copy() {
             return new LootConfig(id, name, color, isDefault, entry.copy());
+        }
+
+        @Override public ILootEntry getLootEntry() {
+            return this.entry;
         }
 
         @Override
@@ -205,13 +209,10 @@ public class LootConfigManager
         }
     }
 
-    /**
-     * 根据刷新实体/方块自身lootId的通用获取接口
-     */
-    @Nullable
-    public LootConfig getLootConfig(BlockEntity be, int id) {
+    @Override
+    public @Nullable LootConfig getLootConfig(BlockEntity be) {
         if (be instanceof AbstractLootBlockEntity lootBlockEntity) {
-            return this.getConfigEntry(lootBlockEntity.getConfigFolderId(), id);
+            return this.getConfigEntry(lootBlockEntity.getConfigFolderId(), lootBlockEntity.getConfigId());
         }
         BattleRoyale.LOGGER.warn("unsupported BlockEntity type");
         return null;

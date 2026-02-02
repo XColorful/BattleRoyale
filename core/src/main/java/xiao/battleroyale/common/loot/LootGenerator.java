@@ -22,7 +22,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.IConfigSubManager;
+import xiao.battleroyale.api.config.common.loot.ILootConfigManager;
 import xiao.battleroyale.api.config.common.loot.ILootEntry;
+import xiao.battleroyale.api.config.common.loot.ILootSingleEntry;
 import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
 import xiao.battleroyale.api.loot.*;
@@ -250,17 +253,36 @@ public class LootGenerator {
         return centerPos;
     }
 
+    public static ILootConfigManager<?> getILootConfigManager() {
+        IConfigSubManager<?> configSubManager = BattleRoyale.getModConfigManager().getConfigSubManager(LootConfigManager.get().getNameKey());
+        if (configSubManager instanceof ILootConfigManager<?> lootConfigManager) {
+            return lootConfigManager;
+        } else {
+            if (configSubManager == null) {
+                BattleRoyale.LOGGER.warn("LootGenerator: Failed to get ILootConfigManager with NameKey '{}'", LootConfigManager.get().getNameKey());
+            } else {
+                BattleRoyale.LOGGER.warn("LootGenerator: Failed to get ILootConfigManager, default FolderType: {}", configSubManager.getFolderType());
+            }
+            return null;
+        }
+    }
+
+    public static boolean refreshLootObject(LootContext lootContext, BlockEntity blockEntity) {
+        ILootConfigManager<?> lootConfigManager = getILootConfigManager();
+        return lootConfigManager != null && refreshLootObject(lootConfigManager, lootContext, blockEntity);
+    }
+
     /**
      * 刷新单个战利品方块实体。
      * @return 是否成功刷新
      */
-    public static boolean refreshLootObject(LootContext lootContext, BlockEntity blockEntity) {
+    public static <T extends ILootSingleEntry> boolean refreshLootObject(ILootConfigManager<T> lootConfigManager, LootContext lootContext, BlockEntity blockEntity) {
         if (blockEntity instanceof ILootObject lootObject) { // 本模组方块
             UUID blockGameId = lootObject.getGameId();
-            LootConfig config = LootConfigManager.get().getLootConfig(blockEntity, lootObject.getConfigId());
+            ILootSingleEntry lootConfig = lootConfigManager.getLootConfig(blockEntity);
 
-            if (config != null && (blockGameId == null || !blockGameId.equals(lootContext.gameId))) {
-                ILootEntry entry = config.entry;
+            if (lootConfig != null && (blockGameId == null || !blockGameId.equals(lootContext.gameId))) {
+                ILootEntry entry = lootConfig.getLootEntry();
                 generateLoot(lootContext, (AbstractLootBlockEntity) lootObject, entry);
                 lootObject.setGameId(lootContext.gameId);
                 // blockEntity.setChanged(); // setGameId内部已经标记
@@ -270,14 +292,14 @@ public class LootGenerator {
             if (!LOOT_ANY_BLOCK_ENTITY && !(blockEntity instanceof Container)) {
                 return false;
             }
-            LootConfig config = LootConfigManager.get().getDefaultConfig();
-            if (config == null ||
+            ILootSingleEntry lootConfig = lootConfigManager.getDefaultConfig();
+            if (lootConfig == null ||
                     (HAS_BLOCK_FILTER && !blockFilter.shouldLoot(blockEntity))) {
                 return false;
             }
             UUID blockGameId = BattleRoyale.getGameManager().getGameIdReadApi().getGameId(blockEntity);
             if (blockGameId == null || !blockGameId.equals(lootContext.gameId)) {
-                ILootEntry entry = config.entry;
+                ILootEntry entry = lootConfig.getLootEntry();
                 generateVanillaLoot(lootContext, blockEntity, entry);
                 BattleRoyale.getGameManager().getGameIdWriteApi().addGameId(blockEntity, lootContext.gameId);
                 // blockEntity.setChanged(); // addGameId内部已经标记
@@ -287,11 +309,16 @@ public class LootGenerator {
         return false;
     }
 
+    public static int refreshLootInChunk(LootContext lootContext) {
+        ILootConfigManager<?> lootConfigManager = getILootConfigManager();
+        return lootConfigManager != null ? refreshLootInChunk(lootConfigManager, lootContext) : 0;
+    }
+
     /**
      * 刷新指定区块内的所有战利品方块。
      * @return 该区块内刷新的战利品方块数量，返回 CHUNK_NOT_LOADED 则为区块未加载
      */
-    public static int refreshLootInChunk(LootContext lootContext) {
+    public static <T extends ILootSingleEntry> int refreshLootInChunk(ILootConfigManager<T> lootConfigManager, LootContext lootContext) {
         int refreshedCount = 0;
         LevelChunk chunk = lootContext.serverLevel.getChunkSource().getChunkNow(lootContext.chunkPos.x, lootContext.chunkPos.z);
 
@@ -302,7 +329,7 @@ public class LootGenerator {
         clearOldLoot(lootContext);
 
         for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
-            if (refreshLootObject(lootContext, blockEntity)) {
+            if (refreshLootObject(lootConfigManager, lootContext, blockEntity)) {
                 refreshedCount++;
             }
         }

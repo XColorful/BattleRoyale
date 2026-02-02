@@ -206,8 +206,11 @@
 ### 服务端
 > _./common/server_
 
+- [ServerManager](./common/server/server-manager.md)：服务端管理器
 - Performance：性能
 	- [PerformanceManager](./common/server/performance/performance-manager.md)：性能管理器
+- Profile：预设
+	- [ProfileManager](./common/server/profile/profile-manager.md)：预设管理器
 - Utility：实用
 	- [SurvivalLobby](./common/server/utility/survival-lobby.md)：生存大厅
 	- UtilityManager：实用功能管理器
@@ -272,6 +275,7 @@
 	  - [性能配置管理器](./config/common/server/performance/performance-config-manager.md)：管理[性能配置](/docs/wiki/Configuration/Performance%20config.md)
       > - 生成性能配置：
       > 	- CFHC性能配置
+      - [预设配置管理器](./config/common/server/profile/profile-config-manager.md)：管理[预设配置](/docs/wiki/Configuration/Profile%20config.md)
 	  - [实用配置管理器](./config/common/server/utility/utility-config-manager.md)：管理[实用配置](/docs/wiki/Configuration/Utility%20config.md)
 
 ### 模组数据
@@ -572,8 +576,11 @@ Module division based on the `xiao.battleroyale` top-level package
 ### Server
 > _./common/server_
 
+- [ServerManager](./common/server/server-manager.md): Server manager
 - Performance:
 	- [PerformanceManager](./common/server/performance/performance-manager.md#English): Performance manager
+- Profile:
+	- [ProfileManager](./common/server/profile/profile-manager.md#English): Profile manager
 - Utility:
 	- [SurvivalLobby](./common/server/utility/survival-lobby.md#English): Survival lobby
 	- UtilityManager: Utility function manager
@@ -638,6 +645,7 @@ Module division based on the `xiao.battleroyale` top-level package
 	  - [Performance Config Manager](./config/common/server/performance/performance-config-manager.md#English): Manage [Performance config](/docs/wiki/Configuration/Performance%20config.md#English)
       > - Generate performance config:
       > 	- CFHC performance config
+      - [Profile Config Manager](./config/common/server/profile/profile-config-manager.md#English): Manage [Profile config](/docs/wiki/Configuration/Profile%20config.md#English)
 	  - [Utility Config Manager](./config/common/server/utility/utility-config-manager.md#English): Manage [Utility config](/docs/wiki/Configuration/Utility%20config.md#English)
 
 ### Mod Data
