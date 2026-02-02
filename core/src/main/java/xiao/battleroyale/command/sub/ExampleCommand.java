@@ -23,6 +23,7 @@ import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
+import xiao.battleroyale.config.common.server.profile.ProfileConfigManager;
 import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
 
 import javax.annotation.Nullable;
@@ -66,6 +67,8 @@ public class ExampleCommand {
                         .executes(context -> generateServerConfigs(context, null))
                         .then(Commands.literal(PERFORMANCE)
                                 .executes(context -> generateServerConfigs(context, PERFORMANCE)))
+                        .then(Commands.literal(PROFILE)
+                                .executes(context -> generateServerConfigs(context, PROFILE)))
                         .then(Commands.literal(UTILITY)
                                 .executes(context -> generateServerConfigs(context, UTILITY))));
     }
@@ -257,6 +260,10 @@ public class ExampleCommand {
                 case PERFORMANCE:
                     subManagerNameKey = PerformanceConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.default_performance_config_generated";
+                    break;
+                case PROFILE:
+                    subManagerNameKey = ProfileConfigManager.get().getNameKey();
+                    messageKey = "battleroyale.message.default_profile_config_generated";
                     break;
                 case UTILITY:
                     subManagerNameKey = UtilityConfigManager.get().getNameKey();

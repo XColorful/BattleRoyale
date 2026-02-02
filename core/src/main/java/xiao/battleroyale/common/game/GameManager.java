@@ -584,59 +584,44 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     @Override public int getBotConfigId() { return botConfigId; }
 
     // 用指令设置默认配置
-    @Override public boolean setGameruleConfigId(int gameId) {
-        IConfigManager gameConfigManager = BattleRoyale.getModConfigManager().getConfigManager(GameConfigManager.get().getNameKey());
-
-        if (gameConfigManager == null || gameId < 0 || gameConfigManager.getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId) == null) {
-            BattleRoyale.LOGGER.info("setGameruleConfigId {} failed", gameId);
-            return false;
-        }
-        this.gameruleConfigId = gameId;
+    @Override public boolean setGameruleConfigId(int id) {
+        if (id < 0) return false;
+        this.gameruleConfigId = id;
         return true;
     }
-    @Override public String getGameruleConfigName(int gameId) {
-        IConfigManager gameConfigManager = BattleRoyale.getModConfigManager().getConfigManager(GameConfigManager.get().getNameKey());
-        if (gameConfigManager == null) return "";
+    @Override public String getGameruleConfigName(int id) {
+        IConfigSubManager<?> gameruleConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(GameConfigManager.get().getNameKey(), GameruleConfigManager.get().getNameKey());
+        if (gameruleConfigManager == null || id < 0 || !(gameruleConfigManager.getConfigEntry(id) instanceof GameruleConfig config)) return "";
 
-        GameruleConfig gameruleConfig = gameConfigManager.getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId) instanceof GameruleConfig config ? config : null;
-        return gameruleConfig != null ? gameruleConfig.getGameName() : "";
+        return config.getName();
     }
     @Override public boolean setSpawnConfigId(int id) {
-        IConfigManager gameConfigManager = BattleRoyale.getModConfigManager().getConfigManager(GameConfigManager.get().getNameKey());
-
-        if (gameConfigManager == null || id < 0 || gameConfigManager.getConfigEntry(SpawnConfigManager.get().getNameKey(), id) == null) {
-            return false;
-        }
+        if (spawnConfigId < 0) return false;
         this.spawnConfigId = id;
         return true;
     }
     @Override public String getSpawnConfigName(int id) {
-        IConfigManager gameConfigManager = BattleRoyale.getModConfigManager().getConfigManager(GameConfigManager.get().getNameKey());
-        if (gameConfigManager == null) return "";
+        IConfigSubManager<?> spawnConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(GameConfigManager.get().getNameKey(), SpawnConfigManager.get().getNameKey());
+        if (spawnConfigManager == null || id < 0 || !(spawnConfigManager.getConfigEntry(id) instanceof SpawnConfig config)) return "";
 
-        SpawnConfig spawnConfig = gameConfigManager.getConfigEntry(SpawnConfigManager.get().getNameKey(), id) instanceof SpawnConfig config ? config : null;
-        return spawnConfig != null ? spawnConfig.name : "";
+        return config.getName();
     }
     @Override public boolean setBotConfigId(int id) {
-        IConfigSubManager<?> botConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(GameConfigManager.get().getNameKey(), BotConfigManager.get().getNameKey());
-        if (botConfigManager == null || id < 0 || botConfigManager.getConfigEntry(id) == null) {
-            return false;
-        }
+        if (id < 0) return false;
         this.botConfigId = id;
         return true;
     }
     @Override public String getBotConfigName(int id) {
-        IConfigManager gameConfigManager = BattleRoyale.getModConfigManager().getConfigManager(GameConfigManager.get().getNameKey());
-        if (gameConfigManager == null) return "";
+        IConfigSubManager<?> botConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(GameConfigManager.get().getNameKey(), BotConfigManager.get().getNameKey());
+        if (botConfigManager == null || id < 0 || !(botConfigManager.getConfigEntry(id) instanceof BotConfigManager.BotConfig config)) return "";
 
-        BotConfigManager.BotConfig botConfig = gameConfigManager.getConfigEntry(BotConfigManager.get().getNameKey(), id) instanceof BotConfigManager.BotConfig config ? config : null;
-        return botConfig != null ? botConfig.name : "";
+        return config.getName();
     }
     @Override public String getZoneConfigFileName() {
-        IConfigManager gameConfigManager = BattleRoyale.getModConfigManager().getConfigManager(GameConfigManager.get().getNameKey());
-        if (gameConfigManager == null) return "";
+        IConfigSubManager<?> zoneConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(GameConfigManager.get().getNameKey(), ZoneConfigManager.get().getNameKey());
+        if (zoneConfigManager == null) return "";
 
-        return gameConfigManager.getCurrentSelectedFileName(ZoneConfigManager.get().getNameKey());
+        return zoneConfigManager.getCurrentSelectedFileName();
     }
 
     private void setServerLevel(@Nullable ServerLevel serverLevel) {

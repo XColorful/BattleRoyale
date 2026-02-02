@@ -41,7 +41,7 @@ public class ZoneConfigManager
     }
 
     private ZoneConfigManager() {
-        allFolderConfigData.put(DEFAULT_ZONE_CONFIG_FOLDER, new FolderConfigData<>());
+        allFolderConfigData.put(DEFAULT_ZONE_CONFIG_FOLDER, new FolderConfigData<>(DEFAULT_ZONE_CONFIG_FOLDER));
     }
 
     public static void init() {

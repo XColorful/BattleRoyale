@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 import xiao.battleroyale.config.common.game.zone.zonefunc.MessageFuncEntry;
+import xiao.battleroyale.config.common.game.zone.zonefunc.MutekiFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.CircleEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
@@ -95,10 +96,14 @@ public class Pubg5340x5340Casual {
     }
 
     public static void generateBorderCircle(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME) {
+        generateBorderCircle(zoneConfigJson, halfWidth, GAME_TIME, 0);
+    }
+
+    public static void generateBorderCircle(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME, double randomRange) {
         SafeFuncEntry safeFuncEntry = new SafeFuncEntry(0, 0, 200, 0, 666); // 固定边界的检查频率低一些
 
         StartEntry startEntry = new StartEntry();
-        startEntry.addFixedCenter(new Vec3(0, -64, 0));
+        startEntry.addFixedCenter(new Vec3(0, -64, 0)).addCenterRange(randomRange);
         startEntry.addFixedDimension(new Vec3(halfWidth, 384, halfWidth));
 
         EndEntry endEntry = new EndEntry();
@@ -128,6 +133,20 @@ public class Pubg5340x5340Casual {
         zoneConfig = new ZoneConfig(1, "Game Start Message", "#FFAA00AA",
                 0, 80,
                 messageFuncEntry, circleEntry);
+        zoneConfigJson.add(zoneConfig.toJson());
+
+        // 黄色无敌区
+        int muteki_zoneTime = 20 * 30;
+        MutekiFuncEntry mutekiFuncEntry = new MutekiFuncEntry(0, muteki_zoneTime, 20, -1,
+                30);
+        circleEntry = new CircleEntry(
+                new StartEntry().addPreviousCenter(0, 0).addPreviousDimension(0, 0).addRelativeDimension(new Vec3(-5, 0, -5)),
+                new EndEntry().addPreviousCenter(0, 0).addPreviousDimension(0, 0).addRelativeDimension(new Vec3(-5, 64-384, -5)),
+                false
+        );
+        zoneConfig = new ZoneConfig(4, "30s Muteki Time", "#FFD700AA", // 2和3是鞘翅区
+                0, muteki_zoneTime,
+                mutekiFuncEntry, circleEntry);
         zoneConfigJson.add(zoneConfig.toJson());
     }
 
