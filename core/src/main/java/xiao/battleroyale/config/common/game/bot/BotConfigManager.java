@@ -32,7 +32,7 @@ public class BotConfigManager
     }
 
     private BotConfigManager() {
-        allFolderConfigData.put(DEFAULT_BOT_CONFIG_FOLDER, new FolderConfigData<>());
+        allFolderConfigData.put(DEFAULT_BOT_CONFIG_FOLDER, new FolderConfigData<>(DEFAULT_BOT_CONFIG_FOLDER));
     }
 
     public static void init() {
