@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
+import xiao.battleroyale.util.ClassUtils;
 import xiao.battleroyale.util.ClassUtils.ArrayMap;
 
 import java.nio.file.Path;
@@ -16,10 +17,10 @@ import java.util.*;
 public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> implements IConfigSubManager<T> {
 
     protected final int DEFAULT_CONFIG_FOLDER = 0;
-    protected final Map<Integer, FolderConfigData<T>> allFolderConfigData = new HashMap<>(); // folderId -> 文件夹下配置
+    protected final ClassUtils.ArrayMap<Integer, FolderConfigData<T>> allFolderConfigData = new ArrayMap<>(FolderConfigData::getFolderId); // folderId -> 文件夹下配置
 
     public AbstractConfigSubManager() {
-        allFolderConfigData.put(DEFAULT_CONFIG_FOLDER, new FolderConfigData<>());
+        allFolderConfigData.put(DEFAULT_CONFIG_FOLDER, new FolderConfigData<>(DEFAULT_CONFIG_FOLDER));
     }
 
     /**
@@ -31,10 +32,10 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     }
     protected final FolderConfigData<T> getConfigFolderData(int folderId) {
         if (allFolderConfigData.containsKey(folderId)) {
-            return allFolderConfigData.get(folderId);
+            return allFolderConfigData.mapGet(folderId);
         } else { // 默认不会触发，触发了也别崩溃
             BattleRoyale.LOGGER.error("Unexpected ConfigManager folderId {}, default config dir: {}, default folderId: {}", folderId, getConfigDirPath(), DEFAULT_CONFIG_FOLDER);
-            return allFolderConfigData.get(DEFAULT_CONFIG_FOLDER);
+            return allFolderConfigData.mapGet(DEFAULT_CONFIG_FOLDER);
         }
     }
 
@@ -82,8 +83,25 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         }
         return getConfigFolderData(folderId).getConfigFileName();
     }
+    @Override public void setLastAppliedConfigId(int configId) {
+        setLastAppliedConfigId(DEFAULT_CONFIG_FOLDER, configId);
+    }
+    @Override public void setLastAppliedConfigId(int folderId, int configId) {
+        allFolderConfigData.mapGet(folderId).setLastAppliedConfigId(configId);
+    }
+    @Override public int getLastAppliedConfigId() {
+        return getLastAppliedConfigId(DEFAULT_CONFIG_FOLDER);
+    }
+    @Override public int getLastAppliedConfigId(int folderId) {
+        return allFolderConfigData.mapGet(folderId).getLastAppliedConfigId();
+    }
     @Override public String getFolderType() {
         return getFolderType(DEFAULT_CONFIG_FOLDER);
+    }
+    @Override public List<Integer> getAllFolderId() {
+        List<Integer> list = new ArrayList<>(allFolderConfigData.size());
+        allFolderConfigData.forEach(data -> list.add(data.getFolderId()));
+        return list;
     }
 
     /**

@@ -14,7 +14,7 @@
 - healPlayer：恢复游戏玩家状态
 - teleportToLobby：传送回大厅
 
-[![ILobbyFuncApi](/docs/api/utility/ILobbyFuncApi.md)](/docs/api/utility/ILobbyFuncApi.md)
+[![ILobbyFuncApi](/docs/api/server/utility/ILobbyFuncApi.md)](/docs/api/server/utility/ILobbyFuncApi.md)
 
 #### 大厅API
 
@@ -23,7 +23,7 @@
 
 [![IGameLobbyReadApi](/docs/api/game/lobby/IGameLobbyReadApi.md)](/docs/api/game/lobby/IGameLobbyReadApi.md)
 
-[![ILobbyReadApi](/docs/api/utility/ILobbyReadApi.md)](/docs/api/utility/ILobbyReadApi.md)
+[![ILobbyReadApi](/docs/api/server/utility/ILobbyReadApi.md)](/docs/api/server/utility/ILobbyReadApi.md)
 
 # English
 
@@ -41,7 +41,7 @@
 - healPlayer: Restores the game player's state.
 - teleportToLobby: Teleports back to the lobby.
 
-[![ILobbyFuncApi](/docs/api/utility/ILobbyFuncApi.md)](/docs/api/utility/ILobbyFuncApi.md)
+[![ILobbyFuncApi](/docs/api/server/utility/ILobbyFuncApi.md)](/docs/api/server/utility/ILobbyFuncApi.md)
 
 #### Lobby API
 
@@ -50,4 +50,4 @@
 
 [![IGameLobbyReadApi](/docs/api/game/lobby/IGameLobbyReadApi.md)](/docs/api/game/lobby/IGameLobbyReadApi.md)
 
-[![ILobbyReadApi](/docs/api/utility/ILobbyReadApi.md)](/docs/api/utility/ILobbyReadApi.md)
+[![ILobbyReadApi](/docs/api/server/utility/ILobbyReadApi.md)](/docs/api/server/utility/ILobbyReadApi.md)

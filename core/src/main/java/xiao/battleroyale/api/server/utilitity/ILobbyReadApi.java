@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.utilitity;
+package xiao.battleroyale.api.server.utilitity;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;

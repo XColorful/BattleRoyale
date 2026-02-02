@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.utilitity;
+package xiao.battleroyale.api.server.utilitity;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
