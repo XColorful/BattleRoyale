@@ -18,6 +18,8 @@ import java.util.List;
 public class EmptyEntry extends AbstractLootEntry {
 
     public LootEntryType type;
+    public static String TYPE_ITEM = LootEntryType.ITEM.getName();
+    public static String TYPE_ENTITY = LootEntryType.ENTITY.getName();
 
     public EmptyEntry(String typeString) {
         LootEntryType entryType = LootEntryType.fromName(typeString);
