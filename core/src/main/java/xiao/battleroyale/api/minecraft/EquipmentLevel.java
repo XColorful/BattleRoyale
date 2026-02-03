@@ -83,6 +83,11 @@ public class EquipmentLevel {
         return maxDurability + 1;
     }
 
+    public static ItemEntry equipment(int material, int part) {
+        String equipName = getName(material, part);
+        return new ItemEntry(equipName, "{}", 1);
+    }
+
     public static ItemEntry equipment(int material, int part, int shootTaken) {
         String equipName = getName(material, part);
         int damage = Math.max(getDamage(material, part) - 2 * shootTaken, 0);
