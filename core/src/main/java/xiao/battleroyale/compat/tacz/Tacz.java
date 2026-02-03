@@ -64,6 +64,22 @@ public class Tacz extends AbstractCompatMod {
         TaczBleedingHandler.get().unregister();
     }
 
+    /**
+     * 监听并修改子弹伤害和盔甲耐久损耗
+     */
+    public static void registerBulletEvent() {
+        if (!get().isLoaded()) {
+            return;
+        }
+        TaczBulletHandler.get().register();
+    }
+    public static void unregisterBulletEvent() {
+        if (!get().isLoaded()) {
+            return;
+        }
+        TaczBulletHandler.get().unregister();
+    }
+
     public static void onAddingBleedingPlayer(@NotNull Player player) {
         if (!get().isLoaded()) {
             return;
