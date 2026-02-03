@@ -1,6 +1,6 @@
 package xiao.battleroyale.compat.tacz;
 
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.tacz.IGunFireSelectEvent;
@@ -51,9 +51,7 @@ public class TaczBleedingHandler {
             return;
         }
 
-        if (!(event.getShooter() instanceof Player player)) {
-            return;
-        }
+        LivingEntity player = event.getShooter();
         if (PlayerRevive.get().isBleeding(player)) {
             event.setCanceled(true);
             BattleRoyale.LOGGER.debug("Prevented bleeding {} from shooting", getPlayerDebugName(player));
@@ -68,9 +66,7 @@ public class TaczBleedingHandler {
             return;
         }
 
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
+        LivingEntity player = event.getEntity();
         if (PlayerRevive.get().isBleeding(player)) {
             event.setCanceled(true);
             BattleRoyale.LOGGER.debug("Prevented bleeding {} from reloading", getPlayerDebugName(player));
@@ -92,9 +88,7 @@ public class TaczBleedingHandler {
             return;
         }
 
-        if (!(event.getShooter() instanceof Player player)) {
-            return;
-        }
+        LivingEntity player = event.getShooter();
         if (PlayerRevive.get().isBleeding(player)) {
             event.setCanceled(true);
             BattleRoyale.LOGGER.debug("Prevented bleeding {} from selecting fire mode", getPlayerDebugName(player));
@@ -109,16 +103,14 @@ public class TaczBleedingHandler {
             return;
         }
 
-        if (!(event.getShooter() instanceof Player player)) {
-            return;
-        }
+        LivingEntity player = event.getShooter();
         if (PlayerRevive.get().isBleeding(player)) {
             event.setCanceled(true);
             BattleRoyale.LOGGER.debug("Prevented bleeding {} from GunMelee", getPlayerDebugName(player));
         }
     }
 
-    private static String getPlayerDebugName(Player player) {
+    private static String getPlayerDebugName(LivingEntity player) {
         GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(player.getUUID());
         if (gamePlayer != null) {
             return String.format("GamePlayer %s", gamePlayer.getNameWithId());

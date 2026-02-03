@@ -1,14 +1,12 @@
 package xiao.battleroyale.compat.forge.compat.tacz;
 
-import com.tacz.guns.api.event.common.GunFireSelectEvent;
-import com.tacz.guns.api.event.common.GunMeleeEvent;
-import com.tacz.guns.api.event.common.GunReloadEvent;
-import com.tacz.guns.api.event.common.GunShootEvent;
+import com.tacz.guns.api.event.common.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.compat.tacz.ITaczEventRegister;
 import xiao.battleroyale.compat.tacz.TaczBleedingHandler;
+import xiao.battleroyale.compat.tacz.TaczBulletHandler;
 
 public class TaczEventRegister implements ITaczEventRegister {
 
@@ -22,37 +20,63 @@ public class TaczEventRegister implements ITaczEventRegister {
 
     private TaczEventRegister() {}
 
+    private final BleedingEventListener bleedingListener = new BleedingEventListener();
+    private final BulletEventListener bulletListener = new BulletEventListener();
+
     @Override
     public boolean registerBleedingHandler() {
-        MinecraftForge.EVENT_BUS.register(get());
+        MinecraftForge.EVENT_BUS.register(bleedingListener);
         BattleRoyale.LOGGER.debug("Registered TaczBleedingHandler");
         return true;
     }
 
     @Override
     public boolean unregisterBleedingHandler() {
-        MinecraftForge.EVENT_BUS.unregister(get());
+        MinecraftForge.EVENT_BUS.unregister(bleedingListener);
         BattleRoyale.LOGGER.debug("Unregistered TaczBleedingHandler");
         return true;
     }
 
-    @SubscribeEvent
-    public void onGunShoot(GunShootEvent event) {
-        TaczBleedingHandler.get().onGunShoot(new TaczGunShootEvent(event));
+    @Override
+    public boolean registerBulletHandler() {
+        MinecraftForge.EVENT_BUS.register(bulletListener);
+        BattleRoyale.LOGGER.debug("Registered TaczBulletHandler");
+        return true;
     }
 
-    @SubscribeEvent
-    public void onGunReload(GunReloadEvent event) {
-        TaczBleedingHandler.get().onGunReload(new TaczGunReloadEvent(event));
+    @Override
+    public boolean unregisterBulletHandler() {
+        MinecraftForge.EVENT_BUS.unregister(bulletListener);
+        BattleRoyale.LOGGER.debug("Unregistered TaczBulletHandler");
+        return true;
     }
 
-    @SubscribeEvent
-    public void onGunFireSelect(GunFireSelectEvent event) {
-        TaczBleedingHandler.get().onGunFireSelect(new TaczGunFireSelectEvent(event));
+    private static class BleedingEventListener {
+        @SubscribeEvent
+        public void onGunShoot(GunShootEvent event) {
+            TaczBleedingHandler.get().onGunShoot(new TaczGunShootEvent(event));
+        }
+
+        @SubscribeEvent
+        public void onGunReload(GunReloadEvent event) {
+            TaczBleedingHandler.get().onGunReload(new TaczGunReloadEvent(event));
+        }
+
+        @SubscribeEvent
+        public void onGunFireSelect(GunFireSelectEvent event) {
+            TaczBleedingHandler.get().onGunFireSelect(new TaczGunFireSelectEvent(event));
+        }
+
+        @SubscribeEvent
+        public void onGunMelee(GunMeleeEvent event) {
+            TaczBleedingHandler.get().onGunMelee(new TaczGunMeleeEvent(event));
+        }
     }
 
-    @SubscribeEvent
-    public void onGunMelee(GunMeleeEvent event) {
-        TaczBleedingHandler.get().onGunMelee(new TaczGunMeleeEvent(event));
+    private static class BulletEventListener {
+        @SubscribeEvent
+        public void onBulletHurt(EntityHurtByGunEvent.Pre event) {
+            TaczBulletHandler.get().onBulletHurt(new TaczBulletHurtEvent(event));
+        }
     }
 }

@@ -2,6 +2,7 @@ package xiao.battleroyale.init;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.init.ICommonSetup;
+import xiao.battleroyale.compat.tacz.Tacz;
 import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.network.NetworkHandler;
 
@@ -21,5 +22,6 @@ public class CommonSetup implements ICommonSetup {
         BattleRoyale.LOGGER.debug("onCommonSetup, reloadAllConfigs:");
         BattleRoyale.getModConfigManager().reloadAllConfigs();
         TempDataManager.get().saveTempData();
+        Tacz.registerBulletEvent();
     }
 }
