@@ -1,11 +1,16 @@
 package xiao.battleroyale.client.renderer.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import it.unimi.dsi.fastutil.longs.Long2BooleanMap;
+import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
@@ -21,25 +26,72 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
         RENDER_IF_EMPTY = bool;
     }
 
+    protected static long CHECK_INTERVAL_MS = 500;
+    protected static volatile long lastCheckTime = 0; // volatile保证渲染线程可见性
+    protected static volatile Long2BooleanMap checkedPos = new Long2BooleanOpenHashMap();
+
     public LootContainerRenderer(BlockEntityRendererProvider.Context context) {
         super(context);
     }
 
     @Override
     public void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-        poseStack.pushPose();
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) return;
 
-        boolean renderBlock = (Minecraft.getInstance().player != null
-                && blockEntity.getBlockPos().distSqr(Minecraft.getInstance().player.blockPosition()) <= MAX_RENDER_DISTANCE_SQ);
-        if (renderBlock) {
-            boolean renderItem = !blockEntity.isEmpty();
-            if (renderItem) { // 渲染容器内物品
-                renderItems(blockEntity, partialTick, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
-            } else if (RENDER_IF_EMPTY) { // 渲染方块模型
-                renderBlockModel(blockEntity, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
-            }
+        // 获取摄像机数据
+        Camera camera = mc.gameRenderer.getMainCamera();
+        Vec3 cameraPos = camera.getPosition();
+        Vector3f cameraLook = camera.getLookVector();
+
+        // --- 1. 距离判断 (Distance Check) ---
+        // 3减 3乘 2加 1比较 (L1 Cache)
+        BlockPos pos = blockEntity.getBlockPos();
+        double dx = pos.getX() + 0.5 - cameraPos.x;
+        double dy = pos.getY() + 0.5 - cameraPos.y;
+        double dz = pos.getZ() + 0.5 - cameraPos.z;
+        if (dx * dx + dy * dy + dz * dz > MAX_RENDER_DISTANCE_SQ) return;
+
+        // --- 2. 夹角计算 (Frustum/Dot Product) ---
+        // 6减 3乘 2加 1比较 (插值向量，避免身后对象创建)
+        if (cameraLook.x * dx + cameraLook.y * dy + cameraLook.z * dz < 0) return;
+
+        // --- 3. 状态检查 (State Check) ---
+        // 逻辑过滤，避免空容器进行后续昂贵的哈希查找和物理检测
+        boolean empty = blockEntity.isEmpty();
+        if (empty && !RENDER_IF_EMPTY) return;
+
+        // --- 4. 周期性缓存重置 (Cache Reset) ---
+        // 1次 volatile 读 + 1次系统时间调用 (每 500ms 降频重置)
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastCheckTime > CHECK_INTERVAL_MS) {
+            lastCheckTime = currentTime;
+            checkedPos = new Long2BooleanOpenHashMap();
         }
 
+        // --- 5. 遮挡状态获取 (Occlusion Fetch) ---
+        // 1次 long 转换 + 1次原生 long 哈希查找 (无装箱开销)
+        long posKey = pos.asLong();
+        Long2BooleanMap currentMap = checkedPos;
+        boolean isVisible;
+        if (currentMap.containsKey(posKey)) {
+            isVisible = currentMap.get(posKey);
+        } else {
+            // --- 6. 射线检测 (Ray-cast / Heavy) ---
+            // 缓存失效后调用父类通用检测。容器检测点设为底部 +0.1 以防被模型阻断
+            isVisible = isVisible(blockEntity, cameraPos, 0.1);
+            currentMap.put(posKey, isVisible);
+        }
+        if (!isVisible) return;
+
+        // --- 7. 渲染执行 (Final Render) ---
+        // 通过所有门槛后才分配矩阵栈。物资箱逻辑：非空则渲染物品，否则仅渲染箱子模型
+        poseStack.pushPose();
+        if (!empty) {
+            renderItems(blockEntity, partialTick, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+        } else {
+            renderBlockModel(blockEntity, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+        }
         poseStack.popPose();
     }
 
