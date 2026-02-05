@@ -30,7 +30,7 @@ public class ElytraAddon {
         writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
-    private static JsonObject generateLevitationEffect2() {
+    public static JsonObject generateLevitationEffect2() {
         EffectFuncEntry effectFuncEntry = new EffectFuncEntry.EffectFuncEntryBuilder(0, 20, 20, 0)
                 .add("minecraft:levitation", 20, 1)
                 .add("minecraft:glowing", 20, 1)
@@ -54,7 +54,7 @@ public class ElytraAddon {
         return zoneConfig.toJson();
     }
 
-    private static JsonObject generateElytraEquipment3() {
+    public static JsonObject generateElytraEquipment3() {
         ILootEntry lootEntry = new MultiEntry(Arrays.asList(
                 new EmptyEntry(LootEntryType.ITEM.getName()),
                 new EmptyEntry(LootEntryType.ITEM.getName()),

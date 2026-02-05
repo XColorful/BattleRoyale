@@ -136,6 +136,9 @@ public class Pubg5340x5340Casual {
                 messageFuncEntry, circleEntry);
         zoneConfigJson.add(zoneConfig.toJson());
 
+        zoneConfigJson.add(ElytraAddon.generateLevitationEffect2());
+        zoneConfigJson.add(ElytraAddon.generateElytraEquipment3());
+
         // 黄色无敌区
         int muteki_zoneTime = 20 * 30;
         MutekiFuncEntry mutekiFuncEntry = new MutekiFuncEntry(0, muteki_zoneTime, 20, -1,
