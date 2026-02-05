@@ -5,11 +5,9 @@ import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.common.effect.boost.BoostData;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
-import xiao.battleroyale.config.common.game.zone.zonefunc.MessageFuncEntry;
-import xiao.battleroyale.config.common.game.zone.zonefunc.MutekiFuncEntry;
-import xiao.battleroyale.config.common.game.zone.zonefunc.NoFuncEntry;
-import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
+import xiao.battleroyale.config.common.game.zone.zonefunc.*;
 import xiao.battleroyale.config.common.game.zone.zoneshape.CircleEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.SquareEntry;
@@ -155,6 +153,13 @@ public class Pubg8000x8000Casual {
                 0, muteki_zoneTime,
                 mutekiFuncEntry, squareEntry);
         zoneConfigJson.add(zoneConfig.toJson());
+
+        // Boost zone (Shrink countdown)
+        BoostFuncEntry boostFuncEntry = new BoostFuncEntry(0, 0, 20, 0, muteki_zoneTime);
+        zoneConfig = new ZoneConfig(5, "Initial boost zone (Muteki countdown)", "#FFFFFF00",
+                4, 0, 19,
+                boostFuncEntry, squareEntry.copy());
+        zoneConfigJson.add(zoneConfig.toJson());
     }
 
     private static void add8000x8000Zone(JsonArray zoneConfigJson) {
@@ -241,7 +246,15 @@ public class Pubg8000x8000Casual {
         squareEntry = new SquareEntry(startEntry, endEntry, false);
         zoneConfig = new ZoneConfig(warnPhase, String.format("Phase %s shrink message", phase), "#FF5555FF",
                 forecastPhase, MOVE_DELAY, 80,
-                messageFuncEntry, squareEntry);
+                messageFuncEntry, squareEntry.copy());
+        zoneConfigJson.add(zoneConfig.toJson());
+
+        // Boost zone (Shrink countdown)
+        int boostPhase = warnPhase + 1;
+        BoostFuncEntry boostFuncEntry = new BoostFuncEntry(0, 0, 20, 0, MOVE_DELAY);
+        zoneConfig = new ZoneConfig(boostPhase, String.format("Phase %s boost zone (Shrink countdown)", phase), "#FFFFFF00",
+                forecastPhase, 0, 19,
+                boostFuncEntry, squareEntry.copy());
         zoneConfigJson.add(zoneConfig.toJson());
     }
 
