@@ -59,7 +59,7 @@ public class ElytraAddon {
                 new EmptyEntry(LootEntryType.ITEM.getName()),
                 new EmptyEntry(LootEntryType.ITEM.getName()),
                 new ItemEntry("minecraft:elytra", "{Damage:332}", 1),
-                new ItemEntry("minecraft:iron_helmet", "", 1)
+                new EmptyEntry(LootEntryType.ITEM.getName())
         ));
         InventoryFuncEntry inventoryFuncEntry = new InventoryFuncEntry(0, 0, 20, 0,
                 false, false, 36, 39,
