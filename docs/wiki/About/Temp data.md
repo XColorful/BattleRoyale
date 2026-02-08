@@ -19,6 +19,16 @@ _./minecraft/battleroyale/temp/registry.json_
 }
 ```
 
+### 机制项
+_./minecraft/battleroyale/temp/feature.json_
+
+- taczBulletHandler：是否启用[TaCZ子弹处理器](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#TaCZ子弹处理器)
+```json
+{
+	"taczBulletHandler": true
+}
+```
+
 ## 配置类
 
 ### 预计算
@@ -64,13 +74,23 @@ Temporary data directory located in all json files under _./minecraft/battleroya
 
 ## Function category
 
-### Registry Entry
+### Registry entry
 _./minecraft/battleroyale/temp/registry.json_
 
 - pubgmcCommand: Enables/disables [PUBGMC compatibility](https://github.com/XColorful/BattleRoyale/wiki/PUBGMC-compatibility#English)
 ```json
 {
 	"pubgmcCommand": true
+}
+```
+
+### Feature entry
+_./minecraft/battleroyale/temp/feature.json_
+
+- taczBulletHandler: Enables/disables [TaCZ bullet handler](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#TaCZ-bullet-handler)
+```json
+{
+	"taczBulletHandler": true
 }
 ```
 

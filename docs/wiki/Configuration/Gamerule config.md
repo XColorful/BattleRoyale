@@ -122,7 +122,7 @@
 - downReload：倒地后手持枪械是否能换弹
 - downFireSelect：倒地后是否能切换手持枪械射击模式
 - downMelee：倒地后手持枪械是否能近战
-> 倒地枪械机制需要同时安装[玩家救援（PlayerRevive）](https://github.com/CreativeMD/PlayerRevive)和[永恒枪械工坊：零（TaCZ）]([MCModderAnchor/TACZ](https://github.com/MCModderAnchor/TACZ))模组
+> 倒地枪械机制需要同时安装[玩家救援（PlayerRevive）](https://github.com/CreativeMD/PlayerRevive)和[永恒枪械工坊：零（TaCZ）](https://github.com/MCModderAnchor/TACZ)模组
 > - 玩家在倒地前执行的换弹不会被取消
 - onlyGamePlayerSpectate：是否仅游戏玩家可以观战
 - spectateAfterTeamEliminated：游戏玩家是否等队伍淘汰才能观战
