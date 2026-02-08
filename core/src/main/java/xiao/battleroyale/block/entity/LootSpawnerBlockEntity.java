@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.init.registry.ModBlocks;
@@ -18,6 +19,8 @@ import xiao.battleroyale.inventory.LootSpawnerMenu;
 import javax.annotation.Nullable;
 
 public class LootSpawnerBlockEntity extends AbstractLootContainerBlockEntity implements MenuProvider {
+
+    protected static final AABB RELATIVE_RENDER_AABB = new AABB(0, 0, 0, 1, 0.5, 1); // 半格高
 
     public LootSpawnerBlockEntity(BlockPos pos, BlockState blockState) {
         super(ModBlocks.LOOT_SPAWNER_BE.get(), pos, blockState, 18);
@@ -46,5 +49,10 @@ public class LootSpawnerBlockEntity extends AbstractLootContainerBlockEntity imp
     @Override
     public boolean stillValid(@NotNull Player p_18946_) {
         return !this.isRemoved();
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        return RELATIVE_RENDER_AABB.move(this.worldPosition);
     }
 }

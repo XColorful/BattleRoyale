@@ -36,7 +36,7 @@ public class EntitySpawnerRenderer extends AbstractBlockRenderer<EntitySpawnerBl
         Vec3 cameraPos = camera.getPosition();
         Vector3f cameraLook = camera.getLookVector();
 
-        // --- 1. 距离判断 (优化：手动计算，避免 BlockPos.distSqr 内部对象调用) ---
+        // ---1. 距离判断---
         BlockPos pos = blockEntity.getBlockPos();
         double dx = pos.getX() + 0.5 - cameraPos.x;
         double dy = pos.getY() + 0.5 - cameraPos.y;
@@ -44,11 +44,11 @@ public class EntitySpawnerRenderer extends AbstractBlockRenderer<EntitySpawnerBl
         double distSq = dx * dx + dy * dy + dz * dz;
         if (distSq > MAX_RENDER_DISTANCE_SQ) return;
 
-        // --- 2. 夹角判断 (极简数学过滤，砍掉身后 180 度的方块) ---
-        // 这里的开销仅仅是 3 次乘法，比任何渲染调用都轻量
-        if (cameraLook.x * dx + cameraLook.y * dy + cameraLook.z * dz < 0) return;
+        // ---2. 夹角判断---
+        // shouldRenderOffScreen并没有对方块实体生效
+        if (cameraLook.x * dx + cameraLook.y * dy + cameraLook.z * dz < -0.1) return; // 小阈值防止视野边缘闪烁
 
-        // --- 3. 渲染执行 ---
+        // ---3. 渲染执行---
         // 实体刷新方块模型长宽为32x32
         poseStack.pushPose();
         poseStack.translate(0.25F, 0, 0.25F);
