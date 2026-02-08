@@ -36,6 +36,9 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
         return this.items.size();
     }
 
+    // 没物品的应用场景下，开销不大
+    // 一般场景在第一个格子就有物品，接近 bool 标志位的 O(1) 性能
+    // 整那么麻烦干嘛，不需要了解更多机制，直接保证正确的方法秒了 (熵排向个别极端场景)
     @Override
     public boolean isEmpty() {
         for (ItemStack itemStack : this.items) {
