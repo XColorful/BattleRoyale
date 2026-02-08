@@ -5,11 +5,9 @@ import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.common.effect.boost.BoostData;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
-import xiao.battleroyale.config.common.game.zone.zonefunc.MessageFuncEntry;
-import xiao.battleroyale.config.common.game.zone.zonefunc.MutekiFuncEntry;
-import xiao.battleroyale.config.common.game.zone.zonefunc.NoFuncEntry;
-import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
+import xiao.battleroyale.config.common.game.zone.zonefunc.*;
 import xiao.battleroyale.config.common.game.zone.zoneshape.CircleEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.SquareEntry;
@@ -142,6 +140,9 @@ public class Pubg8000x8000Casual {
                 messageFuncEntry, squareEntry);
         zoneConfigJson.add(zoneConfig.toJson());
 
+        zoneConfigJson.add(ElytraAddon.generateLevitationEffect2());
+        zoneConfigJson.add(ElytraAddon.generateElytraEquipment3());
+
         // 黄色无敌区
         int muteki_zoneTime = 20 * 30;
         MutekiFuncEntry mutekiFuncEntry = new MutekiFuncEntry(0, muteki_zoneTime, 20, -1,
@@ -151,9 +152,16 @@ public class Pubg8000x8000Casual {
                 new EndEntry().addPreviousCenter(0, 0).addPreviousDimension(0, 0).addRelativeDimension(new Vec3(-5, 64-384, -5)),
                 false
         );
-        zoneConfig = new ZoneConfig(4, "30s Muteki Time", "#FFD700AA", // 2和3是鞘翅区
+        zoneConfig = new ZoneConfig(4, "30s Muteki Time", "#FFD700AA",
                 0, muteki_zoneTime,
                 mutekiFuncEntry, squareEntry);
+        zoneConfigJson.add(zoneConfig.toJson());
+
+        // Boost zone (Shrink countdown)
+        BoostFuncEntry boostFuncEntry = new BoostFuncEntry(0, 0, 20, 0, muteki_zoneTime);
+        zoneConfig = new ZoneConfig(5, "Initial boost zone (Muteki countdown)", "#FFFFFF00",
+                4, 0, 19,
+                boostFuncEntry, squareEntry.copy());
         zoneConfigJson.add(zoneConfig.toJson());
     }
 
@@ -241,7 +249,15 @@ public class Pubg8000x8000Casual {
         squareEntry = new SquareEntry(startEntry, endEntry, false);
         zoneConfig = new ZoneConfig(warnPhase, String.format("Phase %s shrink message", phase), "#FF5555FF",
                 forecastPhase, MOVE_DELAY, 80,
-                messageFuncEntry, squareEntry);
+                messageFuncEntry, squareEntry.copy());
+        zoneConfigJson.add(zoneConfig.toJson());
+
+        // Boost zone (Shrink countdown)
+        int boostPhase = warnPhase + 1;
+        BoostFuncEntry boostFuncEntry = new BoostFuncEntry(0, 0, 20, 0, MOVE_DELAY);
+        zoneConfig = new ZoneConfig(boostPhase, String.format("Phase %s boost zone (Shrink countdown)", phase), "#FFFFFF00",
+                forecastPhase, 0, 19,
+                boostFuncEntry, squareEntry.copy());
         zoneConfigJson.add(zoneConfig.toJson());
     }
 

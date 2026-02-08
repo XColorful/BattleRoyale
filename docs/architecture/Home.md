@@ -330,7 +330,7 @@
 	- ModMenuTypes：模组 GUI 类型（物资刷新方块 GUI 界面）
 	- ModSounds：模组声音（暂未使用）
 - CommandRegistry：指令注册
-- CommonSetup：双端初始化
+- CommonSetup：双端设置
 - CompatInit：联动模组初始化
 - ModEvent：模组事件
 
@@ -700,7 +700,7 @@ Module division based on the `xiao.battleroyale` top-level package
 	- ModMenuTypes: Mod GUI types (Loot spawner block GUI interface)
 	- ModSounds: Mod sounds (Not used yet)
 - CommandRegistry: Command registration
-- CommonSetup: Common initialization
+- CommonSetup: Common set up
 - CompatInit: Compat mod initialization
 - ModEvent: Mod event
 
