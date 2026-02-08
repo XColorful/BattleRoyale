@@ -104,13 +104,13 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
 
         // ---4. 视锥体---
         // 剔除视野外的(头顶和楼下)
-        if (DO_FRUSTUM_CHECK) {
+        if (false && DO_FRUSTUM_CHECK) { // 1.21.1neoforge默认管线已经做了优化
             Frustum frustum = mc.levelRenderer.getFrustum();
-            if (!frustum.isVisible(blockEntity.getRenderBoundingBox())) return;
+//            if (!frustum.isVisible(blockEntity.getRenderBoundingBox())) return;
         }
         // --5. 射线检测---
         // 剔除墙后的
-        if (DO_OCCLUSION_CHECK) {
+        if (false && DO_OCCLUSION_CHECK) { // 1.21.1neoforge默认管线已经做了优化
             boolean isVisible;
             // --- 周期性缓存重置 (Cache Reset) ---
             // 1次 volatile 读 + 1次系统时间调用 (默认每 500ms 降频重置)

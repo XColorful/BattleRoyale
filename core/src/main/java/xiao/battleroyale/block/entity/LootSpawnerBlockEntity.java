@@ -56,7 +56,8 @@ public class LootSpawnerBlockEntity extends AbstractLootContainerBlockEntity imp
         return !this.isRemoved();
     }
 
-    @Override
+    // 1.21.1neoforge默认管线已经做了优化
+//    @Override
     public AABB getRenderBoundingBox() {
         return RELATIVE_RENDER_AABB.move(this.worldPosition);
     }
