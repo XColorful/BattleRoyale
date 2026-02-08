@@ -12,6 +12,9 @@ public class RenderConfigTag extends ConfigEntryTag {
     public static String ITEM_RENDER_DISTANCE = "itemRenderDistance";
     public static String RENDER_ITEM_BLOCK_IF_EMPTY = "renderItemBlockIfEmpty";
     public static String ENTITY_RENDER_DISTANCE = "entityRenderDistance";
+    public static String FRUSTUM_CULLING = "enableFrustumCulling";
+    public static String OCCLUSION_CULLING = "enableOcclusionCulling";
+    public static String OCCLUSION_CHECK_INTERVAL = "occlusionCheckInterval";
 
     public static String USE_CLIENT_COLOR = "useClientColor";
     public static String FIXED_COLOR = "fixedColor";

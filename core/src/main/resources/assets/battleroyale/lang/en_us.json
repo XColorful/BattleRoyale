@@ -321,6 +321,8 @@
   "battleroyale.message.disable_init_stack_zone_config": "Disabled stack zone config, clear previous zone config before load game config",
   "battleroyale.message.set_game_step_success": "Set battleroyale game step to %s",
   "battleroyale.message.set_game_step_fail": "Can't set battleroyale game step to %s",
+  "battleroyale.message.enable_tacz_bullet_handler": "Enabled tacz bullet handler, only work with tacz bullet",
+  "battleroyale.message.disable_tacz_bullet_handler": "Disabled tacz bullet handler, just like nothing happened",
   "battleroyale.message.clear_temp_data": "Cleared all temp data",
   "battleroyale.message.add_debug_player": "%s has become a debug player",
   "battleroyale.message.remove_debug_player": "%s is not a debug player now",
