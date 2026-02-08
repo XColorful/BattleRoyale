@@ -32,7 +32,7 @@ public class CFHCLootSpawner {
                                 new WeightedEntry(5, generateFunction()),
                                 new WeightedEntry(5, generateOthers())
                         )),
-                        new RepeatEntry(0, 3, new EmptyEntry(LootEntryType.ITEM.getName()))
+                        new RepeatEntry(0, 3, new EmptyEntry(EmptyEntry.TYPE_ITEM))
                 ))
         );
         LootConfig lootConfig = new LootConfig(0, "CFHC common loot", "#FFFFFFAA", repeatEntry);

@@ -6,6 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.compat.AbstractCompatMod;
 import xiao.battleroyale.compat.playerrevive.BleedingHandler;
+import xiao.battleroyale.data.io.TempDataManager;
+
+import static xiao.battleroyale.api.data.TempDataTag.FEATURE;
+import static xiao.battleroyale.api.data.TempDataTag.TACZ_BULLET_HANDLER;
 
 public class Tacz extends AbstractCompatMod {
 
@@ -23,6 +27,17 @@ public class Tacz extends AbstractCompatMod {
     }
 
     private Tacz() {}
+
+    @Override
+    public void checkLoaded() {
+        super.checkLoaded();
+        if (isLoaded()) {
+            Boolean registerBulletHandler = TempDataManager.get().getBool(FEATURE, TACZ_BULLET_HANDLER);
+            if (registerBulletHandler != null && registerBulletHandler) {
+                Tacz.registerBulletEvent();
+            }
+        }
+    }
 
     /**
      * 抛出异常后父类会处理为未加载
@@ -62,6 +77,22 @@ public class Tacz extends AbstractCompatMod {
             return;
         }
         TaczBleedingHandler.get().unregister();
+    }
+
+    /**
+     * 监听并修改子弹伤害和盔甲耐久损耗
+     */
+    public static void registerBulletEvent() {
+        if (!get().isLoaded()) {
+            return;
+        }
+        TaczBulletHandler.get().register();
+    }
+    public static void unregisterBulletEvent() {
+        if (!get().isLoaded()) {
+            return;
+        }
+        TaczBulletHandler.get().unregister();
     }
 
     public static void onAddingBleedingPlayer(@NotNull Player player) {

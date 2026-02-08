@@ -2,8 +2,10 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.loot.ILootEntry;
 import xiao.battleroyale.api.minecraft.EquipmentLevel;
+import xiao.battleroyale.compat.tacz.Tacz;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.type.*;
 import xiao.battleroyale.config.common.loot.type.WeightEntry.WeightedEntry;
@@ -726,6 +728,27 @@ public class CbrgLootSpawner {
      * 皮革
      */
     private static ILootEntry commomEquipmentEntry() {
+        if (BattleRoyale.getMcRegistry().isModLoaded(Tacz.get().getModId())) {
+            return new WeightEntry(Arrays.asList(
+                    // 头 20
+                    new WeightedEntry(20, new WeightEntry(Arrays.asList(
+                            new WeightedEntry(65, EquipmentLevel.equipment(LEATHER, HELMET)),
+                            new WeightedEntry(35, EquipmentLevel.equipment(IRON, HELMET))
+                    ))),
+                    // 甲 30
+                    new WeightedEntry(30, new WeightEntry(Arrays.asList(
+                            new WeightedEntry(65, EquipmentLevel.equipment(IRON, CHESTPLATE)),
+                            new WeightedEntry(30, EquipmentLevel.equipment(IRON, CHESTPLATE)),
+                            new WeightedEntry(5, EquipmentLevel.equipment(DIAMOND, CHESTPLATE))
+                    ))),
+                    // 包 50
+                    new WeightedEntry(50, new WeightEntry(Arrays.asList(
+                            new WeightedEntry(65, new EmptyEntry(EmptyEntry.TYPE_ITEM)),
+                            new WeightedEntry(30, new EmptyEntry(EmptyEntry.TYPE_ITEM)),
+                            new WeightedEntry(5, new EmptyEntry(EmptyEntry.TYPE_ITEM))
+                    )))
+            ));
+        }
         return new WeightEntry(Arrays.asList(
                 new WeightedEntry(45, commonVestEntry()),
                 new WeightedEntry(30, commonLeggingsEntry()),
@@ -734,6 +757,22 @@ public class CbrgLootSpawner {
     }
 
     private static ILootEntry rareEquipmentEntry() {
+        if (BattleRoyale.getMcRegistry().isModLoaded(Tacz.get().getModId())) {
+            return new MultiEntry(Arrays.asList(
+                    new WeightEntry(Arrays.asList(
+                            new WeightedEntry(20, EquipmentLevel.equipment(NETHERITE, HELMET)),
+                            new WeightedEntry(80, EquipmentLevel.equipment(IRON, HELMET))
+                    )),
+                    new WeightEntry(Arrays.asList(
+                            new WeightedEntry(30, EquipmentLevel.equipment(DIAMOND, CHESTPLATE)),
+                            new WeightedEntry(70, EquipmentLevel.equipment(IRON, CHESTPLATE))
+                    )),
+                    new WeightEntry(Arrays.asList(
+                            new WeightedEntry(20, new EmptyEntry(EmptyEntry.TYPE_ITEM)),
+                            new WeightedEntry(80, new EmptyEntry(EmptyEntry.TYPE_ITEM))
+                    ))
+            ));
+        }
         return new MultiEntry(Arrays.asList(
                 rareHelmetEntry(),
                 rareVestEntry(),
