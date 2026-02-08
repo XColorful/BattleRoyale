@@ -26,7 +26,6 @@ public class TaczEventRegister implements ITaczEventRegister {
     @Override
     public boolean registerBleedingHandler() {
         NeoForge.EVENT_BUS.register(bleedingListener);
-        MinecraftForge.EVENT_BUS.register(bleedingListener);
         BattleRoyale.LOGGER.debug("Registered TaczBleedingHandler");
         return true;
     }
@@ -40,14 +39,14 @@ public class TaczEventRegister implements ITaczEventRegister {
 
     @Override
     public boolean registerBulletHandler() {
-        MinecraftForge.EVENT_BUS.register(bulletListener);
+        NeoForge.EVENT_BUS.register(bulletListener);
         BattleRoyale.LOGGER.debug("Registered TaczBulletHandler");
         return true;
     }
 
     @Override
     public boolean unregisterBulletHandler() {
-        MinecraftForge.EVENT_BUS.unregister(bulletListener);
+        NeoForge.EVENT_BUS.unregister(bulletListener);
         BattleRoyale.LOGGER.debug("Unregistered TaczBulletHandler");
         return true;
     }

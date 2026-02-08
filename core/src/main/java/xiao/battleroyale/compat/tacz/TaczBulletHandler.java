@@ -3,6 +3,7 @@ package xiao.battleroyale.compat.tacz;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import xiao.battleroyale.BattleRoyale;
@@ -111,8 +112,9 @@ public class TaczBulletHandler {
 
         if (currentDamage + loss >= maxDamage) {
             if (slot == EquipmentSlot.HEAD) {
+                Item brokenItem = armor.getItem();
                 armor.shrink(1);
-                victim.broadcastBreakEvent(slot);
+                victim.onEquippedItemBroken(brokenItem, slot);
             } else {
                 ItemStack brokenState = new ItemStack(Items.CHAINMAIL_CHESTPLATE);
                 IGameManager gameManager = BattleRoyale.getGameManager();

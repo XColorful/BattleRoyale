@@ -3,7 +3,7 @@ package xiao.battleroyale.compat.neoforge.compat.tacz;
 import com.tacz.guns.api.event.common.EntityHurtByGunEvent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.fml.LogicalSide;
+import net.neoforged.fml.LogicalSide;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.tacz.IBulletHurtEvent;
 import xiao.battleroyale.compat.neoforge.event.NeoEvent;
