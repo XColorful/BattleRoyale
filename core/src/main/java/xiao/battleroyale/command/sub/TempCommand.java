@@ -9,7 +9,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.compat.tacz.Tacz;
 import xiao.battleroyale.data.io.TempDataManager;
 
 import static xiao.battleroyale.api.data.TempDataTag.*;
@@ -83,10 +82,8 @@ public class TempCommand {
         tempDataManager.writeBool(FEATURE, TACZ_BULLET_HANDLER, turn);
         tempDataManager.saveTempData();
         if (turn) {
-            Tacz.registerBulletEvent();
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.enable_tacz_bullet_handler"), false);
         } else {
-            Tacz.unregisterBulletEvent();
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.disable_tacz_bullet_handler"), false);
         }
         return Command.SINGLE_SUCCESS;
