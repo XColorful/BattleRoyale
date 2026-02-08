@@ -15,6 +15,7 @@ import java.util.UUID;
 
 /**
  * 处理盔甲对 TaCZ 子弹的比例减伤和比例破损
+ * 代码就烂这吧，没必要专门做一个config，不如直接写新Mod专门处理这个 (熵排外)
  */
 public class TaczBulletHandler {
 
