@@ -5,6 +5,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
+import xiao.battleroyale.config.common.game.zone.zonefunc.BoostFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.MessageFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.MutekiFuncEntry;
 import xiao.battleroyale.config.common.game.zone.zonefunc.SafeFuncEntry;
@@ -135,6 +136,9 @@ public class Pubg5340x5340Casual {
                 messageFuncEntry, circleEntry);
         zoneConfigJson.add(zoneConfig.toJson());
 
+        zoneConfigJson.add(ElytraAddon.generateLevitationEffect2());
+        zoneConfigJson.add(ElytraAddon.generateElytraEquipment3());
+
         // 黄色无敌区
         int muteki_zoneTime = 20 * 30;
         MutekiFuncEntry mutekiFuncEntry = new MutekiFuncEntry(0, muteki_zoneTime, 20, -1,
@@ -147,6 +151,14 @@ public class Pubg5340x5340Casual {
         zoneConfig = new ZoneConfig(4, "30s Muteki Time", "#FFD700AA", // 2和3是鞘翅区
                 0, muteki_zoneTime,
                 mutekiFuncEntry, circleEntry);
+        zoneConfigJson.add(zoneConfig.toJson());
+
+        // Boost zone (Shrink countdown)
+        int boostDelay = 5 * 20;
+        BoostFuncEntry boostFuncEntry = new BoostFuncEntry(0, 0, 20, 0, muteki_zoneTime - boostDelay);
+        zoneConfig = new ZoneConfig(5, "Initial boost zone (Muteki countdown)", "#FFFFFF00",
+                4, boostDelay, 19,
+                boostFuncEntry, circleEntry.copy());
         zoneConfigJson.add(zoneConfig.toJson());
     }
 

@@ -33,11 +33,17 @@
 - renderItemBlockIfEmpty：当物资刷新方块为空时是否渲染方块本身
 - entityRenderDistance：实体刷新方块最大渲染距离
 > 计算距离时取玩家脚下位置，而不是摄像机位置
+- enableFrustumCulling：对物资刷新方块渲染启用视锥体剔除
+- enableOcclusionCulling：对物资刷新方块渲染启用遮挡剔除（射线检测）
+- occlusionCheckInterval：物资刷新方块渲染遮挡剔除频率，单位毫秒
 ```json
 "block": {
 	"itemRenderDistance": 16.0,
 	"renderItemBlockIfEmpty": true,
-	"entityRenderDistance": 16.0
+	"entityRenderDistance": 16.0,
+	"enableFrustumCulling": true,
+	"enableOcclusionCulling": true,
+	"occlusionCheckInterval": 100
 }
 ```
 
@@ -136,11 +142,17 @@
 - renderItemBlockIfEmpty: Whether to render loot block itself if it's empty
 - entityRenderDistance: Maximum render distance of entity spawner block
 > When calculating distance, take the player's foot position instead of the camera position
+- enableFrustumCulling: Enable view frustum culling for loot block rendering
+- enableOcclusionCulling: Enable occlusion culling (ray-tracing check) for loot block rendering
+- occlusionCheckInterval: The frequency of occlusion checks for loot blocks, in milliseconds
 ```json
 "block": {
 	"itemRenderDistance": 16.0,
 	"renderItemBlockIfEmpty": true,
-	"entityRenderDistance": 16.0
+	"entityRenderDistance": 16.0,
+	"enableFrustumCulling": true,
+	"enableOcclusionCulling": true,
+	"occlusionCheckInterval": 100
 }
 ```
 

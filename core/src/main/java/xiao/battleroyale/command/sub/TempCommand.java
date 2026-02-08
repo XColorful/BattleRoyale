@@ -9,10 +9,10 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.compat.tacz.Tacz;
 import xiao.battleroyale.data.io.TempDataManager;
 
-import static xiao.battleroyale.api.data.TempDataTag.PUBGMC_COMMAND;
-import static xiao.battleroyale.api.data.TempDataTag.REGISTRY;
+import static xiao.battleroyale.api.data.TempDataTag.*;
 import static xiao.battleroyale.command.CommandArg.*;
 import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 
@@ -31,16 +31,24 @@ public class TempCommand {
                 .then(Commands.literal(GAME_STEP)
                         .then(Commands.argument(INTERVAL, IntegerArgumentType.integer())
                                 .executes(TempCommand::changeGameStep)))
-                .requires(source -> checkCommandLevel(source, 3))
+                .then(Commands.literal(TACZ)
+                        .then(Commands.literal(BULLET_HANDLER)
+                                .then(Commands.argument(BOOL, BoolArgumentType.bool())
+                                        .executes(TempCommand::turnTaczBulletHandler)
+                                )
+                        )
+                )
                 .then(Commands.literal(CLEAR)
-                                .executes(TempCommand::clearAllTempData))
-                .requires(source -> checkCommandLevel(source, 3));
+                        .requires(source -> checkCommandLevel(source, 3))
+                        .executes(TempCommand::clearAllTempData)
+                );
     }
 
     private static int turnPubgmcCompatibility(CommandContext<CommandSourceStack> context) {
         boolean turn = BoolArgumentType.getBool(context, BOOL);
-        TempDataManager.get().writeBool(REGISTRY, PUBGMC_COMMAND, turn);
-        TempDataManager.get().saveTempData();
+        TempDataManager tempDataManager = TempDataManager.get();
+        tempDataManager.writeBool(REGISTRY, PUBGMC_COMMAND, turn);
+        tempDataManager.saveTempData();
         if (turn) {
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.enable_pubgmc_registry"), false);
         } else {
@@ -66,6 +74,21 @@ public class TempCommand {
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.set_game_step_success", gameStep), false);
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.set_game_step_fail", gameStep));
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int turnTaczBulletHandler(CommandContext<CommandSourceStack> context) {
+        boolean turn = BoolArgumentType.getBool(context, BOOL);
+        TempDataManager tempDataManager = TempDataManager.get();
+        tempDataManager.writeBool(FEATURE, TACZ_BULLET_HANDLER, turn);
+        tempDataManager.saveTempData();
+        if (turn) {
+            Tacz.registerBulletEvent();
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.enable_tacz_bullet_handler"), false);
+        } else {
+            Tacz.unregisterBulletEvent();
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.disable_tacz_bullet_handler"), false);
         }
         return Command.SINGLE_SUCCESS;
     }
