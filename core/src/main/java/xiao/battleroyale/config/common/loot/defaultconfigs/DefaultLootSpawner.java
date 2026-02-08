@@ -38,7 +38,7 @@ public class DefaultLootSpawner {
                 new WeightEntry(Arrays.asList(
                         WeightEntry.createWeightedEntry(20, new ItemEntry("minecraft:wooden_sword", null, 1)),
                         WeightEntry.createWeightedEntry(20, new ItemEntry("minecraft:wooden_axe", null, 1)),
-                        WeightEntry.createWeightedEntry(20, new EmptyEntry("item"))
+                        WeightEntry.createWeightedEntry(20, new EmptyEntry(LootEntryType.ITEM.getName()))
                 )),
                 new RandomEntry(0.5, new ItemEntry("minecraft:melon_slice", null, 1)),
                 new RepeatEntry(0, 5, new ItemEntry("minecraft:grass", null, 5)),
@@ -72,7 +72,7 @@ public class DefaultLootSpawner {
         ILootEntry boundEntry = new BoundEntry(true, true, 2, 4, false,
                 Arrays.asList(
                         new ExtraEntry(false, true,
-                                new RandomEntry(0.01, new EmptyEntry("item")),
+                                new RandomEntry(0.01, new EmptyEntry(EmptyEntry.TYPE_ITEM)),
                                 new MessageEntry(false, true, "Rare loot generated!", "#FF0000")),
                         new RegexEntry(false, "minecraft:",
                                 new MultiEntry(Arrays.asList(
@@ -83,8 +83,8 @@ public class DefaultLootSpawner {
                         new CleanEntry(
                                 new ShuffleEntry(true, 0, 2,
                                         new MultiEntry(Arrays.asList(
-                                                new EmptyEntry("item"),
-                                                new EmptyEntry("entity"),
+                                                new EmptyEntry(EmptyEntry.TYPE_ITEM),
+                                                new EmptyEntry(EmptyEntry.TYPE_ENTITY),
                                                 new ItemEntry("minecraft:grass_block", "", 1)
                                         ))
                                 )
