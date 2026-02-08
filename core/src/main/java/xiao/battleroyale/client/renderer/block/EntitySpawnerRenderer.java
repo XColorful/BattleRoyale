@@ -36,7 +36,6 @@ public class EntitySpawnerRenderer extends AbstractBlockRenderer<EntitySpawnerBl
 
         // 获取摄像机数据
         Camera camera = mc.gameRenderer.getMainCamera();
-        Vec3 cameraPos = camera.getPosition();
         Vector3f cameraLook = camera.getLookVector();
 
         // ---1. 距离判断---
