@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import xiao.battleroyale.block.entity.EntitySpawnerBlockEntity;
 
 public class EntitySpawnerRenderer extends AbstractBlockRenderer<EntitySpawnerBlockEntity, BlockEntityRenderState> {
@@ -36,8 +36,8 @@ public class EntitySpawnerRenderer extends AbstractBlockRenderer<EntitySpawnerBl
 
         // 获取摄像机数据
         Camera camera = mc.gameRenderer.getMainCamera();
-        Vec3 cameraPos = camera.getPosition();
-        Vector3f cameraLook = camera.getLookVector();
+        Vec3 cameraPos = camera.position();
+        Vector3fc cameraLook = camera.forwardVector();
 
         // ---1. 距离判断---
         BlockPos pos = blockEntity.getBlockPos();
@@ -49,7 +49,7 @@ public class EntitySpawnerRenderer extends AbstractBlockRenderer<EntitySpawnerBl
 
         // ---2. 夹角判断---
         // shouldRenderOffScreen并没有对方块实体生效
-        if (cameraLook.x * dx + cameraLook.y * dy + cameraLook.z * dz < -0.1) return; // 小阈值防止视野边缘闪烁
+        if (cameraLook.x() * dx + cameraLook.y() * dy + cameraLook.z() * dz < -0.1) return; // 小阈值防止视野边缘闪烁
 
         // ---3. 渲染执行---
         // 实体刷新方块模型长宽为32x32

@@ -23,6 +23,7 @@ import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
 
 import javax.annotation.Nullable;
@@ -82,8 +83,8 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
 
         // 获取摄像机数据
         Camera camera = mc.gameRenderer.getMainCamera();
-        Vec3 cameraPos = camera.getPosition();
-        Vector3f cameraLook = camera.getLookVector();
+        Vec3 cameraPos = camera.position();
+        Vector3fc cameraLook = camera.forwardVector();
 
         // ---1. 距离判断---
         // 3减 3乘 2加 1比较 (L1 Cache)
@@ -95,7 +96,7 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
 
         // ---2. 夹角判断---
         // shouldRenderOffScreen并没有对方块实体生效
-        if (cameraLook.x * dx + cameraLook.y * dy + cameraLook.z * dz < -0.1) return; // 小阈值防止视野边缘闪烁
+        if (cameraLook.x() * dx + cameraLook.y() * dy + cameraLook.z() * dz < -0.1) return; // 小阈值防止视野边缘闪烁
 
         // ---3. 状态检查---
         // 逻辑过滤，避免空容器进行后续昂贵的哈希查找和物理检测

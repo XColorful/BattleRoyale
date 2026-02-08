@@ -60,7 +60,7 @@ public class UtilityCommand {
         );
 
         utilityCommand.then(Commands.literal(PROFILE)
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> checkCommandLevel(source, 2))
                 .then(Commands.literal(SAVE)
                         .then(Commands.argument(ID, IntegerArgumentType.integer())
                                 .then(Commands.argument(OVERWRITE, BoolArgumentType.bool())
