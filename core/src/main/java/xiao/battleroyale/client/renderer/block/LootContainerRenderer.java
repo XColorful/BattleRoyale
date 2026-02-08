@@ -82,6 +82,7 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
 
         // 获取摄像机数据
         Camera camera = mc.gameRenderer.getMainCamera();
+        Vec3 cameraPos = camera.getPosition();
         Vector3f cameraLook = camera.getLookVector();
 
         // ---1. 距离判断---
@@ -104,7 +105,7 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
         // ---4. 视锥体---
         // 剔除视野外的(头顶和楼下)
         if (false && DO_FRUSTUM_CHECK) { // 1.21.1neoforge默认管线已经做了优化
-            Frustum frustum = mc.levelRenderer.getFrustum();
+            Frustum frustum = mc.levelRenderer.getCapturedFrustum();
 //            if (!frustum.isVisible(blockEntity.getRenderBoundingBox())) return;
         }
         // --5. 射线检测---

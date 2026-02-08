@@ -134,7 +134,7 @@ public abstract class AbstractBlockRenderer<T extends AbstractLootBlockEntity, S
                 targetPos,
                 ClipContext.Block.VISUAL,
                 ClipContext.Fluid.NONE,
-                mc.cameraEntity
+                mc.getCameraEntity()
         ));
         return result.getType() == HitResult.Type.MISS || result.getBlockPos().equals(targetBlockPos);
     }
