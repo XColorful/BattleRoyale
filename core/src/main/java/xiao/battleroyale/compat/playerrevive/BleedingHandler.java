@@ -3,16 +3,12 @@ package xiao.battleroyale.compat.playerrevive;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.event.EventType;
-import xiao.battleroyale.api.event.IEvent;
-import xiao.battleroyale.api.event.IEventHandler;
-import xiao.battleroyale.api.event.IServerTickEvent;
+import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.tacz.Tacz;
-import xiao.battleroyale.event.EventRegister;
 
 import java.util.*;
 
@@ -37,7 +33,8 @@ public class BleedingHandler implements IEventHandler {
     }
 
     public static void register() {
-        if (EventRegister.register(get(), EventType.SERVER_TICK_EVENT)) {
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        if (eventRegister.register(get(), EventType.SERVER_TICK_EVENT)) {
             isRegistered = true;
             Tacz.registerBleedingEvent();
         } else {
@@ -46,7 +43,8 @@ public class BleedingHandler implements IEventHandler {
     }
 
     public static void unregister() {
-        EventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
         isRegistered = false;
         Tacz.unregisterBleedingEvent();
     }

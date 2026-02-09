@@ -5,7 +5,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.effect.type.IParticleManager;
-import xiao.battleroyale.event.handler.effect.ParticleEventHandler;
 import xiao.battleroyale.util.GameUtils;
 
 import java.util.Collections;

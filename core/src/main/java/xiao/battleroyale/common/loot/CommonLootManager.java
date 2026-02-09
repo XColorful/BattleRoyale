@@ -17,7 +17,6 @@ import xiao.battleroyale.api.config.common.loot.ILootConfigManager;
 import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.loot.ICommonLootManager;
-import xiao.battleroyale.event.handler.loot.LootGenerationEventHandler;
 
 import java.util.*;
 
