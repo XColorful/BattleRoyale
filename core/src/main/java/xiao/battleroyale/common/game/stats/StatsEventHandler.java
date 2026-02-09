@@ -1,4 +1,4 @@
-package xiao.battleroyale.event.handler.game;
+package xiao.battleroyale.common.game.stats;
 
 import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.BattleRoyale;
@@ -22,16 +22,16 @@ public class StatsEventHandler implements IEventHandler {
     }
 
     @Override public String getEventHandlerName() {
-        return "StatsEventHandler";
+        return String.format("%s:StatsEventHandler", BattleRoyale.MOD_ID);
     }
 
-    public static void register() {
+    protected static void register() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.register(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.LOWEST, true);
         eventRegister.register(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOWEST, true);
     }
 
-    public static void unregister() {
+    protected static void unregister() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.unregister(get(), EventType.LIVING_DAMAGE_EVENT, EventPriority.LOWEST, true);
         eventRegister.unregister(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOWEST, true);

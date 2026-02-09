@@ -1,4 +1,4 @@
-package xiao.battleroyale.event.handler.loot;
+package xiao.battleroyale.common.loot;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
@@ -16,15 +16,15 @@ public class LootGenerationEventHandler implements IEventHandler {
     }
 
     @Override public String getEventHandlerName() {
-        return "LootGenerationEventHandler";
+        return String.format("%s:LootGenerationEventHandler", BattleRoyale.MOD_ID);
     }
 
-    public static void register() {
+    protected static void register() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.register(get(), EventType.SERVER_TICK_EVENT);
     }
 
-    public static void unregister() {
+    protected static void unregister() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
     }

@@ -1,4 +1,4 @@
-package xiao.battleroyale.event.handler.game;
+package xiao.battleroyale.common.game.gamerule;
 
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
@@ -19,20 +19,21 @@ public class LogEventHandler implements IEventHandler {
 
     private LogEventHandler() {}
 
-    public static void register() {
+    protected static void register() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.register(get(), EventType.PLAYER_LOGGED_IN_EVENT);
         eventRegister.register(get(), EventType.PLAYER_LOGGED_OUT_EVENT);
+
     }
 
-    public static void unregister() {
+    protected static void unregister() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.unregister(get(), EventType.PLAYER_LOGGED_IN_EVENT);
         eventRegister.unregister(get(), EventType.PLAYER_LOGGED_OUT_EVENT);
     }
 
     @Override public String getEventHandlerName() {
-        return "LogEventHandler";
+        return String.format("%s:LogEventHandler", BattleRoyale.MOD_ID);
     }
 
     @Override

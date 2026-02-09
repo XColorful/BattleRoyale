@@ -1,10 +1,9 @@
-package xiao.battleroyale.event.handler.game;
+package xiao.battleroyale.common.game;
 
 import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
 /**
@@ -26,12 +25,12 @@ public class PlayerDeathEventHandler implements IEventHandler {
         return "PlayerDeathEventHandler";
     }
 
-    public static void register() {
+    protected static void register() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.register(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOW, true);
     }
 
-    public static void unregister() {
+    protected static void unregister() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.unregister(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOW, true);
     }

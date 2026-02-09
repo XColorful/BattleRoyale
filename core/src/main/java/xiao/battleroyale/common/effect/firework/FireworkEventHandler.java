@@ -1,4 +1,4 @@
-package xiao.battleroyale.event.handler.effect;
+package xiao.battleroyale.common.effect.firework;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
@@ -6,28 +6,28 @@ import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.api.event.IEventRegister;
 
-public class BoostEventHandler implements IEventHandler {
+public class FireworkEventHandler implements IEventHandler {
 
-    private static class BoostEventHandlerHolder {
-        private static final BoostEventHandler INSTANCE = new BoostEventHandler();
+    private static class FireworkEventHandlerHolder {
+        private static final FireworkEventHandler INSTANCE = new FireworkEventHandler();
     }
 
-    public static BoostEventHandler get() {
-        return BoostEventHandlerHolder.INSTANCE;
+    public static FireworkEventHandler get() {
+        return FireworkEventHandlerHolder.INSTANCE;
     }
 
-    private BoostEventHandler() {}
+    private FireworkEventHandler() {}
 
     @Override public String getEventHandlerName() {
-        return "BoostEventHandler";
+        return String.format("%s:FireworkEventHandler", BattleRoyale.MOD_ID);
     }
 
-    public static void register() {
+    protected static void register() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.register(get(), EventType.SERVER_TICK_EVENT);
     }
 
-    public static void unregister() {
+    protected static void unregister() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
     }
@@ -35,7 +35,7 @@ public class BoostEventHandler implements IEventHandler {
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
         if (eventType == EventType.SERVER_TICK_EVENT){
-            BattleRoyale.getEffectManager().getBoostManager().onTick();
+            BattleRoyale.getEffectManager().getFireworkManager().onTick();
         } else {
             onReceiveWrongEvent(eventType);
         }

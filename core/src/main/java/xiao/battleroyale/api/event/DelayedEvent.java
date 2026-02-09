@@ -1,7 +1,6 @@
-package xiao.battleroyale.event.handler.util;
+package xiao.battleroyale.api.event;
 
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.event.*;
 
 import java.util.function.Consumer;
 

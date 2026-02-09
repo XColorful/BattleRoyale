@@ -1,34 +1,33 @@
-package xiao.battleroyale.event.handler.game;
+package xiao.battleroyale.common.message;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.api.event.IEventRegister;
-import xiao.battleroyale.api.game.IGameManager;
 
-public class LoopEventHandler implements IEventHandler {
+public class MessageEventHandler implements IEventHandler {
 
-    private LoopEventHandler() {}
+    private MessageEventHandler() {}
 
-    private static class LoopEventHandlerHolder {
-        private static final LoopEventHandler INSTANCE = new LoopEventHandler();
+    private static class MessageEventHandlerHolder {
+        private static final MessageEventHandler INSTANCE = new MessageEventHandler();
     }
 
-    public static LoopEventHandler get() {
-        return LoopEventHandlerHolder.INSTANCE;
+    public static MessageEventHandler get() {
+        return MessageEventHandlerHolder.INSTANCE;
     }
 
     @Override public String getEventHandlerName() {
-        return "LoopEventHandler";
+        return String.format("%s:MessageEventHandler", BattleRoyale.MOD_ID);
     }
 
-    public static void register() {
+    protected static void register() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.register(get(), EventType.SERVER_TICK_EVENT);
     }
 
-    public static void unregister() {
+    protected static void unregister() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
     }
@@ -36,11 +35,7 @@ public class LoopEventHandler implements IEventHandler {
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
         if (eventType == EventType.SERVER_TICK_EVENT) {
-            IGameManager gameManager = BattleRoyale.getGameManager();
-            if (!gameManager.isInGame()) {
-                unregister();
-            }
-            gameManager.addGameTimeAndTick();
+            MessageManager.get().tick();
         } else {
             onReceiveWrongEvent(eventType);
         }

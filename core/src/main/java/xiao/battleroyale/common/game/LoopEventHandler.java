@@ -1,34 +1,34 @@
-package xiao.battleroyale.event.handler.effect;
+package xiao.battleroyale.common.game;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.api.event.IEventRegister;
+import xiao.battleroyale.api.game.IGameManager;
 
-public class ParticleEventHandler implements IEventHandler {
+public class LoopEventHandler implements IEventHandler {
 
-    private ParticleEventHandler() {}
+    private LoopEventHandler() {}
 
-    private static class ParticleEventHandlerHolder {
-        private static final ParticleEventHandler INSTANCE = new ParticleEventHandler();
+    private static class LoopEventHandlerHolder {
+        private static final LoopEventHandler INSTANCE = new LoopEventHandler();
     }
 
-    public static ParticleEventHandler get() {
-        return ParticleEventHandlerHolder.INSTANCE;
+    public static LoopEventHandler get() {
+        return LoopEventHandlerHolder.INSTANCE;
     }
 
     @Override public String getEventHandlerName() {
-        return "ParticleEventHandler";
+        return "LoopEventHandler";
     }
 
-    public static void register() {
+    protected static void register() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.register(get(), EventType.SERVER_TICK_EVENT);
     }
 
-    // 仅限ParticleManager调用，内部维护是否已经注册
-    public static void unregister() {
+    protected static void unregister() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
     }
@@ -36,7 +36,11 @@ public class ParticleEventHandler implements IEventHandler {
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
         if (eventType == EventType.SERVER_TICK_EVENT) {
-            BattleRoyale.getEffectManager().getParticleManager().onTick();
+            IGameManager gameManager = BattleRoyale.getGameManager();
+            if (!gameManager.isInGame()) {
+                unregister();
+            }
+            gameManager.addGameTimeAndTick();
         } else {
             onReceiveWrongEvent(eventType);
         }

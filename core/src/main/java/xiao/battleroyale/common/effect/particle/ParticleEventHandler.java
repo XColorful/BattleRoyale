@@ -1,34 +1,33 @@
-package xiao.battleroyale.event.handler.message;
+package xiao.battleroyale.common.effect.particle;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.api.event.IEventRegister;
-import xiao.battleroyale.common.message.MessageManager;
 
-public class MessageEventHandler implements IEventHandler {
+public class ParticleEventHandler implements IEventHandler {
 
-    private MessageEventHandler() {}
+    private ParticleEventHandler() {}
 
-    private static class MessageEventHandlerHolder {
-        private static final MessageEventHandler INSTANCE = new MessageEventHandler();
+    private static class ParticleEventHandlerHolder {
+        private static final ParticleEventHandler INSTANCE = new ParticleEventHandler();
     }
 
-    public static MessageEventHandler get() {
-        return MessageEventHandlerHolder.INSTANCE;
+    public static ParticleEventHandler get() {
+        return ParticleEventHandlerHolder.INSTANCE;
     }
 
     @Override public String getEventHandlerName() {
-        return "MessageEventHandler";
+        return String.format("%s:ParticleEventHandler", BattleRoyale.MOD_ID);
     }
 
-    public static void register() {
+    protected static void register() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.register(get(), EventType.SERVER_TICK_EVENT);
     }
 
-    public static void unregister() {
+    protected static void unregister() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
     }
@@ -36,7 +35,7 @@ public class MessageEventHandler implements IEventHandler {
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
         if (eventType == EventType.SERVER_TICK_EVENT) {
-            MessageManager.get().tick();
+            BattleRoyale.getEffectManager().getParticleManager().onTick();
         } else {
             onReceiveWrongEvent(eventType);
         }

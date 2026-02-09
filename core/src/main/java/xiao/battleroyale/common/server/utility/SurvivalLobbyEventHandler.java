@@ -1,8 +1,7 @@
-package xiao.battleroyale.event.handler.server;
+package xiao.battleroyale.common.server.utility;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
-import xiao.battleroyale.common.server.utility.SurvivalLobby;
 
 /**
  * 只用于实现生存模式大厅内无敌
@@ -22,15 +21,15 @@ public class SurvivalLobbyEventHandler implements IEventHandler {
     private SurvivalLobbyEventHandler() {}
 
     @Override public String getEventHandlerName() {
-        return "SurvivalLobbyEventHandler";
+        return String.format("%s:SurvivalLobbyEventHandler", BattleRoyale.MOD_ID);
     }
 
-    public static void register() {
+    protected static void register() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGHEST, false);
     }
 
-    public static void unregister() {
+    protected static void unregister() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
         eventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGHEST, false);
     }
