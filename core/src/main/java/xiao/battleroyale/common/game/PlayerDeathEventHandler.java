@@ -27,12 +27,12 @@ public class PlayerDeathEventHandler implements IEventHandler {
 
     protected static void register() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
-        eventRegister.register(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOW, true);
+        eventRegister.register(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOWEST, true);
     }
 
     protected static void unregister() {
         IEventRegister eventRegister = BattleRoyale.getEventRegister();
-        eventRegister.unregister(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOW, true);
+        eventRegister.unregister(get(), EventType.LIVING_DEATH_EVENT, EventPriority.LOWEST, true);
     }
 
     @Override
@@ -44,13 +44,13 @@ public class PlayerDeathEventHandler implements IEventHandler {
         }
     }
     /**
-     * 监听实体死亡事件，会被不死图腾或PlayerRevive取消
+     * 监听实体死亡事件，会被PlayerRevive取消
      * 当玩家死亡时，判断是否改为击倒
      * 当玩家死亡时，通知TeamManager处理
      * @param event 实体死亡事件
      */
-    private void onLivingDeath(ILivingDeathEvent event) { // 接收被不死图腾或PlayerRevive取消的事件
-        LivingEntity livingEntity = event.getEntity(); // 兼容以后生物作为人机玩家
+    private void onLivingDeath(ILivingDeathEvent event) { // 接收被PlayerRevive取消的事件
+        LivingEntity livingEntity = event.getEntity();
         if (livingEntity == null) {
             return;
         }
@@ -65,9 +65,9 @@ public class PlayerDeathEventHandler implements IEventHandler {
             return;
         }
 
-        if (event.isCanceled()) { // 被不死图腾或PlayerRevive取消，GameManager内部检查是图腾还是倒地
+        if (event.isCanceled()) { // 被PlayerRevive取消
             BattleRoyale.LOGGER.debug("Detected a canceled LivingDeathEvent in game");
-            gameManager.onPlayerDown(event, gamePlayer, livingEntity);
+            gameManager.onPlayerDown(event, gamePlayer, livingEntity); // GameManager内部负责检查是图腾还是倒地
         } else { // 死亡
             gameManager.onPlayerDeath(event, gamePlayer);
         }

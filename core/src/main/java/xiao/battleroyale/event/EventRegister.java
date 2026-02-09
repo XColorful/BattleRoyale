@@ -53,7 +53,9 @@ public class EventRegister implements ICustomEventRegister {
                  SERVER_STOP_EVENT,
                  SERVER_STOP_FINISH_EVENT -> GameFinishEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             // game
-            case GAME_PLAYER_DEATH_EVENT,
+            case GAME_PLAYER_DAMAGE_EVENT,
+                 GAME_PLAYER_DAMAGE_FINISH_EVENT,
+                 GAME_PLAYER_DEATH_EVENT,
                  GAME_PLAYER_DEATH_FINISH_EVENT,
                  GAME_PLAYER_DOWN_EVENT,
                  GAME_PLAYER_DOWN_FINISH_EVENT,
@@ -112,7 +114,9 @@ public class EventRegister implements ICustomEventRegister {
                  SERVER_STOP_EVENT,
                  SERVER_STOP_FINISH_EVENT -> GameFinishEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
             // game
-            case GAME_PLAYER_DEATH_EVENT,
+            case GAME_PLAYER_DAMAGE_EVENT,
+                 GAME_PLAYER_DAMAGE_FINISH_EVENT,
+                 GAME_PLAYER_DEATH_EVENT,
                  GAME_PLAYER_DEATH_FINISH_EVENT,
                  GAME_PLAYER_DOWN_EVENT,
                  GAME_PLAYER_DOWN_FINISH_EVENT,

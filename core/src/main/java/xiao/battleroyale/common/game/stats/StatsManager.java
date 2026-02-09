@@ -103,7 +103,6 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        StatsEventHandler.register();
         startSystemTime = StringUtils.getTimestampString();
         totalPlayers = GameTeamManager.getGamePlayers().size();
         for (GamePlayer gamePlayer : GameTeamManager.getStandingGamePlayers()) {
@@ -128,8 +127,6 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
         if (shouldRecordStats()) {
             saveStats();
         }
-
-        StatsEventHandler.unregister();
     }
 
     private void clearStats() {

@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.ILivingDamageEvent;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.team.ITeamManager;
@@ -63,6 +64,15 @@ public class BRGameEventHandler {
             gamePlayer.setActiveEntity(false);
             brGameProcessManager.finishGameIfShouldEnd(gameManager); // 玩家登出服务器时的防御检查
         }
+    }
+
+    /**
+     * 非游戏玩家免伤机制在 {@link xiao.battleroyale.common.game.gamerule.AttackEventHandler} 提前处理
+     * (对于大逃杀) 这里实际上什么也不需要做
+     * 命中伤害显示等也是 StatsManager 的事情
+     */
+    protected static void onPlayerDamage(BRGameProcessManager brGameProcessManager, ILivingDamageEvent event, @NotNull GamePlayer gamePlayer) {
+        ChatUtils.sendMessageToAllPlayers(BattleRoyale.getGameManager().getServerLevel(), "on " + gamePlayer.getNameWithId() + " damage");
     }
 
     /**

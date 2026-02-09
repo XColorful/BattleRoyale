@@ -345,6 +345,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         customEventRegister.unregister(get(), CustomEventType.GAME_START_FINISH_EVENT);
         customEventRegister.unregister(get(), CustomEventType.GAME_STOP_FINISH_EVENT);
         LoopEventHandler.unregister();
+        PlayerDamageEventHandler.unregister();
         PlayerDeathEventHandler.unregister();
         return true;
     }
@@ -357,11 +358,13 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         switch (customEventType) {
             case GAME_START_FINISH_EVENT -> {
                 LoopEventHandler.register();
+                PlayerDamageEventHandler.register();
                 PlayerDeathEventHandler.register();
                 BleedingHandler.get().clear();
             }
             case GAME_STOP_FINISH_EVENT -> {
                 LoopEventHandler.unregister();
+                PlayerDamageEventHandler.unregister();
                 PlayerDeathEventHandler.unregister();
                 BleedingHandler.unregister();
             }
@@ -738,6 +741,14 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     // 玩家退出服务器
     public void onPlayerLoggedOut(ServerPlayer player) {
         gameProcessManager.onPlayerLoggedOut(isInGame(), player);
+    }
+    public void onPlayerDamage(ILivingDamageEvent event, @NotNull GamePlayer gamePlayer) {
+        if (EventPoster.postEvent(new GamePlayerDamageEvent(this, gamePlayer, event))) {
+            BattleRoyale.LOGGER.debug("GamePlayerDamageEvent canceled, skipped onPlayerDamage (GamePlayer {})", gamePlayer.getNameWithId());
+            return;
+        }
+        gameProcessManager.onPlayerDamage(event, gamePlayer);
+        EventPoster.postEvent(new GamePlayerDamageFinishEvent(this, gamePlayer, event));
     }
     public void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, @NotNull LivingEntity livingEntity) {
         if (EventPoster.postEvent(new GamePlayerDownEvent(this, gamePlayer, livingEntity, event))) {
