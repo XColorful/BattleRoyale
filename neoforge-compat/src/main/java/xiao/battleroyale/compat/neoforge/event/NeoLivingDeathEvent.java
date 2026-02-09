@@ -1,5 +1,6 @@
 package xiao.battleroyale.compat.neoforge.event;
 
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -21,5 +22,10 @@ public class NeoLivingDeathEvent extends NeoEvent implements ILivingDeathEvent {
     @Override
     public LivingEntity getEntity() {
         return livingDeathEvent.getEntity();
+    }
+
+    @Override
+    public @NotNull DamageSource getSource() {
+        return livingDeathEvent.getSource();
     }
 }
