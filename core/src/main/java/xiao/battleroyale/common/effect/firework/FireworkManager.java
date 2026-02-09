@@ -15,7 +15,6 @@ import net.minecraft.world.item.component.Fireworks;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.effect.type.IFireworkManager;
-import xiao.battleroyale.event.handler.effect.FireworkEventHandler;
 import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.Vec3Utils;
 

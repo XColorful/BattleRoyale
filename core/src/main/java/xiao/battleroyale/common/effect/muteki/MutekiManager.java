@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.effect.type.IMutekiManager;
-import xiao.battleroyale.event.handler.effect.MutekiEventHandler;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils;
 

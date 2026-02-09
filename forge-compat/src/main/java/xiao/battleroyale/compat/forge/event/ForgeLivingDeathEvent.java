@@ -1,8 +1,10 @@
 package xiao.battleroyale.compat.forge.event;
 
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 
 public class ForgeLivingDeathEvent extends ForgeEvent implements ILivingDeathEvent {
@@ -21,5 +23,10 @@ public class ForgeLivingDeathEvent extends ForgeEvent implements ILivingDeathEve
     @Override
     public LivingEntity getEntity() {
         return livingDeathEvent.getEntity();
+    }
+
+    @Override
+    public @NotNull DamageSource getSource() {
+        return livingDeathEvent.getSource();
     }
 }

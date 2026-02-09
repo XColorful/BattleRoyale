@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +21,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.event.EventPoster;
-import xiao.battleroyale.event.handler.util.DelayedEvent;
+import xiao.battleroyale.api.event.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils;
 
