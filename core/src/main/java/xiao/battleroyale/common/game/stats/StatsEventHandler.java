@@ -1,12 +1,11 @@
 package xiao.battleroyale.common.game.stats;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.numbers.NumberFormat;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.Score;
-import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.*;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +60,8 @@ public class StatsEventHandler {
             }
             scoreboard.addObjective(name, ObjectiveCriteria.DUMMY,
                     Component.literal(name),
-                    ObjectiveCriteria.RenderType.INTEGER);
+                    ObjectiveCriteria.RenderType.INTEGER,
+                    true, null);
         }
         BattleRoyale.LOGGER.info("StatsEventHandler: All objectives re-created for a new game.");
     }
@@ -228,7 +228,7 @@ public class StatsEventHandler {
         }
     }
 
-    public static Score getSafeScore(Scoreboard scoreboard, String objectiveName, String playerName) {
+    public static ScoreAccess getSafeScore(Scoreboard scoreboard, String objectiveName, String playerName) {
         Objective objective = scoreboard.getObjective(objectiveName);
         // 如果表不存在，需要手动创建，而不能用Scoreboard的getOrCreateObjective
         if (objective == null) {
@@ -236,14 +236,18 @@ public class StatsEventHandler {
                     objectiveName,
                     ObjectiveCriteria.DUMMY,
                     Component.literal(objectiveName),
-                    ObjectiveCriteria.RenderType.INTEGER
+                    ObjectiveCriteria.RenderType.INTEGER,
+                    true, null
             );
         }
-        return scoreboard.getOrCreatePlayerScore(playerName, objective);
+        ScoreHolder playerNameHolder = ScoreHolder.forNameOnly(playerName);
+        return scoreboard.getOrCreatePlayerScore(playerNameHolder, objective);
     }
 
     private static void addScore(Scoreboard scoreboard, String objectiveName, String playerName, int amount) {
         if (amount == 0) return;
-        getSafeScore(scoreboard, objectiveName, playerName).add(amount);
+        ScoreAccess access = getSafeScore(scoreboard, objectiveName, playerName);
+        int currentScore = access.get();
+        access.set(currentScore + amount);
     }
 }
