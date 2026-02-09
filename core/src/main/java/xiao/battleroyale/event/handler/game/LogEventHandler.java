@@ -3,7 +3,6 @@ package xiao.battleroyale.event.handler.game;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
-import xiao.battleroyale.event.EventRegister;
 
 /**
  * 监听玩家登出/登入
@@ -21,13 +20,15 @@ public class LogEventHandler implements IEventHandler {
     private LogEventHandler() {}
 
     public static void register() {
-        EventRegister.register(get(), EventType.PLAYER_LOGGED_IN_EVENT);
-        EventRegister.register(get(), EventType.PLAYER_LOGGED_OUT_EVENT);
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.register(get(), EventType.PLAYER_LOGGED_IN_EVENT);
+        eventRegister.register(get(), EventType.PLAYER_LOGGED_OUT_EVENT);
     }
 
     public static void unregister() {
-        EventRegister.unregister(get(), EventType.PLAYER_LOGGED_IN_EVENT);
-        EventRegister.unregister(get(), EventType.PLAYER_LOGGED_OUT_EVENT);
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.unregister(get(), EventType.PLAYER_LOGGED_IN_EVENT);
+        eventRegister.unregister(get(), EventType.PLAYER_LOGGED_OUT_EVENT);
     }
 
     @Override public String getEventHandlerName() {

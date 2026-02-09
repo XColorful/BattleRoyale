@@ -27,27 +27,17 @@ public class EventRegister implements ICustomEventRegister {
     }
 
     // -------- Forge & NeoForge事件 --------
-    public static boolean register(IEventHandler eventHandler, EventType eventType) {
-        register(eventHandler, eventType, EventPriority.NORMAL, false);
-        return true;
-    }
-    public static boolean register(IEventHandler eventHandler, EventType eventType, EventPriority priority, boolean receiveCanceled) {
+    public boolean register(IEventHandler eventHandler, EventType eventType, EventPriority priority, boolean receiveCanceled) {
         if (eventRegister == null) {
             throw new IllegalStateException("Event register has not been initialized. Call init() first.");
         }
-        eventRegister.register(eventHandler, eventType, priority, receiveCanceled);
-        return true;
+        return eventRegister.register(eventHandler, eventType, priority, receiveCanceled);
     }
-    public static boolean unregister(IEventHandler eventHandler, EventType eventType) {
-        unregister(eventHandler, eventType, EventPriority.NORMAL, false);
-        return true;
-    }
-    public static boolean unregister(IEventHandler eventHandler, EventType eventType, EventPriority priority, boolean receiveCanceled) {
+    public boolean unregister(IEventHandler eventHandler, EventType eventType, EventPriority priority, boolean receiveCanceled) {
         if (eventRegister == null) {
             throw new IllegalStateException("Event register has not been initialized. Call init() first.");
         }
-        eventRegister.unregister(eventHandler, eventType, priority, receiveCanceled);
-        return true;
+        return eventRegister.unregister(eventHandler, eventType, priority, receiveCanceled);
     }
 
     // -------- 自定义事件 --------

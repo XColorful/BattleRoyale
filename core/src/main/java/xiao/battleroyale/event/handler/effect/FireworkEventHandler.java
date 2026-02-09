@@ -4,7 +4,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
-import xiao.battleroyale.event.EventRegister;
+import xiao.battleroyale.api.event.IEventRegister;
 
 public class FireworkEventHandler implements IEventHandler {
 
@@ -23,11 +23,13 @@ public class FireworkEventHandler implements IEventHandler {
     }
 
     public static void register() {
-        EventRegister.register(get(), EventType.SERVER_TICK_EVENT);
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.register(get(), EventType.SERVER_TICK_EVENT);
     }
 
     public static void unregister() {
-        EventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
     }
 
     @Override

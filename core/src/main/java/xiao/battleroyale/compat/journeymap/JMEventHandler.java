@@ -4,11 +4,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.compat.journeymap.IJmApi;
-import xiao.battleroyale.api.event.EventType;
-import xiao.battleroyale.api.event.IClientTickEvent;
-import xiao.battleroyale.api.event.IEvent;
-import xiao.battleroyale.api.event.IEventHandler;
-import xiao.battleroyale.event.EventRegister;
+import xiao.battleroyale.api.event.*;
 
 public class JMEventHandler implements IEventHandler {
 
@@ -30,11 +26,13 @@ public class JMEventHandler implements IEventHandler {
     }
 
     protected static void register() {
-        EventRegister.register(get(), EventType.CLIENT_TICK_EVENT);
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.register(get(), EventType.CLIENT_TICK_EVENT);
     }
 
     protected static void unregister() {
-        EventRegister.unregister(JMEventHandler.get(), EventType.CLIENT_TICK_EVENT);
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.unregister(JMEventHandler.get(), EventType.CLIENT_TICK_EVENT);
         BattleRoyale.getCompatApi().jmApi().removeAll(JMEventHandler.MOD_JM_ID);
     }
 

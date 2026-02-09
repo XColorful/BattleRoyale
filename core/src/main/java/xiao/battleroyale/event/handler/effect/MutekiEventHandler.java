@@ -2,7 +2,6 @@ package xiao.battleroyale.event.handler.effect;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
-import xiao.battleroyale.event.EventRegister;
 
 public class MutekiEventHandler implements IEventHandler {
 
@@ -21,13 +20,15 @@ public class MutekiEventHandler implements IEventHandler {
     }
 
     public static void register() {
-        EventRegister.register(get(), EventType.SERVER_TICK_EVENT);
-        EventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.register(get(), EventType.SERVER_TICK_EVENT);
+        eventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
     }
 
     public static void unregister() {
-        EventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
-        EventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
+        eventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
     }
 
     @Override

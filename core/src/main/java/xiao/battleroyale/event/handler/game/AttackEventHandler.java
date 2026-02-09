@@ -14,7 +14,6 @@ import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
-import xiao.battleroyale.event.EventRegister;
 import xiao.battleroyale.util.ChatUtils;
 
 /**
@@ -37,11 +36,13 @@ public class AttackEventHandler implements IEventHandler {
     }
 
     public static void register() {
-        EventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGH, false);
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGH, false);
     }
 
     public static void unregister() {
-        EventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGH, false);
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGH, false);
     }
 
     @Override
