@@ -1,7 +1,6 @@
 package xiao.battleroyale.common.game.stats;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,30 +8,29 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.event.ILivingDamageEvent;
-import xiao.battleroyale.api.event.ILivingDeathEvent;
+import xiao.battleroyale.api.event.*;
+import xiao.battleroyale.api.event.game.finish.GameCompleteFinishEvent;
+import xiao.battleroyale.api.event.game.finish.GameStopFinishEvent;
+import xiao.battleroyale.api.event.game.game.*;
+import xiao.battleroyale.api.event.game.starter.GameStartFinishEvent;
 import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
-import xiao.battleroyale.common.game.stats.game.SimpleRecord;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
-import xiao.battleroyale.event.handler.game.StatsEventHandler;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.StringUtils;
 
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static xiao.battleroyale.data.AbstractDataManager.MOD_DATA_PATH;
 
-public class StatsManager extends AbstractGameManager implements IStatsManager {
+public class StatsManager extends AbstractGameManager implements IStatsManager, ICustomEventHandler {
 
     private static class StatsManagerHolder {
         private static final StatsManager INSTANCE = new StatsManager();
@@ -63,23 +61,99 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
     protected static final String RANK_TAG = "rank";
     protected static final String DETAIL_TAG = "detail";
 
+    protected final StatsData statsData = new StatsData();
+
     // player
     protected final Map<GamePlayer, GamePlayerStats> gamePlayerStats = new HashMap<>();
     protected final Map<DamageSource, DamageSourceStats> damageSourceStats = new HashMap<>();
-    // game
-    protected final SimpleRecord gameruleStats = new SimpleRecord();
-    protected final Map<String, SimpleRecord> spawnStats = new TreeMap<>(); // key/singleId -> spawnRecord
-    protected final Map<Integer, SimpleRecord> zoneStats = new HashMap<>(); // zoneId -> ZoneRecord
 
     protected int timeOrder = 0;
     protected int minRank = Integer.MAX_VALUE;
     protected int maxRank = Integer.MIN_VALUE;
     public static int DEFAULT_RANK = -1;
-    protected String startSystemTime = ""; // 系统时间
+    protected String startotherTime = ""; // 系统时间
     protected int totalPlayers = 0;
 
     protected boolean recordStats = false;
     public boolean shouldRecordStats() { return recordStats; }
+    // 原版计分板
+    protected boolean recordScordboard = true;
+    protected boolean resetScordboardAtStart = false;
+    protected String objectName_prefix = BattleRoyale.MOD_NAME_SHORT;
+    protected String player_to_player_damage_ObjectiveName = String.format("%s_hurt", objectName_prefix);
+    protected String other_to_player_damage_ObjectiveName = String.format("%s_otherHurt", objectName_prefix);
+    protected String player_damage_by_player_ObjectiveName = String.format("%s_damage", objectName_prefix);
+    protected String player_damage_by_other_ObjectiveName = String.format("%s_otherDamage", objectName_prefix);
+    protected String player_knock_player_ObjectiveName = String.format("%s_knock", objectName_prefix);
+    protected String other_knock_player_ObjectiveName = String.format("%s_otherKnock", objectName_prefix);
+    protected String player_down_by_player_ObjectiveName = String.format("%s_down", objectName_prefix);
+    protected String player_down_by_other_ObjectiveName = String.format("%s_otherDown", objectName_prefix);
+    protected String player_revive_ObjectiveName = String.format("%s_revive", objectName_prefix);
+    protected String player_kill_player_ObjectiveName = String.format("%s_kill", objectName_prefix);
+    protected String other_kill_player_ObjectiveName = String.format("%s_otherKill", objectName_prefix);
+    protected String player_death_by_player_ObjectiveName = String.format("%s_death", objectName_prefix);
+    protected String player_death_by_other_ObjectiveName = String.format("%s_otherDeath", objectName_prefix);
+    protected String player_win_ObjectiveName = String.format("%s_win", objectName_prefix);
+    protected String player_lose_ObjectiveName = String.format("%s_lose", objectName_prefix);
+
+    @Override
+    public boolean registerGameEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.register(get(), CustomEventType.GAME_START_FINISH_EVENT);
+        customEventRegister.register(get(), CustomEventType.GAME_PLAYER_DAMAGE_FINISH_EVENT);
+        customEventRegister.register(get(), CustomEventType.GAME_PLAYER_DOWN_FINISH_EVENT);
+        customEventRegister.register(get(), CustomEventType.GAME_PLAYER_REVIVE_FINISH_EVENT);
+        customEventRegister.register(get(), CustomEventType.GAME_PLAYER_DEATH_FINISH_EVENT);
+        customEventRegister.register(get(), CustomEventType.GAME_STOP_FINISH_EVENT);
+        customEventRegister.register(get(), CustomEventType.GAME_COMPLETE_FINISH_EVENT);
+        return true;
+    }
+    @Override
+    public boolean unregisterGameEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.unregister(get(), CustomEventType.GAME_START_FINISH_EVENT);
+        customEventRegister.unregister(get(), CustomEventType.GAME_PLAYER_DAMAGE_FINISH_EVENT);
+        customEventRegister.unregister(get(), CustomEventType.GAME_PLAYER_DOWN_FINISH_EVENT);
+        customEventRegister.unregister(get(), CustomEventType.GAME_PLAYER_REVIVE_FINISH_EVENT);
+        customEventRegister.unregister(get(), CustomEventType.GAME_PLAYER_DEATH_FINISH_EVENT);
+        customEventRegister.unregister(get(), CustomEventType.GAME_STOP_FINISH_EVENT);
+        customEventRegister.unregister(get(), CustomEventType.GAME_COMPLETE_FINISH_EVENT);
+        return true;
+    }
+
+    @Override
+    public String getEventHandlerName() {
+        return String.format("%s:StatsManager", BattleRoyale.MOD_ID);
+    }
+    @Override
+    public void handleEvent(CustomEventType customEventType, ICustomEvent event) {
+        switch (customEventType) {
+            case GAME_START_FINISH_EVENT -> {
+                StatsEventHandler.onGameStart(this, (GameStartFinishEvent) event);
+            }
+            case GAME_PLAYER_DAMAGE_FINISH_EVENT -> {
+                StatsEventHandler.onGamePlayerDamage(this, (GamePlayerDamageFinishEvent) event);
+            }
+            case GAME_PLAYER_DOWN_FINISH_EVENT -> {
+                StatsEventHandler.onGamePlayerDown(this, (GamePlayerDownFinishEvent) event);
+            }
+            case GAME_PLAYER_REVIVE_FINISH_EVENT -> {
+                StatsEventHandler.onGamePlayerRevive(this, (GamePlayerReviveFinishEvent) event);
+            }
+            case GAME_PLAYER_DEATH_FINISH_EVENT -> {
+                StatsEventHandler.onGamePlayerDeath(this, (GamePlayerDeathFinishEvent) event);
+            }
+            case GAME_STOP_FINISH_EVENT -> {
+                StatsEventHandler.onGameStop(this, (GameStopFinishEvent) event);
+            }
+            case GAME_COMPLETE_FINISH_EVENT -> {
+                StatsEventHandler.onGameComplete(this, (GameCompleteFinishEvent) event);
+            }
+            default -> {
+                onReceiveWrongEvent(customEventType);
+            }
+        }
+    }
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
@@ -89,7 +163,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
             return;
         }
         BattleroyaleEntry brEntry = gameruleConfig.getBattleRoyaleEntry();
-        recordStats = brEntry.recordGameStats;
+        this.recordStats = brEntry.recordGameStats;
 
         this.configPrepared = true;
         BattleRoyale.LOGGER.debug("StatsManager complete initGameConfig");
@@ -106,13 +180,11 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        StatsEventHandler.register();
-        startSystemTime = StringUtils.getTimestampString();
+        startotherTime = StringUtils.getTimestampString();
         totalPlayers = GameTeamManager.getGamePlayers().size();
         for (GamePlayer gamePlayer : GameTeamManager.getStandingGamePlayers()) {
             gamePlayerStats.put(gamePlayer, new GamePlayerStats(gamePlayer));
         }
-
         return isReady();
     }
 
@@ -131,16 +203,12 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
         if (shouldRecordStats()) {
             saveStats();
         }
-
-        StatsEventHandler.unregister();
     }
 
     private void clearStats() {
         gamePlayerStats.clear();
         damageSourceStats.clear();
-        zoneStats.clear();
-        spawnStats.clear();
-        gameruleStats.clear();
+        this.statsData.clear();
         timeOrder = 0;
         minRank = Integer.MAX_VALUE;
         maxRank = Integer.MIN_VALUE;
@@ -219,102 +287,48 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
 
     }
 
-    /**
-     * Gamerule
-     */
+    // ----Gamerule----
     public void onRecordIntGamerule(Map<String, Integer> intGamerule) {
-        updateRecordMap(gameruleStats.intRecord, intGamerule);
+        GameSetupStatsHelper.onRecordIntGamerule(this, intGamerule);
     }
     public void onRecordBoolGamerule(Map<String, Boolean> boolGamerule) {
-        updateBoolRecordMap(gameruleStats.boolRecord, boolGamerule);
+        GameSetupStatsHelper.onRecordBoolGamerule(this, boolGamerule);
     }
     public void onRecordDoubleGamerule(Map<String, Double> doubleGamerule) {
-        updateRecordMap(gameruleStats.doubleRecord, doubleGamerule);
+        GameSetupStatsHelper.onRecordDoubleGamerule(this, doubleGamerule);
     }
     public void onRecordStringGamerule(Map<String, String> stringGamerule) {
-        updateRecordMap(gameruleStats.stringRecord, stringGamerule);
+        GameSetupStatsHelper.onRecordStringGamerule(this, stringGamerule);
     }
-
-    /**
-     * Spawn
-     */
-    private SimpleRecord getOrCreateSpawnRecord(String key) {
-        return spawnStats.computeIfAbsent(key, k -> new SimpleRecord());
-    }
+    // ----Spawn----
     public void onRecordSpawnInt(String key, Map<String, Integer> spawnInt) {
-        if (spawnInt != null) {
-            SimpleRecord record = getOrCreateSpawnRecord(key);
-            updateRecordMap(record.intRecord, spawnInt);
-        } else {
-            spawnStats.remove(key);
-        }
+        GameSetupStatsHelper.onRecordSpawnInt(this, key, spawnInt);
     }
     public void onRecordSpawnBool(String key, Map<String, Boolean> spawnBool) {
-        if (spawnBool != null) {
-            SimpleRecord record = getOrCreateSpawnRecord(key);
-            updateRecordMap(record.boolRecord, spawnBool);
-        } else {
-            spawnStats.remove(key);
-        }
+        GameSetupStatsHelper.onRecordSpawnBool(this, key, spawnBool);
     }
     public void onRecordSpawnDouble(String key, Map<String, Double> spawnDouble) {
-        if (spawnDouble != null) {
-            SimpleRecord record = getOrCreateSpawnRecord(key);
-            updateRecordMap(record.doubleRecord, spawnDouble);
-        } else {
-            spawnStats.remove(key);
-        }
+        GameSetupStatsHelper.onRecordSpawnDouble(this, key, spawnDouble);
     }
     public void onRecordSpawnString(String key, Map<String, String> spawnString) {
-        if (spawnString != null) {
-            SimpleRecord record = getOrCreateSpawnRecord(key);
-            updateRecordMap(record.stringRecord, spawnString);
-        } else {
-            spawnStats.remove(key);
-        }
+        GameSetupStatsHelper.onRecordSpawnString(this, key, spawnString);
     }
-
-    /**
-     * Zone
-     */
-    private SimpleRecord getOrCreateZoneRecord(Integer key) {
-        return zoneStats.computeIfAbsent(key, k -> new SimpleRecord());
-    }
-    public void onRecordZoneInt(int zoneId, Map<String, Integer> zoneIntWriter) {
-        if (zoneIntWriter != null) {
-            SimpleRecord record = getOrCreateZoneRecord(zoneId);
-            updateRecordMap(record.intRecord, zoneIntWriter);
-        } else {
-            zoneStats.remove(zoneId);
-        }
+    // ----Zone----
+    public void onRecordZoneInt(int zoneId, Map<String, Integer> zoneInt) {
+        GameSetupStatsHelper.onRecordZoneInt(this, zoneId, zoneInt);
     }
     public void onRecordZoneBool(int zoneId, Map<String, Boolean> zoneBool) {
-        if (zoneBool != null) {
-            SimpleRecord record = getOrCreateZoneRecord(zoneId);
-            updateBoolRecordMap(record.boolRecord, zoneBool);
-        } else {
-            zoneStats.remove(zoneId);
-        }
+        GameSetupStatsHelper.onRecordZoneBool(this, zoneId, zoneBool);
     }
     public void onRecordZoneDouble(int zoneId, Map<String, Double> zoneDouble) {
-        if (zoneDouble != null) {
-            SimpleRecord record = getOrCreateZoneRecord(zoneId);
-            updateRecordMap(record.doubleRecord, zoneDouble);
-        } else {
-            zoneStats.remove(zoneId);
-        }
+        GameSetupStatsHelper.onRecordZoneDouble(this, zoneId, zoneDouble);
     }
     public void onRecordZoneString(int zoneId, Map<String, String> zoneString) {
-        if (zoneString != null) {
-            SimpleRecord record = getOrCreateZoneRecord(zoneId);
-            updateRecordMap(record.stringRecord, zoneString);
-        } else {
-            zoneStats.remove(zoneId);
-        }
+        GameSetupStatsHelper.onRecordZoneString(this, zoneId, zoneString);
     }
 
     private String generateStateDirectory() {
-        String fileName = startSystemTime + "_" + totalPlayers + ".json";
+        String fileName = startotherTime + "_" + totalPlayers + ".json";
         return Paths.get(STATS_PATH, fileName).toString();
     }
     public String getStatsFilePath() {
@@ -333,7 +347,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
         );
 
         JsonArray jsonArray = new JsonArray();
-        addGameStats(jsonArray);
+        GameSetupStatsHelper.addGameSetupStats(this, jsonArray);
         JsonUtils.writeJsonToFile(filePath, jsonArray);
 
         ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
@@ -343,84 +357,6 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
             BattleRoyale.LOGGER.warn("GameManager doesn't have valid serverLevel, can't send message");
         }
         BattleRoyale.LOGGER.info("Saved game stats to {}", filePath);
-    }
-
-    private void addGameStats(@NotNull JsonArray jsonArray) {
-        JsonObject statsObject = new JsonObject();
-
-        statsObject.addProperty(STATS_TAG, GAME_TAG);
-        addGameruleProperty(statsObject);
-        addSpawnProperty(statsObject);
-        addZoneProperty(statsObject);
-
-        jsonArray.add(statsObject);
-    }
-    private void addGameruleProperty(JsonObject jsonObject) {
-        JsonObject gameruleObject = new JsonObject();
-        for (Map.Entry<String, Integer> entry : gameruleStats.intRecord.entrySet()) {
-            gameruleObject.addProperty(entry.getKey(), entry.getValue());
-        }
-        for (Map.Entry<String, Boolean> entry : gameruleStats.boolRecord.entrySet()) {
-            gameruleObject.addProperty(entry.getKey(), entry.getValue());
-        }
-        for (Map.Entry<String, Double> entry : gameruleStats.doubleRecord.entrySet()) {
-            gameruleObject.addProperty(entry.getKey(), entry.getValue());
-        }
-        for (Map.Entry<String, String> entry : gameruleStats.stringRecord.entrySet()) {
-            gameruleObject.addProperty(entry.getKey(), entry.getValue());
-        }
-
-        jsonObject.add(GAMERULE_TAG, gameruleObject);
-    }
-    private void addSpawnProperty(JsonObject jsonObject) {
-        JsonObject spawnObject = new JsonObject();
-
-        for (Map.Entry<String, SimpleRecord> entry : spawnStats.entrySet()) {
-            String spawnKey = entry.getKey();
-            SimpleRecord record = entry.getValue();
-            JsonObject singleSpawnObject = new JsonObject();
-            for (Map.Entry<String, Integer> intEntry : record.intRecord.entrySet()) {
-                singleSpawnObject.addProperty(intEntry.getKey(), intEntry.getValue());
-            }
-            for (Map.Entry<String, Boolean> boolEntry : record.boolRecord.entrySet()) {
-                singleSpawnObject.addProperty(boolEntry.getKey(), boolEntry.getValue());
-            }
-            for (Map.Entry<String, Double> doubleEntry : record.doubleRecord.entrySet()) {
-                singleSpawnObject.addProperty(doubleEntry.getKey(), doubleEntry.getValue());
-            }
-            for (Map.Entry<String, String> stringEntry : record.stringRecord.entrySet()) {
-                singleSpawnObject.addProperty(stringEntry.getKey(), stringEntry.getValue());
-            }
-
-            spawnObject.add(spawnKey, singleSpawnObject);
-        }
-
-        jsonObject.add(SPAWN_TAG, spawnObject);
-    }
-    private void addZoneProperty(JsonObject jsonObject) {
-        JsonObject zoneObject = new JsonObject();
-
-        for (Map.Entry<Integer, SimpleRecord> entry : zoneStats.entrySet()) {
-            String zoneKey = Integer.toString(entry.getKey());
-            SimpleRecord record = entry.getValue();
-            JsonObject singleZoneObject = new JsonObject();
-            for (Map.Entry<String, Integer> intEntry : record.intRecord.entrySet()) {
-                singleZoneObject.addProperty(intEntry.getKey(), intEntry.getValue());
-            }
-            for (Map.Entry<String, Boolean> boolEntry : record.boolRecord.entrySet()) {
-                singleZoneObject.addProperty(boolEntry.getKey(), boolEntry.getValue());
-            }
-            for (Map.Entry<String, Double> doubleEntry : record.doubleRecord.entrySet()) {
-                singleZoneObject.addProperty(doubleEntry.getKey(), doubleEntry.getValue());
-            }
-            for (Map.Entry<String, String> stringEntry : record.stringRecord.entrySet()) {
-                singleZoneObject.addProperty(stringEntry.getKey(), stringEntry.getValue());
-            }
-
-            zoneObject.add(zoneKey, singleZoneObject);
-        }
-
-        jsonObject.add(ZONE_TAG, zoneObject);
     }
 
     private void addTimelineStats(@NotNull JsonArray jsonArray) {
@@ -433,29 +369,6 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
 
     private void addDetailStats(@NotNull JsonArray jsonArray) {
         ;
-    }
-
-    private <T> void updateRecordMap(Map<String, T> targetMap, Map<String, T> sourceMap) {
-        if (sourceMap != null) {
-            sourceMap.forEach((key, value) -> {
-                if (value != null) {
-                    targetMap.put(key, value);
-                } else {
-                    targetMap.remove(key);
-                }
-            });
-        }
-    }
-    private void updateBoolRecordMap(Map<String, Boolean> targetMap, Map<String, Boolean> sourceMap) {
-        if (sourceMap != null) {
-            sourceMap.forEach((key, value) -> {
-                if (Boolean.TRUE.equals(value)) {
-                    targetMap.put(key, value);
-                } else {
-                    targetMap.remove(key);
-                }
-            });
-        }
     }
 
     /**

@@ -76,7 +76,7 @@ public class BattleRoyale {
         BattleRoyale.registrarFactory = factory;
         BattleRoyale.mcRegistry = mcRegistry;
 
-        gameManager = GameManager.get();
+        setGameManagerInternal(GameManager.get());
         modConfigManager = ModConfigManager.getApi();
         effectManager = EffectManager.get();
         serverManager = ServerManager.get();
@@ -193,7 +193,7 @@ public class BattleRoyale {
      */
     @Deprecated(forRemoval=false)
     public static void setGameManager(@NotNull IGameManager gameManager) {
-        BattleRoyale.gameManager = gameManager;
+        setGameManagerInternal(gameManager);
     }
     @Deprecated(forRemoval = false)
     public static void setModConfigManager(@NotNull IModConfigManager modConfigManager) {
@@ -226,5 +226,12 @@ public class BattleRoyale {
     @Deprecated(forRemoval = false)
     public static void setClientLevelRenderer(@NotNull IClientLevelRenderer clientLevelRenderer) {
         BattleRoyale.clientLevelRenderer = clientLevelRenderer;
+    }
+
+    // 跟IGameSubManager同样的机制
+    private static void setGameManagerInternal(@NotNull IGameManager gameManager) {
+        if (BattleRoyale.gameManager != null) BattleRoyale.gameManager.unregisterGameEventHandler();
+        BattleRoyale.gameManager = gameManager;
+        gameManager.registerGameEventHandler();
     }
 }
