@@ -79,7 +79,7 @@ public class BRGameEventHandler {
      * 没有队友时不允许倒地直接让PlayerRevive击杀掉
      * PlayerRevive只允许玩家倒地，因此人机玩家无法倒地
      */
-    protected static void onPlayerDown(BRGameProcessManager brGameProcessManager, ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, LivingEntity livingEntity, boolean removeInvalidTeam) {
+    protected static void onPlayerDown(BRGameProcessManager brGameProcessManager, ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, boolean removeInvalidTeam) {
         // 不允许倒地的情况：队友没有Alive的
         GameTeam gameTeam = gamePlayer.getTeam();
         boolean hasAliveMember = false;
@@ -100,7 +100,7 @@ public class BRGameEventHandler {
         }
 
         // PlayerRevive倒地机制：取消事件并设置为流血状态
-        if (livingEntity instanceof Player player) {
+        if (event.getEntity() instanceof Player player) {
             PlayerRevive playerRevive = PlayerRevive.get();
             if (playerRevive.isBleeding(player)) {
                 gamePlayer.setAlive(false);

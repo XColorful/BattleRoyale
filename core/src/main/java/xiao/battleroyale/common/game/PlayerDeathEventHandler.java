@@ -51,7 +51,7 @@ public class PlayerDeathEventHandler implements IEventHandler {
      */
     private void onLivingDeath(ILivingDeathEvent event) { // 接收被PlayerRevive取消的事件
         LivingEntity livingEntity = event.getEntity();
-        if (livingEntity == null) {
+        if (livingEntity == null) { // 没有 UUID 无法查 GamePlayer
             return;
         }
         IGameManager gameManager = BattleRoyale.getGameManager();
@@ -67,7 +67,7 @@ public class PlayerDeathEventHandler implements IEventHandler {
 
         if (event.isCanceled()) { // 被PlayerRevive取消
             BattleRoyale.LOGGER.debug("Detected a canceled LivingDeathEvent in game");
-            gameManager.onPlayerDown(event, gamePlayer, livingEntity); // GameManager内部负责检查是图腾还是倒地
+            gameManager.onPlayerDown(event, gamePlayer); // GameManager内部负责检查是图腾还是倒地
         } else { // 死亡
             gameManager.onPlayerDeath(event, gamePlayer);
         }

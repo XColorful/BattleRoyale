@@ -21,7 +21,11 @@ public interface IGameEventReceiver {
     void onPlayerDamage(ILivingDamageEvent event, @NotNull GamePlayer gamePlayer);
 
     @ApiStatus.Internal
-    void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, @NotNull LivingEntity livingEntity);
+    void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer);
+    @ApiStatus.Internal
+    @Deprecated default void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, LivingEntity livingEntity) {
+        onPlayerDown(event, gamePlayer);
+    }
 
     @ApiStatus.Internal
     void onPlayerRevived(@NotNull GamePlayer gamePlayer);

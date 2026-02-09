@@ -750,13 +750,13 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         gameProcessManager.onPlayerDamage(event, gamePlayer);
         EventPoster.postEvent(new GamePlayerDamageFinishEvent(this, gamePlayer, event));
     }
-    public void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, @NotNull LivingEntity livingEntity) {
-        if (EventPoster.postEvent(new GamePlayerDownEvent(this, gamePlayer, livingEntity, event))) {
+    public void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer) {
+        if (EventPoster.postEvent(new GamePlayerDownEvent(this, gamePlayer, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDownEvent canceled, skipped onPlayerDown (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
-        gameProcessManager.onPlayerDown(event, gamePlayer, livingEntity, getGameEntry().removeInvalidTeam);
-        EventPoster.postEvent(new GamePlayerDownFinishEvent(this, gamePlayer, livingEntity, event));
+        gameProcessManager.onPlayerDown(event, gamePlayer, getGameEntry().removeInvalidTeam);
+        EventPoster.postEvent(new GamePlayerDownFinishEvent(this, gamePlayer, event));
     }
     public void onPlayerRevived(@NotNull GamePlayer gamePlayer) {
         if (EventPoster.postEvent(new GamePlayerReviveEvent(this, gamePlayer))) {
