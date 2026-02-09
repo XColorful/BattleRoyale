@@ -1,8 +1,7 @@
-package xiao.battleroyale.event.handler.effect;
+package xiao.battleroyale.common.effect.muteki;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
-import xiao.battleroyale.event.EventRegister;
 
 public class MutekiEventHandler implements IEventHandler {
 
@@ -17,17 +16,19 @@ public class MutekiEventHandler implements IEventHandler {
     private MutekiEventHandler() {}
 
     @Override public String getEventHandlerName() {
-        return "MutekiEventHandler";
+        return String.format("%s:MutekiEventHandler", BattleRoyale.MOD_ID);
     }
 
-    public static void register() {
-        EventRegister.register(get(), EventType.SERVER_TICK_EVENT);
-        EventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
+    protected static void register() {
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.register(get(), EventType.SERVER_TICK_EVENT);
+        eventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
     }
 
-    public static void unregister() {
-        EventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
-        EventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
+    protected static void unregister() {
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
+        eventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGH, false);
     }
 
     @Override

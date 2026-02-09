@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
-import xiao.battleroyale.event.handler.util.DelayedEvent;
+import xiao.battleroyale.api.event.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils;
 
