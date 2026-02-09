@@ -1,10 +1,10 @@
-package xiao.battleroyale.event.handler.message;
+package xiao.battleroyale.common.message;
 
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
-import xiao.battleroyale.common.message.MessageManager;
-import xiao.battleroyale.event.EventRegister;
+import xiao.battleroyale.api.event.IEventRegister;
 
 public class MessageEventHandler implements IEventHandler {
 
@@ -19,15 +19,17 @@ public class MessageEventHandler implements IEventHandler {
     }
 
     @Override public String getEventHandlerName() {
-        return "MessageEventHandler";
+        return String.format("%s:MessageEventHandler", BattleRoyale.MOD_ID);
     }
 
-    public static void register() {
-        EventRegister.register(get(), EventType.SERVER_TICK_EVENT);
+    protected static void register() {
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.register(get(), EventType.SERVER_TICK_EVENT);
     }
 
-    public static void unregister() {
-        EventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
+    protected static void unregister() {
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
     }
 
     @Override

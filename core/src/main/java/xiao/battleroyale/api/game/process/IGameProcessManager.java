@@ -2,7 +2,7 @@ package xiao.battleroyale.api.game.process;
 
 import xiao.battleroyale.api.game.IGameSubManager;
 
-public interface IGameProcessManager extends IGameSubManager, IGameManagement, IGameNotification, IGameEventHandler {
+public interface IGameProcessManager extends IGameSubManager, IGameManagement, IGameNotification, IGameEventHelper {
 
     /**
      * 完整检查所有队伍情况

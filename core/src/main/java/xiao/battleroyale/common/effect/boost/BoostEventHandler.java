@@ -1,10 +1,10 @@
-package xiao.battleroyale.event.handler.effect;
+package xiao.battleroyale.common.effect.boost;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.api.event.IEventHandler;
-import xiao.battleroyale.event.EventRegister;
+import xiao.battleroyale.api.event.IEventRegister;
 
 public class BoostEventHandler implements IEventHandler {
 
@@ -19,15 +19,17 @@ public class BoostEventHandler implements IEventHandler {
     private BoostEventHandler() {}
 
     @Override public String getEventHandlerName() {
-        return "BoostEventHandler";
+        return String.format("%s:BoostEventHandler", BattleRoyale.MOD_ID);
     }
 
-    public static void register() {
-        EventRegister.register(get(), EventType.SERVER_TICK_EVENT);
+    protected static void register() {
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.register(get(), EventType.SERVER_TICK_EVENT);
     }
 
-    public static void unregister() {
-        EventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
+    protected static void unregister() {
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.unregister(get(), EventType.SERVER_TICK_EVENT);
     }
 
     @Override

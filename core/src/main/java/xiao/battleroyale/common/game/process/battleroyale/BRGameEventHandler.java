@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.ILivingDamageEvent;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.team.ITeamManager;
@@ -66,11 +67,19 @@ public class BRGameEventHandler {
     }
 
     /**
+     * 非游戏玩家免伤机制在 {@link xiao.battleroyale.common.game.gamerule.AttackEventHandler} 提前处理
+     * (对于大逃杀) 这里实际上什么也不需要做
+     * 命中伤害显示等也是 StatsManager 的事情
+     */
+    protected static void onPlayerDamage(BRGameProcessManager brGameProcessManager, ILivingDamageEvent event, @NotNull GamePlayer gamePlayer) {
+    }
+
+    /**
      * 检查GamePlayer是被不死图腾救了还是PlayerRevive倒地
      * 没有队友时不允许倒地直接让PlayerRevive击杀掉
      * PlayerRevive只允许玩家倒地，因此人机玩家无法倒地
      */
-    protected static void onPlayerDown(BRGameProcessManager brGameProcessManager, ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, LivingEntity livingEntity, boolean removeInvalidTeam) {
+    protected static void onPlayerDown(BRGameProcessManager brGameProcessManager, ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, boolean removeInvalidTeam) {
         // 不允许倒地的情况：队友没有Alive的
         GameTeam gameTeam = gamePlayer.getTeam();
         boolean hasAliveMember = false;
@@ -86,12 +95,12 @@ public class BRGameEventHandler {
         }
         if (!hasAliveMember) { // 没有存活队友就判定为无法救援，直接判死亡
             BattleRoyale.LOGGER.debug("GamePlayer {} is down and has no alive member, switch to onPlayerDeath", gamePlayer.getPlayerName());
-            BattleRoyale.getGameManager().onPlayerDeath(event, gamePlayer); //
+            BattleRoyale.getGameManager().onPlayerDeath(event, gamePlayer); // 没有其他标识，让 IStatsManager 手动检查 isEliminated()
             return;
         }
 
         // PlayerRevive倒地机制：取消事件并设置为流血状态
-        if (livingEntity instanceof Player player) {
+        if (event.getEntity() instanceof Player player) {
             PlayerRevive playerRevive = PlayerRevive.get();
             if (playerRevive.isBleeding(player)) {
                 gamePlayer.setAlive(false);
