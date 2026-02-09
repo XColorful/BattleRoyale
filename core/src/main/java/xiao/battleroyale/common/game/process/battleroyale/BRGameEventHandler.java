@@ -72,7 +72,6 @@ public class BRGameEventHandler {
      * 命中伤害显示等也是 StatsManager 的事情
      */
     protected static void onPlayerDamage(BRGameProcessManager brGameProcessManager, ILivingDamageEvent event, @NotNull GamePlayer gamePlayer) {
-        ChatUtils.sendMessageToAllPlayers(BattleRoyale.getGameManager().getServerLevel(), "on " + gamePlayer.getNameWithId() + " damage");
     }
 
     /**
