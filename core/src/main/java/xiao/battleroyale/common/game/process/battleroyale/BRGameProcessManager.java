@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.event.ILivingDamageEvent;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.process.IGameProcessManager;
@@ -204,8 +205,11 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
     @Override public void onPlayerLoggedOut(boolean isInGame, ServerPlayer player) {
         BRGameEventHandler.onPlayerLoggedOut(this, isInGame, player);
     }
-    @Override public void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, LivingEntity livingEntity, boolean removeInvalidTeam) {
-        BRGameEventHandler.onPlayerDown(this, event, gamePlayer, livingEntity, removeInvalidTeam);
+    @Override public void onPlayerDamage(ILivingDamageEvent event, @NotNull GamePlayer gamePlayer) {
+        BRGameEventHandler.onPlayerDamage(this, event, gamePlayer);
+    }
+    @Override public void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, boolean removeInvalidTeam) {
+        BRGameEventHandler.onPlayerDown(this, event, gamePlayer, removeInvalidTeam);
     }
     @Override public void onPlayerDeath(@Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
         BRGameEventHandler.onPlayerDeath(this, event, serverLevel, gamePlayer);

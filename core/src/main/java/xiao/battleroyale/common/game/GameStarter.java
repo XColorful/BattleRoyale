@@ -12,10 +12,6 @@ import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.Gamer
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.data.io.TempDataManager;
-import xiao.battleroyale.event.handler.game.AttackEventHandler;
-import xiao.battleroyale.event.handler.game.LogEventHandler;
-import xiao.battleroyale.event.handler.game.LoopEventHandler;
-import xiao.battleroyale.event.handler.game.PlayerDeathEventHandler;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.StringUtils;
 
@@ -120,7 +116,6 @@ public class GameStarter {
         gameManager.setGameTime(0); // 游戏结束后不手动重置
         gameManager.clearWinnerGamePlayers(); // 游戏结束后不手动重置
         gameManager.clearWinnerGameTeams(); // 游戏结束后不手动重置
-        GameStarter.registerGameEvent();
         TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(gameManager.globalCenterOffset));
         ServerLevel serverLevel = gameManager.getServerLevel();
         TempDataManager.get().startGame(serverLevel); // 立即写入备份
@@ -180,20 +175,5 @@ public class GameStarter {
      */
     protected static boolean isStartReady(IGameManager gameManager) {
         return isReady(gameManager) && gameManager.getTeamManager().isReady();
-    }
-
-    protected static void registerGameEvent() {
-        AttackEventHandler.register();
-        LoopEventHandler.register();
-        PlayerDeathEventHandler.register();
-        BleedingHandler.get().clear();
-    }
-    protected static void unregisterGameEvent() {
-        AttackEventHandler.unregister();
-        LoopEventHandler.unregister();
-        PlayerDeathEventHandler.unregister();
-        LogEventHandler.unregister();
-        // ServerEventHandler.unregister(); // 不需要解除注册
-        BleedingHandler.unregister();
     }
 }

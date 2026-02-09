@@ -13,9 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.config.IConfigManager;
 import xiao.battleroyale.api.config.IConfigSubManager;
-import xiao.battleroyale.api.event.ILivingDeathEvent;
+import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.api.event.game.finish.*;
 import xiao.battleroyale.api.event.game.game.*;
 import xiao.battleroyale.api.event.game.starter.*;
@@ -47,6 +46,7 @@ import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.game.team.TeamManager;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.message.game.GameInfoMessageManager;
+import xiao.battleroyale.compat.playerrevive.BleedingHandler;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
@@ -57,8 +57,7 @@ import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.event.EventPoster;
-import xiao.battleroyale.event.handler.game.LogEventHandler;
-import xiao.battleroyale.event.handler.util.DelayedEvent;
+import xiao.battleroyale.api.event.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.StringUtils;
 
@@ -68,7 +67,7 @@ import java.util.function.Supplier;
 
 import static xiao.battleroyale.api.data.TempDataTag.*;
 
-public class GameManager extends AbstractGameManager implements IGameManager, IStatsWriter {
+public class GameManager extends AbstractGameManager implements IGameManager, IStatsWriter, ICustomEventHandler {
 
     private static class GameManagerHolder {
         private static final GameManager INSTANCE = new GameManager();
@@ -99,6 +98,14 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             }
         }
         TempDataManager.get().writeString(GAME_MANAGER, LAST_GAME_ID, getGameId().toString());
+        this.gameProcessManager = BRGameProcessManager.get(); this.gameProcessManager.registerGameEventHandler();
+        this.gameruleManager = GameruleManager.get(); this.gameruleManager.registerGameEventHandler();
+        this.gameLootManager = GameLootManager.get(); this.gameLootManager.registerGameEventHandler();
+        this.spawnManager = SpawnManager.get(); this.spawnManager.registerGameEventHandler();
+        this.gameLobbyManager = GameLobbyManager.get(); this.gameLobbyManager.registerGameEventHandler();
+        this.statsManager = StatsManager.get(); this.statsManager.registerGameEventHandler();
+        this.teamManager = TeamManager.get(); this.teamManager.registerGameEventHandler();
+        this.zoneManager = ZoneManager.get(); this.zoneManager.registerGameEventHandler();
     }
 
     public static void init(McSide mcSide) {
@@ -106,6 +113,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         GameruleManager.init(mcSide);
         GameLootManager.init(mcSide);
         SpawnManager.init(mcSide);
+        GameLobbyManager.init(mcSide);
         StatsManager.init(mcSide);
         TeamManager.init(mcSide);
         ZoneManager.init(mcSide);
@@ -115,19 +123,21 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return String.format("%s:GameManager", BattleRoyale.MOD_ID);
     }
 
-    private @NotNull IGameProcessManager gameProcessManager = BRGameProcessManager.get();
-    private @NotNull IGameruleManager gameruleManager = GameruleManager.get();
-    private @NotNull IGameLootManager gameLootManager = GameLootManager.get();
-    private @NotNull ISpawnManager spawnManager = SpawnManager.get();
-    private @NotNull IGameLobbyManager gameLobbyManager = GameLobbyManager.get();
-    private @NotNull IStatsManager statsManager = StatsManager.get();
-    private @NotNull ITeamManager teamManager = TeamManager.get();
-    private @NotNull IZoneManager zoneManager = ZoneManager.get();
+    private @NotNull IGameProcessManager gameProcessManager;
+    private @NotNull IGameruleManager gameruleManager;
+    private @NotNull IGameLootManager gameLootManager;
+    private @NotNull ISpawnManager spawnManager;
+    private @NotNull IGameLobbyManager gameLobbyManager;
+    private @NotNull IStatsManager statsManager;
+    private @NotNull ITeamManager teamManager;
+    private @NotNull IZoneManager zoneManager;
     protected void registerNewManager(IGameSubManager previousManager, IGameSubManager newManager) {
-        if (previousManager.unregisterGameEventHandler()) {
-            BattleRoyale.LOGGER.debug("Unregister previous GameSubManager {} to game", previousManager.getManagerName());
-        } else {
-            BattleRoyale.LOGGER.debug("Failed to unregister previous GameSubManager {} to game", previousManager.getManagerName());
+        if (previousManager != null) {
+            if (previousManager.unregisterGameEventHandler()) {
+                BattleRoyale.LOGGER.debug("Unregister previous GameSubManager {} to game", previousManager.getManagerName());
+            } else {
+                BattleRoyale.LOGGER.debug("Failed to unregister previous GameSubManager {} to game", previousManager.getManagerName());
+            }
         }
         if (newManager.registerGameEventHandler()) {
             BattleRoyale.LOGGER.debug("Register new GameSubManager {} to game", newManager.getManagerName());
@@ -322,6 +332,48 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return Collections.unmodifiableSet(this.winnerGameTeams);
     }
 
+    @Override
+    public boolean registerGameEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.register(get(), CustomEventType.GAME_START_FINISH_EVENT);
+        customEventRegister.register(get(), CustomEventType.GAME_STOP_FINISH_EVENT);
+        return true;
+    }
+    @Override
+    public boolean unregisterGameEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.unregister(get(), CustomEventType.GAME_START_FINISH_EVENT);
+        customEventRegister.unregister(get(), CustomEventType.GAME_STOP_FINISH_EVENT);
+        LoopEventHandler.unregister();
+        PlayerDamageEventHandler.unregister();
+        PlayerDeathEventHandler.unregister();
+        return true;
+    }
+    @Override
+    public String getEventHandlerName() {
+        return String.format("%s:GameManager", BattleRoyale.MOD_ID);
+    }
+    @Override
+    public void handleEvent(CustomEventType customEventType, ICustomEvent event) {
+        switch (customEventType) {
+            case GAME_START_FINISH_EVENT -> {
+                LoopEventHandler.register();
+                PlayerDamageEventHandler.register();
+                PlayerDeathEventHandler.register();
+                BleedingHandler.get().clear();
+            }
+            case GAME_STOP_FINISH_EVENT -> {
+                LoopEventHandler.unregister();
+                PlayerDamageEventHandler.unregister();
+                PlayerDeathEventHandler.unregister();
+                BleedingHandler.unregister();
+            }
+            default -> {
+                onReceiveWrongEvent(customEventType);
+            }
+        }
+    }
+
     /**
      * 检测并加载游戏配置，不应该执行任何实际内容
      */
@@ -349,7 +401,6 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
         if (GameStarter.gameConfigAllReady(this)) {
             this.configPrepared = true;
-            LogEventHandler.register(); // 后续玩家登录可根据配置直接加入队伍
             EventPoster.postEvent(new GameLoadFinishEvent(this));
         } else {
             this.configPrepared = false;
@@ -541,8 +592,6 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
         GameInfoMessageManager.get().stopGame(serverLevel); // 不在游戏中影响消息逻辑
         // this.ready = false; // 不使用ready标记，因为Team会变动
-        // 取消事件监听
-        GameStarter.unregisterGameEvent();
         statsManager.stopGame(serverLevel);
 
         // 游戏中途若修改配置，在游戏结束后生效
@@ -693,13 +742,21 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     public void onPlayerLoggedOut(ServerPlayer player) {
         gameProcessManager.onPlayerLoggedOut(isInGame(), player);
     }
-    public void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, @NotNull LivingEntity livingEntity) {
-        if (EventPoster.postEvent(new GamePlayerDownEvent(this, gamePlayer, livingEntity, event))) {
+    public void onPlayerDamage(ILivingDamageEvent event, @NotNull GamePlayer gamePlayer) {
+        if (EventPoster.postEvent(new GamePlayerDamageEvent(this, gamePlayer, event))) {
+            BattleRoyale.LOGGER.debug("GamePlayerDamageEvent canceled, skipped onPlayerDamage (GamePlayer {})", gamePlayer.getNameWithId());
+            return;
+        }
+        gameProcessManager.onPlayerDamage(event, gamePlayer);
+        EventPoster.postEvent(new GamePlayerDamageFinishEvent(this, gamePlayer, event));
+    }
+    public void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer) {
+        if (EventPoster.postEvent(new GamePlayerDownEvent(this, gamePlayer, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDownEvent canceled, skipped onPlayerDown (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
-        gameProcessManager.onPlayerDown(event, gamePlayer, livingEntity, getGameEntry().removeInvalidTeam);
-        EventPoster.postEvent(new GamePlayerDownFinishEvent(this, gamePlayer, livingEntity, event));
+        gameProcessManager.onPlayerDown(event, gamePlayer, getGameEntry().removeInvalidTeam);
+        EventPoster.postEvent(new GamePlayerDownFinishEvent(this, gamePlayer, event));
     }
     public void onPlayerRevived(@NotNull GamePlayer gamePlayer) {
         if (EventPoster.postEvent(new GamePlayerReviveEvent(this, gamePlayer))) {

@@ -20,14 +20,11 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
-import xiao.battleroyale.event.handler.game.StatsEventHandler;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.StringUtils;
 
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static xiao.battleroyale.data.AbstractDataManager.MOD_DATA_PATH;
@@ -106,7 +103,6 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        StatsEventHandler.register();
         startSystemTime = StringUtils.getTimestampString();
         totalPlayers = GameTeamManager.getGamePlayers().size();
         for (GamePlayer gamePlayer : GameTeamManager.getStandingGamePlayers()) {
@@ -131,8 +127,6 @@ public class StatsManager extends AbstractGameManager implements IStatsManager {
         if (shouldRecordStats()) {
             saveStats();
         }
-
-        StatsEventHandler.unregister();
     }
 
     private void clearStats() {

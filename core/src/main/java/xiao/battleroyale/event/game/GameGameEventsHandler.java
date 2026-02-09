@@ -14,7 +14,9 @@ public class GameGameEventsHandler extends AbstractEventHandler {
     }
 
     private GameGameEventsHandler() {
-        super(CustomEventType.GAME_PLAYER_DEATH_EVENT,
+        super(CustomEventType.GAME_PLAYER_DAMAGE_EVENT,
+                CustomEventType.GAME_PLAYER_DAMAGE_FINISH_EVENT,
+                CustomEventType.GAME_PLAYER_DEATH_EVENT,
                 CustomEventType.GAME_PLAYER_DEATH_FINISH_EVENT,
                 CustomEventType.GAME_PLAYER_DOWN_EVENT,
                 CustomEventType.GAME_PLAYER_DOWN_FINISH_EVENT,
