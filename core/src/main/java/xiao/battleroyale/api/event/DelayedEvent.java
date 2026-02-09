@@ -1,11 +1,6 @@
-package xiao.battleroyale.event.handler.util;
+package xiao.battleroyale.api.event;
 
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.event.EventType;
-import xiao.battleroyale.api.event.IEvent;
-import xiao.battleroyale.api.event.IEventHandler;
-import xiao.battleroyale.api.event.IServerTickEvent;
-import xiao.battleroyale.event.EventRegister;
 
 import java.util.function.Consumer;
 
@@ -32,7 +27,8 @@ public class DelayedEvent<T> implements IEventHandler {
         this.parameter = parameter;
         this.ticksLeft = delay;
         this.description = description;
-        EventRegister.register(this, EventType.SERVER_TICK_EVENT);
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.register(this, EventType.SERVER_TICK_EVENT);
     }
 
     @Override
@@ -53,7 +49,8 @@ public class DelayedEvent<T> implements IEventHandler {
             BattleRoyale.LOGGER.debug("Process {}", this.ticksLeft);
         }
         if (this.ticksLeft <= 0) {
-            EventRegister.unregister(this, EventType.SERVER_TICK_EVENT);
+            IEventRegister eventRegister = BattleRoyale.getEventRegister();
+            eventRegister.unregister(this, EventType.SERVER_TICK_EVENT);
         }
     }
 

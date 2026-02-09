@@ -1,8 +1,7 @@
-package xiao.battleroyale.event.handler.game;
+package xiao.battleroyale.common.game.lobby;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
-import xiao.battleroyale.event.EventRegister;
 
 /**
  * 只用于实现Lobby内无敌
@@ -22,15 +21,17 @@ public class LobbyEventHandler implements IEventHandler {
     private LobbyEventHandler() {}
 
     @Override public String getEventHandlerName() {
-        return "LobbyEventHandlerHolder";
+        return String.format("%s:LobbyEventHandler", BattleRoyale.MOD_ID);
     }
 
-    public static void register() {
-        EventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
+    protected static void register() {
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
     }
 
-    public static void unregister() {
-        EventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
+    protected static void unregister() {
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, xiao.battleroyale.api.event.EventPriority.HIGHEST, false);
     }
 
     @Override
