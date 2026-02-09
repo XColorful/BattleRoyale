@@ -9,7 +9,6 @@ import xiao.battleroyale.api.effect.type.IBoostManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.event.handler.effect.BoostEventHandler;
 import xiao.battleroyale.util.GameUtils;
 
 import java.util.HashMap;

@@ -8,6 +8,10 @@ import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.event.CustomEventType;
+import xiao.battleroyale.api.event.ICustomEvent;
+import xiao.battleroyale.api.event.ICustomEventHandler;
+import xiao.battleroyale.api.event.ICustomEventRegister;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.gamerule.IGameruleManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
@@ -26,7 +30,7 @@ import xiao.battleroyale.util.GameUtils;
 
 import java.util.List;
 
-public class GameruleManager extends AbstractGameManager implements IGameruleManager {
+public class GameruleManager extends AbstractGameManager implements IGameruleManager, ICustomEventHandler {
 
     private static class GameruleManagerHolder {
         private static final GameruleManager INSTANCE = new GameruleManager();
@@ -51,6 +55,47 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
     protected final McRuleStorage gameruleBackup = new McRuleStorage();
 
     protected boolean autoSaturation = true;
+
+    @Override
+    public boolean registerGameEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.register(get(), CustomEventType.GAME_LOAD_FINISH_EVENT);
+        customEventRegister.register(get(), CustomEventType.GAME_START_FINISH_EVENT);
+        customEventRegister.register(get(), CustomEventType.GAME_STOP_FINISH_EVENT);
+        return true;
+    }
+    @Override
+    public boolean unregisterGameEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.unregister(get(), CustomEventType.GAME_LOAD_FINISH_EVENT);
+        customEventRegister.unregister(get(), CustomEventType.GAME_START_FINISH_EVENT);
+        customEventRegister.unregister(get(), CustomEventType.GAME_STOP_FINISH_EVENT);
+        LogEventHandler.unregister();
+        AttackEventHandler.unregister();
+        return true;
+    }
+    @Override
+    public String getEventHandlerName() {
+        return String.format("%s:GameruleManager", BattleRoyale.MOD_ID);
+    }
+    @Override
+    public void handleEvent(CustomEventType customEventType, ICustomEvent event) {
+        switch (customEventType) {
+            case GAME_LOAD_FINISH_EVENT -> {
+                LogEventHandler.register(); // 后续玩家登录可根据配置直接加入队伍
+            }
+            case GAME_START_FINISH_EVENT -> {
+                AttackEventHandler.register();
+            }
+            case GAME_STOP_FINISH_EVENT -> {
+                LogEventHandler.unregister();
+                AttackEventHandler.unregister();
+            }
+            default -> {
+                onReceiveWrongEvent(customEventType);
+            }
+        }
+    }
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {

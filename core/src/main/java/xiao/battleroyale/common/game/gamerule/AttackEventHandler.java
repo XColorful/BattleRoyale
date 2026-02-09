@@ -1,4 +1,4 @@
-package xiao.battleroyale.event.handler.game;
+package xiao.battleroyale.common.game.gamerule;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -14,7 +14,6 @@ import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
-import xiao.battleroyale.event.EventRegister;
 import xiao.battleroyale.util.ChatUtils;
 
 /**
@@ -33,15 +32,17 @@ public class AttackEventHandler implements IEventHandler {
     }
 
     @Override public String getEventHandlerName() {
-        return "AttackEventHandler";
+        return String.format("%s:AttackEventHandler", BattleRoyale.MOD_ID);
     }
 
-    public static void register() {
-        EventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGH, false);
+    protected static void register() {
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGH, false);
     }
 
-    public static void unregister() {
-        EventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGH, false);
+    protected static void unregister() {
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGH, false);
     }
 
     @Override

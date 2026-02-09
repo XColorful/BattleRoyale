@@ -8,8 +8,7 @@ import xiao.battleroyale.api.game.IGameManager;
 
 public class GameSpectateEvent extends AbstractGameEvent {
 
-    protected @Nullable
-    final ServerPlayer player;
+    protected @Nullable final ServerPlayer player;
     protected final GameSpectateResult spectateResult;
 
     public GameSpectateEvent(IGameManager gameManager, @Nullable ServerPlayer player, GameSpectateResult result) {
