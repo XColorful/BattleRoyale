@@ -89,7 +89,7 @@ public class StatsEventHandler {
         if (!statsManager.recordScordboard) return;
         Scoreboard scoreboard = serverLevel.getScoreboard();
 
-        int score = (int) (damageAmount * 10);
+        int score = (int) (damageAmount * 5);
         if (attackerGamePlayer != null) {
             // 攻击者玩家(对玩家)造成的伤害
             addScore(scoreboard, statsManager.player_to_player_damage_ObjectiveName, attackerGamePlayer.getPlayerName(), score);
