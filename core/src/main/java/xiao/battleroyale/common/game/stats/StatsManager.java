@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.*;
+import xiao.battleroyale.api.event.game.finish.GameCompleteFinishEvent;
 import xiao.battleroyale.api.event.game.finish.GameStopFinishEvent;
 import xiao.battleroyale.api.event.game.game.*;
 import xiao.battleroyale.api.event.game.starter.GameStartFinishEvent;
@@ -70,11 +71,30 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     protected int minRank = Integer.MAX_VALUE;
     protected int maxRank = Integer.MIN_VALUE;
     public static int DEFAULT_RANK = -1;
-    protected String startSystemTime = ""; // 系统时间
+    protected String startotherTime = ""; // 系统时间
     protected int totalPlayers = 0;
 
     protected boolean recordStats = false;
     public boolean shouldRecordStats() { return recordStats; }
+    // 原版计分板
+    protected boolean recordScordboard = true;
+    protected boolean resetScordboardAtStart = false;
+    protected String objectName_prefix = BattleRoyale.MOD_NAME_SHORT;
+    protected String player_to_player_damage_ObjectiveName = String.format("%s_hurt", objectName_prefix);
+    protected String other_to_player_damage_ObjectiveName = String.format("%s_otherHurt", objectName_prefix);
+    protected String player_damage_by_player_ObjectiveName = String.format("%s_damage", objectName_prefix);
+    protected String player_damage_by_other_ObjectiveName = String.format("%s_otherDamage", objectName_prefix);
+    protected String player_knock_player_ObjectiveName = String.format("%s_knock", objectName_prefix);
+    protected String other_knock_player_ObjectiveName = String.format("%s_otherKnock", objectName_prefix);
+    protected String player_down_by_player_ObjectiveName = String.format("%s_down", objectName_prefix);
+    protected String player_down_by_other_ObjectiveName = String.format("%s_otherDown", objectName_prefix);
+    protected String player_revive_ObjectiveName = String.format("%s_revive", objectName_prefix);
+    protected String player_kill_player_ObjectiveName = String.format("%s_kill", objectName_prefix);
+    protected String other_kill_player_ObjectiveName = String.format("%s_otherKill", objectName_prefix);
+    protected String player_death_by_player_ObjectiveName = String.format("%s_death", objectName_prefix);
+    protected String player_death_by_other_ObjectiveName = String.format("%s_otherDeath", objectName_prefix);
+    protected String player_win_ObjectiveName = String.format("%s_win", objectName_prefix);
+    protected String player_lose_ObjectiveName = String.format("%s_lose", objectName_prefix);
 
     @Override
     public boolean registerGameEventHandler() {
@@ -85,6 +105,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
         customEventRegister.register(get(), CustomEventType.GAME_PLAYER_REVIVE_FINISH_EVENT);
         customEventRegister.register(get(), CustomEventType.GAME_PLAYER_DEATH_FINISH_EVENT);
         customEventRegister.register(get(), CustomEventType.GAME_STOP_FINISH_EVENT);
+        customEventRegister.register(get(), CustomEventType.GAME_COMPLETE_FINISH_EVENT);
         return true;
     }
     @Override
@@ -96,6 +117,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
         customEventRegister.unregister(get(), CustomEventType.GAME_PLAYER_REVIVE_FINISH_EVENT);
         customEventRegister.unregister(get(), CustomEventType.GAME_PLAYER_DEATH_FINISH_EVENT);
         customEventRegister.unregister(get(), CustomEventType.GAME_STOP_FINISH_EVENT);
+        customEventRegister.unregister(get(), CustomEventType.GAME_COMPLETE_FINISH_EVENT);
         return true;
     }
 
@@ -123,6 +145,9 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
             }
             case GAME_STOP_FINISH_EVENT -> {
                 StatsEventHandler.onGameStop(this, (GameStopFinishEvent) event);
+            }
+            case GAME_COMPLETE_FINISH_EVENT -> {
+                StatsEventHandler.onGameComplete(this, (GameCompleteFinishEvent) event);
             }
             default -> {
                 onReceiveWrongEvent(customEventType);
@@ -155,7 +180,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        startSystemTime = StringUtils.getTimestampString();
+        startotherTime = StringUtils.getTimestampString();
         totalPlayers = GameTeamManager.getGamePlayers().size();
         for (GamePlayer gamePlayer : GameTeamManager.getStandingGamePlayers()) {
             gamePlayerStats.put(gamePlayer, new GamePlayerStats(gamePlayer));
@@ -303,7 +328,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     }
 
     private String generateStateDirectory() {
-        String fileName = startSystemTime + "_" + totalPlayers + ".json";
+        String fileName = startotherTime + "_" + totalPlayers + ".json";
         return Paths.get(STATS_PATH, fileName).toString();
     }
     public String getStatsFilePath() {
