@@ -6,14 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.common.game.stats.game.SimpleRecord;
 
 import java.util.Map;
+import java.util.function.Function;
 
 import static xiao.battleroyale.common.game.stats.StatsManager.*;
 
 public class GameSetupStatsHelper {
 
-    /**
-     * Gamerule 相关
-     */
+    // ----Gamerule----
     protected static void onRecordIntGamerule(StatsManager statsManager, Map<String, Integer> intGamerule) {
         updateRecordMap(statsManager.statsData.gameruleStats.intRecord, intGamerule);
     }
@@ -29,58 +28,54 @@ public class GameSetupStatsHelper {
     protected static void onRecordStringGamerule(StatsManager statsManager, Map<String, String> stringGamerule) {
         updateRecordMap(statsManager.statsData.gameruleStats.stringRecord, stringGamerule);
     }
-
-    /**
-     * Spawn 相关
-     */
+    // ----Spawn----
     protected static void onRecordSpawnInt(StatsManager statsManager, String key, Map<String, Integer> spawnInt) {
-        updateSpawnRecord(statsManager, key, spawnInt, (record, data) -> updateRecordMap(record.intRecord, data));
+        updateSpawnRecord(statsManager, key, spawnInt, record -> record.intRecord, false);
     }
 
     protected static void onRecordSpawnBool(StatsManager statsManager, String key, Map<String, Boolean> spawnBool) {
-        updateSpawnRecord(statsManager, key, spawnBool, (record, data) -> updateBoolRecordMap(record.boolRecord, data));
+        updateSpawnRecord(statsManager, key, spawnBool, record -> record.boolRecord, true);
     }
 
     protected static void onRecordSpawnDouble(StatsManager statsManager, String key, Map<String, Double> spawnDouble) {
-        updateSpawnRecord(statsManager, key, spawnDouble, (record, data) -> updateRecordMap(record.doubleRecord, data));
+        updateSpawnRecord(statsManager, key, spawnDouble, record -> record.doubleRecord, false);
     }
 
     protected static void onRecordSpawnString(StatsManager statsManager, String key, Map<String, String> spawnString) {
-        updateSpawnRecord(statsManager, key, spawnString, (record, data) -> updateRecordMap(record.stringRecord, data));
+        updateSpawnRecord(statsManager, key, spawnString, record -> record.stringRecord, false);
     }
-
-    /**
-     * Zone 相关
-     */
+    // ----Zone----
     protected static void onRecordZoneInt(StatsManager statsManager, int zoneId, Map<String, Integer> zoneInt) {
-        updateZoneRecord(statsManager, zoneId, zoneInt, (record, data) -> updateRecordMap(record.intRecord, data));
+        updateZoneRecord(statsManager, zoneId, zoneInt, record -> record.intRecord, false);
     }
 
     protected static void onRecordZoneBool(StatsManager statsManager, int zoneId, Map<String, Boolean> zoneBool) {
-        updateZoneRecord(statsManager, zoneId, zoneBool, (record, data) -> updateBoolRecordMap(record.boolRecord, data));
+        updateZoneRecord(statsManager, zoneId, zoneBool, record -> record.boolRecord, true);
     }
 
     protected static void onRecordZoneDouble(StatsManager statsManager, int zoneId, Map<String, Double> zoneDouble) {
-        updateZoneRecord(statsManager, zoneId, zoneDouble, (record, data) -> updateRecordMap(record.doubleRecord, data));
+        updateZoneRecord(statsManager, zoneId, zoneDouble, record -> record.doubleRecord, false);
     }
 
     protected static void onRecordZoneString(StatsManager statsManager, int zoneId, Map<String, String> zoneString) {
-        updateZoneRecord(statsManager, zoneId, zoneString, (record, data) -> updateRecordMap(record.stringRecord, data));
+        updateZoneRecord(statsManager, zoneId, zoneString, record -> record.stringRecord, false);
     }
 
-    private static <K, V> void updateSpawnRecord(StatsManager statsManager, String key, Map<String, V> data, RecordUpdater<V> updater) {
+    private static <V> void updateSpawnRecord(StatsManager statsManager, String key, Map<String, V> data, Function<SimpleRecord, Map<String, V>> mapSelector, boolean isBool) {
         if (data != null) {
             SimpleRecord record = statsManager.statsData.spawnStats.computeIfAbsent(key, k -> new SimpleRecord());
-            updater.update(record, data);
+            if (isBool) updateBoolRecordMap((Map<String, Boolean>) mapSelector.apply(record), (Map<String, Boolean>) data);
+            else updateRecordMap(mapSelector.apply(record), data);
         } else {
             statsManager.statsData.spawnStats.remove(key);
         }
     }
 
-    private static <K, V> void updateZoneRecord(StatsManager statsManager, int zoneId, Map<String, V> data, RecordUpdater<V> updater) {
+    private static <V> void updateZoneRecord(StatsManager statsManager, int zoneId, Map<String, V> data, Function<SimpleRecord, Map<String, V>> mapSelector, boolean isBool) {
         if (data != null) {
             SimpleRecord record = statsManager.statsData.zoneStats.computeIfAbsent(zoneId, k -> new SimpleRecord());
-            updater.update(record, data);
+            if (isBool) updateBoolRecordMap((Map<String, Boolean>) mapSelector.apply(record), (Map<String, Boolean>) data);
+            else updateRecordMap(mapSelector.apply(record), data);
         } else {
             statsManager.statsData.zoneStats.remove(zoneId);
         }
@@ -104,86 +99,32 @@ public class GameSetupStatsHelper {
         }
     }
 
-    @FunctionalInterface
-    private interface RecordUpdater<V> {
-        void update(SimpleRecord record, Map<String, V> data);
-    }
-
     protected static void addGameSetupStats(StatsManager statsManager, @NotNull JsonArray jsonArray) {
         JsonObject statsObject = new JsonObject();
-
         statsObject.addProperty(STATS_TAG, GAME_TAG);
-        addGameruleProperty(statsManager, statsObject);
-        addSpawnProperty(statsManager, statsObject);
-        addZoneProperty(statsManager, statsObject);
+
+        // Gamerule
+        statsObject.add(GAMERULE_TAG, serializeRecord(statsManager.statsData.gameruleStats));
+
+        // Spawn
+        JsonObject spawnObject = new JsonObject();
+        statsManager.statsData.spawnStats.forEach((key, record) -> spawnObject.add(key, serializeRecord(record)));
+        statsObject.add(SPAWN_TAG, spawnObject);
+
+        // Zone
+        JsonObject zoneObject = new JsonObject();
+        statsManager.statsData.zoneStats.forEach((key, record) -> zoneObject.add(String.valueOf(key), serializeRecord(record)));
+        statsObject.add(ZONE_TAG, zoneObject);
 
         jsonArray.add(statsObject);
     }
-    private static void addGameruleProperty(StatsManager statsManager, JsonObject jsonObject) {
-        JsonObject gameruleObject = new JsonObject();
-        for (Map.Entry<String, Integer> entry : statsManager.statsData.gameruleStats.intRecord.entrySet()) {
-            gameruleObject.addProperty(entry.getKey(), entry.getValue());
-        }
-        for (Map.Entry<String, Boolean> entry : statsManager.statsData.gameruleStats.boolRecord.entrySet()) {
-            gameruleObject.addProperty(entry.getKey(), entry.getValue());
-        }
-        for (Map.Entry<String, Double> entry : statsManager.statsData.gameruleStats.doubleRecord.entrySet()) {
-            gameruleObject.addProperty(entry.getKey(), entry.getValue());
-        }
-        for (Map.Entry<String, String> entry : statsManager.statsData.gameruleStats.stringRecord.entrySet()) {
-            gameruleObject.addProperty(entry.getKey(), entry.getValue());
-        }
 
-        jsonObject.add(GAMERULE_TAG, gameruleObject);
-    }
-    private static void addSpawnProperty(StatsManager statsManager, JsonObject jsonObject) {
-        JsonObject spawnObject = new JsonObject();
-
-        for (Map.Entry<String, SimpleRecord> entry : statsManager.statsData.spawnStats.entrySet()) {
-            String spawnKey = entry.getKey();
-            SimpleRecord record = entry.getValue();
-            JsonObject singleSpawnObject = new JsonObject();
-            for (Map.Entry<String, Integer> intEntry : record.intRecord.entrySet()) {
-                singleSpawnObject.addProperty(intEntry.getKey(), intEntry.getValue());
-            }
-            for (Map.Entry<String, Boolean> boolEntry : record.boolRecord.entrySet()) {
-                singleSpawnObject.addProperty(boolEntry.getKey(), boolEntry.getValue());
-            }
-            for (Map.Entry<String, Double> doubleEntry : record.doubleRecord.entrySet()) {
-                singleSpawnObject.addProperty(doubleEntry.getKey(), doubleEntry.getValue());
-            }
-            for (Map.Entry<String, String> stringEntry : record.stringRecord.entrySet()) {
-                singleSpawnObject.addProperty(stringEntry.getKey(), stringEntry.getValue());
-            }
-
-            spawnObject.add(spawnKey, singleSpawnObject);
-        }
-
-        jsonObject.add(SPAWN_TAG, spawnObject);
-    }
-    private static void addZoneProperty(StatsManager statsManager, JsonObject jsonObject) {
-        JsonObject zoneObject = new JsonObject();
-
-        for (Map.Entry<Integer, SimpleRecord> entry : statsManager.statsData.zoneStats.entrySet()) {
-            String zoneKey = Integer.toString(entry.getKey());
-            SimpleRecord record = entry.getValue();
-            JsonObject singleZoneObject = new JsonObject();
-            for (Map.Entry<String, Integer> intEntry : record.intRecord.entrySet()) {
-                singleZoneObject.addProperty(intEntry.getKey(), intEntry.getValue());
-            }
-            for (Map.Entry<String, Boolean> boolEntry : record.boolRecord.entrySet()) {
-                singleZoneObject.addProperty(boolEntry.getKey(), boolEntry.getValue());
-            }
-            for (Map.Entry<String, Double> doubleEntry : record.doubleRecord.entrySet()) {
-                singleZoneObject.addProperty(doubleEntry.getKey(), doubleEntry.getValue());
-            }
-            for (Map.Entry<String, String> stringEntry : record.stringRecord.entrySet()) {
-                singleZoneObject.addProperty(stringEntry.getKey(), stringEntry.getValue());
-            }
-
-            zoneObject.add(zoneKey, singleZoneObject);
-        }
-
-        jsonObject.add(ZONE_TAG, zoneObject);
+    private static JsonObject serializeRecord(SimpleRecord record) {
+        JsonObject jsonObject = new JsonObject();
+        record.intRecord.forEach(jsonObject::addProperty);
+        record.boolRecord.forEach(jsonObject::addProperty);
+        record.doubleRecord.forEach(jsonObject::addProperty);
+        record.stringRecord.forEach(jsonObject::addProperty);
+        return jsonObject;
     }
 }
