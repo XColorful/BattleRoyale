@@ -25,7 +25,7 @@
 - mcMaxHealth：玩家最大生命值
 - damageMultiplier：伤害分数倍率
 - ratioBase：100%倍率对应的分数
-> 伤害分数：$\text{mcMaxHealth} \times \text{damageMultiplier} \times \text{ratioBase}$
+> 伤害分数： $\text{mcMaxHealth} \times \text{damageMultiplier} \times \text{ratioBase}$
 - scoreboardCycleInterval：侧边栏记分板循环间隔，单位 tick
 - cycleObjectiveName：循环切换的记分板列表
 - mainObjective：主记分项
