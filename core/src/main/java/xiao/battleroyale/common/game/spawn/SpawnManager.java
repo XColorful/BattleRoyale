@@ -8,6 +8,8 @@ import xiao.battleroyale.algorithm.CircleGridCalculator;
 import xiao.battleroyale.algorithm.Distribution;
 import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.config.IConfigSubManager;
+import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.api.game.spawn.ISpawnManager;
@@ -86,13 +88,11 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
         IGameManager gameManager = BattleRoyale.getGameManager();
-        if (gameManager.isInGame()) {
-            return;
-        }
+        if (gameManager.isInGame()) return;
 
-        int spawnConfigId = gameManager.getSpawnConfigId();
-        SpawnConfig spawnConfig = (SpawnConfig) GameConfigManager.get().getConfigEntry(SpawnConfigManager.get().getNameKey(), spawnConfigId);
-        if (spawnConfig == null) {
+        IModConfigManager modConfigManager = BattleRoyale.getModConfigManager();
+        IConfigSubManager<?> spawnConfigManager = modConfigManager.getConfigSubManager(GameConfigManager.get().getNameKey(), SpawnConfigManager.get().getNameKey());
+        if (spawnConfigManager == null || !(spawnConfigManager.getConfigEntry(gameManager.getSpawnConfigId()) instanceof SpawnConfig spawnConfig)) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_spawn_config");
             return;
         }
@@ -102,9 +102,8 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
             return;
         }
 
-        int gameId = gameManager.getGameruleConfigId();
-        GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId);
-        if (gameruleConfig == null) {
+        IConfigSubManager<?> gameruleConfigManager = modConfigManager.getConfigSubManager(GameConfigManager.get().getNameKey(), GameruleConfigManager.get().getNameKey());
+        if (gameruleConfigManager == null || !(gameruleConfigManager.getConfigEntry(gameManager.getGameruleConfigId()) instanceof GameruleConfig gameruleConfig)) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;
         }
