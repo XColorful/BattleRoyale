@@ -1,11 +1,9 @@
 package xiao.battleroyale.common.game.stats;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.scores.*;
-import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+import net.minecraft.world.scores.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -18,9 +16,12 @@ import xiao.battleroyale.api.event.game.game.GamePlayerDeathFinishEvent;
 import xiao.battleroyale.api.event.game.game.GamePlayerDownFinishEvent;
 import xiao.battleroyale.api.event.game.game.GamePlayerReviveFinishEvent;
 import xiao.battleroyale.api.event.game.starter.GameStartFinishEvent;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.util.ScoreUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -28,16 +29,8 @@ import static xiao.battleroyale.util.ScoreUtils.*;
 
 public class StatsEventHandler {
 
-    protected static void onGameStart(StatsManager statsManager, GameStartFinishEvent event) {
-        if (!statsManager.recordScordboard) return;
-
-        // 重置计分板
-        if (!statsManager.resetScordboardAtStart) return;
-        ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
-        if (serverLevel == null) return;
-
-        Scoreboard scoreboard = serverLevel.getScoreboard();
-        List<String> objectiveNames = List.of(
+    protected static List<String> getObjectiveNames(StatsManager statsManager) {
+        List<String> objectiveNames = new ArrayList<>(List.of(
                 // 原始数据
                 statsManager.player_to_player_damage_ObjectiveName,
                 statsManager.other_to_player_damage_ObjectiveName,
@@ -58,25 +51,55 @@ public class StatsEventHandler {
                 statsManager.player_attack_rate_ObjectiveName,
                 statsManager.player_kd_ObjectiveName,
                 statsManager.player_win_rate_ObjectiveName
-        );
-        for (String name : objectiveNames) {
-            Objective oldObj = scoreboard.getObjective(name);
-            if (oldObj != null) {
-                scoreboard.removeObjective(oldObj);
-            }
-            // 适配 1.21.1 addObjective 参数
-            scoreboard.addObjective(name, ObjectiveCriteria.DUMMY,
-                    Component.literal(name),
-                    ObjectiveCriteria.RenderType.INTEGER,
-                    true, null);
+        ));
+        if (statsManager.enableJourneyStats) objectiveNames.add(statsManager.player_journey_ObjectiveName);
+        if (statsManager.enableMaxSpeedStats) objectiveNames.add(statsManager.player_max_speed_ObjectiveName);
+        return objectiveNames;
+    }
+
+    protected static void onGameStart(StatsManager statsManager, GameStartFinishEvent event) {
+
+
+        if (!statsManager.recordScordboard) return;
+
+        IGameManager gameManager = event.getGameManager();
+        ServerLevel serverLevel = gameManager.getServerLevel();
+
+        // 清除内存数据 (不是计分板)
+        SpecialStatsEventHandler.onNewJourney(statsManager, gameManager);
+        SpecialStatsEventHandler.onNewMaxSpeed(statsManager, gameManager);
+
+        if (!statsManager.resetScordboardAtStart) return;
+
+        if (serverLevel == null) return;
+
+        // 重置计分板
+        Scoreboard scoreboard = serverLevel.getScoreboard();
+        List<String> objectiveNames = getObjectiveNames(statsManager);
+
+        ScoreUtils.removeObjectives(scoreboard, objectiveNames);
+        BattleRoyale.LOGGER.info("StatsEventHandler: All objectives cleared");
+        ScoreUtils.addObjectivesIfNull(scoreboard, objectiveNames);
+    }
+
+    protected static void onGameTick(StatsManager statsManager, GameTickFinishEvent event) {
+        IGameManager gameManager = event.getGameManager();
+        if (!gameManager.isInGame()) return;
+
+        int gameTime = event.getGameTime();
+        if (gameTime > statsManager.journeyStatsDelay) {
+            SpecialStatsEventHandler.onJourneyStats(statsManager, gameManager);
         }
-        BattleRoyale.LOGGER.info("StatsEventHandler: All objectives re-created for a new game.");
+        if (gameTime > statsManager.maxSpeedStatsDelay) {
+            SpecialStatsEventHandler.onMaxSpeedStats(statsManager, gameManager);
+        }
     }
 
     protected static void onGamePlayerDamage(StatsManager statsManager, GamePlayerDamageFinishEvent event) {
         @NotNull GamePlayer gamePlayer = event.getGamePlayer();
         String playerName = gamePlayer.getPlayerName();
-        @Nullable ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
+        IGameManager gameManager = event.getGameManager();
+        @Nullable ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null) {
             BattleRoyale.LOGGER.debug("StatsEventHandler: Failed to get ServerLevel by GameManager, skipped onGamePlayerDamage");
             return;
@@ -85,17 +108,18 @@ public class StatsEventHandler {
         @Nullable ILivingDamageEvent livingDamageEvent = event.getLivingDamageEvent(); // 玩家离线被扣血的就没有事件
         if (livingDamageEvent == null) {
             // 暂时不处理
+            BattleRoyale.LOGGER.debug("StatsEventHandler: ILivingDamageEvent is null, skipped onGamePlayerDamage");
             return;
         }
         DamageSource damageSource = livingDamageEvent.getSource();
         @Nullable Entity attackerEntity = damageSource.getEntity();
-        @Nullable GamePlayer attackerGamePlayer = attackerEntity != null ? GameTeamManager.getGamePlayerByUUID(attackerEntity.getUUID()) : null;
+        @Nullable GamePlayer attackerGamePlayer = attackerEntity != null ? gameManager.getTeamManager().getGamePlayerByUUID(attackerEntity.getUUID()) : null;
         @Nullable Entity damageMethod = damageSource.getDirectEntity();
         float damageAmount = livingDamageEvent.getDamageAmount();
 
         if (!statsManager.recordScordboard) return;
-        Scoreboard scoreboard = serverLevel.getScoreboard();
 
+        Scoreboard scoreboard = serverLevel.getScoreboard();
         int score = (int) (damageAmount * statsManager.damageMultiplier);
         if (attackerGamePlayer != null) {
             // 攻击者玩家(对玩家)造成的伤害
@@ -128,7 +152,8 @@ public class StatsEventHandler {
             return;
         }
         String playerName = gamePlayer.getPlayerName();
-        @Nullable ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
+        IGameManager gameManager = event.getGameManager();
+        @Nullable ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null) {
             BattleRoyale.LOGGER.debug("StatsEventHandler: Failed to get ServerLevel by GameManager, skipped onGamePlayerDown");
             return;
@@ -137,16 +162,17 @@ public class StatsEventHandler {
         @Nullable ILivingDeathEvent livingDeathEvent = event.getLivingDeathEvent();
         if (livingDeathEvent == null) {
             // 暂时不处理
+            BattleRoyale.LOGGER.debug("StatsEventHandler: ILivingDeathEvent is null, skipped onGamePlayerDown");
             return;
         }
         DamageSource damageSource = livingDeathEvent.getSource();
         @Nullable Entity attackerEntity = damageSource.getEntity();
-        @Nullable GamePlayer attackerGamePlayer = attackerEntity != null ? GameTeamManager.getGamePlayerByUUID(attackerEntity.getUUID()) : null;
+        @Nullable GamePlayer attackerGamePlayer = attackerEntity != null ? gameManager.getTeamManager().getGamePlayerByUUID(attackerEntity.getUUID()) : null;
         @Nullable Entity damageMethod = damageSource.getDirectEntity();
 
         if (!statsManager.recordScordboard) return;
-        Scoreboard scoreboard = serverLevel.getScoreboard();
 
+        Scoreboard scoreboard = serverLevel.getScoreboard();
         if (attackerGamePlayer != null) {
             // 攻击者玩家(对玩家)造成的击倒数
             addScore(scoreboard, statsManager.player_knock_player_ObjectiveName, attackerGamePlayer.getPlayerName(), 1);
@@ -166,15 +192,15 @@ public class StatsEventHandler {
     protected static void onGamePlayerRevive(StatsManager statsManager, GamePlayerReviveFinishEvent event) {
         @NotNull GamePlayer gamePlayer = event.getGamePlayer();
         String playerName = gamePlayer.getPlayerName();
-        @Nullable ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
+        @Nullable ServerLevel serverLevel = event.getGameManager().getServerLevel();
         if (serverLevel == null) {
             BattleRoyale.LOGGER.debug("StatsEventHandler: Failed to get ServerLevel by GameManager, skipped onGamePlayerRevive");
             return;
         }
 
         if (!statsManager.recordScordboard) return;
-        Scoreboard scoreboard = serverLevel.getScoreboard();
 
+        Scoreboard scoreboard = serverLevel.getScoreboard();
         // 玩家被扶起次数
         addScore(scoreboard, statsManager.player_revive_ObjectiveName, playerName, 1);
     }
@@ -182,7 +208,8 @@ public class StatsEventHandler {
     protected static void onGamePlayerDeath(StatsManager statsManager, GamePlayerDeathFinishEvent event) {
         @NotNull GamePlayer gamePlayer = event.getGamePlayer();
         String playerName = gamePlayer.getPlayerName();
-        @Nullable ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
+        IGameManager gameManager = event.getGameManager();
+        @Nullable ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null) {
             BattleRoyale.LOGGER.debug("StatsEventHandler: Failed to get ServerLevel by GameManager, skipped onGamePlayerDeath");
             return;
@@ -191,16 +218,17 @@ public class StatsEventHandler {
         @Nullable ILivingDeathEvent livingDeathEvent = event.getLivingDeathEvent(); // 被游戏机制淘汰的就没有事件
         if (livingDeathEvent == null) {
             // 暂时不处理
+            BattleRoyale.LOGGER.debug("StatsEventHandler: ILivingDeathEvent is null, skipped onGamePlayerDeath");
             return;
         }
         DamageSource damageSource = livingDeathEvent.getSource();
         @Nullable Entity attackerEntity = damageSource.getEntity();
-        @Nullable GamePlayer attackerGamePlayer = attackerEntity != null ? GameTeamManager.getGamePlayerByUUID(attackerEntity.getUUID()) : null;
+        @Nullable GamePlayer attackerGamePlayer = attackerEntity != null ? gameManager.getTeamManager().getGamePlayerByUUID(attackerEntity.getUUID()) : null;
         @Nullable Entity damageMethod = damageSource.getDirectEntity();
 
         if (!statsManager.recordScordboard) return;
-        Scoreboard scoreboard = serverLevel.getScoreboard();
 
+        Scoreboard scoreboard = serverLevel.getScoreboard();
         if (attackerGamePlayer != null) {
             // 攻击者玩家(对玩家)造成的击杀数
             addScore(scoreboard, statsManager.player_kill_player_ObjectiveName, attackerGamePlayer.getPlayerName(), 1);
@@ -232,7 +260,7 @@ public class StatsEventHandler {
     protected static void onGameComplete(StatsManager statsManager, GameCompleteFinishEvent event) {
         if (!event.hasWinner()) return;
 
-        @Nullable ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
+        @Nullable ServerLevel serverLevel = event.getGameManager().getServerLevel();
         if (serverLevel == null) {
             BattleRoyale.LOGGER.debug("StatsEventHandler: Failed to get ServerLevel by GameManager, skipped onGameComplete");
             return;
@@ -240,7 +268,15 @@ public class StatsEventHandler {
         List<GamePlayer> gamePlayers = event.getGamePlayers();
         Set<GamePlayer> winnerGamePlayers = event.getWinnerGamePlayers();
 
+        if (statsManager.enableJourneyStats) {
+            SpecialStatsEventHandler.onJourneyComplete(statsManager, event);
+        }
+        if (statsManager.enableMaxSpeedStats) {
+            SpecialStatsEventHandler.onMaxSpeedComplete(statsManager, event);
+        }
+
         if (!statsManager.recordScordboard) return;
+
         Scoreboard scoreboard = serverLevel.getScoreboard();
         for (GamePlayer gamePlayer : gamePlayers) {
             String playerName = gamePlayer.getPlayerName();
