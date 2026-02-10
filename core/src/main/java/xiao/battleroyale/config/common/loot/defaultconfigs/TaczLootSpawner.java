@@ -840,9 +840,12 @@ public class TaczLootSpawner {
 
     private static ILootEntry commonHealEntry() {
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(28, new ItemEntry("minecraft:potion", "{components:{'minecraft:custom_name':'{\"text\":\"Bandage\",\"color\":\"white\",\"italic\":false}','minecraft:potion_contents':{custom_effects:[{id:\"minecraft:regeneration\",amplifier:0,duration:100,show_particles:0b,ambient:0b}]}}}", 1)),
-                new WeightedEntry(16, new ItemEntry("minecraft:potion", "{components:{'minecraft:custom_name':'{\"text\":\"First Aid Kit\",\"color\":\"red\",\"italic\":false}','minecraft:potion_contents':{custom_effects:[{id:\"minecraft:regeneration\",amplifier:3,duration:90,show_particles:0b,ambient:0b}]}}}", 1)),
-                new WeightedEntry(2, new ItemEntry("minecraft:potion", "{components:{'minecraft:custom_name':'{\"text\":\"Med Kit\",\"color\":\"blue\",\"italic\":false}','minecraft:potion_contents':{custom_effects:[{id:\"minecraft:regeneration\",amplifier:3,duration:120,show_particles:0b,ambient:0b}]}}}", 1))
+                new WeightedEntry(28, new ItemEntry("minecraft:splash_potion",
+                        "{components:{'minecraft:custom_name':'{\"text\":\"Bandage\",\"color\":\"white\",\"italic\":false}','minecraft:potion_contents':{custom_effects:[{id:\"minecraft:regeneration\",amplifier:0,duration:100,show_particles:0b,ambient:0b}]}}}", 1)),
+                new WeightedEntry(16, new ItemEntry("minecraft:potion",
+                        "{components:{'minecraft:custom_name':'{\"text\":\"First Aid Kit\",\"color\":\"red\",\"italic\":false}','minecraft:potion_contents':{custom_effects:[{id:\"minecraft:regeneration\",amplifier:3,duration:90,show_particles:0b,ambient:0b}]}}}", 1)),
+                new WeightedEntry(2, new ItemEntry("minecraft:potion",
+                        "{components:{'minecraft:custom_name':'{\"text\":\"Med Kit\",\"color\":\"blue\",\"italic\":false}','minecraft:potion_contents':{custom_effects:[{id:\"minecraft:regeneration\",amplifier:3,duration:120,show_particles:0b,ambient:0b}]}}}", 1))
                 // new WeightedEntry(27, new EmptyEntry("item")),
                 // new WeightedEntry(24, new EmptyEntry("item")),
                 // new WeightedEntry(3, new EmptyEntry("item"))
