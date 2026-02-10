@@ -14,6 +14,7 @@
 
 - [游戏规则配置](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config)
 - [出生配置](https://github.com/XColorful/BattleRoyale/wiki/Spawn-config)
+- [统计数据配置](https://github.com/XColorful/BattleRoyale/wiki/Stats-config)
 - [区域配置](https://github.com/XColorful/BattleRoyale/wiki/Zone-config)
 - [人机配置](https://github.com/XColorful/BattleRoyale/wiki/Bot-config)
 
@@ -120,6 +121,7 @@
 
 - [Gamerule](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config#English)
 - [Spawn](https://github.com/XColorful/BattleRoyale/wiki/Spawn-config#English)
+- [Stats](https://github.com/XColorful/BattleRoyale/wiki/Stats-config#English)
 - [Zone](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#English)
 - [Bot](https://github.com/XColorful/BattleRoyale/wiki/Bot-config#English)
 

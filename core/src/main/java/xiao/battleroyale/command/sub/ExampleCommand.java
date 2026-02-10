@@ -18,6 +18,7 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
+import xiao.battleroyale.config.common.game.stats.StatsConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
@@ -53,6 +54,8 @@ public class ExampleCommand {
                         .executes(context -> generateGameConfigs(context, null))
                         .then(Commands.literal(ZONE)
                                 .executes(context -> generateGameConfigs(context, ZONE)))
+                        .then(Commands.literal(STATS)
+                                .executes(context -> generateGameConfigs(context, STATS)))
                         .then(Commands.literal(SPAWN)
                                 .executes(context -> generateGameConfigs(context, SPAWN)))
                         .then(Commands.literal(GAMERULE)
@@ -151,6 +154,10 @@ public class ExampleCommand {
                 case ZONE:
                     subManagerNameKey = ZoneConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.default_zone_config_generated";
+                    break;
+                case STATS:
+                    subManagerNameKey = StatsConfigManager.get().getNameKey();
+                    messageKey = "battleroyale.message.default_stats_config_generated";
                     break;
                 case SPAWN:
                     subManagerNameKey = SpawnConfigManager.get().getNameKey();
