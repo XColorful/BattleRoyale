@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.config.IConfigSubManager;
+import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.command.sub.TeamCommand;
@@ -59,15 +61,13 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
         IGameManager gameManager = BattleRoyale.getGameManager();
-        if (gameManager.isInGame()) {
-            return;
-        }
+        if (gameManager.isInGame()) return;
 
+        IModConfigManager modConfigManager = BattleRoyale.getModConfigManager();
+        IConfigSubManager<?> gameruleConfigManager = modConfigManager.getConfigSubManager(GameConfigManager.get().getNameKey(), GameruleConfigManager.get().getNameKey());
         int configId = gameManager.getGameruleConfigId();
-        GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), configId);
-        if (gameruleConfig == null) {
+        if (gameruleConfigManager == null || !(gameruleConfigManager.getConfigEntry(configId) instanceof GameruleConfig gameruleConfig)) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
-            BattleRoyale.LOGGER.warn("Failed to get gameruleConfig by id: {}", configId);
             return;
         }
         BattleroyaleEntry brEntry = gameruleConfig.getBattleRoyaleEntry();
