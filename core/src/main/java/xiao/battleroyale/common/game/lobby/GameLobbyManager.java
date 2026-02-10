@@ -12,7 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.event.ICustomEventHandler;
+import xiao.battleroyale.api.config.IConfigSubManager;
+import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportEvent;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
@@ -68,13 +69,12 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
         IGameManager gameManager = BattleRoyale.getGameManager();
-        if (gameManager.isInGame()) {
-            return;
-        }
+        if (gameManager.isInGame()) return;
 
-        int gameId = gameManager.getGameruleConfigId();
-        GameruleConfigManager.GameruleConfig gameruleConfig = (GameruleConfigManager.GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), gameId);
-        if (gameruleConfig == null) {
+        IModConfigManager modConfigManager = BattleRoyale.getModConfigManager();
+        IConfigSubManager<?> gameruleConfigManager = modConfigManager.getConfigSubManager(GameConfigManager.get().getNameKey(), GameruleConfigManager.get().getNameKey());
+        int configId = gameManager.getGameruleConfigId();
+        if (gameruleConfigManager == null || !(gameruleConfigManager.getConfigEntry(configId) instanceof GameruleConfigManager.GameruleConfig gameruleConfig)) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;
         }

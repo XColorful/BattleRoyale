@@ -53,6 +53,7 @@ public class GameStarter {
     }
     @ApiStatus.Internal
     public static void initGameConfigSubManager(IGameManager gameManager, ServerLevel serverLevel) {
+        // TODO 目前还是各IGameSubManager各拿各的，没加入IGameManager统一持有的@NotNull配置
         gameManager.getGameProcessManager().initGameConfig(serverLevel);
         gameManager.getGameLootManager().initGameConfig(serverLevel);
         gameManager.getGameruleManager().initGameConfig(serverLevel);

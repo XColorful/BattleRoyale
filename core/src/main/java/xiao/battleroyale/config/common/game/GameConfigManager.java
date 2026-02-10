@@ -8,6 +8,7 @@ import xiao.battleroyale.config.ModConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
+import xiao.battleroyale.config.common.game.stats.StatsConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 
 import java.nio.file.Paths;
@@ -36,6 +37,7 @@ public class GameConfigManager extends AbstractConfigManager implements IGameCon
         BotConfigManager.init();
         GameruleConfigManager.init();
         SpawnConfigManager.init();
+        StatsConfigManager.init();
         ZoneConfigManager.init();
     }
 }
