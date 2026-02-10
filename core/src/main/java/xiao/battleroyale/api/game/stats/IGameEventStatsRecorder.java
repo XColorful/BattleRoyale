@@ -1,19 +1,29 @@
 package xiao.battleroyale.api.game.stats;
 
-import net.minecraft.world.damagesource.DamageSource;
-import xiao.battleroyale.api.event.ILivingDamageEvent;
-import xiao.battleroyale.api.event.ILivingDeathEvent;
-import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.api.event.game.finish.GameCompleteFinishEvent;
+import xiao.battleroyale.api.event.game.finish.GameStopFinishEvent;
+import xiao.battleroyale.api.event.game.game.GamePlayerDamageFinishEvent;
+import xiao.battleroyale.api.event.game.game.GamePlayerDeathFinishEvent;
+import xiao.battleroyale.api.event.game.game.GamePlayerDownFinishEvent;
+import xiao.battleroyale.api.event.game.game.GamePlayerReviveFinishEvent;
+import xiao.battleroyale.api.event.game.starter.GameStartFinishEvent;
+import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
 
 public interface IGameEventStatsRecorder {
 
-    void onRecordDamage(GamePlayer gamePlayer, DamageSource damageSource, float damage);
+    void onRecordStart(GameStartFinishEvent event);
 
-    void onRecordDamage(GamePlayer gamePlayer, ILivingDamageEvent livingDamageEvent);
+    void onRecordGameTick(GameTickFinishEvent event);
 
-    void onRecordInstantRevive(GamePlayer gamePlayer, ILivingDeathEvent event);
+    void onRecordPlayerDamage(GamePlayerDamageFinishEvent event);
 
-    void onRecordDown(GamePlayer gamePlayer, ILivingDeathEvent event);
+    void onRecordPlayerDown(GamePlayerDownFinishEvent event);
 
-    void onRecordKill(GamePlayer gamePlayer, ILivingDeathEvent event);
+    void onRecordPlayerRevive(GamePlayerReviveFinishEvent event);
+
+    void onRecordPlayerDeath(GamePlayerDeathFinishEvent event);
+
+    void onRecordStop(GameStopFinishEvent event);
+
+    void onRecordComplete(GameCompleteFinishEvent event);
 }
