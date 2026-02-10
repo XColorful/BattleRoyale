@@ -840,7 +840,7 @@ public class TaczLootSpawner {
 
     private static ILootEntry commonHealEntry() {
         return new WeightEntry(Arrays.asList(
-                new WeightedEntry(28, new ItemEntry("minecraft:potion",
+                new WeightedEntry(28, new ItemEntry("minecraft:splash_potion",
                         "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"Bandage\",\"color\":\"white\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:0,Duration:100,ShowParticles:0b,Ambient:0b}]}", 1)),
                 new WeightedEntry(16, new ItemEntry("minecraft:potion",
                         "{Potion:\"minecraft:empty\",display:{Name:'{\"text\":\"First Aid Kit\",\"color\":\"red\",\"italic\":false}'},CustomPotionEffects:[{Id:10,Amplifier:3,Duration:90,ShowParticles:0b,Ambient:0b}]}", 1)),
