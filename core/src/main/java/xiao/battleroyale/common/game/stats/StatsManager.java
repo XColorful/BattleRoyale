@@ -3,7 +3,7 @@ package xiao.battleroyale.common.game.stats;
 import com.google.gson.JsonArray;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.scores.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -13,6 +13,7 @@ import xiao.battleroyale.api.event.game.finish.GameCompleteFinishEvent;
 import xiao.battleroyale.api.event.game.finish.GameStopFinishEvent;
 import xiao.battleroyale.api.event.game.game.*;
 import xiao.battleroyale.api.event.game.starter.GameStartFinishEvent;
+import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
 import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
@@ -23,6 +24,7 @@ import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.Gamer
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.JsonUtils;
+import xiao.battleroyale.util.ScoreUtils;
 import xiao.battleroyale.util.StringUtils;
 
 import java.nio.file.Paths;
@@ -82,6 +84,10 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     protected float mcMaxHealth = 20; // 对应100%血
     protected float damageMultiplier = 5; // 伤害计分倍率，5就是20*5=100
     protected float ratioBase = 1000; // 对应100%
+    protected int scoreboardCycleInterval = 20 * 3; // 3秒轮换一次
+    protected List<String> cycleObjectiveName = new ArrayList<>();
+    protected String listObjectiveAfterGame = "";
+    protected String sidebarObjectiveAfterGame = "";
     protected String objectName_prefix = BattleRoyale.MOD_NAME_SHORT;
     // 原始数据
     protected String player_to_player_damage_ObjectiveName = String.format("%s_hurt", objectName_prefix);
@@ -103,11 +109,19 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     protected String player_attack_rate_ObjectiveName = String.format("%s_attackRate", objectName_prefix);
     protected String player_kd_ObjectiveName = String.format("%s_kd", objectName_prefix);
     protected String player_win_rate_ObjectiveName = String.format("%s_winRate", objectName_prefix);
+    // 整活计算
+    protected boolean enableJourneyStats = true;
+    protected int journeyStatsDelay = 20 * 5; // 5秒后开始统计
+    protected String player_journey_ObjectiveName = String.format("%s_journey", objectName_prefix);
+    protected boolean enableMaxSpeedStats = true;
+    protected int maxSpeedStatsDelay = 20 * 5; // 5秒后开始统计
+    protected String player_max_speed_ObjectiveName = String.format("%s_maxSpeed", objectName_prefix);
 
     @Override
     public boolean registerGameEventHandler() {
         ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
         customEventRegister.register(get(), CustomEventType.GAME_START_FINISH_EVENT);
+        customEventRegister.register(get(), CustomEventType.GAME_TICK_FINISH_EVENT);
         customEventRegister.register(get(), CustomEventType.GAME_PLAYER_DAMAGE_FINISH_EVENT);
         customEventRegister.register(get(), CustomEventType.GAME_PLAYER_DOWN_FINISH_EVENT);
         customEventRegister.register(get(), CustomEventType.GAME_PLAYER_REVIVE_FINISH_EVENT);
@@ -120,6 +134,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     public boolean unregisterGameEventHandler() {
         ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
         customEventRegister.unregister(get(), CustomEventType.GAME_START_FINISH_EVENT);
+        customEventRegister.unregister(get(), CustomEventType.GAME_TICK_FINISH_EVENT);
         customEventRegister.unregister(get(), CustomEventType.GAME_PLAYER_DAMAGE_FINISH_EVENT);
         customEventRegister.unregister(get(), CustomEventType.GAME_PLAYER_DOWN_FINISH_EVENT);
         customEventRegister.unregister(get(), CustomEventType.GAME_PLAYER_REVIVE_FINISH_EVENT);
@@ -136,30 +151,15 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     @Override
     public void handleEvent(CustomEventType customEventType, ICustomEvent event) {
         switch (customEventType) {
-            case GAME_START_FINISH_EVENT -> {
-                StatsEventHandler.onGameStart(this, (GameStartFinishEvent) event);
-            }
-            case GAME_PLAYER_DAMAGE_FINISH_EVENT -> {
-                StatsEventHandler.onGamePlayerDamage(this, (GamePlayerDamageFinishEvent) event);
-            }
-            case GAME_PLAYER_DOWN_FINISH_EVENT -> {
-                StatsEventHandler.onGamePlayerDown(this, (GamePlayerDownFinishEvent) event);
-            }
-            case GAME_PLAYER_REVIVE_FINISH_EVENT -> {
-                StatsEventHandler.onGamePlayerRevive(this, (GamePlayerReviveFinishEvent) event);
-            }
-            case GAME_PLAYER_DEATH_FINISH_EVENT -> {
-                StatsEventHandler.onGamePlayerDeath(this, (GamePlayerDeathFinishEvent) event);
-            }
-            case GAME_STOP_FINISH_EVENT -> {
-                StatsEventHandler.onGameStop(this, (GameStopFinishEvent) event);
-            }
-            case GAME_COMPLETE_FINISH_EVENT -> {
-                StatsEventHandler.onGameComplete(this, (GameCompleteFinishEvent) event);
-            }
-            default -> {
-                onReceiveWrongEvent(customEventType);
-            }
+            case GAME_START_FINISH_EVENT -> onRecordStart((GameStartFinishEvent) event);
+            case GAME_TICK_FINISH_EVENT -> onRecordGameTick((GameTickFinishEvent) event);
+            case GAME_PLAYER_DAMAGE_FINISH_EVENT -> onRecordPlayerDamage((GamePlayerDamageFinishEvent) event);
+            case GAME_PLAYER_DOWN_FINISH_EVENT -> onRecordPlayerDown((GamePlayerDownFinishEvent) event);
+            case GAME_PLAYER_REVIVE_FINISH_EVENT -> onRecordPlayerRevive((GamePlayerReviveFinishEvent) event);
+            case GAME_PLAYER_DEATH_FINISH_EVENT -> onRecordPlayerDeath((GamePlayerDeathFinishEvent) event);
+            case GAME_STOP_FINISH_EVENT -> onRecordStop((GameStopFinishEvent) event);
+            case GAME_COMPLETE_FINISH_EVENT -> onRecordComplete((GameCompleteFinishEvent) event);
+            default -> onReceiveWrongEvent(customEventType);
         }
     }
 
@@ -175,6 +175,19 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
 
         this.configPrepared = true;
         BattleRoyale.LOGGER.debug("StatsManager complete initGameConfig");
+
+
+        if (cycleObjectiveName.isEmpty()) { // TODO 测试用，后续改为自定义配置
+            cycleObjectiveName.add(player_attack_rate_ObjectiveName);
+            cycleObjectiveName.add(player_kd_ObjectiveName);
+            cycleObjectiveName.add(player_win_rate_ObjectiveName);
+        }
+        listObjectiveAfterGame = player_win_rate_ObjectiveName;
+        sidebarObjectiveAfterGame = player_journey_ObjectiveName;
+
+        // TODO 测试用
+        journeyStatsDelay = 20 * 30;
+        maxSpeedStatsDelay = 20 * 30;
     }
 
     @Override
@@ -197,11 +210,22 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     }
 
     /**
-     * 主要基于事件立即记录，因此逻辑不放onGameTick
+     * Stats主要基于事件立即记录，因此逻辑不放onGameTick
+     * 处理其余功能
      */
     @Override
     public void onGameTick(int gameTime) {
-        ;
+
+        if (!recordScordboard) return;
+
+        // 轮流切换scoreboard
+        if (cycleObjectiveName.isEmpty()) return;
+        @Nullable ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
+        if (serverLevel == null) return;
+
+        Scoreboard scoreboard = serverLevel.getScoreboard();
+        int cycleIndex = (gameTime / scoreboardCycleInterval) % cycleObjectiveName.size();
+        ScoreUtils.setSidebarObjective(scoreboard, cycleObjectiveName.get(cycleIndex));
     }
 
     @Override
@@ -211,6 +235,13 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
         if (shouldRecordStats()) {
             saveStats();
         }
+
+        if (!recordScordboard) return;
+        if (serverLevel == null) return;
+
+        Scoreboard scoreboard = serverLevel.getScoreboard();
+        ScoreUtils.setListObjective(scoreboard, listObjectiveAfterGame);
+        ScoreUtils.setSidebarObjective(scoreboard, sidebarObjectiveAfterGame);
     }
 
     private void clearStats() {
@@ -222,77 +253,36 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
         maxRank = Integer.MIN_VALUE;
     }
 
-    /**
-     * 记录攻击方玩家造成伤害量
-     * 记录被攻击方承受伤害量
-     * @param event 实体受到伤害事件
-     */
-    public void onRecordDamage(@NotNull GamePlayer damagedGamePlayer, ILivingDamageEvent event) {
-        if (!gamePlayerStats.containsKey(damagedGamePlayer)) {
-            BattleRoyale.LOGGER.warn("Reject to add new game player stats for {} (UUID: {})", damagedGamePlayer.getPlayerName(), damagedGamePlayer.getPlayerUUID());
-            return;
-        }
-
-
-        DamageSource damageSource = event.getSource();
-        float damageAmount = event.getDamageAmount();
-        onRecordDamage(damagedGamePlayer, damageSource, damageAmount);
+    @Override public void onRecordStart(GameStartFinishEvent event) {
+        StatsEventHandler.onGameStart(this, event);
     }
 
-    /**
-     * 记录非玩家伤害来源造成伤害量
-     * 记录被攻击方被承受伤害量
-     */
-    public void onRecordDamage(GamePlayer damagedGamePlayer, DamageSource damageSource, float damageAmount) {
-        if (!gamePlayerStats.containsKey(damagedGamePlayer)) {
-            BattleRoyale.LOGGER.warn("Reject to add new game player stats for {} (UUID: {})", damagedGamePlayer.getPlayerName(), damagedGamePlayer.getPlayerUUID());
-            return;
-        }
-
-        if (damageSource.getEntity() instanceof LivingEntity attackingEntity) {
-            GamePlayer attackingGamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerByUUID(attackingEntity.getUUID());
-            if (attackingGamePlayer != null) {
-                return;
-            }
-        }
-
-        // 非游戏玩家伤害
-        if (!damageSourceStats.containsKey(damageSource)) {
-            damageSourceStats.put(damageSource, new DamageSourceStats(damageSource));
-        }
+    @Override public void onRecordGameTick(GameTickFinishEvent event) {
+        StatsEventHandler.onGameTick(this, event);
     }
 
-    /**
-     * 立即复活（击倒失败）视为 被击倒1次 + 立即自救1次
-     */
-    public void onRecordInstantRevive(@NotNull GamePlayer reviveGamePlayer, ILivingDeathEvent event) {
-        if (!gamePlayerStats.containsKey(reviveGamePlayer)) {
-            BattleRoyale.LOGGER.warn("Reject to add new game player stats for {} (UUID: {})", reviveGamePlayer.getPlayerName(), reviveGamePlayer.getPlayerUUID());
-            return;
-        }
+    @Override public void onRecordPlayerDamage(GamePlayerDamageFinishEvent event) {
+        StatsEventHandler.onGamePlayerDamage(this, event);
     }
 
-    public void onRecordRevive(@NotNull GamePlayer reviveGamePlayer, ILivingDeathEvent event) {
-        if (!gamePlayerStats.containsKey(reviveGamePlayer)) {
-            BattleRoyale.LOGGER.warn("Reject to add new game player stats for {} (UUID: {})", reviveGamePlayer.getPlayerName(), reviveGamePlayer.getPlayerUUID());
-            return;
-        }
+    @Override public void onRecordPlayerDown(GamePlayerDownFinishEvent event) {
+        StatsEventHandler.onGamePlayerDown(this, event);
     }
 
-    public void onRecordDown(@NotNull GamePlayer downGamePlayer, ILivingDeathEvent event) {
-        if (!gamePlayerStats.containsKey(downGamePlayer)) {
-            BattleRoyale.LOGGER.warn("Reject to add new game player stats for {} (UUID: {})", downGamePlayer.getPlayerName(), downGamePlayer.getPlayerUUID());
-            return;
-        }
-
+    @Override public void onRecordPlayerRevive(GamePlayerReviveFinishEvent event) {
+        StatsEventHandler.onGamePlayerRevive(this, event);
     }
 
-    public void onRecordKill(@NotNull GamePlayer downGamePlayer, ILivingDeathEvent event) {
-        if (!gamePlayerStats.containsKey(downGamePlayer)) {
-            BattleRoyale.LOGGER.warn("Reject to add new game player stats for {} (UUID: {})", downGamePlayer.getPlayerName(), downGamePlayer.getPlayerUUID());
-            return;
-        }
+    @Override public void onRecordPlayerDeath(GamePlayerDeathFinishEvent event) {
+        StatsEventHandler.onGamePlayerDeath(this, event);
+    }
 
+    @Override public void onRecordStop(GameStopFinishEvent event) {
+        StatsEventHandler.onGameStop(this, event);
+    }
+
+    @Override public void onRecordComplete(GameCompleteFinishEvent event) {
+        StatsEventHandler.onGameComplete(this, event);
     }
 
     // ----Gamerule----
