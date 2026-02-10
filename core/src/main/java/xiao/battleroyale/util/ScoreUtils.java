@@ -2,7 +2,8 @@ package xiao.battleroyale.util;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.Score;
+import net.minecraft.world.scores.ScoreAccess;
+import net.minecraft.world.scores.ScoreHolder;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 
@@ -11,7 +12,7 @@ public class ScoreUtils {
     public static int getScore(Scoreboard scoreboard, String objectiveName, String playerName) {
         Objective objective = scoreboard.getObjective(objectiveName);
         if (objective == null) return 0;
-        return scoreboard.getOrCreatePlayerScore(playerName, objective).getScore();
+        return scoreboard.getOrCreatePlayerScore(ScoreHolder.forNameOnly(playerName), objective).get();
     }
 
     /**
@@ -27,7 +28,7 @@ public class ScoreUtils {
 
         int result = (int) Math.floor(((float) numerator / effectiveDenominator) * ratioBase);
 
-        getSafeScore(scoreboard, targetObj, playerName).setScore(result);
+        getSafeScore(scoreboard, targetObj, playerName).set(result);
     }
 
     /**
@@ -43,10 +44,10 @@ public class ScoreUtils {
             result = (int) Math.floor(((float) numerator / total) * ratioBase);
         }
 
-        getSafeScore(scoreboard, targetObj, playerName).setScore(result);
+        getSafeScore(scoreboard, targetObj, playerName).set(result);
     }
 
-    public static Score getSafeScore(Scoreboard scoreboard, String objectiveName, String playerName) {
+    public static ScoreAccess getSafeScore(Scoreboard scoreboard, String objectiveName, String playerName) {
         Objective objective = scoreboard.getObjective(objectiveName);
         // 如果表不存在，需要手动创建，而不能用Scoreboard的getOrCreateObjective
         if (objective == null) {
@@ -54,14 +55,16 @@ public class ScoreUtils {
                     objectiveName,
                     ObjectiveCriteria.DUMMY,
                     Component.literal(objectiveName),
-                    ObjectiveCriteria.RenderType.INTEGER
+                    ObjectiveCriteria.RenderType.INTEGER,
+                    true, null
             );
         }
-        return scoreboard.getOrCreatePlayerScore(playerName, objective);
+        return scoreboard.getOrCreatePlayerScore(ScoreHolder.forNameOnly(playerName), objective);
     }
 
     public static void addScore(Scoreboard scoreboard, String objectiveName, String playerName, int amount) {
         if (amount == 0) return;
-        getSafeScore(scoreboard, objectiveName, playerName).add(amount);
+        ScoreAccess access = getSafeScore(scoreboard, objectiveName, playerName);
+        access.set(access.get() + amount);
     }
 }
