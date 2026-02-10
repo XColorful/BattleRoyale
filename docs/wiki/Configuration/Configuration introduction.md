@@ -29,6 +29,7 @@
 位于 _./minecraft/config/battleroyale/game_ 下的子文件夹：
 - gamerule：[游戏规则配置](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config)
 - spawn：[出生配置](https://github.com/XColorful/BattleRoyale/wiki/Spawn-config)
+- stats：[统计数据配置](https://github.com/XColorful/BattleRoyale/wiki/Stats-config)
 - zone：[区域配置](https://github.com/XColorful/BattleRoyale/wiki/Zone-config)
 - bot：[人机配置](https://github.com/XColorful/BattleRoyale/wiki/Bot-config)
 
@@ -80,6 +81,7 @@ All of them use the [General loot](https://github.com/XColorful/BattleRoyale/wik
 Located in subfolders under _./minecraft/config/battleroyale/game_
 - [gamerule](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config#English)
 - [spawn](https://github.com/XColorful/BattleRoyale/wiki/Spawn-config#English)
+- [stats](https://github.com/XColorful/BattleRoyale/wiki/Stats-config#English)
 - [zone](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#English)
 - [bot](https://github.com/XColorful/BattleRoyale/wiki/Bot-config#English)
 
