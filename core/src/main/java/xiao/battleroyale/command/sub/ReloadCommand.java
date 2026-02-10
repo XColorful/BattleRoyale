@@ -18,6 +18,7 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
+import xiao.battleroyale.config.common.game.stats.StatsConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
@@ -53,6 +54,8 @@ public class ReloadCommand {
                         .executes(context -> reloadGameConfigs(context, null))
                         .then(Commands.literal(ZONE)
                                 .executes(context -> reloadGameConfigs(context, ZONE)))
+                        .then(Commands.literal(STATS)
+                                .executes(context -> reloadGameConfigs(context, STATS)))
                         .then(Commands.literal(SPAWN)
                                 .executes(context -> reloadGameConfigs(context, SPAWN)))
                         .then(Commands.literal(GAMERULE)
@@ -149,6 +152,10 @@ public class ReloadCommand {
                 case ZONE:
                     subManagerNameKey = ZoneConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.zone_config_reloaded";
+                    break;
+                case STATS:
+                    subManagerNameKey = StatsConfigManager.get().getNameKey();
+                    messageKey = "battleroyale.message.stats_config_reloaded";
                     break;
                 case SPAWN:
                     subManagerNameKey = SpawnConfigManager.get().getNameKey();

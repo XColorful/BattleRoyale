@@ -71,6 +71,11 @@ _/battleroyale example game spawn_
 在 _./minecraft/config/battleroyale/game/spawn_ 下写入配置文件
 - 额外生成经典大逃杀的出生配置（经典8000x8000、半径2670、半径881）
 
+#### 统计数据配置
+_/battleroyale example game stats_
+
+在 _./minecraft/config/battleroyale/game/stats_ 下写入配置文件
+
 #### 区域配置
 
 _/battleroyale example game zone_
@@ -213,6 +218,11 @@ _/battleroyale example game spawn_
 
 Writes configuration files under _./minecraft/config/battleroyale/game/spawn/_.
 - Additionally generates classic BattleRoyale spawn configurations (classic 8000x8000, radius 2670, radius 881).
+
+#### Stats config
+_/battleroyale example game stats_
+
+Writes configuration files under _./minecraft/config/battleroyale/game/stats/_.
 
 #### Zone config
 _/battleroyale example game zone_
