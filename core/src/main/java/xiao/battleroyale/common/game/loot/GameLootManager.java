@@ -148,6 +148,9 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.isInGame()) return;
+
         clear();
 
         shutdownBfsExecuter("initGameConfig");

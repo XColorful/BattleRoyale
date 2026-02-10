@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +53,8 @@ import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.Gamer
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
+import xiao.battleroyale.config.common.game.stats.StatsConfigManager;
+import xiao.battleroyale.config.common.game.stats.StatsConfigManager.StatsConfig;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.event.EventPoster;
@@ -235,6 +236,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     // config
     protected int gameruleConfigId = 0;
     protected int spawnConfigId = 0;
+    protected int statsConfigId = 0;
     protected int botConfigId = 0;
     protected Vec3 globalCenterOffset;
     protected int maxGameTime = -1;
@@ -631,6 +633,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
     @Override public int getGameruleConfigId() { return gameruleConfigId; }
     @Override public int getSpawnConfigId() { return spawnConfigId; }
+    @Override public int getStatsConfigId() { return statsConfigId; }
     @Override public int getBotConfigId() { return botConfigId; }
 
     // 用指令设置默认配置
@@ -646,13 +649,24 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         return config.getName();
     }
     @Override public boolean setSpawnConfigId(int id) {
-        if (spawnConfigId < 0) return false;
-        this.spawnConfigId = id;
+        if (id < 0) return false;
+        this.statsConfigId = id;
         return true;
     }
     @Override public String getSpawnConfigName(int id) {
         IConfigSubManager<?> spawnConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(GameConfigManager.get().getNameKey(), SpawnConfigManager.get().getNameKey());
         if (spawnConfigManager == null || id < 0 || !(spawnConfigManager.getConfigEntry(id) instanceof SpawnConfig config)) return "";
+
+        return config.getName();
+    }
+    @Override public boolean setStatsConfigId(int id) {
+        if (id < 0) return false;
+        this.statsConfigId = id;
+        return true;
+    }
+    @Override public String getStatsConfigName(int id) {
+        IConfigSubManager<?> statsConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(GameConfigManager.get().getNameKey(), StatsConfigManager.get().getNameKey());
+        if (statsConfigManager == null || id < 0 || (!(statsConfigManager.getConfigEntry(id) instanceof StatsConfig config))) return "";
 
         return config.getName();
     }

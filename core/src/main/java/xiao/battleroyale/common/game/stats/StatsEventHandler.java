@@ -60,24 +60,24 @@ public class StatsEventHandler {
     protected static void onGameStart(StatsManager statsManager, GameStartFinishEvent event) {
 
 
-        if (!statsManager.recordScordboard) return;
+        if (!statsManager.recordScoreboard) return;
 
         IGameManager gameManager = event.getGameManager();
         ServerLevel serverLevel = gameManager.getServerLevel();
 
-        // 清除内存数据 (不是计分板)
+        // 清除内存数据 (不是记分板)
         SpecialStatsEventHandler.onNewJourney(statsManager, gameManager);
         SpecialStatsEventHandler.onNewMaxSpeed(statsManager, gameManager);
 
-        if (!statsManager.resetScordboardAtStart) return;
+        if (!statsManager.resetScoreboardAtStart) return;
 
         if (serverLevel == null) return;
 
-        // 重置计分板
+        // 重置记分板
         Scoreboard scoreboard = serverLevel.getScoreboard();
         List<String> objectiveNames = getObjectiveNames(statsManager);
 
-        ScoreUtils.removeObjectives(scoreboard, objectiveNames);
+        ScoreUtils.clearObjectives(scoreboard, objectiveNames);
         BattleRoyale.LOGGER.info("StatsEventHandler: All objectives cleared");
         ScoreUtils.addObjectivesIfNull(scoreboard, objectiveNames);
     }
@@ -117,7 +117,7 @@ public class StatsEventHandler {
         @Nullable Entity damageMethod = damageSource.getDirectEntity();
         float damageAmount = livingDamageEvent.getDamageAmount();
 
-        if (!statsManager.recordScordboard) return;
+        if (!statsManager.recordScoreboard) return;
 
         Scoreboard scoreboard = serverLevel.getScoreboard();
         int score = (int) (damageAmount * statsManager.damageMultiplier);
@@ -170,7 +170,7 @@ public class StatsEventHandler {
         @Nullable GamePlayer attackerGamePlayer = attackerEntity != null ? gameManager.getTeamManager().getGamePlayerByUUID(attackerEntity.getUUID()) : null;
         @Nullable Entity damageMethod = damageSource.getDirectEntity();
 
-        if (!statsManager.recordScordboard) return;
+        if (!statsManager.recordScoreboard) return;
 
         Scoreboard scoreboard = serverLevel.getScoreboard();
         if (attackerGamePlayer != null) {
@@ -198,7 +198,7 @@ public class StatsEventHandler {
             return;
         }
 
-        if (!statsManager.recordScordboard) return;
+        if (!statsManager.recordScoreboard) return;
 
         Scoreboard scoreboard = serverLevel.getScoreboard();
         // 玩家被扶起次数
@@ -226,7 +226,7 @@ public class StatsEventHandler {
         @Nullable GamePlayer attackerGamePlayer = attackerEntity != null ? gameManager.getTeamManager().getGamePlayerByUUID(attackerEntity.getUUID()) : null;
         @Nullable Entity damageMethod = damageSource.getDirectEntity();
 
-        if (!statsManager.recordScordboard) return;
+        if (!statsManager.recordScoreboard) return;
 
         Scoreboard scoreboard = serverLevel.getScoreboard();
         if (attackerGamePlayer != null) {
@@ -275,7 +275,7 @@ public class StatsEventHandler {
             SpecialStatsEventHandler.onMaxSpeedComplete(statsManager, event);
         }
 
-        if (!statsManager.recordScordboard) return;
+        if (!statsManager.recordScoreboard) return;
 
         Scoreboard scoreboard = serverLevel.getScoreboard();
         for (GamePlayer gamePlayer : gamePlayers) {

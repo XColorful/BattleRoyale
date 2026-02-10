@@ -8,20 +8,26 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.config.IConfigSubManager;
+import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.api.event.game.finish.GameCompleteFinishEvent;
 import xiao.battleroyale.api.event.game.finish.GameStopFinishEvent;
 import xiao.battleroyale.api.event.game.game.*;
 import xiao.battleroyale.api.event.game.starter.GameStartFinishEvent;
 import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game.stats.StatsConfigHelper.DefaultObjectiveName;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
+import xiao.battleroyale.config.common.game.stats.StatsConfigManager;
+import xiao.battleroyale.config.common.game.stats.StatsConfigManager.StatsConfig;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.ScoreUtils;
@@ -75,47 +81,57 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     public static int DEFAULT_RANK = -1;
     protected String startotherTime = ""; // 系统时间
     protected int totalPlayers = 0;
-
     protected boolean recordStats = false;
     public boolean shouldRecordStats() { return recordStats; }
-    // 原版计分板
-    protected boolean recordScordboard = true;
-    protected boolean resetScordboardAtStart = false;
+
+    // 原版记分板
+    protected boolean recordScoreboard = true;
+    protected boolean resetScoreboardAtStart = false;
     protected float mcMaxHealth = 20; // 对应100%血
     protected float damageMultiplier = 5; // 伤害计分倍率，5就是20*5=100
     protected float ratioBase = 1000; // 对应100%
     protected int scoreboardCycleInterval = 20 * 3; // 3秒轮换一次
     protected List<String> cycleObjectiveName = new ArrayList<>();
-    protected String listObjectiveAfterGame = "";
-    protected String sidebarObjectiveAfterGame = "";
     protected String objectName_prefix = BattleRoyale.MOD_NAME_SHORT;
+
     // 原始数据
-    protected String player_to_player_damage_ObjectiveName = String.format("%s_hurt", objectName_prefix);
-    protected String other_to_player_damage_ObjectiveName = String.format("%s_otherHurt", objectName_prefix);
-    protected String player_damage_by_player_ObjectiveName = String.format("%s_damage", objectName_prefix);
-    protected String player_damage_by_other_ObjectiveName = String.format("%s_otherDamage", objectName_prefix);
-    protected String player_knock_player_ObjectiveName = String.format("%s_knock", objectName_prefix);
-    protected String other_knock_player_ObjectiveName = String.format("%s_otherKnock", objectName_prefix);
-    protected String player_down_by_player_ObjectiveName = String.format("%s_down", objectName_prefix);
-    protected String player_down_by_other_ObjectiveName = String.format("%s_otherDown", objectName_prefix);
-    protected String player_revive_ObjectiveName = String.format("%s_revive", objectName_prefix);
-    protected String player_kill_player_ObjectiveName = String.format("%s_kill", objectName_prefix);
-    protected String other_kill_player_ObjectiveName = String.format("%s_otherKill", objectName_prefix);
-    protected String player_death_by_player_ObjectiveName = String.format("%s_death", objectName_prefix);
-    protected String player_death_by_other_ObjectiveName = String.format("%s_otherDeath", objectName_prefix);
-    protected String player_win_ObjectiveName = String.format("%s_win", objectName_prefix);
-    protected String player_lose_ObjectiveName = String.format("%s_lose", objectName_prefix);
+    protected @NotNull String player_to_player_damage_ObjectiveName = DefaultObjectiveName.PLAYER_TO_PLAYER_DAMAGE;
+    protected @NotNull String other_to_player_damage_ObjectiveName = DefaultObjectiveName.OTHER_TO_PLAYER_DAMAGE;
+    protected @NotNull String player_damage_by_player_ObjectiveName = DefaultObjectiveName.PLAYER_DAMAGE_BY_PLAYER;
+    protected @NotNull String player_damage_by_other_ObjectiveName = DefaultObjectiveName.PLAYER_DAMAGE_BY_OTHER;
+
+    protected @NotNull String player_knock_player_ObjectiveName = DefaultObjectiveName.PLAYER_KNOCK_PLAYER;
+    protected @NotNull String other_knock_player_ObjectiveName = DefaultObjectiveName.OTHER_KNOCK_PLAYER;
+    protected @NotNull String player_down_by_player_ObjectiveName = DefaultObjectiveName.PLAYER_DOWN_BY_PLAYER;
+    protected @NotNull String player_down_by_other_ObjectiveName = DefaultObjectiveName.PLAYER_DOWN_BY_OTHER;
+
+    protected @NotNull String player_revive_ObjectiveName = DefaultObjectiveName.PLAYER_REVIVE;
+
+    protected @NotNull String player_kill_player_ObjectiveName = DefaultObjectiveName.PLAYER_KILL_PLAYER;
+    protected @NotNull String other_kill_player_ObjectiveName = DefaultObjectiveName.OTHER_KILL_PLAYER;
+    protected @NotNull String player_death_by_player_ObjectiveName = DefaultObjectiveName.PLAYER_DEATH_BY_PLAYER;
+    protected @NotNull String player_death_by_other_ObjectiveName = DefaultObjectiveName.PLAYER_DEATH_BY_OTHER;
+
+    protected @NotNull String player_win_ObjectiveName = DefaultObjectiveName.PLAYER_WIN;
+    protected @NotNull String player_lose_ObjectiveName = DefaultObjectiveName.PLAYER_LOSE;
+
     // 二次计算
-    protected String player_attack_rate_ObjectiveName = String.format("%s_attackRate", objectName_prefix);
-    protected String player_kd_ObjectiveName = String.format("%s_kd", objectName_prefix);
-    protected String player_win_rate_ObjectiveName = String.format("%s_winRate", objectName_prefix);
+    protected @NotNull String player_attack_rate_ObjectiveName = DefaultObjectiveName.PLAYER_ATTACK_RATE;
+    protected @NotNull String player_kd_ObjectiveName = DefaultObjectiveName.PLAYER_KD;
+    protected @NotNull String player_win_rate_ObjectiveName = DefaultObjectiveName.PLAYER_WIN_RATE;
+
     // 整活计算
     protected boolean enableJourneyStats = true;
     protected int journeyStatsDelay = 20 * 5; // 5秒后开始统计
-    protected String player_journey_ObjectiveName = String.format("%s_journey", objectName_prefix);
+    protected @NotNull String player_journey_ObjectiveName = DefaultObjectiveName.PLAYER_JOURNEY;
+
     protected boolean enableMaxSpeedStats = true;
     protected int maxSpeedStatsDelay = 20 * 5; // 5秒后开始统计
-    protected String player_max_speed_ObjectiveName = String.format("%s_maxSpeed", objectName_prefix);
+    protected @NotNull String player_max_speed_ObjectiveName = DefaultObjectiveName.PLAYER_MAX_SPEED;
+
+    // 游戏结束后
+    protected @NotNull String listObjectiveAfterGame = "";
+    protected @NotNull String sidebarObjectiveAfterGame = "";
 
     @Override
     public boolean registerGameEventHandler() {
@@ -165,29 +181,31 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
-        GameruleConfig gameruleConfig = (GameruleConfig) GameConfigManager.get().getConfigEntry(GameruleConfigManager.get().getNameKey(), BattleRoyale.getGameManager().getGameruleConfigId());
-        if (gameruleConfig == null) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.isInGame()) return;
+
+        IModConfigManager modConfigManager = BattleRoyale.getModConfigManager();
+        IConfigSubManager<?> gameruleConfigManager = modConfigManager.getConfigSubManager(GameConfigManager.get().getNameKey(), GameruleConfigManager.get().getNameKey());
+        if (gameruleConfigManager == null || !(gameruleConfigManager.getConfigEntry(gameManager.getGameruleConfigId()) instanceof GameruleConfig gameruleConfig)) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;
         }
         BattleroyaleEntry brEntry = gameruleConfig.getBattleRoyaleEntry();
         this.recordStats = brEntry.recordGameStats;
 
+        IConfigSubManager<?> statsConfigManager = modConfigManager.getConfigSubManager(GameConfigManager.get().getNameKey(), StatsConfigManager.get().getNameKey());
+        if (statsConfigManager == null || !(statsConfigManager.getConfigEntry(gameManager.getStatsConfigId()) instanceof StatsConfig statsConfig)) {
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_stats_config");
+            return;
+        }
+
+        if (!StatsConfigHelper.updateStats(this, statsConfig)) {
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_stats_config");
+            return;
+        }
+
         this.configPrepared = true;
         BattleRoyale.LOGGER.debug("StatsManager complete initGameConfig");
-
-
-        if (cycleObjectiveName.isEmpty()) { // TODO 测试用，后续改为自定义配置
-            cycleObjectiveName.add(player_attack_rate_ObjectiveName);
-            cycleObjectiveName.add(player_kd_ObjectiveName);
-            cycleObjectiveName.add(player_win_rate_ObjectiveName);
-        }
-        listObjectiveAfterGame = player_win_rate_ObjectiveName;
-        sidebarObjectiveAfterGame = player_journey_ObjectiveName;
-
-        // TODO 测试用
-        journeyStatsDelay = 20 * 30;
-        maxSpeedStatsDelay = 20 * 30;
     }
 
     @Override
@@ -216,7 +234,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     @Override
     public void onGameTick(int gameTime) {
 
-        if (!recordScordboard) return;
+        if (!recordScoreboard) return;
 
         // 轮流切换scoreboard
         if (cycleObjectiveName.isEmpty()) return;
@@ -236,7 +254,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
             saveStats();
         }
 
-        if (!recordScordboard) return;
+        if (!recordScoreboard) return;
         if (serverLevel == null) return;
 
         Scoreboard scoreboard = serverLevel.getScoreboard();

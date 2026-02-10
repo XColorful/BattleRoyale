@@ -51,7 +51,7 @@ public class SpecialStatsEventHandler {
     protected static void onMaxSpeedStats(StatsManager statsManager, IGameManager gameManager) {
     }
 
-    // --------写入计分板--------
+    // --------写入记分板--------
 
     protected static void onJourneyComplete(StatsManager statsManager, GameCompleteFinishEvent event) {
         if (!currentJourney.isEmpty()) {
@@ -69,7 +69,7 @@ public class SpecialStatsEventHandler {
             return;
         }
 
-        if (!statsManager.recordScordboard) return;
+        if (!statsManager.recordScoreboard) return;
 
         Scoreboard scoreboard = serverLevel.getScoreboard();
         for (JourneyStats journeyStats : completedJourney) {
