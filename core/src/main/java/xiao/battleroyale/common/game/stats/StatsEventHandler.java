@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.Score;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +25,8 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import java.util.List;
 import java.util.Set;
 
+import static xiao.battleroyale.util.ScoreUtils.*;
+
 public class StatsEventHandler {
 
     protected static void onGameStart(StatsManager statsManager, GameStartFinishEvent event) {
@@ -38,6 +39,7 @@ public class StatsEventHandler {
 
         Scoreboard scoreboard = serverLevel.getScoreboard();
         List<String> objectiveNames = List.of(
+                // 原始数据
                 statsManager.player_to_player_damage_ObjectiveName,
                 statsManager.other_to_player_damage_ObjectiveName,
                 statsManager.player_damage_by_player_ObjectiveName,
@@ -52,7 +54,11 @@ public class StatsEventHandler {
                 statsManager.player_death_by_player_ObjectiveName,
                 statsManager.player_death_by_other_ObjectiveName,
                 statsManager.player_win_ObjectiveName,
-                statsManager.player_lose_ObjectiveName
+                statsManager.player_lose_ObjectiveName,
+                // 二次计算
+                statsManager.player_attack_rate_ObjectiveName,
+                statsManager.player_kd_ObjectiveName,
+                statsManager.player_win_rate_ObjectiveName
         );
         for (String name : objectiveNames) {
             Objective oldObj = scoreboard.getObjective(name);
@@ -89,13 +95,21 @@ public class StatsEventHandler {
         if (!statsManager.recordScordboard) return;
         Scoreboard scoreboard = serverLevel.getScoreboard();
 
-        int score = (int) (damageAmount * 10);
+        int score = (int) (damageAmount * statsManager.damageMultiplier);
         if (attackerGamePlayer != null) {
             // 攻击者玩家(对玩家)造成的伤害
             addScore(scoreboard, statsManager.player_to_player_damage_ObjectiveName, attackerGamePlayer.getPlayerName(), score);
 
             // 玩家承受(攻击者玩家)的伤害
             addScore(scoreboard, statsManager.player_damage_by_player_ObjectiveName, playerName, score);
+
+            // 更新攻击频率比例 (造成/被造成)
+            updateRatioScore(scoreboard, attackerGamePlayer.getPlayerName(),
+                    statsManager.player_to_player_damage_ObjectiveName, statsManager.player_damage_by_player_ObjectiveName, statsManager.player_attack_rate_ObjectiveName,
+                    statsManager.ratioBase, statsManager.mcMaxHealth * statsManager.damageMultiplier);
+            updateRatioScore(scoreboard, playerName,
+                    statsManager.player_to_player_damage_ObjectiveName, statsManager.player_damage_by_player_ObjectiveName, statsManager.player_attack_rate_ObjectiveName,
+                    statsManager.ratioBase, statsManager.mcMaxHealth * statsManager.damageMultiplier);
         } else {
             // 其他方式对玩家造成的伤害
             String otherName = damageMethod != null ? damageMethod.getScoreboardName() : "other";
@@ -192,6 +206,14 @@ public class StatsEventHandler {
 
             // 玩家被(攻击者玩家)击杀数
             addScore(scoreboard, statsManager.player_death_by_player_ObjectiveName, playerName, 1);
+
+            // 更新 KD 比例
+            updateRatioScore(scoreboard, attackerGamePlayer.getPlayerName(),
+                    statsManager.player_kill_player_ObjectiveName, statsManager.player_death_by_player_ObjectiveName, statsManager.player_kd_ObjectiveName,
+                    statsManager.ratioBase, 1);
+            updateRatioScore(scoreboard, playerName,
+                    statsManager.player_kill_player_ObjectiveName, statsManager.player_death_by_player_ObjectiveName, statsManager.player_kd_ObjectiveName,
+                    statsManager.ratioBase, 1);
         } else {
             // 其他方式对玩家造成的击杀数
             String sourceName = damageMethod != null ? damageMethod.getScoreboardName() : "other";
@@ -220,30 +242,16 @@ public class StatsEventHandler {
         if (!statsManager.recordScordboard) return;
         Scoreboard scoreboard = serverLevel.getScoreboard();
         for (GamePlayer gamePlayer : gamePlayers) {
+            String playerName = gamePlayer.getPlayerName();
             if (winnerGamePlayers.contains(gamePlayer)) {
-                addScore(scoreboard, statsManager.player_win_ObjectiveName, gamePlayer.getPlayerName(), 1);
+                addScore(scoreboard, statsManager.player_win_ObjectiveName, playerName, 1);
             } else {
-                addScore(scoreboard, statsManager.player_lose_ObjectiveName, gamePlayer.getPlayerName(), 1);
+                addScore(scoreboard, statsManager.player_lose_ObjectiveName, playerName, 1);
             }
+            // 更新胜率比例 [ 赢 / (输+赢) ]
+            updatePercentageScore(scoreboard, playerName,
+                    statsManager.player_win_ObjectiveName, statsManager.player_lose_ObjectiveName, statsManager.player_win_rate_ObjectiveName,
+                    statsManager.ratioBase);
         }
-    }
-
-    public static Score getSafeScore(Scoreboard scoreboard, String objectiveName, String playerName) {
-        Objective objective = scoreboard.getObjective(objectiveName);
-        // 如果表不存在，需要手动创建，而不能用Scoreboard的getOrCreateObjective
-        if (objective == null) {
-            objective = scoreboard.addObjective(
-                    objectiveName,
-                    ObjectiveCriteria.DUMMY,
-                    Component.literal(objectiveName),
-                    ObjectiveCriteria.RenderType.INTEGER
-            );
-        }
-        return scoreboard.getOrCreatePlayerScore(playerName, objective);
-    }
-
-    private static void addScore(Scoreboard scoreboard, String objectiveName, String playerName, int amount) {
-        if (amount == 0) return;
-        getSafeScore(scoreboard, objectiveName, playerName).add(amount);
     }
 }

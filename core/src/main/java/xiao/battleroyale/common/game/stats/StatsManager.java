@@ -79,7 +79,11 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     // 原版计分板
     protected boolean recordScordboard = true;
     protected boolean resetScordboardAtStart = false;
+    protected float mcMaxHealth = 20; // 对应100%血
+    protected float damageMultiplier = 5; // 伤害计分倍率，5就是20*5=100
+    protected float ratioBase = 1000; // 对应100%
     protected String objectName_prefix = BattleRoyale.MOD_NAME_SHORT;
+    // 原始数据
     protected String player_to_player_damage_ObjectiveName = String.format("%s_hurt", objectName_prefix);
     protected String other_to_player_damage_ObjectiveName = String.format("%s_otherHurt", objectName_prefix);
     protected String player_damage_by_player_ObjectiveName = String.format("%s_damage", objectName_prefix);
@@ -95,6 +99,10 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     protected String player_death_by_other_ObjectiveName = String.format("%s_otherDeath", objectName_prefix);
     protected String player_win_ObjectiveName = String.format("%s_win", objectName_prefix);
     protected String player_lose_ObjectiveName = String.format("%s_lose", objectName_prefix);
+    // 二次计算
+    protected String player_attack_rate_ObjectiveName = String.format("%s_attackRate", objectName_prefix);
+    protected String player_kd_ObjectiveName = String.format("%s_kd", objectName_prefix);
+    protected String player_win_rate_ObjectiveName = String.format("%s_winRate", objectName_prefix);
 
     @Override
     public boolean registerGameEventHandler() {
