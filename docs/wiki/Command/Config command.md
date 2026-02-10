@@ -23,11 +23,12 @@ _/battleroyale config loot [loot_spawner/entity_spawner/airdrop/airdrop_special/
 - 神秘点位配置文件：_/battleroyale config loot secret_room switch [fileName]_
 
 ### 大逃杀游戏配置
-_/battleroyale config game [bot/gamerule/spawn/zone] switch [fileName]_
+_/battleroyale config game [bot/gamerule/spawn/stats/zone] switch [fileName]_
 
 - 人机配置文件：_/battleroyale config game bot switch [fileName]_
 - 游戏规则配置文件：_/battleroyale config game gamerule switch [fileName]_
 - 出生配置文件：_/battleroyale config game spawn switch [fileName]_
+- 统计数据配置文件：_/battleroyale config game stats switch [fileName]_
 - 区域配置文件：_/battleroyale config game zone switch [fileName]_
 
 > 区域配置文件可以用 _区域控制器_ 切换，无需权限等级
@@ -53,7 +54,7 @@ _/battleroyale config server [performance/profile/utility] switch [fileName]_
 - 实用配置文件：_/battleroyale config server utility switch [fileName]_
 
 ## 切换大逃杀选中配置
-_/battleroyale config game [bot/gamerule/spawn] [id]_
+_/battleroyale config game [bot/gamerule/spawn/stats] [id]_
 
 更改大逃杀配置文件中选用的配置id
 - 默认均使用配置0
@@ -62,6 +63,7 @@ _/battleroyale config game [bot/gamerule/spawn] [id]_
 - 人机配置： _/battleroyale config game bot [id]_
 - 游戏规则配置： _/battleroyale config game gamerule [id]_
 - 出生配置： _/battleroyale config game spawn [id]_
+- 统计数据配置： _/battleroyale config game stats [id]_
 
 ## 应用选中的客户端配置
 _/battleroyale config client [render/display] [id]_
@@ -106,11 +108,12 @@ _/battleroyale config loot [loot_spawner/entity_spawner/airdrop/airdrop_special/
 - Secret room config file: _/battleroyale config loot secret_room switch [fileName]_
 
 ### BattleRoyale config
-_/battleroyale config game [bot/gamerule/spawn/zone] switch [fileName]_
+_/battleroyale config game [bot/gamerule/spawn/stats/zone] switch [fileName]_
 
 - Bot config file: _/battleroyale config game bot switch [fileName]_
 - Gamerule config file: _/battleroyale config game gamerule switch [fileName]_
 - Spawn config file: _/battleroyale config game spawn switch [fileName]_
+- Stats config file: _/battleroyale config game stats switch [fileName]_
 - Zone config file: _/battleroyale config game zone switch [fileName]_
 
 > Zone config file can be switched with _Zone Controller_ , no permission level requried
@@ -145,6 +148,7 @@ Change the configuration id used in the BattleRoyale game
 - Bot config: _/battleroyale config bot [id]_
 - Gamerule config: _/battleroyale config gamerule [id]_
 - Spawn config: _/battleroyale config spawn [id]_
+- Stats config: _/battleroyale config stats [id]_
 
 ## Apply selected Client config
 _/battleroyale config client [render/display] [id]_

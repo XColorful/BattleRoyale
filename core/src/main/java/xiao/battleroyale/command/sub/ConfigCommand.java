@@ -21,6 +21,7 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
+import xiao.battleroyale.config.common.game.stats.StatsConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
@@ -107,6 +108,17 @@ public class ConfigCommand {
                                         .executes(ConfigCommand::switchNextSpawnConfig)
                                         .then(Commands.argument(FILE, StringArgumentType.string())
                                                 .executes(ConfigCommand::switchSpawnConfig)
+                                        )
+                                )
+                        )
+                        .then(Commands.literal(STATS)
+                                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                                        .executes(ConfigCommand::applyStatsConfig)
+                                )
+                                .then(Commands.literal(SWITCH)
+                                        .executes(ConfigCommand::switchNextStatsConfig)
+                                        .then(Commands.argument(FILE, StringArgumentType.string())
+                                                .executes(ConfigCommand::switchStatsConfig)
                                         )
                                 )
                         )
@@ -670,6 +682,52 @@ public class ConfigCommand {
             return Command.SINGLE_SUCCESS;
         } else {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.no_spawn_config_file", currentFileName));
+            return 0;
+        }
+    }
+
+    private static int applyStatsConfig(CommandContext<CommandSourceStack> context) {
+        IConfigSubManager<?> statsConfigManager = getConfigSubManager(context, GameConfigManager.get().getNameKey(), StatsConfigManager.get().getNameKey());
+        if (statsConfigManager == null) return 0;
+
+        int id = IntegerArgumentType.getInteger(context, ID);
+        IConfigSingleEntry statsConfig = statsConfigManager.getConfigEntry(id);
+        if (statsConfig != null) {
+            BattleRoyale.LOGGER.info("Set stats config ID to {} via command", id);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.stats_config_id_set", id, statsConfig.getName()), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.invalid_stats_config_id", id));
+            return 0;
+        }
+    }
+
+    private static int switchNextStatsConfig(CommandContext<CommandSourceStack> context) {
+        IConfigSubManager<?> statsConfigManager = getConfigSubManager(context, GameConfigManager.get().getNameKey(), StatsConfigManager.get().getNameKey());
+        if (statsConfigManager == null) return 0;
+
+        if (statsConfigManager.switchConfigFile()) {
+            String currentFileName = statsConfigManager.getCurrentSelectedFileName();
+            BattleRoyale.LOGGER.info("Switch stats config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_stats_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_stats_config_available"));
+            return 0;
+        }
+    }
+
+    private static int switchStatsConfig(CommandContext<CommandSourceStack> context) {
+        IConfigSubManager<?> statsConfigManager = getConfigSubManager(context, GameConfigManager.get().getNameKey(), StatsConfigManager.get().getNameKey());
+        if (statsConfigManager == null) return 0;
+
+        String currentFileName = StringArgumentType.getString(context, FILE);
+        if (statsConfigManager.switchConfigFile(currentFileName)) {
+            BattleRoyale.LOGGER.info("Switch stats config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_stats_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_stats_config_file", currentFileName));
             return 0;
         }
     }

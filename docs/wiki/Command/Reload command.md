@@ -71,6 +71,11 @@ _/battleroyale reload game spawn_
 
 从 _./minecraft/config/battleroyale/game/spawn_ 重新读取配置文件
 
+#### 统计数据配置
+_/battleroyale reload game stats_
+
+从 _./minecraft/config/battleroyale/game/stats_ 重新读取配置文件
+
 #### 区域配置
 
 _/battleroyale reload game zone_
@@ -209,6 +214,11 @@ Re-read config files from _./minecraft/config/battleroyale/game/gamerule_
 _/battleroyale reload game spawn_
 
 Re-read config files from _./minecraft/config/battleroyale/game/spawn_
+
+#### Stats config
+_/battleroyale reload game stats_
+
+Re-read config files from _./minecraft/config/battleroyale/game/stats_
 
 #### Zone config
 
