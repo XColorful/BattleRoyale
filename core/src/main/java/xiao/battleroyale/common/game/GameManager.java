@@ -546,7 +546,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             return;
         }
 
-        if (EventPoster.postEvent(new GameCompleteEvent(this, hasWinner))) {
+        List<GamePlayer> gamePlayers = teamManager.getGamePlayers();
+        if (EventPoster.postEvent(new GameCompleteEvent(this, hasWinner, gamePlayers))) {
             BattleRoyale.LOGGER.debug("GameCompleteEvent canceled, skipped finishGame (gameTime:{}, hasWinner:{})", gameTime, hasWinner);
             return;
         }
@@ -568,7 +569,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
                 new DelayedEvent<>(delayedTask, cachedGameLevelKey, 1, "GameManager::sendWinnerResult");
             }
         }
-        EventPoster.postEvent(new GameCompleteFinishEvent(this, hasWinner, getWinnerGamePlayers(), getWinnerGameTeams()));
+        EventPoster.postEvent(new GameCompleteFinishEvent(this, hasWinner, gamePlayers, getWinnerGamePlayers(), getWinnerGameTeams()));
     }
 
     /**
