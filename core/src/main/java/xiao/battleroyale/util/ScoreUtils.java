@@ -88,13 +88,13 @@ public class ScoreUtils {
         for (String name : objectiveNames) {
             Objective objective = scoreboard.getObjective(name);
             if (objective != null) {
-                Collection<Score> scores = scoreboard.getPlayerScores(objective);
+                Collection<PlayerScoreEntry> entries = scoreboard.listPlayerScores(objective);
                 List<String> playersToReset = new ArrayList<>();
-                for (Score score : scores) {
-                    playersToReset.add(score.getOwner());
+                for (PlayerScoreEntry entry : entries) {
+                    playersToReset.add(entry.owner());
                 }
                 for (String playerName : playersToReset) {
-                    scoreboard.resetPlayerScore(playerName, objective);
+                    scoreboard.resetSinglePlayerScore(ScoreHolder.forNameOnly(playerName), objective);
                 }
             }
         }
