@@ -43,6 +43,7 @@ public class CommandArg {
     public static final String BOT = "bot";
     public static final String GAMERULE = "gamerule";
     public static final String SPAWN = "spawn";
+    public static final String STATS = "stats";
     public static final String ZONE = "zone";
 
     public static final String ID = "id";

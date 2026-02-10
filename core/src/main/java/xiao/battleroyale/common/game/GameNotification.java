@@ -22,10 +22,12 @@ public class GameNotification {
         int botConfigId = gameManager.getBotConfigId();
         int gameruleConfigId = gameManager.getGameruleConfigId();
         int spawnConfigId = gameManager.getSpawnConfigId();
+        int statsConfigId = gameManager.getStatsConfigId();
         String zoneConfigFileName = gameManager.getZoneConfigFileName();
         ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_bot_config", botConfigId, gameManager.getBotConfigName(botConfigId)));
         ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_gamerule_config", gameruleConfigId, gameManager.getGameruleConfigName(gameruleConfigId)));
         ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_spawn_config", spawnConfigId, gameManager.getSpawnConfigName(spawnConfigId)));
+        ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_stats_config", statsConfigId, gameManager.getStatsConfigName(statsConfigId)));
         List<IConfigSingleEntry> zoneConfigList = GameConfigManager.get().getConfigEntryList(ZoneConfigManager.get().getNameKey());
         if (zoneConfigList != null) {
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.selected_zone_config", zoneConfigFileName, zoneConfigList.size()));
@@ -40,10 +42,12 @@ public class GameNotification {
         int botConfigId = gameManager.getBotConfigId();
         int gameruleConfigId = gameManager.getGameruleConfigId();
         int spawnConfigId = gameManager.getSpawnConfigId();
+        int statsConfigId = gameManager.getStatsConfigId();
         String zoneConfigFileName = gameManager.getZoneConfigFileName();
         ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_bot_config", botConfigId, gameManager.getBotConfigName(botConfigId)));
         ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_gamerule_config", gameruleConfigId, gameManager.getGameruleConfigName(gameruleConfigId)));
         ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_spawn_config", spawnConfigId, gameManager.getSpawnConfigName(spawnConfigId)));
+        ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_stats_config", statsConfigId, gameManager.getStatsConfigName(statsConfigId)));
         List<IConfigSingleEntry> zoneConfigList = GameConfigManager.get().getConfigEntryList(ZoneConfigManager.get().getNameKey());
         if (zoneConfigList != null) {
             ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.selected_zone_config", zoneConfigFileName, zoneConfigList.size()));

@@ -5,8 +5,9 @@ import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Score;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
-import xiao.battleroyale.BattleRoyale;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ScoreUtils {
@@ -25,7 +26,7 @@ public class ScoreUtils {
         int numerator = getScore(scoreboard, numeratorObj, playerName);
         int denominator = getScore(scoreboard, denominatorObj, playerName);
 
-        // 确保分母不会低于保底值，但不修改原始计分板上的受击/死亡数
+        // 确保分母不会低于保底值，但不修改原始记分板上的受击/死亡数
         float effectiveDenominator = Math.max(minDenominator, (float) denominator);
 
         int result = (int) Math.floor(((float) numerator / effectiveDenominator) * ratioBase);
@@ -68,11 +69,33 @@ public class ScoreUtils {
         getSafeScore(scoreboard, objectiveName, playerName).add(amount);
     }
 
+    /**
+     * 直接删表 (Objective)
+     */
     public static void removeObjectives(Scoreboard scoreboard, List<String> objectiveNames) {
         for (String name : objectiveNames) {
             Objective oldObj = scoreboard.getObjective(name);
             if (oldObj != null) {
                 scoreboard.removeObjective(oldObj);
+            }
+        }
+    }
+
+    /**
+     * 删除所有项，保留表 (Objective) 属性
+     */
+    public static void clearObjectives(Scoreboard scoreboard, List<String> objectiveNames) {
+        for (String name : objectiveNames) {
+            Objective objective = scoreboard.getObjective(name);
+            if (objective != null) {
+                Collection<Score> scores = scoreboard.getPlayerScores(objective);
+                List<String> playersToReset = new ArrayList<>();
+                for (Score score : scores) {
+                    playersToReset.add(score.getOwner());
+                }
+                for (String playerName : playersToReset) {
+                    scoreboard.resetPlayerScore(playerName, objective);
+                }
             }
         }
     }

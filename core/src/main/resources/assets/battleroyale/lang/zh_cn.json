@@ -159,6 +159,7 @@
 
   "battleroyale.message.missing_gamerule_config": "缺少有效的大逃杀规则配置",
   "battleroyale.message.missing_spawn_config": "缺少有效的玩家生成配置",
+  "battleroyale.message.missing_stats_config": "缺少有效的统计数据配置",
   "battleroyale.message.missing_zone_config": "缺少有效的区域配置",
   "battleroyale.message.missing_bot_config": "缺少有效的人机配置",
 
@@ -232,6 +233,7 @@
   "battleroyale.message.selected_bot_config": "人机配置%s: %s",
   "battleroyale.message.selected_gamerule_config": "大逃杀规则配置%s: %s",
   "battleroyale.message.selected_spawn_config": "出生配置%s: %s",
+  "battleroyale.message.selected_stats_config": "统计数据配置%s: %s",
   "battleroyale.message.selected_zone_config": "区域配置%s: %s个区域",
   "battleroyale.message.current_game_id": "当前游戏ID(字符串): %s",
 

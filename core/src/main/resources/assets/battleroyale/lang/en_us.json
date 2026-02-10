@@ -159,6 +159,7 @@
 
   "battleroyale.message.missing_gamerule_config": "Missing valid gamerule config for battleroyale game",
   "battleroyale.message.missing_spawn_config": "Missing valid spawn config for battleroyale game",
+  "battleroyale.message.missing_stats_config": "Missing valid stats config for battleroyale game",
   "battleroyale.message.missing_zone_config": "Missing valid zone config for battleroyale game",
   "battleroyale.message.missing_bot_config": "Missing valid bot config for battleroyale game",
 
@@ -232,6 +233,7 @@
   "battleroyale.message.selected_bot_config": "Bot config %s: %s",
   "battleroyale.message.selected_gamerule_config": "Gamerule config %s: %s",
   "battleroyale.message.selected_spawn_config": "Spawn config %s: %s",
+  "battleroyale.message.selected_stats_config": "Stats config %s: %s",
   "battleroyale.message.selected_zone_config": "Zone config %s: %s zones",
   "battleroyale.message.current_game_id": "Current game id (toString): %s",
 
