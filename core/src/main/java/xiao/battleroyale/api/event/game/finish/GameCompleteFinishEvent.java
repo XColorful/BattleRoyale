@@ -6,18 +6,22 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 public class GameCompleteFinishEvent extends AbstractGameStatsEvent {
 
     protected final boolean hasWinner;
+    protected final List<GamePlayer> gamePlayers;
     protected final Set<GamePlayer> winnerGamePlayers;
     protected final Set<GameTeam> winnerGameTeams;
 
-    public GameCompleteFinishEvent(IGameManager gameManager, boolean hasWinner,
+    public GameCompleteFinishEvent(IGameManager gameManager, boolean hasWinner, List<GamePlayer> gamePlayers,
                                    Set<GamePlayer> winnerGamePlayers, Set<GameTeam> winnerGameTeams) {
         super(gameManager);
         this.hasWinner = hasWinner;
+        this.gamePlayers = gamePlayers;
         this.winnerGamePlayers = winnerGamePlayers;
         this.winnerGameTeams = winnerGameTeams;
     }
@@ -27,6 +31,10 @@ public class GameCompleteFinishEvent extends AbstractGameStatsEvent {
 
     public boolean hasWinner() {
         return this.hasWinner;
+    }
+
+    public List<GamePlayer> getGamePlayers() {
+        return Collections.unmodifiableList(gamePlayers);
     }
 
     public Set<GamePlayer> getWinnerGamePlayers() {
