@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.config.IConfigSubManager;
+import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.api.event.game.tick.ZoneTickEvent;
 import xiao.battleroyale.api.event.game.tick.ZoneTickFinishEvent;
@@ -58,18 +60,24 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
-        if (BattleRoyale.getGameManager().isInGame()) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.isInGame()) return;
+
+        IModConfigManager modConfigManager = BattleRoyale.getModConfigManager();
+        IConfigSubManager<?> zoneConfigManager = modConfigManager.getConfigSubManager(GameConfigManager.get().getNameKey(), ZoneConfigManager.get().getNameKey());
+        if (zoneConfigManager == null) {
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_zone_config");
             return;
         }
 
-        List<IConfigSingleEntry> allConfigs = GameConfigManager.get().getConfigEntryList(ZoneConfigManager.get().getNameKey());
+        List<?> allConfigs = zoneConfigManager.getConfigEntryList();
         if (allConfigs == null) {
             BattleRoyale.LOGGER.warn("No zone config available for init game config");
             return;
         }
         List<ZoneConfig> allZoneConfigs = new ArrayList<>();
-        for (IConfigSingleEntry config : allConfigs) {
-            allZoneConfigs.add((ZoneConfig) config);
+        for (Object config : allConfigs) {
+            if (config instanceof ZoneConfig zoneConfig) allZoneConfigs.add(zoneConfig);
         }
         if (allZoneConfigs.isEmpty()) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_zone_config");

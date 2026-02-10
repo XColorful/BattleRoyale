@@ -70,6 +70,11 @@ _/battleroyale backup game spawn_
 
 将已加载的出生配置备份至 _./minecraft/battleroyale/backup/game/spawn_ 下
 
+#### 统计数据配置
+_/battleroyale backup game stats_
+
+将已加载的统计配置备份至 _./minecraft/battleroyale/backup/game/stats_ 下
+
 #### 区域配置
 _/battleroyale backup game zone_
 
@@ -201,6 +206,11 @@ Backup loaded gamerule config to _./minecraft/battleroyale/backup/game/gamerule_
 _/battleroyale backup game spawn_
 
 Backup loaded spawn config to _./minecraft/battleroyale/backup/game/spawn_
+
+#### Stats config
+_/battleroyale backup game stats_
+
+Backup loaded stats config to _./minecraft/battleroyale/backup/game/stats_
 
 #### Zone config
 _/battleroyale backup game zone_

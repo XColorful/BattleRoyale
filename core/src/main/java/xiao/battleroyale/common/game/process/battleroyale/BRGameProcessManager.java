@@ -44,9 +44,8 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
-        if (BattleRoyale.getGameManager().isInGame()) {
-            return;
-        }
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        if (gameManager.isInGame()) return;
 
         this.configPrepared = true;
         BattleRoyale.LOGGER.debug("BRGameProcessManager complete initGameConfig");

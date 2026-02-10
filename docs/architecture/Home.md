@@ -359,7 +359,7 @@
 - JsonUtils：各种数据类型的 JSON 序列化便捷封装
 - ListUtils：列表操作
 - NBTUtils：NBT 序列化
-- ScoreUtils：封装计分板调用及版本差异
+- ScoreUtils：封装记分板调用及版本差异
 - SendUtils：封装网络消息的发送，使网络处理器（`NetworkHandler`）与项目主体解耦
 - StringUtils：解析/转换各种格式字符串、构建字符串
 - Vec3Utils：向量随机偏移、向量加减/线性插值等

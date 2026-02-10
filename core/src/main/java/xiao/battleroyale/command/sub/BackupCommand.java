@@ -18,6 +18,7 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
+import xiao.battleroyale.config.common.game.stats.StatsConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
@@ -55,6 +56,8 @@ public class BackupCommand {
                                 .executes(context -> backupGameConfigs(context, ZONE)))
                         .then(Commands.literal(SPAWN)
                                 .executes(context -> backupGameConfigs(context, SPAWN)))
+                        .then(Commands.literal(STATS)
+                                .executes(context -> backupGameConfigs(context, STATS)))
                         .then(Commands.literal(GAMERULE)
                                 .executes(context -> backupGameConfigs(context, GAMERULE)))
                         .then(Commands.literal(BOT)
@@ -157,6 +160,10 @@ public class BackupCommand {
                 case SPAWN:
                     subManagerNameKey = SpawnConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.spawn_config_backed_up";
+                    break;
+                case STATS:
+                    subManagerNameKey = StatsConfigManager.get().getNameKey();
+                    messageKey = "battleroyale.message.stats_config_backed_up";
                     break;
                 case GAMERULE:
                     subManagerNameKey = GameruleConfigManager.get().getNameKey();
