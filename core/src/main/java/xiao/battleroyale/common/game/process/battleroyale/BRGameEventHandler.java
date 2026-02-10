@@ -95,7 +95,7 @@ public class BRGameEventHandler {
         }
         if (!hasAliveMember) { // 没有存活队友就判定为无法救援，直接判死亡
             BattleRoyale.LOGGER.debug("GamePlayer {} is down and has no alive member, switch to onPlayerDeath", gamePlayer.getPlayerName());
-            BattleRoyale.getGameManager().onPlayerDeath(event, gamePlayer); //
+            BattleRoyale.getGameManager().onPlayerDeath(event, gamePlayer); // 没有其他标识，让 IStatsManager 手动检查 isEliminated()
             return;
         }
 
