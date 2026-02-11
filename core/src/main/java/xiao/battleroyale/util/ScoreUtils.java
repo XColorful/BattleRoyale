@@ -1,7 +1,9 @@
 package xiao.battleroyale.util;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.scores.*;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.Score;
+import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 
 import java.util.ArrayList;
@@ -13,7 +15,7 @@ public class ScoreUtils {
     public static int getScore(Scoreboard scoreboard, String objectiveName, String playerName) {
         Objective objective = scoreboard.getObjective(objectiveName);
         if (objective == null) return 0;
-        return scoreboard.getOrCreatePlayerScore(ScoreHolder.forNameOnly(playerName), objective).get();
+        return scoreboard.getOrCreatePlayerScore(playerName, objective).getScore();
     }
 
     /**
@@ -29,7 +31,7 @@ public class ScoreUtils {
 
         int result = (int) Math.floor(((float) numerator / effectiveDenominator) * ratioBase);
 
-        getSafeScore(scoreboard, targetObj, playerName).set(result);
+        getSafeScore(scoreboard, targetObj, playerName).setScore(result);
     }
 
     /**
@@ -45,10 +47,20 @@ public class ScoreUtils {
             result = (int) Math.floor(((float) numerator / total) * ratioBase);
         }
 
-        getSafeScore(scoreboard, targetObj, playerName).set(result);
+        getSafeScore(scoreboard, targetObj, playerName).setScore(result);
     }
 
-    public static ScoreAccess getSafeScore(Scoreboard scoreboard, String objectiveName, String playerName) {
+    /**
+     * 将两个记分项的值相加并更新到目标项（用于 gameTotal = win + lose）
+     * 无论原先 targetObj 值是多少，都会根据当前的 numerator 和 denominator 强制更新
+     */
+    public static void updateTotalScore(Scoreboard scoreboard, String playerName, String numeratorObj, String denominatorObj, String targetObj) {
+        int numerator = getScore(scoreboard, numeratorObj, playerName);
+        int denominator = getScore(scoreboard, denominatorObj, playerName);
+        setScore(scoreboard, targetObj, playerName, numerator + denominator);
+    }
+
+    public static Score getSafeScore(Scoreboard scoreboard, String objectiveName, String playerName) {
         Objective objective = scoreboard.getObjective(objectiveName);
         // 如果表不存在，需要手动创建，而不能用Scoreboard的getOrCreateObjective
         if (objective == null) {
@@ -56,17 +68,19 @@ public class ScoreUtils {
                     objectiveName,
                     ObjectiveCriteria.DUMMY,
                     Component.literal(objectiveName),
-                    ObjectiveCriteria.RenderType.INTEGER,
-                    true, null
+                    ObjectiveCriteria.RenderType.INTEGER
             );
         }
-        return scoreboard.getOrCreatePlayerScore(ScoreHolder.forNameOnly(playerName), objective);
+        return scoreboard.getOrCreatePlayerScore(playerName, objective);
     }
 
     public static void addScore(Scoreboard scoreboard, String objectiveName, String playerName, int amount) {
         if (amount == 0) return;
-        ScoreAccess access = getSafeScore(scoreboard, objectiveName, playerName);
-        access.set(access.get() + amount);
+        getSafeScore(scoreboard, objectiveName, playerName).add(amount);
+    }
+
+    public static void setScore(Scoreboard scoreboard, String objectiveName, String playerName, int value) {
+        getSafeScore(scoreboard, objectiveName, playerName).setScore(value);
     }
 
     /**
@@ -88,13 +102,13 @@ public class ScoreUtils {
         for (String name : objectiveNames) {
             Objective objective = scoreboard.getObjective(name);
             if (objective != null) {
-                Collection<PlayerScoreEntry> entries = scoreboard.listPlayerScores(objective);
+                Collection<Score> scores = scoreboard.getPlayerScores(objective);
                 List<String> playersToReset = new ArrayList<>();
-                for (PlayerScoreEntry entry : entries) {
-                    playersToReset.add(entry.owner());
+                for (Score score : scores) {
+                    playersToReset.add(score.getOwner());
                 }
                 for (String playerName : playersToReset) {
-                    scoreboard.resetSinglePlayerScore(ScoreHolder.forNameOnly(playerName), objective);
+                    scoreboard.resetPlayerScore(playerName, objective);
                 }
             }
         }
@@ -106,8 +120,7 @@ public class ScoreUtils {
             if (oldObj == null) {
                 scoreboard.addObjective(name, ObjectiveCriteria.DUMMY,
                         Component.literal(name),
-                        ObjectiveCriteria.RenderType.INTEGER,
-                        true, null);
+                        ObjectiveCriteria.RenderType.INTEGER);
             }
         }
     }
@@ -117,8 +130,8 @@ public class ScoreUtils {
         Objective objective = scoreboard.getObjective(objectiveName);
         if (objective != null) {
             // 只有当当前 Slot 显示的不是该 Objective 时才设置，防止发包冗余
-            if (scoreboard.getDisplayObjective(DisplaySlot.LIST) != objective) {
-                scoreboard.setDisplayObjective(DisplaySlot.LIST, objective);
+            if (scoreboard.getDisplayObjective(Scoreboard.DISPLAY_SLOT_LIST) != objective) {
+                scoreboard.setDisplayObjective(Scoreboard.DISPLAY_SLOT_LIST, objective);
             }
         }
     }
@@ -128,8 +141,8 @@ public class ScoreUtils {
         Objective objective = scoreboard.getObjective(objectiveName);
         if (objective != null) {
             // 防止重复设置导致客户端渲染闪烁
-            if (scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR) != objective) {
-                scoreboard.setDisplayObjective(DisplaySlot.SIDEBAR, objective);
+            if (scoreboard.getDisplayObjective(Scoreboard.DISPLAY_SLOT_SIDEBAR) != objective) {
+                scoreboard.setDisplayObjective(Scoreboard.DISPLAY_SLOT_SIDEBAR, objective);
             }
         }
     }
