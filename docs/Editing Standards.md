@@ -12,6 +12,11 @@
 - 链接：采用`[链接文本](链接地址)`格式，链接文本不受文件名格式或驼峰命名法约束
 - Obsidian 专用语法：禁止使用`[[双链]]`、`==高亮==`等非标准 Markdown 语法
 
+### 语言工程
+
+- 用软件工程重构“长难句”
+- 语言架构扁平化
+
 ## 格式与标点
 > 标题下的`>`引用块后不用空行
 
@@ -73,6 +78,11 @@ Github Wiki，主要面向服主（玩家只需`/cbr team`指令）
 - Perspective: Do not use the first person (e.g., "we"); use an objective, descriptive tone.
 - Links: Use the `[Link Text](URL)` format; link text should not be limited by file formats or CamelCase.
 - Obsidian Syntax: Prohibited from using non-standard Markdown like `[[Links]]` or `==Highlight==`.
+
+### Language Engineering
+
+- Refactor "long and complex sentences" using software engineering principles.
+- Flatten the linguistic architecture.
 
 ## Formatting & Punctuation
 > No empty line is required after a `>` quote block following a heading.

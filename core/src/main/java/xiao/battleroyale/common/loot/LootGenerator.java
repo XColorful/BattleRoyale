@@ -371,7 +371,7 @@ public class LootGenerator {
                 }
             }
 
-            BattleRoyale.LOGGER.info("Clear old game object: {} (UUID: {}) (GameId: {}) at {}",
+            BattleRoyale.LOGGER.debug("Clear old game object: {} (UUID: {}) (GameId: {}) at {}",
                     entity.getName().getString(),
                     entity.getUUID(),
                     debugGameId != null ? debugGameId.toString() : "N/A", // 打印转换后的 UUID
