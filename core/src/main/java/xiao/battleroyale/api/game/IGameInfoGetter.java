@@ -24,6 +24,8 @@ public interface IGameInfoGetter {
     ResourceKey<Level> getGameLevelKey();
     Supplier<Float> getRandom();
 
+    boolean hasWinner();
     Set<GamePlayer> getWinnerGamePlayers();
     Set<GameTeam> getWinnerGameTeams();
+    int getRemainRestartTime();
 }

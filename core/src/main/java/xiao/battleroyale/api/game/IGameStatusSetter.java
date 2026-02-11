@@ -18,8 +18,10 @@ public interface IGameStatusSetter {
     @ApiStatus.Internal
     void setGameId(UUID gameId);
 
+    boolean setHasWinner(boolean hasWinner);
     boolean clearWinnerGamePlayers();
     boolean clearWinnerGameTeams();
     boolean addWinnerGamePlayer(GamePlayer gamePlayer);
     boolean addWinnerGameTeam(GameTeam gameTeam);
+    boolean setRemainRestartTime(int remainRestartTime);
 }

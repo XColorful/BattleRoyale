@@ -59,12 +59,10 @@ import xiao.battleroyale.config.common.game.stats.StatsConfigManager.StatsConfig
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.event.EventPoster;
-import xiao.battleroyale.api.event.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.StringUtils;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static xiao.battleroyale.api.data.TempDataTag.*;
@@ -227,6 +225,9 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     private String gameLevelKeyString = "";
     private @Nullable ResourceKey<Level> gameLevelKey;
     private @Nullable ServerLevel serverLevel;
+    private boolean hasWinner = false;
+    private int remainRestartTime = 0;
+    public static int MIN_RESTART_DELAY = 5;
     private final Set<GameTeam> winnerGameTeams = new HashSet<>();
     private final Set<GamePlayer> winnerGamePlayers = new HashSet<>();
     private boolean isStopping = false;
@@ -310,6 +311,10 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         BattleRoyale.LOGGER.info("GameManager gameId set to {}", gameId);
         TempDataManager.get().writeString(GAME_MANAGER, LAST_GAME_ID, this.gameId.toString());
     }
+    @Override public boolean setHasWinner(boolean hasWinner) {
+        this.hasWinner = hasWinner;
+        return true;
+    }
     @Override public boolean clearWinnerGamePlayers() {
         this.winnerGamePlayers.clear();
         return true;
@@ -328,11 +333,22 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         }
         return this.winnerGameTeams.add(gameTeam);
     }
+    @Override public boolean setRemainRestartTime(int remainRestartTime) {
+        if (remainRestartTime < 0) return false;
+        this.remainRestartTime = remainRestartTime;
+        return true;
+    }
+    @Override public boolean hasWinner() {
+        return this.hasWinner;
+    }
     @Override public Set<GamePlayer> getWinnerGamePlayers() {
         return Collections.unmodifiableSet(this.winnerGamePlayers);
     }
     @Override public Set<GameTeam> getWinnerGameTeams() {
         return Collections.unmodifiableSet(this.winnerGameTeams);
+    }
+    @Override public int getRemainRestartTime() {
+        return this.remainRestartTime;
     }
 
     @Override
@@ -340,6 +356,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
         customEventRegister.register(get(), CustomEventType.GAME_START_FINISH_EVENT);
         customEventRegister.register(get(), CustomEventType.GAME_STOP_FINISH_EVENT);
+        customEventRegister.register(get(), CustomEventType.GAME_COMPLETE_FINISH_EVENT);
         return true;
     }
     @Override
@@ -347,6 +364,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
         customEventRegister.unregister(get(), CustomEventType.GAME_START_FINISH_EVENT);
         customEventRegister.unregister(get(), CustomEventType.GAME_STOP_FINISH_EVENT);
+        customEventRegister.unregister(get(), CustomEventType.GAME_COMPLETE_FINISH_EVENT);
         LoopEventHandler.unregister();
         PlayerDamageEventHandler.unregister();
         PlayerDeathEventHandler.unregister();
@@ -370,6 +388,10 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
                 PlayerDamageEventHandler.unregister();
                 PlayerDeathEventHandler.unregister();
                 BleedingHandler.unregister();
+                GameScheduler.delayedRestartAfterGame(this);
+            }
+            case GAME_COMPLETE_FINISH_EVENT -> {
+                GameScheduler.delayedInitAfterGame(this);
             }
             default -> {
                 onReceiveWrongEvent(customEventType);
@@ -556,22 +578,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         }
 
         gameProcessManager.finishGameAddWinner(hasWinner);
-        stopGame(this.serverLevel);
 
-        // 游戏结束后自动初始化下一局游戏
-        if (getGameEntry().initGameAfterGame) {
-            if (hasWinner && this.serverLevel != null) { // 游戏正常结束
-                // 延迟1tick初始化游戏
-                ResourceKey<Level> cachedGameLevelKey = this.serverLevel.dimension();
-                Consumer<ResourceKey<Level>> delayedTask = levelKey -> {
-                    ServerLevel currentServerLevel = BattleRoyale.getMinecraftServer().getLevel(levelKey);
-                    if (currentServerLevel != null) {
-                        initGame(serverLevel);
-                    }
-                };
-                new DelayedEvent<>(delayedTask, cachedGameLevelKey, 1, "GameManager::initGameAfterGame");
-            }
-        }
+        stopGame(this.serverLevel);
 
         EventPoster.postEvent(new GameCompleteFinishEvent(this, hasWinner, gamePlayers, getWinnerGamePlayers(), getWinnerGameTeams()));
     }
