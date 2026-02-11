@@ -1,9 +1,7 @@
 package xiao.battleroyale.util;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.Score;
-import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.*;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 
 import java.util.ArrayList;
@@ -15,7 +13,7 @@ public class ScoreUtils {
     public static int getScore(Scoreboard scoreboard, String objectiveName, String playerName) {
         Objective objective = scoreboard.getObjective(objectiveName);
         if (objective == null) return 0;
-        return scoreboard.getOrCreatePlayerScore(playerName, objective).getScore();
+        return scoreboard.getOrCreatePlayerScore(ScoreHolder.forNameOnly(playerName), objective).get();
     }
 
     /**
@@ -31,7 +29,7 @@ public class ScoreUtils {
 
         int result = (int) Math.floor(((float) numerator / effectiveDenominator) * ratioBase);
 
-        getSafeScore(scoreboard, targetObj, playerName).setScore(result);
+        getSafeScore(scoreboard, targetObj, playerName).set(result);
     }
 
     /**
@@ -47,7 +45,7 @@ public class ScoreUtils {
             result = (int) Math.floor(((float) numerator / total) * ratioBase);
         }
 
-        getSafeScore(scoreboard, targetObj, playerName).setScore(result);
+        getSafeScore(scoreboard, targetObj, playerName).set(result);
     }
 
     /**
@@ -68,15 +66,17 @@ public class ScoreUtils {
                     objectiveName,
                     ObjectiveCriteria.DUMMY,
                     Component.literal(objectiveName),
-                    ObjectiveCriteria.RenderType.INTEGER
+                    ObjectiveCriteria.RenderType.INTEGER,
+                    true, null
             );
         }
-        return scoreboard.getOrCreatePlayerScore(playerName, objective);
+        return scoreboard.getOrCreatePlayerScore(ScoreHolder.forNameOnly(playerName), objective);
     }
 
     public static void addScore(Scoreboard scoreboard, String objectiveName, String playerName, int amount) {
         if (amount == 0) return;
-        getSafeScore(scoreboard, objectiveName, playerName).add(amount);
+        ScoreAccess access = getSafeScore(scoreboard, objectiveName, playerName);
+        access.set(access.get() + amount);
     }
 
     public static void setScore(Scoreboard scoreboard, String objectiveName, String playerName, int value) {
@@ -102,13 +102,13 @@ public class ScoreUtils {
         for (String name : objectiveNames) {
             Objective objective = scoreboard.getObjective(name);
             if (objective != null) {
-                Collection<Score> scores = scoreboard.getPlayerScores(objective);
+                Collection<PlayerScoreEntry> entries = scoreboard.listPlayerScores(objective);
                 List<String> playersToReset = new ArrayList<>();
-                for (Score score : scores) {
-                    playersToReset.add(score.getOwner());
+                for (PlayerScoreEntry entry : entries) {
+                    playersToReset.add(entry.owner());
                 }
                 for (String playerName : playersToReset) {
-                    scoreboard.resetPlayerScore(playerName, objective);
+                    scoreboard.resetSinglePlayerScore(ScoreHolder.forNameOnly(playerName), objective);
                 }
             }
         }
@@ -120,7 +120,8 @@ public class ScoreUtils {
             if (oldObj == null) {
                 scoreboard.addObjective(name, ObjectiveCriteria.DUMMY,
                         Component.literal(name),
-                        ObjectiveCriteria.RenderType.INTEGER);
+                        ObjectiveCriteria.RenderType.INTEGER,
+                        true, null);
             }
         }
     }
@@ -130,8 +131,8 @@ public class ScoreUtils {
         Objective objective = scoreboard.getObjective(objectiveName);
         if (objective != null) {
             // 只有当当前 Slot 显示的不是该 Objective 时才设置，防止发包冗余
-            if (scoreboard.getDisplayObjective(Scoreboard.DISPLAY_SLOT_LIST) != objective) {
-                scoreboard.setDisplayObjective(Scoreboard.DISPLAY_SLOT_LIST, objective);
+            if (scoreboard.getDisplayObjective(DisplaySlot.LIST) != objective) {
+                scoreboard.setDisplayObjective(DisplaySlot.LIST, objective);
             }
         }
     }
@@ -141,8 +142,8 @@ public class ScoreUtils {
         Objective objective = scoreboard.getObjective(objectiveName);
         if (objective != null) {
             // 防止重复设置导致客户端渲染闪烁
-            if (scoreboard.getDisplayObjective(Scoreboard.DISPLAY_SLOT_SIDEBAR) != objective) {
-                scoreboard.setDisplayObjective(Scoreboard.DISPLAY_SLOT_SIDEBAR, objective);
+            if (scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR) != objective) {
+                scoreboard.setDisplayObjective(DisplaySlot.SIDEBAR, objective);
             }
         }
     }
