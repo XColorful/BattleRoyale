@@ -649,6 +649,7 @@ public class ConfigCommand {
         int id = IntegerArgumentType.getInteger(context, ID);
         IConfigSingleEntry spawnConfig = spawnConfigManager.getConfigEntry(id);
         if (spawnConfig != null) {
+            spawnConfig.applyDefault();
             BattleRoyale.LOGGER.info("Set spawn config ID to {} via command", id);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.spawn_config_id_set", id, spawnConfig.getName()), true);
             return Command.SINGLE_SUCCESS;
@@ -693,6 +694,7 @@ public class ConfigCommand {
         int id = IntegerArgumentType.getInteger(context, ID);
         IConfigSingleEntry statsConfig = statsConfigManager.getConfigEntry(id);
         if (statsConfig != null) {
+            statsConfig.applyDefault();
             BattleRoyale.LOGGER.info("Set stats config ID to {} via command", id);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.stats_config_id_set", id, statsConfig.getName()), true);
             return Command.SINGLE_SUCCESS;

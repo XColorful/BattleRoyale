@@ -17,6 +17,9 @@ public class ScoreboardEntry implements IStatsEntry {
     public int mcMaxHealth;
     public float damageMultiplier;
     public float ratioBase;
+    public boolean syncGameInfoToObjective;
+    public String gameInfoObjectiveName;
+    public @Nullable GameInfoObjectiveEntry gameInfoObjectiveEntry;
     public int scoreboardCycleInterval;
     public @NotNull List<String> cycleObjectiveNames;
 
@@ -29,6 +32,7 @@ public class ScoreboardEntry implements IStatsEntry {
 
     public ScoreboardEntry(boolean recordScoreboard, boolean resetScoreboardAtStart, int mcMaxHealth,
                            float damageMultiplier, float ratioBase,
+                           boolean syncGameInfoToObjective, String gameInfoObjectiveName, GameInfoObjectiveEntry gameInfoObjectiveEntry,
                            int scoreboardCycleInterval, @Nullable List<String> cycleObjectiveNames,
                            @Nullable MainObjectiveEntry mainObjective, @Nullable SecondObjectiveEntry secondObjective, @Nullable SpecialObjectiveEntry specialObjective,
                            @NotNull String listObjectiveAfterGame, @NotNull String sidebarObjectiveAfterGame) {
@@ -37,6 +41,9 @@ public class ScoreboardEntry implements IStatsEntry {
         this.mcMaxHealth = mcMaxHealth;
         this.damageMultiplier = damageMultiplier;
         this.ratioBase = ratioBase;
+        this.syncGameInfoToObjective = syncGameInfoToObjective;
+        this.gameInfoObjectiveName = gameInfoObjectiveName;
+        this.gameInfoObjectiveEntry = gameInfoObjectiveEntry;
         this.scoreboardCycleInterval = scoreboardCycleInterval;
         this.cycleObjectiveNames = cycleObjectiveNames != null ? cycleObjectiveNames : new ArrayList<>();
         this.mainObjective = mainObjective;
@@ -48,12 +55,9 @@ public class ScoreboardEntry implements IStatsEntry {
 
     @Override
     public @NotNull ScoreboardEntry copy() {
-        return new ScoreboardEntry(
-                recordScoreboard,
-                resetScoreboardAtStart,
-                mcMaxHealth,
-                damageMultiplier,
-                ratioBase,
+        return new ScoreboardEntry(recordScoreboard, resetScoreboardAtStart, mcMaxHealth,
+                damageMultiplier, ratioBase,
+                syncGameInfoToObjective, gameInfoObjectiveName, gameInfoObjectiveEntry,
                 scoreboardCycleInterval,
                 new ArrayList<>(cycleObjectiveNames),
                 mainObjective != null ? mainObjective.copy() : null,
@@ -77,6 +81,11 @@ public class ScoreboardEntry implements IStatsEntry {
         jsonObject.addProperty(ScoreboardEntryTag.MC_MAX_HEALTH, mcMaxHealth);
         jsonObject.addProperty(ScoreboardEntryTag.DAMAGE_MULTIPLIER, damageMultiplier);
         jsonObject.addProperty(ScoreboardEntryTag.RATIO_BASE, ratioBase);
+        jsonObject.addProperty(ScoreboardEntryTag.SYNC_GAME_INFO_TO_OBJECTIVE, syncGameInfoToObjective);
+        jsonObject.addProperty(ScoreboardEntryTag.GAME_INFO_OBJECTIVE_NAME, gameInfoObjectiveName);
+        if (gameInfoObjectiveEntry != null) {
+            jsonObject.add(ScoreboardEntryTag.GAME_INFO_OBJECTIVE, gameInfoObjectiveEntry.toJson());
+        }
         jsonObject.addProperty(ScoreboardEntryTag.SCOREBOARD_CYCLE_INTERVAL, scoreboardCycleInterval);
         jsonObject.add(ScoreboardEntryTag.CYCLE_OBJECTIVE_NAME, JsonUtils.writeStringListToJson(cycleObjectiveNames));
 
@@ -102,6 +111,11 @@ public class ScoreboardEntry implements IStatsEntry {
         int mcMaxHealth = JsonUtils.getJsonInt(jsonObject, ScoreboardEntryTag.MC_MAX_HEALTH, 20);
         float damageMultiplier = (float) JsonUtils.getJsonDouble(jsonObject, ScoreboardEntryTag.DAMAGE_MULTIPLIER, 100 / 20f);
         float ratioBase = (float) JsonUtils.getJsonDouble(jsonObject, ScoreboardEntryTag.RATIO_BASE, 1000.0f);
+        boolean syncGameInfoToObjective = JsonUtils.getJsonBool(jsonObject, ScoreboardEntryTag.SYNC_GAME_INFO_TO_OBJECTIVE, true);
+        String gameInfoObjectiveName = JsonUtils.getJsonString(jsonObject, ScoreboardEntryTag.GAME_INFO_OBJECTIVE_NAME, "");
+        JsonObject gameObj = JsonUtils.getJsonObject(jsonObject, ScoreboardEntryTag.GAME_INFO_OBJECTIVE, null);
+        GameInfoObjectiveEntry gameEntry = gameObj != null ? GameInfoObjectiveEntry.fromJson(gameObj) : null;
+
         int scoreboardCycleInterval = JsonUtils.getJsonInt(jsonObject, ScoreboardEntryTag.SCOREBOARD_CYCLE_INTERVAL, 20 * 3);
         List<String> cycleObjectiveNames = JsonUtils.getJsonStringList(jsonObject, ScoreboardEntryTag.CYCLE_OBJECTIVE_NAME);
 
@@ -118,8 +132,10 @@ public class ScoreboardEntry implements IStatsEntry {
         String sidebarAfter = JsonUtils.getJsonString(jsonObject, ScoreboardEntryTag.SIDEBAR_OBJECTIVE_AFTER_GAME, "");
 
         return new ScoreboardEntry(recordScoreboard, resetScoreboardAtStart, mcMaxHealth,
-                damageMultiplier, ratioBase, scoreboardCycleInterval,
-                cycleObjectiveNames, mainEntry, secondEntry, specialEntry,
+                damageMultiplier, ratioBase,
+                syncGameInfoToObjective, gameInfoObjectiveName, gameEntry,
+                scoreboardCycleInterval, cycleObjectiveNames,
+                mainEntry, secondEntry, specialEntry,
                 listAfter, sidebarAfter);
     }
 }

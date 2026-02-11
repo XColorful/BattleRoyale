@@ -298,6 +298,9 @@ public class TeamData extends AbstractGameManagerData {
         return gamePlayers.asList();
     }
 
+    public int getStandingGamePlayerSize() {
+        return standingGamePlayers.size();
+    }
     public List<GamePlayer> getStandingGamePlayersList() {
         return standingGamePlayers.asList();
     }
