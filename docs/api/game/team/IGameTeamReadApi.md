@@ -9,6 +9,7 @@ public interface IGameTeamReadApi {
 	@Nullable GameTeam getGameTeamById(int teamId);
 	List<GamePlayer> getGamePlayers();
 	List<GamePlayer> getStandingGamePlayers();
+	int getStandingGamePlayerSize();
 	int getTotalMembers();
 	int getStandingPlayerTeamCount();
 	int getStandingTeamCount();

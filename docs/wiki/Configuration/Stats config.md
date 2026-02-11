@@ -26,6 +26,11 @@
 - damageMultiplier：伤害分数倍率
 - ratioBase：100%倍率对应的分数
 > 伤害分数： $\text{mcMaxHealth} \times \text{damageMultiplier} \times \text{ratioBase}$
+- syncGameInfoToObjective：是否同步游戏信息至记分项
+- gameInfoObjectiveName：游戏信息记分项名称
+	- playerTotal：玩家总数名称
+	- alive：存活人数名称
+	- gameTime：游戏时间名称，值以秒为单位
 - scoreboardCycleInterval：侧边栏记分板循环间隔，单位 tick
 - cycleObjectiveName：循环切换的记分板列表
 - mainObjective：主记分项
@@ -49,6 +54,7 @@
 	记分项名称：
 	- player_attack_rate：玩家对玩家造成的伤害 / 玩家承受玩家伤害
 	- player_kd：玩家击杀玩家次数 / 玩家被玩家击杀次数
+	- player_game_total：玩家获胜次数 + 玩家失败次数
 	- player_win_rate：玩家获胜次数 / （玩家获胜次数 + 玩家失败次数）
 - specialObjective：特殊记分项
 	- enableJourneyStats：是否启用玩家移动距离记分项
@@ -64,11 +70,16 @@
 	"mcMaxHealth": 20,
 	"damageMultiplier": 5,
 	"ratioBase": 1000,
+	"syncGameInfoToObjective": true,
+	"gameInfoObjectiveName": "cbr_gameInfo",
+	"gameInfoObjective": {
+		"playerTotal": "Total",
+		"alive": "Alive",
+		"gameTime": "GameTime",
+	},
 	"scoreboardCycleInterval": 60,
 	"cycleObjectiveName": [
-		"cbr_attackRate",
-		"cbr_kd",
-		"cbr_winRate"
+		"cbr_gameInfo"
 	],
 	"mainObjective": {
 		"player_to_player_damage": "cbr_hurt",
@@ -90,6 +101,7 @@
 	"secondObjective": {
 		"player_attack_rate": "cbr_attackRate",
 		"player_kd": "cbr_kd",
+		"player_game_total": "cbr_gameTotal",
 		"player_win_rate": "cbr_winRate"
 	},
 	"specialObjective": {
@@ -125,6 +137,11 @@
 - damageMultiplier: Multiplier for damage-related scores
 - ratioBase: The score corresponding to a 100% ratio
 > Damage Score Formula: $\text{mcMaxHealth} \times \text{damageMultiplier} \times \text{ratioBase}$
+- syncGameInfoToObjective: Whether to sync game information to a scoreboard objective
+- gameInfoObjectiveName: Name of the objective used for game information
+	- playerTotal: Name for total player count
+	- alive: Name for alive player count
+	- gameTime: Name for game time (value in seconds)
 - scoreboardCycleInterval: The interval for cycling sidebar objectives, measured in ticks
 - cycleObjectiveName: List of objectives to be displayed in the sidebar rotation
 - mainObjective: Primary objectives
@@ -148,6 +165,7 @@
     Objective Names:
     - player_attack_rate: Player damage dealt to players / Player damage taken from players
     - player_kd: Player kills / Player deaths
+	- player_game_total: Player wins + Player losses
     - player_win_rate: Player wins / (Player wins + Player losses)
 - specialObjective: Special objectives
     - enableJourneyStats: Whether to enable the tracking of player movement distance
@@ -163,11 +181,16 @@
 	"mcMaxHealth": 20,
 	"damageMultiplier": 5,
 	"ratioBase": 1000,
+	"syncGameInfoToObjective": true,
+	"gameInfoObjectiveName": "cbr_gameInfo",
+	"gameInfoObjective": {
+		"playerTotal": "Total",
+		"alive": "Alive",
+		"gameTime": "GameTime",
+	},
 	"scoreboardCycleInterval": 60,
 	"cycleObjectiveName": [
-		"cbr_attackRate",
-		"cbr_kd",
-		"cbr_winRate"
+		"cbr_gameInfo"
 	],
 	"MainObjective": {
 		"player_to_player_damage": "cbr_hurt",
@@ -189,6 +212,7 @@
 	"secondObjective": {
 		"player_attack_rate": "cbr_attackRate",
 		"player_kd": "cbr_kd",
+		"player_game_total": "cbr_gameTotal",
 		"player_win_rate": "cbr_winRate"
 	},
 	"specialObjective": {
