@@ -144,4 +144,38 @@ public class StatsConfigHelper {
         public static final String PLAYER_JOURNEY = String.format("%s_journey", OBJECTNAME_PREFIX);
         public static final String PLAYER_MAX_SPEED = String.format("%s_maxSpeed", OBJECTNAME_PREFIX);
     }
+
+    public static class DeathMatchObjectiveName {
+        public static final String OBJECTNAME_PREFIX = "dm";
+
+        // 原始数据记分项名
+        public static final String PLAYER_TO_PLAYER_DAMAGE = String.format("%s_hurt", OBJECTNAME_PREFIX);
+        public static final String OTHER_TO_PLAYER_DAMAGE = String.format("%s_otherHurt", OBJECTNAME_PREFIX);
+        public static final String PLAYER_DAMAGE_BY_PLAYER = String.format("%s_damage", OBJECTNAME_PREFIX);
+        public static final String PLAYER_DAMAGE_BY_OTHER = String.format("%s_otherDamage", OBJECTNAME_PREFIX);
+
+        public static final String PLAYER_KNOCK_PLAYER = String.format("%s_knock", OBJECTNAME_PREFIX);
+        public static final String OTHER_KNOCK_PLAYER = String.format("%s_otherKnock", OBJECTNAME_PREFIX);
+        public static final String PLAYER_DOWN_BY_PLAYER = String.format("%s_down", OBJECTNAME_PREFIX);
+        public static final String PLAYER_DOWN_BY_OTHER = String.format("%s_otherDown", OBJECTNAME_PREFIX);
+
+        public static final String PLAYER_REVIVE = String.format("%s_revive", OBJECTNAME_PREFIX);
+
+        public static final String PLAYER_KILL_PLAYER = String.format("%s_kill", OBJECTNAME_PREFIX);
+        public static final String OTHER_KILL_PLAYER = String.format("%s_otherKill", OBJECTNAME_PREFIX);
+        public static final String PLAYER_DEATH_BY_PLAYER = String.format("%s_death", OBJECTNAME_PREFIX);
+        public static final String PLAYER_DEATH_BY_OTHER = String.format("%s_otherDeath", OBJECTNAME_PREFIX);
+
+        public static final String PLAYER_WIN = String.format("%s_win", OBJECTNAME_PREFIX);
+        public static final String PLAYER_LOSE = String.format("%s_lose", OBJECTNAME_PREFIX);
+
+        // 二次计算记分项名
+        public static final String PLAYER_ATTACK_RATE = String.format("%s_attackRate", OBJECTNAME_PREFIX);
+        public static final String PLAYER_KD = String.format("%s_kd", OBJECTNAME_PREFIX);
+        public static final String PLAYER_WIN_RATE = String.format("%s_winRate", OBJECTNAME_PREFIX);
+
+        // 特殊统计记分项名
+        public static final String PLAYER_JOURNEY = String.format("%s_journey", OBJECTNAME_PREFIX);
+        public static final String PLAYER_MAX_SPEED = String.format("%s_maxSpeed", OBJECTNAME_PREFIX);
+    }
 }

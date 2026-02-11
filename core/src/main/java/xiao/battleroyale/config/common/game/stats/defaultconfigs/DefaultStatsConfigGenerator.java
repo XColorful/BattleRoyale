@@ -8,5 +8,7 @@ public class DefaultStatsConfigGenerator {
 
     public static void generateDefaultStatsConfigs(String configDirPath) {
         DefaultStats.generateDefaultConfigs(configDirPath);
+        BattleRoyaleStats.generateDefaultConfigs(configDirPath);
+        DeathMatchStats.generateDefaultConfigs(configDirPath);
     }
 }
