@@ -4,6 +4,52 @@
 
 > 本文档阐述了开发准则背后的核心思想与设计初衷
 
+## 线性熵增
+> 核心哲学
+
+用一次函数 $y = ax + b$ 来表示项目随更新而变化的整体复杂度，则复杂度增速为常数 $a$：
+- 追求步调一致：以统一性为主体，将主要熵增用“共享的同一结构”实现叠加态，避免熵增坍缩至各功能的独立特性中
+	- 从而将各独特性的熵增最小可观测化
+- 常数结构提取：针对 $O(n)$ 持续增长的复杂度，从中集中提取全通用的 $O(1)$ 效果的结构
+	- 使新功能的添加过程仅为对该结构的线性复用
+	- 即便常数结构本身极度复杂，复用时也不会因架构产生额外复杂度，工程量仅取决于功能自身的增量内容
+- 抑制耦合爆炸：传统架构中每增加一层级，层级下的个体间最大存在 $2^{n-1}$ 的耦合关系，这是 NP 问题
+> 例如本模组通过`IGameSubManager`穿透`IGameManager`的扁平化设计：
+> - 既保留了各层级的独特性
+> - 又规避了深层嵌套带来的熵增累加效应
+- 抑制观测复杂度：从观测者效应的视角看，即便实际复杂度为 $\text{常数结构} \times \text{独特性}$：
+	- 当开发者学习或效仿已有功能时，若复用结构成为其“主要印象”，则常数项即成为逻辑主体
+	- 此时独特性带来的可感知复杂度被有效抑制（熵上移至开发者最初的设计支出），甚至在系统演化中趋向于“高阶无穷小”
+
+### 存在方式
+
+#### 当加入新功能时
+
+- 实现“局部必要代码”是短期内最快速的路径（如直接 AI 生成记分板命令实现简易游戏机制）：
+	- 对于长期维护而言，这属于高熵的技术债
+	- 能够以最小熵增而长久保持系统活力的，必然是“死”的结构约束
+- 实现已有结构的完整扁平融入：
+	- 在视模组已有内容为 $O(n)$ 量级的视角下，唯一未扁平化处理的新功能是可忽略的 $O(1)$ 量级
+	- 在该 $O(1)$ 的视角下，所有新增独特性都必须捆绑已有架构，这会拖慢开发速度并增加复杂度
+	- 即在思考功能实现的同时，必须强制思考如何将其解耦融入
+	> - 例如`IConfigSubManager`需要配套完成`BackupCommand`、`ConfigCommand`等诸多适配
+	> - 微观视角下，$O(n)$ 的扁平融入会拖慢功能本身 $O(1)$ 的增量开发过程
+- 并行开发策略：
+	- 快速开发 Demo，在未完成扁平化适配前不合并至主分支
+	- 扁平化后并入主分支，增量逻辑在合并时不占用相同的行修改，从而实现行隔离
+
+#### 扁平化以无后效性
+> “线性”的核心
+
+在当前仅有一个新增功能时，该功能在微积分上（相对于已有规模）是可忽略的“新的一点”：
+- 及时平摊以力求避免“多个新功能”累加造成的技术债
+
+#### 存在后存在
+
+- 隔离性：新功能开发初期必须遵循已有的相互隔离，从而实现可选择性添加或及时删除
+- Demo 迭代：可先快速实现 Demo，此时独特性占主体并引入大量额外熵增
+- 及时坍缩：在同一开发线程下，Demo 完成后必须及时清理以抑制独特性熵增（如将配置项统一至模组框架），消灭其特殊性以回归常数状态
+
 ## 同构分形与扁平化
 
 ### 易用门面
@@ -190,6 +236,52 @@ public class DefaultLootConfigGenerator {
 # English
 
 > This document explains the core ideas and original intentions behind the development principles.
+
+## Linear Entropy Increase
+> Core Philosophy
+
+Represent the overall project complexity as a function of updates using the linear equation $y = ax + b$, where the growth rate of complexity is the constant $a$:
+- Pursuing Synchronicity: Use uniformity as the main body; realize the superposition of major entropy increases through a "shared identical structure" to prevent entropy from collapsing into the independent characteristics of individual features.
+    - Consequently, the entropy increase of each unique feature is rendered as "minimally observable."
+- Constant Structure Extraction: Target the continuously growing $O(n)$ complexity and extract universal structures that achieve $O(1)$ effects.
+    - Thus, the addition of new features is merely a linear reuse of these structures.
+    - Even if the constant structure itself is extremely complex, its reuse adds no additional architectural complexity; the workload depends solely on the incremental content of the feature.
+- Suppressing Coupling Explosions: In traditional architectures, each added hierarchy level can result in up to $2^{n-1}$ coupling relationships among individuals, which is an NP problem.
+> For example, the flattened design of this mod allows `IGameSubManager` to penetrate `IGameManager`:
+> - It preserves the uniqueness of each level.
+> - It avoids the cumulative entropy effects brought by deep nesting.
+- Suppressing Observational Complexity: From the perspective of the observer effect, even if the actual complexity is $\text{Constant Structure} \times \text{Uniqueness}$:
+    - When developers learn from or mimic existing features, the constant structure becomes the logical subject if it forms their "primary impression."
+    - At this point, the perceived complexity brought by uniqueness is effectively suppressed (entropy moves upward to the developer's initial design expenditure) and tends toward "higher-order infinitesimals" in system evolution.
+
+### Mode of Existen
+
+#### When adding new features
+
+- Implementing "locally necessary code" is the fastest path in the short term (e.g., using AI to generate scoreboard commands for simple mechanics):
+    - For long-term maintenance, this belongs to high-entropy technical debt.
+    - What maintains system vitality over the long run with minimal entropy increase must be "dead" structural constraints.
+- Implementing full flattened integration into existing structures:
+    - From a perspective where existing content is of $O(n)$ magnitude, a single un-flattened new feature is a negligible $O(1)$.
+    - From the $O(1)$ perspective, all added uniqueness must be bound to the existing architecture, which slows development and increases complexity.
+    - In other words, while thinking about feature implementation, one must forcibly consider how to decouple and integrate it.
+    > - For example, an `IConfigSubManager` requires accompanying adaptations such as `BackupCommand` and `ConfigCommand`.
+    > - From a micro perspective, $O(n)$ flattened integration slows down the $O(1)$ incremental development of the feature itself.
+- Parallel Development Strategy:
+    - Develop Demos rapidly and do not merge into the main branch until flattened adaptation is complete.
+    - After flattening, merge into the main branch; incremental logic should not occupy the same line modifications during merging, thereby achieving line isolation.
+
+#### Flattening for memorylessness
+> The core of "Linearity"
+
+When only one new feature is added, it is a negligible "new point" in terms of calculus (relative to existing scale):
+- Amortize immediately to strive to avoid the technical debt caused by the accumulation of "multiple new features."
+
+#### Existen after Existen
+
+- Isolation: Early development of new features must follow existing mutual isolation, thereby achieving selective addition or timely removal.
+- Demo Iteration: Demos can be implemented quickly, where uniqueness dominates and introduces significant additional entropy.
+- Timely Collapse: Within the same development thread, the Demo must be cleaned up immediately upon completion to suppress uniqueness-driven entropy (e.g., unifying config items into the mod framework), eliminating its particularity to return to a constant state.
 
 ## Isomorphic Fractals & Flattening
 

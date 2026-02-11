@@ -50,8 +50,10 @@ public class StatsEventHandler {
                 // 二次计算
                 statsManager.player_attack_rate_ObjectiveName,
                 statsManager.player_kd_ObjectiveName,
+                statsManager.player_game_total_ObjectiveName, // win 和 lose 都重置的话也没必要保留
                 statsManager.player_win_rate_ObjectiveName
         ));
+        if (statsManager.syncGameInfoToObjective) objectiveNames.add(statsManager.gameInfoObjectiveName);
         if (statsManager.enableJourneyStats) objectiveNames.add(statsManager.player_journey_ObjectiveName);
         if (statsManager.enableMaxSpeedStats) objectiveNames.add(statsManager.player_max_speed_ObjectiveName);
         return objectiveNames;
@@ -87,11 +89,43 @@ public class StatsEventHandler {
         if (!gameManager.isInGame()) return;
 
         int gameTime = event.getGameTime();
+        if (statsManager.syncGameInfoToObjective) {
+            syncGameInfo(statsManager, gameManager, gameTime);
+        }
         if (gameTime > statsManager.journeyStatsDelay) {
             SpecialStatsEventHandler.onJourneyStats(statsManager, gameManager);
         }
         if (gameTime > statsManager.maxSpeedStatsDelay) {
             SpecialStatsEventHandler.onMaxSpeedStats(statsManager, gameManager);
+        }
+    }
+
+    // 每tick检查，而不基于事件通知才更改
+    // 采用基于状态对比的轮询同步，确保在 gameStep 加速或 Tick 丢失时记分板数据的最终一致性
+    protected static void syncGameInfo(StatsManager statsManager, IGameManager gameManager, int gameTimeInTick) {
+        @Nullable ServerLevel serverLevel = gameManager.getServerLevel();
+        if (serverLevel == null) {
+            BattleRoyale.LOGGER.debug("StatsEventHandler: Failed to get ServerLevel by GameManager, skipped syncGameInfo");
+            return;
+        }
+        Scoreboard scoreboard = serverLevel.getScoreboard();
+
+        int currentPlayerTotal = getScore(scoreboard, statsManager.gameInfoObjectiveName, statsManager.playerTotalScoreName);
+        int actualPlayerTotal = statsManager.totalPlayers; // 游戏开始时写死的数字
+        if (currentPlayerTotal != actualPlayerTotal) {
+            setScore(scoreboard, statsManager.gameInfoObjectiveName, statsManager.playerTotalScoreName, actualPlayerTotal);
+        }
+
+        int currentAlive = getScore(scoreboard, statsManager.aliveScoreName, statsManager.aliveScoreName);
+        int actualAlive = gameManager.getTeamManager().getStandingGamePlayerSize();
+        if (currentAlive != actualAlive) {
+            setScore(scoreboard, statsManager.gameInfoObjectiveName, statsManager.aliveScoreName, actualAlive);
+        }
+
+        int currentGameTime = getScore(scoreboard, statsManager.gameInfoObjectiveName, statsManager.gameTimeScoreName);
+        int actualGameTime = gameTimeInTick / 20; // 以秒为单位
+        if (currentGameTime != actualGameTime) {
+            setScore(scoreboard, statsManager.gameInfoObjectiveName, statsManager.gameTimeScoreName, actualGameTime);
         }
     }
 
@@ -285,7 +319,14 @@ public class StatsEventHandler {
             } else {
                 addScore(scoreboard, statsManager.player_lose_ObjectiveName, playerName, 1);
             }
-            // 更新胜率比例 [ 赢 / (输+赢) ]
+
+            // 更新总场数 [ 赢 + 输 ]
+            updateTotalScore(scoreboard, playerName,
+                    statsManager.player_win_ObjectiveName,
+                    statsManager.player_lose_ObjectiveName,
+                    statsManager.player_game_total_ObjectiveName);
+
+            // 更新胜率比例 [ 赢 / (输 + 赢) ]
             updatePercentageScore(scoreboard, playerName,
                     statsManager.player_win_ObjectiveName, statsManager.player_lose_ObjectiveName, statsManager.player_win_rate_ObjectiveName,
                     statsManager.ratioBase);
