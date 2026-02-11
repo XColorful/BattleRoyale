@@ -58,7 +58,7 @@ public class ScoreUtils {
         setScore(scoreboard, targetObj, playerName, numerator + denominator);
     }
 
-    public static Score getSafeScore(Scoreboard scoreboard, String objectiveName, String playerName) {
+    public static ScoreAccess getSafeScore(Scoreboard scoreboard, String objectiveName, String playerName) {
         Objective objective = scoreboard.getObjective(objectiveName);
         // 如果表不存在，需要手动创建，而不能用Scoreboard的getOrCreateObjective
         if (objective == null) {
@@ -80,7 +80,7 @@ public class ScoreUtils {
     }
 
     public static void setScore(Scoreboard scoreboard, String objectiveName, String playerName, int value) {
-        getSafeScore(scoreboard, objectiveName, playerName).setScore(value);
+        getSafeScore(scoreboard, objectiveName, playerName).set(value);
     }
 
     /**
