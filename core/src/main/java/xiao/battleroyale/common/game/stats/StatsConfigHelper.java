@@ -3,10 +3,7 @@ package xiao.battleroyale.common.game.stats;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.config.common.game.stats.StatsConfigManager;
-import xiao.battleroyale.config.common.game.stats.scoreboard.MainObjectiveEntry;
-import xiao.battleroyale.config.common.game.stats.scoreboard.ScoreboardEntry;
-import xiao.battleroyale.config.common.game.stats.scoreboard.SecondObjectiveEntry;
-import xiao.battleroyale.config.common.game.stats.scoreboard.SpecialObjectiveEntry;
+import xiao.battleroyale.config.common.game.stats.scoreboard.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,12 +26,19 @@ public class StatsConfigHelper {
 
         // 检查配置有效性：所有 ObjectiveName 必须不为空且互不相同
         // ↓AI拉的屎，反正不是我搬砖
+        GameInfoObjectiveEntry gameInfo = scoreboardEntry.gameInfoObjectiveEntry;
         MainObjectiveEntry main = scoreboardEntry.mainObjective;
         SecondObjectiveEntry second = scoreboardEntry.secondObjective;
         SpecialObjectiveEntry special = scoreboardEntry.specialObjective;
 
         // 1. 集中收集所有 ObjectiveName
         List<String> names = new ArrayList<>();
+        if (scoreboardEntry.syncGameInfoToObjective) names.add(scoreboardEntry.gameInfoObjectiveName);
+        if (gameInfo != null) {
+            names.add(gameInfo.playerTotal);
+            names.add(gameInfo.alive);
+            names.add(gameInfo.gameTime);
+        }
         if (main != null) {
             names.add(main.player_to_player_damage); names.add(main.other_to_player_damage);
             names.add(main.player_damage_by_player); names.add(main.player_damage_by_other);
@@ -48,6 +52,7 @@ public class StatsConfigHelper {
         if (second != null) {
             names.add(second.player_attack_rate);
             names.add(second.player_kd);
+            names.add(second.player_game_total);
             names.add(second.player_win_rate);
         }
         if (special != null) {
@@ -72,6 +77,13 @@ public class StatsConfigHelper {
         statsManager.mcMaxHealth = scoreboardEntry.mcMaxHealth;
         statsManager.damageMultiplier = scoreboardEntry.damageMultiplier;
         statsManager.ratioBase = scoreboardEntry.ratioBase;
+        statsManager.syncGameInfoToObjective = scoreboardEntry.syncGameInfoToObjective;
+        statsManager.gameInfoObjectiveName = scoreboardEntry.gameInfoObjectiveName;
+        if (gameInfo != null) {
+            statsManager.playerTotalScoreName = gameInfo.playerTotal;
+            statsManager.aliveScoreName = gameInfo.alive;
+            statsManager.gameTimeScoreName = gameInfo.gameTime;
+        }
         statsManager.scoreboardCycleInterval = scoreboardEntry.scoreboardCycleInterval;
         statsManager.cycleObjectiveName = scoreboardEntry.cycleObjectiveNames;
 
@@ -96,6 +108,7 @@ public class StatsConfigHelper {
         if (second != null) {
             statsManager.player_attack_rate_ObjectiveName = second.player_attack_rate;
             statsManager.player_kd_ObjectiveName = second.player_kd;
+            statsManager.player_game_total_ObjectiveName = second.player_game_total;
             statsManager.player_win_rate_ObjectiveName = second.player_win_rate;
         }
 
@@ -113,6 +126,11 @@ public class StatsConfigHelper {
 
     public static class DefaultObjectiveName {
         public static final String OBJECTNAME_PREFIX = BattleRoyale.MOD_NAME_SHORT;
+
+        public static final String GAME_INFO = String.format("%s_gameInfo", OBJECTNAME_PREFIX);
+        public static final String GAME_TIME = "GameTime";
+        public static final String PLAYER_TOTAL = "Total";
+        public static final String ALIVE = "Alive";
 
         // 原始数据记分项名
         public static final String PLAYER_TO_PLAYER_DAMAGE = String.format("%s_hurt", OBJECTNAME_PREFIX);
@@ -138,6 +156,47 @@ public class StatsConfigHelper {
         // 二次计算记分项名
         public static final String PLAYER_ATTACK_RATE = String.format("%s_attackRate", OBJECTNAME_PREFIX);
         public static final String PLAYER_KD = String.format("%s_kd", OBJECTNAME_PREFIX);
+        public static final String PLAYER_GAME_TOTAL = String.format("%s_gameTotal", OBJECTNAME_PREFIX);
+        public static final String PLAYER_WIN_RATE = String.format("%s_winRate", OBJECTNAME_PREFIX);
+
+        // 特殊统计记分项名
+        public static final String PLAYER_JOURNEY = String.format("%s_journey", OBJECTNAME_PREFIX);
+        public static final String PLAYER_MAX_SPEED = String.format("%s_maxSpeed", OBJECTNAME_PREFIX);
+    }
+
+    public static class DeathMatchObjectiveName {
+        public static final String OBJECTNAME_PREFIX = "dm";
+
+        public static final String GAME_INFO = String.format("%s_gameInfo", OBJECTNAME_PREFIX);
+        public static final String GAME_TIME = "GameTime";
+        public static final String PLAYER_TOTAL = "Total";
+        public static final String ALIVE = "Alive";
+
+        // 原始数据记分项名
+        public static final String PLAYER_TO_PLAYER_DAMAGE = String.format("%s_hurt", OBJECTNAME_PREFIX);
+        public static final String OTHER_TO_PLAYER_DAMAGE = String.format("%s_otherHurt", OBJECTNAME_PREFIX);
+        public static final String PLAYER_DAMAGE_BY_PLAYER = String.format("%s_damage", OBJECTNAME_PREFIX);
+        public static final String PLAYER_DAMAGE_BY_OTHER = String.format("%s_otherDamage", OBJECTNAME_PREFIX);
+
+        public static final String PLAYER_KNOCK_PLAYER = String.format("%s_knock", OBJECTNAME_PREFIX);
+        public static final String OTHER_KNOCK_PLAYER = String.format("%s_otherKnock", OBJECTNAME_PREFIX);
+        public static final String PLAYER_DOWN_BY_PLAYER = String.format("%s_down", OBJECTNAME_PREFIX);
+        public static final String PLAYER_DOWN_BY_OTHER = String.format("%s_otherDown", OBJECTNAME_PREFIX);
+
+        public static final String PLAYER_REVIVE = String.format("%s_revive", OBJECTNAME_PREFIX);
+
+        public static final String PLAYER_KILL_PLAYER = String.format("%s_kill", OBJECTNAME_PREFIX);
+        public static final String OTHER_KILL_PLAYER = String.format("%s_otherKill", OBJECTNAME_PREFIX);
+        public static final String PLAYER_DEATH_BY_PLAYER = String.format("%s_death", OBJECTNAME_PREFIX);
+        public static final String PLAYER_DEATH_BY_OTHER = String.format("%s_otherDeath", OBJECTNAME_PREFIX);
+
+        public static final String PLAYER_WIN = String.format("%s_win", OBJECTNAME_PREFIX);
+        public static final String PLAYER_LOSE = String.format("%s_lose", OBJECTNAME_PREFIX);
+
+        // 二次计算记分项名
+        public static final String PLAYER_ATTACK_RATE = String.format("%s_attackRate", OBJECTNAME_PREFIX);
+        public static final String PLAYER_KD = String.format("%s_kd", OBJECTNAME_PREFIX);
+        public static final String PLAYER_GAME_TOTAL = String.format("%s_gameTotal", OBJECTNAME_PREFIX);
         public static final String PLAYER_WIN_RATE = String.format("%s_winRate", OBJECTNAME_PREFIX);
 
         // 特殊统计记分项名
