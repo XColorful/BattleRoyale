@@ -4,10 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.common.game.stats.StatsConfigHelper.DeathMatchObjectiveName;
 import xiao.battleroyale.config.common.game.stats.StatsConfigManager;
-import xiao.battleroyale.config.common.game.stats.scoreboard.MainObjectiveEntry;
-import xiao.battleroyale.config.common.game.stats.scoreboard.ScoreboardEntry;
-import xiao.battleroyale.config.common.game.stats.scoreboard.SecondObjectiveEntry;
-import xiao.battleroyale.config.common.game.stats.scoreboard.SpecialObjectiveEntry;
+import xiao.battleroyale.config.common.game.stats.scoreboard.*;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -16,7 +13,7 @@ import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
 public class DeathMatchStats {
 
-    private static String DEFAULT_FILE_NAME = "example_deathmatch.json";
+    private static final String DEFAULT_FILE_NAME = "example_deathmatch.json";
 
     public static void generateDefaultConfigs(String configDirPath) {
         JsonArray statsConfigJson = new JsonArray();
@@ -27,6 +24,7 @@ public class DeathMatchStats {
     private static JsonObject generateDeathMatchStatsConfig() {
         ScoreboardEntry scoreboardEntry = new ScoreboardEntry(true, false, 20,
                 100 / 20f, 1000,
+                true, DeathMatchObjectiveName.GAME_INFO, new GameInfoObjectiveEntry(DeathMatchObjectiveName.PLAYER_TOTAL, DeathMatchObjectiveName.ALIVE, DeathMatchObjectiveName.GAME_TIME),
                 20 * 3, Arrays.asList(DeathMatchObjectiveName.PLAYER_TO_PLAYER_DAMAGE, DeathMatchObjectiveName.PLAYER_KILL_PLAYER, DeathMatchObjectiveName.PLAYER_KD),
                 new MainObjectiveEntry(
                         DeathMatchObjectiveName.PLAYER_TO_PLAYER_DAMAGE, DeathMatchObjectiveName.OTHER_TO_PLAYER_DAMAGE, DeathMatchObjectiveName.PLAYER_DAMAGE_BY_PLAYER, DeathMatchObjectiveName.PLAYER_DAMAGE_BY_OTHER,
@@ -40,6 +38,7 @@ public class DeathMatchStats {
                 new SecondObjectiveEntry(
                         DeathMatchObjectiveName.PLAYER_ATTACK_RATE,
                         DeathMatchObjectiveName.PLAYER_KD,
+                        DeathMatchObjectiveName.PLAYER_GAME_TOTAL,
                         DeathMatchObjectiveName.PLAYER_WIN_RATE
                 ),
                 new SpecialObjectiveEntry(

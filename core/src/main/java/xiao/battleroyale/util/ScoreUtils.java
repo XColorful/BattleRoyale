@@ -50,6 +50,16 @@ public class ScoreUtils {
         getSafeScore(scoreboard, targetObj, playerName).setScore(result);
     }
 
+    /**
+     * 将两个记分项的值相加并更新到目标项（用于 gameTotal = win + lose）
+     * 无论原先 targetObj 值是多少，都会根据当前的 numerator 和 denominator 强制更新
+     */
+    public static void updateTotalScore(Scoreboard scoreboard, String playerName, String numeratorObj, String denominatorObj, String targetObj) {
+        int numerator = getScore(scoreboard, numeratorObj, playerName);
+        int denominator = getScore(scoreboard, denominatorObj, playerName);
+        setScore(scoreboard, targetObj, playerName, numerator + denominator);
+    }
+
     public static Score getSafeScore(Scoreboard scoreboard, String objectiveName, String playerName) {
         Objective objective = scoreboard.getObjective(objectiveName);
         // 如果表不存在，需要手动创建，而不能用Scoreboard的getOrCreateObjective
@@ -67,6 +77,10 @@ public class ScoreUtils {
     public static void addScore(Scoreboard scoreboard, String objectiveName, String playerName, int amount) {
         if (amount == 0) return;
         getSafeScore(scoreboard, objectiveName, playerName).add(amount);
+    }
+
+    public static void setScore(Scoreboard scoreboard, String objectiveName, String playerName, int value) {
+        getSafeScore(scoreboard, objectiveName, playerName).setScore(value);
     }
 
     /**

@@ -256,6 +256,9 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
     @Override public List<GamePlayer> getStandingGamePlayers() {
         return teamData.getStandingGamePlayersList();
     }
+    @Override public int getStandingGamePlayerSize() {
+        return teamData.getStandingGamePlayerSize();
+    }
     @Override public @Nullable GamePlayer getRandomStandingGamePlayer() {
         List<GamePlayer> standingGamePlayers = getStandingGamePlayers();
         if (standingGamePlayers.isEmpty()) {

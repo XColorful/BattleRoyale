@@ -9,6 +9,12 @@ public class ScoreboardEntryTag extends ConfigEntryTag {
     public static final String MC_MAX_HEALTH = "mcMaxHealth";
     public static final String DAMAGE_MULTIPLIER = "damageMultiplier";
     public static final String RATIO_BASE = "ratioBase";
+    public static final String SYNC_GAME_INFO_TO_OBJECTIVE = "syncGameInfoToObjective";
+    public static final String GAME_INFO_OBJECTIVE_NAME = "gameInfoObjectiveName";
+    public static final String GAME_INFO_OBJECTIVE = "gameInfoObjective";
+    public static final String PLAYER_TOTAL = "playerTotal";
+    public static final String ALIVE = "alive";
+    public static final String GAME_TIME = "gameTime";
     public static final String SCOREBOARD_CYCLE_INTERVAL = "scoreboardCycleInterval";
     public static final String CYCLE_OBJECTIVE_NAME = "cycleObjectiveName";
 
@@ -32,6 +38,7 @@ public class ScoreboardEntryTag extends ConfigEntryTag {
     public static final String SECOND_OBJECTIVE = "secondObjective";
     public static final String PLAYER_ATTACK_RATE = "player_attack_rate";
     public static final String PLAYER_KD = "player_kd";
+    public static final String PLAYER_GAME_TOTAL = "player_game_total";
     public static final String PLAYER_WIN_RATE = "player_win_rate";
 
     public static final String SPECIAL_OBJECTIVE = "specialObjective";
