@@ -557,21 +557,22 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
         gameProcessManager.finishGameAddWinner(hasWinner);
         stopGame(this.serverLevel);
-        if (hasWinner) {
-            // 延迟2tick发送胜利队伍消息
-            if (this.serverLevel != null) {
+
+        // 游戏结束后自动初始化下一局游戏
+        if (getGameEntry().initGameAfterGame) {
+            if (hasWinner && this.serverLevel != null) { // 游戏正常结束
+                // 延迟1tick初始化游戏
                 ResourceKey<Level> cachedGameLevelKey = this.serverLevel.dimension();
                 Consumer<ResourceKey<Level>> delayedTask = levelKey -> {
                     ServerLevel currentServerLevel = BattleRoyale.getMinecraftServer().getLevel(levelKey);
-                    gameProcessManager.sendWinnerResult(currentServerLevel, getWinnerGamePlayers(), getWinnerGameTeams(), this.gameTime);
-                    // 游戏正常结束后自动初始化游戏
-                    if (getGameEntry().initGameAfterGame && currentServerLevel != null) {
+                    if (currentServerLevel != null) {
                         initGame(serverLevel);
                     }
                 };
-                new DelayedEvent<>(delayedTask, cachedGameLevelKey, 1, "GameManager::sendWinnerResult");
+                new DelayedEvent<>(delayedTask, cachedGameLevelKey, 1, "GameManager::initGameAfterGame");
             }
         }
+
         EventPoster.postEvent(new GameCompleteFinishEvent(this, hasWinner, gamePlayers, getWinnerGamePlayers(), getWinnerGameTeams()));
     }
 
