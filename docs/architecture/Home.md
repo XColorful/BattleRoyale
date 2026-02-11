@@ -249,6 +249,10 @@
     > 	- CFHC出生配置
     > 	- PUBG区域出生配置（传送）
     > - 出生配置类型
+    - [统计数据配置管理器](./config/common/game/stats/stats-config-manager.md)：管理[统计数据配置](/docs/wiki/Configuration/Stats%20config.md)
+    > - 生成统计数据配置：
+    > 	- 大逃杀统计数据配置（结果导向）
+    > 	- 死亡竞赛统计数据配置（过程导向）
     - [区域配置管理器](./config/common/game/zone/zone-config-manager.md)：管理[区域配置](/docs/wiki/Configuration/Zone%20config.md)
     > - 自定义区域配置：
     > 	- [特殊渲染协议](./config/common/game/zone/custom/special-render-protocol.md)：[方向渲染](/docs/wiki/Configuration/Zone%20special%20client.md#方向渲染)
@@ -613,6 +617,10 @@ Module division based on the `xiao.battleroyale` top-level package
     > 	- CFHC spawn config
     > 	- PUBG zone spawn config (teleport)
     > - Spawn config type
+    - [Stats Config Manager](./config/common/game/stats/stats-config-manager.md#English): Manage [Stats config](/docs/wiki/Configuration/Stats%20config.md#English)
+    > - Generate stats config:
+    > 	- BattleRoyale stats config (Result-oriented)
+    > 	- DeathMatch stats config (Process-oriented)
     - [Zone Config Manager](./config/common/game/zone/zone-config-manager.md#English): Manage [Zone config](/docs/wiki/Configuration/Zone%20config.md#English)
     > - Custom zone config:
     > 	- [Special Render Protocol](./config/common/game/zone/custom/special-render-protocol.md#English): [Direction render](/docs/wiki/Configuration/Zone%20special%20client.md#Direction%20render)
