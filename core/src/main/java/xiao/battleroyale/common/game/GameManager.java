@@ -48,6 +48,7 @@ import xiao.battleroyale.common.message.game.GameInfoMessageManager;
 import xiao.battleroyale.compat.playerrevive.BleedingHandler;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.bot.BotConfigManager;
+import xiao.battleroyale.config.common.game.bot.BotConfigManager.BotConfig;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
@@ -650,7 +651,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
     @Override public boolean setSpawnConfigId(int id) {
         if (id < 0) return false;
-        this.statsConfigId = id;
+        this.spawnConfigId = id;
         return true;
     }
     @Override public String getSpawnConfigName(int id) {
@@ -677,7 +678,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
     @Override public String getBotConfigName(int id) {
         IConfigSubManager<?> botConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(GameConfigManager.get().getNameKey(), BotConfigManager.get().getNameKey());
-        if (botConfigManager == null || id < 0 || !(botConfigManager.getConfigEntry(id) instanceof BotConfigManager.BotConfig config)) return "";
+        if (botConfigManager == null || id < 0 || !(botConfigManager.getConfigEntry(id) instanceof BotConfig config)) return "";
 
         return config.getName();
     }

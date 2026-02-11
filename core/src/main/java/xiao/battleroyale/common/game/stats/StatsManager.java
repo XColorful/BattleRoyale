@@ -90,9 +90,13 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     protected float mcMaxHealth = 20; // 对应100%血
     protected float damageMultiplier = 5; // 伤害计分倍率，5就是20*5=100
     protected float ratioBase = 1000; // 对应100%
+    protected boolean syncGameInfoToObjective = true;
+    protected @NotNull String gameInfoObjectiveName = DefaultObjectiveName.GAME_INFO;
+    protected @NotNull String playerTotalScoreName = DefaultObjectiveName.PLAYER_TOTAL;
+    protected @NotNull String aliveScoreName = DefaultObjectiveName.ALIVE;
+    protected @NotNull String gameTimeScoreName = DefaultObjectiveName.GAME_TIME;
     protected int scoreboardCycleInterval = 20 * 3; // 3秒轮换一次
     protected List<String> cycleObjectiveName = new ArrayList<>();
-    protected String objectName_prefix = BattleRoyale.MOD_NAME_SHORT;
 
     // 原始数据
     protected @NotNull String player_to_player_damage_ObjectiveName = DefaultObjectiveName.PLAYER_TO_PLAYER_DAMAGE;
@@ -118,6 +122,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     // 二次计算
     protected @NotNull String player_attack_rate_ObjectiveName = DefaultObjectiveName.PLAYER_ATTACK_RATE;
     protected @NotNull String player_kd_ObjectiveName = DefaultObjectiveName.PLAYER_KD;
+    protected @NotNull String player_game_total_ObjectiveName = DefaultObjectiveName.PLAYER_GAME_TOTAL;
     protected @NotNull String player_win_rate_ObjectiveName = DefaultObjectiveName.PLAYER_WIN_RATE;
 
     // 整活计算
