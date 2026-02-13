@@ -97,10 +97,10 @@ public class Pubg5340x5340Casual {
     }
 
     public static void generateBorderCircle(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME) {
-        generateBorderCircle(zoneConfigJson, halfWidth, GAME_TIME, 0);
+        generateBorderCircle(zoneConfigJson, halfWidth, GAME_TIME, 0, true, 30);
     }
 
-    public static void generateBorderCircle(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME, double randomRange) {
+    public static void generateBorderCircle(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME, double randomRange, boolean eltraAddon, int mutekiSeconds) {
         SafeFuncEntry safeFuncEntry = new SafeFuncEntry(0, 0, 200, 0, 666); // 固定边界的检查频率低一些
 
         StartEntry startEntry = new StartEntry();
@@ -136,11 +136,13 @@ public class Pubg5340x5340Casual {
                 messageFuncEntry, circleEntry);
         zoneConfigJson.add(zoneConfig.toJson());
 
-        zoneConfigJson.add(ElytraAddon.generateLevitationEffect2());
-        zoneConfigJson.add(ElytraAddon.generateElytraEquipment3());
+        if (eltraAddon) {
+            zoneConfigJson.add(ElytraAddon.generateLevitationEffect2());
+            zoneConfigJson.add(ElytraAddon.generateElytraEquipment3());
+        }
 
         // 黄色无敌区
-        int muteki_zoneTime = 20 * 30;
+        int muteki_zoneTime = 20 * mutekiSeconds;
         MutekiFuncEntry mutekiFuncEntry = new MutekiFuncEntry(0, muteki_zoneTime, 20, -1,
                 30);
         circleEntry = new CircleEntry(
@@ -153,8 +155,8 @@ public class Pubg5340x5340Casual {
                 mutekiFuncEntry, circleEntry);
         zoneConfigJson.add(zoneConfig.toJson());
 
-        // Boost zone (Shrink countdown)
-        int boostDelay = 5 * 20;
+        // Boost zone (Muteki countdown)
+        int boostDelay = 20 * 5;
         BoostFuncEntry boostFuncEntry = new BoostFuncEntry(0, 0, 20, 0, muteki_zoneTime - boostDelay);
         zoneConfig = new ZoneConfig(5, "Initial boost zone (Muteki countdown)", "#FFFFFF00",
                 4, boostDelay, 19,

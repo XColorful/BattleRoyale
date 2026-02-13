@@ -263,6 +263,8 @@
   "battleroyale.message.saved_game_stats": "已保存游戏统计数据",
   "battleroyale.message.eliminated_invalid_player": "已淘汰无效玩家 %s",
   "battleroyale.message.reach_max_game_time": "达到最大游戏时长",
+  "battleroyale.message.auto_restart_after_game": "游戏将在 %s 秒后重新开始",
+  "battleroyale.message.remain": "剩余",
 
   "battleroyale.message.switch_loot_spawner_config_file": "切换物资刷新配置文件'%s'",
   "battleroyale.message.no_loot_spawner_config_file": "没有物资刷新配置文件'%s'",
