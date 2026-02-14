@@ -1,14 +1,16 @@
 package xiao.battleroyale.common.game.stats;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.stats.IGamePlayerStats;
 import xiao.battleroyale.common.game.stats.event.*;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GamePlayerStats extends AbstractStats {
+public class GamePlayerStats implements IGamePlayerStats {
 
     public final @NotNull GamePlayer gamePlayer;
 
@@ -28,11 +30,10 @@ public class GamePlayerStats extends AbstractStats {
     private final List<DeathRecord> deathRecords = new ArrayList<>();
 
     public GamePlayerStats(@NotNull GamePlayer gamePlayer) {
-        super();
         this.gamePlayer = gamePlayer;
     }
 
-    public @NotNull GamePlayer getGamePlayer() {
+    @Override public @NotNull GamePlayer getGamePlayer() {
         return gamePlayer;
     }
 
@@ -49,30 +50,56 @@ public class GamePlayerStats extends AbstractStats {
         this.isFinished = true;
     }
 
-    public int getHurtCount() {
+    @Override public int getHurtCount() {
         return hurtRecords.size();
     }
-    public int getDamageCount() {
+    @Override public int getDamageCount() {
         return damageRecords.size();
     }
-    public int getKnockCount() {
+    @Override public int getKnockCount() {
+//        return knockRecords.stream()
+//                .mapToInt(KnockRecord::getKnockCount)
+//                .sum();
         return knockRecords.size();
     }
-    public int getDownCount() {
+    @Override public int getDownCount() {
+//        return downRecords.stream()
+//                .mapToInt(DownRecord::getDownCount)
+//                .sum();
         return downRecords.size();
     }
-    public int getReviveCount() {
+    @Override public int getReviveCount() {
+//        return reviveRecords.stream()
+//                .mapToInt(ReviveRecord::getReviveCount)
+//                .sum();
         return reviveRecords.size();
     }
-    public int getKillCount() {
+    @Override public int getKillCount() {
+//        return killRecords.stream()
+//                .mapToInt(KillRecord::getKillCount)
+//                .sum();
         return killRecords.size();
     }
-    public int getDeathCount() {
+    @Override public int getDeathCount() {
+//        return deathRecords.stream()
+//                .mapToInt(DeathRecord::getDeathCount)
+//                .sum();
         return deathRecords.size();
     }
 
+    @Override public double getHurtAmountTotal() {
+        return hurtRecords.stream()
+                .mapToDouble(HurtRecord::getHurtAmount)
+                .sum();
+    }
+    @Override public double getDamageAmountTotal() {
+        return damageRecords.stream()
+                .mapToDouble(DamageRecord::getDamageAmount)
+                .sum();
+    }
+
     // 伤害
-    public void addHurtRecord(HurtRecord newRecord) {
+    @Override public void addHurtRecord(HurtRecord newRecord) {
         if (isFinished) {
             BattleRoyale.LOGGER.warn("Reject to add hurt record to finished game player stats");
             return;
@@ -85,7 +112,7 @@ public class GamePlayerStats extends AbstractStats {
         hurtRecords.add(newRecord);
     }
     // 被造成伤害
-    public void addDamageRecord(DamageRecord newRecord) {
+    @Override public void addDamageRecord(DamageRecord newRecord) {
         if (isFinished) {
             BattleRoyale.LOGGER.warn("Reject to add damage record to finished game player stats");
             return;
@@ -98,7 +125,7 @@ public class GamePlayerStats extends AbstractStats {
         damageRecords.add(newRecord);
     }
     // 击倒
-    public void addKnockRecord(KnockRecord newRecord) {
+    @Override public void addKnockRecord(KnockRecord newRecord) {
         if (isFinished) {
             BattleRoyale.LOGGER.warn("Reject to add knock record to finished game player stats");
             return;
@@ -111,7 +138,7 @@ public class GamePlayerStats extends AbstractStats {
         knockRecords.add(newRecord);
     }
     // 倒地
-    public void addDownRecord(DownRecord newRecord) {
+    @Override public void addDownRecord(DownRecord newRecord) {
         if (isFinished) {
             BattleRoyale.LOGGER.warn("Reject to add down record to finished game player stats");
             return;
@@ -124,7 +151,7 @@ public class GamePlayerStats extends AbstractStats {
         downRecords.add(newRecord);
     }
     // 复活
-    public void addReviveRecord(ReviveRecord newRecord) {
+    @Override public void addReviveRecord(ReviveRecord newRecord) {
         if (isFinished) {
             BattleRoyale.LOGGER.warn("Reject to add revive record to finished game player stats");
             return;
@@ -137,7 +164,7 @@ public class GamePlayerStats extends AbstractStats {
         reviveRecords.add(newRecord);
     }
     // 淘汰
-    public void addKillRecord(KillRecord newRecord) {
+    @Override public void addKillRecord(KillRecord newRecord) {
         if (isFinished) {
             BattleRoyale.LOGGER.warn("Reject to add kill record to finished game player stats");
             return;
@@ -150,7 +177,7 @@ public class GamePlayerStats extends AbstractStats {
         killRecords.add(newRecord);
     }
     // 被淘汰
-    public void addDeathRecord(DeathRecord newRecord) {
+    @Override public void addDeathRecord(DeathRecord newRecord) {
         if (isFinished) {
             BattleRoyale.LOGGER.warn("Reject to add death record to finished game player stats");
             return;
@@ -161,5 +188,49 @@ public class GamePlayerStats extends AbstractStats {
             if (lastRecord.stackRecord(newRecord)) return;
         }
         deathRecords.add(newRecord);
+    }
+
+    @Override public @Nullable HurtRecord copyLastHurtRecord() {
+        return hurtRecords.isEmpty() ? null : hurtRecords.get(hurtRecords.size() - 1).copyRecord();
+    }
+    @Override public @Nullable DamageRecord copyLastDamageRecord() {
+        return damageRecords.isEmpty() ? null : damageRecords.get(damageRecords.size() - 1).copyRecord();
+    }
+    @Override public @Nullable KnockRecord copyLastKnockRecord() {
+        return knockRecords.isEmpty() ? null : knockRecords.get(knockRecords.size() - 1).copyRecord();
+    }
+    @Override public @Nullable DownRecord copyLastDownRecord() {
+        return downRecords.isEmpty() ? null : downRecords.get(downRecords.size() - 1).copyRecord();
+    }
+    @Override public @Nullable ReviveRecord copyLastReviveRecord() {
+        return reviveRecords.isEmpty() ? null : reviveRecords.get(reviveRecords.size() - 1).copyRecord();
+    }
+    @Override public @Nullable KillRecord copyLastKillRecord() {
+        return killRecords.isEmpty() ? null : killRecords.get(killRecords.size() - 1).copyRecord();
+    }
+    @Override public @Nullable DeathRecord copyLastDeathRecord() {
+        return deathRecords.isEmpty() ? null : deathRecords.get(deathRecords.size() - 1).copyRecord();
+    }
+
+    @Override public List<HurtRecord> getHurtRecords() {
+        return new ArrayList<>(hurtRecords);
+    }
+    @Override public List<DamageRecord> getDamageRecords() {
+        return new ArrayList<>(damageRecords);
+    }
+    @Override public List<KnockRecord> getKnockRecords() {
+        return new ArrayList<>(knockRecords);
+    }
+    @Override public List<DownRecord> getDownRecords() {
+        return new ArrayList<>(downRecords);
+    }
+    @Override public List<ReviveRecord> getReviveRecords() {
+        return new ArrayList<>(reviveRecords);
+    }
+    @Override public List<KillRecord> getKillRecords() {
+        return new ArrayList<>(killRecords);
+    }
+    @Override public List<DeathRecord> getDeathRecords() {
+        return new ArrayList<>(deathRecords);
     }
 }

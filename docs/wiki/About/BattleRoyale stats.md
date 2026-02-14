@@ -55,6 +55,7 @@
 ## 玩家数据
 
 ## 事件数据
+> 时间线
 
 # English
 
@@ -111,3 +112,4 @@ Located in all json files under _./minecraft/battleroyale/temp_
 ## Player stats
 
 ## Event stats
+> Timeline

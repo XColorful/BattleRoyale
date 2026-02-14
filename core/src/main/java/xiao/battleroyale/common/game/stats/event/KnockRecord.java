@@ -1,12 +1,21 @@
 package xiao.battleroyale.common.game.stats.event;
 
+import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.common.game.team.GamePlayer;
+
 /**
  * 击倒事件的记录
  */
-public class KnockRecord extends AbstractGameEventRecord<KnockRecord> {
+public class KnockRecord extends AbstractGamePlayerEventRecord<KnockRecord> {
 
-    public KnockRecord(int gameTime, int timeOrder) {
-        super(gameTime, timeOrder);
+    private int knockCount = 1;
+
+    public KnockRecord(int gameTime, int timeOrder, @NotNull GamePlayer gamePlayer, @NotNull GamePlayer causeGamePlayer) {
+        super(gameTime, timeOrder, gamePlayer, causeGamePlayer);
+    }
+
+    public int getKnockCount() {
+        return knockCount;
     }
 
     @Override
@@ -15,7 +24,12 @@ public class KnockRecord extends AbstractGameEventRecord<KnockRecord> {
     }
 
     @Override
-    public KnockRecord copyRecord(int gameTimeAppend, int timeOrder) {
-        return new  KnockRecord(this.gameTime + gameTimeAppend, timeOrder);
+    public boolean stackAdditional(KnockRecord newRecord) {
+        return false;
+    }
+
+    @Override
+    public KnockRecord copyRecord() {
+        return new KnockRecord(this.gameTime, timeOrder, gamePlayer, causeGamePlayer);
     }
 }

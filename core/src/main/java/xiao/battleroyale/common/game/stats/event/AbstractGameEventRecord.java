@@ -6,7 +6,7 @@ public abstract class AbstractGameEventRecord<T extends AbstractGameEventRecord<
     public final int timeOrder;
     protected int recordDuration = 0; // gameTime + recordDuration = 最终gameTime（相同时刻记录叠加，gameTime相减为0）
 
-    public AbstractGameEventRecord(int gameTime, int timeOrder) {
+    protected AbstractGameEventRecord(int gameTime, int timeOrder) {
         this.gameTime = gameTime;
         this.timeOrder = timeOrder;
     }
@@ -37,11 +37,13 @@ public abstract class AbstractGameEventRecord<T extends AbstractGameEventRecord<
         if (!canStack(newRecord)) return false;
 
         this.recordDuration = newRecord.getGameTime() - this.getGameTime();
-        return true;
+        return stackAdditional(newRecord);
     }
+
+    protected abstract boolean stackAdditional(T newRecord);
 
     /**
      * 复制记录
      */
-    public abstract T copyRecord(int gameTimeAppend, int timeOrder);
+    public abstract T copyRecord();
 }

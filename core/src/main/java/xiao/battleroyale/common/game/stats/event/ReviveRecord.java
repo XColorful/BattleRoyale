@@ -1,12 +1,21 @@
 package xiao.battleroyale.common.game.stats.event;
 
+import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.common.game.team.GamePlayer;
+
 /**
  * 救援事件的记录，包含倒地扶起
  */
-public class ReviveRecord extends AbstractGameEventRecord<ReviveRecord> {
+public class ReviveRecord extends AbstractGamePlayerEventRecord<ReviveRecord> {
 
-    public ReviveRecord(int gameTime, int timeOrder) {
-        super(gameTime, timeOrder);
+    private int reviveCount = 1;
+
+    public ReviveRecord(int gameTime, int timeOrder, @NotNull GamePlayer gamePlayer, @NotNull GamePlayer causeGamePlayer) {
+        super(gameTime, timeOrder, gamePlayer, causeGamePlayer);
+    }
+
+    public int getReviveCount() {
+        return reviveCount;
     }
 
     @Override
@@ -15,8 +24,12 @@ public class ReviveRecord extends AbstractGameEventRecord<ReviveRecord> {
     }
 
     @Override
-    public ReviveRecord copyRecord(int gameTimeAppend, int timeOrder) {
-        ReviveRecord newRecord = new ReviveRecord(this.gameTime + gameTimeAppend, timeOrder);
-        return newRecord;
+    public boolean stackAdditional(ReviveRecord newRecord) {
+        return false;
+    }
+
+    @Override
+    public ReviveRecord copyRecord() {
+        return new ReviveRecord(this.gameTime, timeOrder, gamePlayer, causeGamePlayer);
     }
 }
