@@ -71,10 +71,6 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
 
     protected final StatsData statsData = new StatsData();
 
-    // player
-    protected final Map<GamePlayer, GamePlayerStats> gamePlayerStats = new HashMap<>();
-    protected final Map<DamageSource, DamageSourceStats> damageSourceStats = new HashMap<>();
-
     protected int timeOrder = 0;
     protected int minRank = Integer.MAX_VALUE;
     protected int maxRank = Integer.MIN_VALUE;
@@ -83,6 +79,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     protected int totalPlayers = 0;
     protected boolean recordStats = false;
     public boolean shouldRecordStats() { return recordStats; }
+    public Set<GamePlayer> getRecordGamePlayers() { return this.statsData.getRecordGamePlayers(); }
 
     // 原版记分板
     protected boolean recordScoreboard = true;
@@ -221,14 +218,19 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
         this.configPrepared = false;
         BattleRoyale.LOGGER.debug("StatsManager complete initGame");
     }
-
+    private void clearStats() {
+        this.statsData.clear();
+        timeOrder = 0;
+        minRank = Integer.MAX_VALUE;
+        maxRank = Integer.MIN_VALUE;
+    }
     @Override
     public boolean startGame(ServerLevel serverLevel) {
         startotherTime = StringUtils.getTimestampString();
         totalPlayers = GameTeamManager.getGamePlayers().size();
-        for (GamePlayer gamePlayer : GameTeamManager.getStandingGamePlayers()) {
-            gamePlayerStats.put(gamePlayer, new GamePlayerStats(gamePlayer));
-        }
+        this.statsData.addRecordGamePlayers(GameTeamManager.getStandingGamePlayers());
+
+        this.statsData.startGame(); // 上锁
         return isReady();
     }
 
@@ -239,16 +241,16 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     @Override
     public void onGameTick(int gameTime) {
 
-        if (!recordScoreboard) return;
-
         // 轮流切换scoreboard
-        if (cycleObjectiveName.isEmpty()) return;
-        @Nullable ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
-        if (serverLevel == null) return;
+        if (scoreboardCycleInterval > 0) {
+            if (cycleObjectiveName.isEmpty()) return;
+            @Nullable ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
+            if (serverLevel == null) return;
 
-        Scoreboard scoreboard = serverLevel.getScoreboard();
-        int cycleIndex = (gameTime / scoreboardCycleInterval) % cycleObjectiveName.size();
-        ScoreUtils.setSidebarObjective(scoreboard, cycleObjectiveName.get(cycleIndex));
+            Scoreboard scoreboard = serverLevel.getScoreboard();
+            int cycleIndex = (gameTime / scoreboardCycleInterval) % cycleObjectiveName.size();
+            ScoreUtils.setSidebarObjective(scoreboard, cycleObjectiveName.get(cycleIndex));
+        }
     }
 
     @Override
@@ -258,22 +260,16 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
         if (shouldRecordStats()) {
             saveStats();
         }
+        this.statsData.endGame(); // 解锁
 
-        if (!recordScoreboard) return;
-        if (serverLevel == null) return;
+        // 设置 sidebar 和 list 位置显示的记分板
+        if (recordScoreboard) {
+            if (serverLevel == null) return;
 
-        Scoreboard scoreboard = serverLevel.getScoreboard();
-        ScoreUtils.setListObjective(scoreboard, listObjectiveAfterGame);
-        ScoreUtils.setSidebarObjective(scoreboard, sidebarObjectiveAfterGame);
-    }
-
-    private void clearStats() {
-        gamePlayerStats.clear();
-        damageSourceStats.clear();
-        this.statsData.clear();
-        timeOrder = 0;
-        minRank = Integer.MAX_VALUE;
-        maxRank = Integer.MIN_VALUE;
+            Scoreboard scoreboard = serverLevel.getScoreboard();
+            ScoreUtils.setListObjective(scoreboard, listObjectiveAfterGame);
+            ScoreUtils.setSidebarObjective(scoreboard, sidebarObjectiveAfterGame);
+        }
     }
 
     @Override public void onRecordStart(GameStartFinishEvent event) {
@@ -361,14 +357,17 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
      */
     public void saveStats(String filePath) {
         // 按先排名，后游戏玩家id排序
-        List<GamePlayerStats> gamePlayerStatsList = new ArrayList<>(gamePlayerStats.values());
+        List<GamePlayerStats> gamePlayerStatsList = this.statsData.getRecordGamePlayerStats();
         gamePlayerStatsList.sort(Comparator
                 .comparingInt(GamePlayerStats::getGameRank)
-                .thenComparingInt(s -> s.gameSingleId)
+                .thenComparingInt(s -> s.getGamePlayer().getGameSingleId())
         );
 
         JsonArray jsonArray = new JsonArray();
         GameSetupStatsHelper.addGameSetupStats(this, jsonArray);
+        GameEventStatsHelper.addTimelineStats(this, jsonArray);
+        GameEventStatsHelper.addRankStats(this, jsonArray);
+        GameEventStatsHelper.addDetailStats(this, jsonArray);
         JsonUtils.writeJsonToFile(filePath, jsonArray);
 
         ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
@@ -380,16 +379,8 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
         BattleRoyale.LOGGER.info("Saved game stats to {}", filePath);
     }
 
-    private void addTimelineStats(@NotNull JsonArray jsonArray) {
-        ;
-    }
-
-    private void addRankStats(@NotNull JsonArray jsonArray) {
-        ;
-    }
-
-    private void addDetailStats(@NotNull JsonArray jsonArray) {
-        ;
+    protected GamePlayerStats getGamePlayerStats(GamePlayer gamePlayer) {
+        return this.statsData.getGamePlayerStats(gamePlayer);
     }
 
     /**
