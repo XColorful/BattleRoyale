@@ -5,14 +5,14 @@ import xiao.battleroyale.api.game.IGameManager;
 
 public abstract class AbstractGameTickEvent extends AbstractGameEvent {
 
-    protected final int gameTime;
+    protected final int gameTickTime;
 
-    public AbstractGameTickEvent(IGameManager gameManager, int gameTime) {
+    public AbstractGameTickEvent(IGameManager gameManager, int gameTickTime) {
         super(gameManager);
-        this.gameTime = gameTime;
+        this.gameTickTime = gameTickTime;
     }
 
-    public int getGameTime() {
-        return this.gameTime;
+    public int getGameTickTime() {
+        return this.gameTickTime;
     }
 }
