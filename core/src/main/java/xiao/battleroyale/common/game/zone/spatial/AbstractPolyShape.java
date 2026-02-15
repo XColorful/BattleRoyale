@@ -54,9 +54,8 @@ public abstract class AbstractPolyShape extends AbstractSimpleShape {
     @Override
     public @Nullable Vec3 getStartDimension() {
         if (startDimension == null) return null;
-        if (checkBadShape
-                && (Vec3Utils.hasNegative(startDimension) || !Vec3Utils.equalXZAbs(startDimension))) {
-            return Vec3Utils.positive(Vec3Utils.applyXAbsToZ(startDimension));
+        if (checkBadShape) {
+            return Vec3Utils.toPositiveAndXGreaterThanZ(startDimension);
         } else {
             return startDimension;
         }
@@ -70,9 +69,8 @@ public abstract class AbstractPolyShape extends AbstractSimpleShape {
         }
         Vec3 baseVec = getDimensionNoCheck(allowedProgress);
         if (baseVec == null) return null;
-        if (checkBadShape
-                && (Vec3Utils.hasNegative(baseVec) || !Vec3Utils.equalXZAbs(baseVec))) {
-            return Vec3Utils.positive(Vec3Utils.applyXAbsToZ(baseVec));
+        if (checkBadShape) {
+            return Vec3Utils.toPositiveAndXGreaterThanZ(baseVec);
         } else {
             return baseVec;
         }
@@ -81,9 +79,8 @@ public abstract class AbstractPolyShape extends AbstractSimpleShape {
     @Override
     public @Nullable Vec3 getEndDimension() {
         if (endDimension == null) return null;
-        if (checkBadShape
-                && (Vec3Utils.hasNegative(endDimension) || !Vec3Utils.equalXZAbs(endDimension))) {
-            return Vec3Utils.positive(Vec3Utils.applyXAbsToZ(endDimension));
+        if (checkBadShape) {
+            return Vec3Utils.toPositiveAndXGreaterThanZ(endDimension);
         } else {
             return endDimension;
         }

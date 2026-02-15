@@ -1,6 +1,5 @@
 package xiao.battleroyale.common.game.zone.spatial;
 
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;

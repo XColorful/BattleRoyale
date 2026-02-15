@@ -5,6 +5,7 @@ import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.util.ClassUtils;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
 public class SubReloadConfigs {
@@ -37,19 +38,18 @@ public class SubReloadConfigs {
             }
         }
 
-        Map<String, ClassUtils.ArrayMap<Integer, T>> fileConfigs = context.getConfigFolderData(folderId).fileConfigsByFileName;
-        if (!fileConfigs.containsKey(fileNameString)) { // 之前的文件名不存在
-            if (fileConfigs.isEmpty()) {
-                BattleRoyale.LOGGER.warn("No config files loaded for type {}. Cannot switch to any file.", context.getFolderType(folderId));
-                return false;
-            }
-            fileNameString = fileConfigs.keySet().iterator().next();
+        FolderConfigData<T> fileConfigs = context.getConfigFolderData(folderId);
+        if (!fileConfigs.hasConfigLoaded()) { // 没有配置
+            BattleRoyale.LOGGER.warn("No config files loaded for type {}. Cannot switch to any file.", context.getFolderType(folderId));
+            return false;
+        } else if (!fileConfigs.getConfigFileNames().contains(fileNameString)) { // 之前的文件名不存在
+            fileNameString = fileConfigs.getConfigFileNames().iterator().next();
         }
 
         // 遍历每个配置文件
-        for (Map.Entry<String, ClassUtils.ArrayMap<Integer, T>> entry : fileConfigs.entrySet()) {
+        for (Map.Entry<String, ClassUtils.ArrayMap<Integer, T>> entry : fileConfigs.getFileConfigsUnsafe().entrySet()) {
             // 遍历文件内每个配置
-            for (T configEntry : entry.getValue().asList()) {
+            for (T configEntry : entry.getValue()) {
                 if (!configEntry.isDefaultSelect()) {
                     continue;
                 }

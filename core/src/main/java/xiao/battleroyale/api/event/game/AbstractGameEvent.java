@@ -15,6 +15,10 @@ public abstract class AbstractGameEvent extends CustomEvent {
         return gameManager;
     }
 
+    public int getGameTime() {
+        return gameManager.getGameTime();
+    }
+
     @Override
     public boolean isCancelable() {
         return true;
