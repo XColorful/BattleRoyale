@@ -1,5 +1,6 @@
 package xiao.battleroyale.common.game.zone.spatial;
 
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -44,8 +45,8 @@ public class CircleShape extends AbstractSimpleShape {
             cachedDimension = dimension;
             cachedProgress = allowProgress;
         }
-        double dimSq = dimension.x * dimension.z;
-        boolean isZoneInverted = dimSq < 0;
+        double dimSq = dimension.x * dimension.x;
+        boolean isZoneInverted = Mth.sign(dimension.x) * Mth.sign(dimension.z) < 0;
         // 旋转对圆没有几何影响
 
         // 忽略y方向
