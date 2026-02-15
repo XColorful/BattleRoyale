@@ -20,7 +20,6 @@ import xiao.battleroyale.config.common.server.profile.config.ConfigApplicationEn
 import xiao.battleroyale.config.common.server.profile.config.ConfigEntry;
 import xiao.battleroyale.config.common.server.profile.config.ConfigManagerEntry;
 import xiao.battleroyale.config.common.server.profile.config.ConfigSubManagerEntry;
-import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.StringUtils;
 
 import java.nio.file.Paths;
@@ -72,11 +71,13 @@ public class ProfileManager implements IProfileManager {
 
         int savedTotal = 0;
 
+        // 主配置管理器
         List<ConfigManagerEntry> configManagerEntries = new ArrayList<>();
         for (IConfigManager configManager : modConfigManager.getConfigManagers()) {
             savedTotal += addToConfigManagerEntry(configManagerEntries, configManager);
         }
 
+        // 子配置管理器
         List<ConfigSubManagerEntry> configSubManagerEntries = new ArrayList<>();
         for (IConfigSubManager<?> configSubManager : modConfigManager.getConfigSubManagers()) {
             savedTotal += addToConfigSubManagerEntry(configSubManagerEntries, configSubManager);

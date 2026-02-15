@@ -96,7 +96,8 @@ public class SubLoadConfigs {
             }
 
             // 遍历文件夹下所有json文件
-            context.getConfigFolderData(folderId).fileConfigsByFileName.clear();
+            FolderConfigData<T> fileConfigs = context.getConfigFolderData(folderId);
+            fileConfigs.clearAll();
 
             for (Path filePath : jsonFiles) {
                 String fileNameNoExtension = filePath.getFileName().toString().replace(".json", "");
@@ -105,7 +106,7 @@ public class SubLoadConfigs {
                 loadConfigFromFile(context, filePath, newFileConfigs, folderId);
 
                 if (!newFileConfigs.isEmpty()) {
-                    context.getConfigFolderData(folderId).fileConfigsByFileName.put(fileNameNoExtension, newFileConfigs);
+                    fileConfigs.putConfigFile(fileNameNoExtension, newFileConfigs);
                     newFileConfigs.sort(context.getConfigIdComparator(folderId));
 
                     BattleRoyale.LOGGER.debug("Loaded {} {} config from file: {} for type {}", newFileConfigs.size(), context.getConfigSubPath(folderId), filePath.getFileName(), folderType);

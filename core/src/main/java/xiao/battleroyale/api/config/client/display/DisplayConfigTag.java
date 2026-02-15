@@ -17,6 +17,7 @@ public class DisplayConfigTag extends ConfigEntryTag {
     public static final String ALIVE_COUNT_COLOR = "aliveCountColor";
 
     public static final String ENABLE_JOURNEY_MAP = "enableJourneyMap";
+    public static final String LINE_THICKNESS = "lineThickness";
 
     private DisplayConfigTag() {}
 }

@@ -263,6 +263,8 @@
   "battleroyale.message.saved_game_stats": "Saved game stats",
   "battleroyale.message.eliminated_invalid_player": "Eliminated invalid player %s",
   "battleroyale.message.reach_max_game_time": "Reached max game time",
+  "battleroyale.message.auto_restart_after_game": "Game will restart after %s seconds",
+  "battleroyale.message.remain": "Remain",
 
   "battleroyale.message.switch_loot_spawner_config_file": "Switch loot spawner config file to '%s'",
   "battleroyale.message.no_loot_spawner_config_file": "No loot spawner config file '%s'",

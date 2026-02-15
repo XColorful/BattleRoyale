@@ -193,4 +193,83 @@ public class Shape2D {
             consumer.vertex(matrix, outerX2, 0, outerZ2).color(r, g, b, a).normal(normalX2, 0, normalZ2).endVertex();
         }
     }
+
+    /**
+     * 绘制一个以模型原点为中心的填充十字形柱体。
+     * 十字由两个相互垂直的矩形组成，底面位于Y=0平面。
+     * @param outerHalfWidth 十字架长臂的半长度（外宽）。
+     * @param innerHalfWidth 十字架短臂的半宽度（内宽）。
+     * @param height 柱体的高度。
+     */
+    public static void drawFilledCrossCylinder(Matrix4f matrix, VertexConsumer consumer,
+                                               float r, float g, float b, float a,
+                                               float outerHalfWidth, float innerHalfWidth, float height) {
+        // 十字形的12个顶点坐标（按顺时针/逆时针排列，避免内部重叠）
+        // 坐标点分布示意：
+        //      1--2
+        //      |  |
+        // 12---3  4---5
+        // |           |
+        // 11---9  7---6
+        //      |  |
+        //      10-8
+        float[] x = {
+                -innerHalfWidth,  innerHalfWidth,  innerHalfWidth,  outerHalfWidth, outerHalfWidth,  innerHalfWidth,
+                innerHalfWidth, -innerHalfWidth, -innerHalfWidth, -outerHalfWidth, -outerHalfWidth, -innerHalfWidth
+        };
+        float[] z = {
+                -outerHalfWidth, -outerHalfWidth, -innerHalfWidth, -innerHalfWidth,  innerHalfWidth,  innerHalfWidth,
+                outerHalfWidth,  outerHalfWidth,  innerHalfWidth,  innerHalfWidth, -innerHalfWidth, -innerHalfWidth
+        };
+        // 对应的法线向量（12条边）
+        float[] nx = { 0, 1, 1, 0, -1, 0, 0, -1, -1, 0, 1, 0 };
+        float[] nz = { -1, 0, 0, 1, 0, 1, 1, 0, 0, -1, 0, -1 };
+
+        for (int i = 0; i < 12; i++) {
+            int next = (i + 1) % 12;
+            consumer.vertex(matrix, x[i], 0, z[i]).color(r, g, b, a).normal(nx[i], 0, nz[i]).endVertex();
+            consumer.vertex(matrix, x[i], height, z[i]).color(r, g, b, a).normal(nx[i], 0, nz[i]).endVertex();
+            consumer.vertex(matrix, x[next], height, z[next]).color(r, g, b, a).normal(nx[i], 0, nz[i]).endVertex();
+            consumer.vertex(matrix, x[next], 0, z[next]).color(r, g, b, a).normal(nx[i], 0, nz[i]).endVertex();
+        }
+    }
+
+    /**
+     * 绘制一个以模型原点为中心的填充圆环柱体。
+     * 包含外圆柱面和内圆柱面（内壁法线指向中心），底面位于Y=0平面。
+     * @param outerRadius 圆环外径。
+     * @param innerRadius 圆环内径。
+     * @param height 柱体的高度。
+     * @param segments 近似段数。
+     * @param initialAngle 初始旋转角度。
+     */
+    public static void drawFilledRingCylinder(Matrix4f matrix, VertexConsumer consumer,
+                                              float r, float g, float b, float a,
+                                              float outerRadius, float innerRadius, float height, int segments, float initialAngle) {
+        // 1. 渲染外环面 (法线向外)
+        drawFilledPolygonCylinder(matrix, consumer, r, g, b, a, outerRadius, height, segments, initialAngle);
+
+        // 2. 渲染内环面 (手动实现，法线向内)
+        final float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
+        for (int i = 0; i < segments; i++) {
+            float angle1 = initialAngle + (i * TWO_PI_DIV_SEGMENTS);
+            float angle2 = initialAngle + ((i + 1) * TWO_PI_DIV_SEGMENTS);
+
+            float x1 = innerRadius * Mth.cos(angle1);
+            float z1 = innerRadius * Mth.sin(angle1);
+            float x2 = innerRadius * Mth.cos(angle2);
+            float z2 = innerRadius * Mth.sin(angle2);
+
+            // 内壁法线指向圆心，取外壁法线的反方向
+            float midAngle = angle1 + (TWO_PI_DIV_SEGMENTS / 2.0f);
+            float normalX = -Mth.cos(midAngle);
+            float normalZ = -Mth.sin(midAngle);
+
+            // 为了保证背面剔除(Backface Culling)正确，内壁的顶点顺序应与外壁相反
+            consumer.vertex(matrix, x1, 0, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(matrix, x2, 0, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(matrix, x2, height, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.vertex(matrix, x1, height, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+        }
+    }
 }

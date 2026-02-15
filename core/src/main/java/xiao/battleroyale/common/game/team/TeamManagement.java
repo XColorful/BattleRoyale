@@ -196,7 +196,7 @@ public class TeamManagement {
                         Consumer<ServerPlayer> delayedTask = isWinner -> {
                             gameManager.getGameLobbyManager().sendLobbyTeleportMessage(serverPlayer, false);
                         };
-                        new DelayedEvent<>(delayedTask, serverPlayer, 2, "TeamManager::GameManager.sendLobbyTeleportMessage");
+                        new DelayedEvent<>(delayedTask, serverPlayer, 1, "TeamManager::GameManager.sendLobbyTeleportMessage");
                     }
                 }
             }

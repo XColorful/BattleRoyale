@@ -62,9 +62,11 @@
 ### 地图信息显示
 
 - enableJourneyMap：是否在[JourneyMap](https://teamjm.github.io/journeymap-docs/5.9.x/)上显示区域
+- lineThickness：区域轮廓的线条粗细
 ```json
 "map": {
-	"enableJourneyMap": true
+	"enableJourneyMap": true,
+	"lineThickness": 4
 }
 ```
 
@@ -130,8 +132,10 @@
 ### Map info display
 
 - enableJourneyMap: Whether to display zone on [JourneyMap](https://teamjm.github.io/journeymap-docs/5.9.x/)
+- lineThickness: the thickness of the zone outline stroke
 ```json
 "map": {
-	"enableJourneyMap": true
+	"enableJourneyMap": true,
+	"lineThickness": 4
 }
 ```

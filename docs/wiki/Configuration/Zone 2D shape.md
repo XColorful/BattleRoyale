@@ -56,8 +56,8 @@
 }
 ```
 ```java
-double dimSq = dimension.x * dimension.z;  
-boolean isZoneInverted = dimSq < 0;  
+double dimSq = dimension.x * dimension.x;  
+boolean isZoneInverted = Mth.sign(dimension.x) * Mth.sign(dimension.z) < 0;
 double xDist = center.x - checkPos.x;  
 double zDist = center.z - checkPos.z;  
 return (xDist * xDist + zDist * zDist) <= Math.abs(dimSq) != isZoneInverted;  
@@ -454,6 +454,133 @@ if (distFromCenterSq >= maxRadiusSq) { // 外接圆判断
 return (result <= 1.0 + EPSILON) != isZoneInverted;
 ```
 
+#### 十字形
+
+- zoneShapeType："cross"
+- dimension：取dimension.x作为外正方形半边长，取dimension.z作为内正方形半边长
+> allowBadShape：在dimension进行正值校正的基础上使用dimension.x和dimension.z较大者作为外正方形半边长，取dimensin.x判断是否反转
+```json
+{
+	"zoneShapeType": "cross",
+	"start": {
+		"center": {
+			"centerType": "lockPlayer",
+			"playerId": 0,
+			"selectStanding": true,
+			"randomRange": 0.0,
+			"playerCenterLerp": 0.2
+		},
+		"dimension": {
+			"dimensionType": "fixed",
+			"fixed": "15.0,1.5,5.0",
+			"randomRange": 0.0
+		},
+		"rotation": {
+			"rotationType": "fixed",
+			"fixed": 0.0,
+			"randomRange": 0.0
+		}
+	},
+	"end": {
+		"center": {
+			"centerType": "previous",
+			"previousZoneId": 18,
+			"progress": 0.0,
+			"randomRange": 0.0,
+			"playerCenterLerp": 0.0
+		},
+		"dimension": {
+			"dimensionType": "previous",
+			"previousZoneId": 18,
+			"progress": 0.0,
+			"scale": 1.0,
+			"randomRange": 0.0
+		},
+		"rotation": {
+			"rotationType": "fixed",
+			"fixed": 30.0,
+			"randomRange": 0.0
+		}
+	},
+	"allowBadShape": false
+}
+```
+```java
+double rawOuterHalfWidth = dimension.x;
+double rawInnerHalfWidth = dimension.z;
+boolean isZoneInverted = rawOuterHalfWidth < 0;
+return ( // 横向矩形：X轴长（外半长），Z轴窄（内半长）
+        (Math.abs(pX_rotated) <= effectiveOuterHalfWidth
+                && Math.abs(pZ_rotated) <= effectiveInnerHalfWidth)
+        // 纵向矩形：X轴窄（内半长），Z轴长（外半长）
+        ||
+                (Math.abs(pX_rotated) <= effectiveInnerHalfWidth
+                && Math.abs(pZ_rotated) <= effectiveOuterHalfWidth)
+) == !isZoneInverted;
+```
+
+#### 环形
+
+- zoneShapeType："ring"
+- dimension：取dimension.x作为外圆半径，取dimension.z作为内圆半径
+> allowBadShape：在dimension进行正值校正的基础上使用dimension.x和dimension.z较大者作为外接圆半径，取dimensin.x判断是否反转
+```json
+{
+	"zoneShapeType": "ring",
+	"start": {
+		"center": {
+			"centerType": "previous",
+			"previousZoneId": 18,
+			"progress": 0.0,
+			"randomRange": 0.0,
+			"playerCenterLerp": 0.0
+		},
+		"dimension": {
+			"dimensionType": "previous",
+			"previousZoneId": 18,
+			"progress": 0.0,
+			"scale": 1.0,
+			"randomRange": 0.0
+		},
+		"rotation": {
+			"rotationType": "fixed",
+			"fixed": 0.0,
+			"randomRange": 0.0
+		}
+	},
+	"end": {
+		"center": {
+			"centerType": "previous",
+			"previousZoneId": 19,
+			"progress": 0.0,
+			"randomRange": 0.0,
+			"playerCenterLerp": 0.0
+		},
+		"dimension": {
+			"dimensionType": "fixed",
+			"fixed": "21.213203,1.5,24.213203",
+			"randomRange": 0.0
+		},
+		"rotation": {
+			"rotationType": "fixed",
+			"fixed": 0.0,
+			"randomRange": 0.0
+		}
+	},
+	"allowBadShape": false
+}
+```
+```java
+double outerDimSq = dimension.x * dimension.x;  
+double innerDimSq = dimension.z * dimension.z;
+boolean isZoneInverted = dimension.x < 0;
+return ( // 在外圆环内  
+        distSq < outerDimSq  
+         // 在内圆环内  
+        && distSq > innerDimSq  
+) == !isZoneInverted;
+```
+
 #### 不规则多边形
 暂未实现
 
@@ -515,8 +642,8 @@ return (result <= 1.0 + EPSILON) != isZoneInverted;
 }
 ```
 ```java
-double dimSq = dimension.x * dimension.z;  
-boolean isZoneInverted = dimSq < 0;  
+double dimSq = dimension.x * dimension.x;  
+boolean isZoneInverted = Mth.sign(dimension.x) * Mth.sign(dimension.z) < 0;
 double xDist = center.x - checkPos.x;  
 double zDist = center.z - checkPos.z;  
 return (xDist * xDist + zDist * zDist) <= Math.abs(dimSq) != isZoneInverted;  
@@ -840,6 +967,7 @@ return (windingNumber == 0) == isZoneInverted;
 ```
 
 #### Ellipse
+
 - zoneShapeType: "ellipse"
 - dimension: dimension.x is used as the semi-major axis, and dimension.z is used as the semi-minor axis.
 > allowBadShape: Positive value correction is the same as for rectangles; if dimension.x and dimension.z have different signs, the shape is inverted.
@@ -910,6 +1038,133 @@ if (distFromCenterSq >= maxRadiusSq) { // 外接圆判断
     return isZoneInverted;
 }
 return (result <= 1.0 + EPSILON) != isZoneInverted;
+```
+
+#### Cross
+
+- zoneShapeType: "cross",
+- dimension: take dimension.x as the outer half-width, and dimension.z as the inner half-width
+> allowBadShape: Based on positive value correction in dimension, the larger of dimension.x and dimension.z is used as the radius of the circumscribed circle. Use dimensin.x to decide whether to invert
+```json
+{
+	"zoneShapeType": "cross",
+	"start": {
+		"center": {
+			"centerType": "lockPlayer",
+			"playerId": 0,
+			"selectStanding": true,
+			"randomRange": 0.0,
+			"playerCenterLerp": 0.2
+		},
+		"dimension": {
+			"dimensionType": "fixed",
+			"fixed": "15.0,1.5,5.0",
+			"randomRange": 0.0
+		},
+		"rotation": {
+			"rotationType": "fixed",
+			"fixed": 0.0,
+			"randomRange": 0.0
+		}
+	},
+	"end": {
+		"center": {
+			"centerType": "previous",
+			"previousZoneId": 18,
+			"progress": 0.0,
+			"randomRange": 0.0,
+			"playerCenterLerp": 0.0
+		},
+		"dimension": {
+			"dimensionType": "previous",
+			"previousZoneId": 18,
+			"progress": 0.0,
+			"scale": 1.0,
+			"randomRange": 0.0
+		},
+		"rotation": {
+			"rotationType": "fixed",
+			"fixed": 30.0,
+			"randomRange": 0.0
+		}
+	},
+	"allowBadShape": false
+}
+```
+```java
+double rawOuterHalfWidth = dimension.x;
+double rawInnerHalfWidth = dimension.z;
+boolean isZoneInverted = rawOuterHalfWidth < 0;
+return ( // 横向矩形：X轴长（外半长），Z轴窄（内半长）
+        (Math.abs(pX_rotated) <= effectiveOuterHalfWidth
+                && Math.abs(pZ_rotated) <= effectiveInnerHalfWidth)
+        // 纵向矩形：X轴窄（内半长），Z轴长（外半长）
+        ||
+                (Math.abs(pX_rotated) <= effectiveInnerHalfWidth
+                && Math.abs(pZ_rotated) <= effectiveOuterHalfWidth)
+) == !isZoneInverted;
+```
+
+#### Ring
+
+- zoneShapeType: "ring",
+- dimension: take dimension.x as the outer radius, and dimension.z as the inner radius
+> allowBadShape: Based on positive value correction in dimension, the larger of dimension.x and dimension.z is used as the radius of the circumscribed circle. Use dimensin.x to decide whether to invert
+```json
+{
+	"zoneShapeType": "ring",
+	"start": {
+		"center": {
+			"centerType": "previous",
+			"previousZoneId": 18,
+			"progress": 0.0,
+			"randomRange": 0.0,
+			"playerCenterLerp": 0.0
+		},
+		"dimension": {
+			"dimensionType": "previous",
+			"previousZoneId": 18,
+			"progress": 0.0,
+			"scale": 1.0,
+			"randomRange": 0.0
+		},
+		"rotation": {
+			"rotationType": "fixed",
+			"fixed": 0.0,
+			"randomRange": 0.0
+		}
+	},
+	"end": {
+		"center": {
+			"centerType": "previous",
+			"previousZoneId": 19,
+			"progress": 0.0,
+			"randomRange": 0.0,
+			"playerCenterLerp": 0.0
+		},
+		"dimension": {
+			"dimensionType": "fixed",
+			"fixed": "21.213203,1.5,24.213203",
+			"randomRange": 0.0
+		},
+		"rotation": {
+			"rotationType": "fixed",
+			"fixed": 0.0,
+			"randomRange": 0.0
+		}
+	},
+	"allowBadShape": false
+}
+```
+```java
+double outerDimSq = dimension.x * dimension.x;  
+double innerDimSq = dimension.z * dimension.z;
+boolean isZoneInverted = dimension.x < 0;
+return ( // 在外圆环内  
+        distSq < outerDimSq  
+         // 在内圆环内  
+        && distSq > innerDimSq  
+) == !isZoneInverted;
 ```
 
 #### Irregular polygon

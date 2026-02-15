@@ -75,12 +75,11 @@ public class SphereShape extends Abstract3DShape {
     @Override
     public @Nullable Vec3 getStartDimension() {
         if (startDimension == null) return null;
-        Vec3 baseV = needEqualAbs ? Vec3Utils.applyYAbsToXZ(startDimension) : startDimension;
-        if (checkBadShape
-                && (Vec3Utils.hasNegative(startDimension) || !Vec3Utils.equalXYZAbs(startDimension))) {
-            return Vec3Utils.positive(baseV);
+        Vec3 baseVec = needEqualAbs ? Vec3Utils.applyYAbsToXZ(startDimension) : startDimension;
+        if (checkBadShape) {
+            return Vec3Utils.toPositiveAndEqualYXZ(baseVec);
         } else {
-            return baseV;
+            return baseVec;
         }
     }
 
@@ -95,9 +94,8 @@ public class SphereShape extends Abstract3DShape {
         if (needEqualAbs) {
             baseVec = Vec3Utils.applyYAbsToXZ(baseVec);
         }
-        if (checkBadShape
-                && (Vec3Utils.hasNegative(baseVec) || !Vec3Utils.equalXYZAbs(baseVec))) {
-            return Vec3Utils.positive(baseVec);
+        if (checkBadShape) {
+            return Vec3Utils.toPositiveAndEqualYXZ(baseVec);
         } else {
             return baseVec;
         }
@@ -106,12 +104,11 @@ public class SphereShape extends Abstract3DShape {
     @Override
     public @Nullable Vec3 getEndDimension() {
         if (endDimension == null) return null;
-        Vec3 baseV = needEqualAbs ? Vec3Utils.applyYAbsToXZ(endDimension) : endDimension;
-        if (checkBadShape
-                && (Vec3Utils.hasNegative(endDimension) || !Vec3Utils.equalXYZAbs(endDimension))) {
-            return Vec3Utils.positive(baseV);
+        Vec3 baseVec = needEqualAbs ? Vec3Utils.applyYAbsToXZ(endDimension) : endDimension;
+        if (checkBadShape) {
+            return Vec3Utils.toPositiveAndEqualYXZ(baseVec);
         } else {
-            return baseV;
+            return baseVec;
         }
     }
 }
