@@ -2,7 +2,6 @@ package xiao.battleroyale.common.game.stats;
 
 import com.google.gson.JsonArray;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.scores.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +16,7 @@ import xiao.battleroyale.api.event.game.game.*;
 import xiao.battleroyale.api.event.game.starter.GameStartFinishEvent;
 import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.stats.IGamePlayerStats;
 import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
@@ -60,14 +60,6 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
 
     public static final String STATS_SUB_PATH = "stats";
     public static final String STATS_PATH = Paths.get(MOD_DATA_PATH).resolve(STATS_SUB_PATH).toString();
-    protected static final String STATS_TAG = "stats";
-    protected static final String GAME_TAG = "game";
-    protected static final String GAMERULE_TAG = "gamerule";
-    protected static final String SPAWN_TAG = "spawn";
-    protected static final String ZONE_TAG = "zone";
-    protected static final String TIMELINE_TAG = "timeline";
-    protected static final String RANK_TAG = "rank";
-    protected static final String DETAIL_TAG = "detail";
 
     protected final StatsData statsData = new StatsData();
 
@@ -356,18 +348,19 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
      * 将数据写入json
      */
     public void saveStats(String filePath) {
-        // 按先排名，后游戏玩家id排序
         List<GamePlayerStats> gamePlayerStatsList = this.statsData.getRecordGamePlayerStats();
-        gamePlayerStatsList.sort(Comparator
-                .comparingInt(GamePlayerStats::getGameRank)
-                .thenComparingInt(s -> s.getGamePlayer().getGameSingleId())
-        );
+        // 此时还没确定排名顺序
+//        // 按先排名，后游戏玩家id排序
+//        gamePlayerStatsList.sort(Comparator
+//                .comparingInt(GamePlayerStats::getGameRank)
+//                .thenComparingInt(s -> s.getGamePlayer().getGameSingleId())
+//        );
 
         JsonArray jsonArray = new JsonArray();
         GameSetupStatsHelper.addGameSetupStats(this, jsonArray);
-        GameEventStatsHelper.addTimelineStats(this, jsonArray);
-        GameEventStatsHelper.addRankStats(this, jsonArray);
-        GameEventStatsHelper.addDetailStats(this, jsonArray);
+        GameEventStatsHelper.addTeamStats(this, jsonArray);
+        GameEventStatsHelper.addPlayerStats(this, jsonArray);
+        GameEventStatsHelper.addTimelineStats(this, jsonArray, gamePlayerStatsList);
         JsonUtils.writeJsonToFile(filePath, jsonArray);
 
         ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
@@ -379,7 +372,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
         BattleRoyale.LOGGER.info("Saved game stats to {}", filePath);
     }
 
-    protected GamePlayerStats getGamePlayerStats(GamePlayer gamePlayer) {
+    @Override public @Nullable IGamePlayerStats getGamePlayerStats(GamePlayer gamePlayer) {
         return this.statsData.getGamePlayerStats(gamePlayer);
     }
 

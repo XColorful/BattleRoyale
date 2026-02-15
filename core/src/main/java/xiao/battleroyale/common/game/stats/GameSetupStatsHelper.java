@@ -3,6 +3,7 @@ package xiao.battleroyale.common.game.stats;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.api.game.stats.StatsTag;
 import xiao.battleroyale.common.game.stats.game.SimpleRecord;
 
 import java.util.Map;
@@ -101,20 +102,20 @@ public class GameSetupStatsHelper {
 
     protected static void addGameSetupStats(StatsManager statsManager, @NotNull JsonArray jsonArray) {
         JsonObject statsObject = new JsonObject();
-        statsObject.addProperty(STATS_TAG, GAME_TAG);
+        statsObject.addProperty(StatsTag.STATS_TAG, StatsTag.GAME_TAG);
 
         // Gamerule
-        statsObject.add(GAMERULE_TAG, serializeRecord(statsManager.statsData.gameruleStats));
+        statsObject.add(StatsTag.GAMERULE_TAG, serializeRecord(statsManager.statsData.gameruleStats));
 
         // Spawn
         JsonObject spawnObject = new JsonObject();
         statsManager.statsData.spawnStats.forEach((key, record) -> spawnObject.add(key, serializeRecord(record)));
-        statsObject.add(SPAWN_TAG, spawnObject);
+        statsObject.add(StatsTag.SPAWN_TAG, spawnObject);
 
         // Zone
         JsonObject zoneObject = new JsonObject();
         statsManager.statsData.zoneStats.forEach((key, record) -> zoneObject.add(String.valueOf(key), serializeRecord(record)));
-        statsObject.add(ZONE_TAG, zoneObject);
+        statsObject.add(StatsTag.ZONE_TAG, zoneObject);
 
         jsonArray.add(statsObject);
     }

@@ -18,6 +18,7 @@ import xiao.battleroyale.api.event.game.game.GamePlayerReviveFinishEvent;
 import xiao.battleroyale.api.event.game.starter.GameStartFinishEvent;
 import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.stats.IGamePlayerStats;
 import xiao.battleroyale.common.game.stats.event.*;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.util.ScoreUtils;
@@ -164,15 +165,16 @@ public class StatsEventHandler {
         @Nullable Entity damageMethod = damageSource.getDirectEntity();
         float damageAmount = livingDamageEvent.getDamageAmount();
 
+        // ----Stats记录----
         int gameTime = event.getGameTime();
         if (attackerGamePlayer != null) {
-            GamePlayerStats attackerStats = statsManager.getGamePlayerStats(attackerGamePlayer);
-            attackerStats.addHurtRecord(new HurtRecord(gameTime, getTimeOrderAndIncrease()));
-            GamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
-            victimStats.addDamageRecord(new DamageRecord(gameTime, getTimeOrderAndIncrease()));
+            IGamePlayerStats attackerStats = statsManager.getGamePlayerStats(attackerGamePlayer);
+            attackerStats.addHurtRecord(new HurtRecord(gameTime, getTimeOrderAndIncrease(), attackerGamePlayer, victimGamePlayer, damageAmount));
+            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
+            victimStats.addDamageRecord(new DamageRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, attackerGamePlayer, damageAmount));
         } else {
-            GamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
-            victimStats.addDamageRecord(new DamageRecord(gameTime, getTimeOrderAndIncrease()));
+            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
+            victimStats.addDamageRecord(new DamageRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, damageSource, damageAmount));
         }
 
         // ----记分板----
@@ -229,15 +231,16 @@ public class StatsEventHandler {
         @Nullable GamePlayer attackerGamePlayer = attackerEntity != null ? gameManager.getTeamManager().getGamePlayerByUUID(attackerEntity.getUUID()) : null;
         @Nullable Entity damageMethod = damageSource.getDirectEntity();
 
+        // ----Stats记录----
         int gameTime = event.getGameTime();
         if (attackerGamePlayer != null) {
-            GamePlayerStats attackerStats = statsManager.getGamePlayerStats(attackerGamePlayer);
-            attackerStats.addKnockRecord(new KnockRecord(gameTime, getTimeOrderAndIncrease()));
-            GamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
-            victimStats.addDownRecord(new DownRecord(gameTime, getTimeOrderAndIncrease()));
+            IGamePlayerStats attackerStats = statsManager.getGamePlayerStats(attackerGamePlayer);
+            attackerStats.addKnockRecord(new KnockRecord(gameTime, getTimeOrderAndIncrease(), attackerGamePlayer, victimGamePlayer));
+            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
+            victimStats.addDownRecord(new DownRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, attackerGamePlayer));
         } else {
-            GamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
-            victimStats.addDownRecord(new DownRecord(gameTime, getTimeOrderAndIncrease()));
+            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
+            victimStats.addDownRecord(new DownRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, damageSource));
         }
 
         // ----记分板----
@@ -269,9 +272,10 @@ public class StatsEventHandler {
             return;
         }
 
+        // ----Stats记录----
         int gameTime = event.getGameTime();
-        GamePlayerStats gamePlayerStats = statsManager.getGamePlayerStats(gamePlayer);
-        gamePlayerStats.addReviveRecord(new ReviveRecord(gameTime, getTimeOrderAndIncrease()));
+        IGamePlayerStats gamePlayerStats = statsManager.getGamePlayerStats(gamePlayer);
+        gamePlayerStats.addReviveRecord(new ReviveRecord(gameTime, getTimeOrderAndIncrease(), gamePlayer, gamePlayer));
 
         // ----记分板----
         if (statsManager.recordScoreboard) {
@@ -302,15 +306,16 @@ public class StatsEventHandler {
         @Nullable GamePlayer attackerGamePlayer = attackerEntity != null ? gameManager.getTeamManager().getGamePlayerByUUID(attackerEntity.getUUID()) : null;
         @Nullable Entity damageMethod = damageSource.getDirectEntity();
 
+        // ----Stats记录----
         int gameTime = event.getGameTime();
         if (attackerGamePlayer != null) {
-            GamePlayerStats attackerStats = statsManager.getGamePlayerStats(attackerGamePlayer);
-            attackerStats.addKillRecord(new KillRecord(gameTime, getTimeOrderAndIncrease()));
-            GamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
-            victimStats.addDeathRecord(new DeathRecord(gameTime, getTimeOrderAndIncrease()));
+            IGamePlayerStats attackerStats = statsManager.getGamePlayerStats(attackerGamePlayer);
+            attackerStats.addKillRecord(new KillRecord(gameTime, getTimeOrderAndIncrease(), attackerGamePlayer, victimGamePlayer));
+            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
+            victimStats.addDeathRecord(new DeathRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, attackerGamePlayer));
         } else {
-            GamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
-            victimStats.addDeathRecord(new DeathRecord(gameTime, getTimeOrderAndIncrease()));
+            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
+            victimStats.addDeathRecord(new DeathRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, damageSource));
         }
 
         // ----记分板----

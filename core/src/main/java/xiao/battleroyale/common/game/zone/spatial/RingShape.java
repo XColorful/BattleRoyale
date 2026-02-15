@@ -1,6 +1,5 @@
 package xiao.battleroyale.common.game.zone.spatial;
 
-import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -11,17 +10,17 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 import xiao.battleroyale.util.Vec3Utils;
 
 /**
- * 二维 Circle
+ * 二维 环形
  */
-public class CircleShape extends AbstractSimpleShape {
+public class RingShape extends AbstractSimpleShape {
 
-    private static int CIRCLE_SEGMENTS = 64;
-    public static int getCircleSegments() { return CIRCLE_SEGMENTS; }
-    public static void setCircleSegments(int segments) { CIRCLE_SEGMENTS = Math.max(32, segments); }
+    private static int RING_SEGMENTS = 64;
+    public static int getRingSegments() { return RING_SEGMENTS; }
+    public static void setRingSegments(int segments) { RING_SEGMENTS = Math.max(32, segments); }
 
     protected boolean needEqualAbs = false;
 
-    public CircleShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
+    public RingShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
         super(startEntry, endEntry, allowBadShape);
     }
 
@@ -33,6 +32,7 @@ public class CircleShape extends AbstractSimpleShape {
         if (!isDetermined()) {
             return false;
         }
+
         double allowProgress = GameZone.allowedProgress(progress);
         Vec3 center, dimension;
         if (Math.abs(allowProgress - cachedProgress) < EPSILON) {
@@ -45,44 +45,44 @@ public class CircleShape extends AbstractSimpleShape {
             cachedDimension = dimension;
             cachedProgress = allowProgress;
         }
-        double dimSq = dimension.x * dimension.x;
-        boolean isZoneInverted = Mth.sign(dimension.x) * Mth.sign(dimension.z) < 0;
+        double outerDimSq = dimension.x * dimension.x;
+        double innerDimSq = dimension.z * dimension.z;
+        boolean isZoneInverted = dimension.x < 0;
         // 旋转对圆没有几何影响
 
         // 忽略y方向
         double xDist = center.x - checkPos.x;
         double zDist = center.z - checkPos.z;
-        return (xDist * xDist + zDist * zDist) <= Math.abs(dimSq) != isZoneInverted;
+        double distSq = xDist * xDist + zDist * zDist;
+        return ( // 在外圆环内
+                distSq < outerDimSq
+                 // 在内圆环内
+                && distSq > innerDimSq
+        ) == !isZoneInverted;
     }
 
     @Override
     public ZoneShapeType getShapeType() {
-        return ZoneShapeType.CIRCLE;
+        return ZoneShapeType.RING;
     }
 
     @Override
     protected boolean additionalCalculationCheck() {
         assert startDimension != null && endDimension != null;
 
-        hasBadShape = hasNegativeDimension();
+        hasBadShape = hasNegativeDimension()
+                || startDimension.x < startDimension.z || endDimension.x < endDimension.z;
         checkBadShape = hasBadShape && !allowBadShape;
-        needEqualAbs = !hasEqualXZAbsDimension();
         return true;
-    }
-
-    @Override
-    public int getSegments() {
-        return CIRCLE_SEGMENTS;
     }
 
     @Override
     public @Nullable Vec3 getStartDimension() {
         if (startDimension == null) return null;
-        Vec3 baseVec = needEqualAbs ? Vec3Utils.applyXAbsToZ(startDimension) : startDimension;
         if (checkBadShape) {
-            return Vec3Utils.toPositiveAndEqualXZ(baseVec);
+            return Vec3Utils.toPositiveAndXGreaterThanZ(startDimension);
         } else {
-            return baseVec;
+            return startDimension;
         }
     }
 
@@ -94,11 +94,8 @@ public class CircleShape extends AbstractSimpleShape {
         }
         Vec3 baseVec = getDimensionNoCheck(allowedProgress);
         if (baseVec == null) return null;
-        if (needEqualAbs) {
-            baseVec = Vec3Utils.applyXAbsToZ(baseVec);
-        }
         if (checkBadShape) {
-            return Vec3Utils.toPositiveAndEqualXZ(baseVec);
+            return Vec3Utils.toPositiveAndXGreaterThanZ(baseVec);
         } else {
             return baseVec;
         }
@@ -107,11 +104,15 @@ public class CircleShape extends AbstractSimpleShape {
     @Override
     public @Nullable Vec3 getEndDimension() {
         if (endDimension == null) return null;
-        Vec3 baseVec = needEqualAbs ? Vec3Utils.applyXAbsToZ(endDimension) : endDimension;
         if (checkBadShape) {
-            return Vec3Utils.toPositiveAndEqualXZ(baseVec);
+            return Vec3Utils.toPositiveAndXGreaterThanZ(endDimension);
         } else {
-            return baseVec;
+            return endDimension;
         }
+    }
+
+    @Override
+    public int getSegments() {
+        return RING_SEGMENTS;
     }
 }

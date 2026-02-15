@@ -1,6 +1,5 @@
 package xiao.battleroyale.common.game.zone.spatial;
 
-import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -11,31 +10,24 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 import xiao.battleroyale.util.Vec3Utils;
 
 /**
- * 二维⭐
+ * 二维 十字形
  */
-public class StarShape extends AbstractSimpleShape {
+public class CrossShape extends AbstractSimpleShape {
 
-    protected int segments;
-    protected float angle = (float) (Math.PI / 2.0); // 使正上方成为第一个顶点
-
-    public StarShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape, int segments) {
+    public CrossShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
         super(startEntry, endEntry, allowBadShape);
-        this.segments = Math.max(segments, 2); // 至少为指南针
-    }
-
-    @Override
-    public int getSegments() {
-        return this.segments;
     }
 
     @Override
     public boolean isWithinZone(@Nullable Vec3 checkPos, double progress) {
-        if (checkPos == null || progress < 0 || !isDetermined()) {
+        if (checkPos == null || progress < 0) { // 进度小于0则为未创建
             return false;
         }
-
+        if (!isDetermined()) {
+            return false;
+        }
         double allowedProgress = GameZone.allowedProgress(progress);
-        Vec3 center, dimension; // dimension.x 为外接圆半径，dimension.z 为内接圆半径
+        Vec3 center, dimension; // dimension.x 为外正方形半边长，dimension.z 为内正方形半边长
         double rotateDegree;
 
         if (Math.abs(allowedProgress - cachedProgress) < EPSILON) {
@@ -53,17 +45,13 @@ public class StarShape extends AbstractSimpleShape {
             cachedProgress = allowedProgress;
         }
 
-        double rawOuterRadius = dimension.x;
-        double rawInnerRadius = dimension.z;
+        double rawOuterHalfWidth = dimension.x;
+        double rawInnerHalfWidth = dimension.z;
 
-        double effectiveOuterRadius = Math.abs(rawOuterRadius);
-        double effectiveInnerRadius = Math.abs(rawInnerRadius);
+        double effectiveOuterHalfWidth = Math.abs(rawOuterHalfWidth);
+        double effectiveInnerHalfWidth = Math.abs(rawInnerHalfWidth);
 
-        if (effectiveOuterRadius <= EPSILON) {
-            return false;
-        }
-
-        boolean isZoneInverted = rawOuterRadius < 0;
+        boolean isZoneInverted = rawOuterHalfWidth < 0;
 
         double pX_relative = checkPos.x - center.x;
         double pZ_relative = checkPos.z - center.z;
@@ -83,66 +71,19 @@ public class StarShape extends AbstractSimpleShape {
             pZ_rotated = -pX_relative * sinDegree + pZ_relative * cosDegree;
         }
 
-        double distSq = pX_rotated * pX_rotated + pZ_rotated * pZ_rotated;
-
-        // 外接圆判断
-        if (distSq > effectiveOuterRadius * effectiveOuterRadius + EPSILON) {
-            return isZoneInverted;
-        }
-        // 内接圆判断
-        if (distSq < effectiveInnerRadius * effectiveInnerRadius - EPSILON) {
-            return !isZoneInverted;
-        }
-
-        // 卷绕数法判断点是否在星形内部
-        double totalRotationRadians = angle + Math.toRadians(rotateDegree);
-
-        int numVertices = 2 * segments;
-        double[] vertexX = new double[numVertices];
-        double[] vertexZ = new double[numVertices];
-
-        for (int i = 0; i < segments; i++) {
-            double outerVertexAngle = totalRotationRadians + (2 * Math.PI * i / segments);
-            vertexX[2 * i] = effectiveOuterRadius * Mth.cos((float) outerVertexAngle);
-            vertexZ[2 * i] = effectiveOuterRadius * Mth.sin((float) outerVertexAngle);
-
-            double innerVertexAngle = totalRotationRadians + (2 * Math.PI * i / segments) + (Math.PI / segments);
-            vertexX[2 * i + 1] = effectiveInnerRadius * Mth.cos((float) innerVertexAngle);
-            vertexZ[2 * i + 1] = effectiveInnerRadius * Mth.sin((float) innerVertexAngle);
-        }
-
-        int windingNumber = 0;
-        for (int i = 0; i < numVertices; i++) {
-            double v1x = vertexX[i];
-            double v1z = vertexZ[i];
-            double v2x = vertexX[(i + 1) % numVertices];
-            double v2z = vertexZ[(i + 1) % numVertices];
-
-            boolean v1_above = v1z > pZ_rotated;
-            boolean v2_above = v2z > pZ_rotated;
-
-            // 向上穿越射线
-            double crossProduct = (v2x - v1x) * (pZ_rotated - v1z) - (pX_rotated - v1x) * (v2z - v1z);
-            if (!v1_above && v2_above) {
-                // 叉积判断点在V1->V2的哪一侧
-                if (crossProduct > EPSILON) {
-                    windingNumber++;
-                }
-            }
-            // 向下穿越射线
-            else if (v1_above && !v2_above) {
-                if (crossProduct < -EPSILON) {
-                    windingNumber--;
-                }
-            }
-        }
-        // 根据卷绕数和区域反转状态返回结果
-        return (windingNumber == 0) == isZoneInverted;
+        return ( // 横向矩形：X轴长（外半长），Z轴窄（内半长）
+                (Math.abs(pX_rotated) <= effectiveOuterHalfWidth
+                        && Math.abs(pZ_rotated) <= effectiveInnerHalfWidth)
+                // 纵向矩形：X轴窄（内半长），Z轴长（外半长）
+                ||
+                        (Math.abs(pX_rotated) <= effectiveInnerHalfWidth
+                        && Math.abs(pZ_rotated) <= effectiveOuterHalfWidth)
+        ) == !isZoneInverted;
     }
 
     @Override
     public ZoneShapeType getShapeType() {
-        return ZoneShapeType.STAR;
+        return ZoneShapeType.CROSS;
     }
 
     @Override
@@ -188,5 +129,16 @@ public class StarShape extends AbstractSimpleShape {
         } else {
             return endDimension;
         }
+    }
+
+    @Override
+    public int getSegments() {
+        /*
+            __
+         __|  |__
+        |__    __|
+           |__|
+         */
+        return 12;
     }
 }

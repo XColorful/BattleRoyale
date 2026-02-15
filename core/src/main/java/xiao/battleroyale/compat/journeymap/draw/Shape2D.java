@@ -1,6 +1,5 @@
 package xiao.battleroyale.compat.journeymap.draw;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -20,11 +19,11 @@ public class Shape2D {
      */
     public static void drawRectangleBox(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                         Vec3 center, float halfWidth, float halfDepth, float rotateDegree, double y, float thickness) {
-        List<BlockPos> points = new ArrayList<>();
-        points.add(BlockPos.containing(center.x - halfWidth, y, center.z - halfDepth));
-        points.add(BlockPos.containing(center.x + halfWidth, y, center.z - halfDepth));
-        points.add(BlockPos.containing(center.x + halfWidth, y, center.z + halfDepth));
-        points.add(BlockPos.containing(center.x - halfWidth, y, center.z + halfDepth));
+        List<Vec3> points = new ArrayList<>();
+        points.add(new Vec3(center.x - halfWidth, y, center.z - halfDepth));
+        points.add(new Vec3(center.x + halfWidth, y, center.z - halfDepth));
+        points.add(new Vec3(center.x + halfWidth, y, center.z + halfDepth));
+        points.add(new Vec3(center.x - halfWidth, y, center.z + halfDepth));
 
         rotatePoints(points, center, rotateDegree);
 
@@ -36,14 +35,14 @@ public class Shape2D {
      */
     public static void drawPolygonCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                            Vec3 center, float radius, int segments, float initialAngle, float rotateDegree, double y, float thickness) {
-        List<BlockPos> points = new ArrayList<>();
+        List<Vec3> points = new ArrayList<>();
         float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
 
         for (int i = 0; i < segments; i++) {
             float angle = initialAngle + (i * TWO_PI_DIV_SEGMENTS);
             double x = center.x + radius * Math.cos(angle);
             double z = center.z + radius * Math.sin(angle);
-            points.add(BlockPos.containing(x, y, z));
+            points.add(new Vec3(x, y, z));
         }
 
         rotatePoints(points, center, rotateDegree);
@@ -56,14 +55,14 @@ public class Shape2D {
      */
     public static void drawEllipseCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                            Vec3 center, float halfA, float halfB, int segments, float rotateDegree, double y, float thickness) {
-        List<BlockPos> points = new ArrayList<>();
+        List<Vec3> points = new ArrayList<>();
         float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
 
         for (int i = 0; i < segments; i++) {
             float angle = i * TWO_PI_DIV_SEGMENTS;
             double x = center.x + halfA * Math.cos(angle);
             double z = center.z + halfB * Math.sin(angle);
-            points.add(BlockPos.containing(x, y, z));
+            points.add(new Vec3(x, y, z));
         }
 
         rotatePoints(points, center, rotateDegree);
@@ -76,7 +75,7 @@ public class Shape2D {
      */
     public static void drawStarCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                         Vec3 center, float outerRadius, float innerRadius, int segments, float initialAngle, float rotateDegree, double y, float thickness) {
-        List<BlockPos> points = new ArrayList<>();
+        List<Vec3> points = new ArrayList<>();
         final float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
         final float PI_DIV_SEGMENTS = (float) (Math.PI / segments);
 
@@ -86,15 +85,53 @@ public class Shape2D {
 
             double outerX = center.x + outerRadius * Math.cos(outerAngle);
             double outerZ = center.z + outerRadius * Math.sin(outerAngle);
-            points.add(BlockPos.containing(outerX, y, outerZ));
+            points.add(new Vec3(outerX, y, outerZ));
 
             double innerX = center.x + innerRadius * Math.cos(innerAngle);
             double innerZ = center.z + innerRadius * Math.sin(innerAngle);
-            points.add(BlockPos.containing(innerX, y, innerZ));
+            points.add(new Vec3(innerX, y, innerZ));
         }
 
         rotatePoints(points, center, rotateDegree);
 
         drawPolygon(jmAPI, displayId, dimension, color, points, thickness);
+    }
+
+    /**
+     * 在JourneyMap上绘制一个带描边的十字形。
+     */
+    public static void drawCrossCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
+                                         Vec3 center, float outerHalfWidth, float innerHalfWidth, float rotateDegree, double y, float thickness) {
+        List<Vec3> points = new ArrayList<>();
+
+        float[] dx = {
+                -innerHalfWidth,  innerHalfWidth,  innerHalfWidth,  outerHalfWidth, outerHalfWidth,  innerHalfWidth,
+                innerHalfWidth, -innerHalfWidth, -innerHalfWidth, -outerHalfWidth, -outerHalfWidth, -innerHalfWidth
+        };
+        float[] dz = {
+                -outerHalfWidth, -outerHalfWidth, -innerHalfWidth, -innerHalfWidth,  innerHalfWidth,  innerHalfWidth,
+                outerHalfWidth,  outerHalfWidth,  innerHalfWidth,  innerHalfWidth, -innerHalfWidth, -innerHalfWidth
+        };
+
+        for (int i = 0; i < 12; i++) {
+            points.add(new Vec3(center.x + dx[i], y, center.z + dz[i]));
+        }
+
+        // 应用旋转逻辑
+        rotatePoints(points, center, rotateDegree);
+
+        drawPolygon(jmAPI, displayId, dimension, color, points, thickness);
+    }
+
+    /**
+     * 在JourneyMap上绘制一个带描边的圆环。
+     */
+    public static void drawRingCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
+                                        Vec3 center, float outerRadius, float innerRadius, int segments, float initialAngle, float rotateDegree, double y, float thickness) {
+        // 绘制外环
+        drawPolygonCylinder(jmAPI, displayId + "_outer", dimension, color, center, outerRadius, segments, initialAngle, rotateDegree, y, thickness);
+
+        // 绘制内环
+        drawPolygonCylinder(jmAPI, displayId + "_inner", dimension, color, center, innerRadius, segments, initialAngle, rotateDegree, y, thickness);
     }
 }
