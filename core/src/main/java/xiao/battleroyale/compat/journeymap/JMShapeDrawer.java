@@ -65,6 +65,12 @@ public class JMShapeDrawer {
                 case STAR -> // 尖顶星形
                         Shape2D.drawStarCylinder(jmAPI, displayId, dimension, color,
                                 zoneData.center, (float) zoneData.dimension.x, (float) zoneData.dimension.z, zoneData.segments, POINTING_POLYGON_ANGLE, rotateDegree, y, THICKNESS);
+                case CROSS -> // 十字形
+                        Shape2D.drawCrossCylinder(jmAPI, displayId, dimension, color,
+                                zoneData.center, (float) zoneData.dimension.x, (float) zoneData.dimension.z, rotateDegree, y, THICKNESS);
+                case RING -> // 环形
+                        Shape2D.drawRingCylinder(jmAPI, displayId, dimension, color,
+                                zoneData.center, (float) zoneData.dimension.x, (float) zoneData.dimension.z, CIRCLE_SEGMENTS, 0, rotateDegree, y, THICKNESS);
                 // 3D shape
                 case SPHERE ->
                         Shape3D.drawFilledSphere(jmAPI, displayId, dimension, color,

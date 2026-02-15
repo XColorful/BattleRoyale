@@ -150,10 +150,12 @@
 	- Spatial：区域范围判定
 		- 二维判定形状：
 	    > - [CircleShape](./common/game/zone/spatial/circle-shape.md)：[圆形](/docs/wiki/Configuration/Zone%202D%20shape.md#圆形)
+	    > - [CrossShape](./common/game/zone/spatial/cross-shape.md)：[十字形](/docs/wiki/Configuration/Zone%202D%20shape.md#十字形)
 	    > - [EllipseShape](./common/game/zone/spatial/ellipse-shape.md)：[椭圆](/docs/wiki/Configuration/Zone%202D%20shape.md#椭圆)
 	    > - [HexagonShape](./common/game/zone/spatial/hexagon-shape.md)：[平顶正六边形](/docs/wiki/Configuration/Zone%202D%20shape.md#平顶正六边形)
 	    > - [PolygonShape](./common/game/zone/spatial/polygon-shape.md)：[尖顶正多边形](/docs/wiki/Configuration/Zone%202D%20shape.md#尖顶正多边形)
-        > - [RectangleShape](./common/game/zone/spatial/rectangle-shape.md)：[长方形](/docs/wiki/Configuration/Zone%202D%20shape.md#矩形)
+        > - [RectangleShape](./common/game/zone/spatial/rectangle-shape.md)：[矩形](/docs/wiki/Configuration/Zone%202D%20shape.md#矩形)
+        > - [RingShape](./common/game/zone/spatial/ring-shape.md)：[环形](/docs/wiki/Configuration/Zone%202D%20shape.md#环形)
         > - [SquareShape](./common/game/zone/spatial/square-shape.md)：[方形](/docs/wiki/Configuration/Zone%202D%20shape.md#方形)
         > - [StarShape](./common/game/zone/spatial/star-shape.md)：[星形](/docs/wiki/Configuration/Zone%202D%20shape.md#星形)
 		- 三维判定形状：
@@ -518,10 +520,12 @@ Module division based on the `xiao.battleroyale` top-level package
 	- Spatial: Zone range determination
 		- 2D determination shape:
 	    > - [CircleShape](./common/game/zone/spatial/circle-shape.md#English): [Circle](/docs/wiki/Configuration/Zone%202D%20shape.md#Circle)
+	    > - [CrossShape](./common/game/zone/spatial/cross-shape.md#English): [Cross](/docs/wiki/Configuration/Zone%202D%20shape.md#Cross)
 	    > - [EllipseShape](./common/game/zone/spatial/ellipse-shape.md#English): [Ellipse](/docs/wiki/Configuration/Zone%202D%20shape.md#Ellipse)
 	    > - [HexagonShape](./common/game/zone/spatial/hexagon-shape.md#English): [Hexagon](/docs/wiki/Configuration/Zone%202D%20shape.md#Flat%20top%20regular%20hexagon)
 	    > - [PolygonShape](./common/game/zone/spatial/polygon-shape.md#English): [Polygon](/docs/wiki/Configuration/Zone%202D%20shape.md#Spike%20regular%20polygon)
         > - [RectangleShape](./common/game/zone/spatial/rectangle-shape.md#English): [Rectangle](/docs/wiki/Configuration/Zone%202D%20shape.md#Rectangle)
+        > - [RingShape](./common/game/zone/spatial/ring-shape.md#English): [Ring](/docs/wiki/Configuration/Zone%202D%20shape.md#Ring)
         > - [SquareShape](./common/game/zone/spatial/square-shape.md#English): [Square](/docs/wiki/Configuration/Zone%202D%20shape.md#Square)
         > - [StarShape](./common/game/zone/spatial/star-shape.md#English): [Star](/docs/wiki/Configuration/Zone%202D%20shape.md#Star)
 		- 3D determination shape:

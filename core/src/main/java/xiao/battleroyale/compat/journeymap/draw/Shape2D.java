@@ -97,4 +97,42 @@ public class Shape2D {
 
         drawPolygon(jmAPI, displayId, dimension, color, points, thickness);
     }
+
+    /**
+     * 在JourneyMap上绘制一个带描边的十字形。
+     */
+    public static void drawCrossCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
+                                         Vec3 center, float outerHalfWidth, float innerHalfWidth, float rotateDegree, double y, float thickness) {
+        List<BlockPos> points = new ArrayList<>();
+
+        float[] dx = {
+                -innerHalfWidth,  innerHalfWidth,  innerHalfWidth,  outerHalfWidth, outerHalfWidth,  innerHalfWidth,
+                innerHalfWidth, -innerHalfWidth, -innerHalfWidth, -outerHalfWidth, -outerHalfWidth, -innerHalfWidth
+        };
+        float[] dz = {
+                -outerHalfWidth, -outerHalfWidth, -innerHalfWidth, -innerHalfWidth,  innerHalfWidth,  innerHalfWidth,
+                outerHalfWidth,  outerHalfWidth,  innerHalfWidth,  innerHalfWidth, -innerHalfWidth, -innerHalfWidth
+        };
+
+        for (int i = 0; i < 12; i++) {
+            points.add(BlockPos.containing(center.x + dx[i], y, center.z + dz[i]));
+        }
+
+        // 应用旋转逻辑
+        rotatePoints(points, center, rotateDegree);
+
+        drawPolygon(jmAPI, displayId, dimension, color, points, thickness);
+    }
+
+    /**
+     * 在JourneyMap上绘制一个带描边的圆环。
+     */
+    public static void drawRingCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
+                                        Vec3 center, float outerRadius, float innerRadius, int segments, float initialAngle, float rotateDegree, double y, float thickness) {
+        // 绘制外环
+        drawPolygonCylinder(jmAPI, displayId + "_outer", dimension, color, center, outerRadius, segments, initialAngle, rotateDegree, y, thickness);
+
+        // 绘制内环
+        drawPolygonCylinder(jmAPI, displayId + "_inner", dimension, color, center, innerRadius, segments, initialAngle, rotateDegree, y, thickness);
+    }
 }

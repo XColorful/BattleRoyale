@@ -116,6 +116,12 @@ public class ZoneRenderer implements IClientZoneRenderer {
                 case STAR -> // 尖顶星形
                         Shape2D.drawFilledStarCylinder(currentZoneMatrix, consumer, r, g, b, a,
                                 (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y, zoneData.segments, POINTING_POLYGON_ANGLE);
+                case CROSS -> // 十字形
+                        Shape2D.drawFilledCrossCylinder(currentZoneMatrix, consumer, r, g, b, a,
+                                (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y);
+                case RING -> // 环形
+                        Shape2D.drawFilledRingCylinder(currentZoneMatrix, consumer, r, g, b, a,
+                                (float) zoneData.dimension.x, (float) zoneData.dimension.z, (float) zoneData.dimension.y, CIRCLE_SEGMENTS, 0);
                 // 3D shape
                 case SPHERE ->
                         Shape3D.drawFilledSphere(currentZoneMatrix, consumer, r, g, b, a,
