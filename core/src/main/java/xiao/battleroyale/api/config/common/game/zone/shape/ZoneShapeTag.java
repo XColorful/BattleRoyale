@@ -12,6 +12,8 @@ public final class ZoneShapeTag {
     public static final String POLYGON = "polygon";
     public static final String ELLIPSE = "ellipse";
     public static final String STAR = "star";
+    public static final String CROSS = "cross";
+    public static final String RING = "ring";
     // 3D shape
     public static final String SPHERE = "sphere";
     public static final String HEMI_SPHERE = "hemiSphere";

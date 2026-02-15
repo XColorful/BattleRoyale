@@ -36,7 +36,7 @@ public class DefaultDisplay {
     private static JsonObject generateDefaultDisplayConfig1() {
         TeamEntry teamEntry = new TeamEntry(false);
         GameEntry gameEntry = new GameEntry(false);
-        MapEntry mapEntry = new MapEntry(false);
+        MapEntry mapEntry = new MapEntry(false, 4);
 
         DisplayConfig displayConfig = new DisplayConfig(1, "Display nothing", "#FFFFFFAA", teamEntry, gameEntry, mapEntry);
 

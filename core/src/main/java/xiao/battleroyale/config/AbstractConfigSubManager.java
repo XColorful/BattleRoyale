@@ -48,9 +48,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         this.clear(DEFAULT_CONFIG_FOLDER);
     }
     protected void clear(int folderId) {
-        getConfigFolderData(folderId).fileConfigsByFileName.clear();
-        getConfigFolderData(folderId).currentConfigs.clear();
-        getConfigFolderData(folderId).setConfigFileName("");
+        getConfigFolderData(folderId).clearAll();
     }
 
     /**
@@ -63,7 +61,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         if (!getAvailableFolderIds().contains(folderId)) {
             return null;
         }
-        return getConfigFolderData(folderId).currentConfigs.mapGet(id);
+        return getConfigFolderData(folderId).getCurrentConfigEntry(id);
     }
     @Override public @Nullable List<T> getConfigEntryList() {
         return getConfigEntryList(DEFAULT_CONFIG_FOLDER);
@@ -72,7 +70,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         if (!getAvailableFolderIds().contains(folderId)) {
             return null;
         }
-        return getConfigFolderData(folderId).currentConfigs.asList();
+        return getConfigFolderData(folderId).getCurrentConfigEntryList();
     }
     @Override public String getCurrentSelectedFileName() {
         return getCurrentSelectedFileName(DEFAULT_CONFIG_FOLDER);
@@ -127,7 +125,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         return getAvailableConfigFileNames(DEFAULT_CONFIG_FOLDER);
     }
     @Override public Set<String> getAvailableConfigFileNames(int folderId) {
-        return getConfigFolderData(folderId).fileConfigsByFileName.keySet();
+        return getConfigFolderData(folderId).getConfigFileNames();
     }
     @Override public Set<Integer> getAvailableFolderIds() {
         return allFolderConfigData.keySet();
@@ -145,8 +143,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         return hasConfigLoaded(DEFAULT_CONFIG_FOLDER);
     }
     @Override public boolean hasConfigLoaded(int folderId) { // 仅判断是否已经读取到数据，不代表已经选中
-        Map<String, ArrayMap<Integer, T>> fileConfigs = getConfigFolderData(folderId).fileConfigsByFileName;
-        return !fileConfigs.isEmpty() && fileConfigs.values().stream().anyMatch(arrayMap -> !arrayMap.isEmpty());
+        return getConfigFolderData(folderId).hasConfigLoaded();
     }
     @Override public void initializeDefaultConfigsIfEmpty() {
         initializeDefaultConfigsIfEmpty(DEFAULT_CONFIG_FOLDER);
@@ -195,7 +192,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         if (!getAvailableFolderIds().contains(folderId)) {
             return -1;
         }
-        return getConfigFolderData(folderId).DEFAULT_CONFIG_ID;
+        return getConfigFolderData(folderId).getDefaultConfigId();
     }
     @Override public boolean setDefaultConfigId(int id) {
         return setDefaultConfigId(id, DEFAULT_CONFIG_FOLDER);
@@ -204,7 +201,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         if (!getAvailableFolderIds().contains(folderId)) {
             return false;
         }
-        getConfigFolderData(folderId).DEFAULT_CONFIG_ID = id;
+        getConfigFolderData(folderId).setDefaultConfigId(id);
         return true;
     }
     @Override public @Nullable T getDefaultConfig() {

@@ -136,7 +136,10 @@
 - teleportWinnerAfterGame：游戏结束后将胜利玩家传送回大厅
 - winnerFireworkId：（暂未生效）庆祝胜利玩家的烟花配置id
 - winnerParticleId：庆祝胜利玩家的粒子配置id
-- initGameAfterGame：大逃杀游戏以胜利队伍结束后自动初始化游戏
+- initGameAfterGame：大逃杀游戏以胜利队伍结束后自动[初始化游戏](https://github.com/XColorful/BattleRoyale/wiki/Game-command#初始化游戏)
+- restartAfterGame：大逃杀游戏以胜利队伍结束后自动[开始游戏](https://github.com/XColorful/BattleRoyale/wiki/Game-command#开始游戏)
+- restartDelay：自动重开游戏的延迟（单位 tick），不小于 5
+- maxRestartRound：自动开始游戏的次数，大逃杀未以胜利队伍结束则提前终止
 - messageCleanFrequency：服务端清理过期消息的频率，不小于0
 - messageExpireTime：服务端消息多久算过期，不小于清理频率
 - messageSyncFrequency：服务端强制完整同步消息的频率，不小于过期频率
@@ -178,6 +181,9 @@
 	"winnerFireworkId": 0,
 	"winnerParticleId": 0,
 	"initGameAfterGame": false,
+	"restartAfterGame": false,
+	"restartDelay": 20,
+	"maxRestartRound": 15,
 	"messageCleanFreq": 140,
 	"messageExpireTime": 100,
 	"messageSyncFrequency": 100
@@ -320,6 +326,9 @@
 - winnerFireworkId: (Not yet effective) The firework config ID for celebrating the winning players
 - winnerParticleId: The particle config ID for celebrating the winning players
 - initGameAfterGame: Automatically [Initialize the game](https://github.com/XColorful/BattleRoyale/wiki/Game-command#initialize-the-game) when finish BattleRoyale with winner game team(s)
+- restartAfterGame: Automatically [Start game](https://github.com/XColorful/BattleRoyale/wiki/Game-command#Start-game) when BattleRoyale ends with a winning team.
+- restartDelay: Delay for automatic game restart (in ticks), minimum value is 5.
+- maxRestartRound: The maximum number of automatic restarts; will terminate early if the game does not end with a winning team.
 - messageCleanFrequency: How often the server clears expired messages (minimum 0)
 - messageExpireTime: How long a message stays on the server before expiring (minimum: messageCleanFrequency)
 - messageSyncFrequency: How often the server forces a full message resync (minimum: messageExpireTime)
@@ -361,6 +370,9 @@
 	"winnerFireworkId": 0,
 	"winnerParticleId": 0,
 	"initGameAfterGame": false,
+	"restartAfterGame": false,
+	"restartDelay": 20,
+	"maxRestartRound": 15,
 	"messageCleanFreq": 140,
 	"messageExpireTime": 100,
 	"messageSyncFrequency": 100

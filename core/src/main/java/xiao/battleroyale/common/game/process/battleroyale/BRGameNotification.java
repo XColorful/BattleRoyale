@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.process.IGameProcessManager;
 import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.effect.EffectManager;
@@ -45,9 +46,12 @@ public class BRGameNotification {
     }
 
     // 发送胜利队伍消息
-    public static void sendWinnerResult(@Nullable ServerLevel serverLevel, Set<GamePlayer> winnerGamePlayers, Set<GameTeam> winnerGameTeams, int gameTime) {
+    public static void sendWinnerResult(IGameProcessManager gameProcessManager, @Nullable ServerLevel serverLevel, Set<GamePlayer> winnerGamePlayers, Set<GameTeam> winnerGameTeams, int gameTime) {
+        // 游戏时长
         MutableComponent winnerComponent = Component.empty()
                 .append(Component.translatable("battleroyale.message.game_time", gameTime, new GameUtils.GameTimeFormat(gameTime).toFormattedString(true)));
+
+        // 聊天栏发送胜利队伍
         for (GameTeam team : winnerGameTeams) {
             // 队伍ID
             TextColor color = TextColor.fromRgb(ColorUtils.parseColorToInt(team.getGameTeamColor()));
@@ -75,6 +79,11 @@ public class BRGameNotification {
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, winnerComponent);
         } else {
             BattleRoyale.LOGGER.debug("GameManager.serverLevel is null, winner result: {}", winnerComponent);
+        }
+
+        // 标题+粒子效果
+        for (GamePlayer gamePlayer : winnerGamePlayers) {
+            gameProcessManager.notifyWinner(serverLevel, gamePlayer, BattleRoyale.getGameManager().getGameEntry().winnerParticleId);
         }
     }
 
