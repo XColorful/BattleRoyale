@@ -1,6 +1,7 @@
 package xiao.battleroyale.util;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.scores.DisplaySlot;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Score;
 import net.minecraft.world.scores.Scoreboard;
@@ -130,8 +131,8 @@ public class ScoreUtils {
         Objective objective = scoreboard.getObjective(objectiveName);
         if (objective != null) {
             // 只有当当前 Slot 显示的不是该 Objective 时才设置，防止发包冗余
-            if (scoreboard.getDisplayObjective(Scoreboard.DISPLAY_SLOT_LIST) != objective) {
-                scoreboard.setDisplayObjective(Scoreboard.DISPLAY_SLOT_LIST, objective);
+            if (scoreboard.getDisplayObjective(DisplaySlot.LIST) != objective) {
+                scoreboard.setDisplayObjective(DisplaySlot.LIST, objective);
             }
         }
     }
@@ -141,8 +142,8 @@ public class ScoreUtils {
         Objective objective = scoreboard.getObjective(objectiveName);
         if (objective != null) {
             // 防止重复设置导致客户端渲染闪烁
-            if (scoreboard.getDisplayObjective(Scoreboard.DISPLAY_SLOT_SIDEBAR) != objective) {
-                scoreboard.setDisplayObjective(Scoreboard.DISPLAY_SLOT_SIDEBAR, objective);
+            if (scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR) != objective) {
+                scoreboard.setDisplayObjective(DisplaySlot.SIDEBAR, objective);
             }
         }
     }
