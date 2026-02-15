@@ -1,6 +1,5 @@
 package xiao.battleroyale.compat.journeymap.draw;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -20,14 +19,14 @@ public class Shape3D {
      */
     public static void drawFilledSphere(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                         Vec3 center, float radius, int segments, float rotateDegree, double y) {
-        List<BlockPos> points = new ArrayList<>();
+        List<Vec3> points = new ArrayList<>();
         float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
 
         for (int i = 0; i < segments; i++) {
             float angle = i * TWO_PI_DIV_SEGMENTS;
             double x = center.x + radius * Math.cos(angle);
             double z = center.z + radius * Math.sin(angle);
-            points.add(BlockPos.containing(x, y, z));
+            points.add(new Vec3(x, y, z));
         }
 
         rotatePoints(points, center, rotateDegree);
@@ -40,11 +39,11 @@ public class Shape3D {
      */
     public static void drawFilledCuboid(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                         Vec3 center, float halfWidth, float halfDepth, float rotateDegree, double y) {
-        List<BlockPos> points = new ArrayList<>();
-        points.add(BlockPos.containing(center.x - halfWidth, y, center.z - halfDepth));
-        points.add(BlockPos.containing(center.x + halfWidth, y, center.z - halfDepth));
-        points.add(BlockPos.containing(center.x + halfWidth, y, center.z + halfDepth));
-        points.add(BlockPos.containing(center.x - halfWidth, y, center.z + halfDepth));
+        List<Vec3> points = new ArrayList<>();
+        points.add(new Vec3(center.x - halfWidth, y, center.z - halfDepth));
+        points.add(new Vec3(center.x + halfWidth, y, center.z - halfDepth));
+        points.add(new Vec3(center.x + halfWidth, y, center.z + halfDepth));
+        points.add(new Vec3(center.x - halfWidth, y, center.z + halfDepth));
 
         rotatePoints(points, center, rotateDegree);
 
@@ -56,14 +55,14 @@ public class Shape3D {
      */
     public static void drawFilledEllipsoid(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                            Vec3 center, float halfA, float halfB, int segments, float rotateDegree, double y) {
-        List<BlockPos> points = new ArrayList<>();
+        List<Vec3> points = new ArrayList<>();
         float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
 
         for (int i = 0; i < segments; i++) {
             float angle = i * TWO_PI_DIV_SEGMENTS;
             double x = center.x + halfA * Math.cos(angle);
             double z = center.z + halfB * Math.sin(angle);
-            points.add(BlockPos.containing(x, y, z));
+            points.add(new Vec3(x, y, z));
         }
 
         rotatePoints(points, center, rotateDegree);

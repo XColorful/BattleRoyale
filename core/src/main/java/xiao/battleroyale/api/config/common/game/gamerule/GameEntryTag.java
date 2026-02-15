@@ -37,6 +37,10 @@ public class GameEntryTag extends ConfigEntryTag {
     public static final String WINNER_FIREWORK_ID = "winnerFireworkId";
     public static final String WINNER_PARTICLE_ID = "winnerParticleId";
     public static final String INIT_GAME_AFTER_GAME = "initGameAfterGame";
+    public static final String RESTART_AFTER_GAME = "restartAfterGame";
+    public static final String RESTART_DELAY = "restartDelay";
+    public static final String MAX_RESTART_ROUND = "maxRestartRound";
+
     // message
     public static final String MESSAGE_CLEAN_FREQUENCY = "messageCleanFrequency";
     public static final String MESSAGE_EXPIRE_TIME = "messageExpireTime";

@@ -24,7 +24,7 @@ public class SpecialStatsEventHandler {
     protected static void onNewJourney(StatsManager statsManager, IGameManager gameManager) {
         currentJourney.clear();
         completedJourney.clear();
-        for (GamePlayer gamePlayer : statsManager.gamePlayerStats.keySet()) {
+        for (GamePlayer gamePlayer : statsManager.getRecordGamePlayers()) {
             currentJourney.add(new JourneyStats(gamePlayer));
         }
     }
@@ -49,6 +49,10 @@ public class SpecialStatsEventHandler {
         }
     }
     protected static void onMaxSpeedStats(StatsManager statsManager, IGameManager gameManager) {
+
+        // ----记分板----
+        if (statsManager.recordScoreboard) {
+        }
     }
 
     // --------写入记分板--------
@@ -69,11 +73,12 @@ public class SpecialStatsEventHandler {
             return;
         }
 
-        if (!statsManager.recordScoreboard) return;
-
-        Scoreboard scoreboard = serverLevel.getScoreboard();
-        for (JourneyStats journeyStats : completedJourney) {
-            ScoreUtils.addScore(scoreboard, statsManager.player_journey_ObjectiveName, journeyStats.getPlayerName(), (int) journeyStats.journeyTotal);
+        // ----记分板----
+        if (statsManager.recordScoreboard) {
+            Scoreboard scoreboard = serverLevel.getScoreboard();
+            for (JourneyStats journeyStats : completedJourney) {
+                ScoreUtils.addScore(scoreboard, statsManager.player_journey_ObjectiveName, journeyStats.getPlayerName(), (int) journeyStats.journeyTotal);
+            }
         }
     }
     protected static void onMaxSpeedComplete(StatsManager statsManager, GameCompleteFinishEvent event) {

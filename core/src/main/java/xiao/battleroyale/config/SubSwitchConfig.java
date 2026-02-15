@@ -7,6 +7,7 @@ import xiao.battleroyale.util.ClassUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class SubSwitchConfig {
 
@@ -20,8 +21,8 @@ public class SubSwitchConfig {
                                                                            AbstractConfigSubManager<T> context,
                                                                            int folderId) {
 
-        Map<String, ClassUtils.ArrayMap<Integer, T>> fileConfigs = context.getConfigFolderData(folderId).fileConfigsByFileName;
-        List<String> fileNames = new ArrayList<>(fileConfigs.keySet());
+        Set<String> availableConfigFileNames = context.getConfigFolderData(folderId).getConfigFileNames();
+        List<String> fileNames = new ArrayList<>(availableConfigFileNames);
         if (fileNames.isEmpty()) {
             return false;
         }
@@ -45,12 +46,9 @@ public class SubSwitchConfig {
                                                                            int folderId,
                                                                            String fileName) {
 
-        ClassUtils.ArrayMap<Integer, T> selectedFileConfigs = context.getConfigFolderData(folderId).fileConfigsByFileName.get(fileName);
+        ClassUtils.ArrayMap<Integer, T> selectedFileConfigs = context.getConfigFolderData(folderId).switchAndGetConfigFile(fileName);
 
         if (selectedFileConfigs != null) {
-            context.getConfigFolderData().setConfigFileName(fileName);
-
-            context.getConfigFolderData(folderId).currentConfigs.clearAndPutAll(selectedFileConfigs.asMap());
             BattleRoyale.LOGGER.debug("Switched to config file '{}' for type: {}", fileName, context.getFolderType(folderId));
             if (!selectedFileConfigs.isEmpty()) {
                 T configEntry = selectedFileConfigs.listGet(0);

@@ -46,6 +46,8 @@ public class DefaultZone {
         zoneConfigJson.add(generateZoneEvent15());
         zoneConfigJson.add(generateInitialEquipment16());
         zoneConfigJson.add(generateClientRender17());
+        zoneConfigJson.add(generateRedCross18());
+        zoneConfigJson.add(generateYellowRing19());
         writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
@@ -436,6 +438,49 @@ public class DefaultZone {
         ZoneConfig zoneConfig = new ZoneConfig(17, "Client special render", "#FFFFFF22",
                 false, 0, 80, 12000,
                 noFuncEntry, circleEntry, specialRenderEntry);
+
+        return zoneConfig.toJson();
+    }
+
+    private static JsonObject generateRedCross18() {
+        EffectFuncEntry effectFuncEntry = new EffectFuncEntryBuilder(0, 0, 20, -1)
+                .add("minecraft:regeneration", 20, 1)
+                .build();
+
+        StartEntry startEntry = new StartEntry()
+                .addLockCenter(0, true)
+                .addPlayerCenterLerp(0.2)
+                .addFixedDimension(new Vec3(15, 1.5, 5));
+        EndEntry endEntry = new EndEntry()
+                .addPreviousCenter(18, 0)
+                .addPreviousDimension(18, 0);
+
+        CrossEntry crossEntry = new CrossEntry(startEntry, endEntry, false);
+
+        ZoneConfig zoneConfig = new ZoneConfig(18, "Red cross regeneration", "#FF000099",
+                900, 700,
+                effectFuncEntry, crossEntry);
+
+        return zoneConfig.toJson();
+    }
+
+    private static JsonObject generateYellowRing19() {
+        EffectFuncEntry effectFuncEntry = new EffectFuncEntryBuilder(0, 20, 20, -1)
+                .add("minecraft:glowing", 20, 1)
+                .build();
+
+        StartEntry startEntry = new StartEntry()
+                .addPreviousCenter(18, 0)
+                .addPreviousDimension(18, 0);
+        EndEntry endEntry = new EndEntry()
+                .addPreviousCenter(19, 0)
+                .addFixedDimension(new Vec3(15 * Math.sqrt(2), 1.5, 15 * Math.sqrt(2) + 3));
+
+        RingEntry ringEntry = new RingEntry(startEntry, endEntry, false);
+
+        ZoneConfig zoneConfig = new ZoneConfig(19, "Yellow ring glowing", "#FFD70099",
+                900, 700,
+                effectFuncEntry, ringEntry);
 
         return zoneConfig.toJson();
     }
