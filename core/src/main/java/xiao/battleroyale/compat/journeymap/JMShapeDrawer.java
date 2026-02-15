@@ -16,6 +16,7 @@ import xiao.battleroyale.compat.journeymap.draw.Shape3D;
 
 import java.awt.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JMShapeDrawer {
 
@@ -90,30 +91,35 @@ public class JMShapeDrawer {
     /**
      * 在JourneyMap上绘制多边形。
      */
-    public static void drawPolygon(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color, List<BlockPos> points, float strokeWidth) {
+    public static void drawPolygon(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color, List<Vec3> points, float strokeWidth) {
         try {
+            List<BlockPos> blockPoints = points.stream().map(BlockPos::containing).collect(Collectors.toList());
+
             JMShapeProperties JMShapeProperties = new JMShapeProperties(0,
                     0.0F, // 默认是0.5，需要覆盖
                     color.getRGB(),
                     color.getAlpha() / 255.0F,
                     strokeWidth);
 
-            JMMapPolygon JMMapPolygon = new JMMapPolygon(points);
+            JMMapPolygon JMMapPolygon = new JMMapPolygon(blockPoints);
             JMPolygonOverlay overlay = new JMPolygonOverlay(JMEventHandler.MOD_JM_ID, displayId, dimension, JMShapeProperties, JMMapPolygon);
             jmAPI.show(overlay);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Failed to draw polygon on JourneyMap: {}", e.getMessage(), e);
         }
     }
-    public static void drawFilledPolygon(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color, List<BlockPos> points) {
+
+    public static void drawFilledPolygon(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color, List<Vec3> points) {
         try {
+            List<BlockPos> blockPoints = points.stream().map(BlockPos::containing).collect(Collectors.toList());
+
             JMShapeProperties JMShapeProperties = new JMShapeProperties(color.getRGB(),
                     color.getAlpha() / 255.0F,
                     0,
                     0,
                     0); // 默认是2
 
-            JMMapPolygon JMMapPolygon = new JMMapPolygon(points);
+            JMMapPolygon JMMapPolygon = new JMMapPolygon(blockPoints);
             JMPolygonOverlay overlay = new JMPolygonOverlay(JMEventHandler.MOD_JM_ID, displayId, dimension, JMShapeProperties, JMMapPolygon);
             jmAPI.show(overlay);
         } catch (Exception e) {
@@ -124,7 +130,7 @@ public class JMShapeDrawer {
     /**
      * 旋转点列表
      */
-    public static void rotatePoints(List<BlockPos> points, Vec3 center, float rotateDegree) {
+    public static void rotatePoints(List<Vec3> points, Vec3 center, float rotateDegree) {
         if (Math.abs(rotateDegree) < 0.001) {
             return;
         }
@@ -133,10 +139,10 @@ public class JMShapeDrawer {
         rotationMatrix.rotate(-rotateDegree * DEGREE_TO_RADIAN, new Vector3f(0, 1, 0));
 
         for (int i = 0; i < points.size(); i++) {
-            BlockPos p = points.get(i);
-            Vector4f vec = new Vector4f((float) (p.getX() - center.x), 0, (float) (p.getZ() - center.z), 1.0f);
+            Vec3 p = points.get(i);
+            Vector4f vec = new Vector4f((float) (p.x - center.x), 0, (float) (p.z - center.z), 1.0f);
             vec.mul(rotationMatrix);
-            points.set(i, BlockPos.containing(vec.x() + center.x, p.getY(), vec.z() + center.z));
+            points.set(i, new Vec3(vec.x() + center.x, p.y, vec.z() + center.z));
         }
     }
 }
