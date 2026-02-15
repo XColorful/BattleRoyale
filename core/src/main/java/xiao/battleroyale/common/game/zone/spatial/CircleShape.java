@@ -1,5 +1,6 @@
 package xiao.battleroyale.common.game.zone.spatial;
 
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -44,8 +45,8 @@ public class CircleShape extends AbstractSimpleShape {
             cachedDimension = dimension;
             cachedProgress = allowProgress;
         }
-        double dimSq = dimension.x * dimension.z;
-        boolean isZoneInverted = dimSq < 0;
+        double dimSq = dimension.x * dimension.x;
+        boolean isZoneInverted = Mth.sign(dimension.x) * Mth.sign(dimension.z) < 0;
         // 旋转对圆没有几何影响
 
         // 忽略y方向
@@ -77,12 +78,11 @@ public class CircleShape extends AbstractSimpleShape {
     @Override
     public @Nullable Vec3 getStartDimension() {
         if (startDimension == null) return null;
-        Vec3 baseV = needEqualAbs ? Vec3Utils.applyXAbsToZ(startDimension) : startDimension;
-        if (checkBadShape
-                && (Vec3Utils.hasNegative(startDimension) || !Vec3Utils.equalXZAbs(startDimension))) {
-            return Vec3Utils.positive(baseV);
+        Vec3 baseVec = needEqualAbs ? Vec3Utils.applyXAbsToZ(startDimension) : startDimension;
+        if (checkBadShape) {
+            return Vec3Utils.toPositiveAndEqualXZ(baseVec);
         } else {
-            return baseV;
+            return baseVec;
         }
     }
 
@@ -97,9 +97,8 @@ public class CircleShape extends AbstractSimpleShape {
         if (needEqualAbs) {
             baseVec = Vec3Utils.applyXAbsToZ(baseVec);
         }
-        if (checkBadShape
-                && (Vec3Utils.hasNegative(baseVec) || !Vec3Utils.equalXZAbs(baseVec))) {
-            return Vec3Utils.positive(baseVec);
+        if (checkBadShape) {
+            return Vec3Utils.toPositiveAndEqualXZ(baseVec);
         } else {
             return baseVec;
         }
@@ -108,12 +107,11 @@ public class CircleShape extends AbstractSimpleShape {
     @Override
     public @Nullable Vec3 getEndDimension() {
         if (endDimension == null) return null;
-        Vec3 baseV = needEqualAbs ? Vec3Utils.applyXAbsToZ(endDimension) : endDimension;
-        if (checkBadShape
-                && (Vec3Utils.hasNegative(endDimension) || !Vec3Utils.equalXZAbs(endDimension))) {
-            return Vec3Utils.positive(baseV);
+        Vec3 baseVec = needEqualAbs ? Vec3Utils.applyXAbsToZ(endDimension) : endDimension;
+        if (checkBadShape) {
+            return Vec3Utils.toPositiveAndEqualXZ(baseVec);
         } else {
-            return baseV;
+            return baseVec;
         }
     }
 }

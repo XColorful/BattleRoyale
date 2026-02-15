@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
-import xiao.battleroyale.api.event.ILivingDamageEvent;
-import xiao.battleroyale.api.event.ILivingDeathEvent;
+import xiao.battleroyale.api.event.*;
+import xiao.battleroyale.api.event.game.finish.GameCompleteFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.process.IGameProcessManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
@@ -18,11 +18,12 @@ import xiao.battleroyale.common.game.team.GameTeam;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * BattleRoyale Game Process Manager
  */
-public class BRGameProcessManager extends AbstractGameManager implements IGameProcessManager {
+public class BRGameProcessManager extends AbstractGameManager implements IGameProcessManager, ICustomEventHandler {
 
     private static class BRGameProcessManagerHolder {
         private static final BRGameProcessManager INSTANCE = new BRGameProcessManager();
@@ -38,9 +39,48 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
         ;
     }
 
+    public static final int winnerMessageDelay = 1; // 延迟1tick发送消息，在当前tick的DeathEvent之后
+    public static final int teleportAfterGameMessageDelay = 2; // 延迟2tick发送回大厅消息，在聊天栏最新位置
+
     @Override public String getManagerName() {
         return String.format("%s:BRGameProcessManager", BattleRoyale.MOD_ID);
     }
+
+    @Override
+    public boolean registerGameEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.register(get(), CustomEventType.GAME_COMPLETE_FINISH_EVENT, EventPriority.LOW, true); // 最后发送胜利消息
+        return true;
+    }
+    @Override
+    public boolean unregisterGameEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.unregister(get(), CustomEventType.GAME_COMPLETE_FINISH_EVENT, EventPriority.LOW, true);
+        return true;
+    }
+
+    @Override
+    public String getEventHandlerName() {
+        return String.format("%s:BRGameProcessManager", BattleRoyale.MOD_ID);
+    }
+    @Override
+    public void handleEvent(CustomEventType customEventType, ICustomEvent event) {
+        switch (customEventType) {
+            case GAME_COMPLETE_FINISH_EVENT -> {
+                IGameManager cachedGameManager = ((GameCompleteFinishEvent) event).getGameManager();
+                Consumer<IGameManager> delayedTask = gameManager -> {
+                    if (gameManager.isInGame()) { // 防止立即重开
+                        BattleRoyale.LOGGER.warn("BRGameProcessManager: GameManager is inGame immediately after GameCompleteFinishEvent, skipped sendWinnerResult");
+                        return;
+                    }
+                    this.sendWinnerResult(gameManager.getServerLevel(), gameManager.getWinnerGamePlayers(), gameManager.getWinnerGameTeams(), gameManager.getGameTime());
+                };
+                new DelayedEvent<>(delayedTask, cachedGameManager, BRGameProcessManager.winnerMessageDelay, "BRGameProcessManager::sendWinnerResult");
+            }
+            default -> onReceiveWrongEvent(customEventType);
+        }
+    }
+
 
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
@@ -172,13 +212,13 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
         BRGameManagement.healGamePlayers(serverLevel, gamePlayers);
     }
     @Override public void finishGameAddWinner(boolean hasWinner) {
-        BRGameManagement.finishGameAddWinner(this, hasWinner);
+        BRGameManagement.finishGameAddWinner(hasWinner);
     }
 
     // --------IGameNotification--------
 
     @Override public void sendWinnerResult(@Nullable ServerLevel serverLevel, Set<GamePlayer> winnerGamePlayers, Set<GameTeam> winnerGameTeams, int gameTime) {
-        BRGameNotification.sendWinnerResult(serverLevel, winnerGamePlayers, winnerGameTeams, gameTime);
+        BRGameNotification.sendWinnerResult(this, serverLevel, winnerGamePlayers, winnerGameTeams, gameTime);
     }
     @Override public void notifyWinner(@Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer, int winnerParticleId) {
         BRGameNotification.notifyWinner(serverLevel, gamePlayer, winnerParticleId);

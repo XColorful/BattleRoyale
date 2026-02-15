@@ -7,5 +7,10 @@ public interface IGameInfoGetter {
     Vec3 getGlobalCenterOffset();
     int getWinnerTeamTotal();
     ServerLevel getServerLevel();
+    
+    boolean hasWinner();
+    Set<GamePlayer> getWinnerGamePlayers();
+    Set<GameTeam> getWinnerGameTeams();
+    int getRemainRestartTime();
 }
 ```

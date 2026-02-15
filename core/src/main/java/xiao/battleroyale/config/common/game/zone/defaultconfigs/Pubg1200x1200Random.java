@@ -79,7 +79,7 @@ public class Pubg1200x1200Random {
     }
 
     private static void add1200x1200Zone(JsonArray zoneConfigJson) {
-        generateBorderCircle(zoneConfigJson, 1200 / 2F, GAME_TIME, 8000 * 0.85 / 2);
+        generateBorderCircle(zoneConfigJson, 1200 / 2F, GAME_TIME, 8000 * 0.85 / 2, true, 30);
     }
 
     private static void addPhase3(JsonArray zoneConfigJson) {

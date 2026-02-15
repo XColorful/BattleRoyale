@@ -115,6 +115,7 @@ public class GameStarter {
     public static void startGameSetup(GameManager gameManager) {
         // gameManager.ready = false; // 不使用ready标记，因为Team会变动
         gameManager.setGameTime(0); // 游戏结束后不手动重置
+        gameManager.setHasWinner(false);
         gameManager.clearWinnerGamePlayers(); // 游戏结束后不手动重置
         gameManager.clearWinnerGameTeams(); // 游戏结束后不手动重置
         TempDataManager.get().writeString(GAME_MANAGER, GLOBAL_OFFSET, StringUtils.vectorToString(gameManager.globalCenterOffset));

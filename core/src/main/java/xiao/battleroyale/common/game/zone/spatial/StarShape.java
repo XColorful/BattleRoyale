@@ -35,7 +35,7 @@ public class StarShape extends AbstractSimpleShape {
         }
 
         double allowedProgress = GameZone.allowedProgress(progress);
-        Vec3 center, dimension; // dimension.x 为原始外接圆半径，dimension.z 为原始内接圆半径
+        Vec3 center, dimension; // dimension.x 为外接圆半径，dimension.z 为内接圆半径
         double rotateDegree;
 
         if (Math.abs(allowedProgress - cachedProgress) < EPSILON) {
@@ -158,9 +158,8 @@ public class StarShape extends AbstractSimpleShape {
     @Override
     public @Nullable Vec3 getStartDimension() {
         if (startDimension == null) return null;
-        if (checkBadShape
-                && (Vec3Utils.hasNegative(startDimension) || startDimension.x < startDimension.z)) {
-            return Vec3Utils.positive(new Vec3(startDimension.z, startDimension.y, startDimension.x));
+        if (checkBadShape) {
+            return Vec3Utils.toPositiveAndXGreaterThanZ(startDimension);
         } else {
             return startDimension;
         }
@@ -174,9 +173,8 @@ public class StarShape extends AbstractSimpleShape {
         }
         Vec3 baseVec = getDimensionNoCheck(allowedProgress);
         if (baseVec == null) return null;
-        if (checkBadShape
-                && (Vec3Utils.hasNegative(baseVec) || baseVec.x < baseVec.z)) {
-            return Vec3Utils.positive(new Vec3(baseVec.z, baseVec.y, baseVec.x));
+        if (checkBadShape) {
+            return Vec3Utils.toPositiveAndXGreaterThanZ(baseVec);
         } else {
             return baseVec;
         }
@@ -185,9 +183,8 @@ public class StarShape extends AbstractSimpleShape {
     @Override
     public @Nullable Vec3 getEndDimension() {
         if (endDimension == null) return null;
-        if (checkBadShape
-                && (Vec3Utils.hasNegative(endDimension) || endDimension.x < endDimension.z)) {
-            return Vec3Utils.positive(new Vec3(endDimension.z, endDimension.y, endDimension.x));
+        if (checkBadShape) {
+            return Vec3Utils.toPositiveAndXGreaterThanZ(endDimension);
         } else {
             return endDimension;
         }

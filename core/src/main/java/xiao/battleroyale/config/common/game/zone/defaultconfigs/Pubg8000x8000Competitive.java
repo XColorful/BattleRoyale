@@ -95,7 +95,7 @@ public class Pubg8000x8000Competitive {
 
 
     private static void add8000x8000Zone(JsonArray zoneConfigJson) {
-        generateBorder(zoneConfigJson, 8000 / 2F, GAME_TIME);
+        generateBorder(zoneConfigJson, 8000 / 2F, GAME_TIME, true, 30);
     }
 
     private static void addPhase1(JsonArray zoneConfigJson) {

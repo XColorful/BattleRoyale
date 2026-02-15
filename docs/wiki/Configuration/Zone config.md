@@ -192,6 +192,10 @@
 
 #### [椭圆](https://github.com/XColorful/BattleRoyale/wiki/Zone-2D-shape#椭圆)
 
+#### [十字形](https://github.com/XColorful/BattleRoyale/wiki/Zone-2D-shape#十字形)
+
+#### [环形](https://github.com/XColorful/BattleRoyale/wiki/Zone-2D-shape#环形)
+
 #### [不规则多边形](https://github.com/XColorful/BattleRoyale/wiki/Zone-2D-shape#不规则多边形)
 暂未实现
 
@@ -419,6 +423,10 @@ The value is _true_ or _false_, default it false
 #### [Star](https://github.com/XColorful/BattleRoyale/wiki/Zone-2D-shape#Star)
 
 #### [Ellipse](https://github.com/XColorful/BattleRoyale/wiki/Zone-2D-shape#Ellipse)
+
+#### [Cross](https://github.com/XColorful/BattleRoyale/wiki/Zone-2D-shape#Cross)
+
+#### [Ring](https://github.com/XColorful/BattleRoyale/wiki/Zone-2D-shape#Ring)
 
 #### [Irregular polygon](https://github.com/XColorful/BattleRoyale/wiki/Zone-2D-shape#Irregular-polygon)
 
