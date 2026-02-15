@@ -169,4 +169,33 @@ public class Vec3Utils {
 
         return baseVec.add(x, y, z);
     }
+
+    /**
+     * 取正
+     * X绝对值赋给Z
+     */
+    public static Vec3 toPositiveAndEqualXZ(Vec3 baseVec) {
+        double x = Math.abs(baseVec.x);
+        double y = Math.abs(baseVec.y);
+        return new Vec3(x, y, x);
+    }
+    /**
+     * 取正
+     * Y绝对值赋给XZ
+     */
+    public static Vec3 toPositiveAndEqualYXZ(Vec3 baseVec) {
+        double y = Math.abs(baseVec.y);
+        return new Vec3(y, y, y);
+    }
+
+    /**
+     * 取正
+     * (交换) X绝对值大于Z
+     */
+    public static Vec3 toPositiveAndXGreaterThanZ(Vec3 baseVec) {
+        double x = Math.abs(baseVec.x);
+        double y = Math.abs(baseVec.y);
+        double z = Math.abs(baseVec.z);
+        return x > z ? new Vec3(x, y, z) : new Vec3(z, y, x);
+    }
 }

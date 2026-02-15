@@ -182,7 +182,7 @@ public class BRGameManagement {
                         BattleRoyale.getGameManager().getGameLobbyManager().sendLobbyTeleportMessage(serverPlayer, true);
                     }
                 };
-                new DelayedEvent<>(delayedTask, player, 2, "GameManager::sendLobbyTeleportMessage");
+                new DelayedEvent<>(delayedTask, player, BRGameProcessManager.teleportAfterGameMessageDelay, "GameManager::sendLobbyTeleportMessage");
             }
         }
 
@@ -206,7 +206,7 @@ public class BRGameManagement {
                         BattleRoyale.getGameManager().getGameLobbyManager().sendLobbyTeleportMessage(serverPlayer, false);
                     }
                 };
-                new DelayedEvent<>(delayedTask, player, 2, "GameManager::sendLobbyTeleportMessage");
+                new DelayedEvent<>(delayedTask, player, BRGameProcessManager.teleportAfterGameMessageDelay, "GameManager::sendLobbyTeleportMessage");
             }
         }
     }
@@ -306,19 +306,18 @@ public class BRGameManagement {
         }
     }
 
-    public static void finishGameAddWinner(IGameProcessManager brGameProcessManager, boolean hasWinner) {
+    public static void finishGameAddWinner(boolean hasWinner) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        gameManager.setHasWinner(hasWinner);
         if (hasWinner) {
-            IGameManager gameManager = BattleRoyale.getGameManager();
             for (GameTeam team : gameManager.getTeamManager().getGameTeams()) {
                 if (!team.isTeamEliminated()) {
                     gameManager.addWinnerGameTeam(team);
                 }
             }
-            int particleId = gameManager.getGameEntry().winnerParticleId;
             for (GameTeam team : gameManager.getWinnerGameTeams()) {
                 for (GamePlayer member : team.getTeamMembers()) {
                     gameManager.addWinnerGamePlayer(member);
-                    brGameProcessManager.notifyWinner(gameManager.getServerLevel(), member, particleId);
                 }
             }
         }

@@ -36,7 +36,7 @@ public class JourneyMap extends AbstractCompatMod {
 
     protected static boolean shouldDisplayZone = true;
 
-    public static void setJourneyMapConfig(boolean enableJourneyMap) {
+    public static void setJourneyMapConfig(boolean enableJourneyMap, float lineThickness) {
         shouldDisplayZone = enableJourneyMap;
         if (get().isLoaded()) {
             if (shouldDisplayZone) {
@@ -44,6 +44,7 @@ public class JourneyMap extends AbstractCompatMod {
             } else {
                 unregister();
             }
+            JMShapeDrawer.setThickness(lineThickness);
         }
     }
 }

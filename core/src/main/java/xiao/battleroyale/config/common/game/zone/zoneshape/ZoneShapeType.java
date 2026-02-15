@@ -17,6 +17,8 @@ public enum ZoneShapeType {
     POLYGON(ZoneShapeTag.POLYGON, PolygonEntry::fromJson),
     ELLIPSE(ZoneShapeTag.ELLIPSE, EllipseEntry::fromJson),
     STAR(ZoneShapeTag.STAR, StarEntry::fromJson),
+    CROSS(ZoneShapeTag.CROSS, CrossEntry::fromJson),
+    RING(ZoneShapeTag.RING, RingEntry::fromJson),
     // 3D shape
     SPHERE(ZoneShapeTag.SPHERE, SphereEntry::fromJson),
     CUBE(ZoneShapeTag.CUBE, CubeEntry::fromJson),

@@ -12,6 +12,7 @@ public class DefaultGameruleConfigGenerator {
     public static void generateDefaultGameruleConfigs(String configDirPath) {
         DefaultGamerule.generateDefaultConfigs(configDirPath);
         PubgGamerule.generateDefaultConfigs(configDirPath);
+        DeathMatchGamerule.generateDefaultConfigs(configDirPath);
         if (BattleRoyale.getMcRegistry().isModLoaded(CbrAddon.get().getModId())) {
             CFHCGamerule.generateDefaultConfigs(configDirPath);
         }
