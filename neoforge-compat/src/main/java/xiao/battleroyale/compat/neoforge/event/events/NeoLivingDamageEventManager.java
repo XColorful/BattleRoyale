@@ -50,7 +50,7 @@ public class NeoLivingDamageEventManager {
             return new NeoLivingDamageEvent(event);
         }
 
-        protected void handle(LivingDamageEvent event) {
+        protected void handle(LivingDamageEvent.Post event) {
             super.onEvent(event);
         }
     }
@@ -58,30 +58,30 @@ public class NeoLivingDamageEventManager {
     public static class Highest extends NeoLivingDamageProxy {
         static final Highest INSTANCE = new Highest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGHEST, receiveCanceled = true)
-        public void onEvent(LivingDamageEvent e) { handle(e); }
+        public void onEvent(LivingDamageEvent.Post e) { handle(e); }
     }
 
     public static class High extends NeoLivingDamageProxy {
         static final High INSTANCE = new High();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGH, receiveCanceled = true)
-        public void onEvent(LivingDamageEvent e) { handle(e); }
+        public void onEvent(LivingDamageEvent.Post e) { handle(e); }
     }
 
     public static class Normal extends NeoLivingDamageProxy {
         static final Normal INSTANCE = new Normal();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.NORMAL, receiveCanceled = true)
-        public void onEvent(LivingDamageEvent e) { handle(e); }
+        public void onEvent(LivingDamageEvent.Post e) { handle(e); }
     }
 
     public static class Low extends NeoLivingDamageProxy {
         static final Low INSTANCE = new Low();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOW, receiveCanceled = true)
-        public void onEvent(LivingDamageEvent e) { handle(e); }
+        public void onEvent(LivingDamageEvent.Post e) { handle(e); }
     }
 
     public static class Lowest extends NeoLivingDamageProxy {
         static final Lowest INSTANCE = new Lowest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST, receiveCanceled = true)
-        public void onEvent(LivingDamageEvent e) { handle(e); }
+        public void onEvent(LivingDamageEvent.Post e) { handle(e); }
     }
 }
