@@ -13,6 +13,7 @@ public class DefaultSpawnConfigGenerator {
         DefaultSpawn.generateDefaultConfigs(configDirPath);
         AirSpawn.generateDefaultConfigs(configDirPath);
         PubgSpawn.generateDefaultConfigs(configDirPath);
+        DeathMatchSpawn.generateDefaultConfigs(configDirPath);
         FunctionShowcase.generateDefaultConfigs(configDirPath);
         if (BattleRoyale.getMcRegistry().isModLoaded(CbrAddon.get().getModId())) {
             CFHC1000x1000Spawn.generateDefaultConfigs(configDirPath);

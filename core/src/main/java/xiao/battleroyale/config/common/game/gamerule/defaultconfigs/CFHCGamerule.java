@@ -44,7 +44,8 @@ public class CFHCGamerule {
                 true, true, true, false, DEFAULT_DOWN_DAMAGE, 20,
                 false, false, false, false,
                 false, true, true, true, true, true,
-                false, true, false, false, 0, 0, false,
+                false, true, false, false, 0, 0,
+                false, false, 20, 15,
                 20 * 7, 20 * 5, 20 * 5);
         GameruleConfig gameruleConfig = new GameruleConfig(gameId, String.format("%s %s %s", name, playerTotal, teamSize), "#FFFFFFAA",
                 brEntry, mcEntry, gameEntry);
