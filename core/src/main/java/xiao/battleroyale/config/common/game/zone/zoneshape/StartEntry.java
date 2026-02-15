@@ -83,7 +83,7 @@ public class StartEntry {
         return this;
     }
     public StartEntry addRelativeCenter(Vec3 relativeAdd) {
-        if (this.startCenterType != StartCenterType.RELATIVE) {
+        if (this.startCenterType != StartCenterType.PREVIOUS) {
             BattleRoyale.LOGGER.warn("Please use StartEntry::addPreviousCenter before addRelativeCenter {}", relativeAdd);
         }
         this.startCenterType = StartCenterType.RELATIVE;
@@ -117,7 +117,7 @@ public class StartEntry {
         return this;
     }
     public StartEntry addRelativeDimension(Vec3 relativeAdd) {
-        if (this.startDimensionType != StartDimensionType.RELATIVE) {
+        if (this.startDimensionType != StartDimensionType.PREVIOUS) {
             BattleRoyale.LOGGER.warn("Please use StartEntry::addPreviousDimension before addRelativeDimension {}", relativeAdd);
         }
         this.startDimensionType = StartDimensionType.RELATIVE;
@@ -145,7 +145,7 @@ public class StartEntry {
         return this;
     }
     public StartEntry addRelativeRotate(double degree) {
-        if (this.startRotationType != StartRotationType.RELATIVE) {
+        if (this.startRotationType != StartRotationType.PREVIOUS) {
             BattleRoyale.LOGGER.warn("Please use StartEntry::addPreviousRotate before addRelativeRotate {}", degree);
         }
         this.startRotationType = StartRotationType.RELATIVE;

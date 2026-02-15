@@ -18,6 +18,8 @@ import xiao.battleroyale.api.event.game.game.GamePlayerReviveFinishEvent;
 import xiao.battleroyale.api.event.game.starter.GameStartFinishEvent;
 import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.stats.IGamePlayerStats;
+import xiao.battleroyale.common.game.stats.event.*;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.util.ScoreUtils;
 
@@ -28,6 +30,14 @@ import java.util.Set;
 import static xiao.battleroyale.util.ScoreUtils.*;
 
 public class StatsEventHandler {
+
+    private static int timeOrder = 0;
+    private static void resetTimeOrder() {
+        timeOrder = 0;
+    }
+    private static int getTimeOrderAndIncrease() {
+        return timeOrder++;
+    }
 
     protected static List<String> getObjectiveNames(StatsManager statsManager) {
         List<String> objectiveNames = new ArrayList<>(List.of(
@@ -60,9 +70,7 @@ public class StatsEventHandler {
     }
 
     protected static void onGameStart(StatsManager statsManager, GameStartFinishEvent event) {
-
-
-        if (!statsManager.recordScoreboard) return;
+        resetTimeOrder();
 
         IGameManager gameManager = event.getGameManager();
         ServerLevel serverLevel = gameManager.getServerLevel();
@@ -71,38 +79,44 @@ public class StatsEventHandler {
         SpecialStatsEventHandler.onNewJourney(statsManager, gameManager);
         SpecialStatsEventHandler.onNewMaxSpeed(statsManager, gameManager);
 
-        if (!statsManager.resetScoreboardAtStart) return;
+        // ----记分板----
+        if (statsManager.recordScoreboard) {
+            if (statsManager.resetScoreboardAtStart) {
+                if (serverLevel == null) {
+                    BattleRoyale.LOGGER.warn("StatsEventHandler: serverLevel is null, failed to reset scoreboard at start");
+                    return;
+                }
 
-        if (serverLevel == null) return;
+                // 重置记分板
+                Scoreboard scoreboard = serverLevel.getScoreboard();
+                List<String> objectiveNames = getObjectiveNames(statsManager);
 
-        // 重置记分板
-        Scoreboard scoreboard = serverLevel.getScoreboard();
-        List<String> objectiveNames = getObjectiveNames(statsManager);
-
-        ScoreUtils.clearObjectives(scoreboard, objectiveNames);
-        BattleRoyale.LOGGER.info("StatsEventHandler: All objectives cleared");
-        ScoreUtils.addObjectivesIfNull(scoreboard, objectiveNames);
+                ScoreUtils.clearObjectives(scoreboard, objectiveNames);
+                BattleRoyale.LOGGER.info("StatsEventHandler: All objectives cleared");
+                ScoreUtils.addObjectivesIfNull(scoreboard, objectiveNames);
+            }
+        }
     }
 
     protected static void onGameTick(StatsManager statsManager, GameTickFinishEvent event) {
         IGameManager gameManager = event.getGameManager();
         if (!gameManager.isInGame()) return;
 
-        int gameTime = event.getGameTime();
+        int gameTickTime = event.getGameTickTime();
         if (statsManager.syncGameInfoToObjective) {
-            syncGameInfo(statsManager, gameManager, gameTime);
+            syncGameInfo(statsManager, gameManager, gameTickTime);
         }
-        if (gameTime > statsManager.journeyStatsDelay) {
+        if (gameTickTime > statsManager.journeyStatsDelay) {
             SpecialStatsEventHandler.onJourneyStats(statsManager, gameManager);
         }
-        if (gameTime > statsManager.maxSpeedStatsDelay) {
+        if (gameTickTime > statsManager.maxSpeedStatsDelay) {
             SpecialStatsEventHandler.onMaxSpeedStats(statsManager, gameManager);
         }
     }
 
     // 每tick检查，而不基于事件通知才更改
     // 采用基于状态对比的轮询同步，确保在 gameStep 加速或 Tick 丢失时记分板数据的最终一致性
-    protected static void syncGameInfo(StatsManager statsManager, IGameManager gameManager, int gameTimeInTick) {
+    private static void syncGameInfo(StatsManager statsManager, IGameManager gameManager, int gameTimeInTick) {
         @Nullable ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null) {
             BattleRoyale.LOGGER.debug("StatsEventHandler: Failed to get ServerLevel by GameManager, skipped syncGameInfo");
@@ -130,8 +144,8 @@ public class StatsEventHandler {
     }
 
     protected static void onGamePlayerDamage(StatsManager statsManager, GamePlayerDamageFinishEvent event) {
-        @NotNull GamePlayer gamePlayer = event.getGamePlayer();
-        String playerName = gamePlayer.getPlayerName();
+        @NotNull GamePlayer victimGamePlayer = event.getGamePlayer();
+        String playerName = victimGamePlayer.getPlayerName();
         IGameManager gameManager = event.getGameManager();
         @Nullable ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null) {
@@ -151,41 +165,54 @@ public class StatsEventHandler {
         @Nullable Entity damageMethod = damageSource.getDirectEntity();
         float damageAmount = livingDamageEvent.getDamageAmount();
 
-        if (!statsManager.recordScoreboard) return;
-
-        Scoreboard scoreboard = serverLevel.getScoreboard();
-        int score = (int) (damageAmount * statsManager.damageMultiplier);
+        // ----Stats记录----
+        int gameTime = event.getGameTime();
         if (attackerGamePlayer != null) {
-            // 攻击者玩家(对玩家)造成的伤害
-            addScore(scoreboard, statsManager.player_to_player_damage_ObjectiveName, attackerGamePlayer.getPlayerName(), score);
-
-            // 玩家承受(攻击者玩家)的伤害
-            addScore(scoreboard, statsManager.player_damage_by_player_ObjectiveName, playerName, score);
-
-            // 更新攻击频率比例 (造成/被造成)
-            updateRatioScore(scoreboard, attackerGamePlayer.getPlayerName(),
-                    statsManager.player_to_player_damage_ObjectiveName, statsManager.player_damage_by_player_ObjectiveName, statsManager.player_attack_rate_ObjectiveName,
-                    statsManager.ratioBase, statsManager.mcMaxHealth * statsManager.damageMultiplier);
-            updateRatioScore(scoreboard, playerName,
-                    statsManager.player_to_player_damage_ObjectiveName, statsManager.player_damage_by_player_ObjectiveName, statsManager.player_attack_rate_ObjectiveName,
-                    statsManager.ratioBase, statsManager.mcMaxHealth * statsManager.damageMultiplier);
+            IGamePlayerStats attackerStats = statsManager.getGamePlayerStats(attackerGamePlayer);
+            attackerStats.addHurtRecord(new HurtRecord(gameTime, getTimeOrderAndIncrease(), attackerGamePlayer, victimGamePlayer, damageAmount));
+            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
+            victimStats.addDamageRecord(new DamageRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, attackerGamePlayer, damageAmount));
         } else {
-            // 其他方式对玩家造成的伤害
-            String otherName = damageMethod != null ? damageMethod.getScoreboardName() : "other";
-            addScore(scoreboard, statsManager.other_to_player_damage_ObjectiveName, otherName, score);
+            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
+            victimStats.addDamageRecord(new DamageRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, damageSource, damageAmount));
+        }
 
-            // 玩家承受(非攻击者玩家)的伤害
-            addScore(scoreboard, statsManager.player_damage_by_other_ObjectiveName, playerName, score);
+        // ----记分板----
+        if (statsManager.recordScoreboard) {
+            Scoreboard scoreboard = serverLevel.getScoreboard();
+            int score = (int) (damageAmount * statsManager.damageMultiplier);
+            if (attackerGamePlayer != null) {
+                // 攻击者玩家(对玩家)造成的伤害
+                addScore(scoreboard, statsManager.player_to_player_damage_ObjectiveName, attackerGamePlayer.getPlayerName(), score);
+
+                // 玩家承受(攻击者玩家)的伤害
+                addScore(scoreboard, statsManager.player_damage_by_player_ObjectiveName, playerName, score);
+
+                // 更新攻击频率比例 (造成/被造成)
+                updateRatioScore(scoreboard, attackerGamePlayer.getPlayerName(),
+                        statsManager.player_to_player_damage_ObjectiveName, statsManager.player_damage_by_player_ObjectiveName, statsManager.player_attack_rate_ObjectiveName,
+                        statsManager.ratioBase, statsManager.mcMaxHealth * statsManager.damageMultiplier);
+                updateRatioScore(scoreboard, playerName,
+                        statsManager.player_to_player_damage_ObjectiveName, statsManager.player_damage_by_player_ObjectiveName, statsManager.player_attack_rate_ObjectiveName,
+                        statsManager.ratioBase, statsManager.mcMaxHealth * statsManager.damageMultiplier);
+            } else {
+                // 其他方式对玩家造成的伤害
+                String otherName = damageMethod != null ? damageMethod.getScoreboardName() : "other";
+                addScore(scoreboard, statsManager.other_to_player_damage_ObjectiveName, otherName, score);
+
+                // 玩家承受(非攻击者玩家)的伤害
+                addScore(scoreboard, statsManager.player_damage_by_other_ObjectiveName, playerName, score);
+            }
         }
     }
 
     protected static void onGamePlayerDown(StatsManager statsManager, GamePlayerDownFinishEvent event) {
-        @NotNull GamePlayer gamePlayer = event.getGamePlayer();
-        if (gamePlayer.isEliminated()) {
-            BattleRoyale.LOGGER.debug("StatsEventHandler: GamePlayer {} is eliminated, skipped onGamePlayerDown", gamePlayer.getNameWithId());
+        @NotNull GamePlayer victimGamePlayer = event.getGamePlayer();
+        if (victimGamePlayer.isEliminated()) {
+            BattleRoyale.LOGGER.debug("StatsEventHandler: GamePlayer {} is eliminated, skipped onGamePlayerDown", victimGamePlayer.getNameWithId());
             return;
         }
-        String playerName = gamePlayer.getPlayerName();
+        String playerName = victimGamePlayer.getPlayerName();
         IGameManager gameManager = event.getGameManager();
         @Nullable ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null) {
@@ -204,22 +231,35 @@ public class StatsEventHandler {
         @Nullable GamePlayer attackerGamePlayer = attackerEntity != null ? gameManager.getTeamManager().getGamePlayerByUUID(attackerEntity.getUUID()) : null;
         @Nullable Entity damageMethod = damageSource.getDirectEntity();
 
-        if (!statsManager.recordScoreboard) return;
-
-        Scoreboard scoreboard = serverLevel.getScoreboard();
+        // ----Stats记录----
+        int gameTime = event.getGameTime();
         if (attackerGamePlayer != null) {
-            // 攻击者玩家(对玩家)造成的击倒数
-            addScore(scoreboard, statsManager.player_knock_player_ObjectiveName, attackerGamePlayer.getPlayerName(), 1);
-
-            // 玩家被(攻击者玩家)击倒数
-            addScore(scoreboard, statsManager.player_down_by_player_ObjectiveName, playerName, 1);
+            IGamePlayerStats attackerStats = statsManager.getGamePlayerStats(attackerGamePlayer);
+            attackerStats.addKnockRecord(new KnockRecord(gameTime, getTimeOrderAndIncrease(), attackerGamePlayer, victimGamePlayer));
+            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
+            victimStats.addDownRecord(new DownRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, attackerGamePlayer));
         } else {
-            // 其他方式对玩家的击倒数
-            String sourceName = damageMethod != null ? damageMethod.getScoreboardName() : "other";
-            addScore(scoreboard, statsManager.other_knock_player_ObjectiveName, sourceName, 1);
+            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
+            victimStats.addDownRecord(new DownRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, damageSource));
+        }
 
-            // 玩家被(非攻击者玩家)击倒数
-            addScore(scoreboard, statsManager.player_down_by_other_ObjectiveName, playerName, 1);
+        // ----记分板----
+        if (statsManager.recordScoreboard) {
+            Scoreboard scoreboard = serverLevel.getScoreboard();
+            if (attackerGamePlayer != null) {
+                // 攻击者玩家(对玩家)造成的击倒数
+                addScore(scoreboard, statsManager.player_knock_player_ObjectiveName, attackerGamePlayer.getPlayerName(), 1);
+
+                // 玩家被(攻击者玩家)击倒数
+                addScore(scoreboard, statsManager.player_down_by_player_ObjectiveName, playerName, 1);
+            } else {
+                // 其他方式对玩家的击倒数
+                String sourceName = damageMethod != null ? damageMethod.getScoreboardName() : "other";
+                addScore(scoreboard, statsManager.other_knock_player_ObjectiveName, sourceName, 1);
+
+                // 玩家被(非攻击者玩家)击倒数
+                addScore(scoreboard, statsManager.player_down_by_other_ObjectiveName, playerName, 1);
+            }
         }
     }
 
@@ -232,16 +272,22 @@ public class StatsEventHandler {
             return;
         }
 
-        if (!statsManager.recordScoreboard) return;
+        // ----Stats记录----
+        int gameTime = event.getGameTime();
+        IGamePlayerStats gamePlayerStats = statsManager.getGamePlayerStats(gamePlayer);
+        gamePlayerStats.addReviveRecord(new ReviveRecord(gameTime, getTimeOrderAndIncrease(), gamePlayer, gamePlayer));
 
-        Scoreboard scoreboard = serverLevel.getScoreboard();
-        // 玩家被扶起次数
-        addScore(scoreboard, statsManager.player_revive_ObjectiveName, playerName, 1);
+        // ----记分板----
+        if (statsManager.recordScoreboard) {
+            Scoreboard scoreboard = serverLevel.getScoreboard();
+            // 玩家被扶起次数
+            addScore(scoreboard, statsManager.player_revive_ObjectiveName, playerName, 1);
+        }
     }
 
     protected static void onGamePlayerDeath(StatsManager statsManager, GamePlayerDeathFinishEvent event) {
-        @NotNull GamePlayer gamePlayer = event.getGamePlayer();
-        String playerName = gamePlayer.getPlayerName();
+        @NotNull GamePlayer victimGamePlayer = event.getGamePlayer();
+        String playerName = victimGamePlayer.getPlayerName();
         IGameManager gameManager = event.getGameManager();
         @Nullable ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel == null) {
@@ -260,30 +306,43 @@ public class StatsEventHandler {
         @Nullable GamePlayer attackerGamePlayer = attackerEntity != null ? gameManager.getTeamManager().getGamePlayerByUUID(attackerEntity.getUUID()) : null;
         @Nullable Entity damageMethod = damageSource.getDirectEntity();
 
-        if (!statsManager.recordScoreboard) return;
-
-        Scoreboard scoreboard = serverLevel.getScoreboard();
+        // ----Stats记录----
+        int gameTime = event.getGameTime();
         if (attackerGamePlayer != null) {
-            // 攻击者玩家(对玩家)造成的击杀数
-            addScore(scoreboard, statsManager.player_kill_player_ObjectiveName, attackerGamePlayer.getPlayerName(), 1);
-
-            // 玩家被(攻击者玩家)击杀数
-            addScore(scoreboard, statsManager.player_death_by_player_ObjectiveName, playerName, 1);
-
-            // 更新 KD 比例
-            updateRatioScore(scoreboard, attackerGamePlayer.getPlayerName(),
-                    statsManager.player_kill_player_ObjectiveName, statsManager.player_death_by_player_ObjectiveName, statsManager.player_kd_ObjectiveName,
-                    statsManager.ratioBase, 1);
-            updateRatioScore(scoreboard, playerName,
-                    statsManager.player_kill_player_ObjectiveName, statsManager.player_death_by_player_ObjectiveName, statsManager.player_kd_ObjectiveName,
-                    statsManager.ratioBase, 1);
+            IGamePlayerStats attackerStats = statsManager.getGamePlayerStats(attackerGamePlayer);
+            attackerStats.addKillRecord(new KillRecord(gameTime, getTimeOrderAndIncrease(), attackerGamePlayer, victimGamePlayer));
+            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
+            victimStats.addDeathRecord(new DeathRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, attackerGamePlayer));
         } else {
-            // 其他方式对玩家造成的击杀数
-            String sourceName = damageMethod != null ? damageMethod.getScoreboardName() : "other";
-            addScore(scoreboard, statsManager.other_kill_player_ObjectiveName, sourceName, 1);
+            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
+            victimStats.addDeathRecord(new DeathRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, damageSource));
+        }
 
-            // 玩家被(非攻击者玩家)击杀数
-            addScore(scoreboard, statsManager.player_death_by_other_ObjectiveName, playerName, 1);
+        // ----记分板----
+        if (statsManager.recordScoreboard) {
+            Scoreboard scoreboard = serverLevel.getScoreboard();
+            if (attackerGamePlayer != null) {
+                // 攻击者玩家(对玩家)造成的击杀数
+                addScore(scoreboard, statsManager.player_kill_player_ObjectiveName, attackerGamePlayer.getPlayerName(), 1);
+
+                // 玩家被(攻击者玩家)击杀数
+                addScore(scoreboard, statsManager.player_death_by_player_ObjectiveName, playerName, 1);
+
+                // 更新 KD 比例
+                updateRatioScore(scoreboard, attackerGamePlayer.getPlayerName(),
+                        statsManager.player_kill_player_ObjectiveName, statsManager.player_death_by_player_ObjectiveName, statsManager.player_kd_ObjectiveName,
+                        statsManager.ratioBase, 1);
+                updateRatioScore(scoreboard, playerName,
+                        statsManager.player_kill_player_ObjectiveName, statsManager.player_death_by_player_ObjectiveName, statsManager.player_kd_ObjectiveName,
+                        statsManager.ratioBase, 1);
+            } else {
+                // 其他方式对玩家造成的击杀数
+                String sourceName = damageMethod != null ? damageMethod.getScoreboardName() : "other";
+                addScore(scoreboard, statsManager.other_kill_player_ObjectiveName, sourceName, 1);
+
+                // 玩家被(非攻击者玩家)击杀数
+                addScore(scoreboard, statsManager.player_death_by_other_ObjectiveName, playerName, 1);
+            }
         }
     }
 
@@ -309,27 +368,28 @@ public class StatsEventHandler {
             SpecialStatsEventHandler.onMaxSpeedComplete(statsManager, event);
         }
 
-        if (!statsManager.recordScoreboard) return;
+        // ----记分板----
+        if (statsManager.recordScoreboard) {
+            Scoreboard scoreboard = serverLevel.getScoreboard();
+            for (GamePlayer gamePlayer : gamePlayers) {
+                String playerName = gamePlayer.getPlayerName();
+                if (winnerGamePlayers.contains(gamePlayer)) {
+                    addScore(scoreboard, statsManager.player_win_ObjectiveName, playerName, 1);
+                } else {
+                    addScore(scoreboard, statsManager.player_lose_ObjectiveName, playerName, 1);
+                }
 
-        Scoreboard scoreboard = serverLevel.getScoreboard();
-        for (GamePlayer gamePlayer : gamePlayers) {
-            String playerName = gamePlayer.getPlayerName();
-            if (winnerGamePlayers.contains(gamePlayer)) {
-                addScore(scoreboard, statsManager.player_win_ObjectiveName, playerName, 1);
-            } else {
-                addScore(scoreboard, statsManager.player_lose_ObjectiveName, playerName, 1);
+                // 更新总场数 [ 赢 + 输 ]
+                updateTotalScore(scoreboard, playerName,
+                        statsManager.player_win_ObjectiveName,
+                        statsManager.player_lose_ObjectiveName,
+                        statsManager.player_game_total_ObjectiveName);
+
+                // 更新胜率比例 [ 赢 / (输 + 赢) ]
+                updatePercentageScore(scoreboard, playerName,
+                        statsManager.player_win_ObjectiveName, statsManager.player_lose_ObjectiveName, statsManager.player_win_rate_ObjectiveName,
+                        statsManager.ratioBase);
             }
-
-            // 更新总场数 [ 赢 + 输 ]
-            updateTotalScore(scoreboard, playerName,
-                    statsManager.player_win_ObjectiveName,
-                    statsManager.player_lose_ObjectiveName,
-                    statsManager.player_game_total_ObjectiveName);
-
-            // 更新胜率比例 [ 赢 / (输 + 赢) ]
-            updatePercentageScore(scoreboard, playerName,
-                    statsManager.player_win_ObjectiveName, statsManager.player_lose_ObjectiveName, statsManager.player_win_rate_ObjectiveName,
-                    statsManager.ratioBase);
         }
     }
 }

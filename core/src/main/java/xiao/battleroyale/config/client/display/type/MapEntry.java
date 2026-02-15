@@ -10,15 +10,17 @@ import xiao.battleroyale.util.JsonUtils;
 public class MapEntry implements IRenderEntry {
 
     public boolean enableJourneyMap;
+    public float lineThickness;
 
     public MapEntry() {
-        this(true);
+        this(true, 4);
     }
-    public MapEntry(boolean enableJourneyMap) {
+    public MapEntry(boolean enableJourneyMap, float lineThickness) {
         this.enableJourneyMap = enableJourneyMap;
+        this.lineThickness = lineThickness;
     }
     @Override public @NotNull MapEntry copy() {
-        return new MapEntry(enableJourneyMap);
+        return new MapEntry(enableJourneyMap, lineThickness);
     }
 
     @Override
@@ -31,6 +33,7 @@ public class MapEntry implements IRenderEntry {
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty(DisplayConfigTag.ENABLE_JOURNEY_MAP, enableJourneyMap);
+        jsonObject.addProperty(DisplayConfigTag.LINE_THICKNESS, lineThickness);
 //        if (enableJourneyMap) {
 //            ;
 //        }
@@ -43,13 +46,14 @@ public class MapEntry implements IRenderEntry {
         }
 
         boolean enableJourneyMap = JsonUtils.getJsonBool(jsonObject, DisplayConfigTag.ENABLE_JOURNEY_MAP, true);
+        float lineThickness = (float) JsonUtils.getJsonDouble(jsonObject, DisplayConfigTag.LINE_THICKNESS, 4);
 
-        return new MapEntry(enableJourneyMap);
+        return new MapEntry(enableJourneyMap, lineThickness);
     }
 
     @Override
     public void applyDefault() {
-        JourneyMap.setJourneyMapConfig(enableJourneyMap);
+        JourneyMap.setJourneyMapConfig(enableJourneyMap, lineThickness);
 //        if (enableJourneyMap) {
 //            ;
 //        }

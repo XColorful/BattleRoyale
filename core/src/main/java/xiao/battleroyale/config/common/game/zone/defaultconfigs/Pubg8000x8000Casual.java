@@ -104,7 +104,7 @@ public class Pubg8000x8000Casual {
     }
 
     // 游戏边界
-    public static void generateBorder(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME) {
+    public static void generateBorder(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME, boolean eltraAddon, int mutekiSeconds) {
         SafeFuncEntry safeFuncEntry = new SafeFuncEntry(0, 0, 200, 0, 666); // 固定边界的检查频率低一些
 
         StartEntry startEntry = new StartEntry();
@@ -140,11 +140,13 @@ public class Pubg8000x8000Casual {
                 messageFuncEntry, squareEntry);
         zoneConfigJson.add(zoneConfig.toJson());
 
-        zoneConfigJson.add(ElytraAddon.generateLevitationEffect2());
-        zoneConfigJson.add(ElytraAddon.generateElytraEquipment3());
+        if (eltraAddon) {
+            zoneConfigJson.add(ElytraAddon.generateLevitationEffect2());
+            zoneConfigJson.add(ElytraAddon.generateElytraEquipment3());
+        }
 
         // 黄色无敌区
-        int muteki_zoneTime = 20 * 30;
+        int muteki_zoneTime = 20 * mutekiSeconds;
         MutekiFuncEntry mutekiFuncEntry = new MutekiFuncEntry(0, muteki_zoneTime, 20, -1,
                 30);
         squareEntry = new SquareEntry(
@@ -157,7 +159,7 @@ public class Pubg8000x8000Casual {
                 mutekiFuncEntry, squareEntry);
         zoneConfigJson.add(zoneConfig.toJson());
 
-        // Boost zone (Shrink countdown)
+        // Boost zone (Muteki countdown)
         BoostFuncEntry boostFuncEntry = new BoostFuncEntry(0, 0, 20, 0, muteki_zoneTime);
         zoneConfig = new ZoneConfig(5, "Initial boost zone (Muteki countdown)", "#FFFFFF00",
                 4, 0, 19,
@@ -166,7 +168,7 @@ public class Pubg8000x8000Casual {
     }
 
     private static void add8000x8000Zone(JsonArray zoneConfigJson) {
-        generateBorder(zoneConfigJson, 8000 / 2F, GAME_TIME);
+        generateBorder(zoneConfigJson, 8000 / 2F, GAME_TIME, true, 30);
     }
 
     public static void addPhase(JsonArray zoneConfigJson, int phase, double SHRINK_RANGE, double SHRINK_SCALE, int PRE_ZONE_TIME, int ZONE_TIME,

@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.game.gamerule.type;
 import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.sub.IConfigAppliable;
 import xiao.battleroyale.api.config.common.game.gamerule.GameEntryTag;
 import xiao.battleroyale.api.config.common.game.gamerule.IGameruleEntry;
@@ -75,6 +76,9 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public int winnerFireworkId;
     public int winnerParticleId;
     public boolean initGameAfterGame;
+    public boolean restartAfterGame;
+    public int restartDelay;
+    public int maxRestartRound;
 
     public int messageCleanFreq;
     public int messageExpireTime;
@@ -87,7 +91,8 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
                 true, false, true, false, DEFAULT_DOWN_DAMAGE, 20,
                 false, false, false, false,
                 false, true, true, false, true, true,
-                true, true, true, false, 0, 0, false,
+                true, true, true, false, 0, 0,
+                false, false, 20, 15,
                 20 * 7, 20 * 5, 20 * 5);
     }
     public GameEntry(boolean teleportWhenInitGame, int teamMsgExpireTimeSeconds, List<String> teamColors, boolean buildVanillaTeam, boolean hideVanillaTeamName,
@@ -95,7 +100,8 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
                      boolean healAllAtStart, boolean friendlyFire, boolean canHurtNonGamePlayer, boolean downFire, List<Float> downDamageList, int downDamageFrequency,
                      boolean downShoot, boolean downReload, boolean downFireSelect, boolean downMelee,
                      boolean onlyGamePlayerSpectate, boolean spectateAfterTeam, boolean spectatorSeeAllTeams, boolean allowInterfererDamage, boolean teleportInterfererToLobby, boolean forceEliminationTeleportToLobby,
-                     boolean allowRemainingBot, boolean keepTeamAfterGame, boolean teleportAfterGame, boolean teleportWinnerAfterGame, int winnerFireworkId, int winnerParticleId, boolean initGameAfterGame,
+                     boolean allowRemainingBot, boolean keepTeamAfterGame, boolean teleportAfterGame, boolean teleportWinnerAfterGame, int winnerFireworkId, int winnerParticleId,
+                     boolean initGameAfterGame, boolean restartAfterGame, int restartDelay, int maxRestartRound,
                      int messageCleanFreq, int messageExpireTime, int messageSyncFreq) {
         this.teleportWhenInitGame = teleportWhenInitGame;
         this.teamMsgExpireTimeSeconds = teamMsgExpireTimeSeconds;
@@ -128,6 +134,9 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         this.winnerFireworkId = winnerFireworkId;
         this.winnerParticleId = winnerParticleId;
         this.initGameAfterGame = initGameAfterGame;
+        this.restartAfterGame = restartAfterGame;
+        this.restartDelay = restartDelay;
+        this.maxRestartRound = maxRestartRound;
         this.messageCleanFreq = messageCleanFreq;
         this.messageExpireTime = messageExpireTime;
         this.messageSyncFreq = messageSyncFreq;
@@ -138,7 +147,8 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
                 healAllAtStart, friendlyFire, canHurtNonGamePlayer, downFire, new ArrayList<>(downDamageList), downDamageFrequency,
                 downShoot, downReload, downFireSelect, downMelee,
                 onlyGamePlayerSpectate, spectateAfterTeam, spectatorSeeAllTeams, allowInterfererDamage, teleportInterfererToLobby, forceEliminationTeleportToLobby,
-                allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId, initGameAfterGame,
+                allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId,
+                initGameAfterGame, restartAfterGame, restartDelay, maxRestartRound,
                 messageCleanFreq, messageExpireTime, messageSyncFreq);
     }
 
@@ -186,6 +196,9 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         jsonObject.addProperty(GameEntryTag.WINNER_FIREWORK_ID, winnerFireworkId);
         jsonObject.addProperty(GameEntryTag.WINNER_PARTICLE_ID, winnerParticleId);
         jsonObject.addProperty(GameEntryTag.INIT_GAME_AFTER_GAME, initGameAfterGame);
+        jsonObject.addProperty(GameEntryTag.RESTART_AFTER_GAME, restartAfterGame);
+        jsonObject.addProperty(GameEntryTag.RESTART_DELAY, restartDelay);
+        jsonObject.addProperty(GameEntryTag.MAX_RESTART_ROUND, maxRestartRound);
 
         jsonObject.addProperty(GameEntryTag.MESSAGE_CLEAN_FREQUENCY, messageCleanFreq);
         jsonObject.addProperty(GameEntryTag.MESSAGE_EXPIRE_TIME, messageExpireTime);
@@ -231,6 +244,9 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         int winnerFireworkId = JsonUtils.getJsonInt(jsonObject, GameEntryTag.WINNER_FIREWORK_ID, 0);
         int winnerParticleId = JsonUtils.getJsonInt(jsonObject, GameEntryTag.WINNER_PARTICLE_ID, 0);
         boolean initGameAfterGame = JsonUtils.getJsonBool(jsonObject, GameEntryTag.INIT_GAME_AFTER_GAME, false);
+        boolean restartAfterGame = JsonUtils.getJsonBool(jsonObject, GameEntryTag.RESTART_AFTER_GAME, false);
+        int restartDelay = JsonUtils.getJsonInt(jsonObject, GameEntryTag.RESTART_DELAY, 20);
+        int maxRestartRound = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_RESTART_ROUND, 15);
 
         int messageCleanFreq = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_CLEAN_FREQUENCY, 20 * 7);
         int messageExpireTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_EXPIRE_TIME, 20 * 5);
@@ -241,12 +257,14 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
                 healAllAtStart, friendlyFire, canHurtNonGamePlayer, downFire, downDamageList, downDamageFrequency,
                 downShoot, downReload, downFireSelect, downMelee,
                 onlyGamePlayerSpectate, spectateAfterTeam, spectatorSeeAllTeams, allowInterfererDamage, teleportInterfererToLobby, forceEliminationTeleportToLobby,
-                allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId, initGameAfterGame,
+                allowRemainingBot, keepTeamAfterGame, teleportAfterGame, teleportWinnerAfterGame, winnerFireworkId, winnerParticleId,
+                initGameAfterGame, restartAfterGame, restartDelay, maxRestartRound,
                 messageCleanFreq, messageExpireTime, messageSyncFreq);
     }
 
     @Override
     public void applyDefault() {
+        BattleRoyale.getGameManager().setRemainRestartTime(maxRestartRound); // 仅在切换配置时触发，而不是每次initGameConfig
         AbstractMessageManager.setCleanFrequency(messageCleanFreq);
         AbstractMessageManager.setExpireTime(messageExpireTime);
         AbstractMessageManager.setForceSyncFrequency(messageSyncFreq);
