@@ -236,10 +236,11 @@ public class Shape2D {
 
         for (int i = 0; i < 12; i++) {
             int next = (i + 1) % 12;
-            consumer.vertex(matrix, x[i], 0, z[i]).color(r, g, b, a).normal(nx[i], 0, nz[i]).endVertex();
-            consumer.vertex(matrix, x[i], height, z[i]).color(r, g, b, a).normal(nx[i], 0, nz[i]).endVertex();
-            consumer.vertex(matrix, x[next], height, z[next]).color(r, g, b, a).normal(nx[i], 0, nz[i]).endVertex();
-            consumer.vertex(matrix, x[next], 0, z[next]).color(r, g, b, a).normal(nx[i], 0, nz[i]).endVertex();
+            consumer.setNormal(nx[i], 0, nz[i]);
+            consumer.addVertex(matrix, x[i], 0, z[i]).setColor(r, g, b, a);
+            consumer.addVertex(matrix, x[i], height, z[i]).setColor(r, g, b, a);
+            consumer.addVertex(matrix, x[next], height, z[next]).setColor(r, g, b, a);
+            consumer.addVertex(matrix, x[next], 0, z[next]).setColor(r, g, b, a);
         }
     }
 
@@ -275,10 +276,11 @@ public class Shape2D {
             float normalZ = -Mth.sin(midAngle);
 
             // 为了保证背面剔除(Backface Culling)正确，内壁的顶点顺序应与外壁相反
-            consumer.vertex(matrix, x1, 0, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(matrix, x2, 0, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(matrix, x2, height, z2).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
-            consumer.vertex(matrix, x1, height, z1).color(r, g, b, a).normal(normalX, 0, normalZ).endVertex();
+            consumer.setNormal(normalX, 0, normalZ);
+            consumer.addVertex(matrix, x1, 0, z1).setColor(r, g, b, a);
+            consumer.addVertex(matrix, x2, 0, z2).setColor(r, g, b, a);
+            consumer.addVertex(matrix, x2, height, z2).setColor(r, g, b, a);
+            consumer.addVertex(matrix, x1, height, z1).setColor(r, g, b, a);
         }
     }
 }
