@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -38,6 +39,7 @@ import xiao.battleroyale.common.game.process.battleroyale.BRGameProcessManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.lobby.GameLobbyManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
+import xiao.battleroyale.common.game.process.deathmatch.DMGameProcessManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -117,6 +119,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         StatsManager.init(mcSide);
         TeamManager.init(mcSide);
         ZoneManager.init(mcSide);
+        BattleRoyale.getEventRegister().register(GameManagerRegister.get(), CustomEventType.REGISTER_MANAGER_EVENT);
     }
 
     @Override public String getManagerName() {
