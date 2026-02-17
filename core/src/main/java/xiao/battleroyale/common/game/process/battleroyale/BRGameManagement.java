@@ -9,6 +9,7 @@ import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.DelayedEvent;
 import xiao.battleroyale.api.event.game.game.GameSpectateEvent;
 import xiao.battleroyale.api.event.game.game.GameSpectateResult;
 import xiao.battleroyale.api.game.IGameManager;
@@ -20,7 +21,6 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.event.EventPoster;
-import xiao.battleroyale.api.event.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils;
 

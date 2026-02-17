@@ -2,7 +2,6 @@ package xiao.battleroyale.common.game.process.battleroyale;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -12,7 +11,6 @@ import xiao.battleroyale.api.event.game.finish.GameCompleteFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.process.IGameProcessManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 

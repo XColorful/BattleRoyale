@@ -3,7 +3,6 @@ package xiao.battleroyale.developer.debug;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.loot.CommonLootManager;
 import xiao.battleroyale.developer.debug.text.LootText;
 
 public class DebugLoot {

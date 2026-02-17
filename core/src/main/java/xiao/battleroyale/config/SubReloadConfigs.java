@@ -5,7 +5,6 @@ import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.util.ClassUtils;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 
 public class SubReloadConfigs {
