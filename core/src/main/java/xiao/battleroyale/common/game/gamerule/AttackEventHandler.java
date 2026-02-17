@@ -9,8 +9,8 @@ import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.common.game.GameMessageManager;
-import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
@@ -65,14 +65,15 @@ public class AttackEventHandler implements IEventHandler {
         DamageSource damageSource = event.getSource(); // 攻击方
 
         IGameManager gameManager = BattleRoyale.getGameManager();
+        ITeamManager teamManager = gameManager.getTeamManager();
 
-        GamePlayer targetGamePlayer = GameTeamManager.hasStandingGamePlayer(damagedEntity.getUUID()) ? GameTeamManager.getGamePlayerByUUID(damagedEntity.getUUID()) : null;
+        GamePlayer targetGamePlayer = teamManager.hasStandingGamePlayer(damagedEntity.getUUID()) ? teamManager.getGamePlayerByUUID(damagedEntity.getUUID()) : null;
         if (targetGamePlayer != null && targetGamePlayer.isEliminated()) {
             targetGamePlayer = null;
         }
         GamePlayer attackerGamePlayer = null;
         if (damageSource.getEntity() instanceof LivingEntity attackerEntity) {
-            attackerGamePlayer = GameTeamManager.hasStandingGamePlayer(attackerEntity.getUUID()) ? GameTeamManager.getGamePlayerByUUID(attackerEntity.getUUID()) : null;
+            attackerGamePlayer = teamManager.hasStandingGamePlayer(attackerEntity.getUUID()) ? teamManager.getGamePlayerByUUID(attackerEntity.getUUID()) : null;
             if (attackerGamePlayer != null && attackerGamePlayer.isEliminated()) {
                 attackerGamePlayer = null;
             }
@@ -99,9 +100,6 @@ public class AttackEventHandler implements IEventHandler {
         }
         // 游戏玩家攻击非游戏玩家
         else if (attackerGamePlayer != null) {
-//            if (damageSource instanceof LivingEntity livingEntity) {
-//                ;
-//            }
             if (!gameEntry.canHurtNonGamePlayer) {
                 event.setCanceled(true);
             }

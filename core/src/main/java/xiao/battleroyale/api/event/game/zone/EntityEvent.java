@@ -4,9 +4,9 @@ import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.api.config.common.loot.ILootEntry;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.api.config.common.loot.ILootEntry;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.loot.LootGenerator;
 

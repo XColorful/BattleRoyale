@@ -1,23 +1,15 @@
 package xiao.battleroyale.common.game.zone.spatial;
 
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.config.common.game.zone.zoneshape.EndCenterType;
-import xiao.battleroyale.config.common.game.zone.zoneshape.EndDimensionType;
-import xiao.battleroyale.config.common.game.zone.zoneshape.EndRotationType;
-import xiao.battleroyale.config.common.game.zone.zoneshape.StartCenterType;
-import xiao.battleroyale.config.common.game.zone.zoneshape.StartDimensionType;
-import xiao.battleroyale.config.common.game.zone.zoneshape.StartRotationType;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
-import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
-import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
+import xiao.battleroyale.config.common.game.zone.zoneshape.*;
 import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.Vec3Utils;
 

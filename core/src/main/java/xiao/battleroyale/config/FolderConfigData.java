@@ -4,7 +4,10 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.util.ClassUtils.ArrayMap;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class FolderConfigData<T extends IConfigSingleEntry> {
 
