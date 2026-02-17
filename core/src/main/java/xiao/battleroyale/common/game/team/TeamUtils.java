@@ -1,7 +1,6 @@
 package xiao.battleroyale.common.game.team;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
@@ -89,19 +88,21 @@ public class TeamUtils {
      */
     @ApiStatus.Internal
     public static boolean hasEnoughPlayerTeamToStart(TeamManager teamManager) {
-    public static boolean hasEnoughPlayerToStart(TeamManager teamManager) {
-        int totalPlayerAndBots = teamManager.getTotalMembers();
         int minTeam = BattleRoyale.getGameManager().getRequiredGameTeam();
-    public static boolean hasEnoughTeamToStart(TeamManager teamManager) {
-        if (!BattleRoyale.getGameManager().getGameEntry().allowRemainingBot) { // 不允许剩余人机打架 -> 开局不能直接只剩人机队
         boolean allowBot = teamManager.teamConfig.aiEnemy;
+
+        // 根据是否允许 AI 队伍过滤
         List<GameTeam> validTeams = teamManager.getGameTeams().stream()
                 .filter(team -> allowBot || !team.onlyHasBotMember())
                 .toList();
+
         // 不允许剩余人机打架 -> 开局不能直接只剩人机队
+        if (!BattleRoyale.getGameManager().getGameEntry().allowRemainingBot
+                && validTeams.stream().allMatch(GameTeam::onlyHasBotMember)) {
+            BattleRoyale.LOGGER.debug("TeamUtils: Not allow remaining bot");
             return false;
-            int minTeam = BattleRoyale.getGameManager().getRequiredGameTeam();
         }
+
         return validTeams.size() >= minTeam;
     }
 
