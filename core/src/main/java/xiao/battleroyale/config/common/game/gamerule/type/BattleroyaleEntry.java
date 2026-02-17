@@ -5,10 +5,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.config.sub.IConfigAppliable;
-import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.config.common.game.gamerule.BattleroyaleEntryTag;
 import xiao.battleroyale.api.config.common.game.gamerule.IGameruleEntry;
+import xiao.battleroyale.api.config.sub.IConfigAppliable;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.StringUtils;
 

@@ -14,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.effect.EffectManager;
-import xiao.battleroyale.common.effect.muteki.MutekiManager;
 
 import java.util.Collection;
 

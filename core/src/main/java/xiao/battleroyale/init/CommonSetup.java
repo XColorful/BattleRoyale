@@ -2,6 +2,7 @@ package xiao.battleroyale.init;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.init.ICommonSetup;
+import xiao.battleroyale.common.game.process.deathmatch.DMGameProcessManager;
 import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.network.NetworkHandler;
 
@@ -21,5 +22,8 @@ public class CommonSetup implements ICommonSetup {
         BattleRoyale.LOGGER.debug("onCommonSetup, reloadAllConfigs:");
         BattleRoyale.getModConfigManager().reloadAllConfigs();
         TempDataManager.get().saveTempData();
+
+        // 所有扩展放在 onCommonSetup 执行
+        DMGameProcessManager.init(BattleRoyale.getMcSide());
     }
 }

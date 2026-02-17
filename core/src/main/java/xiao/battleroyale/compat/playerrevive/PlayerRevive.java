@@ -89,6 +89,8 @@ public class PlayerRevive extends AbstractCompatMod {
     public void kill(LivingEntity livingEntity) {
         if (livingEntity instanceof Player player) { // PlayerRevive只支持Player
             kill(player);
+        } else {
+            BattleRoyale.LOGGER.warn("PlayerRevive: Skipped livingEntity {} kill", livingEntity.getName().getString());
         }
     }
     public void kill(Player player) {
@@ -101,6 +103,14 @@ public class PlayerRevive extends AbstractCompatMod {
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("PlayerRevive: Failed to kill {}: {}", player.getName().getString(), e.getMessage());
         }
+    }
+
+    public void addBleedingPlayer(@NotNull LivingEntity livingEntity) {
+        if (livingEntity instanceof Player player) {
+            addBleedingPlayer(player);
+            return;
+        }
+        BattleRoyale.LOGGER.warn("PlayerRevive: Attempt to add LivingEntity {} to BleedingPlayer, have you checked PlayerRevive::isBleeding?", livingEntity.getName().getString());
     }
 
     public void addBleedingPlayer(@NotNull Player player) {

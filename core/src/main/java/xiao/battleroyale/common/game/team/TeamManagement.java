@@ -11,9 +11,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.DelayedEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
-import xiao.battleroyale.api.event.DelayedEvent;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils;
 
@@ -174,6 +174,22 @@ public class TeamManagement {
         for (GamePlayer noTeamPlayer : noTeamPlayers) {
             if (teamManager.teamData.removePlayer(noTeamPlayer)) {
                 GameMessageManager.notifyLeavedMember(noTeamPlayer.getPlayerUUID(), noTeamPlayer.getGameTeamId()); // 防止游戏开始时无队伍的GamePlayer
+                BattleRoyale.LOGGER.debug("Removed no team GamePlayer {}", noTeamPlayer.getNameWithId());
+            }
+        }
+    }
+    @ApiStatus.Internal
+    public static void removeNoGamePlayerTeam(TeamManager teamManager) {
+        List<GameTeam> noPlayerTeams = new ArrayList<>();
+        for (GameTeam team : teamManager.teamData.getGameTeamsList()) {
+            if (team.getTeamMemberCount() == 0) {
+                noPlayerTeams.add(team);
+            }
+        }
+
+        for (GameTeam noPlayerTeam : noPlayerTeams) {
+            if (teamManager.teamData.removeTeam(noPlayerTeam)) {
+                BattleRoyale.LOGGER.debug("Removed no member GameTeam {}", noPlayerTeam.getGameTeamId());
             }
         }
     }
@@ -326,7 +342,7 @@ public class TeamManagement {
             if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.failed_to_join_team", teamId).withStyle(ChatFormatting.RED));
             return false;
         }
-        GamePlayer gamePlayer = new GamePlayer(player.getUUID(), playerName, newPlayerId, false, newTeam);
+        GamePlayer gamePlayer = new GamePlayer(player.getUUID(), playerName, newPlayerId, serverPlayer == null, newTeam);
         if (!teamManager.teamData.addPlayerToTeam(gamePlayer, newTeam)) {
             return false;
         }

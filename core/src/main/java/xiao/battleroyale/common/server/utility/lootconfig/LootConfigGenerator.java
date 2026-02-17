@@ -13,11 +13,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.algorithm.BfsCalculator;
+import xiao.battleroyale.algorithm.BfsCalculator.Offset2D;
 import xiao.battleroyale.api.config.common.loot.ILootEntry;
 import xiao.battleroyale.api.config.common.loot.item.IItemLootEntry;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
-import xiao.battleroyale.algorithm.BfsCalculator;
-import xiao.battleroyale.algorithm.BfsCalculator.Offset2D;
 import xiao.battleroyale.common.loot.data.ItemData;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.type.ItemEntry;
@@ -31,9 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static xiao.battleroyale.command.CommandArg.SLOT;
-import static xiao.battleroyale.command.CommandArg.BLOCK;
-import static xiao.battleroyale.command.CommandArg.CHUNK;
+import static xiao.battleroyale.command.CommandArg.*;
 
 public class LootConfigGenerator {
 

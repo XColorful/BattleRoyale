@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface IGameManagement {
+    default void checkAndUpdateGamePlayerPre(ServerLevel serverLevel) {}
     void checkAndUpdateInvalidGamePlayer(ServerLevel serverLevel);
     void teleportToLobbyInGame(ServerPlayer player);
     void teleportAfterGame(@Nullable ServerLevel serverLevel, Set<GamePlayer> winnerGamePlayers, Set<GameTeam> winnerGameTeams,  

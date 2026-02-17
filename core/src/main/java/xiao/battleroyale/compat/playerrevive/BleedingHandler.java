@@ -61,7 +61,7 @@ public class BleedingHandler implements IEventHandler {
             register();
         }
         IGameManager gameManager = BattleRoyale.getGameManager();
-        BattleRoyale.LOGGER.debug("GameTime:{} addBleedingPlayer", gameManager.getGameTime());
+        BattleRoyale.LOGGER.debug("GameTime:{} addBleedingPlayer {}", gameManager.getGameTime(), player.getName().getString());
         UUID playerUUID = player.getUUID();
         GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(playerUUID);
         if (gamePlayer == null) {

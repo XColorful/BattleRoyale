@@ -28,7 +28,8 @@ import xiao.battleroyale.api.config.common.loot.ILootEntry;
 import xiao.battleroyale.api.config.common.loot.ILootSingleEntry;
 import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
-import xiao.battleroyale.api.loot.*;
+import xiao.battleroyale.api.loot.ILootObject;
+import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.api.loot.data.IEntityLootData;
 import xiao.battleroyale.api.loot.data.IItemLootData;
 import xiao.battleroyale.api.loot.data.ILootData;
@@ -36,7 +37,6 @@ import xiao.battleroyale.api.loot.data.LootDataType;
 import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
 import xiao.battleroyale.block.entity.AbstractLootContainerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
-import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.TagUtils;
 
 import java.util.ArrayList;

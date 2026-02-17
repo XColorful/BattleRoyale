@@ -5,11 +5,13 @@ public interface IGameTeamReadApi {
 	@Nullable GamePlayer getGamePlayerByUUID(UUID uuid);
 	@Nullable GamePlayer getGamePlayerBySingleId(int playerId);
 	boolean hasStandingGamePlayer(UUID uuid);
-	List<GameTeam> getGameTeams();
+	boolean onlyRemainBotTeam();
 	@Nullable GameTeam getGameTeamById(int teamId);
 	List<GamePlayer> getGamePlayers();
+	List<GameTeam> getGameTeams();
 	List<GamePlayer> getStandingGamePlayers();
 	int getStandingGamePlayerSize();
+	List<GameTeam> getStandingGameTeams();
 	int getTotalMembers();
 	int getStandingPlayerTeamCount();
 	int getStandingTeamCount();
