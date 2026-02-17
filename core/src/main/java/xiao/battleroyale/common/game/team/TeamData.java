@@ -264,6 +264,7 @@ public class TeamData extends AbstractGameManagerData {
     }
     public boolean removeTeam(int teamId) {
         if (locked) {
+            return false;
         }
 
         GameTeam removedTeam = gameTeams.remove(teamId);
@@ -308,9 +309,28 @@ public class TeamData extends AbstractGameManagerData {
     public List<GamePlayer> getStandingGamePlayersList() {
         return standingGamePlayers.asList();
     }
+    public List<GameTeam> getStandingGameTeamsList() {
+        Set<GameTeam> gameTeams = new HashSet<>();
+        for (GamePlayer gamePlayer : standingGamePlayers) {
+            gameTeams.add(gamePlayer.getTeam());
+        }
+        return new ArrayList<>(gameTeams);
+    }
 
     public boolean hasStandingGamePlayer(UUID id) {
         return standingGamePlayers.containsKey(id);
+    }
+    public boolean isOnlyRemainBotTeam() {
+        Set<GameTeam> checkedTeam = new HashSet<>();
+        for (GamePlayer gamePlayer : standingGamePlayers) {
+            GameTeam gameTeam = gamePlayer.getTeam();
+            if (checkedTeam.contains(gameTeam)) continue;
+            if (!gameTeam.onlyRemainStandingBot()) {
+                return false;
+            }
+            checkedTeam.add(gamePlayer.getTeam());
+        }
+        return true;
     }
 
     public int getTotalPlayerCount() { return gamePlayers.size(); }
