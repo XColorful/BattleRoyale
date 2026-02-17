@@ -144,7 +144,11 @@ public class GameTeam {
                 .collect(Collectors.toList());
     }
 
-    public boolean onlyRemainBot() {
+    public boolean onlyHasBotMember() {
+        return teamMembers.stream().allMatch(GamePlayer::isBot);
+    }
+
+    public boolean onlyRemainStandingBot() {
         return teamMembers.stream()
                 .allMatch(gamePlayer -> gamePlayer.isBot() || (!gamePlayer.isBot() && gamePlayer.isEliminated()));
     }

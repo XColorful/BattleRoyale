@@ -170,14 +170,10 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
         }
 
         if (!gameManager.getGameEntry().allowRemainingBot) { // 不允许只剩人机继续打架，即无真人玩家时提前终止游戏
-            for (GameTeam gameTeam : GameTeamManager.getGameTeams()) {
-                if (!gameTeam.onlyRemainBot()) {
-                    return;
-                }
+            if (gameManager.getTeamManager().onlyRemainBotTeam()) {
+                gameManager.finishGame(false);
+                BattleRoyale.LOGGER.debug("BRGameProcessManager: Finished game with no winner for there's no two team has non-eliminated non-bot game player");
             }
-            // 没有提前返回就是没有1队真人
-            gameManager.finishGame(false);
-            BattleRoyale.LOGGER.debug("Finished game with no winner for there's no two team has non-eliminated non-bot game player");
         }
     }
 

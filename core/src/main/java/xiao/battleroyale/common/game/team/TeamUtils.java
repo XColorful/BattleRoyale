@@ -89,31 +89,20 @@ public class TeamUtils {
      */
     @ApiStatus.Internal
     public static boolean hasEnoughPlayerTeamToStart(TeamManager teamManager) {
-        return hasEnoughPlayerToStart(teamManager) && hasEnoughTeamToStart(teamManager);
-    }
-    @ApiStatus.Internal
     public static boolean hasEnoughPlayerToStart(TeamManager teamManager) {
         int totalPlayerAndBots = teamManager.getTotalMembers();
         int minTeam = BattleRoyale.getGameManager().getRequiredGameTeam();
-        return totalPlayerAndBots >= minTeam // 真人玩家满足最小单人队限制
-                || teamManager.teamConfig.aiEnemy; // TODO 人机填充
-    }
-    @ApiStatus.Internal
     public static boolean hasEnoughTeamToStart(TeamManager teamManager) {
         if (!BattleRoyale.getGameManager().getGameEntry().allowRemainingBot) { // 不允许剩余人机打架 -> 开局不能直接只剩人机队
-            List<GameTeam> gameTeams = teamManager.getGameTeams();
-            for (GameTeam gameTeam : gameTeams) {
-                if (!gameTeam.onlyRemainBot()) {
-                    return true;
-                }
-            }
+        boolean allowBot = teamManager.teamConfig.aiEnemy;
+        List<GameTeam> validTeams = teamManager.getGameTeams().stream()
+                .filter(team -> allowBot || !team.onlyHasBotMember())
+                .toList();
+        // 不允许剩余人机打架 -> 开局不能直接只剩人机队
             return false;
-        } else { // 允许人机打架
-            int totalPlayerTeam = getNonBotTeamCount(teamManager);
             int minTeam = BattleRoyale.getGameManager().getRequiredGameTeam();
-            return totalPlayerTeam >= minTeam // 满足最小队伍限制
-                    || teamManager.teamConfig.aiEnemy; // TODO 人机填充
         }
+        return validTeams.size() >= minTeam;
     }
 
     /**
