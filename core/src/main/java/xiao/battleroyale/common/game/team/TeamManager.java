@@ -145,6 +145,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
         }
 
         TeamManagement.removeNoTeamGamePlayer(this); // 确保玩家均有队伍
+        TeamManagement.removeNoGamePlayerTeam(this); // 确保队伍均有玩家
         if (!hasEnoughPlayerTeamToStart()) { // init之后可能都退出了队伍，开始游戏前再次检查
             return false;
         }
@@ -239,9 +240,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
     @Override public @Nullable GamePlayer getGamePlayerByUUID(UUID playerUUID) { return teamData.getGamePlayerByUUID(playerUUID); }
     @Override public @Nullable GamePlayer getGamePlayerBySingleId(int playerId) { return teamData.getGamePlayerByGameSingleId(playerId); }
     @Override public boolean hasStandingGamePlayer(UUID id) { return teamData.hasStandingGamePlayer(id); }
-    @Override public List<GameTeam> getGameTeams() {
-        return teamData.getGameTeamsList();
-    }
+    @Override public boolean onlyRemainBotTeam() { return teamData.isOnlyRemainBotTeam(); }
     @Override public @Nullable GameTeam getGameTeamById(int teamId) {
         if (isStoppingGame) { // TeamMessageManager通过gameTeam来build消息，特殊处理
             GameTeam gameTeam = teamData.getGameTeamById(teamId);
@@ -253,11 +252,17 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
     @Override public List<GamePlayer> getGamePlayers() {
         return teamData.getGamePlayersList();
     }
+    @Override public List<GameTeam> getGameTeams() {
+        return teamData.getGameTeamsList();
+    }
     @Override public List<GamePlayer> getStandingGamePlayers() {
         return teamData.getStandingGamePlayersList();
     }
     @Override public int getStandingGamePlayerSize() {
         return teamData.getStandingGamePlayerSize();
+    }
+    @Override public List<GameTeam> getStandingGameTeams() {
+        return teamData.getStandingGameTeamsList();
     }
     @Override public @Nullable GamePlayer getRandomStandingGamePlayer() {
         List<GamePlayer> standingGamePlayers = getStandingGamePlayers();

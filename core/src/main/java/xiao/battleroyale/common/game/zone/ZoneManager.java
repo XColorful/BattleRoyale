@@ -7,7 +7,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.IModConfigManager;
-import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.api.event.game.tick.ZoneTickEvent;
 import xiao.battleroyale.api.event.game.tick.ZoneTickFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
