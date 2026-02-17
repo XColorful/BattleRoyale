@@ -47,7 +47,6 @@ import xiao.battleroyale.network.NetworkHandler;
 import xiao.battleroyale.network.NetworkHook;
 import xiao.battleroyale.resource.ResourceLoader;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BattleRoyale {
