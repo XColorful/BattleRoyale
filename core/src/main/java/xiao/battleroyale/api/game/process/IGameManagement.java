@@ -13,6 +13,10 @@ import java.util.Set;
 public interface IGameManagement {
 
     /**
+     * 在 {@link IGameManagement#checkAndUpdateInvalidGamePlayer} 前执行，供扩展
+     */
+    default void checkAndUpdateGamePlayerPre(ServerLevel serverLevel) {}
+    /**
      * 检查所有传入的游戏玩家是否在线，更新不在线时长或更新最后有效位置
      * 检查队伍成员是否均为倒地或者不在线，淘汰队伍（所有成员）
      */

@@ -4,8 +4,8 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.loot.data.ILootData;
 import xiao.battleroyale.api.config.common.loot.LootEntryTag;
+import xiao.battleroyale.api.loot.data.ILootData;
 import xiao.battleroyale.common.loot.LootGenerator;
 
 import java.util.Collections;

@@ -14,6 +14,7 @@
 
 #### 游戏状态管理
 
+- checkAndUpdateGamePlayerPre：在`checkAndUpdateInvalidGamePlayer`前执行，供扩展
 - checkAndUpdateInvalidGamePlayer：检查所有玩家，更新不在线时长及最后有效位置，处理无效玩家
 - teleportToLobbyInGame：玩家手动[传送至大厅](https://github.com/XColorful/BattleRoyale/wiki/Game-command#传送至大厅)，通常应视为离开游戏而直接淘汰
 - teleportAfterGame：游戏结束后对胜利玩家与其余玩家进行一次传送
@@ -58,6 +59,7 @@
 
 #### Game Status Management
 
+- checkAndUpdateGamePlayerPre: Executed before `checkAndUpdateInvalidGamePlayer`, for extension purposes.
 - checkAndUpdateInvalidGamePlayer: Checks all players, updates offline duration and last valid position, and handles invalid players. 
 - teleportToLobbyInGame: Player manually [Teleport to lobby](https://github.com/XColorful/BattleRoyale/wiki/Game-command#Teleport-to-lobby), which should typically be treated as leaving the game and resulting in elimination.
 - teleportAfterGame: Performs a single teleportation for winning players and remaining players after the game ends.
