@@ -208,7 +208,7 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
         BRGameManagement.healGamePlayers(serverLevel, gamePlayers);
     }
     @Override public void finishGameAddWinner(boolean hasWinner) {
-        BRGameManagement.finishGameAddWinner(hasWinner);
+        BRGameManagement.finishGameAddWinner(BattleRoyale.getGameManager(), hasWinner);
     }
 
     // --------IGameNotification--------

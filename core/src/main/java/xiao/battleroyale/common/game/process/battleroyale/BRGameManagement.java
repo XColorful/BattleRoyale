@@ -306,8 +306,7 @@ public class BRGameManagement {
         }
     }
 
-    public static void finishGameAddWinner(boolean hasWinner) {
-        IGameManager gameManager = BattleRoyale.getGameManager();
+    protected static void finishGameAddWinner(IGameManager gameManager, boolean hasWinner) {
         gameManager.setHasWinner(hasWinner);
         if (hasWinner) {
             for (GameTeam team : gameManager.getTeamManager().getGameTeams()) {
