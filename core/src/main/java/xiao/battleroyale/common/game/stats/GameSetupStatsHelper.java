@@ -9,8 +9,6 @@ import xiao.battleroyale.common.game.stats.game.SimpleRecord;
 import java.util.Map;
 import java.util.function.Function;
 
-import static xiao.battleroyale.common.game.stats.StatsManager.*;
-
 public class GameSetupStatsHelper {
 
     // ----Gamerule----

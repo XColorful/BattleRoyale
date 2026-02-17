@@ -51,7 +51,15 @@ public class GameTeam {
                 Component.literal(String.format("An unexpected error occurred: GameTeam %s has no leader", gameTeamId)));
         BattleRoyale.LOGGER.error("GameTeam has no leader, gameTeamId:{}, gameTeamColor:{}", gameTeamId, gameTeamColor);
         for (GamePlayer gamePlayer : teamMembers) BattleRoyale.LOGGER.error("GamePlayer {}, playerUUID: {}", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID());
-        return new GamePlayer(UUID.randomUUID(), "", 0, false, this);
+
+        if (teamMembers.isEmpty()) {
+            return new GamePlayer(UUID.randomUUID(), "", 0, false, this);
+        } else {
+            GamePlayer newLeader = teamMembers.get(0);
+            this.leaderUUID = newLeader.getPlayerUUID();
+            BattleRoyale.LOGGER.debug("GameTeam {} assigned leader GamePlayer {}", gameTeamId, newLeader.getNameWithId());
+            return newLeader;
+        }
     }
 
     public List<GamePlayer> getTeamMembers() { return Collections.unmodifiableList(teamMembers); }
@@ -144,7 +152,11 @@ public class GameTeam {
                 .collect(Collectors.toList());
     }
 
-    public boolean onlyRemainBot() {
+    public boolean onlyHasBotMember() {
+        return teamMembers.stream().allMatch(GamePlayer::isBot);
+    }
+
+    public boolean onlyRemainStandingBot() {
         return teamMembers.stream()
                 .allMatch(gamePlayer -> gamePlayer.isBot() || (!gamePlayer.isBot() && gamePlayer.isEliminated()));
     }

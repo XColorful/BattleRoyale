@@ -11,8 +11,8 @@ import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
-import xiao.battleroyale.config.common.server.profile.defaultconfigs.DefaultProfileConfigGenerator;
 import xiao.battleroyale.config.common.server.profile.config.ConfigApplicationEntry;
+import xiao.battleroyale.config.common.server.profile.defaultconfigs.DefaultProfileConfigGenerator;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;

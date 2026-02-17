@@ -3,8 +3,8 @@ package xiao.battleroyale.config.common.game.zone.zonespecial;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.api.game.zone.gamezone.IAdditionalZone;
 import xiao.battleroyale.api.config.common.game.zone.special.ZoneSpecialTag;
+import xiao.battleroyale.api.game.zone.gamezone.IAdditionalZone;
 import xiao.battleroyale.common.game.zone.additional.AdditionalRender;
 import xiao.battleroyale.util.JsonUtils;
 
