@@ -13,7 +13,6 @@ import xiao.battleroyale.api.event.game.game.GameSpectateEvent;
 import xiao.battleroyale.api.event.game.game.GameSpectateResult;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.lobby.IGameLobbyManager;
-import xiao.battleroyale.api.game.process.IGameProcessManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameTeamManager;
 import xiao.battleroyale.common.game.GameUtilsFunction;
@@ -42,23 +41,22 @@ public class BRGameManagement {
         // 筛选并增加无效时间计数
         for (GamePlayer gamePlayer : BattleRoyale.getGameManager().getTeamManager().getStandingGamePlayers()) {
             if (!gamePlayer.isBot()) { // 真人玩家
-                updateInvalidGamePlayer(gamePlayer, serverLevel, invalidPlayers, gameManager.getGameEntry().maxPlayerInvalidTime);
+                updateInvalidGamePlayerInternal(gamePlayer, serverLevel, invalidPlayers, gameManager.getGameEntry().maxPlayerInvalidTime);
             } else { // 人机
-                updateInvalidBotPlayer(gamePlayer, serverLevel, invalidPlayers, gameManager.getGameEntry().maxBotInvalidTime);
+                updateInvalidGamePlayerInternal(gamePlayer, serverLevel, invalidPlayers, gameManager.getGameEntry().maxBotInvalidTime);
             }
         }
+        if (invalidPlayers.isEmpty()) return;
 
         // 清理无效玩家
-        if (!invalidPlayers.isEmpty()) {
-            for (GamePlayer invalidPlayer : invalidPlayers) {
-                if (BattleRoyale.getGameManager().getTeamManager().forceEliminatePlayerSilence(invalidPlayer)) { // 强制淘汰了玩家，不一定都在此处淘汰
-                    ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", invalidPlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
-                    BattleRoyale.LOGGER.info("Force eliminated GamePlayer {} (UUID: {})", invalidPlayer.getPlayerName(), invalidPlayer.getPlayerUUID());
-                }
+        for (GamePlayer invalidPlayer : invalidPlayers) {
+            if (BattleRoyale.getGameManager().getTeamManager().forceEliminatePlayerSilence(invalidPlayer)) { // 强制淘汰了玩家，不一定都在此处淘汰
+                ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.eliminated_invalid_player", invalidPlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
+                BattleRoyale.LOGGER.info("Force eliminated GamePlayer {} (UUID: {})", invalidPlayer.getPlayerName(), invalidPlayer.getPlayerUUID());
             }
         }
     }
-    private static void updateInvalidGamePlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {
+    private static void updateInvalidGamePlayerInternal(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {
         LivingEntity livingEntity = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
         if (livingEntity == null) { // 不在线或者不在游戏运行的 serverLevel
             if (gamePlayer.isActiveEntity()) {
@@ -70,44 +68,19 @@ public class BRGameManagement {
                 return;
             } else if (gamePlayer.getInvalidTime() >= maxInvalidTime) { // 达到允许的最大离线时间
                 invalidPlayers.add(gamePlayer); // 淘汰单个离线玩家
+                BattleRoyale.LOGGER.debug("Add invalidGamePlayer {} for invalid time {} >= {}", gamePlayer.getNameWithId(), gamePlayer.getInvalidTime(), maxInvalidTime);
             }
         } else { // 更新最后有效位置
             if (!gamePlayer.isActiveEntity()) { // 刚上线
                 BRGameNotification.notifyGamePlayerIsActive(serverLevel, gamePlayer);
                 float lastHealth = gamePlayer.getLastHealth();
                 if (lastHealth <= 0) {
-                    invalidPlayers.add(gamePlayer);
-                    return;
+                    BattleRoyale.LOGGER.debug("GamePlayer {} lastHealth {} <= 0", gamePlayer.getNameWithId(), gamePlayer.getLastHealth());
+                    if (lastHealth < -0.1) { // 阈值，否则死亡后不算淘汰的就会被误杀 (DeathMatch模式)
+                        invalidPlayers.add(gamePlayer); // 低于 0 一般就是毒圈设置的扣血
+                        return;
+                    }
                 }
-                // TODO GamePlayer health 和 absorptionAmount 处理
-                livingEntity.setHealth(lastHealth); // 不用maxHealth检查，可能包含吸收血量
-            }
-            gamePlayer.setActiveEntity(true);
-            gamePlayer.setLastHealth(livingEntity.getHealth());
-            gamePlayer.setLastPos(livingEntity.position());
-        }
-    }
-    private static void updateInvalidBotPlayer(@NotNull GamePlayer gamePlayer, @NotNull ServerLevel serverLevel, List<GamePlayer> invalidPlayers, int maxInvalidTime) {
-        LivingEntity livingEntity = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
-        if (livingEntity == null) {
-            if (gamePlayer.isActiveEntity()) {
-                BRGameNotification.notifyGamePlayerIsInactive(serverLevel, gamePlayer);
-            }
-            gamePlayer.setActiveEntity(false);
-            gamePlayer.addInvalidTime();
-            if (eliminateInactiveTeam(serverLevel, gamePlayer)) { // 队伍全员离线啊
-                return;
-            } else if (gamePlayer.getInvalidTime() >= maxInvalidTime) {
-                invalidPlayers.add(gamePlayer); // 淘汰单个人机
-            }
-        } else {
-            if (!gamePlayer.isActiveEntity()) { // 刚上线
-                BRGameNotification.notifyGamePlayerIsActive(serverLevel, gamePlayer);
-                float lastHealth = gamePlayer.getLastHealth();
-                if (lastHealth <= 0) {
-                    invalidPlayers.add(gamePlayer);
-                }
-                livingEntity.setHealth(lastHealth);
             }
             gamePlayer.setActiveEntity(true);
             gamePlayer.setLastHealth(livingEntity.getHealth());
