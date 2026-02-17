@@ -2,12 +2,12 @@ package xiao.battleroyale.common.game.zone;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.game.zone.func.IZoneFuncEntry;
+import xiao.battleroyale.api.config.common.game.zone.shape.IZoneShapeEntry;
+import xiao.battleroyale.api.config.common.game.zone.special.IZoneSpecialEntry;
 import xiao.battleroyale.api.game.zone.gamezone.IAdditionalZone;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
-import xiao.battleroyale.api.config.common.game.zone.shape.IZoneShapeEntry;
-import xiao.battleroyale.api.config.common.game.zone.special.IZoneSpecialEntry;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
 
 import javax.annotation.Nullable;
