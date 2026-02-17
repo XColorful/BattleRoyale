@@ -10,7 +10,6 @@ import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.SquareEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.config.common.loot.type.EmptyEntry;
-import xiao.battleroyale.config.common.loot.type.ItemEntry;
 import xiao.battleroyale.config.common.loot.type.LootEntryType;
 import xiao.battleroyale.config.common.loot.type.MultiEntry;
 

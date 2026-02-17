@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.IConfigSubManager;
+import xiao.battleroyale.api.config.common.game.gamerule.BattleroyaleEntryTag;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.api.event.game.finish.*;
 import xiao.battleroyale.api.event.game.game.*;
@@ -23,7 +24,6 @@ import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.IGameSubManager;
-import xiao.battleroyale.api.config.common.game.gamerule.BattleroyaleEntryTag;
 import xiao.battleroyale.api.game.gamerule.IGameruleManager;
 import xiao.battleroyale.api.game.lobby.IGameLobbyManager;
 import xiao.battleroyale.api.game.loot.IGameLootManager;
@@ -34,10 +34,10 @@ import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.api.game.zone.IZoneManager;
 import xiao.battleroyale.common.effect.EffectManager;
-import xiao.battleroyale.common.game.process.battleroyale.BRGameProcessManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.lobby.GameLobbyManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
+import xiao.battleroyale.common.game.process.battleroyale.BRGameProcessManager;
 import xiao.battleroyale.common.game.spawn.SpawnManager;
 import xiao.battleroyale.common.game.stats.StatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -117,6 +117,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         StatsManager.init(mcSide);
         TeamManager.init(mcSide);
         ZoneManager.init(mcSide);
+        BattleRoyale.getEventRegister().register(GameManagerRegister.get(), CustomEventType.REGISTER_MANAGER_EVENT);
     }
 
     @Override public String getManagerName() {
@@ -599,7 +600,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         this.inGame = false;
         GameEntry gameEntry = getGameEntry();
         gameProcessManager.teleportAfterGame(serverLevel, getWinnerGamePlayers(), getWinnerGameTeams(), gameEntry.teleportWinnerAfterGame, gameEntry.teleportAfterGame);
-
+        gameProcessManager.stopGame(serverLevel);
         teamManager.stopGame(serverLevel); // 最后处理TeamManager
         this.configPrepared = false;
 

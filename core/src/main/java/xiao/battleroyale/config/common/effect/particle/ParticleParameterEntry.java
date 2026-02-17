@@ -3,8 +3,8 @@ package xiao.battleroyale.config.common.effect.particle;
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.api.config.sub.IConfigEntry;
 import xiao.battleroyale.api.config.common.effect.particle.ParticleConfigTag;
+import xiao.battleroyale.api.config.sub.IConfigEntry;
 import xiao.battleroyale.util.JsonUtils;
 
 public class ParticleParameterEntry implements IConfigEntry {

@@ -1,10 +1,12 @@
 package xiao.battleroyale;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import xiao.battleroyale.algorithm.AlgorithmFacade;
 import xiao.battleroyale.api.algorithm.IAlgorithmApi;
@@ -21,6 +23,7 @@ import xiao.battleroyale.api.effect.IEffectManager;
 import xiao.battleroyale.api.event.ICustomEventPoster;
 import xiao.battleroyale.api.event.ICustomEventRegister;
 import xiao.battleroyale.api.event.IEventRegister;
+import xiao.battleroyale.api.event.register.RegisterManagerEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.loot.ICommonInventoryManager;
@@ -46,7 +49,6 @@ import xiao.battleroyale.network.NetworkHandler;
 import xiao.battleroyale.network.NetworkHook;
 import xiao.battleroyale.resource.ResourceLoader;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BattleRoyale {
@@ -233,5 +235,9 @@ public class BattleRoyale {
         if (BattleRoyale.gameManager != null) BattleRoyale.gameManager.unregisterGameEventHandler();
         BattleRoyale.gameManager = gameManager;
         gameManager.registerGameEventHandler();
+    }
+
+    public static boolean registerManager(@Nullable CommandSourceStack source, String protocol) {
+        return getEventPoster().postCustomEvent(new RegisterManagerEvent(source, protocol));
     }
 }
