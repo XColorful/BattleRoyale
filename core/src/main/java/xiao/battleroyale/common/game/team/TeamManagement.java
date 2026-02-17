@@ -326,7 +326,7 @@ public class TeamManagement {
             if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.failed_to_join_team", teamId).withStyle(ChatFormatting.RED));
             return false;
         }
-        GamePlayer gamePlayer = new GamePlayer(player.getUUID(), playerName, newPlayerId, false, newTeam);
+        GamePlayer gamePlayer = new GamePlayer(player.getUUID(), playerName, newPlayerId, serverPlayer == null, newTeam);
         if (!teamManager.teamData.addPlayerToTeam(gamePlayer, newTeam)) {
             return false;
         }
