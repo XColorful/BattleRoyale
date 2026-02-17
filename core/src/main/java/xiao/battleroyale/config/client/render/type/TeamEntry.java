@@ -3,9 +3,9 @@ package xiao.battleroyale.config.client.render.type;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.client.render.level.IClientTeamRenderer;
 import xiao.battleroyale.api.config.client.render.IRenderEntry;
 import xiao.battleroyale.api.config.client.render.RenderConfigTag;
-import xiao.battleroyale.api.client.render.level.IClientTeamRenderer;
 import xiao.battleroyale.util.JsonUtils;
 
 public class TeamEntry implements IRenderEntry {

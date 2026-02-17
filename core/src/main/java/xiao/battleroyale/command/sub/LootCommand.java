@@ -17,7 +17,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.ICommonInventoryManager;
 import xiao.battleroyale.api.minecraft.InventoryIndex;
 import xiao.battleroyale.common.loot.LootStatus;
-import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.StringUtils;
 
 import java.util.List;

@@ -90,7 +90,7 @@
 - needShuffle：打乱可选的点位
 ```json
 {
-	"spawnType": "distributed",
+	"spawnType": "teleport",
 	"spawnShapeType": "rectangle",
 	"center": "0.0,-60.0,0.0",
 	"dimension": "128.0,0.0,128.0",
@@ -114,7 +114,7 @@ _（spawnShapeType为"circle"时可用）_
 > - 以(0, 0)为中心，半径r=18的圆内包含约1000个网格点
 ```json
 {
-	"spawnType": "distributed",
+	"spawnType": "teleport",
 	"spawnShapeType": "circle",
 	"center": "0.0,-60.0,0.0",
 	"dimension": "128.0,0.0,128.0",
@@ -139,7 +139,7 @@ _（spawnShapeType为"circle"时可用）_
 > 黄金螺旋计算的点位在N>1时有且仅有1个点位在边界上
 ```json
 {
-	"spawnType": "distributed",
+	"spawnType": "teleport",
 	"spawnShapeType": "circle",
 	"center": "0.0,-60.0,0.0",
 	"dimension": "128.0,0.0,128.0",
@@ -263,7 +263,7 @@ _（spawnShapeType为"circle"时可用）_
 - needShuffle: Shuffles the list of available spawn points before selection.
 ```json
 {
-	"spawnType": "distributed",
+	"spawnType": "teleport",
 	"spawnShapeType": "rectangle",
 	"center": "0.0,-60.0,0.0",
 	"dimension": "128.0,0.0,128.0",
@@ -287,7 +287,7 @@ _(Available when spawnShapeType is "circle")_
 > - A circle centered at (0,0) with a radius r=18 contains approximately 1000 grid points.
 ```json
 {
-	"spawnType": "distributed",
+	"spawnType": "teleport",
 	"spawnShapeType": "circle",
 	"center": "0.0,-60.0,0.0",
 	"dimension": "128.0,0.0,128.0",
@@ -312,7 +312,7 @@ _(Available when spawnShapeType is "circle")_
 > For N>1, the Golden Spiral calculation results in only 1 point exactly on the boundary.
 ```json
 {
-	"spawnType": "distributed",
+	"spawnType": "teleport",
 	"spawnShapeType": "circle",
 	"center": "0.0,-60.0,0.0",
 	"dimension": "128.0,0.0,128.0",

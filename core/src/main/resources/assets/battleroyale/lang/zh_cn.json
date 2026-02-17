@@ -13,6 +13,9 @@
   "death.attack.safezone": "%s 在安全区外被淘汰",
   "death.attack.unsafezone": "%s 在不安全区内被淘汰",
 
+  "battleroyale.message.register_manager_success": "已注册 %s",
+  "battleroyale.message.register_manager_failed": "未能注册 %s",
+
   "battleroyale.message.loot_spawner_lootid_switched": "切换至物资刷新配置%s: %s",
   "battleroyale.message.entity_spawner_lootid_switched": "切换至实体刷新配置%s: %s",
   "battleroyale.message.airdrop_lootid_switched": "切换至补给箱配置%s: %s",
