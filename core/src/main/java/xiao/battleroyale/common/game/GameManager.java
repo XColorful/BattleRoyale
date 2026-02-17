@@ -599,7 +599,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         this.inGame = false;
         GameEntry gameEntry = getGameEntry();
         gameProcessManager.teleportAfterGame(serverLevel, getWinnerGamePlayers(), getWinnerGameTeams(), gameEntry.teleportWinnerAfterGame, gameEntry.teleportAfterGame);
-
+        gameProcessManager.stopGame(serverLevel);
         teamManager.stopGame(serverLevel); // 最后处理TeamManager
         this.configPrepared = false;
 
