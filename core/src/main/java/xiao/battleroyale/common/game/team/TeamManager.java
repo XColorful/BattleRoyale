@@ -145,6 +145,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
         }
 
         TeamManagement.removeNoTeamGamePlayer(this); // 确保玩家均有队伍
+        TeamManagement.removeNoGamePlayerTeam(this); // 确保队伍均有玩家
         if (!hasEnoughPlayerTeamToStart()) { // init之后可能都退出了队伍，开始游戏前再次检查
             return false;
         }

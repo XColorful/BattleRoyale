@@ -221,15 +221,16 @@ public class TeamData extends AbstractGameManagerData {
             return false;
         }
 
+        int retrievedId = removedPlayer.getGameSingleId();
         gamePlayersById.remove(removedPlayer.getGameSingleId());
         GameTeam team = removedPlayer.getTeam();
         if (team != null) {
-            team.removePlayer(removedPlayer);
-            if (team.getTeamMemberCount() == 0 && gameTeams.containsKey(team.getGameTeamId())) {
-                removeTeam(team.getGameTeamId());
+            team.removePlayer(removedPlayer); removedPlayer = null;
+            if (team.getTeamMemberCount() == 0) {
+                removeTeam(team); team = null;
             }
         }
-        availablePlayerIds.add(removedPlayer.getGameSingleId());
+        availablePlayerIds.add(retrievedId);
         return true;
     }
 
@@ -258,14 +259,16 @@ public class TeamData extends AbstractGameManagerData {
         return false;
     }
 
-    private void removeTeam(int teamId) {
+    public boolean removeTeam(GameTeam gameTeam) {
+        return removeTeam(gameTeam.getGameTeamId());
+    }
+    public boolean removeTeam(int teamId) {
         if (locked) {
-            return;
         }
 
         GameTeam removedTeam = gameTeams.remove(teamId);
         if (removedTeam == null) {
-            return;
+            return false;
         }
 
         for (GamePlayer player : new ArrayList<>(removedTeam.getTeamMembers())) {
@@ -276,6 +279,7 @@ public class TeamData extends AbstractGameManagerData {
             }
         }
         availableTeamIds.add(teamId);
+        return true;
     }
 
     public @Nullable GameTeam getGameTeamById(int teamId) {
@@ -334,8 +338,8 @@ public class TeamData extends AbstractGameManagerData {
 
         if (oldTeam != null) {
             oldTeam.removePlayer(player);
-            if (oldTeam.getTeamMemberCount() == 0 && gameTeams.containsKey(oldTeam.getGameTeamId())) {
-                removeTeam(oldTeam.getGameTeamId());
+            if (oldTeam.getTeamMemberCount() == 0) {
+                removeTeam(oldTeam); oldTeam = null;
             }
         }
 

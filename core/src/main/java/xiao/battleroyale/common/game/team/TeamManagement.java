@@ -174,6 +174,22 @@ public class TeamManagement {
         for (GamePlayer noTeamPlayer : noTeamPlayers) {
             if (teamManager.teamData.removePlayer(noTeamPlayer)) {
                 GameMessageManager.notifyLeavedMember(noTeamPlayer.getPlayerUUID(), noTeamPlayer.getGameTeamId()); // 防止游戏开始时无队伍的GamePlayer
+                BattleRoyale.LOGGER.debug("Removed no team GamePlayer {}", noTeamPlayer.getNameWithId());
+            }
+        }
+    }
+    @ApiStatus.Internal
+    public static void removeNoGamePlayerTeam(TeamManager teamManager) {
+        List<GameTeam> noPlayerTeams = new ArrayList<>();
+        for (GameTeam team : teamManager.teamData.getGameTeamsList()) {
+            if (team.getTeamMemberCount() == 0) {
+                noPlayerTeams.add(team);
+            }
+        }
+
+        for (GameTeam noPlayerTeam : noPlayerTeams) {
+            if (teamManager.teamData.removeTeam(noPlayerTeam)) {
+                BattleRoyale.LOGGER.debug("Removed no member GameTeam {}", noPlayerTeam.getGameTeamId());
             }
         }
     }
