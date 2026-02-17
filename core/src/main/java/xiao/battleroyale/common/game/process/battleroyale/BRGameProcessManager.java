@@ -180,9 +180,7 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
     // --------IGameManagement--------
 
     @Override public void checkAndUpdateInvalidGamePlayer(ServerLevel serverLevel) {
-        if (serverLevel == null) {
-            return;
-        }
+        checkAndUpdateGamePlayerPre(serverLevel);
         BRGameManagement.checkAndUpdateInvalidGamePlayer(serverLevel);
     }
     @Override public void teleportToLobbyInGame(ServerPlayer player) {
