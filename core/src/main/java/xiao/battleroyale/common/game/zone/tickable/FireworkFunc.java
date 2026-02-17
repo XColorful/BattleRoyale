@@ -1,6 +1,5 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.common.effect.EffectManager;

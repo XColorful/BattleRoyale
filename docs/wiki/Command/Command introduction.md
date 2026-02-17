@@ -16,6 +16,7 @@
 
 - [大逃杀指令](https://github.com/XColorful/BattleRoyale/wiki/Game-command)：_/battleroyale game_
 - [队伍管理](https://github.com/XColorful/BattleRoyale/wiki/Team-command)：_/battleroyale team_
+- [注册指令](https://github.com/XColorful/BattleRoyale/wiki/Register-command)：_/battleroyale register_
 
 ### 效果指令
 
@@ -48,6 +49,7 @@ Start with _/battleroyale_
 
 - [BattleRoyale command](https://github.com/XColorful/BattleRoyale/wiki/Game-command#English): _/battleroyale game_
 - [Team management](https://github.com/XColorful/BattleRoyale/wiki/Team-command#English): _/battleroyale team_
+- [Register command](https://github.com/XColorful/BattleRoyale/wiki/Register-command#English): _/battleroyale register_
 
 ### Effect
 - [Firework generation](https://github.com/XColorful/BattleRoyale/wiki/Firework-command#English): _/battleroyale firework_

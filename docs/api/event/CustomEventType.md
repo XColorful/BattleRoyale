@@ -53,5 +53,7 @@ public enum CustomEventType {
 	CUSTOM_GENERATE_EVENT,
 	// client
 	SPECIAL_ZONE_RENDER_EVENT
+	// register
+	REGISTER_MANAGER_EVENT
 }
 ```
