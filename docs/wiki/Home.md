@@ -48,6 +48,7 @@
 
 - [大逃杀指令](https://github.com/XColorful/BattleRoyale/wiki/Game-command)
 - [队伍管理](https://github.com/XColorful/BattleRoyale/wiki/Team-command)
+- [注册指令](https://github.com/XColorful/BattleRoyale/wiki/Register-command)
 
 ### 效果指令
 
@@ -155,6 +156,7 @@
 
 - [BattleRoyale command](https://github.com/XColorful/BattleRoyale/wiki/Game-command#English)
 - [Team management](https://github.com/XColorful/BattleRoyale/wiki/Team-command#English)
+- [Register command](https://github.com/XColorful/BattleRoyale/wiki/Register-command#English)
 
 ### Effect
 
