@@ -8,6 +8,7 @@ import xiao.battleroyale.api.config.common.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.api.config.common.game.spawn.type.detail.SpawnDetailTag;
 import xiao.battleroyale.common.game.GameStatsManager;
 import xiao.battleroyale.common.game.spawn.AbstractSimpleSpawner;
+import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.detail.PlaneDetailEntry;
@@ -96,7 +97,7 @@ public class PlaneSpawner extends AbstractSimpleSpawner<PlaneDetailEntry> {
      * @param gameTeam 当前存活的队伍列表
      */
     @Override
-    public void tick(int gameTime, List<GameTeam> gameTeam) {
+    public void spawnTick(int gameTime, List<GameTeam> gameTeam) {
         switch (detailType) {
             case FIXED -> {
                 ;
@@ -115,5 +116,9 @@ public class PlaneSpawner extends AbstractSimpleSpawner<PlaneDetailEntry> {
     @Override
     public void clearAfterGame() {
         trackingPlaneEntity = null;
+    }
+
+    @Override
+    public void respawnTick(int gameTime, Map<GameTeam, List<GamePlayer>> respawnTeams) {
     }
 }

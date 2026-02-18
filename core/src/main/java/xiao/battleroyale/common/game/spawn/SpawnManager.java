@@ -15,6 +15,8 @@ import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.api.game.spawn.ISpawnManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
@@ -22,9 +24,12 @@ import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager;
 import xiao.battleroyale.config.common.game.spawn.SpawnConfigManager.SpawnConfig;
 import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.ClassUtils;
 import xiao.battleroyale.util.JsonUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static xiao.battleroyale.api.data.TempDataTag.PRE_CALCULATE;
 import static xiao.battleroyale.api.data.TempDataTag.SPAWN_MANAGER;
@@ -42,7 +47,9 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
         return SpawnManagerHolder.INSTANCE;
     }
 
-    protected SpawnManager() {}
+    protected SpawnManager() {
+        cachedRespawnTeamQueue = new HashMap<>();
+    }
 
     public static void init(McSide mcSide) {
         if (!get().inProperSide(mcSide)) {
@@ -71,6 +78,8 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
             CircleGridCalculator.debugResult();
         }
     }
+
+    protected Map<GameTeam, ClassUtils.ArraySet<GamePlayer>> cachedRespawnTeamQueue;
 
     @Override public String getManagerName() {
         return String.format("%s:SpawnManager", BattleRoyale.MOD_ID);
@@ -153,10 +162,31 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
 
     @Override
     public void onGameTick(int gameTime) {
-        if (!gameSpawner.shouldTick()) {
-            return;
+        // 初始出生
+        if (!gameSpawner.isSpawnTickComplete()) {
+            gameSpawner.spawnTick(gameTime, GameTeamManager.getGameTeams());
+            // 初始出生没结束前不再出生
+            if (!gameSpawner.isSpawnTickComplete()) {
+                return;
+            }
         }
 
-        gameSpawner.tick(gameTime, GameTeamManager.getGameTeams());
+        // 再出生
+        if (!cachedRespawnTeamQueue.isEmpty()) {
+            Map<GameTeam, List<GamePlayer>> snapshot = new HashMap<>();
+            cachedRespawnTeamQueue.forEach((team, set) -> snapshot.put(team, set.asList()));
+            cachedRespawnTeamQueue.clear();
+
+            gameSpawner.respawnTick(gameTime, snapshot);
+        }
+    }
+
+    @Override
+    public void respawn(List<GamePlayer> respawnGamePlayers) {
+        for (GamePlayer player : respawnGamePlayers) {
+            this.cachedRespawnTeamQueue
+                    .computeIfAbsent(player.getTeam(), k -> new ClassUtils.ArraySet<>())
+                    .add(player);
+        }
     }
 }
