@@ -10,6 +10,7 @@ import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.process.deathmatch.IDeathMatchProcessManager;
+import xiao.battleroyale.api.game.spawn.ISpawnManager;
 import xiao.battleroyale.common.game.process.battleroyale.BRGameProcessManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
@@ -125,6 +126,9 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
      * 在 [gameTime + 1, gameTime + 19] 获取到 (LivingEntity != null && getHealth() == 0)
      * 在 gameTIme + 20 起无法获取 LivingEntity (关闭 doImmediateRespawn)
      * 获取到 LivingEntity 的那一 tick，血量为 0
+     * <p>
+     * checkAndUpdateRestandingGamePlayer 在 gameTick 开头执行 {@link BRGameProcessManager#onGameTick}
+     * respawn 在当前 gameTime 就会开始执行
      */
     @Override public void checkAndUpdateRestandingGamePlayer(ServerLevel serverLevel) {
         this.deathMatchData.updateTrackQueueDelay();
@@ -137,9 +141,10 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         }
         if (respawnedGamePlayers.isEmpty()) return;
 
-        if (serverLevel != null) {
-            healGamePlayers(serverLevel, respawnedGamePlayers); // 重新复活采用与开始游戏时相同的恢复效果
-        }
+        if (serverLevel != null) healGamePlayers(serverLevel, respawnedGamePlayers); // 重新复活采用与开始游戏时相同的恢复效果
+
+        ISpawnManager spawnManager = BattleRoyale.getGameManager().getSpawnManager();
+        spawnManager.respawn(respawnedGamePlayers);
 
         for (GamePlayer respawnedGamePlayer : respawnedGamePlayers) {
             this.deathMatchData.removeRestandingGamePlayer(respawnedGamePlayer);
@@ -154,7 +159,6 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
             return false;
         }
 
-        // TODO Respawn机制
         gamePlayer.setEliminated(false);
         gamePlayer.setAlive(true); // 不是玩家救援复活，不使用 onPlayerRevived
         BattleRoyale.LOGGER.debug("Respawned GamePlayer {} at game time {}", gamePlayer.getPlayerName(), BattleRoyale.getGameManager().getGameTime());
