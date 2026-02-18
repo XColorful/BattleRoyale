@@ -226,6 +226,7 @@ public class BattleRoyale {
     }
 
     public static boolean registerManager(@Nullable CommandSourceStack source, String protocol) {
+        if (BattleRoyale.gameManager.isInGame()) return false;
         return getEventPoster().postCustomEvent(new RegisterManagerEvent(source, protocol));
     }
 }
