@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public class WorldUtils {
 
     public static int getGroundY(@NotNull ServerLevel serverLevel, double x, double z) {
-        int maxBuildHeight = serverLevel.getMaxBuildHeight();
+        int maxBuildHeight = serverLevel.getMaxY();
         BlockPos lookupPos = BlockPos.containing(x, maxBuildHeight, z);
         return serverLevel.getHeight(Heightmap.Types.MOTION_BLOCKING, lookupPos.getX(), lookupPos.getZ());
     }
