@@ -2,6 +2,7 @@ package xiao.battleroyale.api.config.common.game.gamerule;
 
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
+import xiao.battleroyale.config.common.game.gamerule.type.ExtraRuleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
 
@@ -12,4 +13,6 @@ public interface IGameruleSingleEntry extends IConfigSingleEntry {
     MinecraftEntry getMinecraftEntry();
 
     GameEntry getGameEntry();
+
+    ExtraRuleEntry getExtraRuleEntry();
 }

@@ -14,5 +14,7 @@ public class GameruleConfigTag extends ConfigEntryTag {
 
     public static final String GAME_ENTRY = "game";
 
+    public static final String EXTRA_RULE_ENTRY = "extraRule";
+
     private GameruleConfigTag() {}
 }
