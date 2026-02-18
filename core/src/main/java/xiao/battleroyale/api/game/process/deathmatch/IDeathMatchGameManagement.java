@@ -11,5 +11,9 @@ public interface IDeathMatchGameManagement extends IGameManagement {
     }
     void checkAndUpdateRestandingGamePlayer(ServerLevel serverLevel);
 
+    /**
+     * 将 GamePlayer 状态恢复 (属于 IGameProcessManager 管理)
+     * 内壁调用后通知 ISpawnManager 再出生 {@link xiao.battleroyale.api.game.spawn.ISpawnManager#respawn}
+     */
     boolean respawnGamePlayer(ServerLevel serverLevel, GamePlayer gamePlayer);
 }

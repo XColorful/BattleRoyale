@@ -3,8 +3,11 @@ package xiao.battleroyale.config.common.game.gamerule.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.process.deathmatch.DeathMatchConfigTag;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
+import xiao.battleroyale.config.common.game.gamerule.type.ExtraRuleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
 import xiao.battleroyale.config.common.game.zone.defaultconfigs.DeathMatch100x100Zone;
@@ -59,8 +62,13 @@ public class DeathMatchGamerule {
         gameEntry.restartDelay = 20 * 5; // 5秒后重开
         gameEntry.maxRestartRound = 15;
 
+        JsonObject jsonTag = new JsonObject();
+        jsonTag.addProperty(DeathMatchConfigTag.TARGET_KILL, 50);
+        jsonTag.addProperty(DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 20 * 5);
+        ExtraRuleEntry extraRuleEntry = new ExtraRuleEntry(String.format("%s:%s", BattleRoyale.MOD_ID, DeathMatchConfigTag.PROTOCOL_NAME), jsonTag);
+
         GameruleConfigManager.GameruleConfig gameruleConfig = new GameruleConfigManager.GameruleConfig(gameId, name + " " + playerTotal + " " + teamSize, "#FFFFFFAA",
-                brEntry, mcEntry, gameEntry);
+                brEntry, mcEntry, gameEntry, extraRuleEntry);
 
         return gameruleConfig.toJson();
     }
