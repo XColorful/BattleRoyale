@@ -34,7 +34,7 @@ public class ServerCommand {
         root.then(GameCommand.get()
         ); // 部分指令不需要权限
         root.then(RegisterCommand.get()
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> checkCommandLevel(source, 2))
         );
         root.then(FireworkCommand.get()
                 .requires(source -> checkCommandLevel(source, 2)));
