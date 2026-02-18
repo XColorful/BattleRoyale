@@ -10,6 +10,7 @@
 - battleroyale：大逃杀规则配置
 - minecraft：原版规则配置
 - game：（可选）游戏配置
+- extraRule：（可选）扩展规则配置
 ```json
 {
 	"gameId": 0,
@@ -230,6 +231,7 @@
 - battleroyale: BattleRoyale gamerule config
 - minecraft: Vanilla gamerule config
 - game: (optional) game config
+- extraRule: (optional) extra gamerule config
 ```json
 {
 	"gameId": 0,
