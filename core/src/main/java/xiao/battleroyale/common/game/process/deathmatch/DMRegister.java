@@ -5,6 +5,7 @@ import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.ICustomEvent;
 import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.event.register.RegisterManagerEvent;
+import xiao.battleroyale.util.StringUtils;
 
 public class DMRegister implements ICustomEventHandler {
 
@@ -33,18 +34,9 @@ public class DMRegister implements ICustomEventHandler {
     }
 
     private void registerDMManager(RegisterManagerEvent event) {
-        String protocol = event.getProtocol();
-        if (protocol == null || protocol.isEmpty()) {
-            return;
-        }
-        String[] parts = protocol.split(":", 2);
-        if (parts.length != 2) {
-            return;
-        }
-        String namespace = parts[0];
-        String managerName = parts[1];
-        if (namespace.equals(BattleRoyale.MOD_ID) || namespace.equals(BattleRoyale.MOD_NAME_SHORT)) {
-            if (managerName.equals("DMGameProcessManager")) {
+        StringUtils.ProtocolString protocolString = event.getProtocolString();
+        if (protocolString.namespace.equals(BattleRoyale.MOD_ID) || protocolString.namespace.equals(BattleRoyale.MOD_NAME_SHORT)) {
+            if (protocolString.name.equals("DMGameProcessManager")) {
                 boolean registered = BattleRoyale.getGameManager().setGameProcessManager(DMGameProcessManager.get());
                 event.setCanceled(registered);
             }

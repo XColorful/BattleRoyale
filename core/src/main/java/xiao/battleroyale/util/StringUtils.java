@@ -107,4 +107,26 @@ public class StringUtils {
     public static String getTimestampString() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
     }
+
+    public static class ProtocolString {
+        public final @Nullable String raw;
+        public final String namespace;
+        public final String name;
+        public ProtocolString(String protocol) {
+            this.raw = protocol;
+            if (protocol == null || protocol.isEmpty()) {
+                this.namespace = "";
+                this.name = "";
+            } else {
+                String[] parts = protocol.split(":", 2);
+                if (parts.length == 2) {
+                    this.namespace = parts[0];
+                    this.name = parts[1];
+                } else {
+                    this.namespace = "";
+                    this.name = parts[0];
+                }
+            }
+        }
+    }
 }

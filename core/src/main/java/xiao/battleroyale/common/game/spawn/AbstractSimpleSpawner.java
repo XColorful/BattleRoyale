@@ -59,7 +59,7 @@ public abstract class AbstractSimpleSpawner<T extends AbstractDetailEntry<T>> im
     public boolean isReady() { return prepared; }
 
     @Override
-    public boolean shouldTick() { return !finished; }
+    public boolean isSpawnTickComplete() { return finished; }
 
     @Override
     public void clear() {
