@@ -23,6 +23,9 @@
 	},
 	"game": {
 		游戏配置
+	},
+	"extraRule": {
+		扩展规则配置
 	}
 }
 ```
@@ -190,6 +193,33 @@
 }
 ```
 
+### 扩展规则配置
+
+- protocol：自定义协议名称
+- jsonTag：自定义数据，用于扩展规则
+```json
+"extraRule": {
+	"protocol": "namespace:name",
+	"jsonTag": {
+	}
+}
+```
+
+#### 死斗模式扩展规则配置
+
+- protocol："battleroyale:deathmatch"或"cbr:deathmatch"均可
+- targetKill：目标淘汰数，为死斗模式胜利条件
+- respawnTrackDelay：游戏玩家再出生的延迟，单位tick，不小于20
+```json
+"extraRule": {
+	"protocol": "battleroyale:deathmatch",
+	"jsonTag": {
+		"targetKill": 50,
+		"respawnTrackDelay": 20
+	}
+}
+```
+
 # English
 
 ## Single gamerule config
@@ -213,6 +243,9 @@
 	},
 	"game": {
 		GAME CONFIG
+	},
+	"extraRule": {
+		EXTRA GAMERULE CONFIG
 	}
 }
 ```
@@ -376,4 +409,31 @@
 	"messageCleanFreq": 140,
 	"messageExpireTime": 100,
 	"messageSyncFrequency": 100
+```
+
+### Extra gamerule config
+
+- protocol: A custom protocol name
+- jsonTag: Custom data, for extra gamerule
+```json
+"extraRule": {
+	"protocol": "namespace:name",
+	"jsonTag": {
+	}
+}
+```
+
+#### DeathMatch extra gamerule config
+
+- protocol: "battleroyale:deathmatch" or "cbr:deathmatch"
+- targetKill: Target number of eliminations required to win in DeathMatch mode
+- respawnTrackDelay: The delay before a game player respawns, in ticks, no less than 20
+```json
+"extraRule": {
+	"protocol": "battleroyale:deathmatch",
+	"jsonTag": {
+		"targetKill": 50,
+		"respawnTrackDelay": 20
+	}
+}
 ```

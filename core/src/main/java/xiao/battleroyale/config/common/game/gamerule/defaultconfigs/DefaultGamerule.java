@@ -37,7 +37,7 @@ public class DefaultGamerule {
                 false, true, 5000);
 
         GameruleConfig gameruleConfig = new GameruleConfig(0, "Adventure battleroyale", "#FFFFFFAA", true,
-                brEntry, mcEntry, null);
+                brEntry, mcEntry, null, null);
 
         return gameruleConfig.toJson();
     }
@@ -56,7 +56,7 @@ public class DefaultGamerule {
                 false, true, 5000);
 
         GameruleConfig gameruleConfig = new GameruleConfig(1, "Survival battleroyale", "#FFFFFFAA",
-                brEntry, mcEntry, null);
+                brEntry, mcEntry, null, null);
 
         return gameruleConfig.toJson();
     }

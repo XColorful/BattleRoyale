@@ -1,20 +1,30 @@
 package xiao.battleroyale.common.game.process.deathmatch;
 
+import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.config.IConfigSubManager;
+import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.process.deathmatch.DeathMatchConfigTag;
 import xiao.battleroyale.api.game.process.deathmatch.IDeathMatchProcessManager;
 import xiao.battleroyale.api.game.spawn.ISpawnManager;
 import xiao.battleroyale.common.game.process.battleroyale.BRGameProcessManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
+import xiao.battleroyale.config.common.game.GameConfigManager;
+import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
+import xiao.battleroyale.config.common.game.gamerule.type.ExtraRuleEntry;
+import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils;
+import xiao.battleroyale.util.JsonUtils;
+import xiao.battleroyale.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +50,8 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         BattleRoyale.getEventRegister().register(DMRegister.get(), CustomEventType.REGISTER_MANAGER_EVENT);
     }
 
-    protected int targetKill = 5; // TODO 之后改成配置
-    protected int respawnTrackDelay = 20;
+    protected int targetKill = 50;
+    protected int respawnTrackDelay = 20 * 5;
     protected final @NotNull DMData deathMatchData = new DMData();
 
     @Override public String getManagerName() {
@@ -56,6 +66,27 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     @Override
     public void initGameConfig(ServerLevel serverLevel) {
         super.initGameConfig(serverLevel);
+        if (!isConfigPrepared()) {
+            return;
+        }
+
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        IModConfigManager modConfigManager = BattleRoyale.getModConfigManager();
+        IConfigSubManager<?> gameruleConfigManager = modConfigManager.getConfigSubManager(GameConfigManager.get().getNameKey(), GameruleConfigManager.get().getNameKey());
+        int configId = gameManager.getGameruleConfigId();
+        if (gameruleConfigManager == null || !(gameruleConfigManager.getConfigEntry(configId) instanceof GameruleConfigManager.GameruleConfig gameruleConfig)) {
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            return;
+        }
+        ExtraRuleEntry extraRuleEntry = gameruleConfig.getExtraRuleEntry();
+        JsonObject jsonTag = extraRuleEntry.jsonTag;
+        StringUtils.ProtocolString protocol = extraRuleEntry.protocol;
+        boolean isDeathMatchConfig = (protocol.namespace.equals(BattleRoyale.MOD_ID) || protocol.namespace.equals(BattleRoyale.MOD_NAME_SHORT))
+                && (protocol.name.equals(DeathMatchConfigTag.PROTOCOL_NAME));
+        this.targetKill = isDeathMatchConfig ? JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.TARGET_KILL, 50) : 50;
+        this.respawnTrackDelay = isDeathMatchConfig ? JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 20 * 5) : 20 * 5;
+        if (this.respawnTrackDelay < 20) this.respawnTrackDelay = 20;
+
         BattleRoyale.LOGGER.debug("DMGameProcessManager complete initGameConfig");
     }
 
