@@ -1,10 +1,9 @@
 package xiao.battleroyale.common.game.spawn.vanilla;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.game.spawn.type.SpawnTypeTag;
@@ -24,12 +23,13 @@ import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.StringUtils;
+import xiao.battleroyale.util.WorldUtils;
 
 import java.util.*;
 import java.util.function.Supplier;
 
 /**
- * 传送所有玩家后就没什么事情了
+ * 以传送作为玩家出生方式
  */
 public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> {
 
@@ -54,6 +54,9 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
     protected final Set<Integer> telepotedTeamId = new HashSet<>();
     protected final double queuedHeight = 1145.14; // findGround失败的时候临时反复传送到这个高度，直到区块能成功加载或达到最大时长
 
+    // respawn
+    protected Map<GameTeam, List<_RespawnEntry>> unteleportedTeams = new HashMap<>();
+
     public TeleportSpawner(SpawnShapeType shapeType, Vec3 center, Vec3 dimension, int zoneId,
                            CommonDetailType detailType,
                            TeleportDetailEntry detailEntry) {
@@ -71,6 +74,15 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
         this.allowOnBorder = this.detailEntry.allowOnBorder;
         this.globalShrinkRatio = this.detailEntry.globalShrinkRatio;
         this.needShuffle = this.detailEntry.needShuffle;
+    }
+
+    @Override
+    public void clearAfterGame() {
+        spawnPos.clear(); // 运行时点位数据
+        spawnPointIndex = 0;
+        teleportedPlayerId.clear();
+        telepotedTeamId.clear();
+        unteleportedTeams.clear();
     }
 
     /**
@@ -138,7 +150,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
      * 没有异步加载区块，不会阻塞主线程
      */
     @Override
-    public void tick(int gameTime, List<GameTeam> gameTeams) {
+    public void spawnTick(int gameTime, List<GameTeam> gameTeams) {
         ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
         if (gameTime > this.hangTime) {
             this.finished = true;
@@ -150,24 +162,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
         }
 
         // 由于所有点位在init()预计算，因此全部可视作 Fixed/提前确定 类型，全都需要应用偏移
-        IGameManager gameManager = BattleRoyale.getGameManager();
-        Vec3 globalOffest = gameManager.getGlobalCenterOffset();
-        IZoneManager zoneManager = gameManager.getZoneManager();
-        IGameZone gameZone = zoneManager.getGameZone(preZoneCenterId);
-        if (gameZone != null) {
-            if (gameZone.isDetermined()) {
-                globalOffest = gameZone.getStartCenterPos();
-            } else if (gameZone.getZoneDelay() <= gameTime) {
-                ZoneManager.ZoneContext zoneContext = zoneManager.getZoneContextInGame();
-                if (zoneContext != null) {
-                    BattleRoyale.LOGGER.debug("TeleportSpawner: attempt to calculate zone shape in advance (preZoneCenterId: {})", preZoneCenterId);
-                    gameZone.calculateShape(zoneContext);
-                }
-                if (gameZone.isDetermined()) {
-                    globalOffest = gameZone.getStartCenterPos();
-                }
-            }
-        }
+        Vec3 globalOffset = getGlobalOffset(gameTime, preZoneCenterId);
 
         boolean allTeleported = true;
         // 按队伍传送，方便队伍统一传送
@@ -182,7 +177,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
 
             boolean teamAllTeleported = true;
 
-            Vec3 targetSpawnPos = findSpawnPos(spawnPointIndex, serverLevel, globalOffest);
+            @Nullable Vec3 targetSpawnPos = findSpawnPos(spawnPointIndex, serverLevel, globalOffset);
             if (targetSpawnPos == null) {
                 BattleRoyale.LOGGER.warn("TeleportSpawner can't find a targetSpawnPos, this is unexpected");
                 ChatUtils.sendMessageToAllPlayers(serverLevel, "Unexpected error in TeleportSpawner");
@@ -199,7 +194,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
             for (int i = 0; i < standingPlayers.size(); i++) {
                 // 找新点位
                 if (!teamTogether && i > 0) {
-                    targetSpawnPos = findSpawnPos(spawnPointIndex, serverLevel, globalOffest);
+                    targetSpawnPos = findSpawnPos(spawnPointIndex, serverLevel, globalOffset);
                     if (targetSpawnPos == null) {
                         BattleRoyale.LOGGER.warn("TeleportSpawner can't find a targetSpawnPos, this is unexpected");
                         ChatUtils.sendMessageToAllPlayers(serverLevel, "Unexpected error in TeleportSpawner");
@@ -223,15 +218,16 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
                     addSpawnStats(gamePlayer, targetSpawnPos);
                     gamePlayer.setLastPos(targetSpawnPos); // 立即更新，防止下一tick找不到又躲了逻辑位置
                     teleportedPlayerId.add(gamePlayer.getGameSingleId());
-                    if (targetSpawnPos.y == queuedHeight) {
-                        BattleRoyale.LOGGER.debug("GroundSpawner: Telepoted gamePlayer {} to team spawn position {}", gamePlayer.getGameSingleId(), targetSpawnPos);
+                    if (targetSpawnPos.y != queuedHeight) {
+                        BattleRoyale.LOGGER.info("GroundSpawner: Teleported gamePlayer {} to team spawn position {}", gamePlayer.getGameSingleId(), targetSpawnPos);
                     } else {
-                        BattleRoyale.LOGGER.info("GroundSpawner: Telepoted gamePlayer {} to team spawn position {}", gamePlayer.getGameSingleId(), targetSpawnPos);
+                        BattleRoyale.LOGGER.debug("GroundSpawner: Telepoted gamePlayer {} to team spawn position {}", gamePlayer.getGameSingleId(), targetSpawnPos);
                     }
                 } else {
                     teamAllTeleported = false; // 离线玩家也保留其尝试次数，超过最大限制后即使登录也不重新传送
                     allTeleported = false;
-                    BattleRoyale.LOGGER.warn("GroundSpawner: Could not find ServerPlayer {} (UUID: {}), playerId: {}, teamId: {}", gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID(), gamePlayer.getGameSingleId(), gamePlayer.getGameTeamId());
+                    BattleRoyale.LOGGER.warn("GroundSpawner: Could not find ServerPlayer {} (UUID: {}), playerId: {}, teamId: {}",
+                            gamePlayer.getPlayerName(), gamePlayer.getPlayerUUID(), gamePlayer.getGameSingleId(), gamePlayer.getGameTeamId());
                 }
             }
             if (teamAllTeleported) {
@@ -256,8 +252,82 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
         GameStatsManager.recordSpawnString(Integer.toString(gamePlayer.getGameSingleId()), stringWriter);
     }
 
-    @Nullable
-    public Vec3 findSpawnPos(int index, ServerLevel serverLevel, Vec3 globalOffset) {
+    // --------Respawn--------
+
+    /**
+     * 由 ISpawnManager 保证调用时已经结束 spawnTick {@link xiao.battleroyale.common.game.spawn.SpawnManager#onGameTick}
+     * 循环取点，不再 init
+     * @param gameTime 当前游戏时间
+     * @param respawnTeams 再出生的玩家
+     */
+    @Override
+    public void respawnTick(int gameTime, Map<GameTeam, List<GamePlayer>> respawnTeams) {
+        if (spawnPos.isEmpty()) {
+            BattleRoyale.LOGGER.warn("TeleportSpawner: this.spawnPos is empty, skipped respawnTick");
+            return;
+        }
+
+        // 合并逻辑：将 GamePlayer 转换为 _RespawnEntry 并注入初始 hangTime
+        int defaultHangTime = this.hangTime; // 避免循环中频繁访问 field（虽然 JIT 会优化）
+        respawnTeams.forEach((team, players) -> {
+            List<_RespawnEntry> entries = this.unteleportedTeams.computeIfAbsent(team, k -> new ArrayList<>());
+            for (GamePlayer p : players) {
+                entries.add(new _RespawnEntry(p, defaultHangTime));
+            }
+        });
+
+        ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
+        if (serverLevel == null) {
+            return;
+        }
+
+        Vec3 globalOffset = getGlobalOffset(gameTime, preZoneCenterId);
+
+        Iterator<Map.Entry<GameTeam, List<_RespawnEntry>>> teamIterator = unteleportedTeams.entrySet().iterator();
+        while (teamIterator.hasNext()) {
+            Map.Entry<GameTeam, List<_RespawnEntry>> entry = teamIterator.next();
+            List<_RespawnEntry> entries = entry.getValue();
+
+            entries.removeIf(respawnEntry -> {
+                GamePlayer gamePlayer = respawnEntry.player;
+                LivingEntity playerEntity = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
+
+                // 只有玩家在线时才处理
+                if (playerEntity != null) {
+                    Vec3 target = findRespawnPos(serverLevel, globalOffset);
+                    if (target == null) return false;
+
+                    // 执行传送
+                    GameUtilsFunction.safeTeleport(playerEntity, serverLevel, target, 0, 0);
+
+                    if (target.y != queuedHeight) {
+                        // 成功传送到地面，消耗一个索引
+                        spawnPointIndex = (spawnPointIndex + 1) % spawnPos.size();
+                        BattleRoyale.LOGGER.info("GroundSpawner: Respawned {} to {}", gamePlayer.getPlayerName(), target);
+                        return true; // 从待传送 List 中移除
+                    } else {
+                        // 还在 queuedHeight 挂着，消耗一次时长，下一次 Tick 继续尝试
+                        respawnEntry.ticksLeft--;
+                        if (respawnEntry.ticksLeft <= 0) {
+                            BattleRoyale.LOGGER.warn("GroundSpawner: Respawn reached maximum hangTime for {}, force finished", gamePlayer.getPlayerName());
+                            return true; // 达到时长限制，强制结束任务
+                        }
+                        BattleRoyale.LOGGER.debug("GroundSpawner: {} is still in queuedHeight, ticks left: {}", gamePlayer.getPlayerName(), respawnEntry.ticksLeft);
+                    }
+                }
+
+                // 玩家离线或仍在尝试时长内，保留在 List 中
+                return false;
+            });
+
+            // 如果该队伍所有人都传完了，从 Map 中移除该队伍
+            if (entries.isEmpty()) {
+                teamIterator.remove();
+            }
+        }
+    }
+
+    public @Nullable Vec3 findSpawnPos(int index, @NotNull ServerLevel serverLevel, Vec3 globalOffset) {
         if (index >= spawnPos.size()) {
             BattleRoyale.LOGGER.warn("GroundSpawner: Not enough spawn point for all players");
             return null;
@@ -268,8 +338,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
             return basePos;
         }
 
-        BlockPos lookupPos = BlockPos.containing(basePos.x, 320, basePos.z); // 最大建筑高度320
-        int groundY = serverLevel.getHeight(Heightmap.Types.MOTION_BLOCKING, lookupPos.getX(), lookupPos.getZ());
+        int groundY = WorldUtils.getGroundY(serverLevel, basePos.x, basePos.z);
         double targetY = groundY + 1.0;
         // 在主世界加载失败时 targetY 返回 -63（最小建筑高度 -64），加2保证在范围内
         if (targetY < serverLevel.dimensionType().minY() + 2) {
@@ -279,11 +348,45 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
         return new Vec3(basePos.x, targetY, basePos.z);
     }
 
-    @Override
-    public void clearAfterGame() {
-        spawnPos.clear(); // 运行时点位数据
-        spawnPointIndex = 0;
-        teleportedPlayerId.clear();
-        telepotedTeamId.clear();
+    // 自动循环取点，获取点位后不自动更新索引
+    private @Nullable Vec3 findRespawnPos(ServerLevel serverLevel, Vec3 globalOffset) {
+        // 自动循环取点，防止溢出
+        if (spawnPointIndex >= spawnPos.size()) {
+            spawnPointIndex = 0;
+        }
+        return findSpawnPos(spawnPointIndex, serverLevel, globalOffset);
+    }
+
+    private Vec3 getGlobalOffset(int gameTime, int preZoneCenterId) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        Vec3 globalOffest = gameManager.getGlobalCenterOffset();
+        IZoneManager zoneManager = gameManager.getZoneManager();
+        IGameZone gameZone = zoneManager.getGameZone(preZoneCenterId);
+        if (gameZone != null) {
+            if (gameZone.isDetermined()) {
+                globalOffest = gameZone.getStartCenterPos();
+            } else if (gameZone.getZoneDelay() <= gameTime) {
+                ZoneManager.ZoneContext zoneContext = zoneManager.getZoneContextInGame();
+                if (zoneContext != null) {
+                    BattleRoyale.LOGGER.debug("TeleportSpawner: attempt to calculate zone shape in advance (preZoneCenterId: {})", preZoneCenterId);
+                    gameZone.calculateShape(zoneContext);
+                }
+                if (gameZone.isDetermined()) {
+                    globalOffest = gameZone.getStartCenterPos();
+                }
+            }
+        }
+        return globalOffest;
+    }
+
+    // 大便类
+    protected static class _RespawnEntry {
+        public final GamePlayer player;
+        public int ticksLeft;
+
+        _RespawnEntry(GamePlayer player, int ticksLeft) {
+            this.player = player;
+            this.ticksLeft = ticksLeft;
+        }
     }
 }

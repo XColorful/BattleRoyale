@@ -1,6 +1,9 @@
 package xiao.battleroyale.api.game.spawn;
 
 import xiao.battleroyale.api.game.IGameSubManager;
+import xiao.battleroyale.common.game.team.GamePlayer;
+
+import java.util.List;
 
 public interface ISpawnManager extends IGameSubManager {
 
@@ -10,4 +13,9 @@ public interface ISpawnManager extends IGameSubManager {
      */
     @Deprecated(forRemoval = false)
     IGameSpawner getGameSpawner();
+
+    /**
+     * 在游戏中添加再出生的玩家
+     */
+    void respawn(List<GamePlayer> respawnGamePlayers);
 }
