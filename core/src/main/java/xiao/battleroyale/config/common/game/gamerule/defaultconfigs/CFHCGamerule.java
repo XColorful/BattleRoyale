@@ -48,7 +48,7 @@ public class CFHCGamerule {
                 false, false, 20, 15,
                 20 * 7, 20 * 5, 20 * 5);
         GameruleConfig gameruleConfig = new GameruleConfig(gameId, String.format("%s %s %s", name, playerTotal, teamSize), "#FFFFFFAA",
-                brEntry, mcEntry, gameEntry);
+                brEntry, mcEntry, gameEntry, null);
         return gameruleConfig.toJson();
     }
 }
