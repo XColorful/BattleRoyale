@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.common.loot.ILootEntry;
@@ -46,41 +47,42 @@ public class InventoryFunc extends AbstractSimpleFunc {
 
     @Override
     public void funcTick(ZoneTickContext zoneTickContext) {
-        ServerLevel serverLevel = zoneTickContext.serverLevel;
-        UUID gameId = BattleRoyale.getGameManager().getGameId();
-        List<ItemStack> lootItems = new ArrayList<>();
-        IConfigSubManager<?> lootConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(LootConfigManager.get().getNameKey());
-        @Nullable LootConfig lootConfig = lootConfigManager == null ? null
-                : lootConfigManager.getConfigEntry(LootConfigTypeEnum.LOOT_SPAWNER, this.lootSpawnerLootId) instanceof LootConfig config ? config : null;
-        @Nullable ILootEntry additionalLootEntry = lootConfig != null ? lootConfig.entry : null;
+        _InventoryEntry tmp = new _InventoryEntry(this);
 
         for (GamePlayer gamePlayer : zoneTickContext.gamePlayers) {
             if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
+                playerFuncInternal(zoneTickContext.serverLevel, gamePlayer, tmp.gameId, tmp.additionalLootEntry);
+            }
+        }
+    }
+    @Override
+    public void playerFunc(@NotNull ServerLevel serverLevel, GamePlayer gamePlayer) {
+        _InventoryEntry tmp = new _InventoryEntry(this);
+        playerFuncInternal(serverLevel, gamePlayer, tmp.gameId, tmp.additionalLootEntry);
+    }
+    private void playerFuncInternal(ServerLevel serverLevel, GamePlayer gamePlayer, UUID gameId, @Nullable ILootEntry additionalLootEntry) {
+        @Nullable LivingEntity livingEntity = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
+        if (livingEntity != null) {
+            Vec3 playerLastPos = gamePlayer.getLastPos();
+            LootGenerator.LootContext lootContext = new LootGenerator.LootContext(serverLevel, playerLastPos, gameId);
 
-                @Nullable LivingEntity livingEntity = GameUtils.getLivingEntity(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID());
-                if (livingEntity != null) {
-                    Vec3 playerLastPos = gamePlayer.getLastPos();
-                    LootGenerator.LootContext lootContext = new LootGenerator.LootContext(serverLevel, playerLastPos, gameId);
+            List<ItemStack> lootItems = new ArrayList<>();
+            // 先刷写在区域配置里的
+            if (this.lootEntry != null) {
+                lootItems = LootGenerator.generateLootItem(lootContext, this.lootEntry);
+            }
+            // 再刷引用物资刷新器的
+            if (additionalLootEntry != null) {
+                lootItems.addAll(LootGenerator.generateLootItem(lootContext, additionalLootEntry));
+            }
+            for (ItemStack itemStack : lootItems) {
+                BattleRoyale.LOGGER.debug(itemStack.toString());
+            }
 
-                    lootItems.clear();
-                    // 先刷写在区域配置里的
-                    if (this.lootEntry != null) {
-                        lootItems = LootGenerator.generateLootItem(lootContext, this.lootEntry);
-                    }
-                    // 再刷引用物资刷新器的
-                    if (additionalLootEntry != null) {
-                        lootItems.addAll(LootGenerator.generateLootItem(lootContext, additionalLootEntry));
-                    }
-                    for (ItemStack itemStack : lootItems) {
-                        BattleRoyale.LOGGER.debug(itemStack.toString());
-                    }
-
-                    if (!gamePlayer.isBot() && livingEntity instanceof ServerPlayer player) { // 直接进背包
-                        InventoryGenerator.lootItemsToPlayerInventory(player, lootItems, firstSlotIndex, lastSlotIndex, skipNonEmptySlot, dropBeforeReplace);
-                    } else { // 丢地上
-                        // TODO 对于没背包的或者人机, 刷新的背包物品丢在lastPos
-                    }
-                }
+            if (!gamePlayer.isBot() && livingEntity instanceof ServerPlayer player) { // 直接进背包
+                InventoryGenerator.lootItemsToPlayerInventory(player, lootItems, firstSlotIndex, lastSlotIndex, skipNonEmptySlot, dropBeforeReplace);
+            } else { // 丢地上
+                // TODO 对于没背包的或者人机, 刷新的背包物品丢在lastPos
             }
         }
     }
@@ -88,5 +90,18 @@ public class InventoryFunc extends AbstractSimpleFunc {
     @Override
     public ZoneFuncType getFuncType() {
         return ZoneFuncType.INVENTORY;
+    }
+
+    // 大便类
+    protected static class _InventoryEntry {
+        UUID gameId;
+        @Nullable ILootEntry additionalLootEntry;
+        public _InventoryEntry(InventoryFunc func) {
+            this.gameId = BattleRoyale.getGameManager().getGameId();
+            IConfigSubManager<?> lootConfigManager = BattleRoyale.getModConfigManager().getConfigSubManager(LootConfigManager.get().getNameKey());
+            @Nullable LootConfig lootConfig = lootConfigManager == null ? null
+                    : lootConfigManager.getConfigEntry(LootConfigTypeEnum.LOOT_SPAWNER, func.lootSpawnerLootId) instanceof LootConfig config ? config : null;
+            this.additionalLootEntry = lootConfig != null ? lootConfig.entry : null;
+        }
     }
 }

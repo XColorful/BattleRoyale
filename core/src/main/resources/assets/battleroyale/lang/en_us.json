@@ -360,6 +360,8 @@
 
   "battleroyale.label.alive": "Alive",
 
+  "battleroyale.title.deathmatch_progress": "Death Match (%s / %s)",
+
   "battleroyale.loot.label": "[Loot]",
   "battleroyale.loot.pos": "Pos %s,%s,%s",
 

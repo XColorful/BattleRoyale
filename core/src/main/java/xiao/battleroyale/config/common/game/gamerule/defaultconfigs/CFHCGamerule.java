@@ -38,7 +38,7 @@ public class CFHCGamerule {
                 false, true, true,
                 true, true, true,
                 true, false, true,
-                false, true, 0);
+                false, false, true, 0);
         GameEntry gameEntry = new GameEntry(true, 300, DEFAULT_TEAM_COLORS, true, true,
                 20 * 60, 20 * 10, true,
                 true, true, true, false, DEFAULT_DOWN_DAMAGE, 20,

@@ -1,5 +1,8 @@
 package xiao.battleroyale.api.game.zone.gamezone;
 
+import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
@@ -37,6 +40,7 @@ public interface ITickableZone {
      * tick当前圈的功能
      */
     void funcTick(ZoneTickContext zoneTickContext);
+    void playerFunc(@NotNull ServerLevel serverLevel, GamePlayer gamePlayer);
 
     /**
      * @return 当前圈功能类型
