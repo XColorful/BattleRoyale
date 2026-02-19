@@ -1,6 +1,8 @@
 package xiao.battleroyale.common.game.process.deathmatch;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.BossEvent;
@@ -97,8 +99,14 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
             this.respawnTrackDelay = JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 20 * 5);
             this.retickZones = JsonUtils.getJsonIntList(jsonTag, DeathMatchConfigTag.RETICK_ZONES);
             this.sendProgressBar = JsonUtils.getJsonBool(jsonTag, DeathMatchConfigTag.SEND_PROGRESS_BAR, false);
-            this.progressBarColor = BossEvent.BossBarColor.byName(JsonUtils.getJsonString(jsonTag, DeathMatchConfigTag.PROGRESS_BAR_COLOR, ""));
-            this.progressBarOverlay = BossEvent.BossBarOverlay.byName(JsonUtils.getJsonString(jsonTag, DeathMatchConfigTag.PROGRESS_BAR_OVERLAY, ""));
+            this.progressBarColor = BossEvent.BossBarColor.CODEC.parse(JsonOps.INSTANCE,
+                            new JsonPrimitive(JsonUtils.getJsonString(jsonTag, DeathMatchConfigTag.PROGRESS_BAR_COLOR, "white")))
+                    .result()
+                    .orElse(BossEvent.BossBarColor.WHITE);
+            this.progressBarOverlay = BossEvent.BossBarOverlay.CODEC.parse(JsonOps.INSTANCE,
+                            new com.google.gson.JsonPrimitive(JsonUtils.getJsonString(jsonTag, DeathMatchConfigTag.PROGRESS_BAR_OVERLAY, "")))
+                    .result()
+                    .orElse(BossEvent.BossBarOverlay.PROGRESS);
             this.allowAllWin = JsonUtils.getJsonBool(jsonTag, DeathMatchConfigTag.ALLOW_ALL_WIN, false);
         } else {
             this.targetKill = 50;
