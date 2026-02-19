@@ -1,8 +1,10 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
-import xiao.battleroyale.common.effect.EffectManager;
+import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.effect.IEffectManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
 public class BoostFunc extends AbstractSimpleFunc {
@@ -15,12 +17,9 @@ public class BoostFunc extends AbstractSimpleFunc {
     }
 
     @Override
-    public void funcTick(ZoneTickContext zoneTickContext) {
-        for (GamePlayer gamePlayer : zoneTickContext.gamePlayers) {
-            if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
-                EffectManager.get().addBoost(gamePlayer.getPlayerUUID(), boost, zoneTickContext.serverLevel);
-            }
-        }
+    public void playerFunc(@NotNull ServerLevel serverLevel, GamePlayer gamePlayer) {
+        IEffectManager effectManager = BattleRoyale.getEffectManager();
+        effectManager.addBoost(gamePlayer.getPlayerUUID(), boost, serverLevel);
     }
 
     @Override
