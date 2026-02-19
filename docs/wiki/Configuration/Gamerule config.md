@@ -96,6 +96,7 @@
 	"spectatorGenerateChunks": false,
 	"clearInventory": true,
 	"keepInventory": false,
+	"doImmediateRespawn": false,
 	"doTimeSet": true,
 	"timeSet": 5000
 }
@@ -322,6 +323,7 @@
 	"spectatorGenerateChunks": false,
 	"clearInventory": true,
 	"keepInventory": false,
+	"doImmediateRespawn": false,
 	"doTimeSet": true,
 	"timeSet": 5000
 }
