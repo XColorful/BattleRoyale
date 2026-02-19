@@ -1,7 +1,9 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
+import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
-import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 
 public class DangerFunc extends AbstractSimpleFunc {
@@ -22,7 +24,7 @@ public class DangerFunc extends AbstractSimpleFunc {
     }
 
     @Override
-    public void funcTick(ZoneTickContext zoneTickContext) {
+    public void playerFunc(@NotNull ServerLevel serverLevel, GamePlayer gamePlayer) {
     }
 
     @Override

@@ -360,6 +360,8 @@
 
   "battleroyale.label.alive": "生存",
 
+  "battleroyale.title.deathmatch_progress": "死斗模式 (%s / %s)",
+
   "battleroyale.loot.label": "[物资刷新]",
   "battleroyale.loot.pos": "坐标%s,%s,%s",
 

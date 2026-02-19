@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -46,18 +47,22 @@ public class MessageFunc extends AbstractSimpleFunc {
     public void funcTick(ZoneTickContext zoneTickContext) {
         for (GamePlayer gamePlayer : zoneTickContext.gamePlayers) {
             if (!gamePlayer.isBot() && zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
-                @Nullable LivingEntity livingEntity = GameUtils.getLivingEntity(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID());
-                if (livingEntity instanceof ServerPlayer player) {
-                    if (this.setTitleAnimation) {
-                        ChatUtils.sendTitleAnimationToPlayer(player, fadeInTicks, stayTicks, fadeOutTicks);
-                    }
-                    if (this.sendTitles) {
-                        ChatUtils.sendTitlesToPlayer(player, title, subTitle);
-                    }
-                    if (this.sendActionBar) {
-                        ChatUtils.sendActionBarToPlayer(player, actionBar);
-                    }
-                }
+                playerFunc(zoneTickContext.serverLevel, gamePlayer);
+            }
+        }
+    }
+    @Override
+    public void playerFunc(@NotNull ServerLevel serverLevel, GamePlayer gamePlayer) {
+        @Nullable LivingEntity livingEntity = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
+        if (livingEntity instanceof ServerPlayer player) {
+            if (this.setTitleAnimation) {
+                ChatUtils.sendTitleAnimationToPlayer(player, fadeInTicks, stayTicks, fadeOutTicks);
+            }
+            if (this.sendTitles) {
+                ChatUtils.sendTitlesToPlayer(player, title, subTitle);
+            }
+            if (this.sendActionBar) {
+                ChatUtils.sendActionBarToPlayer(player, actionBar);
             }
         }
     }
