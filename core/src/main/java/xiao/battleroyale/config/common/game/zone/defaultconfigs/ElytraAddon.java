@@ -25,16 +25,19 @@ public class ElytraAddon {
 
     public static void generateDefaultConfigs(String configDirPath) {
         JsonArray zoneConfigJson = new JsonArray();
-        zoneConfigJson.add(generateLevitationEffect2());
+        zoneConfigJson.add(generateLevitationGlowingEffect2());
         zoneConfigJson.add(generateElytraEquipment3());
         writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
 
-    public static JsonObject generateLevitationEffect2() {
-        EffectFuncEntry effectFuncEntry = new EffectFuncEntry.EffectFuncEntryBuilder(0, 20, 20, 0)
-                .add("minecraft:levitation", 20, 1)
-                .add("minecraft:glowing", 20, 1)
-                .build();
+    public static JsonObject generateLevitationGlowingEffect2() {
+        return generateLevitationGlowingEffect2(true, true);
+    }
+    public static JsonObject generateLevitationGlowingEffect2(boolean levitation, boolean glowing) {
+        EffectFuncEntry.EffectFuncEntryBuilder builder = new EffectFuncEntry.EffectFuncEntryBuilder(0, 20, 20, 0);
+        if (levitation) builder.add("minecraft:levitation", 20, 1);
+        if (glowing) builder.add("minecraft:glowing", 20, 1);
+        EffectFuncEntry effectFuncEntry = builder.build();
 
         StartEntry startEntry = new StartEntry()
                 .addPreviousCenter(0, 0)

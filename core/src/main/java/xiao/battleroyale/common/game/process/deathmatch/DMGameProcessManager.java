@@ -241,6 +241,10 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     @Override public void checkAndUpdateRestandingGamePlayer(ServerLevel serverLevel) {
         this.deathMatchData.updateTrackQueueDelay();
 
+        // 重新复活采用与开始游戏时相同的恢复效果
+        // 先恢复，再区域tick，否则会清除 EffectFunc
+        if (serverLevel != null) healGamePlayers(serverLevel, this.deathMatchData.getTrackedRestandingGamePlayerUnsafe().stream().toList());
+
         ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
         List<GamePlayer> eliminatedGamePlayers = new ArrayList<>();
         List<GamePlayer> respawnedGamePlayers = new ArrayList<>();
@@ -257,8 +261,6 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         }
         if (!eliminatedGamePlayers.isEmpty()) eliminatedGamePlayers.forEach(this.deathMatchData::removeRestandingGamePlayer);
         if (respawnedGamePlayers.isEmpty()) return;
-
-        if (serverLevel != null) healGamePlayers(serverLevel, respawnedGamePlayers); // 重新复活采用与开始游戏时相同的恢复效果
 
         ISpawnManager spawnManager = BattleRoyale.getGameManager().getSpawnManager();
         spawnManager.respawn(respawnedGamePlayers);
@@ -278,18 +280,13 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
         gamePlayer.setEliminated(false);
         gamePlayer.setAlive(true); // 不是玩家救援复活，不使用 onPlayerRevived
+        gamePlayer.setActiveEntity(true); // EffectFunc 基于此快速判断
 
         // 再刷一遍 zone function
-        if (!retickZones.isEmpty()) {
+        if (!this.retickZones.isEmpty()) {
+            IGameManager gameManager = BattleRoyale.getGameManager();
             List<Integer> tickedFunc = new ArrayList<>();
-            IZoneManager zoneManager = BattleRoyale.getGameManager().getZoneManager();
-            for (Integer zoneId : retickZones) {
-                @Nullable ITickableZone tickableZone = zoneManager.getGameZone(zoneId); // 只需要 func 而不需要 shape
-                if (tickableZone != null && tickableZone.isReady()) {
-                    tickableZone.playerFunc(serverLevel, gamePlayer);
-                    tickedFunc.add(zoneId);
-                }
-            }
+            tickZoneFunc(gameManager.getZoneManager(), serverLevel, gamePlayer, this.retickZones, tickedFunc);
             BattleRoyale.LOGGER.debug("Re-ticked {} zone func for GamePlayer {}", tickedFunc, gamePlayer.getNameWithId());
         }
 
@@ -304,17 +301,11 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         // 复用团队记分逻辑
         if (!addGameTeamKill(gamePlayer.getTeam(), kill)) return false;
 
-        ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
-        if (!killFuncs.isEmpty()) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        ServerLevel serverLevel = gameManager.getServerLevel();
+        if (!this.killFuncs.isEmpty()) {
             List<Integer> tickedFunc = new ArrayList<>();
-            IZoneManager zoneManager = BattleRoyale.getGameManager().getZoneManager();
-            for (Integer zoneId : retickZones) {
-                @Nullable ITickableZone tickableZone = zoneManager.getGameZone(zoneId); // 只需要 func 而不需要 shape
-                if (tickableZone != null && tickableZone.isReady()) {
-                    tickableZone.playerFunc(serverLevel, gamePlayer);
-                    tickedFunc.add(zoneId);
-                }
-            }
+            tickZoneFunc(gameManager.getZoneManager(), serverLevel, gamePlayer, this.killFuncs, tickedFunc);
             BattleRoyale.LOGGER.debug("GamePlayer {} add {} kill and ticked {} zone func", gamePlayer.getNameWithId(), kill, tickedFunc);
         }
         return true;
@@ -353,6 +344,16 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
     @Override public void onPlayerDeath(@Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
         DMGameEventHandler.onPlayerDeath(this, event, serverLevel, gamePlayer);
+    }
+
+    private void tickZoneFunc(IZoneManager zoneManager, ServerLevel serverLevel, GamePlayer gamePlayer, List<Integer> zoneFunc, List<Integer> tickedFunc) {
+        for (Integer zoneId : zoneFunc) {
+            @Nullable ITickableZone tickableZone = zoneManager.getGameZone(zoneId); // 只需要 func 而不需要 shape
+            if (tickableZone != null && tickableZone.isReady()) {
+                tickableZone.playerFunc(serverLevel, gamePlayer);
+                tickedFunc.add(zoneId);
+            }
+        }
     }
 
     private void sendProgressBarToAll(ServerLevel serverLevel, List<GamePlayer> gamePlayers, int currentKill, int targetKill) {

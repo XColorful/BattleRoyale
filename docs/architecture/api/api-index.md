@@ -215,6 +215,11 @@
 - Generate：物资刷新
 	- CustomGenerateEvent：物资刷新通用事件，由[通用事件刷新](/docs/wiki/Configuration/General%20loot%20config.md#通用事件刷新)词条发送
 
+#### 自定义注册事件
+> _./api/event/register_
+
+- RegisterManagerEvent：注册管理器通用事件，由模组主类发送
+
 ## 初始化
 
 - Registry：平台无关的注册
@@ -467,6 +472,11 @@ Post Event:
 
 - Generate: Loot generation
 	- CustomGenerateEvent: Loot generation common event, sent by [Common event loot](/docs/wiki/Configuration/General%20loot%20config.md#Common%20event%20loot) entry
+
+#### Custom Register Event
+> _./api/event/register_
+
+- RegisterManagerEvent: Register manager common event, sent by mod main class
 
 ## Init
 
