@@ -15,6 +15,9 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.process.deathmatch.DeathMatchConfigTag;
 import xiao.battleroyale.api.game.process.deathmatch.IDeathMatchProcessManager;
 import xiao.battleroyale.api.game.spawn.ISpawnManager;
+import xiao.battleroyale.api.game.team.ITeamManager;
+import xiao.battleroyale.api.game.zone.IZoneManager;
+import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.common.game.process.battleroyale.BRGameProcessManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
@@ -52,6 +55,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
     protected int targetKill = 50;
     protected int respawnTrackDelay = 20 * 5;
+    protected @NotNull List<Integer> retickZones = new ArrayList<>();
     protected boolean allowAllWin = false; // 是否允许全部队伍胜利，赢麻了
     protected final @NotNull DMData deathMatchData = new DMData();
 
@@ -86,6 +90,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
                 && (protocol.name.equals(DeathMatchConfigTag.PROTOCOL_NAME));
         this.targetKill = isDeathMatchConfig ? JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.TARGET_KILL, 50) : 50;
         this.respawnTrackDelay = isDeathMatchConfig ? JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 20 * 5) : 20 * 5;
+        this.retickZones = isDeathMatchConfig ? JsonUtils.getJsonIntList(jsonTag, DeathMatchConfigTag.RETICK_ZONES) : new ArrayList<>();
         this.allowAllWin = isDeathMatchConfig ? JsonUtils.getJsonBool(jsonTag, DeathMatchConfigTag.ALLOW_ALL_WIN, false) : false;
         if (this.respawnTrackDelay < 20) this.respawnTrackDelay = 20;
 
@@ -220,6 +225,21 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
         gamePlayer.setEliminated(false);
         gamePlayer.setAlive(true); // 不是玩家救援复活，不使用 onPlayerRevived
+
+        // 再刷一遍 zone function
+        if (!retickZones.isEmpty()) {
+            List<Integer> tickedFunc = new ArrayList<>();
+            IZoneManager zoneManager = BattleRoyale.getGameManager().getZoneManager();
+            for (Integer zoneId : retickZones) {
+                @Nullable ITickableZone tickableZone = zoneManager.getGameZone(zoneId); // 只需要 func 而不需要 shape
+                if (tickableZone != null && tickableZone.isReady()) {
+                    tickableZone.playerFunc(serverLevel, gamePlayer);
+                    tickedFunc.add(zoneId);
+                }
+            }
+            BattleRoyale.LOGGER.debug("Re-ticked {} zone func for GamePlayer {}", tickedFunc, gamePlayer.getNameWithId());
+        }
+
         BattleRoyale.LOGGER.debug("Respawned GamePlayer {} at game time {}", gamePlayer.getPlayerName(), BattleRoyale.getGameManager().getGameTime());
         return true;
     }

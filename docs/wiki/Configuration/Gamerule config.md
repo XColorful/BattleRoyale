@@ -211,13 +211,15 @@
 - protocol："battleroyale:deathmatch"或"cbr:deathmatch"均可
 - targetKill：目标淘汰数，为死斗模式胜利条件
 - respawnTrackDelay：游戏玩家再出生的延迟，单位tick，不小于20
+- retickZones：[区域配置](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#单个配置)唯一id列表；再出生时立即对玩家执行其[区域功能词条](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#区域功能词条)
 - allowAllWin：是否允许全部队伍胜利；若为 false，则在 $\text{生存队伍数} < \text{winnerTeamTotal} - 1$ 时结束游戏
 ```json
 "extraRule": {
 	"protocol": "battleroyale:deathmatch",
 	"jsonTag": {
 		"targetKill": 50,
-		"respawnTrackDelay": 20,
+		"respawnTrackDelay": 100,
+		"retickZones": [],
 		"allowAllWin": false
 	}
 }
@@ -432,13 +434,15 @@
 - protocol: "battleroyale:deathmatch" or "cbr:deathmatch"
 - targetKill: Target number of eliminations required to win in DeathMatch mode
 - respawnTrackDelay: The delay before a game player respawns, in ticks, no less than 20
+- retickZones: A list of [Zone config](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#Single-zone-config) IDs; the [Zone function entry](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#Zone-function-entry) is executed immediately for players upon respawn
 - allowAllWin: Whether to allow all teams to win; otherwise, the game ends when $\text{Alive teams} < \text{winnerTeamTotal} - 1$
 ```json
 "extraRule": {
 	"protocol": "battleroyale:deathmatch",
 	"jsonTag": {
 		"targetKill": 50,
-		"respawnTrackDelay": 20,
+		"respawnTrackDelay": 100,
+		"retickZones": [],
 		"allowAllWin": false
 	}
 }
