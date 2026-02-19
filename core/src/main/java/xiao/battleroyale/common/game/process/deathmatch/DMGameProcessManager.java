@@ -52,6 +52,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
     protected int targetKill = 50;
     protected int respawnTrackDelay = 20 * 5;
+    protected boolean allowAllWin = false; // 是否允许全部队伍胜利，赢麻了
     protected final @NotNull DMData deathMatchData = new DMData();
 
     @Override public String getManagerName() {
@@ -85,6 +86,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
                 && (protocol.name.equals(DeathMatchConfigTag.PROTOCOL_NAME));
         this.targetKill = isDeathMatchConfig ? JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.TARGET_KILL, 50) : 50;
         this.respawnTrackDelay = isDeathMatchConfig ? JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 20 * 5) : 20 * 5;
+        this.allowAllWin = isDeathMatchConfig ? JsonUtils.getJsonBool(jsonTag, DeathMatchConfigTag.ALLOW_ALL_WIN, false) : false;
         if (this.respawnTrackDelay < 20) this.respawnTrackDelay = 20;
 
         BattleRoyale.LOGGER.debug("DMGameProcessManager complete initGameConfig");
@@ -130,13 +132,22 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
             return;
         }
 
-        int currentMaxKill = this.deathMatchData.getCurrentMaxKill();
-        if (currentMaxKill < targetKill) {
+        int winnerTeamTotal = gameManager.getWinnerTeamTotal();
+
+        // 游戏队伍不够胜利队伍数时终止游戏 (防止游戏逻辑卡住)
+        int standingTeamTotal = gameManager.getTeamManager().getStandingTeamCount();
+        int minTeam = allowAllWin ? winnerTeamTotal : winnerTeamTotal + 1;
+        if (standingTeamTotal < minTeam) {
+            BattleRoyale.LOGGER.debug("DMGameProcessManager: standingTeam < {}, finishGame without winner", minTeam);
+            gameManager.finishGame(false);
             return;
         }
 
         // 检查是否有足够队伍满足淘汰数
-        int winnerTeamTotal = gameManager.getWinnerTeamTotal();
+        int currentMaxKill = this.deathMatchData.getCurrentMaxKill();
+        if (currentMaxKill < targetKill) {
+            return;
+        }
         NavigableMap<Integer, Set<GameTeam>> sortedKills = this.deathMatchData.getTeamKillsGreaterOrEqual(targetKill);
         int sum = sortedKills.values().stream().mapToInt(Set::size).sum();
         if (sum >= winnerTeamTotal) {

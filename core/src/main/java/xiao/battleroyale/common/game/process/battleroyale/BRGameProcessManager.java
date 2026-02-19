@@ -161,8 +161,11 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
         }
 
         int winnerTeamTotal = gameManager.getWinnerTeamTotal();
-        if (gameManager.getTeamManager().getStandingTeamCount() <= winnerTeamTotal) {
-            BattleRoyale.LOGGER.debug("GameManager: standingTeam <= {}, finishGame with winner", winnerTeamTotal);
+
+        // 达到胜利队伍数 (大逃杀胜利条件)
+        int standingTeamTotal = gameManager.getTeamManager().getStandingTeamCount();
+        if (standingTeamTotal <= winnerTeamTotal) {
+            BattleRoyale.LOGGER.debug("BRGameProcessManager: standingTeam <= {}, finishGame with winner", winnerTeamTotal);
             gameManager.finishGame(true);
             return;
         }

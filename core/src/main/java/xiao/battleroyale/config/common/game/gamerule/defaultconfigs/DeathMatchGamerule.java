@@ -65,6 +65,7 @@ public class DeathMatchGamerule {
         JsonObject jsonTag = new JsonObject();
         jsonTag.addProperty(DeathMatchConfigTag.TARGET_KILL, 50);
         jsonTag.addProperty(DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 20 * 5);
+        jsonTag.addProperty(DeathMatchConfigTag.ALLOW_ALL_WIN, false);
         ExtraRuleEntry extraRuleEntry = new ExtraRuleEntry(String.format("%s:%s", BattleRoyale.MOD_ID, DeathMatchConfigTag.PROTOCOL_NAME), jsonTag);
 
         GameruleConfigManager.GameruleConfig gameruleConfig = new GameruleConfigManager.GameruleConfig(gameId, name + " " + playerTotal + " " + teamSize, "#FFFFFFAA",
