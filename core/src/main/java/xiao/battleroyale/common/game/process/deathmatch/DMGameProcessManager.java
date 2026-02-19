@@ -1,7 +1,9 @@
 package xiao.battleroyale.common.game.process.deathmatch;
 
 import com.google.gson.JsonObject;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,15 +26,9 @@ import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.ExtraRuleEntry;
-import xiao.battleroyale.util.ChatUtils;
-import xiao.battleroyale.util.GameUtils;
-import xiao.battleroyale.util.JsonUtils;
-import xiao.battleroyale.util.StringUtils;
+import xiao.battleroyale.util.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NavigableMap;
-import java.util.Set;
+import java.util.*;
 
 /**
  * DeathMatch Game Process Manager
@@ -57,7 +53,12 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     protected @NotNull List<Integer> killFuncs = new ArrayList<>();
     protected int respawnTrackDelay = 20 * 5;
     protected @NotNull List<Integer> retickZones = new ArrayList<>();
+    protected boolean sendProgressBar = false;
+    public final UUID progressBarUUID = UUID.nameUUIDFromBytes("battleroyale:deathmatch_progress".getBytes());
+    protected BossEvent.BossBarColor progressBarColor = BossEvent.BossBarColor.WHITE;
+    protected BossEvent.BossBarOverlay progressBarOverlay = BossEvent.BossBarOverlay.PROGRESS;
     protected boolean allowAllWin = false; // 是否允许全部队伍胜利，赢麻了
+
     protected final @NotNull DMData deathMatchData = new DMData();
 
     @Override public String getManagerName() {
@@ -84,16 +85,32 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             return;
         }
+
         ExtraRuleEntry extraRuleEntry = gameruleConfig.getExtraRuleEntry();
         JsonObject jsonTag = extraRuleEntry.jsonTag;
         StringUtils.ProtocolString protocol = extraRuleEntry.protocol;
         boolean isDeathMatchConfig = (protocol.namespace.equals(BattleRoyale.MOD_ID) || protocol.namespace.equals(BattleRoyale.MOD_NAME_SHORT))
                 && (protocol.name.equals(DeathMatchConfigTag.PROTOCOL_NAME));
-        this.targetKill = isDeathMatchConfig ? JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.TARGET_KILL, 50) : 50;
-        this.killFuncs = isDeathMatchConfig ? JsonUtils.getJsonIntList(jsonTag, DeathMatchConfigTag.KILL_FUNCS) : new ArrayList<>();
-        this.respawnTrackDelay = isDeathMatchConfig ? JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 20 * 5) : 20 * 5;
-        this.retickZones = isDeathMatchConfig ? JsonUtils.getJsonIntList(jsonTag, DeathMatchConfigTag.RETICK_ZONES) : new ArrayList<>();
-        this.allowAllWin = isDeathMatchConfig ? JsonUtils.getJsonBool(jsonTag, DeathMatchConfigTag.ALLOW_ALL_WIN, false) : false;
+        if (isDeathMatchConfig) {
+            this.targetKill = JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.TARGET_KILL, 50);
+            this.killFuncs = JsonUtils.getJsonIntList(jsonTag, DeathMatchConfigTag.KILL_FUNCS);
+            this.respawnTrackDelay = JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 20 * 5);
+            this.retickZones = JsonUtils.getJsonIntList(jsonTag, DeathMatchConfigTag.RETICK_ZONES);
+            this.sendProgressBar = JsonUtils.getJsonBool(jsonTag, DeathMatchConfigTag.SEND_PROGRESS_BAR, false);
+            this.progressBarColor = BossEvent.BossBarColor.byName(JsonUtils.getJsonString(jsonTag, DeathMatchConfigTag.PROGRESS_BAR_COLOR, ""));
+            this.progressBarOverlay = BossEvent.BossBarOverlay.byName(JsonUtils.getJsonString(jsonTag, DeathMatchConfigTag.PROGRESS_BAR_OVERLAY, ""));
+            this.allowAllWin = JsonUtils.getJsonBool(jsonTag, DeathMatchConfigTag.ALLOW_ALL_WIN, false);
+        } else {
+            this.targetKill = 50;
+            this.killFuncs = new ArrayList<>();
+            this.respawnTrackDelay = 20 * 5;
+            this.retickZones = new ArrayList<>();
+            this.sendProgressBar = false;
+            this.progressBarColor = BossEvent.BossBarColor.WHITE;
+            this.progressBarOverlay = BossEvent.BossBarOverlay.PROGRESS;
+            this.allowAllWin = false;
+        }
+        if (this.targetKill < 1) this.targetKill = 1;
         if (this.respawnTrackDelay < 20) this.respawnTrackDelay = 20;
 
         BattleRoyale.LOGGER.debug("DMGameProcessManager complete initGameConfig");
@@ -110,6 +127,9 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         super.initGame(serverLevel);
 
         this.deathMatchData.clear();
+        // 清理进度条 (用 init 来对不参与的玩家也进行清理)
+        serverLevel.players().forEach(player -> WorldUtils.removeBossBar(player, progressBarUUID));
+
         BattleRoyale.LOGGER.debug("DMGameProcessManager complete initGame");
     }
 
@@ -129,6 +149,29 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         super.stopGame(serverLevel);
 
         this.deathMatchData.endGame();
+        // 清理进度条
+        if (this.sendProgressBar // 省流
+                && serverLevel != null) {
+            ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
+            List<GamePlayer> gamePlayers = teamManager.getGamePlayers();
+            if (!gamePlayers.isEmpty()) {
+                WorldUtils.removeBossBar(serverLevel, gamePlayers, progressBarUUID);
+            }
+        }
+    }
+
+    @Override
+    public void onGameTick(int gameTime) {
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        UUID gameId = gameManager.getGameId();
+        super.onGameTick(gameTime);
+
+        gameManager = BattleRoyale.getGameManager();
+        if (this.sendProgressBar
+                && gameManager.isInGame() && gameId.equals(gameManager.getGameId()) // 防止 onGameTick 后结束游戏，又立即重开了游戏 (其他模组修改)
+                && gameTime % 200 == 0) { // 每10秒保底更新一次进度条
+            sendProgressBarToAll(gameManager.getServerLevel(), gameManager.getTeamManager().getGamePlayers(), this.deathMatchData.getCurrentMaxKill(), this.targetKill);
+        }
     }
 
     /**
@@ -273,7 +316,21 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     public boolean addGameTeamKill(GameTeam gameTeam, int kill) {
         if (!BattleRoyale.getGameManager().isInGame()) return false;
 
-        return this.deathMatchData.addGameTeamKill(gameTeam, kill);
+        int preMaxKill = this.deathMatchData.getCurrentMaxKill();
+
+        if (this.deathMatchData.addGameTeamKill(gameTeam, kill)) {
+            // 发送全局进度条
+            if (this.sendProgressBar) {
+                int current = this.deathMatchData.getCurrentMaxKill();
+                if (preMaxKill != current) {
+                    IGameManager gameManager = BattleRoyale.getGameManager();
+                    sendProgressBarToAll(gameManager.getServerLevel(), gameManager.getTeamManager().getGamePlayers(), current, this.targetKill);
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override public boolean addAndTrackRestandingGamePlayer(GamePlayer gamePlayer) {
@@ -288,5 +345,18 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
     @Override public void onPlayerDeath(@Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
         DMGameEventHandler.onPlayerDeath(this, event, serverLevel, gamePlayer);
+    }
+
+    private void sendProgressBarToAll(ServerLevel serverLevel, List<GamePlayer> gamePlayers, int currentKill, int targetKill) {
+        float progress = (float) currentKill / targetKill;
+        WorldUtils.sendBossBar(
+                serverLevel,
+                gamePlayers,
+                progressBarUUID,
+                Component.translatable("battleroyale.title.deathmatch_progress", currentKill, this.targetKill),
+                Math.min(1.0f, progress),
+                this.progressBarColor,
+                this.progressBarOverlay
+        );
     }
 }

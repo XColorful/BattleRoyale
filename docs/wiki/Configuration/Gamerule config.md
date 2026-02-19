@@ -214,7 +214,10 @@
 - killFuncs：[区域配置](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#单个配置)唯一id列表；当玩家获得有效击杀数后立即对玩家执行其[区域功能词条](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#区域功能词条)
 - respawnTrackDelay：游戏玩家再出生的延迟，单位tick，不小于20
 - retickZones：[区域配置](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#单个配置)唯一id列表；再出生时立即对玩家执行其[区域功能词条](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#区域功能词条)
-- allowAllWin：是否允许全部队伍胜利；若为 false，则在 $\text{生存队伍数} < \text{winnerTeamTotal} - 1$ 时结束游戏
+- sendProgressBar：是否更新进度条（Boss栏）
+- progressBarColor：进度条颜色
+- progressBarOverlay：进度条样式
+- allowAllWin：是否允许全部队伍胜利；若为 false，则在 $\text{生存队伍数} < \text{winnerTeamTotal} + 1$ 时结束游戏
 ```json
 "extraRule": {
 	"protocol": "battleroyale:deathmatch",
@@ -223,6 +226,9 @@
 		"killFuncs": [],
 		"respawnTrackDelay": 100,
 		"retickZones": [],
+		"sendProgressBar": false,
+		"progressBarColor": "white",
+		"progressBarOverlay": "progress",
 		"allowAllWin": false
 	}
 }
@@ -440,7 +446,10 @@
 - killFuncs: A list of [Zone config](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#Single-zone-config) IDs; the [Zone function entry](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#Zone-function-entry) is executed immediately after player gain a valid kill
 - respawnTrackDelay: The delay before a game player respawns, in ticks, no less than 20
 - retickZones: A list of [Zone config](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#Single-zone-config) IDs; the [Zone function entry](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#Zone-function-entry) is executed immediately for players upon respawn
-- allowAllWin: Whether to allow all teams to win; otherwise, the game ends when $\text{Alive teams} < \text{winnerTeamTotal} - 1$
+- sendProgressBar: Whether to display and update the game progress bar (Boss Bar)
+- progressBarColor: The color of the progress bar
+- progressBarOverlay: The visual style of the progress bar
+- allowAllWin: Whether to allow all teams to win; otherwise, the game ends when $\text{Alive teams} < \text{winnerTeamTotal} + 1$
 ```json
 "extraRule": {
 	"protocol": "battleroyale:deathmatch",
@@ -449,6 +458,9 @@
 		"killFuncs": [],
 		"respawnTrackDelay": 100,
 		"retickZones": [],
+		"sendProgressBar": false,
+		"progressBarColor": "white",
+		"progressBarOverlay": "progress",
 		"allowAllWin": false
 	}
 }

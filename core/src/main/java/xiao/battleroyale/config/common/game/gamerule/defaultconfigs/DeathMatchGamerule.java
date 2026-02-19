@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.game.gamerule.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.minecraft.world.BossEvent;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.process.deathmatch.DeathMatchConfigTag;
@@ -70,6 +71,9 @@ public class DeathMatchGamerule {
         jsonTag.add(DeathMatchConfigTag.KILL_FUNCS, JsonUtils.writeIntListToJson(new ArrayList<>()));
         jsonTag.addProperty(DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 20 * 5);
         jsonTag.add(DeathMatchConfigTag.RETICK_ZONES, JsonUtils.writeIntListToJson(new ArrayList<>()));
+        jsonTag.addProperty(DeathMatchConfigTag.SEND_PROGRESS_BAR, false);
+        jsonTag.addProperty(DeathMatchConfigTag.PROGRESS_BAR_COLOR, BossEvent.BossBarColor.WHITE.getName());
+        jsonTag.addProperty(DeathMatchConfigTag.PROGRESS_BAR_OVERLAY, BossEvent.BossBarOverlay.PROGRESS.getName());
         jsonTag.addProperty(DeathMatchConfigTag.ALLOW_ALL_WIN, false);
         ExtraRuleEntry extraRuleEntry = new ExtraRuleEntry(String.format("%s:%s", BattleRoyale.MOD_ID, DeathMatchConfigTag.PROTOCOL_NAME), jsonTag);
 
