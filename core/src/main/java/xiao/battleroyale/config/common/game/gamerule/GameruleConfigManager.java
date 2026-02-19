@@ -118,6 +118,9 @@ public class GameruleConfigManager
             if (gameEntry != null) {
                 jsonObject.add(GameruleConfigTag.GAME_ENTRY, gameEntry.toJson());
             }
+            if (extraRuleEntry != null) {
+                jsonObject.add(GameruleConfigTag.EXTRA_RULE_ENTRY, extraRuleEntry.toJson());
+            }
             return jsonObject;
         }
 
