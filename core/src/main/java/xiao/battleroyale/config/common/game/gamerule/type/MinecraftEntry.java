@@ -21,6 +21,7 @@ public class MinecraftEntry implements IGameruleEntry {
     public boolean spectatorGenerateChunks;
     public boolean clearInventory;
     public boolean keepInventory;
+    public boolean doImmediateRespawn;
     public boolean doTimeSet;
     public int timeSet;
 
@@ -28,7 +29,7 @@ public class MinecraftEntry implements IGameruleEntry {
                           boolean naturalRegeneration, boolean doMobSpawning, boolean doFireTick,
                           boolean doDaylightCycle, boolean doWeatherCycle, boolean fallDamage,
                           boolean tntExplosionDropDecay, boolean spectatorGenerateChunks, boolean clearInventory,
-                          boolean keepInventory, boolean doTimeSet, int timeSet) {
+                          boolean keepInventory, boolean doImmediateRespawn, boolean doTimeSet, int timeSet) {
         this.adventureMode = adventureMode;
         this.mobGriefing = mobGriefing;
         this.autoSaturation = autoSaturation;
@@ -42,6 +43,7 @@ public class MinecraftEntry implements IGameruleEntry {
         this.spectatorGenerateChunks = spectatorGenerateChunks;
         this.clearInventory = clearInventory;
         this.keepInventory = keepInventory;
+        this.doImmediateRespawn = doImmediateRespawn;
         this.doTimeSet = doTimeSet;
         this.timeSet = timeSet;
     }
@@ -50,7 +52,7 @@ public class MinecraftEntry implements IGameruleEntry {
                 naturalRegeneration, doMobSpawning, doFireTick,
                 doDaylightCycle, doWeatherCycle, fallDamage,
                 tntExplosionDropDecay, spectatorGenerateChunks, clearInventory,
-                keepInventory, doTimeSet, timeSet);
+                keepInventory, doImmediateRespawn, doTimeSet, timeSet);
     }
 
     @Override
@@ -72,8 +74,9 @@ public class MinecraftEntry implements IGameruleEntry {
         jsonObject.addProperty(MinecraftEntryTag.FALL_DAMAGE, fallDamage);
         jsonObject.addProperty(MinecraftEntryTag.TNT_EXPLOSION_DROP_DECAY, tntExplosionDropDecay);
         jsonObject.addProperty(MinecraftEntryTag.SPECTATOR_GENERATE_CHUNKS, spectatorGenerateChunks);
-        jsonObject.addProperty(MinecraftEntryTag.CLEAR_INVENTORY, clearInventory);
+        jsonObject.addProperty(MinecraftEntryTag.CLEAR_INVENTORY_AT_START, clearInventory);
         jsonObject.addProperty(MinecraftEntryTag.KEEP_INVENTORY, keepInventory);
+        jsonObject.addProperty(MinecraftEntryTag.DO_IMMEDIATE_RESPAWN, doImmediateRespawn);
         jsonObject.addProperty(MinecraftEntryTag.DO_TIME_SET, doTimeSet);
         jsonObject.addProperty(MinecraftEntryTag.TIME_SET, timeSet);
         return jsonObject;
@@ -94,8 +97,11 @@ public class MinecraftEntry implements IGameruleEntry {
         boolean tntExplodes = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.TNT_EXPLOSION_DROP_DECAY, false)
                 || JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.TNT_EXPLOSION_DROP_DECAY_OLD, false); // 0.4.7及以前
         boolean spectatorGenerateChunks = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.SPECTATOR_GENERATE_CHUNKS, false);
-        boolean clearInventory = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.CLEAR_INVENTORY, true);
+        @SuppressWarnings("deprecation")
+        boolean clearInventory = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.CLEAR_INVENTORY_AT_START, true)
+                || JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.CLEAR_INVENTORY, true); // 0.5.0及以前
         boolean keepInventory = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.KEEP_INVENTORY, false);
+        boolean doImmediateRespawn = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.DO_IMMEDIATE_RESPAWN, false);
         boolean doTimeSet = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.DO_TIME_SET, true);
         int timeSet = JsonUtils.getJsonInt(jsonObject, MinecraftEntryTag.TIME_SET, 5000);
 
@@ -103,6 +109,6 @@ public class MinecraftEntry implements IGameruleEntry {
                 naturalRegeneration, mobSpawning, doFireTick,
                 doDaylightCycle, doWeatherCycle, fallDamage,
                 tntExplodes, spectatorGenerateChunks, clearInventory,
-                keepInventory, doTimeSet, timeSet);
+                keepInventory, doImmediateRespawn, doTimeSet, timeSet);
     }
 }
