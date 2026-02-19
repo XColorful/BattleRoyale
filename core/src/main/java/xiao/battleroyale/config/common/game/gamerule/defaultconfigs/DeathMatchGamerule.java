@@ -67,6 +67,7 @@ public class DeathMatchGamerule {
 
         JsonObject jsonTag = new JsonObject();
         jsonTag.addProperty(DeathMatchConfigTag.TARGET_KILL, 50);
+        jsonTag.add(DeathMatchConfigTag.KILL_FUNCS, JsonUtils.writeIntListToJson(new ArrayList<>()));
         jsonTag.addProperty(DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 20 * 5);
         jsonTag.add(DeathMatchConfigTag.RETICK_ZONES, JsonUtils.writeIntListToJson(new ArrayList<>()));
         jsonTag.addProperty(DeathMatchConfigTag.ALLOW_ALL_WIN, false);

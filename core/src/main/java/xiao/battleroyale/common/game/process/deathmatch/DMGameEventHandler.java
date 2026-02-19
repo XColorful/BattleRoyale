@@ -164,7 +164,7 @@ public class DMGameEventHandler {
         // 仅在被玩家击杀时通知，区别于 BattleRoyale 模式 (任意方式死亡都算淘汰)
         if (isDeathByAttacker) {
             dmGameProcessManager.sendEliminateMessage(serverLevel, gamePlayer);
-            dmGameProcessManager.addGameTeamKill(attackerGamePlayer.getTeam(), 1); // 给攻击者的队伍加分数
+            dmGameProcessManager.addGamePlayerKill(attackerGamePlayer, 1); // 给攻击者的队伍加分数
             BattleRoyale.LOGGER.debug("onPlayerDeath (GamePlayer {}) detected attacker GamePlayer {}", gamePlayer.getNameWithId(), attackerGamePlayer.getNameWithId());
         }
 

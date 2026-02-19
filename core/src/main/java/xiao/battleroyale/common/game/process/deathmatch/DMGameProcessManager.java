@@ -54,6 +54,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     }
 
     protected int targetKill = 50;
+    protected @NotNull List<Integer> killFuncs = new ArrayList<>();
     protected int respawnTrackDelay = 20 * 5;
     protected @NotNull List<Integer> retickZones = new ArrayList<>();
     protected boolean allowAllWin = false; // 是否允许全部队伍胜利，赢麻了
@@ -89,6 +90,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         boolean isDeathMatchConfig = (protocol.namespace.equals(BattleRoyale.MOD_ID) || protocol.namespace.equals(BattleRoyale.MOD_NAME_SHORT))
                 && (protocol.name.equals(DeathMatchConfigTag.PROTOCOL_NAME));
         this.targetKill = isDeathMatchConfig ? JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.TARGET_KILL, 50) : 50;
+        this.killFuncs = isDeathMatchConfig ? JsonUtils.getJsonIntList(jsonTag, DeathMatchConfigTag.KILL_FUNCS) : new ArrayList<>();
         this.respawnTrackDelay = isDeathMatchConfig ? JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 20 * 5) : 20 * 5;
         this.retickZones = isDeathMatchConfig ? JsonUtils.getJsonIntList(jsonTag, DeathMatchConfigTag.RETICK_ZONES) : new ArrayList<>();
         this.allowAllWin = isDeathMatchConfig ? JsonUtils.getJsonBool(jsonTag, DeathMatchConfigTag.ALLOW_ALL_WIN, false) : false;
@@ -245,6 +247,27 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     }
 
     // --------IDeathMatchDataManagement--------
+
+    @Override
+    public boolean addGamePlayerKill(GamePlayer gamePlayer, int kill) {
+        // 复用团队记分逻辑
+        if (!addGameTeamKill(gamePlayer.getTeam(), kill)) return false;
+
+        ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();
+        if (!killFuncs.isEmpty()) {
+            List<Integer> tickedFunc = new ArrayList<>();
+            IZoneManager zoneManager = BattleRoyale.getGameManager().getZoneManager();
+            for (Integer zoneId : retickZones) {
+                @Nullable ITickableZone tickableZone = zoneManager.getGameZone(zoneId); // 只需要 func 而不需要 shape
+                if (tickableZone != null && tickableZone.isReady()) {
+                    tickableZone.playerFunc(serverLevel, gamePlayer);
+                    tickedFunc.add(zoneId);
+                }
+            }
+            BattleRoyale.LOGGER.debug("GamePlayer {} add {} kill and ticked {} zone func", gamePlayer.getNameWithId(), kill, tickedFunc);
+        }
+        return true;
+    }
 
     @Override
     public boolean addGameTeamKill(GameTeam gameTeam, int kill) {
