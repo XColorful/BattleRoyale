@@ -211,12 +211,12 @@ public class TeamData extends AbstractGameManagerData {
     /**
      * 使UUID对应的GamePlayer失效，调用后应不再使用对应的GamePlayer
      */
-    public boolean removePlayer(UUID playerId) {
+    public boolean removePlayer(UUID playerUUID) {
         if (locked) {
             return false;
         }
 
-        GamePlayer removedPlayer = gamePlayers.remove(playerId);
+        GamePlayer removedPlayer = gamePlayers.remove(playerUUID);
         if (removedPlayer == null) {
             return false;
         }

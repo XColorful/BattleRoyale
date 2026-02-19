@@ -90,9 +90,17 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         BattleRoyale.LOGGER.debug("DMGameProcessManager complete initGameConfig");
     }
 
+    /**
+     * 在 {@link BRGameProcessManager#startGame} 会先执行一次 {@link BRGameProcessManager#checkAndUpdateInvalidGamePlayer}
+     * 包含 {@link DMGameProcessManager#checkAndUpdateRestandingGamePlayer}
+     * 而 stopGame 不保证所有数据都清理，由 initGame 或 startGame 保证
+     * 因此先清理 {@link DMGameProcessManager#deathMatchData}
+     */
     @Override
     public void initGame(ServerLevel serverLevel) {
         super.initGame(serverLevel);
+
+        this.deathMatchData.clear();
         BattleRoyale.LOGGER.debug("DMGameProcessManager complete initGame");
     }
 
@@ -164,12 +172,21 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     @Override public void checkAndUpdateRestandingGamePlayer(ServerLevel serverLevel) {
         this.deathMatchData.updateTrackQueueDelay();
 
+        ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
+        List<GamePlayer> eliminatedGamePlayers = new ArrayList<>();
         List<GamePlayer> respawnedGamePlayers = new ArrayList<>();
         for (GamePlayer gamePlayer : this.deathMatchData.getTrackedRestandingGamePlayerUnsafe()) {
+            // 移除 ITeamManager 级别的淘汰
+            if (!teamManager.hasStandingGamePlayer(gamePlayer.getPlayerUUID())) {
+                eliminatedGamePlayers.add(gamePlayer);
+                continue;
+            }
+            // 移除成功再出生的玩家
             if (respawnGamePlayer(serverLevel, gamePlayer)) {
                 respawnedGamePlayers.add(gamePlayer);
             }
         }
+        if (!eliminatedGamePlayers.isEmpty()) eliminatedGamePlayers.forEach(this.deathMatchData::removeRestandingGamePlayer);
         if (respawnedGamePlayers.isEmpty()) return;
 
         if (serverLevel != null) healGamePlayers(serverLevel, respawnedGamePlayers); // 重新复活采用与开始游戏时相同的恢复效果
