@@ -59,7 +59,7 @@
 #### 无敌区
 
 等价于[无敌指令](https://github.com/XColorful/BattleRoyale/wiki/Muteki-command)
-大厅无敌效果优先于无敌区
+> 大厅无敌效果优先于无敌区
 - zoneFuncType："muteki"
 ```json
 "zoneFunc": {
@@ -91,7 +91,7 @@
 
 等价于[粒子指令](https://github.com/XColorful/BattleRoyale/wiki/Particle-command)，但用游戏专用通道并追踪玩家生成粒子
 - zoneFuncType："particle"
-- particles：粒子配置唯一id列表，见[粒子配置](https://github.com/XColorful/BattleRoyale/wiki/Particle-config#单一配置)
+- particles：[粒子配置](https://github.com/XColorful/BattleRoyale/wiki/Particle-config#单个配置)唯一id列表
 - selectCount：从粒子列表中重复随机选取的次数
 - channel：粒子生成任务的通道名称，相同通道共享通道冷却
 - cooldown：通道冷却
@@ -318,7 +318,7 @@ Equivalent to [firework command](https://github.com/XColorful/BattleRoyale/wiki/
 #### Muteki zone
 
 Equivalent to [Muteki time](https://github.com/XColorful/BattleRoyale/wiki/Muteki-command#English)
-The lobby muteki effect takes precedence over the muteki zone
+> The lobby muteki effect takes precedence over the muteki zone
 - zoneFuncType: "muteki"
 ```json
 "zoneFunc": {
@@ -350,9 +350,9 @@ Equivalent to [Boost effect](https://github.com/XColorful/BattleRoyale/wiki/Boos
 
 Equivalent to [Particle command](https://github.com/XColorful/BattleRoyale/wiki/Particle-command#English), but use game special channel and track game player to generate particles
 - zoneFuncType: "particle"
-- particles: A list of particle configuration IDs. See [Particle config](https://github.com/XColorful/BattleRoyale/wiki/Particle-config#Single-particle-config).
-- selectCount: The number of times particles are randomly selected from the _particles_ list.
-- channel: The name of the channel for particle generation tasks. Channels with the same name share a cooldown.
+- particles: A list of [Particle config](https://github.com/XColorful/BattleRoyale/wiki/Particle-config#Single-particle-config) IDs
+- selectCount: The number of times particles are randomly selected from the _particles_ list
+- channel: The name of the channel for particle generation tasks. Channels with the same name share a cooldown
 - cooldown: The cooldown duration for the _channel_
 > If the first particle fails to generate, subsequent particles will not be generated, even if the failure is due to a missing configuration file
 ```json
