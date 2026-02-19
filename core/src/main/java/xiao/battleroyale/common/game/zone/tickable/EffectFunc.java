@@ -1,7 +1,9 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry.Effect;
@@ -25,27 +27,31 @@ public class EffectFunc extends AbstractSimpleFunc {
         List<GamePlayer> playersToProcess = new ArrayList<>(zoneTickContext.gamePlayers); // 遍历副本，不然玩家挂了就 ConcurrentModificationException
         for (GamePlayer gamePlayer : playersToProcess) {
             if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
-                if (gamePlayer.isActiveEntity()) {
-                    LivingEntity livingEntity = GameUtils.getLivingEntity(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID());
-                    if (livingEntity != null && livingEntity.isAlive()) {
-                        for (Effect effect : effects) {
-                            MobEffectInstance effectInstance = new MobEffectInstance(
-                                    effect.type(),
-                                    effect.duration(),
-                                    effect.level(),
-                                    false,
-                                    false
-                            );
-                            livingEntity.addEffect(effectInstance);
-                        }
-                        // success stats record
-                    } else {
-                        // failed stats record type 2 (unexpected
-                    }
-                } else {
-                    // failed stats record type 1
-                }
+                playerFunc(zoneTickContext.serverLevel, gamePlayer);
             }
+        }
+    }
+    @Override
+    public void playerFunc(@NotNull ServerLevel serverLevel, GamePlayer gamePlayer) {
+        if (gamePlayer.isActiveEntity()) {
+            LivingEntity livingEntity = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
+            if (livingEntity != null && livingEntity.isAlive()) {
+                for (Effect effect : effects) {
+                    MobEffectInstance effectInstance = new MobEffectInstance(
+                            effect.type(),
+                            effect.duration(),
+                            effect.level(),
+                            false,
+                            false
+                    );
+                    livingEntity.addEffect(effectInstance);
+                }
+                // success stats record
+            } else {
+                // failed stats record type 2 (unexpected
+            }
+        } else {
+            // failed stats record type 1
         }
     }
 

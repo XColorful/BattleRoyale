@@ -76,7 +76,7 @@
 
 - adventureMode：是否以冒险模式开始大逃杀游戏，false则使用生存模式
 - autoSaturation：每10秒自动补充饱和度
-- clearInventory：是否在游戏开始时清除游戏玩家背包
+- clearInventoryAtStart：是否在游戏开始时清除游戏玩家背包
 - doTimeSet：是否使 _timeSet_ 生效
 - timeSet：等价于游戏开始时执行一次 _/time set [int]_
 - 其余选项等价于原版指令 _/gamerule 配置 [true/false]_
@@ -94,8 +94,9 @@
 	"fallDamage": false,
 	"tntExplosionDropDecay": false,
 	"spectatorGenerateChunks": false,
-	"clearInventory": true,
+	"clearInventoryAtStart": true,
 	"keepInventory": false,
+	"doImmediateRespawn": false,
 	"doTimeSet": true,
 	"timeSet": 5000
 }
@@ -210,13 +211,25 @@
 
 - protocol："battleroyale:deathmatch"或"cbr:deathmatch"均可
 - targetKill：目标淘汰数，为死斗模式胜利条件
+- killFuncs：[区域配置](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#单个配置)唯一id列表；当玩家获得有效击杀数后立即对玩家执行其[区域功能词条](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#区域功能词条)
 - respawnTrackDelay：游戏玩家再出生的延迟，单位tick，不小于20
+- retickZones：[区域配置](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#单个配置)唯一id列表；再出生时立即对玩家执行其[区域功能词条](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#区域功能词条)
+- sendProgressBar：是否更新进度条（Boss栏）
+- progressBarColor：进度条颜色
+- progressBarOverlay：进度条样式
+- allowAllWin：是否允许全部队伍胜利；若为 false，则在 $\text{生存队伍数} < \text{winnerTeamTotal} + 1$ 时结束游戏
 ```json
 "extraRule": {
 	"protocol": "battleroyale:deathmatch",
 	"jsonTag": {
 		"targetKill": 50,
-		"respawnTrackDelay": 20
+		"killFuncs": [],
+		"respawnTrackDelay": 100,
+		"retickZones": [],
+		"sendProgressBar": false,
+		"progressBarColor": "white",
+		"progressBarOverlay": "progress",
+		"allowAllWin": false
 	}
 }
 ```
@@ -296,7 +309,7 @@
 ### Vanilla gamerule
 - adventureMode: whether to start the BattleRoyale game in adventure mode, set _false_ to use survival mode
 - autoSaturation: automatically replenish saturation every 10 seconds
-- clearInventory: Whether to clear the player's inventory at the start of the game
+- clearInventoryAtStart: Whether to clear the player's inventory at the start of the game
 - doTimeSet: Whether to make _timeSet_ effective
 - timeSet: equivalent to executing _/time set [int]_ once at the start of the game
 - The rest of the options are equivalent to the vanilla command _/gamerule OPTION [true/false]_
@@ -314,8 +327,9 @@
 	"fallDamage": false,
 	"tntExplosionDropDecay": false,
 	"spectatorGenerateChunks": false,
-	"clearInventory": true,
+	"clearInventoryAtStart": true,
 	"keepInventory": false,
+	"doImmediateRespawn": false,
 	"doTimeSet": true,
 	"timeSet": 5000
 }
@@ -429,13 +443,25 @@
 
 - protocol: "battleroyale:deathmatch" or "cbr:deathmatch"
 - targetKill: Target number of eliminations required to win in DeathMatch mode
+- killFuncs: A list of [Zone config](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#Single-zone-config) IDs; the [Zone function entry](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#Zone-function-entry) is executed immediately after player gain a valid kill
 - respawnTrackDelay: The delay before a game player respawns, in ticks, no less than 20
+- retickZones: A list of [Zone config](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#Single-zone-config) IDs; the [Zone function entry](https://github.com/XColorful/BattleRoyale/wiki/Zone-config#Zone-function-entry) is executed immediately for players upon respawn
+- sendProgressBar: Whether to display and update the game progress bar (Boss Bar)
+- progressBarColor: The color of the progress bar
+- progressBarOverlay: The visual style of the progress bar
+- allowAllWin: Whether to allow all teams to win; otherwise, the game ends when $\text{Alive teams} < \text{winnerTeamTotal} + 1$
 ```json
 "extraRule": {
 	"protocol": "battleroyale:deathmatch",
 	"jsonTag": {
 		"targetKill": 50,
-		"respawnTrackDelay": 20
+		"killFuncs": [],
+		"respawnTrackDelay": 100,
+		"retickZones": [],
+		"sendProgressBar": false,
+		"progressBarColor": "white",
+		"progressBarOverlay": "progress",
+		"allowAllWin": false
 	}
 }
 ```
