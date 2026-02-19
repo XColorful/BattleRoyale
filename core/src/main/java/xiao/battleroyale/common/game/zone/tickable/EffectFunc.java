@@ -30,7 +30,6 @@ public class EffectFunc extends AbstractSimpleFunc {
 
     @Override
     public void funcTick(ZoneTickContext zoneTickContext) {
-
         List<GamePlayer> playersToProcess = new ArrayList<>(zoneTickContext.gamePlayers); // 遍历副本，不然玩家挂了就 ConcurrentModificationException
         for (GamePlayer gamePlayer : playersToProcess) {
             if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
