@@ -2,6 +2,8 @@ package xiao.battleroyale.common.game.zone.tickable;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
+import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 
 public abstract class AbstractSimpleFunc implements ITickableZone {
@@ -69,5 +71,14 @@ public abstract class AbstractSimpleFunc implements ITickableZone {
             tickOffset = BattleRoyale.COMMON_RANDOM.nextInt(this.tickFreq + 1);
         }
         this.tickOffset = Math.min(Math.max(tickOffset, 0), this.tickFreq - 1);
+    }
+
+    @Override
+    public void funcTick(ZoneManager.ZoneTickContext zoneTickContext) {
+        for (GamePlayer gamePlayer : zoneTickContext.gamePlayers) {
+            if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
+                playerFunc(zoneTickContext.serverLevel, gamePlayer);
+            }
+        }
     }
 }

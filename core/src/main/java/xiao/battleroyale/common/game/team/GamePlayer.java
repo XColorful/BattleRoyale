@@ -53,14 +53,21 @@ public class GamePlayer {
     public boolean isAlive() { return isAlive; }
     public boolean isEliminated() { return isEliminated; }
     public int getGameSingleId() { return gameSingleId; }
-    public int getGameTeamId() { return team != null ? team.getGameTeamId() : -1; }
+    public int getGameTeamId() {
+        return team != null ? team.getGameTeamId() : -1;
+    }
     public String getGameTeamColor() { return gameTeamColor; }
     public boolean isActiveEntity() { return isActiveEntity; }
     public Vec3 getLastPos() { return lastPos; }
     public float getLastHealth() { return lastHealth; }
     public int getInvalidTime() { return invalidTime; }
     public boolean isBot() { return bot; }
-    public GameTeam getTeam() { return team; }
+    public GameTeam getTeam() {
+        if (this.team == null) {
+            throw new IllegalStateException(String.format("%s GamePlayer.team is null", getNameWithId()));
+        }
+        return team;
+    }
     public boolean isLeader() { return isLeader; }
 
     public void setAlive(boolean alive) {
@@ -71,7 +78,7 @@ public class GamePlayer {
             BattleRoyale.LOGGER.warn("GamePlayer: Attempt to set alive to an eliminated GamePlayer {}, please manually setEliminated(false) and setAlive(true)", getNameWithId());
         }
 
-        if (team.isTeamEliminated()) { // 队伍无人则倒地
+        if (getTeam().isTeamEliminated()) { // 队伍无人则倒地
             this.isEliminated = true;
         }
 
@@ -102,7 +109,12 @@ public class GamePlayer {
     public void setInvalidTime(int invalidTime) { this.invalidTime = invalidTime; }
     public void addInvalidTime() {this.invalidTime++; }
     public void setLeader(boolean leader) { this.isLeader = leader; }
-    public void setTeam(GameTeam team) { this.team = team; } // 转移队伍
+    public void setTeam(GameTeam team) { // 转移队伍
+        if (team == null) {
+            BattleRoyale.LOGGER.debug("Attempt to set {} GamePlayer.team to null", getNameWithId());
+        }
+        this.team = team;
+    }
 
     public static final int BOOST_LIMIT = 6000;
 

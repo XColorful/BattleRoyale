@@ -1,7 +1,11 @@
 package xiao.battleroyale.common.game.zone.tickable;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.effect.IEffectManager;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
@@ -37,15 +41,20 @@ public class FireworkFunc extends AbstractSimpleFunc {
         for (GamePlayer gamePlayer : playersToProcess) {
             boolean isWithinZone = zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress);
             if (isWithinZone != outside) {
-                if (trackPlayer) {
-                    @Nullable LivingEntity player = GameUtils.getLivingEntity(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID());
-                    if (player != null) {
-                        EffectManager.get().spawnPlayerFirework(player, amount, interval, vRange, hRange);
-                    }
-                } else {
-                    EffectManager.get().spawnFirework(zoneTickContext.serverLevel, gamePlayer.getLastPos(), amount, interval, vRange, hRange);
-                }
+                playerFunc(zoneTickContext.serverLevel, gamePlayer);
             }
+        }
+    }
+    @Override
+    public void playerFunc(@NotNull ServerLevel serverLevel, GamePlayer gamePlayer) {
+        IEffectManager effectManager = BattleRoyale.getEffectManager();
+        if (trackPlayer) {
+            @Nullable LivingEntity player = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
+            if (player != null) {
+                effectManager.spawnPlayerFirework(player, amount, interval, vRange, hRange);
+            }
+        } else {
+            effectManager.spawnFirework(serverLevel, gamePlayer.getLastPos(), amount, interval, vRange, hRange);
         }
     }
 

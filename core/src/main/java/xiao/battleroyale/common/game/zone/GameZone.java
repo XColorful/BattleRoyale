@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.game.zone;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +19,7 @@ import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.api.network.message.zone.GameZoneTag;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game.GameStatsManager;
+import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.common.game.zone.additional.ZoneSpecialHandler;
@@ -224,6 +226,10 @@ public class GameZone implements IGameZone {
     @Override
     public void funcTick(ZoneTickContext zoneTickContext) {
         tickableZone.funcTick(zoneTickContext);
+    }
+    @Override
+    public void playerFunc(@NotNull ServerLevel serverLevel, GamePlayer gamePlayer) {
+        tickableZone.playerFunc(serverLevel, gamePlayer);
     }
 
     @Override
