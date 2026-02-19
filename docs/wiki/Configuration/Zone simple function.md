@@ -116,16 +116,16 @@
 ```java
 // 第一个粒子检测是否在冷却  
 int selected = (int) (size * random.get());
-if (!EffectManager.get().addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, 0)) {
+if (!effectManager.addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, 0) {
     continue;
 }
 for (int i = 1; i < this.select - 1; i++) {
     selected = (int) (size * random.get());
-    EffectManager.get().addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, 0);
+    effectManager.addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, 0);
 }
 // 最后一个粒子添加冷却
 selected = (int) (size * random.get());
-EffectManager.get().addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, cooldown);
+effectManager.addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, cooldown);
 ```
 
 #### 效果区
@@ -375,16 +375,16 @@ Equivalent to [Particle command](https://github.com/XColorful/BattleRoyale/wiki/
 ```java
 // 第一个粒子检测是否在冷却  
 int selected = (int) (size * random.get());
-if (!EffectManager.get().addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, 0)) {
+if (!effectManager.addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, 0) {
     continue;
 }
 for (int i = 1; i < this.select - 1; i++) {
     selected = (int) (size * random.get());
-    EffectManager.get().addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, 0);
+    effectManager.addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, 0);
 }
 // 最后一个粒子添加冷却
 selected = (int) (size * random.get());
-EffectManager.get().addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, cooldown);
+effectManager.addParticle(serverLevel, gamePlayer.getPlayerUUID(), channel, selected, cooldown);
 ```
 
 #### Effect zone
