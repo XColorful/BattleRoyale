@@ -1,5 +1,6 @@
 package xiao.battleroyale.common.game.gamerule.storage;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.gamerules.GameRules;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +30,7 @@ public class McRuleStorage implements IRuleStorage {
             boolean tntExplosionDropDecay,
             boolean spectatorGenerateChunks,
             boolean keepInventory,
+            boolean doImmediateRespawn,
             boolean doTimeSet,
             long timeSet
     ) {}
@@ -55,22 +57,24 @@ public class McRuleStorage implements IRuleStorage {
                 mcEntry.tntExplosionDropDecay,
                 mcEntry.spectatorGenerateChunks,
                 mcEntry.keepInventory,
+                mcEntry.doImmediateRespawn,
                 mcEntry.doTimeSet,
                 mcEntry.timeSet
         );
 
+        GameRules gameRules = serverLevel.getGameRules();
         this.backupRule = new RuleInfo(
-
-                serverLevel.getGameRules().get(GameRules.MOB_GRIEFING),
-                serverLevel.getGameRules().get(GameRules.NATURAL_HEALTH_REGENERATION),
-                serverLevel.getGameRules().get(GameRules.SPAWN_MOBS),
-                serverLevel.getGameRules().get(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER),
-                serverLevel.getGameRules().get(GameRules.ADVANCE_TIME),
-                serverLevel.getGameRules().get(GameRules.ADVANCE_WEATHER),
-                serverLevel.getGameRules().get(GameRules.FALL_DAMAGE),
-                serverLevel.getGameRules().get(GameRules.TNT_EXPLOSION_DROP_DECAY),
-                serverLevel.getGameRules().get(GameRules.SPECTATORS_GENERATE_CHUNKS),
-                serverLevel.getGameRules().get(GameRules.KEEP_INVENTORY),
+                gameRules.get(GameRules.MOB_GRIEFING),
+                gameRules.get(GameRules.NATURAL_HEALTH_REGENERATION),
+                gameRules.get(GameRules.SPAWN_MOBS),
+                gameRules.get(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER),
+                gameRules.get(GameRules.ADVANCE_TIME),
+                gameRules.get(GameRules.ADVANCE_WEATHER),
+                gameRules.get(GameRules.FALL_DAMAGE),
+                gameRules.get(GameRules.TNT_EXPLOSION_DROP_DECAY),
+                gameRules.get(GameRules.SPECTATORS_GENERATE_CHUNKS),
+                gameRules.get(GameRules.KEEP_INVENTORY),
+                gameRules.get(GameRules.IMMEDIATE_RESPAWN),
                 mcEntry.doTimeSet,
                 serverLevel.getDayTime()
                 );
@@ -83,16 +87,19 @@ public class McRuleStorage implements IRuleStorage {
             return;
         }
 
-        serverLevel.getGameRules().set(GameRules.MOB_GRIEFING, currentRule.mobGriefing(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.NATURAL_HEALTH_REGENERATION, this.currentRule.naturalRegeneration(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.SPAWN_MOBS, this.currentRule.doMobSpawning(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER, this.currentRule.doFireTick(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.ADVANCE_TIME, this.currentRule.doDaylightCycle(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.ADVANCE_WEATHER, this.currentRule.doWeatherCycle(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.FALL_DAMAGE, this.currentRule.fallDamage(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.TNT_EXPLOSION_DROP_DECAY, this.currentRule.tntExplosionDropDecay(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.SPECTATORS_GENERATE_CHUNKS, this.currentRule.spectatorGenerateChunks(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.KEEP_INVENTORY, this.currentRule.keepInventory(), serverLevel.getServer());
+        GameRules gameRules = serverLevel.getGameRules();
+        MinecraftServer mcServer = serverLevel.getServer();
+        gameRules.set(GameRules.MOB_GRIEFING, currentRule.mobGriefing(), mcServer);
+        gameRules.set(GameRules.NATURAL_HEALTH_REGENERATION, this.currentRule.naturalRegeneration(), mcServer);
+        gameRules.set(GameRules.SPAWN_MOBS, this.currentRule.doMobSpawning(), mcServer);
+        gameRules.set(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER, this.currentRule.doFireTick(), mcServer);
+        gameRules.set(GameRules.ADVANCE_TIME, this.currentRule.doDaylightCycle(), mcServer);
+        gameRules.set(GameRules.ADVANCE_WEATHER, this.currentRule.doWeatherCycle(), mcServer);
+        gameRules.set(GameRules.FALL_DAMAGE, this.currentRule.fallDamage(), mcServer);
+        gameRules.set(GameRules.TNT_EXPLOSION_DROP_DECAY, this.currentRule.tntExplosionDropDecay(), mcServer);
+        gameRules.set(GameRules.SPECTATORS_GENERATE_CHUNKS, this.currentRule.spectatorGenerateChunks(), mcServer);
+        gameRules.set(GameRules.KEEP_INVENTORY, this.currentRule.keepInventory(), mcServer);
+        gameRules.set(GameRules.IMMEDIATE_RESPAWN, this.currentRule.doImmediateRespawn(), mcServer);
         if (this.currentRule.doTimeSet()) {
             BattleRoyale.LOGGER.info("Set {} game time from {} to {}", serverLevel, serverLevel.getGameTime(), this.currentRule.timeSet());
             serverLevel.setDayTime(this.currentRule.timeSet());
@@ -108,16 +115,19 @@ public class McRuleStorage implements IRuleStorage {
             BattleRoyale.LOGGER.warn("Skipped invalid backupRule to revert in McRuleStorage");
             return;
         }
-        serverLevel.getGameRules().set(GameRules.MOB_GRIEFING, this.backupRule.mobGriefing(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.NATURAL_HEALTH_REGENERATION, this.backupRule.naturalRegeneration(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.SPAWN_MOBS, this.backupRule.doMobSpawning(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER, this.backupRule.doFireTick(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.ADVANCE_TIME, this.backupRule.doDaylightCycle(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.ADVANCE_WEATHER, this.backupRule.doWeatherCycle(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.FALL_DAMAGE, this.backupRule.fallDamage(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.TNT_EXPLOSION_DROP_DECAY, this.backupRule.tntExplosionDropDecay(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.SPECTATORS_GENERATE_CHUNKS, this.backupRule.spectatorGenerateChunks(), serverLevel.getServer());
-        serverLevel.getGameRules().set(GameRules.KEEP_INVENTORY, this.backupRule.keepInventory(), serverLevel.getServer());
+        GameRules gameRules = serverLevel.getGameRules();
+        MinecraftServer mcServer = serverLevel.getServer();
+        gameRules.set(GameRules.MOB_GRIEFING, this.backupRule.mobGriefing(), mcServer);
+        gameRules.set(GameRules.NATURAL_HEALTH_REGENERATION, this.backupRule.naturalRegeneration(), mcServer);
+        gameRules.set(GameRules.SPAWN_MOBS, this.backupRule.doMobSpawning(), mcServer);
+        gameRules.set(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER, this.backupRule.doFireTick(), mcServer);
+        gameRules.set(GameRules.ADVANCE_TIME, this.backupRule.doDaylightCycle(), mcServer);
+        gameRules.set(GameRules.ADVANCE_WEATHER, this.backupRule.doWeatherCycle(), mcServer);
+        gameRules.set(GameRules.FALL_DAMAGE, this.backupRule.fallDamage(), mcServer);
+        gameRules.set(GameRules.TNT_EXPLOSION_DROP_DECAY, this.backupRule.tntExplosionDropDecay(), mcServer);
+        gameRules.set(GameRules.SPECTATORS_GENERATE_CHUNKS, this.backupRule.spectatorGenerateChunks(), mcServer);
+        gameRules.set(GameRules.KEEP_INVENTORY, this.backupRule.keepInventory(), mcServer);
+        gameRules.set(GameRules.IMMEDIATE_RESPAWN, this.backupRule.doImmediateRespawn(), mcServer);
         if (this.backupRule.doTimeSet()) {
             BattleRoyale.LOGGER.info("Revert {} game time from {} to {}", serverLevel, serverLevel.getGameTime(), this.backupRule.timeSet());
             serverLevel.setDayTime(this.backupRule.timeSet());

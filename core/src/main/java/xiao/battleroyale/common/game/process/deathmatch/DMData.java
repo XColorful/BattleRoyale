@@ -65,7 +65,7 @@ public class DMData extends AbstractGameManagerData implements IDeathMatchDataMa
     public void startGame() {
         if (locked) return;
 
-        clear();
+        clear(); // 内部保证，无需关心外部是否手动清理
 
         ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
         teamManager.getGamePlayers().forEach(player -> gamePlayerKill.put(player, 0));
@@ -81,6 +81,9 @@ public class DMData extends AbstractGameManagerData implements IDeathMatchDataMa
         if (locked) {
             unlockData();
         }
+
+        // 游戏结束后缓存的 GamePlayer 可能就无效了
+        clear();
     }
 
     public void updateTrackQueueDelay() {

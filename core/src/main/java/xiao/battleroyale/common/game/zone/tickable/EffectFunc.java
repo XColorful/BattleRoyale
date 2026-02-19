@@ -3,11 +3,12 @@ package xiao.battleroyale.common.game.zone.tickable;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.BattleRoyale;
+import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.EffectFuncEntry.Effect;
@@ -29,41 +30,45 @@ public class EffectFunc extends AbstractSimpleFunc {
 
     @Override
     public void funcTick(ZoneTickContext zoneTickContext) {
-        Registry<MobEffect> mobEffectRegistry = zoneTickContext.serverLevel.registryAccess()
-                .lookupOrThrow(Registries.MOB_EFFECT);
-
         List<GamePlayer> playersToProcess = new ArrayList<>(zoneTickContext.gamePlayers); // 遍历副本，不然玩家挂了就 ConcurrentModificationException
         for (GamePlayer gamePlayer : playersToProcess) {
             if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
-                if (gamePlayer.isActiveEntity()) {
-                    LivingEntity livingEntity = GameUtils.getLivingEntity(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID());
-                    if (livingEntity != null && livingEntity.isAlive()) {
-                        for (Effect effect : effects) {
-                            Optional<Holder.Reference<MobEffect>> effectHolderOpt = mobEffectRegistry.get(effect.effectRL());
-
-                            if (effectHolderOpt.isEmpty()) {
-                                BattleRoyale.LOGGER.error("MobEffect not found in registry: {}", effect.effectRL());
-                                continue;
-                            }
-                            Holder<MobEffect> effectHolder = effectHolderOpt.get();
-
-                            MobEffectInstance effectInstance = new MobEffectInstance(
-                                    effectHolder,
-                                    effect.duration(),
-                                    effect.level(),
-                                    false,
-                                    false
-                            );
-                            livingEntity.addEffect(effectInstance);
-                        }
-                        // success stats record
-                    } else {
-                        // failed stats record type 2 (unexpected
-                    }
-                } else {
-                    // failed stats record type 1
-                }
+                playerFunc(zoneTickContext.serverLevel, gamePlayer);
             }
+        }
+    }
+    @Override
+    public void playerFunc(@NotNull ServerLevel serverLevel, GamePlayer gamePlayer) {
+        Registry<MobEffect> mobEffectRegistry = serverLevel.registryAccess()
+                .lookupOrThrow(Registries.MOB_EFFECT);
+
+        if (gamePlayer.isActiveEntity()) {
+            LivingEntity livingEntity = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
+            if (livingEntity != null && livingEntity.isAlive()) {
+                for (Effect effect : effects) {
+                    Optional<Holder.Reference<MobEffect>> effectHolderOpt = mobEffectRegistry.get(effect.effectRL());
+
+                    if (effectHolderOpt.isEmpty()) {
+                        BattleRoyale.LOGGER.error("MobEffect not found in registry: {}", effect.effectRL());
+                        continue;
+                    }
+                    Holder<MobEffect> effectHolder = effectHolderOpt.get();
+
+                    MobEffectInstance effectInstance = new MobEffectInstance(
+                            effectHolder,
+                            effect.duration(),
+                            effect.level(),
+                            false,
+                            false
+                    );
+                    livingEntity.addEffect(effectInstance);
+                }
+                // success stats record
+            } else {
+                // failed stats record type 2 (unexpected
+            }
+        } else {
+            // failed stats record type 1
         }
     }
 
