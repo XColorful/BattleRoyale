@@ -233,6 +233,10 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     @Override public void checkAndUpdateRestandingGamePlayer(ServerLevel serverLevel) {
         this.deathMatchData.updateTrackQueueDelay();
 
+        // 重新复活采用与开始游戏时相同的恢复效果
+        // 先恢复，再区域tick，否则会清除 EffectFunc
+        if (serverLevel != null) healGamePlayers(serverLevel, this.deathMatchData.getTrackedRestandingGamePlayerUnsafe().stream().toList());
+
         ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
         List<GamePlayer> eliminatedGamePlayers = new ArrayList<>();
         List<GamePlayer> respawnedGamePlayers = new ArrayList<>();
@@ -249,8 +253,6 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         }
         if (!eliminatedGamePlayers.isEmpty()) eliminatedGamePlayers.forEach(this.deathMatchData::removeRestandingGamePlayer);
         if (respawnedGamePlayers.isEmpty()) return;
-
-        if (serverLevel != null) healGamePlayers(serverLevel, respawnedGamePlayers); // 重新复活采用与开始游戏时相同的恢复效果
 
         ISpawnManager spawnManager = BattleRoyale.getGameManager().getSpawnManager();
         spawnManager.respawn(respawnedGamePlayers);
