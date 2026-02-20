@@ -50,40 +50,38 @@ public class ServerTickEventManager {
             return new ForgeServerTickEvent(event);
         }
 
-        protected void handle(TickEvent.ServerTickEvent event) {
-            if (event.phase == TickEvent.Phase.END) {
-                super.onEvent(event);
-            }
+        protected void handle(TickEvent.ServerTickEvent.Post event) {
+            super.onEvent(event);
         }
     }
 
     public static class Highest extends ServerTickProxy {
         static final Highest INSTANCE = new Highest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGHEST, receiveCanceled = true)
-        public void onEvent(TickEvent.ServerTickEvent e) { handle(e); }
+        public void onEvent(TickEvent.ServerTickEvent.Post e) { handle(e); }
     }
 
     public static class High extends ServerTickProxy {
         static final High INSTANCE = new High();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGH, receiveCanceled = true)
-        public void onEvent(TickEvent.ServerTickEvent e) { handle(e); }
+        public void onEvent(TickEvent.ServerTickEvent.Post e) { handle(e); }
     }
 
     public static class Normal extends ServerTickProxy {
         static final Normal INSTANCE = new Normal();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.NORMAL, receiveCanceled = true)
-        public void onEvent(TickEvent.ServerTickEvent e) { handle(e); }
+        public void onEvent(TickEvent.ServerTickEvent.Post e) { handle(e); }
     }
 
     public static class Low extends ServerTickProxy {
         static final Low INSTANCE = new Low();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOW, receiveCanceled = true)
-        public void onEvent(TickEvent.ServerTickEvent e) { handle(e); }
+        public void onEvent(TickEvent.ServerTickEvent.Post e) { handle(e); }
     }
 
     public static class Lowest extends ServerTickProxy {
         static final Lowest INSTANCE = new Lowest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST, receiveCanceled = true)
-        public void onEvent(TickEvent.ServerTickEvent e) { handle(e); }
+        public void onEvent(TickEvent.ServerTickEvent.Post e) { handle(e); }
     }
 }
