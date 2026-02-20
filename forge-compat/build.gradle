@@ -41,7 +41,6 @@ tasks.withType(ProcessResources).configureEach {
 
     var replaceProperties = [
             minecraft_version_range: minecraft_version_range,
-            forge_version_range    : forge_version_range,
             loader_version_range   : forge_version_range,
             mod_id                 : mod_id,
             mod_name               : mod_name,
@@ -73,7 +72,7 @@ tasks.withType(ProcessResources).configureEach {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${forge_version}"
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     implementation project(":core")
 
