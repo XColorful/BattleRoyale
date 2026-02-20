@@ -45,39 +45,49 @@ tasks.withType(ProcessResources).configureEach {
     from(project(':core').sourceSets.main.resources)
 
     var replaceProperties = [
-            minecraft_version   : minecraft_version, minecraft_version_range: minecraft_version_range,
-            neo_version         : neo_version, neo_version_range: neo_version_range,
-            neo_loader_version_range: neo_loader_version_range,
-            mod_id              : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
-            mod_authors         : mod_authors, mod_description: mod_description,
+            minecraft_version_range: minecraft_version_range,
+            loader_version_range   : neo_loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_credits            : mod_credits,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+            mod_issue_url          : mod_issue_url,
+            mod_display_url        : mod_display_url,
+            mod_logo_file          : mod_logo_file,
+            pack_description       : pack_description,
+            pack_format            : pack_format,
+
+            target_modloader       : neoforge_id,
+            target_version_range   : neo_version_range,
+
+            journeymap_version_range: journeymap_version_range,
+            playerrevive_version_range: playerrevive_version_range,
+            tacz_version_range      : tacz_version_range,
+            cbraddon_version_range  : cbraddon_version_range
     ]
     inputs.properties replaceProperties
 
-    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
-        expand replaceProperties + [
-                loader_version_range: project.neo_loader_version_range,
-                target_modloader: 'neoforge',
-                target_version_range: project.neo_version_range,
-                project: project
-        ]
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties
     }
 }
-
-def journeymap_api_version = "2.0.0-1.21.6-SNAPSHOT"
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
 
     implementation project(":core")
 
-    compileOnly "info.journeymap:journeymap-api-neoforge:${journeymap_api_version}"
-    runtimeOnly "curse.maven:journeymap-32274:6688083"
+    compileOnly "info.journeymap:journeymap-api-neoforge:${journeymap_neoforge_api_version}"
+    runtimeOnly "${journeymap_neoforge_curse_maven}"
 }
 
 tasks.named('jar', Jar).configure {
-    archiveBaseName.set("battleroyale")
+    archiveBaseName.set(mod_id)
     archiveVersion.set(mod_version)
-    archiveClassifier.set("neoforge1.21.6")
+    archiveClassifier.set("${neoforge_id}-${minecraft_version}")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':core').sourceSets.main.output
 }
