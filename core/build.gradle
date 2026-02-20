@@ -10,7 +10,7 @@ dependencies {
 }
 
 jar {
-    archiveBaseName.set("battleroyale")
+    archiveBaseName.set(mod_id)
     archiveVersion.set(mod_version)
     archiveClassifier.set("core")
 }
