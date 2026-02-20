@@ -1,43 +1,53 @@
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
-issueTrackerURL="https://github.com/XColorful/BattleRoyale/issues"
+issueTrackerURL="${mod_issue_url}"
 
 [[mods]]
-modId="battleroyale"
+modId="${mod_id}"
 version="${mod_version}"
-displayName="Custom BattleRoyale"
-displayURL="https://github.com/XColorful/BattleRoyale/wiki"
-logoFile="logo.png"
-authors="XiaoColorful"
-description='''Play customizable battleroyale in Minecraft
-'''
+displayName="${mod_name}"
+displayURL="${mod_display_url}"
+logoFile="${mod_logo_file}"
+credits="${mod_credits}"
+authors="${mod_authors}"
+description='''${mod_description}'''
 
-[[dependencies.battleroyale]]
-    modId="${target_modloader}"
-    type="required"
-    versionRange="${target_version_range}"
-    ordering="NONE"
-    side="BOTH"
-[[dependencies.battleroyale]]
-    modId="minecraft"
-    type="required"
-    versionRange="${minecraft_version_range}"
-    ordering="NONE"
-    side="BOTH"
-[[dependencies.battleroyale]]
-    modId = "journeymap"
-    type="optional"
-    versionRange = "[1.21-6.0.0-beta.1,)"
-    ordering = "NONE"
-    side = "CLIENT"
-[[dependencies.battleroyale]]
-    modId="playerrevive"
-    type="optional"
-    versionRange="[2.0.16,]"
-    side="BOTH"
-[[dependencies.battleroyale]]
-    modId="cbraddon"
-    type="optional"
-    versionRange="[0.4.4-dev3,)"
-    side="SERVER"
+[[dependencies.${mod_id}]]
+modId="${target_modloader}"
+type="required"
+versionRange="${target_version_range}"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="minecraft"
+type="required"
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "journeymap"
+type="optional"
+versionRange = "${journeymap_version_range}"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.${mod_id}]]
+modId="playerrevive"
+type="optional"
+versionRange="${playerrevive_version_range}"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="tacz"
+type="optional"
+versionRange="${tacz_version_range}"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="cbraddon"
+type="optional"
+versionRange="${cbraddon_version_range}"
+side="SERVER"
