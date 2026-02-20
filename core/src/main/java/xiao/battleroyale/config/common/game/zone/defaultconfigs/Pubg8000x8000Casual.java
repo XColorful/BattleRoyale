@@ -140,7 +140,7 @@ public class Pubg8000x8000Casual {
         zoneConfigJson.add(zoneConfig.toJson());
 
         if (eltraAddon) {
-            zoneConfigJson.add(ElytraAddon.generateLevitationEffect2());
+            zoneConfigJson.add(ElytraAddon.generateLevitationGlowingEffect2());
             zoneConfigJson.add(ElytraAddon.generateElytraEquipment3());
         }
 
@@ -153,7 +153,7 @@ public class Pubg8000x8000Casual {
                 new EndEntry().addPreviousCenter(0, 0).addPreviousDimension(0, 0).addRelativeDimension(new Vec3(-5, 64-384, -5)),
                 false
         );
-        zoneConfig = new ZoneConfig(4, "30s Muteki Time", "#FFD700AA",
+        zoneConfig = new ZoneConfig(4, mutekiSeconds + "s Muteki Time", "#FFD700AA",
                 0, muteki_zoneTime,
                 mutekiFuncEntry, squareEntry);
         zoneConfigJson.add(zoneConfig.toJson());

@@ -30,7 +30,7 @@
 > - 该接口只能由`游戏管理器`调用
 > - 如有特殊机制如大逃杀游戏可能将倒地事件判定应为淘汰事件，则应调用`游戏管理器`并由其发送相关事件
 
-[![IGameEventHandler](/docs/api/game/process/IGameEventHandler.md)](/docs/api/game/process/IGameEventHandler.md)
+[![IGameEventHelper](/docs/api/game/process/IGameEventHelper.md)](/docs/api/game/process/IGameEventHelper.md)
 
 #### 发送游戏消息
 
@@ -75,7 +75,7 @@ Events dispatched by the `Game Manager`. For example, in a BattleRoyale game, wh
 > - This interface can only be called by the `Game Manager`.
 > - If there are special mechanisms (e.g., a Battle Royale game might treat a downed event as an elimination event), it should call the Game Manager which then dispatches the relevant events.
 
-[![IGameEventHandler](/docs/api/game/process/IGameEventHandler.md)](/docs/api/game/process/IGameEventHandler.md)
+[![IGameEventHelper](/docs/api/game/process/IGameEventHelper.md)](/docs/api/game/process/IGameEventHelper.md)
 
 #### Sending Game Message
 
