@@ -20,9 +20,10 @@ import static xiao.battleroyale.config.common.game.zone.defaultconfigs.Pubg5340x
 import static xiao.battleroyale.config.common.game.zone.defaultconfigs.Pubg8000x8000Casual.addPhase;
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
-public class DeathMatch100x100Zone {
+public class MiniMatch100x100Zone {
 
-    private static final String DEFAULT_FILE_NAME = "example_100x100_deathmatch.json";
+    private static final String DEFAULT_FILE_NAME = "example_100x100_minimatch.json";
+    private static final String DEATH_MATCH_FILE_NAME = "example_100x100_deathmatch.json";
 
     private static final int INIT_ZONE_DELAY = 20 * 30; // 30秒
 
@@ -37,15 +38,23 @@ public class DeathMatch100x100Zone {
 
     public static void generateDefaultConfigs(String configDirPath) {
         JsonArray zoneConfigJson = new JsonArray();
-        add100x100Zone(zoneConfigJson);
+        add100x100Zone(zoneConfigJson, true);
         addInitialItem(zoneConfigJson);
         addInitialEquipment(zoneConfigJson);
         addPhase9(zoneConfigJson);
         writeJsonToFile(Paths.get(configDirPath, DEFAULT_FILE_NAME).toString(), zoneConfigJson);
     }
+    public static void generateDeathMatchConfigs(String configDirPath) {
+        JsonArray zoneConfigJson = new JsonArray();
+        add100x100Zone(zoneConfigJson, false);
+        addInitialItem(zoneConfigJson);
+        addInitialEquipment(zoneConfigJson);
+        writeJsonToFile(Paths.get(configDirPath, DEATH_MATCH_FILE_NAME).toString(), zoneConfigJson);
+    }
 
-    private static void add100x100Zone(JsonArray zoneConfigJson) {
-        generateBorderCircle(zoneConfigJson, 100 / 2F, GAME_TIME, 0, false, 5);
+    private static void add100x100Zone(JsonArray zoneConfigJson, boolean borderDamage ) {
+        generateBorderCircle(zoneConfigJson, 100 / 2F, GAME_TIME, 0, false, 5, borderDamage);
+        zoneConfigJson.add(ElytraAddon.generateLevitationGlowingEffect2(false, true));
     }
 
     private static void addInitialItem(JsonArray zoneConfigJson) {

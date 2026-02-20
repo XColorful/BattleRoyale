@@ -1,6 +1,6 @@
 {
   "pack": {
-    "description": "CBR resources",
-    "pack_format": 15
+    "description": "${pack_description}",
+    "pack_format": ${pack_format}
   }
 }
