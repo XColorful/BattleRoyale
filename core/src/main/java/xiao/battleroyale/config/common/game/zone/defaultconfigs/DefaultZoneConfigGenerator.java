@@ -18,7 +18,8 @@ public class DefaultZoneConfigGenerator {
         Pubg5340x5340Casual.generateDefaultConfigs(configDirPath);
         Pubg1200x1200Random.generateDefaultConfigs(configDirPath);
         Pubg881x881Casual.generateDefaultConfigs(configDirPath);
-        DeathMatch100x100Zone.generateDefaultConfigs(configDirPath);
+        MiniMatch100x100Zone.generateDefaultConfigs(configDirPath);
+        MiniMatch100x100Zone.generateDeathMatchConfigs(configDirPath);
         FunctionShowcase.generateDefaultConfigs(configDirPath);
         ModCover.generateDefaultConfigs(configDirPath);
         UHC1000x1000Simple.generateDefaultConfigs(configDirPath);
