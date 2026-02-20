@@ -16,10 +16,8 @@ import xiao.battleroyale.compat.forge.event.ForgeClientTickEvent;
 public class ForgeClientEventHandler {
 
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            ClientGameEventHandler.onClientTick(new ForgeClientTickEvent(event));
-        }
+    public static void onClientTick(TickEvent.ClientTickEvent.Post event) {
+        ClientGameEventHandler.onClientTick(new ForgeClientTickEvent(event));
     }
 
 //    @SubscribeEvent
