@@ -11,11 +11,10 @@ import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.ExtraRuleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.MinecraftEntry;
-import xiao.battleroyale.config.common.game.zone.defaultconfigs.DeathMatch100x100Zone;
+import xiao.battleroyale.config.common.game.zone.defaultconfigs.MiniMatch100x100Zone;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import static xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry.OVERWORLD_LEVEL_KEY;
@@ -33,12 +32,12 @@ public class DeathMatchGamerule {
     }
 
     public static void addDeathMatchSolo(JsonArray gameruleConfigJson) {
-        gameruleConfigJson.add(addDeathMatch(0, 16, 1, DeathMatch100x100Zone.GAME_TIME,
+        gameruleConfigJson.add(addDeathMatch(0, 16, 1, MiniMatch100x100Zone.GAME_TIME,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10), "DeathMatch solo", false));
     }
 
     public static void addDeathMatchDual(JsonArray gameruleConfigJson) {
-        gameruleConfigJson.add(addDeathMatch(1, 32, 2, DeathMatch100x100Zone.GAME_TIME,
+        gameruleConfigJson.add(addDeathMatch(1, 32, 2, MiniMatch100x100Zone.GAME_TIME,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10), "DeathMatch dual", false));
     }
 
@@ -54,7 +53,7 @@ public class DeathMatchGamerule {
                 false, false, false,
                 false, false, true,
                 false, false, true,
-                false, false, true, 5000);
+                false, true, true, 5000);
 
         GameEntry gameEntry = new GameEntry();
         gameEntry.maxPlayerInvalidTime = 20 * 15; // 15秒掉线
@@ -68,9 +67,9 @@ public class DeathMatchGamerule {
 
         JsonObject jsonTag = new JsonObject();
         jsonTag.addProperty(DeathMatchConfigTag.TARGET_KILL, 50);
-        jsonTag.add(DeathMatchConfigTag.KILL_FUNCS, JsonUtils.writeIntListToJson(new ArrayList<>()));
+        jsonTag.add(DeathMatchConfigTag.KILL_FUNCS, JsonUtils.writeIntListToJson(Arrays.asList(2)));
         jsonTag.addProperty(DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 20 * 5);
-        jsonTag.add(DeathMatchConfigTag.RETICK_ZONES, JsonUtils.writeIntListToJson(new ArrayList<>()));
+        jsonTag.add(DeathMatchConfigTag.RETICK_ZONES, JsonUtils.writeIntListToJson(Arrays.asList(2, 4, 5, 88, 89)));
         jsonTag.addProperty(DeathMatchConfigTag.SEND_PROGRESS_BAR, false);
         jsonTag.addProperty(DeathMatchConfigTag.PROGRESS_BAR_COLOR, BossEvent.BossBarColor.WHITE.getName());
         jsonTag.addProperty(DeathMatchConfigTag.PROGRESS_BAR_OVERLAY, BossEvent.BossBarOverlay.PROGRESS.getName());
