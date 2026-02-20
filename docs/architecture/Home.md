@@ -94,6 +94,7 @@
 	- LootCommand：[手动刷新](/docs/wiki/Command/Loot%20command.md)
 	- MutekiCommand：[无敌指令](/docs/wiki/Command/Muteki%20command.md)
 	- ParticleCommand：[粒子指令](/docs/wiki/Command/Particle%20command.md)
+	- RegisterCommand：[注册指令](/docs/wiki/Command/Register%20command.md)
 	- ReloadCommand：[重载配置](/docs/wiki/Command/Reload%20command.md)
 	- SaveCommand：[保存配置](/docs/wiki/Command/Save%20command.md)
 	- TeamCommand：[队伍管理](/docs/wiki/Command/Team%20command.md)
@@ -130,6 +131,8 @@
 - Process：游戏进程
 	- BattleRoyale：大逃杀游戏进程
 		- [BRGameProcessManager](./common/game/process/battleroyale/br-game-process-manager.md)：游戏进程管理器（大逃杀游戏）
+	- DeathMatch：死斗模式游戏进程
+		- [DMGameProcessManager](./common/game/process/battleroyale/dm-game-process-manager.md)：游戏进程管理器（死斗模式）
 - Spawn：出生
 	- [SpawnManager](./common/game/spawn/spawn-manager.md)：出生管理器
 	- Vanilla：原版出生方式
@@ -260,6 +263,7 @@
     > 	- [特殊渲染协议](./config/common/game/zone/custom/special-render-protocol.md)：[方向渲染](/docs/wiki/Configuration/Zone%20special%20client.md#方向渲染)
     > - 生成区域配置：
     > 	- CFHC区域
+    > 	- 死斗模式区域
     > 	- 鞘翅附加区
     > 	- 模组封面
     > 	- PUBG区域
@@ -465,6 +469,7 @@ Module division based on the `xiao.battleroyale` top-level package
 	- LootCommand: [Loot Command](/docs/wiki/Command/Loot%20command.md#English)
 	- MutekiCommand: [Muteki Command](/docs/wiki/Command/Muteki%20command.md#English)
 	- ParticleCommand: [Particle Command](/docs/wiki/Command/Particle%20command.md#English)
+	- RegisterCommand: [Register Command](/docs/wiki/Command/Register%20command.md#English)
 	- ReloadCommand: [Reload Command](/docs/wiki/Command/Reload%20command.md#English)
 	- SaveCommand: [Save Command](/docs/wiki/Command/Save%20command.md#English)
 	- TeamCommand: [Team Command](/docs/wiki/Command/Team%20command.md#English)
@@ -501,6 +506,8 @@ Module division based on the `xiao.battleroyale` top-level package
 - Process: Game process
 	- BattleRoyale: Battle Royale game process
 		- [BRGameProcessManager](./common/game/process/battleroyale/br-game-process-manager.md#English): Game process manager (Battle Royale game)
+	- DeathMatch：Death Match game process
+		- [DMGameProcessManager](./common/game/process/deathmatch/dm-game-process-manager.md#english): Game process manager (Death Match game)
 - Spawn:
 	- [SpawnManager](./common/game/spawn/spawn-manager.md#English): Spawn manager
 	- Vanilla: Vanilla spawn method
@@ -631,6 +638,7 @@ Module division based on the `xiao.battleroyale` top-level package
     > 	- [Special Render Protocol](./config/common/game/zone/custom/special-render-protocol.md#English): [Direction render](/docs/wiki/Configuration/Zone%20special%20client.md#Direction%20render)
     > - Generate zone config:
     > 	- CFHC zone
+    > 	- DeathMatch zone
     > 	- Elytra additional zone
     > 	- Mod cover
     > 	- PUBG zone

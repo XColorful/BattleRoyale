@@ -101,7 +101,10 @@ public class Pubg5340x5340Casual {
     }
 
     public static void generateBorderCircle(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME, double randomRange, boolean eltraAddon, int mutekiSeconds) {
-        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(0, 0, 200, 0, 666); // 固定边界的检查频率低一些
+        generateBorderCircle(zoneConfigJson, halfWidth, GAME_TIME, randomRange, eltraAddon, mutekiSeconds, true);
+    }
+    public static void generateBorderCircle(JsonArray zoneConfigJson, float halfWidth, int GAME_TIME, double randomRange, boolean eltraAddon, int mutekiSeconds, boolean borderDamage) {
+        SafeFuncEntry safeFuncEntry = new SafeFuncEntry(0, 0, 200, 0, borderDamage ? 666 : 0); // 固定边界的检查频率低一些
 
         StartEntry startEntry = new StartEntry();
         startEntry.addFixedCenter(new Vec3(0, -64, 0)).addCenterRange(randomRange);
@@ -137,7 +140,7 @@ public class Pubg5340x5340Casual {
         zoneConfigJson.add(zoneConfig.toJson());
 
         if (eltraAddon) {
-            zoneConfigJson.add(ElytraAddon.generateLevitationEffect2());
+            zoneConfigJson.add(ElytraAddon.generateLevitationGlowingEffect2());
             zoneConfigJson.add(ElytraAddon.generateElytraEquipment3());
         }
 
@@ -150,7 +153,7 @@ public class Pubg5340x5340Casual {
                 new EndEntry().addPreviousCenter(0, 0).addPreviousDimension(0, 0).addRelativeDimension(new Vec3(-5, 64-384, -5)),
                 false
         );
-        zoneConfig = new ZoneConfig(4, "30s Muteki Time", "#FFD700AA", // 2和3是鞘翅区
+        zoneConfig = new ZoneConfig(4, mutekiSeconds + "s Muteki Time", "#FFD700AA", // 2和3是鞘翅区
                 0, muteki_zoneTime,
                 mutekiFuncEntry, circleEntry);
         zoneConfigJson.add(zoneConfig.toJson());

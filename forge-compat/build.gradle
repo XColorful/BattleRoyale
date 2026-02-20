@@ -40,29 +40,36 @@ tasks.withType(ProcessResources).configureEach {
     from(project(':core').sourceSets.main.resources)
 
     var replaceProperties = [
-            minecraft_version: project.minecraft_version,
-            minecraft_version_range: project.minecraft_version_range,
-            mod_id: project.mod_id,
-            mod_name: project.mod_name,
-            mod_license: project.mod_license,
-            mod_version: project.mod_version,
-            mod_authors: project.mod_authors,
-            mod_description: project.mod_description,
-            pack_format_number: project.pack_format_number,
+            minecraft_version_range: minecraft_version_range,
+            loader_version_range   : forge_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_credits            : mod_credits,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+            mod_issue_url          : mod_issue_url,
+            mod_display_url        : mod_display_url,
+            mod_logo_file          : mod_logo_file,
+            pack_description       : pack_description,
+            pack_format            : pack_format,
+
+            target_modloader       : forge_id,
+            target_version_range   : forge_version_range,
+
+            journeymap_version_range: journeymap_version_range,
+            playerrevive_version_range: playerrevive_version_range,
+            tacz_version_range      : tacz_version_range,
+            cbraddon_version_range  : cbraddon_version_range
     ]
+
     inputs.properties replaceProperties
 
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
-        expand replaceProperties + [
-                loader_version_range: project.property('forge_loader_version_range'),
-                target_modloader: 'forge',
-                target_version_range: project.property('forge_version_range'),
-                project: project
-        ]
+        expand replaceProperties
     }
 }
-
-def journeymap_api_version = "1.20-1.9-SNAPSHOT"
 
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
@@ -70,21 +77,21 @@ dependencies {
     implementation project(":core")
 
     compileOnly fg.deobf("info.journeymap:journeymap-api:${journeymap_api_version}")
-    runtimeOnly fg.deobf("curse.maven:journeymap-32274:5293045")
+    runtimeOnly fg.deobf(journeymap_curse_maven)
 }
 
 tasks.named('jar', Jar).configure {
-    archiveBaseName.set("battleroyale")
+    archiveBaseName.set(mod_id)
     archiveVersion.set(mod_version)
-    archiveClassifier.set("forge1.20.2")
+    archiveClassifier.set("${forge_id}-${minecraft_version}")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':core').sourceSets.main.output
 }
 
 tasks.matching { it.name == 'remapJar' || it.name == 'reobfJar' }.configureEach {
     if (it.hasProperty("archiveClassifier")) {
-        it.archiveBaseName.set("battleroyale")
+        it.archiveBaseName.set(mod_id)
         it.archiveVersion.set(mod_version)
-        it.archiveClassifier.set("forge1.20.2")
+        it.archiveClassifier.set("${forge_id}-${minecraft_version}")
     }
 }
