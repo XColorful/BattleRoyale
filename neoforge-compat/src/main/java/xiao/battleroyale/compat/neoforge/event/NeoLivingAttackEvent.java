@@ -21,11 +21,6 @@ public class NeoLivingAttackEvent extends NeoEvent implements ILivingAttackEvent
     }
 
     @Override
-    public void setCanceled(boolean canceled) {
-
-    }
-
-    @Override
     public @NotNull LivingEntity getEntity() {
         return livingAttackEvent.getEntity();
     }
