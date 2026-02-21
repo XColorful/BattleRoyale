@@ -5,11 +5,14 @@ import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.EventPriority;
 import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.event.ICustomEventRegister;
+import xiao.battleroyale.common.game.process.deathmatch.DMRegister;
 import xiao.battleroyale.event.custom.client.SpecialRenderHandler;
 
 public class CustomEventHandler {
 
     public static void registerAll(ICustomEventRegister customEventRegister) {
+        register(customEventRegister, DMRegister.get(), CustomEventType.REGISTER_MANAGER_EVENT, EventPriority.NORMAL, false);
+
         if (BattleRoyale.getMcSide().isClientSide()) {
             registerClient(customEventRegister);
         }

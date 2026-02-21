@@ -5,7 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.game.IClientGameDataManager;
 import xiao.battleroyale.api.client.render.level.IClientSpectateRenderer;
+import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IClientTickEvent;
+import xiao.battleroyale.api.event.IEvent;
+import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.client.game.data.ClientGameData;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.client.game.data.ClientTeamData;
@@ -13,7 +17,7 @@ import xiao.battleroyale.client.game.data.ClientTeamData;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClientGameDataManager implements IClientGameDataManager {
+public class ClientGameDataManager implements IClientGameDataManager, IEventHandler {
 
     private static class ClientGameDataManagerHolder {
         private static final ClientGameDataManager INSTANCE = new ClientGameDataManager();
@@ -24,7 +28,11 @@ public class ClientGameDataManager implements IClientGameDataManager {
     }
 
     protected ClientGameDataManager() {
-        ;
+    }
+
+    public static void init(McSide mcSide) {
+        if (mcSide.isServerSide()) return;
+        BattleRoyale.getEventRegister().register(get(), EventType.CLIENT_TICK_EVENT);
     }
 
     // zone
@@ -55,6 +63,19 @@ public class ClientGameDataManager implements IClientGameDataManager {
     private static long currentTick = 0; // 所有递增和引用操作，都通过enqueueWork确保在主线程进行，从而避免多线程竞态条件
     public static long getCurrentTick() { return currentTick; }
 
+    @Override
+    public String getEventHandlerName() {
+        return String.format("%s:ClientGameDataManager", BattleRoyale.MOD_ID);
+    }
+    @Override
+    public void handleEvent(EventType customEventType, IEvent event) {
+        if (customEventType == EventType.CLIENT_TICK_EVENT) {
+            onClientTick((IClientTickEvent) event);
+        } else {
+            onReceiveWrongEvent(customEventType);
+        }
+    }
+
     public void onClientTick(IClientTickEvent event) {
         currentTick++; // 主线程递增
         boolean hasZone = hasClientZone();
@@ -64,7 +85,7 @@ public class ClientGameDataManager implements IClientGameDataManager {
             return;
         }
         if (hasZone) {
-            activeZones.entrySet().removeIf(entry -> currentTick - entry.getValue().getLastUpdateTick() > ZONE_EXPIRE_TICK); // 主线程引用
+            activeZones.values().removeIf(data -> currentTick - data.getLastUpdateTick() > ZONE_EXPIRE_TICK); // 主线程引用
         }
         if (hasTeam) {
             if (currentTick - teamData.getLastUpdateTick() > TEAM_EXPIRE_TICK) { // 主线程引用
@@ -77,7 +98,7 @@ public class ClientGameDataManager implements IClientGameDataManager {
             if (currentTick - gameData.getLastUpdateTick() > GAME_EXPIRE_TICK) {
                 gameData.clear();
             } else {
-                IClientSpectateRenderer spectateRenderer = BattleRoyale.getClientLevelRenderer().getClientSpectateRenderer();
+                IClientSpectateRenderer spectateRenderer = BattleRoyale.getClientRenderer().getClientSpectateRenderer();
                 if (currentTick % spectateRenderer.getScanFrequency() == 0) {
                     spectateRenderer.scanSpectatePlayers();
                 }

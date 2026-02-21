@@ -1,7 +1,7 @@
 package xiao.battleroyale.api.game.stats;
 
 import org.jetbrains.annotations.ApiStatus;
-import xiao.battleroyale.common.game.stats.event.*;
+import xiao.battleroyale.common.game.stats.record.*;
 
 @ApiStatus.Internal
 public interface IGameEventRecorder {
