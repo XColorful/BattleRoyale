@@ -2,7 +2,7 @@ package xiao.battleroyale.api.game.stats;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-import xiao.battleroyale.common.game.stats.event.*;
+import xiao.battleroyale.common.game.stats.record.*;
 
 import java.util.List;
 

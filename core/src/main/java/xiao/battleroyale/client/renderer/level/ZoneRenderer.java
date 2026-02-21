@@ -9,14 +9,16 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
-import xiao.battleroyale.api.client.event.RenderLevelStage;
+import xiao.battleroyale.api.event.IRenderLevelStageEvent;
+import xiao.battleroyale.api.event.RenderLevelStage;
 import xiao.battleroyale.api.client.game.sub.IClientZoneDataManager;
 import xiao.battleroyale.api.client.render.level.IClientZoneRenderer;
+import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.client.renderer.CustomRenderType;
 
-public class ZoneRenderer implements IClientZoneRenderer {
+public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
 
     private static class ZoneRendererHolder {
         private static final ZoneRenderer INSTANCE = new ZoneRenderer();
@@ -27,6 +29,13 @@ public class ZoneRenderer implements IClientZoneRenderer {
     }
 
     protected ZoneRenderer() {}
+
+    public static void init(McSide mcSide) {
+        if (!get().inProperSide(mcSide)) {
+            BattleRoyale.LOGGER.debug("ZoneRenderer skipped init() at {}", mcSide.toString());
+            return;
+        }
+    }
 
     public static final RenderType TRANSLUCENT_ZONE = CustomRenderType.SolidTranslucentColor;
     public static final RenderType OPAQUE_ZONE = CustomRenderType.SolidOpaqueColor;
@@ -56,6 +65,33 @@ public class ZoneRenderer implements IClientZoneRenderer {
 
     public String getRendererName() {
         return String.format("%s:ZoneRenderer", BattleRoyale.MOD_ID);
+    }
+
+    @Override
+    public boolean registerRenderEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.register(get(), EventType.RENDER_TRANSLUCENT_EVENT, EventPriority.HIGH, false);
+        return true;
+    }
+
+    @Override
+    public boolean unregisterRenderEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.unregister(get(), EventType.RENDER_TRANSLUCENT_EVENT, EventPriority.HIGH, false);
+        return true;
+    }
+
+    @Override
+    public String getEventHandlerName() {
+        return String.format("%s:ZoneRenderer", BattleRoyale.MOD_ID);
+    }
+    @Override
+    public void handleEvent(EventType eventType, IEvent event) {
+        if (eventType == EventType.RENDER_TRANSLUCENT_EVENT) {
+            onAfterTranslucentBlocks((IRenderLevelStageEvent) event);
+        } else {
+            onReceiveWrongEvent(eventType);
+        }
     }
 
     public void onRenderLevelStage(IRenderLevelStageEvent event) {

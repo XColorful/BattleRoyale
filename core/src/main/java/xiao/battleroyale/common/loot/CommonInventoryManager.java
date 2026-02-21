@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.common.loot.ILootEntry;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
@@ -29,6 +30,9 @@ public class CommonInventoryManager implements ICommonInventoryManager {
     }
 
     private CommonInventoryManager() {}
+
+    public static void init(McSide mcSide) {
+    }
 
     @Override
     public LootStatus lootStatusCheck() {

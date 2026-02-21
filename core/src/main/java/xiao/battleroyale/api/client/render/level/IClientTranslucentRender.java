@@ -1,9 +1,8 @@
 package xiao.battleroyale.api.client.render.level;
 
-import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
-import xiao.battleroyale.api.client.render.IClientRendererName;
+import xiao.battleroyale.api.event.IRenderLevelStageEvent;
 
-public interface IClientTranslucentRender extends IClientRendererName {
+public interface IClientTranslucentRender {
 
     void onAfterTranslucentBlocks(IRenderLevelStageEvent event);
 }

@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.stats.IGamePlayerStats;
-import xiao.battleroyale.common.game.stats.event.*;
+import xiao.battleroyale.common.game.stats.record.*;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
 import java.util.ArrayList;

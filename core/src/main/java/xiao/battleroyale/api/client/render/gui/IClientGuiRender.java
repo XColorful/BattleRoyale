@@ -1,9 +1,8 @@
 package xiao.battleroyale.api.client.render.gui;
 
-import xiao.battleroyale.api.client.event.IRenderGuiEventPost;
-import xiao.battleroyale.api.client.render.IClientRendererName;
+import xiao.battleroyale.api.event.IRenderGuiEvent;
 
-public interface IClientGuiRender extends IClientRendererName {
+public interface IClientGuiRender {
 
-    void onRenderGuiEvent(IRenderGuiEventPost event);
+    void onRenderGuiEvent(IRenderGuiEvent event);
 }
