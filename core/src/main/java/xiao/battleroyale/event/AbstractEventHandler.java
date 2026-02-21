@@ -95,7 +95,6 @@ public class AbstractEventHandler {
         }
 
         try {
-            // 循环遍历所有优先级
             for (int i = 0; i < EventHandlerContainer.PRIORITY_ORDER.length; i++) {
                 // 普通事件
                 ArraySet<ICustomEventHandler> regularHandlers = container.eventHandlers.getHandlersInOrder()[i];
@@ -127,9 +126,9 @@ public class AbstractEventHandler {
         PendingOperation op;
         while ((op = pendingOperations.poll()) != null) {
             if (op.isRegistration) {
-                registerHandlerInternal(op.eventHandler, op.type(), op.priority(), op.receiveCanceled());
+                registerHandlerInternal(op.eventHandler, op.type, op.priority, op.receiveCanceled);
             } else {
-                unregisterHandlerInternal(op.eventHandler, op.type(), op.priority(), op.receiveCanceled());
+                unregisterHandlerInternal(op.eventHandler, op.type, op.priority, op.receiveCanceled);
             }
         }
     }

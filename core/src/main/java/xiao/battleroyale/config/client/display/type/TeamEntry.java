@@ -51,7 +51,7 @@ public class TeamEntry extends AbstractHudEntry {
 
     @Override
     public void applyDefault() {
-        IClientTeamInfoRenderer teamInfoRenderer = BattleRoyale.getClientGuiRenderer().getClientTeamInfoRenderer();
+        IClientTeamInfoRenderer teamInfoRenderer = BattleRoyale.getClientRenderer().getClientTeamInfoRenderer();
         teamInfoRenderer.setDisplayTeam(display);
         if (display) {
             teamInfoRenderer.setXRatio(xRatio);

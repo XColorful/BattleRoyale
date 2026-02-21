@@ -40,7 +40,6 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
     protected ZoneManager() {}
 
     public static void init(McSide mcSide) {
-        ;
     }
 
     @Override public String getManagerName() {

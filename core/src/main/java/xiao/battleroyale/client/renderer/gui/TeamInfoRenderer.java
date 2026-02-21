@@ -4,8 +4,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.client.event.IRenderGuiEventPost;
+import xiao.battleroyale.api.event.IRenderGuiEvent;
 import xiao.battleroyale.api.client.render.gui.IClientTeamInfoRenderer;
+import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.event.EventType;
+import xiao.battleroyale.api.event.ICustomEventRegister;
+import xiao.battleroyale.api.event.IEvent;
+import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
@@ -15,7 +20,7 @@ import xiao.battleroyale.util.ColorUtils;
 import java.awt.*;
 import java.util.List;
 
-public class TeamInfoRenderer implements IClientTeamInfoRenderer {
+public class TeamInfoRenderer implements IClientTeamInfoRenderer, IEventHandler {
 
     private static class TeamInfoRendererHolder {
         private static final TeamInfoRenderer INSTANCE = new TeamInfoRenderer();
@@ -26,6 +31,13 @@ public class TeamInfoRenderer implements IClientTeamInfoRenderer {
     }
 
     private TeamInfoRenderer() {}
+
+    public static void init(McSide mcSide) {
+        if (!get().inProperSide(mcSide)) {
+            BattleRoyale.LOGGER.debug("TeamInfoRenderer skipped init() at {}", mcSide.toString());
+            return;
+        }
+    }
 
     private boolean displayTeam = true;
     public void setDisplayTeam(boolean shouldDisplay) { displayTeam = shouldDisplay; }
@@ -58,7 +70,34 @@ public class TeamInfoRenderer implements IClientTeamInfoRenderer {
         return String.format("%s:TeamInfoRenderer", BattleRoyale.MOD_ID);
     }
 
-    public void onRenderGuiEvent(IRenderGuiEventPost event) {
+    @Override
+    public boolean registerRenderEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.register(get(), EventType.RENDER_GUI_EVENT);
+        return true;
+    }
+
+    @Override
+    public boolean unregisterRenderEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.unregister(get(), EventType.RENDER_GUI_EVENT);
+        return true;
+    }
+
+    @Override
+    public String getEventHandlerName() {
+        return String.format("%s:TeamInfoRenderer", BattleRoyale.MOD_ID);
+    }
+    @Override
+    public void handleEvent(EventType eventType, IEvent event) {
+        if (eventType == EventType.RENDER_GUI_EVENT) {
+            onRenderGuiEvent((IRenderGuiEvent) event);
+        } else {
+            onReceiveWrongEvent(eventType);
+        }
+    }
+
+    public void onRenderGuiEvent(IRenderGuiEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (!displayTeam || mc.level == null || mc.player == null) {
             return;
