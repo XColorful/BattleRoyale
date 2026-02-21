@@ -22,7 +22,7 @@ public class AbstractEventHandler {
     private final Map<CustomEventType, EventHandlerContainer> eventDispatchers = new EnumMap<>(CustomEventType.class);
 
     private final Object lock = new Object();
-    private volatile boolean isDispatching = false;
+    private volatile boolean isDispatching = false; // 标志位，指示当前是否处于事件分发循环中
     private final Queue<PendingOperation> pendingOperations = new LinkedList<>();
 
     private record PendingOperation(ICustomEventHandler eventHandler, CustomEventType type, EventPriority priority, boolean receiveCanceled, boolean isRegistration) {}
@@ -88,9 +88,13 @@ public class AbstractEventHandler {
         EventHandlerContainer container = eventDispatchers.get(customEventType);
         if (container == null) return;
 
+        boolean isNested;
         synchronized (lock) {
+            isNested = isDispatching;
             isDispatching = true;
+        }
 
+        try {
             // 循环遍历所有优先级
             for (int i = 0; i < EventHandlerContainer.PRIORITY_ORDER.length; i++) {
                 // 普通事件
@@ -107,9 +111,13 @@ public class AbstractEventHandler {
                     handler.handleEvent(customEventType, customEvent);
                 }
             }
-
-            isDispatching = false;
-            processPendingOperations();
+        } finally {
+            if (!isNested) {
+                synchronized (lock) {
+                    processPendingOperations();
+                    isDispatching = false;
+                }
+            }
         }
     }
 
