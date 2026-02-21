@@ -46,7 +46,6 @@ public abstract class AbstractEventCommon {
                 registerToForge();
             }
         }
-
         return added;
     }
 
@@ -67,7 +66,7 @@ public abstract class AbstractEventCommon {
             removed = statsEventHandlers.remove(eventHandler);
         }
         if (removed && eventHandlers.isEmpty() && statsEventHandlers.isEmpty()) {
-            unregisterToForge();;
+            unregisterToForge();
         }
         return removed;
     }
@@ -82,22 +81,26 @@ public abstract class AbstractEventCommon {
     protected void onEvent(Event event) {
         ForgeEvent forgeEvent = getForgeEventType(event);
 
+        boolean isNested;
         synchronized (lock) {
-            boolean isCurrentDispatching = isDispatching;
+            isNested = isDispatching;
             isDispatching = true;
-            try {
-                for (IEventHandler handler : eventHandlers) {
-                    if (forgeEvent.isCanceled()) {
-                        break;
-                    }
-                    handler.handleEvent(this.eventType, forgeEvent);
-                }
+        }
 
-                for (IEventHandler handler : statsEventHandlers) {
-                    handler.handleEvent(this.eventType, forgeEvent);
+        try {
+            for (IEventHandler handler : eventHandlers) {
+                if (forgeEvent.isCanceled()) {
+                    break;
                 }
-            } finally {
-                if (!isCurrentDispatching) { // 防止事件A里触发事件B, 事件B提前执行processPendingOperations (否则得把迭代换成索引遍历, 但是不治本)
+                handler.handleEvent(this.eventType, forgeEvent);
+            }
+
+            for (IEventHandler handler : statsEventHandlers) {
+                handler.handleEvent(this.eventType, forgeEvent);
+            }
+        } finally {
+            if (!isNested) {
+                synchronized (lock) {
                     processPendingOperations();
                     isDispatching = false;
                 }
