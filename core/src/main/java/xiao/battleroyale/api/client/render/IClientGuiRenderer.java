@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.client.render.gui.IClientGameInfoRenderer;
 import xiao.battleroyale.api.client.render.gui.IClientTeamInfoRenderer;
 
-public interface IClientGuiRenderer {
+public interface IClientGuiRenderer extends IClientSubRenderer {
 
     @NotNull IClientGameInfoRenderer getClientGameInfoRenderer();
 

@@ -107,19 +107,19 @@ public class DMData extends AbstractGameManagerData implements IDeathMatchDataMa
     }
 
     @Override
-    public boolean addGamePlayerKill(GamePlayer gamePlayer, int kill) {
+    public boolean addGamePlayerKill(GamePlayer gamePlayer, int addKill) {
         if (!locked) return false;
 
         Integer preKills = gamePlayerKill.get(gamePlayer);
         if (preKills == null) return false;
 
-        if (kill < 0) {
+        if (addKill < 0) {
             return false;
-        } else if (kill == 0) {
+        } else if (addKill == 0) {
             return true;
         }
 
-        int currentKill = preKills + kill;
+        int currentKill = preKills + addKill;
         gamePlayerKill.put(gamePlayer, currentKill);
         currentMaxKill = Math.max(currentMaxKill, currentKill);
 
@@ -128,105 +128,25 @@ public class DMData extends AbstractGameManagerData implements IDeathMatchDataMa
     }
 
     @Override
-    public boolean addGameTeamKill(GameTeam gameTeam, int kill) {
+    public boolean addGameTeamKill(GameTeam gameTeam, int addKill) {
         if (!locked) return false;
 
         Integer preKills = gameTeamKill.get(gameTeam);
         if (preKills == null) return false;
 
-        if (kill < 0) {
+        if (addKill < 0) {
             return false;
-        } else if (kill == 0) {
+        } else if (addKill == 0) {
             return true;
         }
 
-        int currentKill = preKills + kill;
+        int currentKill = preKills + addKill;
         gameTeamKill.put(gameTeam, currentKill);
         currentMaxKill = Math.max(currentMaxKill, currentKill);
 
         this.teamDirty = true;
         return true;
     }
-
-    public int getCurrentMaxKill() {
-        return currentMaxKill;
-    }
-
-    public Set<GameTeam> getTrackedGameTeams() {
-        return gameTeamKill.keySet();
-    }
-    public Set<GamePlayer> getTrackedGamePlayers() {
-        return gamePlayerKill.keySet();
-    }
-
-    public Map<GameTeam, Integer> copyGameTeamKills() {
-        return new HashMap<>(gameTeamKill);
-    }
-    public Map<GamePlayer, Integer> copyGamePlayerKills() {
-        return new HashMap<>(gamePlayerKill);
-    }
-
-    /**
-     * 获取按击杀数降序排列的队伍数据
-     * 返回的 Map 键为击杀数，值为拥有该击杀数的队伍集合
-     */
-    public NavigableMap<Integer, Set<GameTeam>> getTeamKillsInvertedSorted() {
-        if (teamDirty || cacheTeamInverted == null) {
-            this.cacheTeamInverted = gameTeamKill.entrySet().stream()
-                    .collect(Collectors.groupingBy(
-                            Map.Entry::getValue,
-                            () -> new TreeMap<Integer, Set<GameTeam>>(Comparator.reverseOrder()), // 必须显式声明泛型，否则 Java 17 编译器无法正确推断 groupingBy 的返回类型
-                            Collectors.mapping(Map.Entry::getKey, Collectors.toSet())
-                    ));
-            this.teamDirty = false;
-        }
-        return copyInvertedMap(cacheTeamInverted);
-    }
-    /**
-     * 获取按击杀数降序排列的玩家数据
-     * 返回的 Map 键为击杀数，值为拥有该击杀数的玩家集合
-     */
-    public NavigableMap<Integer, Set<GamePlayer>> getPlayerKillsInvertedSorted() {
-        if (playerDirty || cachePlayerInverted == null) {
-            this.cachePlayerInverted = gamePlayerKill.entrySet().stream()
-                    .collect(Collectors.groupingBy(
-                            Map.Entry::getValue,
-                            () -> new TreeMap<Integer, Set<GamePlayer>>(Comparator.reverseOrder()), // 必须显式声明泛型，否则 Java 17 编译器无法正确推断 groupingBy 的返回类型
-                            Collectors.mapping(Map.Entry::getKey, Collectors.toSet())
-                    ));
-            this.playerDirty = false;
-        }
-        return copyInvertedMap(cachePlayerInverted);
-    }
-    /**
-     * 获取击杀数大于或等于指定值的队伍 Map 副本
-     */
-    public NavigableMap<Integer, Set<GameTeam>> getTeamKillsGreaterOrEqual(int minKills) {
-        if (teamDirty || cacheTeamInverted == null) {
-            getTeamKillsInvertedSorted(); // 触发更新
-        }
-        return copyInvertedMap(cacheTeamInverted.headMap(minKills, true));
-    }
-    /**
-     * 获取击杀数大于或等于指定值的玩家 Map 副本
-     */
-    public NavigableMap<Integer, Set<GamePlayer>> getPlayerKillsGreaterOrEqual(int minKills) {
-        if (playerDirty || cachePlayerInverted == null) {
-            getPlayerKillsInvertedSorted(); // 触发更新
-        }
-        return copyInvertedMap(cachePlayerInverted.headMap(minKills, true));
-    }
-    /**
-     * 辅助方法：深拷贝 Map 及其内部的 Set，确保外部修改不会影响内部缓存
-     */
-    private <T> NavigableMap<Integer, Set<T>> copyInvertedMap(NavigableMap<Integer, Set<T>> source) {
-        NavigableMap<Integer, Set<T>> copy = new TreeMap<>(source.comparator());
-        for (Map.Entry<Integer, Set<T>> entry : source.entrySet()) {
-            copy.put(entry.getKey(), new HashSet<>(entry.getValue()));
-        }
-        return copy;
-    }
-
 
     @Override
     public boolean addAndTrackRestandingGamePlayer(GamePlayer gamePlayer) {
@@ -247,6 +167,75 @@ public class DMData extends AbstractGameManagerData implements IDeathMatchDataMa
             queuedRestandingGamePlayer.put(gamePlayer, trackDelay);
             return true;
         }
+    }
+
+    // --------IDeathMatchInfoGetter--------
+
+    @Override public int getCurrentMaxKill() {
+        return currentMaxKill;
+    }
+
+    @Override public Set<GameTeam> getTrackedGameTeams() {
+        return new HashSet<>(gameTeamKill.keySet());
+    }
+    @Override public Set<GamePlayer> getTrackedGamePlayers() {
+        return new HashSet<>(gamePlayerKill.keySet());
+    }
+
+    @Override public Map<GameTeam, Integer> copyGameTeamKills() {
+        return new HashMap<>(gameTeamKill);
+    }
+    @Override public Map<GamePlayer, Integer> copyGamePlayerKills() {
+        return new HashMap<>(gamePlayerKill);
+    }
+
+    @Override public NavigableMap<Integer, Set<GameTeam>> getTeamKillsInvertedSorted() {
+        if (teamDirty || cacheTeamInverted == null) {
+            this.cacheTeamInverted = gameTeamKill.entrySet().stream()
+                    .collect(Collectors.groupingBy(
+                            Map.Entry::getValue,
+                            () -> new TreeMap<Integer, Set<GameTeam>>(Comparator.reverseOrder()), // 必须显式声明泛型，否则 Java 17 编译器无法正确推断 groupingBy 的返回类型
+                            Collectors.mapping(Map.Entry::getKey, Collectors.toSet())
+                    ));
+            this.teamDirty = false;
+        }
+        return copyInvertedMap(cacheTeamInverted);
+    }
+    @Override public NavigableMap<Integer, Set<GamePlayer>> getPlayerKillsInvertedSorted() {
+        if (playerDirty || cachePlayerInverted == null) {
+            this.cachePlayerInverted = gamePlayerKill.entrySet().stream()
+                    .collect(Collectors.groupingBy(
+                            Map.Entry::getValue,
+                            () -> new TreeMap<Integer, Set<GamePlayer>>(Comparator.reverseOrder()), // 必须显式声明泛型，否则 Java 17 编译器无法正确推断 groupingBy 的返回类型
+                            Collectors.mapping(Map.Entry::getKey, Collectors.toSet())
+                    ));
+            this.playerDirty = false;
+        }
+        return copyInvertedMap(cachePlayerInverted);
+    }
+
+    @Override public NavigableMap<Integer, Set<GameTeam>> getTeamKillsGreaterOrEqual(int minKills) {
+        if (teamDirty || cacheTeamInverted == null) {
+            getTeamKillsInvertedSorted(); // 触发更新
+        }
+        return copyInvertedMap(cacheTeamInverted.headMap(minKills, true));
+    }
+    @Override public NavigableMap<Integer, Set<GamePlayer>> getPlayerKillsGreaterOrEqual(int minKills) {
+        if (playerDirty || cachePlayerInverted == null) {
+            getPlayerKillsInvertedSorted(); // 触发更新
+        }
+        return copyInvertedMap(cachePlayerInverted.headMap(minKills, true));
+    }
+
+    /**
+     * 辅助方法：深拷贝 Map 及其内部的 Set，确保外部修改不会影响内部缓存
+     */
+    private <T> NavigableMap<Integer, Set<T>> copyInvertedMap(NavigableMap<Integer, Set<T>> source) {
+        NavigableMap<Integer, Set<T>> copy = new TreeMap<>(source.comparator());
+        for (Map.Entry<Integer, Set<T>> entry : source.entrySet()) {
+            copy.put(entry.getKey(), new HashSet<>(entry.getValue()));
+        }
+        return copy;
     }
 
     public Set<GamePlayer> getTrackedRestandingGamePlayerUnsafe() {

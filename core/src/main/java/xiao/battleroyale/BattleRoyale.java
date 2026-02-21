@@ -12,8 +12,7 @@ import xiao.battleroyale.algorithm.AlgorithmFacade;
 import xiao.battleroyale.api.algorithm.IAlgorithmApi;
 import xiao.battleroyale.api.client.game.IClientGameDataManager;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
-import xiao.battleroyale.api.client.render.IClientGuiRenderer;
-import xiao.battleroyale.api.client.render.IClientLevelRenderer;
+import xiao.battleroyale.api.client.render.IClientRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.journeymap.IJmApi;
 import xiao.battleroyale.api.config.IModConfigManager;
@@ -32,8 +31,7 @@ import xiao.battleroyale.api.network.INetworkHook;
 import xiao.battleroyale.api.server.IServerManager;
 import xiao.battleroyale.client.game.ClientGameDataManager;
 import xiao.battleroyale.client.renderer.BlockModelRenderer;
-import xiao.battleroyale.client.renderer.ClientGuiRenderer;
-import xiao.battleroyale.client.renderer.ClientLevelRenderer;
+import xiao.battleroyale.client.renderer.ClientRenderer;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.GameManager;
 import xiao.battleroyale.common.loot.CommonInventoryManager;
@@ -76,29 +74,41 @@ public class BattleRoyale {
         BattleRoyale.registrarFactory = factory;
         BattleRoyale.mcRegistry = mcRegistry;
 
-        setGameManagerInternal(GameManager.get());
+        // 最早可使用的事件机制
+        EventRegister.initialize(eventRegister);
+        BattleRoyale.eventRegister = EventRegister.get();
+        eventPoster = EventPoster.get();
+
+        NetworkHandler.initialize(networkAdapter);
+        NetworkHook.initialize(networkHook);
+        BlockModelRenderer.initialize(blockModelRenderer);
+        BattleRoyale.compatApi = compatApi;
+        Object ignored = getEventPoster();
+
         modConfigManager = ModConfigManager.getApi();
+        ModConfigManager.init(mcSide);
+
+        setGameManagerInternal(GameManager.get());
+        GameManager.init(mcSide);
+
         effectManager = EffectManager.get();
         serverManager = ServerManager.get();
         commonLootManager = CommonLootManager.get();
         commonInventoryManager = CommonInventoryManager.get();
         if (mcSide.isClientSide()) {
             clientGameDataManager = ClientGameDataManager.get();
-            clientGuiRenderer = ClientGuiRenderer.get();
-            clientLevelRenderer = ClientLevelRenderer.get();
+            setClientRendererInternal(ClientRenderer.get());
+        }
+        EffectManager.init(mcSide);
+        ServerManager.init(mcSide);
+        CommonLootManager.init(mcSide);
+        CommonInventoryManager.init(mcSide);
+        if (mcSide.isClientSide()) {
+            ClientGameDataManager.init(mcSide);
+            ClientRenderer.init(mcSide);
         }
 
-        NetworkHandler.initialize(networkAdapter);
-        NetworkHook.initialize(networkHook);
-        EventRegister.initialize(eventRegister);
         CustomEventHandler.registerAll(getEventRegister());
-        BlockModelRenderer.initialize(blockModelRenderer);
-        BattleRoyale.compatApi = compatApi;
-        Object ignored = getEventPoster();
-
-        ModConfigManager.init(mcSide);
-        GameManager.init(mcSide);
-        ServerManager.init(mcSide);
 
         ResourceLoader.INSTANCE.packType = mcSide.isClientSide() ? PackType.CLIENT_RESOURCES : PackType.SERVER_DATA;
 
@@ -142,16 +152,12 @@ public class BattleRoyale {
     public static MinecraftServer getMinecraftServer() {
         return minecraftServer;
     }
-    public static ICustomEventPoster getEventPoster() {
-        return EventPoster.get();
-    }
-    public static ICustomEventRegister getEventRegister() {
-        return EventRegister.get();
-    }
     public static IAlgorithmApi getAlgorithmApi() {
         return AlgorithmFacade.get();
     }
 
+    private static ICustomEventRegister eventRegister;
+    private static ICustomEventPoster eventPoster;
     private static IGameManager gameManager;
     private static IModConfigManager modConfigManager;
     private static IEffectManager effectManager;
@@ -159,8 +165,13 @@ public class BattleRoyale {
     private static ICommonLootManager commonLootManager;
     private static ICommonInventoryManager commonInventoryManager;
     private static IClientGameDataManager clientGameDataManager;
-    private static IClientGuiRenderer clientGuiRenderer;
-    private static IClientLevelRenderer clientLevelRenderer;
+    private static IClientRenderer clientRenderer;
+    public static ICustomEventRegister getEventRegister() {
+        return BattleRoyale.eventRegister != null ? BattleRoyale.eventRegister : EventRegister.get(); // 在模组加载前就能触发
+    }
+    public static ICustomEventPoster getEventPoster() {
+        return BattleRoyale.eventPoster != null ? BattleRoyale.eventPoster : EventPoster.get();
+    }
     public static IGameManager getGameManager() {
         return BattleRoyale.gameManager;
     }
@@ -182,11 +193,8 @@ public class BattleRoyale {
     public static IClientGameDataManager getClientGameDataManager() {
         return BattleRoyale.clientGameDataManager;
     }
-    public static IClientGuiRenderer getClientGuiRenderer() {
-        return clientGuiRenderer;
-    }
-    public static IClientLevelRenderer getClientLevelRenderer() {
-        return BattleRoyale.clientLevelRenderer;
+    public static IClientRenderer getClientRenderer() {
+        return BattleRoyale.clientRenderer;
     }
     /**
      * @deprecated 除非需要深度定制, 否则不应该调用
@@ -220,12 +228,8 @@ public class BattleRoyale {
         BattleRoyale.clientGameDataManager = clientGameDataManager;
     }
     @Deprecated(forRemoval = false)
-    public static void setClientGuiRenderer(@NotNull IClientGuiRenderer clientGuiRenderer) {
-        BattleRoyale.clientGuiRenderer = clientGuiRenderer;
-    }
-    @Deprecated(forRemoval = false)
-    public static void setClientLevelRenderer(@NotNull IClientLevelRenderer clientLevelRenderer) {
-        BattleRoyale.clientLevelRenderer = clientLevelRenderer;
+    public static void setClientRenderer(@NotNull IClientRenderer clientRenderer) {
+        setClientRendererInternal(clientRenderer);
     }
 
     // 跟IGameSubManager同样的机制
@@ -233,6 +237,12 @@ public class BattleRoyale {
         if (BattleRoyale.gameManager != null) BattleRoyale.gameManager.unregisterGameEventHandler();
         BattleRoyale.gameManager = gameManager;
         gameManager.registerGameEventHandler();
+    }
+    // 跟IClientSubRenderer同样的机制
+    private static void setClientRendererInternal(@NotNull IClientRenderer clientRenderer) {
+        if (BattleRoyale.clientRenderer != null) BattleRoyale.clientRenderer.unregisterRenderEventHandler();
+        BattleRoyale.clientRenderer = clientRenderer;
+        clientRenderer.registerRenderEventHandler();
     }
 
     public static boolean registerManager(@Nullable CommandSourceStack source, String protocol) {

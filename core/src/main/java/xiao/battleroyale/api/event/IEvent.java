@@ -6,5 +6,7 @@ public interface IEvent {
 
     void setCanceled(boolean cancel);
 
-    Object getEvent();
+    default Object getEvent() {
+        return this;
+    }
 }

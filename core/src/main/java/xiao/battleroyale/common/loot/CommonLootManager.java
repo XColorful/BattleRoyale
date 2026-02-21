@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.algorithm.BfsCalculator;
 import xiao.battleroyale.algorithm.BfsCalculator.Offset2D;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.common.loot.ILootConfigManager;
 import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.api.game.IGameManager;
@@ -31,6 +32,9 @@ public class CommonLootManager implements ICommonLootManager {
     }
 
     private CommonLootManager() {}
+
+    public static void init(McSide mcSide) {
+    }
 
     private static int MAX_CHUNKS_PER_TICK = 5;
     public static void setMaxChunksPerTick(int chunks) { MAX_CHUNKS_PER_TICK = Math.min(Math.max(chunks, 5), 100000); } // 十万
