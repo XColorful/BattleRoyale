@@ -1,4 +1,4 @@
-package xiao.battleroyale.client.gui;
+package xiao.battleroyale.client.screen;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;

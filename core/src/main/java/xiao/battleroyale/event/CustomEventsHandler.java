@@ -7,7 +7,9 @@ import xiao.battleroyale.api.event.ICustomEvent;
 import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.util.ClassUtils.ArraySet;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CustomEventsHandler {

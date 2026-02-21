@@ -1,7 +1,7 @@
-package xiao.battleroyale.compat.forge.client.event;
+package xiao.battleroyale.compat.forge.event;
 
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
-import xiao.battleroyale.api.client.event.RenderLevelStage;
+import xiao.battleroyale.api.event.RenderLevelStage;
 
 import java.util.HashMap;
 import java.util.Map;

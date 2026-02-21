@@ -1,11 +1,10 @@
-package xiao.battleroyale.compat.forge.client.event;
+package xiao.battleroyale.compat.forge.event;
 
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
-import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
-import xiao.battleroyale.api.client.event.RenderLevelStage;
-import xiao.battleroyale.compat.forge.event.ForgeEvent;
+import xiao.battleroyale.api.event.IRenderLevelStageEvent;
+import xiao.battleroyale.api.event.RenderLevelStage;
 
 public class ForgeRenderLevelStageEvent extends ForgeEvent implements IRenderLevelStageEvent {
 

@@ -5,12 +5,17 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.client.event.IRenderGuiEventPost;
+import xiao.battleroyale.api.event.IRenderGuiEvent;
 import xiao.battleroyale.api.client.render.gui.IClientGameInfoRenderer;
+import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.event.EventType;
+import xiao.battleroyale.api.event.ICustomEventRegister;
+import xiao.battleroyale.api.event.IEvent;
+import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.client.game.data.ClientGameData;
 import xiao.battleroyale.util.ColorUtils;
 
-public class GameInfoRenderer implements IClientGameInfoRenderer {
+public class GameInfoRenderer implements IClientGameInfoRenderer, IEventHandler {
 
     private static class GameInfoRendererHolder {
         private static final GameInfoRenderer INSTANCE = new GameInfoRenderer();
@@ -21,6 +26,13 @@ public class GameInfoRenderer implements IClientGameInfoRenderer {
     }
 
     private GameInfoRenderer() {}
+
+    public static void init(McSide mcSide) {
+        if (!get().inProperSide(mcSide)) {
+            BattleRoyale.LOGGER.debug("GameInfoRenderer skipped init() at {}", mcSide.toString());
+            return;
+        }
+    }
 
     private boolean displayAlive = true;
     public void setDisplayAlive(boolean shouldDisplay) { displayAlive = shouldDisplay;}
@@ -39,11 +51,38 @@ public class GameInfoRenderer implements IClientGameInfoRenderer {
         return String.format("%s:GameInfoRenderer", BattleRoyale.MOD_ID);
     }
 
+    @Override
+    public boolean registerRenderEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.register(get(), EventType.RENDER_GUI_EVENT);
+        return true;
+    }
+
+    @Override
+    public boolean unregisterRenderEventHandler() {
+        ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
+        customEventRegister.unregister(get(), EventType.RENDER_GUI_EVENT);
+        return true;
+    }
+
+    @Override
+    public String getEventHandlerName() {
+        return String.format("%s:GameInfoRenderer", BattleRoyale.MOD_ID);
+    }
+    @Override
+    public void handleEvent(EventType eventType, IEvent event) {
+        if (eventType == EventType.RENDER_GUI_EVENT) {
+            onRenderGuiEvent((IRenderGuiEvent) event);
+        } else {
+            onReceiveWrongEvent(eventType);
+        }
+    }
+
     /*
     右上角
     生存: {人数}
      */
-    public void onRenderGuiEvent(IRenderGuiEventPost event) {
+    public void onRenderGuiEvent(IRenderGuiEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (!displayAlive || mc.level == null || mc.player == null) {
             return;

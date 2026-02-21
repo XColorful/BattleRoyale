@@ -11,7 +11,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.IModConfigManager;
-import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.event.custom.deathmatch.AddKillEvent;
 import xiao.battleroyale.api.game.IGameManager;
@@ -48,7 +47,6 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     protected DMGameProcessManager() {}
 
     public static void init(McSide mcSide) {
-        BattleRoyale.getEventRegister().register(DMRegister.get(), CustomEventType.REGISTER_MANAGER_EVENT);
     }
 
     protected int targetKill = 50;

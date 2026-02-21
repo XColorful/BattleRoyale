@@ -1,4 +1,4 @@
-package xiao.battleroyale.client.gui;
+package xiao.battleroyale.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;

@@ -1,6 +1,8 @@
 package xiao.battleroyale.api.client.render.level;
 
-public interface IClientSpectateRenderer extends IClientSimpleZoneRenderer {
+import xiao.battleroyale.api.client.render.IClientSubRenderer;
+
+public interface IClientSpectateRenderer extends IClientSimpleZoneRenderer, IClientSubRenderer {
 
     void setEnableSpectateRender(boolean bool);
 

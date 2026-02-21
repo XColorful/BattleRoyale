@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.client.event;
+package xiao.battleroyale.api.event;
 
 public enum RenderLevelStage {
     AFTER_SKY,

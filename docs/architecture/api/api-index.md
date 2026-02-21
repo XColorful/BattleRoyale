@@ -8,29 +8,36 @@
 	- [IDistribution](/docs/api/algorithm/IDistribution.md)：提供分布算法
 
 ## 客户端
+> _./api/client_
 
-- Event：事件
-	- [IRenderGUIEventPost](/docs/api/client/event/IRenderGuiEventPost.md)：GUI渲染事件
-	- [IRenderLevelStageEvent](/docs/api/client/event/IRenderLevelStageEvent.md)：世界渲染（区域渲染）
-- Game：游戏
-	- [IClientGameDataManager](/docs/api/client/game/IClientGameDataManager.md)：客户端游戏数据管理
-	    - [IClientTeamDataManager](/docs/api/client/game/sub/IClientTeamDataManager.md)：客户端游戏队伍数据管理
-	    - [IClientZoneDataManager](/docs/api/client/game/sub/IClientZoneDataManager.md)：客户端游戏区域数据管理
-- Init：初始化
-	- [IClientSetup](/docs/api/client/init/IClientSetup.md)：客户端初始化
-      - 注册容器（方块实体`BlockEntity`）GUI
-	- [IModEntityRender](/docs/api/client/init/IModEntityRender.md)：注册方块实体`BlockEntity`渲染
-- Render：渲染
-	- [IBlockModelRenderer](/docs/api/client/render/IBlockModelRenderer.md)：方块实体`BlockEntity`模型渲染接口
-		- 用于渲染方块实体`BlockEntity`本身，或定制渲染（渲染物资刷新器 _battleroyale:loot_spawner_ 内的物品）
-	- [IClientGuiRenderer](/docs/api/client/render/IClientGuiRenderer.md)：客户端GUI渲染接口
-		- IClientGameInfoRenderer：客户端游戏信息显示
-        - IClientTeamInfoRenderer：客户端队伍信息显示
-	- [IClientLevelRenderer](/docs/api/client/render/IClientLevelRenderer.md)：客户端世界渲染接口
-		- IClientSimpleZoneRenderer：普通区域渲染
-		> - IClientSpectateRenderer：观战玩家（全体游戏玩家）渲染
-		> - IClientTeamRenderer：队伍（队友）渲染
-		- IClientZoneRenderer：区域渲染（包含圆/椭球渲染边数的参数获取）
+### 客户端游戏
+> _./api/client/game_
+
+- [IClientGameDataManager](/docs/api/client/game/IClientGameDataManager.md)：客户端游戏数据管理
+	- [IClientTeamDataManager](/docs/api/client/game/sub/IClientTeamDataManager.md)：客户端游戏队伍数据管理
+	- [IClientZoneDataManager](/docs/api/client/game/sub/IClientZoneDataManager.md)：客户端游戏区域数据管理
+
+### 客户端初始化
+> _./api/client/init_
+
+- [IClientSetup](/docs/api/client/init/IClientSetup.md)：客户端初始化
+	- 注册容器（方块实体`BlockEntity`）GUI
+- [IModEntityRender](/docs/api/client/init/IModEntityRender.md)：注册方块实体`BlockEntity`渲染
+
+### 客户端渲染
+> _./api/client/render_
+
+- [IBlockModelRenderer](/docs/api/client/render/IBlockModelRenderer.md)：方块实体`BlockEntity`模型渲染接口
+	- 用于渲染方块实体`BlockEntity`本身，或定制渲染（渲染物资刷新器 _battleroyale:loot_spawner_ 内的物品）
+- [IClientRenderer](/docs/api/client/render/IClientRenderer.md)：客户端渲染接口（全能易用门面）
+	客户端GUI渲染接口：
+	- IClientGameInfoRenderer：客户端游戏信息显示
+	- IClientTeamInfoRenderer：客户端队伍信息显示
+	
+	客户端世界渲染接口：
+	- IClientSpectateRenderer：观战玩家（全体游戏玩家）渲染
+	- IClientTeamRenderer：队伍（队友）渲染
+	- IClientZoneRenderer：区域渲染（包含圆/椭球渲染边数的参数获取）
 
 ## 双端
 
@@ -140,11 +147,17 @@
 
 - [EventType](/docs/api/event/EventType.md)：模组事件类型
 - [IEvent](/docs/api/event/IEvent.md)：模组事件接口
-> - ILivingDamageEvent：Forge/NeoForge 生物受击事件
+> - IServerTickEvent：服务端 tick 事件
+> - IClientTickEvent：客户端 tick 事件
+> - ILivingAttackEvent：Forge/NeoForge 生物受击最先触发的事件
+> - ILivingHurtEvent：Forge/NeoForge 生物受击事件
+> - ILivingDamageEvent：Forge/NeoForge 获取生物受击伤害事件
 > - ILivingDeathEvent：Forge/NeoForge 生物死亡事件
 > - IPlayerLoggedInEvent：玩家登录事件
 > - IPlayerLoggedOutEvent：玩家登出事件
-> - IServerTickEvent：服务端 tick 事件
+> - IRenderLevelStageEvent：世界渲染事件
+> - IRenderTranslucentEvent：世界半透明渲染事件
+> - IRenderGuiEvent：GUI 界面渲染事件
 
 ### 自定义事件
 > _./api/event_
@@ -266,29 +279,36 @@
 	- [IDistribution](/docs/api/algorithm/IDistribution.md): Provides distribution algorithms
 
 ## Client
+> _./api/client_
 
-- Event:
-	- [IRenderGUIEventPost](/docs/api/client/event/IRenderGuiEventPost.md): GUI render event
-	- [IRenderLevelStageEvent](/docs/api/client/event/IRenderLevelStageEvent.md): World render (zone render)
-- Game:
-	- [IClientGameDataManager](/docs/api/client/game/IClientGameDataManager.md): Client game data management
-	    - [IClientTeamDataManager](/docs/api/client/game/sub/IClientTeamDataManager.md): Client game team data management
-	    - [IClientZoneDataManager](/docs/api/client/game/sub/IClientZoneDataManager.md): Client game zone data management
-- Init:
-	- [IClientSetup](/docs/api/client/init/IClientSetup.md): Client initialization
-      - Register container (`BlockEntity`) GUI
-	- [IModEntityRender](/docs/api/client/init/IModEntityRender.md): Register `BlockEntity` render
-- Render:
-	- [IBlockModelRenderer](/docs/api/client/render/IBlockModelRenderer.md): `BlockEntity` model renderer interface
-		- Used for rendering `BlockEntity` itself, or custom rendering (rendering items in loot spawner _battleroyale:loot_spawner_ )
-	- [IClientGuiRenderer](/docs/api/client/render/IClientGuiRenderer.md): Client GUI renderer interface
-		- IClientGameInfoRenderer: Client game info display
-        - IClientTeamInfoRenderer: Client team info display
-	- [IClientLevelRenderer](/docs/api/client/render/IClientLevelRenderer.md): Client world renderer interface
-		- IClientSimpleZoneRenderer: Simple zone renderer
-		> - IClientSpectateRenderer: Spectate player (all game players) renderer
-		> - IClientTeamRenderer: Team (teammate) renderer
-		- IClientZoneRenderer: Zone renderer (includes parameter retrieval for circle/ellipsoid render segments)
+### Client Game
+> _./api/client/game_
+
+- [IClientGameDataManager](/docs/api/client/game/IClientGameDataManager.md): Client game data management
+	- [IClientTeamDataManager](/docs/api/client/game/sub/IClientTeamDataManager.md): Client game team data management
+	- [IClientZoneDataManager](/docs/api/client/game/sub/IClientZoneDataManager.md): Client game zone data management
+
+### Client Init
+> _./api/client/init_
+
+- [IClientSetup](/docs/api/client/init/IClientSetup.md): Client initialization
+	- Register container (`BlockEntity`) GUI
+- [IModEntityRender](/docs/api/client/init/IModEntityRender.md): Register `BlockEntity` render
+
+### Client Render
+> _./api/client/render_
+
+- [IBlockModelRenderer](/docs/api/client/render/IBlockModelRenderer.md): `BlockEntity` model renderer interface
+	- Used for rendering `BlockEntity` itself, or custom rendering (rendering items in loot spawner _battleroyale:loot_spawner_ )
+- [IClientRenderer](/docs/api/client/render/IClientRenderer.md): Client renderer interface (almighty easy-to-use facade)
+	Client GUI renderer interface:
+	- IClientGameInfoRenderer: Client game info display
+	- IClientTeamInfoRenderer: Client team info display
+
+	Client world renderer interface:
+	- IClientSpectateRenderer: Spectate player (all game players) renderer
+	- IClientTeamRenderer: Team (teammate) renderer
+	- IClientZoneRenderer: Zone renderer (includes parameter retrieval for circle/ellipsoid render segments)
 
 ## Common
 
@@ -335,7 +355,6 @@
 
 - [IInventoryManager](/docs/api/loot/IInventoryManager.md): Inventory manager common interface
 > - [ICommonInventoryManager](/docs/api/loot/ICommonInventoryManager.md): Manual inventory manager interface
-- [ILootManager](/docs/api/loot/ILootManager.md)：物资刷新器通用接口
 - [ILootManager](/docs/api/loot/ILootManager.md): Loot manager common interface
 > - [ICommonLootManager](/docs/api/loot/ICommonLootManager.md): Manual loot manager interface
 - [ILootObject](/docs/api/loot/ILootObject.md): Loot object, can generate loot and read/write Game ID (UUID)
@@ -396,13 +415,21 @@ Post Event:
 ### Mod Event
 > _./api/event_
 
+> [Event API](./event-api.md#English)
+
 - [EventType](/docs/api/event/EventType.md): Mod event type
 - [IEvent](/docs/api/event/IEvent.md): Mod event interface
-> - ILivingDamageEvent: Forge/NeoForge living damage event
+> - IServerTickEvent: Server tick event
+> - IClientTickEvent: Client tick event
+> - ILivingAttackEvent: The first event triggered when a living entity is attacked in Forge/NeoForge
+> - ILivingHurtEvent: Forge/NeoForge living entity hurt event
+> - ILivingDamageEvent: Forge/NeoForge event for obtaining living entity damage
 > - ILivingDeathEvent: Forge/NeoForge living death event
 > - IPlayerLoggedInEvent: Player logged in event
 > - IPlayerLoggedOutEvent: Player logged out event
-> - IServerTickEvent: Server tick event
+> - IRenderLevelStageEvent: World rendering event
+> - IRenderTranslucentEvent: World translucent rendering event
+> - IRenderGuiEvent: GUI rendering event
 
 ### Custom Event
 > _./api/event_
@@ -413,7 +440,7 @@ Post Event:
 #### Custom Client Event
 > _./api/event/client_
 
-- Render: Render
+- Render:
 	- [SpecialZoneRenderEvent](/docs/api/event/client/render/SpecialZoneRenderEvent.md): Client special zone render event
 
 #### Custom Game Event

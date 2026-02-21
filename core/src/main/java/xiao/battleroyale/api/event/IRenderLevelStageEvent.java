@@ -1,8 +1,7 @@
-package xiao.battleroyale.api.client.event;
+package xiao.battleroyale.api.event;
 
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
-import xiao.battleroyale.api.event.IEvent;
 
 public interface IRenderLevelStageEvent extends IEvent {
 
