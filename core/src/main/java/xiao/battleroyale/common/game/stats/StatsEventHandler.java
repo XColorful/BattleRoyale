@@ -19,7 +19,7 @@ import xiao.battleroyale.api.event.game.starter.GameStartFinishEvent;
 import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.stats.IGamePlayerStats;
-import xiao.battleroyale.common.game.stats.event.*;
+import xiao.battleroyale.common.game.stats.record.*;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.util.ScoreUtils;
 

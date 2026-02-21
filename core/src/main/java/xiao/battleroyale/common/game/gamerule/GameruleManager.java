@@ -45,7 +45,6 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
     protected GameruleManager() {}
 
     public static void init(McSide mcSide) {
-        ;
     }
 
     @Override public String getManagerName() {

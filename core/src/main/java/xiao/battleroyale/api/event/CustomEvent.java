@@ -8,6 +8,11 @@ public abstract class CustomEvent implements ICustomEvent {
     }
 
     @Override
+    public CustomEventType getEventType() {
+        return CustomEventType.CUSTOM_EVENT;
+    }
+
+    @Override
     public boolean isCanceled() {
         return this.isCanceled;
     }
