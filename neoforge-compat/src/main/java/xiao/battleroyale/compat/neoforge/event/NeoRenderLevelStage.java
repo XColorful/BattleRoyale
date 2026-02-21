@@ -1,14 +1,11 @@
-package xiao.battleroyale.compat.neoforge.client.event;
+package xiao.battleroyale.compat.neoforge.event;
 
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
-import xiao.battleroyale.api.client.event.RenderLevelStage;
+import xiao.battleroyale.api.event.RenderLevelStage;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * NeoForge和核心API渲染阶段的映射枚举。
- */
 public enum NeoRenderLevelStage {
     AFTER_SKY(Stage.AFTER_SKY, RenderLevelStage.AFTER_SKY),
     AFTER_SOLID_BLOCKS(Stage.AFTER_SOLID_BLOCKS, RenderLevelStage.AFTER_SOLID_BLOCKS),
