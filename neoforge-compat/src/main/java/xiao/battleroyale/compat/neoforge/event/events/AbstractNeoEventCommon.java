@@ -24,7 +24,7 @@ public abstract class AbstractNeoEventCommon {
         this.eventType = eventType;
     }
 
-    public boolean addEventHander(IEventHandler eventHandler, boolean receivedCanceled) {
+    protected final boolean addEventHander(IEventHandler eventHandler, boolean receivedCanceled) {
         synchronized (lock) {
             if (isDispatching) {
                 pendingOperations.add(new PendingOperation(eventHandler, receivedCanceled, true));
@@ -33,7 +33,7 @@ public abstract class AbstractNeoEventCommon {
             return addEventHandlerInternal(eventHandler, receivedCanceled);
         }
     }
-    protected boolean addEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
+    protected final boolean addEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
         boolean added;
         if (!receivedCanceled) {
             added = eventHandlers.add(eventHandler);
@@ -46,7 +46,6 @@ public abstract class AbstractNeoEventCommon {
                 registerToNeo();
             }
         }
-
         return added;
     }
 
@@ -59,7 +58,7 @@ public abstract class AbstractNeoEventCommon {
             return removeEventHandlerInternal(eventHandler, receivedCanceled);
         }
     }
-    protected boolean removeEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
+    protected final boolean removeEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
         boolean removed;
         if (!receivedCanceled) {
             removed = eventHandlers.remove(eventHandler);
@@ -82,8 +81,13 @@ public abstract class AbstractNeoEventCommon {
     protected void onEvent(Event event) {
         NeoEvent neoEvent = getNeoEventType(event);
 
+        boolean isNested;
         synchronized (lock) {
+            isNested = isDispatching;
             isDispatching = true;
+        }
+
+        try {
             for (IEventHandler handler : eventHandlers) {
                 if (neoEvent.isCanceled()) {
                     break;
@@ -94,13 +98,17 @@ public abstract class AbstractNeoEventCommon {
             for (IEventHandler handler : statsEventHandlers) {
                 handler.handleEvent(this.eventType, neoEvent);
             }
-            isDispatching = false;
-
-            processPendingOperations();
+        } finally {
+            if (!isNested) {
+                synchronized (lock) {
+                    processPendingOperations();
+                    isDispatching = false;
+                }
+            }
         }
     }
 
-    protected void processPendingOperations() {
+    protected final void processPendingOperations() {
         if (pendingOperations.isEmpty()) {
             return;
         }
