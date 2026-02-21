@@ -80,6 +80,8 @@ public class EventPoster implements ICustomEventPoster {
             case SPECIAL_ZONE_RENDER_EVENT -> ClientRenderEventHandler.get().handleEvent(customEvent);
             // register
             case REGISTER_MANAGER_EVENT -> RegisterManagerEventsHandler.get().handleEvent(customEvent);
+            // custom
+            case CUSTOM_EVENT -> CustomEventsHandler.get().handleEvent(customEvent);
             default -> {
                 BattleRoyale.LOGGER.error("Attempted to post event {} which has no assigned Event Handler! This is a serious configuration error.", customEventType);
             }
