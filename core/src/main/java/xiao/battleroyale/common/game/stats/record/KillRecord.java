@@ -1,4 +1,4 @@
-package xiao.battleroyale.common.game.stats.event;
+package xiao.battleroyale.common.game.stats.record;
 
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.common.game.team.GamePlayer;

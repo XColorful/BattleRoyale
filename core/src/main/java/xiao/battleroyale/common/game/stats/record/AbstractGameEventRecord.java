@@ -1,4 +1,4 @@
-package xiao.battleroyale.common.game.stats.event;
+package xiao.battleroyale.common.game.stats.record;
 
 public abstract class AbstractGameEventRecord<T extends AbstractGameEventRecord<T>> {
 
