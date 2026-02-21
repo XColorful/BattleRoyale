@@ -72,7 +72,7 @@ public class TeamEntry implements IRenderEntry {
 
     @Override
     public void applyDefault() {
-        IClientTeamRenderer teamRenderer = BattleRoyale.getClientLevelRenderer().getClientTeamRenderer();
+        IClientTeamRenderer teamRenderer = BattleRoyale.getClientRenderer().getClientTeamRenderer();
         teamRenderer.setEnableTeamZone(enableTeamZone);
         if (enableTeamZone) {
             teamRenderer.setUseClientColor(useClientColor);

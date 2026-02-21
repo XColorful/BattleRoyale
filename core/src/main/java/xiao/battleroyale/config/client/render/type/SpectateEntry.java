@@ -76,7 +76,7 @@ public class SpectateEntry implements IRenderEntry {
 
     @Override
     public void applyDefault() {
-        IClientSpectateRenderer spectateRenderer = BattleRoyale.getClientLevelRenderer().getClientSpectateRenderer();
+        IClientSpectateRenderer spectateRenderer = BattleRoyale.getClientRenderer().getClientSpectateRenderer();
         spectateRenderer.setEnableSpectateRender(enableSpectateRender);
         if (enableSpectateRender) {
             spectateRenderer.setUseClientColor(useClientColor);

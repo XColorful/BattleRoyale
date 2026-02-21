@@ -7,6 +7,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.IConfigManager;
 import xiao.battleroyale.api.effect.IEffectManager;
 import xiao.battleroyale.api.effect.IEffectSubManager;
@@ -29,7 +30,18 @@ import java.util.UUID;
 
 public class EffectManager implements IEffectManager {
 
+    private static class EffectManagerHolder {
+        private static final EffectManager INSTANCE = new EffectManager();
+    }
+
+    public static EffectManager get() {
+        return EffectManagerHolder.INSTANCE;
+    }
+
     private EffectManager() {}
+
+    public static void init(McSide mcSide) {
+    }
 
     private IBoostManager boostManager = BoostManager.get();
     private IFireworkManager fireworkManager = FireworkManager.get();
@@ -247,13 +259,5 @@ public class EffectManager implements IEffectManager {
     @Override
     public boolean shouldEnd() {
         return false;
-    }
-
-    private static class EffectManagerHolder {
-        private static final EffectManager INSTANCE = new EffectManager();
-    }
-
-    public static EffectManager get() {
-        return EffectManagerHolder.INSTANCE;
     }
 }
