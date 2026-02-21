@@ -1,6 +1,6 @@
 package xiao.battleroyale.compat.forge.event.events;
 
-import net.minecraftforge.client.event.RenderGuiEvent;
+import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -50,7 +50,7 @@ public class RenderGuiEventManager {
             return new ForgeRenderGuiEvent(event);
         }
 
-        protected void handle(RenderGuiEvent.Post event) {
+        protected void handle(CustomizeGuiOverlayEvent event) {
             super.onEvent(event);
         }
     }
@@ -58,30 +58,30 @@ public class RenderGuiEventManager {
     public static class Highest extends RenderGuiProxy {
         static final Highest INSTANCE = new Highest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGHEST, receiveCanceled = true)
-        public void onEvent(RenderGuiEvent.Post e) { handle(e); }
+        public void onEvent(CustomizeGuiOverlayEvent e) { handle(e); }
     }
 
     public static class High extends RenderGuiProxy {
         static final High INSTANCE = new High();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGH, receiveCanceled = true)
-        public void onEvent(RenderGuiEvent.Post e) { handle(e); }
+        public void onEvent(CustomizeGuiOverlayEvent e) { handle(e); }
     }
 
     public static class Normal extends RenderGuiProxy {
         static final Normal INSTANCE = new Normal();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.NORMAL, receiveCanceled = true)
-        public void onEvent(RenderGuiEvent.Post e) { handle(e); }
+        public void onEvent(CustomizeGuiOverlayEvent e) { handle(e); }
     }
 
     public static class Low extends RenderGuiProxy {
         static final Low INSTANCE = new Low();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOW, receiveCanceled = true)
-        public void onEvent(RenderGuiEvent.Post e) { handle(e); }
+        public void onEvent(CustomizeGuiOverlayEvent e) { handle(e); }
     }
 
     public static class Lowest extends RenderGuiProxy {
         static final Lowest INSTANCE = new Lowest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST, receiveCanceled = true)
-        public void onEvent(RenderGuiEvent.Post e) { handle(e); }
+        public void onEvent(CustomizeGuiOverlayEvent e) { handle(e); }
     }
 }
