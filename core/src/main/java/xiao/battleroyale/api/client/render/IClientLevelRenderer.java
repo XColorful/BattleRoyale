@@ -5,7 +5,7 @@ import xiao.battleroyale.api.client.render.level.IClientSpectateRenderer;
 import xiao.battleroyale.api.client.render.level.IClientTeamRenderer;
 import xiao.battleroyale.api.client.render.level.IClientZoneRenderer;
 
-public interface IClientLevelRenderer {
+public interface IClientLevelRenderer extends IClientSubRenderer {
 
     @NotNull IClientSpectateRenderer getClientSpectateRenderer();
 

@@ -7,4 +7,8 @@ public interface ICustomEvent extends IEvent {
     default boolean isCancelable() {
         return true;
     }
+
+    default Class<? extends ICustomEvent> getCustomEventClass() {
+        return this.getClass();
+    }
 }

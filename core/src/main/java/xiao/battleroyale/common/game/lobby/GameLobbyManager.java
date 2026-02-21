@@ -50,7 +50,6 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
     protected GameLobbyManager() {}
 
     public static void init(McSide mcSide) {
-        ;
     }
 
     @Override public String getManagerName() {

@@ -100,10 +100,14 @@ public class EventRegister implements ICustomEventRegister {
             // register
             case REGISTER_MANAGER_EVENT -> RegisterManagerEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             default -> {
-                BattleRoyale.LOGGER.debug("Attempted to register handler for unassigned CustomEventType: {}. Registration aborted.", customEventType);
+                BattleRoyale.LOGGER.warn("Attempted to register handler for unassigned CustomEventType: {}. Registration aborted.", customEventType);
                 yield false;
             }
         };
+    }
+    @Override
+    public <T extends ICustomEvent> boolean register(ICustomEventHandler eventHandler, Class<T> eventClass, EventPriority priority, boolean receiveCanceled) {
+        return CustomEventsHandler.get().registerHandler(eventHandler, eventClass, priority, receiveCanceled);
     }
 
     @Override
@@ -163,9 +167,13 @@ public class EventRegister implements ICustomEventRegister {
             // register
             case REGISTER_MANAGER_EVENT -> RegisterManagerEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
             default -> {
-                BattleRoyale.LOGGER.debug("Attempted to unregister handler for unassigned CustomEventType: {}. Unregistration aborted.", customEventType);
+                BattleRoyale.LOGGER.warn("Attempted to unregister handler for unassigned CustomEventType: {}. Unregistration aborted.", customEventType);
                 yield false;
             }
         };
+    }
+    @Override
+    public <T extends ICustomEvent> boolean unregister(ICustomEventHandler eventHandler, Class<T> eventClass, EventPriority priority, boolean receiveCanceled) {
+        return CustomEventsHandler.get().unregisterHandler(eventHandler, eventClass, priority, receiveCanceled);
     }
 }
