@@ -57,7 +57,6 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     protected StatsManager() {}
 
     public static void init(McSide mcSide) {
-        ;
     }
 
     @Override public String getManagerName() {

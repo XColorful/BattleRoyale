@@ -79,7 +79,7 @@ public class ZoneEntry implements IRenderEntry {
             ClientSingleZoneData.setClientColorString(this.fixedColor);
         }
 
-        IClientZoneRenderer zoneRenderer = BattleRoyale.getClientLevelRenderer().getClientZoneRenderer();
+        IClientZoneRenderer zoneRenderer = BattleRoyale.getClientRenderer().getClientZoneRenderer();
         CircleShape.setCircleSegments(circleSegments);
         zoneRenderer.setCircleSegments(CircleShape.getCircleSegments());
         EllipseShape.setEllipseSegments(ellipsoidSegments);

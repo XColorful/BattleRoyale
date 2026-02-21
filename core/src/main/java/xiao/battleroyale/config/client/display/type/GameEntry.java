@@ -55,7 +55,7 @@ public class GameEntry extends AbstractHudEntry {
 
     @Override
     public void applyDefault() {
-        IClientGameInfoRenderer gameInfoRenderer = BattleRoyale.getClientGuiRenderer().getClientGameInfoRenderer();
+        IClientGameInfoRenderer gameInfoRenderer = BattleRoyale.getClientRenderer().getClientGameInfoRenderer();
         gameInfoRenderer.setDisplayAlive(display);
         if (display) {
             gameInfoRenderer.setAliveXRatio(xRatio);

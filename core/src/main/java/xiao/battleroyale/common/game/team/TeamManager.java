@@ -40,7 +40,6 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
     protected TeamManager() {}
 
     public static void init(McSide mcSide) {
-        ;
     }
 
     @Override public String getManagerName() {

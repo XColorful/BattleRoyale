@@ -1,6 +1,8 @@
 package xiao.battleroyale.api.client.render.gui;
 
-public interface IClientGameInfoRenderer extends IClientGuiRender {
+import xiao.battleroyale.api.client.render.IClientSubRenderer;
+
+public interface IClientGameInfoRenderer extends IClientGuiRender, IClientSubRenderer {
 
     void setDisplayAlive(boolean shouldDisplay);
 
