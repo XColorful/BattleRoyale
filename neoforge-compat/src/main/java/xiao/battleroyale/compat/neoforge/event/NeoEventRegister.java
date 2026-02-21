@@ -11,47 +11,43 @@ public class NeoEventRegister implements IEventRegister {
 
     @Override
     public boolean register(IEventHandler eventHandler, EventType eventType, EventPriority priority, boolean receiveCanceled) {
-        boolean registered = false;
-        switch (eventType) {
-            case SERVER_TICK_EVENT -> registered = NeoServerTickEventManager.register(eventHandler, priority, receiveCanceled);
-            case CLIENT_TICK_EVENT -> registered = NeoClientTickEventManager.register(eventHandler, priority, receiveCanceled);
-            case LIVING_ATTACK_EVENT -> registered = NeoLivingAttackEventManager.register(eventHandler, priority, receiveCanceled);
-            case LIVING_HURT_EVENT -> registered = NeoLivingHurtEventManager.register(eventHandler, priority, receiveCanceled);
-            case LIVING_DAMAGE_EVENT -> registered = NeoLivingDamageEventManager.register(eventHandler, priority, receiveCanceled);
-            case LIVING_DEATH_EVENT -> registered = NeoLivingDeathEventManager.register(eventHandler, priority, receiveCanceled);
-            case PLAYER_LOGGED_IN_EVENT -> registered = NeoPlayerLoggedInEventManager.register(eventHandler, priority, receiveCanceled);
-            case PLAYER_LOGGED_OUT_EVENT -> registered = NeoPlayerLoggedOutEventManager.register(eventHandler, priority, receiveCanceled);
-        }
-
-        if (registered) {
-            BattleRoyale.LOGGER.debug("{} registered", eventHandler.getEventHandlerName());
-            return true;
-        } else {
-            BattleRoyale.LOGGER.debug("{} already registered", eventHandler.getEventHandlerName());
-            return false;
-        }
+        return switch (eventType) {
+            case SERVER_TICK_EVENT -> NeoServerTickEventManager.register(eventHandler, priority, receiveCanceled);
+            case CLIENT_TICK_EVENT -> NeoClientTickEventManager.register(eventHandler, priority, receiveCanceled);
+            case LIVING_ATTACK_EVENT -> NeoLivingAttackEventManager.register(eventHandler, priority, receiveCanceled);
+            case LIVING_HURT_EVENT -> NeoLivingHurtEventManager.register(eventHandler, priority, receiveCanceled);
+            case LIVING_DAMAGE_EVENT -> NeoLivingDamageEventManager.register(eventHandler, priority, receiveCanceled);
+            case LIVING_DEATH_EVENT -> NeoLivingDeathEventManager.register(eventHandler, priority, receiveCanceled);
+            case PLAYER_LOGGED_IN_EVENT -> NeoPlayerLoggedInEventManager.register(eventHandler, priority, receiveCanceled);
+            case PLAYER_LOGGED_OUT_EVENT -> NeoPlayerLoggedOutEventManager.register(eventHandler, priority, receiveCanceled);
+            case RENDER_LEVEL_STAGE_EVENT -> NeoRenderLevelStageEventManager.register(eventHandler, priority, receiveCanceled);
+            case RENDER_TRANSLUCENT_EVENT -> NeoRenderTranslucentEventManager.register(eventHandler, priority, receiveCanceled);
+            case RENDER_GUI_EVENT -> NeoRenderGuiEventManager.register(eventHandler, priority, receiveCanceled);
+            default -> {
+                BattleRoyale.LOGGER.warn("Attempted to register handler for unassigned EventType: {}. Registration aborted.", eventType);
+                yield false;
+            }
+        };
     }
 
     @Override
     public boolean unregister(IEventHandler eventHandler, EventType eventType, EventPriority priority, boolean receiveCanceled) {
-        boolean unregistered = false;
-        switch (eventType) {
-            case SERVER_TICK_EVENT -> unregistered = NeoServerTickEventManager.unregister(eventHandler, priority, receiveCanceled);
-            case CLIENT_TICK_EVENT -> unregistered = NeoClientTickEventManager.unregister(eventHandler, priority, receiveCanceled);
-            case LIVING_ATTACK_EVENT -> unregistered = NeoLivingAttackEventManager.unregister(eventHandler, priority, receiveCanceled);
-            case LIVING_HURT_EVENT -> unregistered = NeoLivingHurtEventManager.unregister(eventHandler, priority, receiveCanceled);
-            case LIVING_DAMAGE_EVENT -> unregistered = NeoLivingDamageEventManager.unregister(eventHandler, priority, receiveCanceled);
-            case LIVING_DEATH_EVENT -> unregistered = NeoLivingDeathEventManager.unregister(eventHandler, priority, receiveCanceled);
-            case PLAYER_LOGGED_IN_EVENT -> unregistered = NeoPlayerLoggedInEventManager.unregister(eventHandler, priority, receiveCanceled);
-            case PLAYER_LOGGED_OUT_EVENT -> unregistered = NeoPlayerLoggedOutEventManager.unregister(eventHandler, priority, receiveCanceled);
-        }
-
-        if (unregistered) {
-            BattleRoyale.LOGGER.debug("{} unregistered", eventHandler.getEventHandlerName());
-            return true;
-        } else {
-            BattleRoyale.LOGGER.debug("{} already unregistered", eventHandler.getEventHandlerName());
-            return false;
-        }
+        return switch (eventType) {
+            case SERVER_TICK_EVENT -> NeoServerTickEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case CLIENT_TICK_EVENT -> NeoClientTickEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case LIVING_ATTACK_EVENT -> NeoLivingAttackEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case LIVING_HURT_EVENT -> NeoLivingHurtEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case LIVING_DAMAGE_EVENT -> NeoLivingDamageEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case LIVING_DEATH_EVENT -> NeoLivingDeathEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case PLAYER_LOGGED_IN_EVENT -> NeoPlayerLoggedInEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case PLAYER_LOGGED_OUT_EVENT -> NeoPlayerLoggedOutEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case RENDER_LEVEL_STAGE_EVENT -> NeoRenderLevelStageEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case RENDER_TRANSLUCENT_EVENT -> NeoRenderTranslucentEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case RENDER_GUI_EVENT -> NeoRenderGuiEventManager.unregister(eventHandler, priority, receiveCanceled);
+            default -> {
+                BattleRoyale.LOGGER.warn("Attempted to unregister handler for unassigned EventType: {}. Registration aborted.", eventType);
+                yield false;
+            }
+        };
     }
 }
