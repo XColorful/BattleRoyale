@@ -1,12 +1,11 @@
-package xiao.battleroyale.compat.neoforge.client.event;
+package xiao.battleroyale.compat.neoforge.event;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
-import xiao.battleroyale.api.client.event.IRenderLevelStageEvent;
-import xiao.battleroyale.api.client.event.RenderLevelStage;
-import xiao.battleroyale.compat.neoforge.event.NeoEvent;
+import xiao.battleroyale.api.event.IRenderLevelStageEvent;
+import xiao.battleroyale.api.event.RenderLevelStage;
 
 public class NeoRenderLevelStageEvent extends NeoEvent implements IRenderLevelStageEvent {
 
