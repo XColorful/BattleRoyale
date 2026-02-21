@@ -42,7 +42,7 @@ public class JMShapeDrawer {
             float rotateDegree = (float) zoneData.rotateDegree; // 正角度为顺时针旋转区域
             double y = zoneData.center.y + zoneData.dimension.y;
 
-            IClientZoneRenderer zoneRenderer = BattleRoyale.getClientLevelRenderer().getClientZoneRenderer();
+            IClientZoneRenderer zoneRenderer = BattleRoyale.getClientRenderer().getClientZoneRenderer();
             switch (zoneData.shapeType) {
                 // 2D shape
                 case CIRCLE ->

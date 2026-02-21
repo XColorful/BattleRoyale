@@ -1,6 +1,8 @@
 package xiao.battleroyale.api.client.render.gui;
 
-public interface IClientTeamInfoRenderer extends IClientGuiRender {
+import xiao.battleroyale.api.client.render.IClientSubRenderer;
+
+public interface IClientTeamInfoRenderer extends IClientGuiRender, IClientSubRenderer {
 
     void setDisplayTeam(boolean shouldDisplay);
 

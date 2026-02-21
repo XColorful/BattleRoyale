@@ -34,7 +34,6 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
     protected BRGameProcessManager() {}
 
     public static void init(McSide mcSide) {
-        ;
     }
 
     public static final int winnerMessageDelay = 1; // 延迟1tick发送消息，在当前tick的DeathEvent之后
