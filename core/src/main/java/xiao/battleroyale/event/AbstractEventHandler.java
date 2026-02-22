@@ -98,7 +98,9 @@ public class AbstractEventHandler {
             for (int i = 0; i < EventHandlerContainer.PRIORITY_ORDER.length; i++) {
                 // 普通事件
                 ArraySet<ICustomEventHandler> regularHandlers = container.eventHandlers.getHandlersInOrder()[i];
-                for (ICustomEventHandler handler : regularHandlers) {
+                int regSize = regularHandlers.size();
+                for (int j = 0; j < regSize; j++) {
+                    ICustomEventHandler handler = regularHandlers.get(j);
                     if (customEvent.isCanceled()) { // 不接收取消的handler无法恢复isCanceled
                         break;
                     }
@@ -106,8 +108,9 @@ public class AbstractEventHandler {
                 }
                 // Stats事件 (接收取消)
                 ArraySet<ICustomEventHandler> statsHandlers = container.statsEventHandlers.getHandlersInOrder()[i];
-                for (ICustomEventHandler handler : statsHandlers) {
-                    handler.handleEvent(customEventType, customEvent);
+                int statsSize = statsHandlers.size();
+                for (int j = 0; j < statsSize; j++) {
+                    statsHandlers.get(j).handleEvent(customEventType, customEvent);
                 }
             }
         } finally {
@@ -135,7 +138,7 @@ public class AbstractEventHandler {
 
     protected static class EventHandlerContainer {
 
-        private static final EventPriority[] PRIORITY_ORDER = EventPriority.values();
+        protected static final EventPriority[] PRIORITY_ORDER = EventPriority.values();
 
         @SuppressWarnings("unchecked")
         private final ArraySet<ICustomEventHandler>[] handlers = new ArraySet[PRIORITY_ORDER.length];
