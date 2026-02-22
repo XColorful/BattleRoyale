@@ -13,7 +13,7 @@ import xiao.battleroyale.compat.forge.event.ForgeRenderGuiEvent;
 public class RenderGuiEventManager {
 
     public static boolean register(IEventHandler eventHandler, EventPriority priority, boolean receiveCanceled) {
-        return getProxy(priority).addEventHander(eventHandler, receiveCanceled);
+        return getProxy(priority).addEventHandler(eventHandler, receiveCanceled);
     }
 
     public static boolean unregister(IEventHandler eventHandler, EventPriority priority, boolean receiveCanceled) {
