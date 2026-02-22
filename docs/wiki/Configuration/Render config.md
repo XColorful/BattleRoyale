@@ -30,9 +30,17 @@
 ### 方块渲染配置
 
 - itemRenderDistance：物资刷新方块渲染物品的最大距离
-- renderItemBlockIfEmpty：当物资刷新方块为空时是否渲染方块本身
-- entityRenderDistance：实体刷新方块最大渲染距离
 > 计算距离时取玩家脚下位置，而不是摄像机位置
+- renderItemBlockIfEmpty：当物资刷新方块为空时是否渲染方块本身
+- itemRenderScale：物品渲染比例，影响后续配置等比缩放
+- itemRenderHeight：物品渲染高度，0 则贴地
+- doItemBobbing：物品是否上下浮动
+- doItemSpinning：物品是否旋转
+- itemBobPhase：物品上下浮动相位差，0 则共振
+- itemBobSpeed：物品上下浮动速度
+- itemBobHeight：物品往上浮动范围
+- itemSpinSpeed：物品旋转速度，单位为度
+- entityRenderDistance：实体刷新方块最大渲染距离
 - enableFrustumCulling：对物资刷新方块渲染启用视锥体剔除
 - enableOcclusionCulling：对物资刷新方块渲染启用遮挡剔除（射线检测）
 - occlusionCheckInterval：物资刷新方块渲染遮挡剔除频率，单位毫秒
@@ -40,6 +48,14 @@
 "block": {
 	"itemRenderDistance": 16.0,
 	"renderItemBlockIfEmpty": true,
+	"itemRenderScale": 1.0,
+	"itemRenderHeight": 0.0,
+	"doItemBobbing": true,
+	"doItemSpinning": true,
+	"itemBobPhase": 0.5,
+	"itemBobSpeed": 0.1,
+	"itemBobHeight": 0.2,
+	"itemSpinSpeed": 2.864789,
 	"entityRenderDistance": 16.0,
 	"enableFrustumCulling": true,
 	"enableOcclusionCulling": true,
@@ -139,9 +155,17 @@
 ### Block render config
 
 - itemRenderDistance: The furthest distance at which items within loot block are rendered
-- renderItemBlockIfEmpty: Whether to render loot block itself if it's empty
-- entityRenderDistance: Maximum render distance of entity spawner block
 > When calculating distance, take the player's foot position instead of the camera position
+- renderItemBlockIfEmpty: Whether to render loot block itself if it's empty
+- itemRenderScale: Scaling factor for item rendering, affecting subsequent proportional scaling
+- itemRenderHeight: Vertical offset for item rendering; set to 0 to align with the ground
+- doItemBobbing: Whether items should bob up and down
+- doItemSpinning: Whether items should rotate
+- itemBobPhase: Phase difference for item bobbing; 0 results in synchronized resonance
+- itemBobSpeed: Speed of the item bobbing animation
+- itemBobHeight: Vertical range of the item bobbing movement
+- itemSpinSpeed: Speed of item rotation in degrees
+- entityRenderDistance: Maximum render distance of entity spawner block
 - enableFrustumCulling: Enable view frustum culling for loot block rendering
 - enableOcclusionCulling: Enable occlusion culling (ray-tracing check) for loot block rendering
 - occlusionCheckInterval: The frequency of occlusion checks for loot blocks, in milliseconds
@@ -149,6 +173,14 @@
 "block": {
 	"itemRenderDistance": 16.0,
 	"renderItemBlockIfEmpty": true,
+	"itemRenderScale": 1.0,
+	"itemRenderHeight": 0.0,
+	"doItemBobbing": true,
+	"doItemSpinning": true,
+	"itemBobPhase": 0.5,
+	"itemBobSpeed": 0.1,
+	"itemBobHeight": 0.2,
+	"itemSpinSpeed": 2.864789,
 	"entityRenderDistance": 16.0,
 	"enableFrustumCulling": true,
 	"enableOcclusionCulling": true,
