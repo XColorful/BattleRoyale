@@ -24,7 +24,7 @@ public abstract class AbstractEventCommon {
         this.eventType = eventType;
     }
 
-    protected final boolean addEventHander(IEventHandler eventHandler, boolean receivedCanceled) {
+    protected final boolean addEventHandler(IEventHandler eventHandler, boolean receivedCanceled) {
         synchronized (lock) {
             if (isDispatching) {
                 pendingOperations.add(new PendingOperation(eventHandler, receivedCanceled, true));
@@ -88,15 +88,17 @@ public abstract class AbstractEventCommon {
         }
 
         try {
-            for (IEventHandler handler : eventHandlers) {
+            int handlerSize = eventHandlers.size();
+            for (int i = 0; i < handlerSize; i++) {
                 if (forgeEvent.isCanceled()) {
                     break;
                 }
-                handler.handleEvent(this.eventType, forgeEvent);
+                eventHandlers.get(i).handleEvent(this.eventType, forgeEvent);
             }
 
-            for (IEventHandler handler : statsEventHandlers) {
-                handler.handleEvent(this.eventType, forgeEvent);
+            int statsSize = statsEventHandlers.size();
+            for (int i = 0; i < statsSize; i++) {
+                statsEventHandlers.get(i).handleEvent(this.eventType, forgeEvent);
             }
         } finally {
             if (!isNested) {
