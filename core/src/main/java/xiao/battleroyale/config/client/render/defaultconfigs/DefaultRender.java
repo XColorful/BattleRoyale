@@ -2,6 +2,7 @@ package xiao.battleroyale.config.client.render.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import xiao.battleroyale.api.config.client.render.RenderConfigTag;
 import xiao.battleroyale.config.client.render.RenderConfigManager.RenderConfig;
 import xiao.battleroyale.config.client.render.type.BlockEntry;
 import xiao.battleroyale.config.client.render.type.SpectateEntry;
@@ -26,7 +27,10 @@ public class DefaultRender {
     }
 
     private static JsonObject generateDefaultRenderConfig0() {
-        BlockEntry blockEntry = new BlockEntry(16, true, 16, true, true, 100);
+        BlockEntry blockEntry = new BlockEntry(16, true,
+                RenderConfigTag.VANILLA_ITEM_RENDER_SCALE, RenderConfigTag.VANILLA_ITEM_RENDER_HEIGHT,true, true,
+                RenderConfigTag.VANILLA_BOB_PHASE, RenderConfigTag.VANILLA_BOB_SPEED, RenderConfigTag.VANILLA_BOB_HEIGHT, RenderConfigTag.VANILLA_SPIN_SPEED,
+                16, true, true, 100);
         ZoneEntry zoneEntry = new ZoneEntry(false);
         TeamEntry teamEntry = new TeamEntry(true, false);
         SpectateEntry spectateEntry = new SpectateEntry(true, false);
@@ -38,7 +42,10 @@ public class DefaultRender {
     }
 
     private static JsonObject generateDefaultRenderConfig1() {
-        BlockEntry blockEntry = new BlockEntry(0, false, 0, true, true, 100);
+        BlockEntry blockEntry = new BlockEntry(8, false,
+                RenderConfigTag.VANILLA_ITEM_RENDER_SCALE, RenderConfigTag.VANILLA_ITEM_RENDER_HEIGHT, true, true,
+                RenderConfigTag.VANILLA_BOB_PHASE, RenderConfigTag.VANILLA_BOB_SPEED, RenderConfigTag.VANILLA_BOB_HEIGHT, RenderConfigTag.VANILLA_SPIN_SPEED,
+                0, true, true, 100);
         ZoneEntry zoneEntry = new ZoneEntry(true, "#0000FF", 64, 64, 64, 64);
         TeamEntry teamEntry = new TeamEntry(true, true);
         SpectateEntry spectateEntry = new SpectateEntry(true, true);
@@ -50,7 +57,10 @@ public class DefaultRender {
     }
 
     private static JsonObject generateDefaultRenderConfig2() {
-        BlockEntry blockEntry = new BlockEntry(8000, true, 8000, true, true, 50);
+        BlockEntry blockEntry = new BlockEntry(8000, true,
+                RenderConfigTag.VANILLA_ITEM_RENDER_SCALE, RenderConfigTag.VANILLA_ITEM_RENDER_HEIGHT, true, true,
+                RenderConfigTag.VANILLA_BOB_PHASE, RenderConfigTag.VANILLA_BOB_SPEED, RenderConfigTag.VANILLA_BOB_HEIGHT, RenderConfigTag.VANILLA_SPIN_SPEED,
+                8000, true, true, 50);
         ZoneEntry zoneEntry = new ZoneEntry(false, "", 1024, 1024, 1024, 1024);
         TeamEntry teamEntry = new TeamEntry(true, false);
         SpectateEntry spectateEntry = new SpectateEntry(true, false);
@@ -62,7 +72,10 @@ public class DefaultRender {
     }
 
     private static JsonObject generateDefaultRenderConfig3() {
-        BlockEntry blockEntry = new BlockEntry(4, false, 4, true, true, 500);
+        BlockEntry blockEntry = new BlockEntry(4, false,
+                0.5F, 0, false, false,
+                RenderConfigTag.VANILLA_BOB_PHASE, RenderConfigTag.VANILLA_BOB_SPEED, RenderConfigTag.VANILLA_BOB_HEIGHT, RenderConfigTag.VANILLA_SPIN_SPEED,
+                4, true, true, 500);
         ZoneEntry zoneEntry = new ZoneEntry(false, "", 32, 32, 32, 32);
         TeamEntry teamEntry = new TeamEntry(true, false, "",
                 false, true, 0.5F);
