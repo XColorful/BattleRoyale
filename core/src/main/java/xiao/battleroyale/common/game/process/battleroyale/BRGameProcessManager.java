@@ -144,17 +144,17 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
      * 调用此方法将检查是否有胜利队伍
      * 如果符合条件则直接结束游戏
      */
-    public void checkIfGameShouldEnd() {
+    public void checkIfGameShouldEndAndFinish() {
         IGameManager gameManager = BattleRoyale.getGameManager();
         if (!gameManager.isInGame()) {
             return;
         }
 
         checkAndUpdateInvalidGamePlayer(gameManager.getServerLevel());
-        finishGameIfShouldEnd(gameManager); // 外部调用的检查
+        finishGameIfShouldEnd(gameManager); // 外部调用的检查 (checkIfGameShouldEndAndFinish)
     }
 
-    protected void finishGameIfShouldEnd(IGameManager gameManager) {
+    public void finishGameIfShouldEnd(IGameManager gameManager) {
         if (!gameManager.isInGame()) {
             return;
         }

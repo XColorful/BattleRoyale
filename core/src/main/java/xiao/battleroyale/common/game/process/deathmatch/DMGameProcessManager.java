@@ -177,7 +177,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     /**
      * 死斗模式判定: 按时间或淘汰数
      */
-    protected void finishGameIfShouldEnd(IGameManager gameManager) {
+    public void finishGameIfShouldEnd(IGameManager gameManager) {
         if (!gameManager.isInGame()) {
             return;
         }

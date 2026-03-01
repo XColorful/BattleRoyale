@@ -187,7 +187,7 @@ public class BRGameEventHandler {
             GameMessageManager.notifyAliveChange();
         }
 
-        brGameProcessManager.finishGameIfShouldEnd(gameManager);
+        gameManager.addFinishCheckAfterDeathEvent();
         return true;
     }
 

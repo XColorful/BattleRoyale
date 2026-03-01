@@ -6,6 +6,9 @@ public interface IGameStatusSetter {
 	boolean setGlobalCenterOffset(Vec3 offset);
 	void setDefaultLevel(String defaultLevelKey);
 	
+	@ApiStatus.Internal
+	void addFinishCheckAfterDeathEvent();
+	
 	boolean setHasWinner(boolean hasWinner);
 	boolean setRemainRestartTime(int remainRestartTime);
 }

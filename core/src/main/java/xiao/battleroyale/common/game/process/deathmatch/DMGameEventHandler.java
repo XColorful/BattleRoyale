@@ -149,9 +149,9 @@ public class DMGameEventHandler {
         }
 
         if (isDeathByAttacker) { // 对淘汰数有贡献
-            dmGameProcessManager.finishGameIfShouldEnd(gameManager);
+            gameManager.addFinishCheckAfterDeathEvent();
         } else {
-            BattleRoyale.LOGGER.debug("onPlayerDeath (GamePlayer {}) not detected attacker GamePlayer, skipped finishGameIfShouldEnd", gamePlayer.getNameWithId());
+            BattleRoyale.LOGGER.debug("onPlayerDeath (GamePlayer {}) not detected attacker GamePlayer, skipped addFinishCheckAfterDeathEvent", gamePlayer.getNameWithId());
         }
         return true; // 触发 Finish 事件 (记录 Stats)，但不参与死斗模式胜利判定
     }

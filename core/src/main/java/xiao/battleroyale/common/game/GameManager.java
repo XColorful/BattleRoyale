@@ -223,6 +223,14 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     private int gameStep = 1;
     private @NotNull UUID gameId;
     private boolean inGame = false;
+    private int pendingFinishCheck = 0;
+    private int getPendingFinishCheckTotal() {
+        return this.pendingFinishCheck;
+    }
+    private void clearPendingFinishCheck() {
+        this.pendingFinishCheck = 0;
+    }
+    private boolean isInsidePlayerDeath = false;
     private String gameLevelKeyString = "";
     private @Nullable ResourceKey<Level> gameLevelKey;
     private @Nullable ServerLevel serverLevel;
@@ -311,6 +319,10 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         this.gameId = gameId;
         BattleRoyale.LOGGER.info("GameManager gameId set to {}", gameId);
         TempDataManager.get().writeString(GAME_MANAGER, LAST_GAME_ID, this.gameId.toString());
+    }
+    @Override public boolean addFinishCheckAfterDeathEvent() {
+        if (isInsidePlayerDeath) this.pendingFinishCheck++;
+        return isInsidePlayerDeath;
     }
     @Override public boolean setHasWinner(boolean hasWinner) {
         this.hasWinner = hasWinner;
@@ -465,6 +477,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         UUID preGameId = getGameId();
         UUID newGameId = generateGameId();
         setGameId(newGameId);
+        this.isInsidePlayerDeath = false;
+        clearPendingFinishCheck();
         GameStarter.initGameSetup(this);
         GameStarter.initGameSubManager(this, serverLevel);
         if (!isReady()) {
@@ -548,8 +562,10 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
                 return;
             }
 
+            // 允许正常结束游戏或崩溃 (捕获异常并强制终止游戏)
             this.gameProcessManager.onGameTick(gameTime);
 
+            // 不保证执行时本局游戏尚未结束
             EventPoster.postEvent(new GameTickFinishEvent(this, gameTime));
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("An unexpected exception occurred during game tick at time {}: {}", gameTime, e);
@@ -806,10 +822,27 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             BattleRoyale.LOGGER.debug("GamePlayerDeathEvent canceled, skipped onPlayerDeath (GamePlayer{})", gamePlayer.getNameWithId());
             return;
         }
-        if (gameProcessManager.onPlayerDeath(event, this.serverLevel, gamePlayer)) {
-            EventPoster.postEvent(new GamePlayerDeathFinishEvent(this, gamePlayer, event));
-        } else {
-            BattleRoyale.LOGGER.debug("{} canceled onPlayerDeath", gameProcessManager.getManagerName());
+
+        int previousPendingFinishCheck = getPendingFinishCheckTotal(); // 如果为 0 则为最外层 onPlayerDeath 嵌套
+        isInsidePlayerDeath = true;
+        try {
+            if (gameProcessManager.onPlayerDeath(event, this.serverLevel, gamePlayer)) {
+                EventPoster.postEvent(new GamePlayerDeathFinishEvent(this, gamePlayer, event));
+            } else {
+                BattleRoyale.LOGGER.debug("{} canceled onPlayerDeath", gameProcessManager.getManagerName());
+            }
+        } finally { // 如果有异常仍然继续传递到 onGameTick 里通知
+            isInsidePlayerDeath = false;
+            int currentPendingFinishCheck = getPendingFinishCheckTotal();
+            if (currentPendingFinishCheck > 0) {
+                if (previousPendingFinishCheck == 0) { // 当前为最外层嵌套
+                    clearPendingFinishCheck();
+                    gameProcessManager.finishGameIfShouldEnd(this);
+                } else if (previousPendingFinishCheck != currentPendingFinishCheck) {
+                    this.pendingFinishCheck = previousPendingFinishCheck;
+                    BattleRoyale.LOGGER.debug("GameManager: reset pendingFinishCheck (from current {} to previous {})", currentPendingFinishCheck, previousPendingFinishCheck);
+                }
+            }
         }
     }
 }
