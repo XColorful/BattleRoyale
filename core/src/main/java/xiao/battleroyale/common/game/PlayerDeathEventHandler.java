@@ -67,7 +67,7 @@ public class PlayerDeathEventHandler implements IEventHandler {
 
         if (event.isCanceled()) { // 被PlayerRevive取消
             BattleRoyale.LOGGER.debug("Detected a canceled LivingDeathEvent in game");
-            gameManager.onPlayerDown(event, gamePlayer); // GameManager内部负责检查是图腾还是倒地
+            gameManager.onPlayerDown(event, gamePlayer); // GameManager 只提供事件是否取消，下放 PlayerRevive 倒地机制判定及处理
         } else { // 死亡
             gameManager.onPlayerDeath(event, gamePlayer);
         }

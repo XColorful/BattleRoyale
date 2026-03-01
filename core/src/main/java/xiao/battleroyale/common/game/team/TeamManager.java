@@ -173,6 +173,12 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
+        // 如果在 onPlayerDeath 里被 IGameProcessManager 嵌套触发 (已延迟) 则不提前让 GameManager 进行结束检查
+        // 避免直接干预 GameProcess
+        if (gameManager.addFinishCheckAfterDeathEvent()) {
+            return;
+        }
+        // 相当于 IGameProcessManager 的延申
         gameManager.checkIfGameShouldEnd();
     }
 
