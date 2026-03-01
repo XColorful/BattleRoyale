@@ -185,7 +185,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     /**
      * 死斗模式判定: 按时间或淘汰数
      */
-    protected void finishGameIfShouldEnd(IGameManager gameManager) {
+    public void finishGameIfShouldEnd(IGameManager gameManager) {
         if (!gameManager.isInGame()) {
             return;
         }
@@ -352,12 +352,12 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
     // --------IGameEventHandler--------
 
-    @Override public void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, boolean removeInvalidTeam) {
-        DMGameEventHandler.onPlayerDown(this, event, gamePlayer, removeInvalidTeam);
+    @Override public boolean onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, boolean removeInvalidTeam) {
+        return DMGameEventHandler.onPlayerDown(this, event, gamePlayer, removeInvalidTeam);
     }
 
-    @Override public void onPlayerDeath(@Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
-        DMGameEventHandler.onPlayerDeath(this, event, serverLevel, gamePlayer);
+    @Override public boolean onPlayerDeath(@Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
+        return DMGameEventHandler.onPlayerDeath(this, event, serverLevel, gamePlayer);
     }
 
     // --------IDeathMatchInfoGetter--------
