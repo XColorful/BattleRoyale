@@ -18,6 +18,12 @@ public interface IGameStatusSetter {
     @ApiStatus.Internal
     void setGameId(UUID gameId);
 
+    /**
+     * @return 当前是否正在 {@link IGameEventReceiver#onPlayerDeath} (含嵌套)
+     */
+    @ApiStatus.Internal
+    boolean addFinishCheckAfterDeathEvent();
+
     boolean setHasWinner(boolean hasWinner);
     boolean clearWinnerGamePlayers();
     boolean clearWinnerGameTeams();
