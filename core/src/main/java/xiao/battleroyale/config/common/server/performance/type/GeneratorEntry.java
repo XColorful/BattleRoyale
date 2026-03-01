@@ -130,7 +130,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         jsonObject.addProperty(GeneratorEntryTag.LOOT_ANY_BLOCK_ENTITY, lootAnyBlockEntity);
         jsonObject.addProperty(GeneratorEntryTag.LOOT_VANILLA_CHEST, lootVanillaChest);
         jsonObject.addProperty(GeneratorEntryTag.REMOVE_LOOT_TABLE, removeLootTable);
-        jsonObject.addProperty(GeneratorEntryTag.CLEAN_CACHED_CHUNK, clearPreviousContent);
+        jsonObject.addProperty(GeneratorEntryTag.CLEAR_PREVIOUS_CONTENT, clearPreviousContent);
         jsonObject.addProperty(GeneratorEntryTag.REMOVE_INNOCENT_ENTITY, removeInnocentEntity);
         jsonObject.add(GeneratorEntryTag.VANILLA_WHITE_LIST, JsonUtils.writeStringListToJson(whiteListRegex));
         jsonObject.add(GeneratorEntryTag.VANILLA_BLACK_LIST, JsonUtils.writeStringListToJson(blackListRegex));

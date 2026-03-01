@@ -2,7 +2,7 @@
 
 ## 游戏进程管理器
 
-- checkIfGameShouldEnd：完整检查游戏状态，如符合条件则直接调用`游戏管理器`游戏主管理器功能结束游戏并进行胜利结算
+- checkIfGameShouldEndAndFinish：完整检查游戏状态，如符合条件则直接调用`游戏管理器`游戏主管理器功能结束游戏并进行胜利结算
 
 [![IGameProcessManager](/docs/api/game/process/IGameProcessManager.md)](/docs/api/game/process/IGameProcessManager.md)
 
@@ -47,7 +47,7 @@
 
 ## Game Process Manager
 
-- checkIfGameShouldEnd: Performs a complete check of the game status; if conditions are met, it directly calls the `Game Manager`'s main functions to end the game and proceed with victory settlement.
+- checkIfGameShouldEndAndFinish: Performs a complete check of the game status; if conditions are met, it directly calls the `Game Manager`'s main functions to end the game and proceed with victory settlement.
 
 [![IGameProcessManager](/docs/api/game/process/IGameProcessManager.md)](/docs/api/game/process/IGameProcessManager.md)
 
