@@ -67,8 +67,8 @@
 ### 游戏事件处理
 
 将游戏事件委派给`游戏进程管理器`处理，更改部分规则即可转化为其他游戏类型
-> 该接口已经由模组事件处理器调用，游戏管理器应只在`游戏进程管理器`接管前后发送相应事件
-> 更改事件处理应通过替换`游戏进程管理器`实现
+> - 该接口已经由模组事件处理器调用，游戏管理器应只在`游戏进程管理器`接管前后发送相应事件
+> - 更改事件处理应通过替换`游戏进程管理器`实现
 
 [![IGameEventReceiver](/docs/api/game/IGameEventReceiver.md)](/docs/api/game/IGameEventReceiver.md)
 
@@ -143,7 +143,7 @@ After manually setting the config ID, `initGameConfig` must be called again to r
 ### Game Event Handling
 
 Game events are delegated to the `Game Process Manager` for handling; changing some rules can transform the game into a different game type.
-> This interface is already called by the mod's event handler. The Game Manager should only send corresponding events before and after the Game Process Manager takes over.
-> Changing event handling should be achieved by replacing the implementation of the Game Process Manager.
+> - This interface is already called by the mod's event handler. The Game Manager should only send corresponding events before and after the Game Process Manager takes over.
+> - Changing event handling should be achieved by replacing the implementation of the Game Process Manager.
 
 [![IGameEventReceiver](/docs/api/game/IGameEventReceiver.md)](/docs/api/game/IGameEventReceiver.md)
