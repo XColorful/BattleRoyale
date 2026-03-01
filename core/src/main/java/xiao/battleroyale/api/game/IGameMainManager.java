@@ -38,7 +38,12 @@ public interface IGameMainManager extends IGameSubManager, IGameFunc, IGameInfoG
     default boolean spectateGame(ServerPlayer player) {
         return getGameProcessManager().spectateGame(player);
     }
+
+    /**
+     * 调用前考虑是否可能在 {@link xiao.battleroyale.api.event.CustomEventType#GAME_PLAYER_DEATH_FINISH_EVENT} 中执行
+     * 如果可能，先尝试 {@link IGameStatusSetter#addFinishCheckAfterDeathEvent()} 代替执行
+     */
     default void checkIfGameShouldEnd() {
-        getGameProcessManager().checkIfGameShouldEnd();
+        getGameProcessManager().checkIfGameShouldEndAndFinish();
     }
 }
