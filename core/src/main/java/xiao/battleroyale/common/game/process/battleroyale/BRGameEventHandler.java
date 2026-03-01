@@ -72,7 +72,8 @@ public class BRGameEventHandler {
      * (对于大逃杀) 这里实际上什么也不需要做
      * 命中伤害显示等也是 StatsManager 的事情
      */
-    protected static void onPlayerDamage(BRGameProcessManager brGameProcessManager, ILivingDamageEvent event, @NotNull GamePlayer gamePlayer) {
+    protected static boolean onPlayerDamage(BRGameProcessManager brGameProcessManager, ILivingDamageEvent event, @NotNull GamePlayer gamePlayer) {
+        return true;
     }
 
     /**
@@ -80,7 +81,7 @@ public class BRGameEventHandler {
      * 没有队友时不允许倒地直接让PlayerRevive击杀掉
      * PlayerRevive只允许玩家倒地，因此人机玩家无法倒地
      */
-    protected static void onPlayerDown(BRGameProcessManager brGameProcessManager, ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, boolean removeInvalidTeam) {
+    protected static boolean onPlayerDown(BRGameProcessManager brGameProcessManager, ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, boolean removeInvalidTeam) {
         IGameManager gameManager = BattleRoyale.getGameManager();
 
         // 不允许倒地的情况：队友没有Alive的
@@ -101,7 +102,7 @@ public class BRGameEventHandler {
         if (!hasAliveMember) {
             BattleRoyale.LOGGER.debug("GamePlayer {} is down and has no alive member, switch to onPlayerDeath", gamePlayer.getPlayerName());
             gameManager.onPlayerDeath(event, gamePlayer); // onPlayerDeath 里会在本次 onPlayerDownFinish 前设置好 eliminated
-            return;
+            return false;
         }
 
         LivingEntity player = event.getEntity();
@@ -112,26 +113,27 @@ public class BRGameEventHandler {
             gamePlayer.setAlive(false);
             playerRevive.addBleedingPlayer(player);
             brGameProcessManager.sendDownMessage(gameManager.getServerLevel(), gamePlayer);
-            return;
+            return true;
         }
 
         if (!gamePlayer.isAlive()) { // 倒地，但是不为存活状态
             BattleRoyale.LOGGER.debug("GamePlayer {} is down but not alive, switch to onPlayerDeath", gamePlayer.getPlayerName());
             gameManager.onPlayerDeath(event, gamePlayer);
-            return;
+            return false;
         }
 
         // 没检测到 PlayerRevive 就认为是其他手段自救
         gamePlayer.setAlive(true); // 其实应该不需要设置
         BattleRoyale.LOGGER.debug("Not detected GamePlayer {} PlayerRevive, may be revived by any method", gamePlayer.getNameWithId());
+        return true;
     }
 
-    protected static void onPlayerDeath(BRGameProcessManager brGameProcessManager, @Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
+    protected static boolean onPlayerDeath(BRGameProcessManager brGameProcessManager, @Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
         boolean teamEliminatedBefore = gamePlayer.getTeam().isTeamEliminated();
         boolean playerEliminatedBefore = gamePlayer.isEliminated();
         if (teamEliminatedBefore && playerEliminatedBefore) {
             BattleRoyale.LOGGER.debug("GamePlayer {} and GameTeam {} already eliminated, skipped onPlayerDeath", gamePlayer.getPlayerName(), gamePlayer.getTeam().getGameTeamId());
-            return;
+            return false;
         }
 
         IGameManager gameManager = BattleRoyale.getGameManager();
@@ -186,15 +188,17 @@ public class BRGameEventHandler {
         }
 
         brGameProcessManager.finishGameIfShouldEnd(gameManager);
+        return true;
     }
 
-    protected static void onPlayerRevived(BRGameProcessManager brGameProcessManager, @NotNull GamePlayer gamePlayer) {
+    protected static boolean onPlayerRevived(BRGameProcessManager brGameProcessManager, @NotNull GamePlayer gamePlayer) {
         if (!GameTeamManager.hasStandingGamePlayer(gamePlayer.getPlayerUUID()) || gamePlayer.isEliminated()) { // 该GamePlayer已经不是未被淘汰玩家
             BattleRoyale.LOGGER.debug("GamePlayer {} is not a standing game player, skipped revive", gamePlayer.getPlayerName());
-            return;
+            return false;
         }
         gamePlayer.setAlive(true);
         brGameProcessManager.sendReviveMessage(BattleRoyale.getGameManager().getServerLevel(), gamePlayer);
         BattleRoyale.LOGGER.info("GamePlayer {} has revived, singleId:{}", gamePlayer.getPlayerName(), gamePlayer.getGameSingleId());
+        return true;
     }
 }

@@ -24,7 +24,7 @@ public class DMGameEventHandler {
     /**
      * 由 BRGameProcessManager 衍生而来 {@link xiao.battleroyale.common.game.process.battleroyale.BRGameProcessManager#onPlayerDown}
      */
-    protected static void onPlayerDown(DMGameProcessManager dmGameProcessManager, ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, boolean removeInvalidTeam) {
+    protected static boolean onPlayerDown(DMGameProcessManager dmGameProcessManager, ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, boolean removeInvalidTeam) {
         IGameManager gameManager = BattleRoyale.getGameManager();
 
         // 不允许倒地的情况：队友没有Alive的
@@ -45,7 +45,7 @@ public class DMGameEventHandler {
         if (!hasAliveMember) {
             BattleRoyale.LOGGER.debug("GamePlayer {} is down and has no alive member, switch to onPlayerDeath", gamePlayer.getPlayerName());
             gameManager.onPlayerDeath(event, gamePlayer);
-            return;
+            return false;
         }
 
         LivingEntity player = event.getEntity();
@@ -56,18 +56,19 @@ public class DMGameEventHandler {
             gamePlayer.setAlive(false);
             playerRevive.addBleedingPlayer(player);
             dmGameProcessManager.sendDownMessage(gameManager.getServerLevel(), gamePlayer);
-            return;
+            return true;
         }
 
         if (!gamePlayer.isAlive()) { // 倒地，但是不为存活状态
             BattleRoyale.LOGGER.debug("GamePlayer {} is down but not alive, switch to onPlayerDeath", gamePlayer.getPlayerName());
             gameManager.onPlayerDeath(event, gamePlayer);
-            return;
+            return false;
         }
 
         // 没检测到 PlayerRevive 就认为是其他手段自救
         gamePlayer.setAlive(true); // 其实应该不需要设置
         BattleRoyale.LOGGER.debug("Not detected GamePlayer {} PlayerRevive, may be revived by any method", gamePlayer.getNameWithId());
+        return true;
     }
 
     /**
@@ -76,7 +77,7 @@ public class DMGameEventHandler {
      * 统计数据在 IStatsManager 监听 onGamePlayerDeath 记录 {@link xiao.battleroyale.common.game.stats.StatsManager#onRecordPlayerDeath}
      * IGameProcessManager 执行后紧接着就是 GamePlayerDeathFinishEvent {@link xiao.battleroyale.common.game.GameManager#onPlayerDeath}
      */
-    protected static void onPlayerDeath(DMGameProcessManager dmGameProcessManager, @Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
+    protected static boolean onPlayerDeath(DMGameProcessManager dmGameProcessManager, @Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
         boolean isDeathByAttacker = false;
 
         // --------正常 onPlayerDeath 逻辑 --------
@@ -86,7 +87,7 @@ public class DMGameEventHandler {
         boolean playerEliminatedBefore = gamePlayer.isEliminated();
         if (teamEliminatedBefore && playerEliminatedBefore) {
             BattleRoyale.LOGGER.debug("GamePlayer {} and GameTeam {} already eliminated, skipped onPlayerDeath", gamePlayer.getPlayerName(), gamePlayer.getTeam().getGameTeamId());
-            return;
+            return false;
         }
 
         IGameManager gameManager = BattleRoyale.getGameManager();
@@ -103,7 +104,7 @@ public class DMGameEventHandler {
             // gameManager.getTeamManager().forceEliminatePlayerSilence(gamePlayer); // 不需要 TeamManager 级别的本局内永久 eliminate
             // dmGameProcessManager.sendEliminateMessage(serverLevel, gamePlayer); // 不需要通知 eliminate，有效的 eliminate 已提前发消息
 
-            // 最后再 kill，此时再触发 onPlayerDeath 已提前被 eliminated 拦截
+            // 最后再 kill，此时再触发 onPlayerDeath 不会被 TeamManager 级别 eliminated 拦截
             @Nullable LivingEntity player = serverLevel != null ? GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID()) : null;
             if (player != null && playerRevive.isBleeding(player)) {
                 BattleRoyale.LOGGER.debug("Detected GamePlayer {} PlayerRevive.isBleeding, force kill", gamePlayer.getPlayerName());
@@ -152,6 +153,7 @@ public class DMGameEventHandler {
         } else {
             BattleRoyale.LOGGER.debug("onPlayerDeath (GamePlayer {}) not detected attacker GamePlayer, skipped finishGameIfShouldEnd", gamePlayer.getNameWithId());
         }
+        return true; // 触发 Finish 事件 (记录 Stats)，但不参与死斗模式胜利判定
     }
 
     private static boolean contributeDeathMatchKill(DMGameProcessManager dmGameProcessManager, IGameManager gameManager, @Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {

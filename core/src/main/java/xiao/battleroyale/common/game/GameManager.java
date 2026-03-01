@@ -773,31 +773,43 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             BattleRoyale.LOGGER.debug("GamePlayerDamageEvent canceled, skipped onPlayerDamage (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
-        gameProcessManager.onPlayerDamage(event, gamePlayer);
-        EventPoster.postEvent(new GamePlayerDamageFinishEvent(this, gamePlayer, event));
+        if (gameProcessManager.onPlayerDamage(event, gamePlayer)) {
+            EventPoster.postEvent(new GamePlayerDamageFinishEvent(this, gamePlayer, event));
+        } else {
+            BattleRoyale.LOGGER.debug("{} canceled onPlayerDamage", gameProcessManager.getManagerName());
+        }
     }
     public void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer) {
         if (EventPoster.postEvent(new GamePlayerDownEvent(this, gamePlayer, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDownEvent canceled, skipped onPlayerDown (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
-        gameProcessManager.onPlayerDown(event, gamePlayer, getGameEntry().removeInvalidTeam);
-        EventPoster.postEvent(new GamePlayerDownFinishEvent(this, gamePlayer, event));
+        if (gameProcessManager.onPlayerDown(event, gamePlayer, getGameEntry().removeInvalidTeam)) {
+            EventPoster.postEvent(new GamePlayerDownFinishEvent(this, gamePlayer, event));
+        } else {
+            BattleRoyale.LOGGER.debug("{} canceled onPlayerDown", gameProcessManager.getManagerName());
+        }
     }
     public void onPlayerRevived(@NotNull GamePlayer gamePlayer) {
         if (EventPoster.postEvent(new GamePlayerReviveEvent(this, gamePlayer))) {
             BattleRoyale.LOGGER.debug("GamePlayerReviveEvent canceled, skipped onPlayerRevive (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
-        gameProcessManager.onPlayerRevived(gamePlayer);
-        EventPoster.postEvent(new GamePlayerReviveFinishEvent(this, gamePlayer));
+        if (gameProcessManager.onPlayerRevived(gamePlayer)) {
+            EventPoster.postEvent(new GamePlayerReviveFinishEvent(this, gamePlayer));
+        } else {
+            BattleRoyale.LOGGER.debug("{} canceled onPlayerRevived", gameProcessManager.getManagerName());
+        }
     }
     public void onPlayerDeath(@Nullable ILivingDeathEvent event, @NotNull GamePlayer gamePlayer) {
         if (EventPoster.postEvent(new GamePlayerDeathEvent(this, gamePlayer, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDeathEvent canceled, skipped onPlayerDeath (GamePlayer{})", gamePlayer.getNameWithId());
             return;
         }
-        gameProcessManager.onPlayerDeath(event, this.serverLevel, gamePlayer);
-        EventPoster.postEvent(new GamePlayerDeathFinishEvent(this, gamePlayer, event));
+        if (gameProcessManager.onPlayerDeath(event, this.serverLevel, gamePlayer)) {
+            EventPoster.postEvent(new GamePlayerDeathFinishEvent(this, gamePlayer, event));
+        } else {
+            BattleRoyale.LOGGER.debug("{} canceled onPlayerDeath", gameProcessManager.getManagerName());
+        }
     }
 }

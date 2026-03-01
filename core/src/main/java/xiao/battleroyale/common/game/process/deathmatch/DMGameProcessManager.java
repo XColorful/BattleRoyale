@@ -344,12 +344,12 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
     // --------IGameEventHandler--------
 
-    @Override public void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, boolean removeInvalidTeam) {
-        DMGameEventHandler.onPlayerDown(this, event, gamePlayer, removeInvalidTeam);
+    @Override public boolean onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, boolean removeInvalidTeam) {
+        return DMGameEventHandler.onPlayerDown(this, event, gamePlayer, removeInvalidTeam);
     }
 
-    @Override public void onPlayerDeath(@Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
-        DMGameEventHandler.onPlayerDeath(this, event, serverLevel, gamePlayer);
+    @Override public boolean onPlayerDeath(@Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
+        return DMGameEventHandler.onPlayerDeath(this, event, serverLevel, gamePlayer);
     }
 
     // --------IDeathMatchInfoGetter--------
