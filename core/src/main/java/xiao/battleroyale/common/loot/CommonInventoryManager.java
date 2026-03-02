@@ -29,7 +29,7 @@ public class CommonInventoryManager implements ICommonInventoryManager {
         return CommonInventoryManagerHolder.INSTANCE;
     }
 
-    private CommonInventoryManager() {}
+    protected CommonInventoryManager() {}
 
     public static void init(McSide mcSide) {
     }
