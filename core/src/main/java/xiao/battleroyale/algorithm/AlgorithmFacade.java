@@ -11,7 +11,7 @@ public class AlgorithmFacade implements IAlgorithmApi {
     public static IAlgorithmApi get() {
         return INSTANCE;
     }
-    private AlgorithmFacade() {}
+    protected AlgorithmFacade() {}
 
     @Override
     public IRectangleGrid rectangleGrid() {
