@@ -38,7 +38,7 @@ public class EffectManager implements IEffectManager {
         return EffectManagerHolder.INSTANCE;
     }
 
-    private EffectManager() {}
+    protected EffectManager() {}
 
     public static void init(McSide mcSide) {
     }

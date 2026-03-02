@@ -20,6 +20,7 @@
 ### 客户端初始化
 > _./api/client/init_
 
+- IClientModEvent：客户端模组事件，让平台调用
 - [IClientSetup](/docs/api/client/init/IClientSetup.md)：客户端初始化
 	- 注册容器（方块实体`BlockEntity`）GUI
 - [IModEntityRender](/docs/api/client/init/IModEntityRender.md)：注册方块实体`BlockEntity`渲染
@@ -291,6 +292,7 @@
 ### Client Init
 > _./api/client/init_
 
+- IClientModEvent: Client mod event, called by platform
 - [IClientSetup](/docs/api/client/init/IClientSetup.md): Client initialization
 	- Register container (`BlockEntity`) GUI
 - [IModEntityRender](/docs/api/client/init/IModEntityRender.md): Register `BlockEntity` render

@@ -31,7 +31,7 @@ public class CommonLootManager implements ICommonLootManager {
         return CommonLootManagerHolder.INSTANCE;
     }
 
-    private CommonLootManager() {}
+    protected CommonLootManager() {}
 
     public static void init(McSide mcSide) {
     }

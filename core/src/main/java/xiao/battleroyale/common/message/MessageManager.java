@@ -14,8 +14,6 @@ import java.util.UUID;
 
 public class MessageManager {
 
-    private MessageManager() {}
-
     private static class MessageManagerHolder {
         private static final MessageManager INSTANCE = new MessageManager();
     }
@@ -23,6 +21,8 @@ public class MessageManager {
     public static MessageManager get() {
         return MessageManagerHolder.INSTANCE;
     }
+
+    protected MessageManager() {}
 
     private int currentTime = 0;
     private final ClassUtils.ArraySet<IMessageManager> messageManagers = new ClassUtils.ArraySet<>();
