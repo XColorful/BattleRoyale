@@ -10,7 +10,7 @@
 
 ### 重复劳动
 
-为什么 _./compat/forge/event/events_ 下有大量同构的事件类（5个事件 × 5个优先级）？
+为什么 _./compat/forge/event/events_ 下有大量同构的事件类（11个事件 × 5个优先级）？
 - 生成效率：通过基础模板进行批量生成，其开发复杂度趋近于 $O(n)$
 - 低心智负担：得益于清晰的同构逻辑，重复性工作当然由 AI 快速产出
 
@@ -109,7 +109,7 @@ Quickly master the development philosophy of Custom BattleRoyale through several
 
 ### Repetitive labor
 
-Why are there a large number of isomorphic event classes (5 events × 5 priorities) under _./compat/forge/event/events_?
+Why are there a large number of isomorphic event classes (11 events × 5 priorities) under _./compat/forge/event/events_?
 - Generation efficiency: By generating in batches through a base template, the development complexity approaches $O(n)$.
 - Low cognitive burden: Thanks to the clear isomorphic logic, repetitive work is naturally produced quickly by AI.
 
