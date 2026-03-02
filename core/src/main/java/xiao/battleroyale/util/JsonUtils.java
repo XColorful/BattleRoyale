@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.function.Function;
 
 public class JsonUtils {
 
@@ -71,125 +72,80 @@ public class JsonUtils {
     }
 
     @NotNull
-    public static List<Vec3> readVec3ListFromJson(@Nullable JsonArray jsonArray) {
-        List<Vec3> vec3List = new ArrayList<>();
-        if (jsonArray == null) {
-            return vec3List;
-        }
+    public static <T> List<T> readListFromJson(@Nullable JsonArray jsonArray, Function<JsonElement, T> mapper) {
+        List<T> list = new ArrayList<>();
+        if (jsonArray == null) return list;
 
         for (JsonElement element : jsonArray) {
-            if (!element.isJsonPrimitive()) {
-                continue;
-            }
-            JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
-            if (!jsonPrimitive.isString()) {
-                continue;
-            }
-            String vec3String = jsonPrimitive.getAsString();
-            Vec3 v = StringUtils.parseVectorString(vec3String);
-            if (v != null) {
-                vec3List.add(v);
-            }
+            try {
+                T result = mapper.apply(element);
+                if (result != null) list.add(result); // 转换失败返回 null 的自动舍弃
+            } catch (Exception ignored) {} // 类型转换异常的自动舍弃
         }
-
-        return vec3List;
+        return list;
     }
-
     @NotNull
-    public static List<Integer> readIntListFromJson(@Nullable JsonArray jsonArray) {
-        List<Integer> intList = new ArrayList<>();
-        if (jsonArray == null) {
-            return intList;
-        }
-
-        for (JsonElement element : jsonArray) {
-            if (!element.isJsonPrimitive()) {
-                continue;
-            }
-            JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
-            if (!jsonPrimitive.isNumber()) {
-                continue;
-            }
-            int x = (int) jsonPrimitive.getAsDouble();
-            intList.add(x);
-        }
-
-        return intList;
+    public static List<Vec3> readVec3ListFromJson(@Nullable JsonArray array) {
+        return readListFromJson(array, e -> e.isJsonPrimitive() ? StringUtils.parseVectorString(e.getAsString()) : null);
     }
-
     @NotNull
-    public static List<Float> readFloatListFromJson(@Nullable JsonArray jsonArray) {
-        List<Float> floatList = new ArrayList<>();
-        if (jsonArray == null) {
-            return floatList;
-        }
-
-        for (JsonElement element : jsonArray) {
-            if (!element.isJsonPrimitive()) {
-                continue;
-            }
-            JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
-            if (!jsonPrimitive.isNumber()) {
-                continue;
-            }
-            float x = jsonPrimitive.getAsFloat();
-            floatList.add(x);
-        }
-
-        return floatList;
+    public static List<Integer> readIntListFromJson(@Nullable JsonArray array) {
+        return readListFromJson(array, e -> (e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber()) ? e.getAsInt() : null);
     }
-
     @NotNull
-    public static List<String> readStringListFromJson(@Nullable JsonArray jsonArray) {
-        List<String> stringList = new ArrayList<>();
-        if (jsonArray == null) {
-            return stringList;
-        }
-
-        for (JsonElement element : jsonArray) {
-            if (!element.isJsonPrimitive()) {
-                continue;
-            }
-            JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
-            if (!jsonPrimitive.isString()) {
-                continue;
-            }
-            String str = jsonPrimitive.getAsString();
-            stringList.add(str);
-        }
-
-        return stringList;
+    public static List<Float> readFloatListFromJson(@Nullable JsonArray array) {
+        return readListFromJson(array, e -> (e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber()) ? e.getAsFloat() : null);
+    }
+    @NotNull
+    public static List<String> readStringListFromJson(@Nullable JsonArray array) {
+        return readListFromJson(array, e -> (e.isJsonPrimitive() && e.getAsJsonPrimitive().isString()) ? e.getAsString() : null);
     }
 
     @NotNull
     public static Map<UUID, String> readUUIDStringFromJson(@Nullable JsonObject jsonObject) {
-        Map<UUID, String> UUIDString = new HashMap<>();
-        if (jsonObject == null) {
-            return UUIDString;
-        }
+        Map<UUID, String> map = new HashMap<>();
+        if (jsonObject == null) return map;
 
         for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-            String key = entry.getKey();
-            JsonElement valueElement = entry.getValue();
-            UUID uuid;
+            // 利用 getValueFromJson 的思想：尝试转换 key 和 value
             try {
-                uuid = UUID.fromString(key);
-            } catch (IllegalArgumentException e) {
-                BattleRoyale.LOGGER.warn("Skipped invalid UUID key {}", key);
-                continue;
-            }
-            if (valueElement == null || !valueElement.isJsonPrimitive()) {
-                continue;
-            }
-            JsonPrimitive jsonPrimitive = valueElement.getAsJsonPrimitive();
-            if (!jsonPrimitive.isString()) {
-                continue;
-            }
-            String value = jsonPrimitive.getAsString();
-            UUIDString.put(uuid, value);
+                UUID uuid = UUID.fromString(entry.getKey());
+                JsonElement v = entry.getValue();
+                if (v.isJsonPrimitive() && v.getAsJsonPrimitive().isString()) {
+                    map.put(uuid, v.getAsString());
+                }
+            } catch (Exception ignored) {}
         }
+        return map;
+    }
 
-        return UUIDString;
+    @NotNull
+    public static <T> JsonArray writeListToJson(List<T> list, Function<T, JsonElement> mapper) {
+        JsonArray jsonArray = new JsonArray();
+        if (list == null) return jsonArray;
+        for (T item : list) {
+            try {
+                JsonElement element = mapper.apply(item);
+                if (element != null) jsonArray.add(element);
+            } catch (Exception ignored) {}
+        }
+        return jsonArray;
+    }
+    @NotNull
+    public static JsonArray writeVec3ListToJson(List<Vec3> list) {
+        return writeListToJson(list, v -> new JsonPrimitive(StringUtils.vectorToString(v)));
+    }
+    @NotNull
+    public static JsonArray writeIntListToJson(List<Integer> list) {
+        return writeListToJson(list, JsonPrimitive::new);
+    }
+    @NotNull
+    public static JsonArray writeFloatListToJson(List<Float> list) {
+        return writeListToJson(list, JsonPrimitive::new);
+    }
+    @NotNull
+    public static JsonArray writeStringListToJson(List<String> list) {
+        return writeListToJson(list, JsonPrimitive::new);
     }
 
     @Deprecated
@@ -212,280 +168,48 @@ public class JsonUtils {
         return jsonObject;
     }
 
-    @NotNull
-    public static JsonArray writeVec3ListToJson(List<Vec3> vec3List) {
-        JsonArray jsonArray = new JsonArray();
-
-        for (Vec3 v : vec3List) {
-            jsonArray.add(StringUtils.vectorToString(v));
-        }
-
-        return jsonArray;
-    }
-
-    @NotNull
-    public static JsonArray writeIntListToJson(List<Integer> intList) {
-        JsonArray jsonArray = new JsonArray();
-
-        for (Integer x : intList) {
-            jsonArray.add(x);
-        }
-
-        return jsonArray;
-    }
-
-    @NotNull
-    public static JsonArray writeFloatListToJson(List<Float> floatList) {
-        JsonArray jsonArray = new JsonArray();
-
-        for (Float x : floatList) {
-            jsonArray.add(x);
-        }
-
-        return jsonArray;
-    }
-
-    @NotNull
-    public static JsonArray writeStringListToJson(List<String> stringList) {
-        JsonArray jsonArray = new JsonArray();
-
-        for (String str : stringList) {
-            jsonArray.add(str);
-        }
-
-        return jsonArray;
-    }
-
-    /**
-     * 从 JsonObject 中安全地获取一个 int 值。
-     * 如果键不存在、值为 null、或值不是一个可解析为整数的基本类型，则返回默认值。
-     *
-     * @param jsonObject 要从中获取值的 JsonObject。
-     * @param key        要获取的键名。
-     * @param defaultValue 如果获取失败，则返回的默认值。
-     * @return 解析后的 int 值或默认值。
-     */
-    public static int getJsonInt(@Nullable JsonObject jsonObject, String key, int defaultValue) {
-        if (jsonObject == null || key == null || key.isEmpty()) {
-            return defaultValue;
-        }
+    public static <T> T getValueFromJson(@Nullable JsonObject jsonObject, String key, T defaultValue, Function<JsonElement, T> mapper) {
+        if (jsonObject == null || key == null || key.isEmpty()) return defaultValue;
 
         JsonElement element = jsonObject.get(key);
-
-        if (element == null || element.isJsonNull() || !element.isJsonPrimitive()) {
-            return defaultValue;
-        }
-
-        JsonPrimitive primitive = element.getAsJsonPrimitive();
-        if (!primitive.isNumber()) {
-            return defaultValue;
-        }
+        if (element == null || element.isJsonNull()) return defaultValue;
 
         try {
-            return primitive.getAsInt();
-        } catch (NumberFormatException e) {
+            T result = mapper.apply(element);
+            return result != null ? result : defaultValue;
+        } catch (Exception e) {
             return defaultValue;
         }
     }
-
-    /**
-     * 从 JsonObject 中安全地获取一个 Integer 对象。
-     * 如果键不存在、值为 null、或值不是一个可解析为整数的数字类型，则返回默认值。
-     *
-     * @param jsonObject 要从中获取值的 JsonObject。
-     * @param key        要获取的键名。
-     * @param defaultValue 如果获取失败，则返回的默认值。
-     * @return 解析后的 Integer 值或默认值。
-     */
-    @Nullable
-    public static Integer getJsonInteger(@Nullable JsonObject jsonObject, String key, @Nullable Integer defaultValue) {
-        if (jsonObject == null || key == null || key.isEmpty()) {
-            return defaultValue;
-        }
-
-        JsonElement element = jsonObject.get(key);
-
-        if (element == null || element.isJsonNull() || !element.isJsonPrimitive()) {
-            return defaultValue;
-        }
-
-        JsonPrimitive primitive = element.getAsJsonPrimitive();
-        if (!primitive.isNumber()) {
-            return defaultValue;
-        }
-
-        try {
-            return primitive.getAsInt();
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
+    public static int getJsonInt(@Nullable JsonObject json, String key, int def) {
+        return getValueFromJson(json, key, def, e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber() ? e.getAsInt() : null);
     }
-
-    /**
-     * 从 JsonObject 中安全地获取一个 boolean 值。
-     * 如果键不存在、值为 null、或值不是一个可解析为布尔类型，则返回默认值。
-     *
-     * @param jsonObject 要从中获取值的 JsonObject。
-     * @param key        要获取的键名。
-     * @param defaultValue 如果获取失败，则返回的默认值。
-     * @return 解析后的 boolean 值或默认值。
-     */
-    public static boolean getJsonBool(@Nullable JsonObject jsonObject, String key, boolean defaultValue) {
-        if (jsonObject == null || key == null || key.isEmpty()) {
-            return defaultValue;
-        }
-
-        JsonElement element = jsonObject.get(key);
-
-        if (element == null || element.isJsonNull() || !element.isJsonPrimitive()) {
-            return defaultValue;
-        }
-
-        JsonPrimitive primitive = element.getAsJsonPrimitive();
-        if (!primitive.isBoolean()) {
-            return defaultValue;
-        }
-
-        return primitive.getAsBoolean();
+    public static Integer getJsonInteger(@Nullable JsonObject json, String key, Integer def) {
+        return getValueFromJson(json, key, def, e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber() ? e.getAsInt() : null);
     }
-
-    /**
-     * 从 JsonObject 中安全地获取一个 Boolean 对象。
-     * 如果键不存在、值为 null、或值不是一个可解析为布尔类型，则返回默认值。
-     *
-     * @param jsonObject 要从中获取值的 JsonObject。
-     * @param key        要获取的键名。
-     * @param defaultValue 如果获取失败，则返回的默认值。
-     * @return 解析后的 Boolean 值或默认值。
-     */
-    @Nullable
-    public static Boolean getJsonBoolean(@Nullable JsonObject jsonObject, String key, @Nullable Boolean defaultValue) {
-        if (jsonObject == null || key == null || key.isEmpty()) {
-            return defaultValue;
-        }
-
-        JsonElement element = jsonObject.get(key);
-
-        if (element == null || element.isJsonNull() || !element.isJsonPrimitive()) {
-            return defaultValue;
-        }
-
-        JsonPrimitive primitive = element.getAsJsonPrimitive();
-        if (!primitive.isBoolean()) {
-            return defaultValue;
-        }
-
-        return primitive.getAsBoolean();
+    public static boolean getJsonBool(@Nullable JsonObject json, String key, boolean def) {
+        return getValueFromJson(json, key, def, e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isBoolean() ? e.getAsBoolean() : null);
     }
-
-    /**
-     * 从 JsonObject 中安全地获取一个 double 值。
-     * 如果键不存在、值为 null、或值不是一个可解析为数字的基本类型，则返回默认值。
-     *
-     * @param jsonObject 要从中获取值的 JsonObject。
-     * @param key        要获取的键名。
-     * @param defaultValue 如果获取失败，则返回的默认值。
-     * @return 解析后的 double 值或默认值。
-     */
-    public static double getJsonDouble(@Nullable JsonObject jsonObject, String key, double defaultValue) {
-        if (jsonObject == null || key == null || key.isEmpty()) {
-            return defaultValue;
-        }
-
-        JsonElement element = jsonObject.get(key);
-
-        if (element == null || element.isJsonNull() || !element.isJsonPrimitive()) {
-            return defaultValue;
-        }
-
-        JsonPrimitive primitive = element.getAsJsonPrimitive();
-        if (!primitive.isNumber()) {
-            return defaultValue;
-        }
-
-        try {
-            return primitive.getAsDouble();
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
+    public static Boolean getJsonBoolean(@Nullable JsonObject json, String key, Boolean def) {
+        return getValueFromJson(json, key, def, e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isBoolean() ? e.getAsBoolean() : null);
     }
-
-    /**
-     * 从 JsonObject 中安全地获取一个 Double 对象。
-     * 如果键不存在、值为 null、或值不是一个可解析为数字的类型，则返回默认值。
-     *
-     * @param jsonObject 要从中获取值的 JsonObject。
-     * @param key        要获取的键名。
-     * @param defaultValue 如果获取失败，则返回的默认值。
-     * @return 解析后的 Double 值或默认值。
-     */
-    @Nullable
-    public static Double getJsonDoubleClass(@Nullable JsonObject jsonObject, String key, @Nullable Double defaultValue) {
-        if (jsonObject == null || key == null || key.isEmpty()) {
-            return defaultValue;
-        }
-
-        JsonElement element = jsonObject.get(key);
-
-        if (element == null || element.isJsonNull() || !element.isJsonPrimitive()) {
-            return defaultValue;
-        }
-
-        JsonPrimitive primitive = element.getAsJsonPrimitive();
-        if (!primitive.isNumber()) {
-            return defaultValue;
-        }
-
-        try {
-            return primitive.getAsDouble();
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
+    public static double getJsonDouble(@Nullable JsonObject json, String key, double def) {
+        return getValueFromJson(json, key, def, e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber() ? e.getAsDouble() : null);
     }
-
-    /**
-     * 从 JsonObject 中安全地获取一个 String 值。
-     * 如果键不存在、值为 null、或值不是一个可解析为字符串类型，则返回默认值。
-     *
-     * @param jsonObject 要从中获取值的 JsonObject。
-     * @param key        要获取的键名。
-     * @param defaultValue 如果获取失败，则返回的默认值。
-     * @return 解析后的 String 值或默认值。
-     */
-    public static String getJsonString(@Nullable JsonObject jsonObject, String key, String defaultValue) {
-        if (jsonObject == null || key == null || key.isEmpty()) {
-            return defaultValue;
-        }
-
-        JsonElement element = jsonObject.get(key);
-
-        if (element == null || element.isJsonNull() || !element.isJsonPrimitive()) {
-            return defaultValue;
-        }
-
-        JsonPrimitive primitive = element.getAsJsonPrimitive();
-        if (!primitive.isString()) {
-            return defaultValue;
-        }
-
-        return primitive.getAsString();
+    public static Double getJsonDoubleClass(@Nullable JsonObject json, String key, Double def) {
+        return getValueFromJson(json, key, def, e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber() ? e.getAsDouble() : null);
     }
-
-    public static CompoundTag getJsonNBT(@Nullable JsonObject jsonObject, String key) {
-        String nbtString = getJsonString(jsonObject, key, "{}");
-        return NBTUtils.stringToNBT(nbtString);
+    public static String getJsonString(@Nullable JsonObject json, String key, String def) {
+        return getValueFromJson(json, key, def, e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isString() ? e.getAsString() : null);
     }
-
-    public static Vec3 getJsonVec(@Nullable JsonObject jsonObject, String key, Vec3 defaultValue) {
-        String vecString = getJsonString(jsonObject, key, null);
-        Vec3 vec = StringUtils.parseVectorString(vecString);
-        return vec != null ? vec : defaultValue;
+    public static Vec3 getJsonVec(@Nullable JsonObject json, String key, Vec3 def) {
+        return getValueFromJson(json, key, def, e -> StringUtils.parseVectorString(e.getAsString()));
     }
-
-    public static Component getJsonComponent(@Nullable JsonObject jsonObject, String key, Component defaultValue) {
-        String componentString = getJsonString(jsonObject, key, null);
-        Component component = StringUtils.parseComponentString(componentString);
-        return component != null ? component : defaultValue;
+    public static Component getJsonComponent(@Nullable JsonObject json, String key, Component def) {
+        return getValueFromJson(json, key, def, e -> StringUtils.parseComponentString(e.getAsString()));
+    }
+    public static CompoundTag getJsonNBT(@Nullable JsonObject json, String key) {
+        return getValueFromJson(json, key, new CompoundTag(), e -> NBTUtils.stringToNBT(e.getAsString()));
     }
 
     @Deprecated
@@ -509,23 +233,20 @@ public class JsonUtils {
     }
 
     @NotNull
-    public static List<Vec3> getJsonVecList(@Nullable JsonObject jsonObject, String key) {
-        return readVec3ListFromJson(JsonUtils.getJsonArray(jsonObject, key, null));
+    public static List<Integer> getJsonIntList(@Nullable JsonObject json, String key) {
+        return readListFromJson(getJsonArray(json, key, null), e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber() ? e.getAsInt() : null);
     }
-
     @NotNull
-    public static List<Integer> getJsonIntList(@Nullable JsonObject jsonObject, String key) {
-        return readIntListFromJson(JsonUtils.getJsonArray(jsonObject, key, null));
+    public static List<Float> getJsonFloatList(@Nullable JsonObject json, String key) {
+        return readListFromJson(getJsonArray(json, key, null), e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isNumber() ? e.getAsFloat() : null);
     }
-
     @NotNull
-    public static List<Float> getJsonFloatList(@Nullable JsonObject jsonObject, String key) {
-        return readFloatListFromJson(JsonUtils.getJsonArray(jsonObject, key, null));
+    public static List<String> getJsonStringList(@Nullable JsonObject json, String key) {
+        return readListFromJson(getJsonArray(json, key, null), e -> e.isJsonPrimitive() && e.getAsJsonPrimitive().isString() ? e.getAsString() : null);
     }
-
     @NotNull
-    public static List<String> getJsonStringList(@Nullable JsonObject jsonObject, String key) {
-        return readStringListFromJson(JsonUtils.getJsonArray(jsonObject, key, null));
+    public static List<Vec3> getJsonVecList(@Nullable JsonObject json, String key) {
+        return readListFromJson(getJsonArray(json, key, null), e -> StringUtils.parseVectorString(e.getAsString()));
     }
 
     @NotNull
