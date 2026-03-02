@@ -22,7 +22,7 @@ public class CustomEventsHandler {
         return CustomEventsHandlerHolder.INSTANCE;
     }
 
-    private CustomEventsHandler() {}
+    protected CustomEventsHandler() {}
 
     // 用 ConcurrentHashMap 保证获取 Handler 时的线程安全（无须全局锁）
     private final Map<Class<? extends ICustomEvent>, ClassHandler> eventDispatchers = new ConcurrentHashMap<>();
