@@ -5,12 +5,13 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.init.IModEvent;
 import xiao.battleroyale.init.ModEvent;
 
 @Mod.EventBusSubscriber(modid = BattleRoyale.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class NeoModEvent {
 
-    private static final ModEvent MOD_EVENT = ModEvent.get();
+    public static IModEvent MOD_EVENT = ModEvent.get();
 
     @SubscribeEvent
     public static void onServerStarting(ServerStartingEvent event) {
