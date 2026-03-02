@@ -2,6 +2,7 @@ package xiao.battleroyale.util;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
@@ -84,7 +85,14 @@ public class StringUtils {
      */
     public @Nullable static Component parseComponentString(@Nullable String inputString) {
         HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
-        return inputString != null && registries != null ? Component.Serializer.fromJson(inputString, registries) : null;
+        if (inputString == null || registries == null) return null;
+        try {
+            // 原版这个解析会在缺少花括号的时候抛异常
+            // 封装一下 Exception 避免其他地方调用导致控制台出 ERROR
+            return Component.Serializer.fromJson(inputString, registries);
+        } catch (Exception ignored) {
+            return Component.literal(inputString);
+        }
     }
 
     /**
