@@ -1,6 +1,7 @@
 package xiao.battleroyale.util;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
@@ -82,7 +83,14 @@ public class StringUtils {
      * @return 对应的 Component 对象。如果输入为 null 或解析失败，则返回 null。
      */
     public @Nullable static Component parseComponentString(@Nullable String inputString) {
-        return inputString != null ? Component.Serializer.fromJson(inputString) : null;
+        if (inputString == null) return null;
+        try {
+            // 原版这个解析会在缺少花括号的时候抛异常
+            // 封装一下 Exception 避免其他地方调用导致控制台出 ERROR
+            return Component.Serializer.fromJson(inputString);
+        } catch (Exception ignored) {
+            return Component.literal(inputString);
+        }
     }
 
     /**
