@@ -92,9 +92,7 @@ public class StringUtils {
      */
     public @Nullable static Component parseComponentString(@Nullable String inputString) {
         HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
-        if (inputString == null || registries == null) {
-            return null;
-        }
+        if (inputString == null || registries == null) return null;
 
         try {
             JsonElement jsonElement = JsonParser.parseString(inputString);
@@ -114,8 +112,7 @@ public class StringUtils {
                 return null;
             }
         } catch (Exception e) {
-            BattleRoyale.LOGGER.warn("Failed to parse Component from JSON string: {}", inputString, e);
-            return null;
+            return Component.literal(inputString);
         }
     }
 
