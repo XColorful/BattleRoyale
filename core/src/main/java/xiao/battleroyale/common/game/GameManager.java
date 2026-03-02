@@ -633,7 +633,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         EventPoster.postEvent(new ServerStopEvent(this));
         isStopping = true;
         stopGame(serverLevel);
-        EffectManager.get().forceEnd();
+        BattleRoyale.getEffectManager().forceEnd();
         setServerLevel(null); // 手动设置为null，单人游戏重启之后也就失效了
         BattleRoyale.LOGGER.debug("Server stopped, GameManager.serverLevel set to null");
         isStopping = false;
