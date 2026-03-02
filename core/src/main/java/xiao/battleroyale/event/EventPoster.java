@@ -19,7 +19,7 @@ public class EventPoster implements ICustomEventPoster {
         return EventPosterHolder.INSTANCE;
     }
 
-    private EventPoster() {}
+    protected EventPoster() {}
 
     public static boolean postEvent(ICustomEvent customEvent) {
         return get().postCustomEvent(customEvent);
