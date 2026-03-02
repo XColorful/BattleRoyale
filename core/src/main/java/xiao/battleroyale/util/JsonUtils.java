@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class JsonUtils {
@@ -38,23 +39,34 @@ public class JsonUtils {
         return GSON.toJson(object);
     }
 
-    public static boolean writeJsonToFile(String filePath, JsonArray jsonArray) {
+    public static boolean writeJsonToFile(String filePath, Object object) {
+        if (object == null) return false;
+
         Path path = Paths.get(filePath);
-        if (Files.notExists(path.getParent())) {
+        Path parent = path.getParent();
+
+        // 确保父目录存在
+        if (parent != null && Files.notExists(parent)) {
             try {
-                Files.createDirectories(path.getParent());
+                Files.createDirectories(parent);
             } catch (IOException e) {
-                BattleRoyale.LOGGER.warn("Failed to create default config directory: {}", e.getMessage());
+                BattleRoyale.LOGGER.warn("JsonUtils: Failed to create directory: {}", e.getMessage());
                 return false;
             }
         }
+
+        // 先写临时文件，再移动覆盖
+        Path tempPath = path.resolveSibling(path.getFileName() + ".tmp");
         try {
-            Files.writeString(path, GSON.toJson(jsonArray));
+            Files.writeString(tempPath, GSON.toJson(object));
+            Files.move(tempPath, path, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             BattleRoyale.LOGGER.debug("Write json to file: {}", path);
             return true;
         } catch (IOException e) {
-            BattleRoyale.LOGGER.warn("Failed to write json to file: {}", e.getMessage());
+            BattleRoyale.LOGGER.warn("JsonUtils: Failed to write json to file: {}", e.getMessage());
             return false;
+        } finally {
+            try { Files.deleteIfExists(tempPath); } catch (IOException ignored) {}
         }
     }
 
