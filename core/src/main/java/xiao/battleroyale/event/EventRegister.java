@@ -17,7 +17,7 @@ public class EventRegister implements ICustomEventRegister {
         return EventRegisterHolder.INSTANCE;
     }
 
-    private EventRegister() {}
+    protected EventRegister() {}
 
     private static IEventRegister eventRegister;
 

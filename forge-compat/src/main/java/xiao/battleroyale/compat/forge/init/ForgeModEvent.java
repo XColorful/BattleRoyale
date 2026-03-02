@@ -5,12 +5,13 @@ import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.init.IModEvent;
 import xiao.battleroyale.init.ModEvent;
 
 @Mod.EventBusSubscriber(modid = BattleRoyale.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeModEvent {
 
-    private static final ModEvent MOD_EVENT = ModEvent.get();
+    public static IModEvent MOD_EVENT = ModEvent.get();
 
     @SubscribeEvent
     public static void onServerStarting(ServerStartingEvent event) {

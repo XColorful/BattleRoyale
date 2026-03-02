@@ -161,5 +161,6 @@ public class ClientGameDataManager implements IClientGameDataManager, IEventHand
         activeZones.clear();
         teamData.clear();
         gameData.clear();
+        currentTick = 0;
     }
 }
