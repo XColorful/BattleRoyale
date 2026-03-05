@@ -3,14 +3,16 @@ package xiao.battleroyale.command.sub;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigManager;
 import xiao.battleroyale.api.config.IConfigSubManager;
 
+@ApiStatus.Internal
 public class ConfigUtils {
 
-    public static @Nullable IConfigManager getConfigManager(CommandContext<CommandSourceStack> context, String managerNameKey) {
+    protected static @Nullable IConfigManager getConfigManager(CommandContext<CommandSourceStack> context, String managerNameKey) {
         IConfigManager configManager = BattleRoyale.getModConfigManager().getConfigManager(managerNameKey);
         if (configManager == null) {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.no_config_manager_available", managerNameKey));
@@ -19,7 +21,7 @@ public class ConfigUtils {
         return configManager;
     }
 
-    public static @Nullable IConfigSubManager<?> getConfigSubManager(CommandContext<CommandSourceStack> context, String managerNameKey, String subManagerNameKey) {
+    protected static @Nullable IConfigSubManager<?> getConfigSubManager(CommandContext<CommandSourceStack> context, String managerNameKey, String subManagerNameKey) {
         IConfigManager configManager = BattleRoyale.getModConfigManager().getConfigManager(managerNameKey);
         if (configManager == null) {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.no_config_manager_available", managerNameKey));
@@ -32,7 +34,7 @@ public class ConfigUtils {
         }
         return configSubManager;
     }
-    public static @Nullable IConfigSubManager<?> getConfigSubManager(CommandContext<CommandSourceStack> context, String subManagerNameKey) {
+    protected static @Nullable IConfigSubManager<?> getConfigSubManager(CommandContext<CommandSourceStack> context, String subManagerNameKey) {
         IConfigSubManager<?> configSubManager = BattleRoyale.getModConfigManager().getConfigSubManager(subManagerNameKey);
         if (configSubManager == null) {
             context.getSource().sendFailure(Component.translatable("battleroyale.message.no_sub_config_manager_available", subManagerNameKey));

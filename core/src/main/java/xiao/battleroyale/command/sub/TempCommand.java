@@ -29,13 +29,6 @@ public class TempCommand {
                 .then(Commands.literal(GAME_STEP)
                         .then(Commands.argument(INTERVAL, IntegerArgumentType.integer())
                                 .executes(TempCommand::changeGameStep)))
-                .then(Commands.literal(TACZ)
-                        .then(Commands.literal(BULLET_HANDLER)
-                                .then(Commands.argument(BOOL, BoolArgumentType.bool())
-                                        .executes(TempCommand::turnTaczBulletHandler)
-                                )
-                        )
-                )
                 .then(Commands.literal(CLEAR)
                         .requires(source -> source.hasPermission(3))
                         .executes(TempCommand::clearAllTempData)
@@ -75,20 +68,7 @@ public class TempCommand {
         }
         return Command.SINGLE_SUCCESS;
     }
-
-    private static int turnTaczBulletHandler(CommandContext<CommandSourceStack> context) {
-        boolean turn = BoolArgumentType.getBool(context, BOOL);
-        TempDataManager tempDataManager = TempDataManager.get();
-        tempDataManager.writeBool(FEATURE, TACZ_BULLET_HANDLER, turn);
-        tempDataManager.saveTempData();
-        if (turn) {
-            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.enable_tacz_bullet_handler"), false);
-        } else {
-            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.disable_tacz_bullet_handler"), false);
-        }
-        return Command.SINGLE_SUCCESS;
-    }
-
+    
     private static int clearAllTempData(CommandContext<CommandSourceStack> context) {
         TempDataManager.get().clearTempData();
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.clear_temp_data"), false);
