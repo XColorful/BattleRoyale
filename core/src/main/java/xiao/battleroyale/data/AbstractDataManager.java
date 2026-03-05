@@ -30,8 +30,15 @@ public abstract class AbstractDataManager {
     protected final String DATA_PATH;
 
     public AbstractDataManager() {
+        this(MOD_DATA_PATH);
+    }
+    public AbstractDataManager(String modDataPath) {
         this.subPath = getSubPath();
-        this.DATA_PATH = Paths.get(MOD_DATA_PATH).resolve(this.subPath).toString();
+        this.DATA_PATH = Paths.get(modDataPath).resolve(this.subPath).toString();
+    }
+    public AbstractDataManager(String modDataPath, String subPath) {
+        this.subPath = subPath;
+        this.DATA_PATH = Paths.get(modDataPath).resolve(this.subPath).toString();
     }
 
     protected abstract String getSubPath();
