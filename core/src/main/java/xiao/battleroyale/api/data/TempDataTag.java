@@ -15,9 +15,5 @@ public class TempDataTag {
     public static final String PRE_CALCULATE = "preCalculate";
     public static final String SPAWN_MANAGER = "spawnManager";
 
-    // feature.json
-    public static final String FEATURE = "feature";
-    public static final String TACZ_BULLET_HANDLER = "taczBulletHandler";
-
     private TempDataTag() {}
 }
