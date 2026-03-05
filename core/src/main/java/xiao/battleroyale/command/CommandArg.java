@@ -32,8 +32,6 @@ public class CommandArg {
     public static final String PUBGMC = "pubgmc";
     public static final String INIT_STACK_ZONE_CONFIG = "initStackZoneConfig";
     public static final String GAME_STEP = "gameStep";
-    public static final String TACZ = "tacz";
-    public static final String BULLET_HANDLER = "bulletHandler";
 
     public static final String LOOT_SPAWNER = "loot_spawner";
     public static final String ENTITY_SPAWNER = "entity_spawner";

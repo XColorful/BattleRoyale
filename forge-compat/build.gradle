@@ -62,7 +62,8 @@ tasks.withType(ProcessResources).configureEach {
             journeymap_version_range: journeymap_version_range,
             playerrevive_version_range: playerrevive_version_range,
             tacz_version_range      : tacz_version_range,
-            cbraddon_version_range  : cbraddon_version_range
+            cbraddon_version_range  : cbraddon_version_range,
+            armorscaling_version_range: armorscaling_version_range
     ]
 
     inputs.properties replaceProperties
