@@ -22,7 +22,7 @@ _./minecraft/battleroyale/temp/registry.json_
 ### 机制项
 _./minecraft/battleroyale/temp/feature.json_
 
-- taczBulletHandler：是否启用[TaCZ子弹处理器](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#TaCZ子弹处理器)
+> 该功能已于 0.5.1 移至[TaCZ护甲缩放](https://github.com/XColorful/TaCZ-Armor-Scaling)
 ```json
 {
 	"taczBulletHandler": true
@@ -87,7 +87,7 @@ _./minecraft/battleroyale/temp/registry.json_
 ### Feature entry
 _./minecraft/battleroyale/temp/feature.json_
 
-- taczBulletHandler: Enables/disables [TaCZ bullet handler](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#TaCZ-bullet-handler)
+> This feature was moved to [TaCZ Armor Scaling](https://github.com/XColorful/TaCZ-Armor-Scaling) in version 0.5.1
 ```json
 {
 	"taczBulletHandler": true

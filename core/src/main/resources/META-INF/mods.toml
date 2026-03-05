@@ -51,3 +51,9 @@ modId="cbraddon"
 mandatory=false
 versionRange="${cbraddon_version_range}"
 side="SERVER"
+
+[[dependencies.${mod_id}]]
+modId="armorscaling"
+mandatory=false
+versionRange="${armorscaling_version_range}"
+side="SERVER"
