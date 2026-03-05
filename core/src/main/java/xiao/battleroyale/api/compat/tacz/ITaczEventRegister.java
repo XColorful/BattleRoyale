@@ -5,8 +5,4 @@ public interface ITaczEventRegister {
     boolean registerBleedingHandler();
 
     boolean unregisterBleedingHandler();
-
-    boolean registerBulletHandler();
-
-    boolean unregisterBulletHandler();
 }

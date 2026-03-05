@@ -6,7 +6,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.compat.tacz.ITaczEventRegister;
 import xiao.battleroyale.compat.tacz.TaczBleedingHandler;
-import xiao.battleroyale.compat.tacz.TaczBulletHandler;
 
 public class TaczEventRegister implements ITaczEventRegister {
 
@@ -21,7 +20,6 @@ public class TaczEventRegister implements ITaczEventRegister {
     private TaczEventRegister() {}
 
     private final BleedingEventListener bleedingListener = new BleedingEventListener();
-    private final BulletEventListener bulletListener = new BulletEventListener();
 
     @Override
     public boolean registerBleedingHandler() {
@@ -34,20 +32,6 @@ public class TaczEventRegister implements ITaczEventRegister {
     public boolean unregisterBleedingHandler() {
         NeoForge.EVENT_BUS.unregister(bleedingListener);
         BattleRoyale.LOGGER.debug("Unregistered TaczBleedingHandler");
-        return true;
-    }
-
-    @Override
-    public boolean registerBulletHandler() {
-        NeoForge.EVENT_BUS.register(bulletListener);
-        BattleRoyale.LOGGER.debug("Registered TaczBulletHandler");
-        return true;
-    }
-
-    @Override
-    public boolean unregisterBulletHandler() {
-        NeoForge.EVENT_BUS.unregister(bulletListener);
-        BattleRoyale.LOGGER.debug("Unregistered TaczBulletHandler");
         return true;
     }
 
@@ -70,13 +54,6 @@ public class TaczEventRegister implements ITaczEventRegister {
         @SubscribeEvent
         public void onGunMelee(GunMeleeEvent event) {
             TaczBleedingHandler.get().onGunMelee(new TaczGunMeleeEvent(event));
-        }
-    }
-
-    private static class BulletEventListener {
-        @SubscribeEvent
-        public void onBulletHurt(EntityHurtByGunEvent.Pre event) {
-            TaczBulletHandler.get().onBulletHurt(new TaczBulletHurtEvent(event));
         }
     }
 }
