@@ -54,6 +54,6 @@ side="SERVER"
 
 [[dependencies.${mod_id}]]
 modId="armorscaling"
-mandatory=false
+type="optional"
 versionRange="${armorscaling_version_range}"
 side="SERVER"
