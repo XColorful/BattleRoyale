@@ -1,5 +1,15 @@
 ### 0.5.x
 
+#### 0.5.1
+- Fix 'clearPreviousContent' write 'clearCachedChunk' tag
+- Fix duplicate death stats in DeathMatch
+- Clear client data on quit single/multi player world
+- Hide Component parser exception error log
+- Improved configuration saving stability in extreme cases
+
+forge1.20.1 & neoforge1.21.1
+- Remove tacz bullet handler, use TaCZ Armor Scaling (new mod) instead
+
 #### 0.5.0
 - Fix '/cbr team build' creating non-bot game player for living entities
 - Add '/cbr register manager' command, disabled during game
