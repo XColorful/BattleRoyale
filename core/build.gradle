@@ -1,17 +1,16 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-minecraft {
-    mappings channel: mapping_channel, version: mapping_version
-    copyIdeResources = false
+loom {
+    accessWidenerPath = file("src/main/resources/battleroyale.accesswidener")
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    compileOnly fg.deobf("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
 }
 
 jar {
