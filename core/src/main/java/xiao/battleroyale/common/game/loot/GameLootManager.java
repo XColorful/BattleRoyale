@@ -3,6 +3,7 @@ package xiao.battleroyale.common.game.loot;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.algorithm.BfsCalculator;
 import xiao.battleroyale.algorithm.BfsCalculator.Offset2D;
@@ -24,7 +25,6 @@ import xiao.battleroyale.config.common.server.performance.type.GeneratorEntry;
 import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.ClassUtils;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
