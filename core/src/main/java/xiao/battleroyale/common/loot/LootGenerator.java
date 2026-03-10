@@ -356,7 +356,8 @@ public class LootGenerator {
         // 清除旧游戏实体
         for (Entity entity : oldEntities) {
             UUID debugGameId = gameIdReadApi.getGameId(entity);
-            BattleRoyale.LOGGER.debug("Clear old game object: {} (UUID: {}) (GameId: {}) at {}",
+            BattleRoyale.LOGGER.debug("Clear old game {} object: {} (UUID: {}) (GameId: {}) at {}",
+                    entity instanceof ItemEntity ? "item" : "entity",
                     entity.getName().getString(),
                     entity.getUUID(),
                     debugGameId != null ? debugGameId.toString() : "N/A", // 打印转换后的 UUID
