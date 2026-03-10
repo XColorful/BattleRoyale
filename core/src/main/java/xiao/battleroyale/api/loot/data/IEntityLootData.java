@@ -2,8 +2,7 @@ package xiao.battleroyale.api.loot.data;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public interface IEntityLootData extends ILootData {
     @Override
