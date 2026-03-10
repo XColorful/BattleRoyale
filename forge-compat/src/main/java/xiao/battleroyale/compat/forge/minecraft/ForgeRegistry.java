@@ -8,9 +8,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
-
-import javax.annotation.Nullable;
 
 public class ForgeRegistry implements IMcRegistry {
 
