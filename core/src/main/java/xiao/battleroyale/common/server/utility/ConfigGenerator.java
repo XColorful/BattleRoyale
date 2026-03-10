@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.common.server.utility.lootconfig.LootConfigGenerator;
@@ -13,7 +14,6 @@ import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.StringUtils;
 
-import javax.annotation.Nullable;
 import java.nio.file.Paths;
 
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;

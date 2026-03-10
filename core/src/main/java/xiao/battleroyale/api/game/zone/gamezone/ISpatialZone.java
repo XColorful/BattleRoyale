@@ -2,10 +2,9 @@ package xiao.battleroyale.api.game.zone.gamezone;
 
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
-
-import javax.annotation.Nullable;
 
 public interface ISpatialZone {
 
