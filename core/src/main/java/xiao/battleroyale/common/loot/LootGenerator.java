@@ -1,7 +1,6 @@
 package xiao.battleroyale.common.loot;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -10,7 +9,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -81,7 +79,7 @@ public class LootGenerator {
         for (ILootData data : lootData) {
             if (data.getDataType() == LootDataType.ITEM) {
                 IItemLootData itemData = (IItemLootData) data;
-                ItemStack itemStack = itemData.getItemStack(lootContext);
+                ItemStack itemStack = itemData.getItemStack();
                 if (itemStack == null) {
                     continue;
                 }
@@ -126,7 +124,7 @@ public class LootGenerator {
      */
     public static <T extends AbstractLootBlockEntity> void generateLoot(LootContext lootContext, T target, ILootEntry entry) {
         if (REMOVE_LOOT_TABLE) {
-            removeLootTable(lootContext, target);
+            removeLootTable(target);
         }
 
         List<ILootData> lootData = entry.generateLootData(lootContext, target);
@@ -143,7 +141,7 @@ public class LootGenerator {
                 ILootData data = lootData.get(i);
                 if (data.getDataType() == LootDataType.ITEM) {
                     IItemLootData itemData = (IItemLootData) data;
-                    ItemStack itemStack = itemData.getItemStack(lootContext);
+                    ItemStack itemStack = itemData.getItemStack();
                     if (itemStack == null) {
                         continue;
                     }
@@ -153,8 +151,7 @@ public class LootGenerator {
                     BattleRoyale.LOGGER.warn("Ignore adding non-item to loot container at {}", target.getBlockPos());
                 }
             }
-            container.setChanged(); // 可能没什么用
-            container.sendBlockUpdated(); // 不调用会导致显示异常
+            container.sendBlockUpdated(); // 省流
         } else { // 实体刷新方块
             BlockPos spawnOrigin = target.getBlockPos();
             for (ILootData data : lootData) {
@@ -197,7 +194,7 @@ public class LootGenerator {
      */
     public static void generateVanillaLoot(LootContext lootContext, BlockEntity targetBlockEntity, ILootEntry entry) {
         if (REMOVE_LOOT_TABLE) {
-            removeLootTable(lootContext, targetBlockEntity);
+            removeLootTable(targetBlockEntity);
         }
 
         // 执行刷新
@@ -216,7 +213,7 @@ public class LootGenerator {
             ILootData data = lootData.get(i);
             if (data.getDataType() == LootDataType.ITEM) {
                 IItemLootData itemData = (IItemLootData) data;
-                ItemStack itemStack = itemData.getItemStack(lootContext);
+                ItemStack itemStack = itemData.getItemStack();
                 if (itemStack == null) {
                     continue;
                 }
@@ -335,7 +332,7 @@ public class LootGenerator {
     private static void clearOldLoot(LootContext lootContext) {
         BlockPos minPos = BlockPos.containing(lootContext.chunkPos.getMinBlockX(), lootContext.serverLevel.getMinBuildHeight(), lootContext.chunkPos.getMinBlockZ());
         BlockPos maxPos = BlockPos.containing(lootContext.chunkPos.getMaxBlockX() + 1, lootContext.serverLevel.getMaxBuildHeight(), lootContext.chunkPos.getMaxBlockZ() + 1);
-        AABB chunkAABB = new AABB(minPos.getX(), minPos.getY(), minPos.getZ(), maxPos.getX(), maxPos.getY(), maxPos.getZ());
+        AABB chunkAABB = new AABB(minPos, maxPos);
         List<Entity> allEntitiesInChunk = lootContext.serverLevel.getEntitiesOfClass(Entity.class, chunkAABB, entity -> !(entity instanceof Player));
         List<Entity> oldEntities = new ArrayList<>();
         List<Entity> innocentEntities = new ArrayList<>();
@@ -353,24 +350,9 @@ public class LootGenerator {
 
         // 清除旧游戏实体
         for (Entity entity : oldEntities) {
-            UUID debugGameId = null;
-            if (entity instanceof ItemEntity itemEntity) {
-                ItemStack itemStack = itemEntity.getItem();
-                CustomData customData = itemStack.get(DataComponents.CUSTOM_DATA);
-
-                if (customData != null) {
-                    CompoundTag itemTag = customData.copyTag();
-                    if (itemTag.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                        debugGameId = itemTag.getUUID(LootNBTTag.GAME_ID_TAG);
-                    }
-                }
-            } else {
-                if (entity.getPersistentData().hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                    debugGameId = entity.getPersistentData().getUUID(LootNBTTag.GAME_ID_TAG);
-                }
-            }
-
-            BattleRoyale.LOGGER.debug("Clear old game object: {} (UUID: {}) (GameId: {}) at {}",
+            UUID debugGameId = gameIdReadApi.getGameId(entity);
+            BattleRoyale.LOGGER.debug("Clear old game {} object: {} (UUID: {}) (GameId: {}) at {}",
+                    entity instanceof ItemEntity ? "item" : "entity",
                     entity.getName().getString(),
                     entity.getUUID(),
                     debugGameId != null ? debugGameId.toString() : "N/A", // 打印转换后的 UUID
@@ -387,17 +369,17 @@ public class LootGenerator {
          }
     }
 
-    public static void removeLootTable(LootContext lootContext, BlockEntity blockEntity) {
-        // 1.21.1仍然在NBT根目录用LootTable和LootTableSeed, 不在components下
-        CompoundTag nbt = blockEntity.saveWithFullMetadata(lootContext.serverLevel.registryAccess());
+    public static void removeLootTable(BlockEntity blockEntity) {
+        CompoundTag nbt = blockEntity.saveWithFullMetadata();
         // nbt.remove("LootTable"); // 无效
         // nbt.remove("LootTableSeed");
         if (nbt.contains("LootTable")) {
             nbt.putString("LootTable", ""); // 必须为字符串类型，空字符串会解析为"minecraft:"，否则写不进去
             // nbt.putLong("LootTableSeed", 0L); // LootTable解析不出来之后就已经没有LootTableSeed了
         }
-        blockEntity.loadWithComponents(nbt, lootContext.serverLevel.registryAccess());
-        blockEntity.setChanged();
+        blockEntity.load(nbt); // 写入内存，没写入硬盘
+        blockEntity.setChanged(); // 防止区块被卸载前还没交互
+        // 之后LootEntry能读取到的已经是"LootTable":"minecraft:"
     }
 
     public static class LootContext {
