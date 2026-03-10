@@ -350,18 +350,9 @@ public class LootGenerator {
 
         // 清除旧游戏实体
         for (Entity entity : oldEntities) {
-            UUID debugGameId = null;
-            if (entity instanceof ItemEntity itemEntity) {
-                if (itemEntity.getItem().getOrCreateTag().hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                    debugGameId = itemEntity.getItem().getOrCreateTag().getUUID(LootNBTTag.GAME_ID_TAG);
-                }
-            } else {
-                if (entity.getPersistentData().hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                    debugGameId = entity.getPersistentData().getUUID(LootNBTTag.GAME_ID_TAG);
-                }
-            }
-
-            BattleRoyale.LOGGER.debug("Clear old game object: {} (UUID: {}) (GameId: {}) at {}",
+            UUID debugGameId = gameIdReadApi.getGameId(entity);
+            BattleRoyale.LOGGER.debug("Clear old game {} object: {} (UUID: {}) (GameId: {}) at {}",
+                    entity instanceof ItemEntity ? "item" : "entity",
                     entity.getName().getString(),
                     entity.getUUID(),
                     debugGameId != null ? debugGameId.toString() : "N/A", // 打印转换后的 UUID
