@@ -2,12 +2,11 @@ package xiao.battleroyale.common.game.zone.spatial;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.config.common.game.zone.zoneshape.EndEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.StartEntry;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
-
-import javax.annotation.Nullable;
 
 public class EllipsoidShape extends Abstract3DShape {
 

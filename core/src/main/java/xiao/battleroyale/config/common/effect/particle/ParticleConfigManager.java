@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.effect.particle.IParticleConfigManager;
 import xiao.battleroyale.api.config.common.effect.particle.IParticleEntry;
@@ -18,7 +19,6 @@ import xiao.battleroyale.config.common.effect.EffectConfigManager;
 import xiao.battleroyale.config.common.effect.particle.defaultconfigs.DefaultParticleConfigGenerator;
 import xiao.battleroyale.util.JsonUtils;
 
-import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.Comparator;
 

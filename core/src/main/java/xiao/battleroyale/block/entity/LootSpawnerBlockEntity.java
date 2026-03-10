@@ -11,12 +11,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.init.registry.ModBlocks;
 import xiao.battleroyale.init.registry.ModMenuTypes;
 import xiao.battleroyale.inventory.LootSpawnerMenu;
-
-import javax.annotation.Nullable;
 
 public class LootSpawnerBlockEntity extends AbstractLootContainerBlockEntity implements MenuProvider {
 
