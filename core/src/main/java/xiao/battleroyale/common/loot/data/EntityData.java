@@ -9,11 +9,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.ValueInput;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.loot.data.IEntityLootData;
 import xiao.battleroyale.config.common.loot.type.EntityEntry;
-
-import javax.annotation.Nullable;
 
 public class EntityData implements IEntityLootData {
     private final @Nullable EntityType<?> entityType;

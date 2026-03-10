@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.loot.type;
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.loot.ILootEntry;
 import xiao.battleroyale.api.config.common.loot.LootEntryTag;
@@ -11,7 +12,6 @@ import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.util.JsonUtils;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 

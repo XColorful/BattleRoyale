@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.game.zone.zonefunc;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.config.common.game.zone.func.ZoneFuncTag;
 import xiao.battleroyale.api.config.common.loot.ILootEntry;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
@@ -9,8 +10,6 @@ import xiao.battleroyale.api.minecraft.InventoryIndex;
 import xiao.battleroyale.common.game.zone.tickable.InventoryFunc;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.util.JsonUtils;
-
-import javax.annotation.Nullable;
 
 public class InventoryFuncEntry extends AbstractFuncEntry {
 
