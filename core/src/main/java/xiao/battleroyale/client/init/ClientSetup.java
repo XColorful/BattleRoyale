@@ -23,6 +23,7 @@ public class ClientSetup implements IClientSetup {
     @Override
     public List<ScreenRegistration<?, ?>> getScreenRegistrations() {
         MenuType<LootSpawnerMenu> menuType = ModMenuTypes.LOOT_SPAWNER_MENU.get();
+        // 用 Access Widener 改了权限
         MenuScreens.ScreenConstructor<LootSpawnerMenu, LootSpawnerScreen> factory = LootSpawnerScreen::new;
 
         @SuppressWarnings({"unchecked", "rawtypes"})

@@ -24,7 +24,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +33,6 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.item.BlockItemBuilder;
 import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
-import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 
 import java.util.UUID;
@@ -83,7 +81,7 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
         return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
-    @Override
+//    @Override
     public PushReaction getPistonPushReaction(BlockState state) {
         return PushReaction.NORMAL;
     }
@@ -112,7 +110,7 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+    public @NotNull ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
         BlockEntity blockentity = level.getBlockEntity(pos);
 
         if (blockentity instanceof AbstractLootBlockEntity e) {
@@ -130,7 +128,7 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
                     })
                     .build();
         }
-        return super.getCloneItemStack(state, target, level, pos, player);
+        return super.getCloneItemStack(level, pos, state);
     }
 
     public float parseRotation(Direction direction) {

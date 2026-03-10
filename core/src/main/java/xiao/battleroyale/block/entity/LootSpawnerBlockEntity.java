@@ -50,7 +50,7 @@ public class LootSpawnerBlockEntity extends AbstractLootContainerBlockEntity imp
         return !this.isRemoved();
     }
 
-    @Override
+//    @Override
     public AABB getRenderBoundingBox() {
         return RELATIVE_RENDER_AABB.move(this.worldPosition);
     }

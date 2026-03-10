@@ -12,6 +12,7 @@ public interface IClientSetup {
 
     List<ScreenRegistration<?, ?>> getScreenRegistrations();
 
+    // 用 Access Widener 改了权限
     record ScreenRegistration<T extends AbstractContainerMenu, U extends Screen & MenuAccess<T>>(
             MenuType<T> menuType,
             MenuScreens.ScreenConstructor<T, U> factory

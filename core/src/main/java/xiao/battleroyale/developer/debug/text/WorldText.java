@@ -60,7 +60,8 @@ public class WorldText {
         CompoundTag fullNbt = blockEntity.saveWithFullMetadata();
         int nbtCount = fullNbt.isEmpty() ? 0 : fullNbt.getAllKeys().size();
 
-        CompoundTag forgeData = blockEntity.getPersistentData();
+//        CompoundTag forgeData = blockEntity.getPersistentData();
+        CompoundTag forgeData = new CompoundTag();
         int forgeCount = forgeData.isEmpty() ? 0 : forgeData.getAllKeys().size();
 
         ListTag items = fullNbt.getList("Items", Tag.TAG_COMPOUND);

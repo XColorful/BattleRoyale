@@ -44,6 +44,7 @@ tasks.withType(ProcessResources).configureEach {
             target_version_range   : fabric_version,
 
             mod_group_id           : mod_group_id,
+            fabric_api_version      : fabric_api_version,
 
             journeymap_version_range: journeymap_version_range,
             playerrevive_version_range: playerrevive_version_range,
@@ -65,7 +66,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
-    implementation include(project(":core"))
+    implementation project(":core")
 }
 
 tasks.named('jar', Jar).configure {

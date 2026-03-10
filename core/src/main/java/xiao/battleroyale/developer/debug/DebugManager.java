@@ -43,6 +43,7 @@ public class DebugManager {
         debugPlayers.clear();
         debugPlayers.putAll(loadedDebugPlayers);
     }
+    // 用 Access Widener 改了权限
     public static boolean hasDebugPermission(CommandSourceStack source) {
         if (source.hasPermission(DEBUG_PERMISSION_LEVEL)) {
             return true;

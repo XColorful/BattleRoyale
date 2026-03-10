@@ -73,4 +73,11 @@ public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> ex
         int y = getGuiTop() + this.textureOffY;
         guiGraphics.blit(this.TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight);
     }
+
+    public int getGuiLeft() {
+        return this.leftPos;
+    }
+    public int getGuiTop() {
+        return this.topPos;
+    }
 }
