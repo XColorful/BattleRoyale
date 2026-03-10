@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.IConfigManager;
 import xiao.battleroyale.api.config.IConfigSubManager;
@@ -26,8 +27,6 @@ import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
 import xiao.battleroyale.config.common.server.profile.ProfileConfigManager;
 import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
-
-import javax.annotation.Nullable;
 
 import static xiao.battleroyale.command.CommandArg.*;
 import static xiao.battleroyale.command.sub.ConfigUtils.getConfigManager;

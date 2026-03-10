@@ -10,6 +10,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.algorithm.BfsCalculator;
 import xiao.battleroyale.algorithm.BfsCalculator.Offset2D;
@@ -24,7 +25,6 @@ import xiao.battleroyale.config.common.loot.type.RepeatEntry;
 import xiao.battleroyale.config.common.loot.type.WeightEntry;
 import xiao.battleroyale.config.common.loot.type.WeightEntry.WeightedEntry;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,9 +38,9 @@ public class LootConfigGenerator {
     public static boolean SKIP_EMPTY_CHUNK = true;
 
     public static @Nullable LootConfig autoLootConfig(ServerLevel serverLevel,
-                                         int lootId, String name,
-                                         String type, Vec3 centerPos,
-                                         int repeat, int weight, int radius) {
+                                                      int lootId, String name,
+                                                      String type, Vec3 centerPos,
+                                                      int repeat, int weight, int radius) {
         ChunkPos centerChunk = new ChunkPos(BlockPos.containing(centerPos.x, centerPos.y, centerPos.z));
         List<ChunkPos> chunks = new ArrayList<>();
         List<List<Offset2D>> layers = BfsCalculator.calculateCenterOffset(radius);
