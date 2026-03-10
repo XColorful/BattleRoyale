@@ -152,7 +152,7 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    @Override
+//    @Override
     public void onDataPacket(net.minecraft.network.Connection net, ClientboundBlockEntityDataPacket pkt) {
         CompoundTag tag = pkt.getTag();
         if (tag != null) {

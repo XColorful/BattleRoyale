@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "${mod_authors}"
+  ],
+  "contact": {
+    "homepage": "${mod_display_url}",
+    "sources": "https://github.com/XColorful/BattleRoyale",
+    "issues": "${mod_issue_url}"
+  },
+  "license": "${mod_license}",
+  "icon": "assets/${mod_id}/${mod_logo_file}",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "${mod_group_id}.compat.fabric.BattleRoyaleFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version_range}",
+    "minecraft": "${minecraft_version_range}",
+    "java": ">=17",
+    "fabric-api": ">=${fabric_api_version}"
+  },
+  "suggests": {
+    "journeymap": "${journeymap_version_range}",
+    "playerrevive": "${playerrevive_version_range}",
+    "tacz": "${tacz_version_range}",
+    "cbraddon": "${cbraddon_version_range}",
+    "armorscaling": "${armorscaling_version_range}"
+  }
+}

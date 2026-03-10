@@ -18,6 +18,7 @@ public class ModEntityRender implements IModEntityRender {
 
     @Override
     public void onRegisterEntityRenderers() {
+        // 用 Access Widener 改了权限
         BlockEntityRenderers.register(ModBlocks.LOOT_SPAWNER_BE.get(), LootSpawnerRenderer::new);
         BlockEntityRenderers.register(ModBlocks.ENTITY_SPAWNER_BE.get(), EntitySpawnerRenderer::new);
     }

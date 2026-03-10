@@ -1,0 +1,35 @@
+accessWidener v2 named
+
+# 允许 ClientSetup 访问 MenuScreens 里的内部接口 ScreenConstructor
+accessible class net/minecraft/client/gui/screens/MenuScreens$ScreenConstructor
+
+# 让 ModEntityRender能注册渲染
+accessible method net/minecraft/client/renderer/blockentity/BlockEntityRenderers register (Lnet/minecraft/world/level/block/entity/BlockEntityType;Lnet/minecraft/client/renderer/blockentity/BlockEntityRendererProvider;)V
+
+# CustomRenderType 内部
+# 开放所有渲染状态分片的构造函数
+accessible method net/minecraft/client/renderer/RenderStateShard$TransparencyStateShard <init> (Ljava/lang/String;Ljava/lang/Runnable;Ljava/lang/Runnable;)V
+accessible method net/minecraft/client/renderer/RenderStateShard$ShaderStateShard <init> (Ljava/util/function/Supplier;)V
+accessible method net/minecraft/client/renderer/RenderStateShard$WriteMaskStateShard <init> (ZZ)V
+accessible method net/minecraft/client/renderer/RenderStateShard$DepthTestStateShard <init> (Ljava/lang/String;I)V
+# 开放 RenderType.CompositeState 及其 Builder
+accessible class net/minecraft/client/renderer/RenderType$CompositeState
+accessible class net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder
+accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder createCompositeState (Z)Lnet/minecraft/client/renderer/RenderType$CompositeState;
+# 开放常用的 RenderStateShard 内部类
+accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
+accessible method net/minecraft/client/renderer/RenderStateShard$TextureStateShard <init> (Lnet/minecraft/resources/ResourceLocation;ZZ)V
+accessible class net/minecraft/client/renderer/RenderStateShard$CullStateShard
+accessible method net/minecraft/client/renderer/RenderStateShard$CullStateShard <init> (Z)V
+accessible class net/minecraft/client/renderer/RenderStateShard$LightmapStateShard
+accessible method net/minecraft/client/renderer/RenderStateShard$LightmapStateShard <init> (Z)V
+accessible class net/minecraft/client/renderer/RenderStateShard$OverlayStateShard
+accessible method net/minecraft/client/renderer/RenderStateShard$OverlayStateShard <init> (Z)V
+# 开启 RenderType.create 静态工厂方法的访问权限
+accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
+
+# 允许 DebugManager 访问 CommandSourceStack 里的 source 接口
+accessible field net/minecraft/commands/CommandSourceStack source Lnet/minecraft/commands/CommandSource;
+
+# 允许 ModBlocks 访问 BlockEntityType 的内部私有接口 BlockEntitySupplier
+accessible class net/minecraft/world/level/block/entity/BlockEntityType$BlockEntitySupplier

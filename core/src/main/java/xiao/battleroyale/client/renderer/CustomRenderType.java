@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import xiao.battleroyale.BattleRoyale;
 
+// 内含大量 Access Widener
 public class CustomRenderType {
 
     private static final ResourceLocation WHITE_TEXTURE = BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:textures/white.png", BattleRoyale.MOD_ID));

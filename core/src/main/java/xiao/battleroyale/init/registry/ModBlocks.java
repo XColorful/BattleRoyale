@@ -25,6 +25,7 @@ public class ModBlocks {
     public static final IRegistryObject<Block> ENTITY_SPAWNER = BLOCKS.register("entity_spawner", EntitySpawner::new);
     public static final IRegistryObject<Block> ZONE_CONTROLLER = BLOCKS.register("zone_controller", ZoneController::new);
 
+    // 用 Access Widener 改了权限
     public static final IRegistryObject<BlockEntityType<LootSpawnerBlockEntity>> LOOT_SPAWNER_BE =
             BLOCK_ENTITIES.register("loot_spawner", () ->
                     BlockEntityType.Builder.of(LootSpawnerBlockEntity::new, LOOT_SPAWNER.get()).build(null));

@@ -34,9 +34,17 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
                 entityGameId = itemTag.getUUID(LootNBTTag.GAME_ID_TAG);
             }
         } else { // 一般实体，位于{ForgeData:{GameId:UUID}}
-            CompoundTag persistentData = entity.getPersistentData();
-            if (persistentData.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                entityGameId = persistentData.getUUID(LootNBTTag.GAME_ID_TAG);
+//            CompoundTag persistentData = entity.getPersistentData();
+//            if (persistentData.hasUUID(LootNBTTag.GAME_ID_TAG)) {
+//                entityGameId = persistentData.getUUID(LootNBTTag.GAME_ID_TAG);
+//            }
+            for (String tag : entity.getTags()) {
+                if (tag.length() == TARGET_LENGTH && tag.startsWith(ID_PREFIX)) {
+                    try {
+                        entityGameId = UUID.fromString(tag.substring(ID_PREFIX.length()));
+                        break;
+                    } catch (IllegalArgumentException ignored) {}
+                }
             }
         }
         return entityGameId;
@@ -46,10 +54,10 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
      * 此方法不适用于本模组的方块
      */
     @Override public @Nullable UUID getGameId(BlockEntity blockEntity) {
-        CompoundTag forgeData = blockEntity.getPersistentData();
-        if (forgeData.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-            return forgeData.getUUID(LootNBTTag.GAME_ID_TAG);
-        }
+//        CompoundTag forgeData = blockEntity.getPersistentData();
+//        if (forgeData.hasUUID(LootNBTTag.GAME_ID_TAG)) {
+//            return forgeData.getUUID(LootNBTTag.GAME_ID_TAG);
+//        }
         return null;
     }
     /**
@@ -72,14 +80,16 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
         itemStack.getOrCreateTag().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
     }
     @Override public void addGameId(Entity entity, UUID gameId) {
-        entity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+//        entity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+        this.removeGameId(entity);
+        entity.addTag(ID_PREFIX + gameId.toString());
     }
     /**
      * 添加游戏UUID
      * 此方法不适用于本模组的方块
      */
     @Override public void addGameId(BlockEntity blockEntity, UUID gameId) {
-        blockEntity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
+//        blockEntity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
         blockEntity.setChanged();
     }
 
@@ -90,14 +100,19 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
         itemStack.getOrCreateTag().remove(LootNBTTag.GAME_ID_TAG);
     }
     @Override public void removeGameId(Entity entity) {
-        entity.getPersistentData().remove(LootNBTTag.GAME_ID_TAG);
+//        entity.getPersistentData().remove(LootNBTTag.GAME_ID_TAG);
+        entity.getTags().removeIf(tag -> tag.length() == TARGET_LENGTH && tag.startsWith(ID_PREFIX));
     }
     /**
      * 移除游戏UUID
      * 此方法不适用于本模组的方块
      */
     @Override public void removeGameId(BlockEntity blockEntity) {
-        blockEntity.getPersistentData().remove(LootNBTTag.GAME_ID_TAG);
+//        blockEntity.getPersistentData().remove(LootNBTTag.GAME_ID_TAG);
         blockEntity.setChanged();
     }
+
+    // fabric only
+    private static final String ID_PREFIX = LootNBTTag.GAME_ID_TAG + ":";
+    private static final int TARGET_LENGTH = ID_PREFIX.length() + 36;
 }

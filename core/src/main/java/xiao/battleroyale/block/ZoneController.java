@@ -101,7 +101,7 @@ public class ZoneController extends BaseEntityBlock {
         return RenderShape.MODEL;
     }
 
-    @Override
+//    @Override
     public PushReaction getPistonPushReaction(BlockState state) {
         return PushReaction.NORMAL;
     }

@@ -11,7 +11,7 @@ public class ModCreativeTabs {
     public static final IRegistrar<CreativeModeTab> TABS =
             BattleRoyale.getRegistrarFactory().createCreativeTabs(BattleRoyale.MOD_ID);
 
-    public static final IRegistryObject<CreativeModeTab> BLOCK_TAB = TABS.register("block", () -> CreativeModeTab.builder()
+    public static final IRegistryObject<CreativeModeTab> BLOCK_TAB = TABS.register("block", () -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
             .title(Component.translatable("itemGroup.tab.battleroyale"))
             .icon(() -> new ItemStack(ModBlocks.ZONE_CONTROLLER.get()))
             .displayItems(((itemDisplayParameters, output) -> {

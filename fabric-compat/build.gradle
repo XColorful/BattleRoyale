@@ -1,0 +1,88 @@
+plugins {
+    id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+loom {
+    accessWidenerPath = project(":core").file("src/main/resources/battleroyale.accesswidener")
+}
+
+loom {
+    runs {
+        configureEach {
+            runDir("run")
+        }
+        client { client() }
+        server {
+            server()
+            programArg "--nogui"
+        }
+    }
+}
+
+tasks.withType(ProcessResources).configureEach {
+    from(project(':core').sourceSets.main.resources)
+
+    var replaceProperties = [
+            minecraft_version_range: minecraft_version_range,
+            loader_version_range   : fabric_version,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_credits            : mod_credits,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+            mod_issue_url          : mod_issue_url,
+            mod_display_url        : mod_display_url,
+            mod_logo_file          : mod_logo_file,
+            pack_description       : pack_description,
+            pack_format            : pack_format,
+
+            target_modloader       : fabric_id,
+            target_version_range   : fabric_version,
+
+            mod_group_id           : mod_group_id,
+            fabric_api_version      : fabric_api_version,
+
+            journeymap_version_range: journeymap_version_range,
+            playerrevive_version_range: playerrevive_version_range,
+            tacz_version_range      : tacz_version_range,
+            cbraddon_version_range  : cbraddon_version_range,
+            armorscaling_version_range: armorscaling_version_range
+    ]
+
+    inputs.properties replaceProperties
+
+    filesMatching(['fabric.mod.json', 'pack.mcmeta']) {
+        expand replaceProperties
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${fabric_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+
+    implementation project(":core")
+
+    modCompileOnlyApi "info.journeymap:journeymap-api:${journeymap_fabric_api_version}"
+    modImplementation "${journeymap_fabric_curse_maven}"
+    modCompileOnlyApi "${tacz_fabric_curse_maven}"
+}
+
+tasks.named('jar', Jar).configure {
+    archiveBaseName.set(mod_id)
+    archiveVersion.set(mod_version)
+    archiveClassifier.set("${fabric_id}-${minecraft_version}")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from project(':core').sourceSets.main.output
+}
+
+tasks.matching { it.name == 'remapJar' }.configureEach {
+    it.archiveBaseName.set(mod_id)
+    it.archiveVersion.set(mod_version)
+    it.archiveClassifier.set("${fabric_id}-${minecraft_version}")
+}

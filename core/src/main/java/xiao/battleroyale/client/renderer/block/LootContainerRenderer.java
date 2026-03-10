@@ -118,8 +118,8 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
         // ---4. 视锥体---
         // 剔除视野外的(头顶和楼下)
         if (DO_FRUSTUM_CHECK) {
-            Frustum frustum = mc.levelRenderer.getFrustum();
-            if (!frustum.isVisible(blockEntity.getRenderBoundingBox())) return;
+//            Frustum frustum = mc.levelRenderer.getFrustum();
+//            if (!frustum.isVisible(blockEntity.getRenderBoundingBox())) return;
         }
         // --5. 射线检测---
         // 剔除墙后的
