@@ -8,9 +8,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.fml.ModList;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
-
-import javax.annotation.Nullable;
 
 public class NeoRegistry implements IMcRegistry {
 
