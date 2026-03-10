@@ -6,6 +6,13 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven {
+            name = "JourneyMap (Public)"
+            url = "https://jm.gserv.me/repository/maven-public/"
+        }
+        maven {
+            url "https://www.cursemaven.com"
+        }
     }
 }
 

@@ -15,13 +15,19 @@ public class JmApi implements IJmApi {
 
     private JmApi() {}
 
+    protected static boolean initialized = false;
+
     @Override
     public void removeAll(String modId) {
-        // 空实现
+        if (initialized) {
+            JourneyMapPlugin.getInstance().removeAll(modId);
+        }
     }
 
     @Override
     public void show(JMPolygonOverlay jmPolygonOverlay) {
-        // 空实现
+        if (initialized) {
+            JourneyMapPlugin.getInstance().show(jmPolygonOverlay);
+        }
     }
 }

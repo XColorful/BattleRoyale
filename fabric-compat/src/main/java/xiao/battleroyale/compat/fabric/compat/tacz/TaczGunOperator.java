@@ -1,5 +1,6 @@
 package xiao.battleroyale.compat.fabric.compat.tacz;
 
+import com.tacz.guns.api.entity.IGunOperator;
 import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.api.compat.tacz.ITaczGunOperator;
 
@@ -17,6 +18,6 @@ public class TaczGunOperator implements ITaczGunOperator {
 
     @Override
     public void cancelLivingEntityReload(LivingEntity livingEntity) {
-        // 空实现，不做任何操作
+        IGunOperator.fromLivingEntity(livingEntity).cancelReload();
     }
 }

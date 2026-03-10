@@ -67,6 +67,10 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
     implementation project(":core")
+
+    modCompileOnlyApi "info.journeymap:journeymap-api:${journeymap_fabric_api_version}"
+    modImplementation "${journeymap_fabric_curse_maven}"
+    modCompileOnlyApi "${tacz_fabric_curse_maven}"
 }
 
 tasks.named('jar', Jar).configure {
