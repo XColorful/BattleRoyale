@@ -29,6 +29,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.item.BlockItemBuilder;
 import xiao.battleroyale.api.loot.LootNBTTag;
 import xiao.battleroyale.block.entity.AbstractLootBlockEntity;
@@ -95,11 +97,9 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
                 CompoundTag nbt = stack.getTag();
 
                 // GameId
-                UUID gameId = null;
-                if (nbt != null && nbt.hasUUID(LootNBTTag.GAME_ID_TAG)) {
-                    gameId = nbt.getUUID(LootNBTTag.GAME_ID_TAG);
-                }
-                e.setGameId(gameId != null ? gameId : UUID.randomUUID());
+                IGameManager gameManager = BattleRoyale.getGameManager();
+                UUID gameId = gameManager.getGameIdReadApi().getGameId(stack);
+                e.setGameId(gameId != null ? gameId : gameManager.getGameId());
 
                 // ConfigId
                 int configId = LootConfigManager.get().getDefaultConfigId(); // 默认获取loot_spawner的默认id
@@ -114,7 +114,8 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
     @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         BlockEntity blockentity = level.getBlockEntity(pos);
-        if (blockentity instanceof LootSpawnerBlockEntity e) {
+
+        if (blockentity instanceof AbstractLootBlockEntity e) {
             UUID gameId = e.getGameId();
             int configId = e.getConfigId();
 
