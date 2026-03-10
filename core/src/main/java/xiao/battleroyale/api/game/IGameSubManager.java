@@ -1,8 +1,7 @@
 package xiao.battleroyale.api.game;
 
 import net.minecraft.server.level.ServerLevel;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public interface IGameSubManager {
 
