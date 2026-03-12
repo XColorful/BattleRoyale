@@ -162,7 +162,18 @@ public class GameTeam {
     }
 
     public String getVanillaTeamName() {
-        // 不合法的队伍名（无法解析字符串，空格会导致后面的部分视为参数），天然避免了对原版队伍内规则的修改
         return String.format("CBR Team %s", this.gameTeamId);
+    }
+
+    // 不合法的队伍名（无法解析字符串，空格会导致后面的部分视为参数），天然避免了对原版队伍内规则的修改
+    public static String DEFAULT_VANILLA_TEAM_FORMAT = "CBR Team %s";
+    public static String createVanillaTeamName(GameTeam gameTeam, String formatString) {
+        try {
+            return String.format(formatString, gameTeam.gameTeamId);
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.debug("Invalid vanilla team format string: {}", formatString);
+            // 回退到可解析的字符串
+            return String.format("team%s", gameTeam.gameTeamId);
+        }
     }
 }

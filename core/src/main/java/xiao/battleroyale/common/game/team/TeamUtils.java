@@ -111,11 +111,14 @@ public class TeamUtils {
      * @param serverLevel 用于从 GamePlayer 获取 LivingEntity 的维度
      * @param hideName 是否向其他队伍隐藏名称
      */
-    public static void buildVanillaTeamForAllGameTeams(ITeamManager teamManager, @NotNull ServerLevel serverLevel, boolean hideName) {
+    public static void buildVanillaTeamForAllGameTeams(TeamManager teamManager, @NotNull ServerLevel serverLevel, boolean hideName) {
         try {
             Scoreboard scoreboard = serverLevel.getScoreboard();
             for (GameTeam gameTeam : teamManager.getGameTeams()) {
-                PlayerTeam vanillaTeam = getClearedVanillaTeam(scoreboard, hideName, gameTeam);
+                PlayerTeam vanillaTeam = getClearedVanillaTeam(scoreboard,
+                        teamManager.teamConfig.vanillaTeamFormat,
+                        hideName,
+                        gameTeam);
                 for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) { // 原版队伍没有队长，直接遍历
                     @Nullable LivingEntity memberPlayer = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
                     if (memberPlayer == null) {
@@ -144,7 +147,7 @@ public class TeamUtils {
         for (GamePlayer gamePlayer : teamManager.getGamePlayers()) {
             @Nullable LivingEntity player = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
             if (player == null) {
-                BattleRoyale.LOGGER.warn("Failed to get GamePlayer[{}][{}]{}, skipped clear vanilla team", gamePlayer.getGameTeamId(), gamePlayer.getGameSingleId(), gamePlayer.getPlayerName());
+                BattleRoyale.LOGGER.warn("Failed to get GamePlayer {}, skipped clear vanilla team", gamePlayer.getNameWithId());
                 continue;
             }
             String playerName = player.getName().getString();
@@ -152,15 +155,15 @@ public class TeamUtils {
         }
     }
 
-    public static @NotNull PlayerTeam getOrCreateVanillaTeam(Scoreboard scoreboard, boolean hideName, GameTeam gameTeam) {
-        String vanillaTeamName = gameTeam.getVanillaTeamName();
+    public static @NotNull PlayerTeam getOrCreateVanillaTeam(Scoreboard scoreboard, String vanillaTeamFormat, boolean hideName, GameTeam gameTeam) {
+        String vanillaTeamName = GameTeam.createVanillaTeamName(gameTeam, vanillaTeamFormat);
 
         PlayerTeam existingTeam = scoreboard.getPlayerTeam(vanillaTeamName);
-        return Objects.requireNonNullElseGet(existingTeam, () -> getClearedVanillaTeam(scoreboard, hideName, gameTeam));
+        return Objects.requireNonNullElseGet(existingTeam, () -> getClearedVanillaTeam(scoreboard, vanillaTeamFormat, hideName, gameTeam));
     }
 
-    public static @NotNull PlayerTeam getClearedVanillaTeam(Scoreboard scoreboard, boolean hideName, GameTeam gameTeam) {
-        String vanillaTeamName = gameTeam.getVanillaTeamName();
+    public static @NotNull PlayerTeam getClearedVanillaTeam(Scoreboard scoreboard, String vanillaTeamFormat, boolean hideName, GameTeam gameTeam) {
+        String vanillaTeamName = GameTeam.createVanillaTeamName(gameTeam, vanillaTeamFormat);
 
         // 移除同名Vanilla队伍
         PlayerTeam existingTeam = scoreboard.getPlayerTeam(vanillaTeamName);
