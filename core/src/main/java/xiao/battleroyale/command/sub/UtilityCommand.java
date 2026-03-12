@@ -57,6 +57,12 @@ public class UtilityCommand {
                                         )
                                 )
                         )
+                        .requires(source -> source.hasPermission(4)) // 战利品表读不了就直接进不了存档
+                        .then(Commands.literal(TO_LOOT_TABLE)
+                                .then(Commands.argument(FILE, StringArgumentType.string())
+                                        .executes(UtilityCommand::toLootTable)
+                                )
+                        )
                 )
         );
 
@@ -140,6 +146,16 @@ public class UtilityCommand {
                 id,
                 type, pos,
                 repeat, weight, radius, autoReload)) {
+            return Command.SINGLE_SUCCESS;
+        } else {
+            return 0;
+        }
+    }
+    private static int toLootTable(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        int id = IntegerArgumentType.getInteger(context, ID);
+        String fileName = StringArgumentType.getString(context, FILE);
+        if (ConfigGenerator.toLootTable(source, id, fileName)) {
             return Command.SINGLE_SUCCESS;
         } else {
             return 0;

@@ -102,6 +102,7 @@ public class CommandArg {
     public static final String SLOT = "slot";
     public static final String BLOCK = "block";
     public static final String CHUNK = "chunk";
+    public static final String TO_LOOT_TABLE = "toLootTable";
     public static final String REPEAT = "repeat";
     public static final String BASE_WEIGHT = "baseWeight";
     public static final String CHUNK_RADIUS = "chunkRadius";

@@ -21,7 +21,7 @@ _/battleroyale utility tosurvivallobby_
 - 若[生存模式大厅](https://github.com/XColorful/BattleRoyale/wiki/Utility-config#生存模式大厅)禁用 _allowGamePlayerTeleport_ ，则需要先[离开队伍](https://github.com/XColorful/BattleRoyale/wiki/Team-command#离开队伍)
 
 ## 生成配置文件
-_/battleroyale utility [lootconfig] [id] [type] [...]_
+_/battleroyale utility [lootconfig] [id] [type/toLootTable] [...]_
 
 ### 生成物资刷新配置文件
 _/battleroyale utility lootconfig [id] [slot/block/chunk] [xyz] [repeat] [baseWeight] [chunkRadius] [autoReload]_
@@ -138,6 +138,15 @@ _/battleroyale utility lootconfig [xyz] [id] [slot/block/chunk] [xyz] [repeat] [
 	}
 ]
 ```
+
+#### 转换成战利品表
+_/battleroyale utility [lootconfig] [id] toLootTable [fileName]_
+
+**需要权限等级4**
+
+将刷新配置转换成战利品表，写入存档目录下单个文件 _./datapacks/battleroyale/data/battleroyale/loot_tables/{fileName}.json_
+- [物资刷新配置](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction#物资刷新配置)几乎不能转化为战利品表，读取失败将导致无法进入存档（需要删除战利品表）
+- 请考虑使用[背包刷新](https://github.com/XColorful/BattleRoyale/wiki/Loot-command#背包刷新)代替战利品表
 
 ## 预设配置
 _/battleroyale utility profile [save/load] [id] [overwrite]_
@@ -314,6 +323,15 @@ By Block or Chunk:
 	}
 ]
 ```
+
+#### Convert to loot table
+_/battleroyale utility [lootconfig] [id] toLootTable [fileName]_
+
+**Require permission level 4**
+
+Convert the loot configuration into a loot table and write it to a single file at _./datapacks/battleroyale/data/battleroyale/loot_tables/{fileName}.json_:
+- [Loot configs](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction#Loot) can rarely be converted to loot tables; a reading failure will prevent entry into the save (requires deleting the loot table)
+- Consider using [inventory loot](https://github.com/XColorful/BattleRoyale/wiki/Loot-command#Inventory-loot) instead of loot tables
 
 ## Profile config
 _/battleroyale utility profile [save/load] [id] [overwrite]_
