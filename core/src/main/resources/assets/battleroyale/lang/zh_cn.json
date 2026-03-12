@@ -355,6 +355,10 @@
   "battleroyale.message.save_current_profile_failed": "未能保存当前预设",
   "battleroyale.message.load_profile_success": "已读取预设 %s (总计: %s)",
   "battleroyale.message.load_profile_failed": "未能读取预设 %s",
+  "battleroyale.message.remove_vanilla_team": "已移除 %s 个原版队伍",
+  "battleroyale.message.no_vanilla_team_removed": "没有原版队伍被移除",
+  "battleroyale.message.rebuild_vanilla_team": "已重新构建原版队伍",
+  "battleroyale.message.no_vanilla_team_rebuild": "没有重建的原版队伍",
 
   "battleroyale.label.alive": "生存",
 

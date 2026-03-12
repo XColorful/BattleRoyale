@@ -355,6 +355,10 @@
   "battleroyale.message.save_current_profile_failed": "Failed to save current profile",
   "battleroyale.message.load_profile_success": "Loaded profile %s (Total: %s)",
   "battleroyale.message.load_profile_failed": "Failed to load profile %s",
+  "battleroyale.message.remove_vanilla_team": "Removed %s vanilla team",
+  "battleroyale.message.no_vanilla_team_removed": "No vanilla team removed",
+  "battleroyale.message.rebuild_vanilla_team": "Rebuilt vanilla team",
+  "battleroyale.message.no_vanilla_team_rebuild": "No vanilla team rebuilt",
 
   "battleroyale.label.alive": "Alive",
 

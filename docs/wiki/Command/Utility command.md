@@ -1,7 +1,7 @@
 [English](#English)
 
 # 实用指令
-_/battleroyale utility [survivallobby/tosurvivallobby/lootconfig/profile] [id/save/load] [type/id] [.../overwrite]_
+_/battleroyale utility [survivallobby/tosurvivallobby/lootconfig/profile/team] [id/save/load/remove/rebuild] [type/id/...] [.../overwrite]_
 
 ## 生存模式大厅
 _/battleroyale utility [survivallobby/tosurvivallobby]_
@@ -155,8 +155,28 @@ _/battleroyale utility profile load [id]_
 自动切换至预设的配置文件及选用配置
 - id：预设配置唯一id
 
+## 原版队伍
+_/battleroyale utility team [remove/rebuild] [...]_
+
+### 移除原版队伍
+_/battleroyale utility team remove [gameTeamOnly]_
+
+移除所有原版队伍，等价于批量执行 _/team remove_
+- gameTeamOnly：是否仅移除当前游戏队伍对应的原版队伍
+> _/team remove_ 无法选中带空格的队伍名
+
+### 重建原版队伍
+_/battleroyale utility team rebuild [formatString] [hideName] [forceRebuild]_
+
+重新为游戏队伍组建原版队伍：
+- formatString：同[游戏配置](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config#游戏配置)`vanillaTeamFormat`
+- hideName：是否隐藏名称
+- forceRebuild：是否允许在游戏中重建
+- 该操作会先清空对应的原版队伍，并过滤掉不在指令执行维度内的游戏玩家
+> 原版队伍不影响游戏队伍判定
+
 # English
-_/battleroyale utility [survivallobby/tosurvivallobby/lootconfig/profile] [id/save/load] [type/id] [.../overwrite]_
+_/battleroyale utility [survivallobby/tosurvivallobby/lootconfig/profile/team] [id/save/load/remove/rebuild] [type/id/...] [.../overwrite]_
 
 ## Survival mode lobby
 _/battleroyale utility [survivallobby/tosurvivallobby]_
@@ -310,3 +330,23 @@ _/battleroyale utility profile load [id]_
 
 Automatically switch to the preset configuration file and apply the selected configuration
 - id: unique profile id
+
+## Vanilla team
+_/battleroyale utility team [remove/rebuild] [...]_
+
+### Remove vanilla team
+_/battleroyale utility team remove [gameTeamOnly]_
+
+Remove all vanilla teams, equivalent to executing _/team remove_ in batches:
+- gameTeamOnly: Whether to only remove the vanilla teams corresponding to the current game teams.
+> _/team remove_ cannot select team names containing spaces.
+
+### Rebuild vanilla team
+_/battleroyale utility team rebuild [formatString] [hideName] [forceRebuild]_
+
+Rebuild vanilla teams for game teams:
+- formatString: Same as `vanillaTeamFormat` in [Game config](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config#Game-config).
+- hideName: Whether to hide names.
+- forceRebuild: Whether to allow rebuilding during the game.
+- This operation will first clear the corresponding vanilla teams and filter out game players who are not within the dimension where the command is executed.
+> Vanilla teams do not affect the determination of game teams.
