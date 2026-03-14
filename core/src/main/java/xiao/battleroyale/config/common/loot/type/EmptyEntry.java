@@ -61,4 +61,17 @@ public class EmptyEntry extends AbstractLootEntry {
         String type = JsonUtils.getJsonString(jsonObject, LootEntryTag.TYPE, "item");
         return new EmptyEntry(type);
     }
+
+    @Override
+    public JsonObject toLootTable() {
+        /*
+            {
+                "type": "minecraft:empty"
+            }
+        */
+        JsonObject entry = new JsonObject();
+        // 原版中只有 empty 类型，不区分物品或实体占位
+        entry.addProperty("type", "minecraft:empty");
+        return entry;
+    }
 }

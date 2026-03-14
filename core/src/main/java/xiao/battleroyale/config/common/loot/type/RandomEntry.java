@@ -1,5 +1,6 @@
 package xiao.battleroyale.config.common.loot.type;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
@@ -66,5 +67,41 @@ public class RandomEntry extends AbstractLootEntry {
             jsonObject.add(LootEntryTag.ENTRY, this.entry.toJson());
         }
         return jsonObject;
+    }
+
+    @Override
+    public JsonObject toLootTable() {
+        /*
+            {
+                "type": "...",
+                "conditions": [
+                    {
+                        "condition": "minecraft:random_chance",
+                        "chance": 0.5
+                    }
+                ]
+            }
+        */
+        JsonObject entryJson = entry != null ? entry.toLootTable() : null;
+        if (entryJson == null) return null;
+
+        // 构造 random_chance 条件
+        JsonObject randomChance = new JsonObject();
+        randomChance.addProperty("condition", "minecraft:random_chance");
+        randomChance.addProperty("chance", this.chance);
+
+        JsonArray conditions;
+
+        // 如果子项已经有 conditions，需要合并
+        if (entryJson.has("conditions")) {
+            conditions = entryJson.getAsJsonArray("conditions");
+        } else {
+            conditions = new JsonArray();
+            entryJson.add("conditions", conditions);
+        }
+
+        conditions.add(randomChance);
+
+        return entryJson;
     }
 }

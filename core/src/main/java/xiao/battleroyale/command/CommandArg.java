@@ -69,6 +69,9 @@ public class CommandArg {
     public static final String BUILD = "build";
     public static final String SIZE = "size";
     public static final String FORCE_REBUILD = "forceRebuild";
+    public static final String REBUILD = "rebuild";
+    public static final String FORMAT_STRING = "formatString";
+    public static final String HIDE_NAME = "hideName";
 
     public static final String XYZ = "xyz";
     public static final String AMOUNT = "amount";
@@ -79,6 +82,7 @@ public class CommandArg {
     public static final String TIME = "time";
     public static final String COOLDOWN = "cooldown";
     public static final String ALL = "all";
+    public static final String REMOVE = "remove";
 
     public static final String LOAD = "load";
     public static final String INIT = "init";
@@ -98,6 +102,7 @@ public class CommandArg {
     public static final String SLOT = "slot";
     public static final String BLOCK = "block";
     public static final String CHUNK = "chunk";
+    public static final String TO_LOOT_TABLE = "toLootTable";
     public static final String REPEAT = "repeat";
     public static final String BASE_WEIGHT = "baseWeight";
     public static final String CHUNK_RADIUS = "chunkRadius";
@@ -108,6 +113,7 @@ public class CommandArg {
     public static final String FIRST_SLOT_INDEX = "firstSlotIndex";
     public static final String LAST_SLOT_INDEX = "lastSlotIndex";
     public static final String OVERWRITE = "overwrite";
+    public static final String GAME_TEAM_ONLY = "gameTeamOnly";
 
     public static final String BOOL = "boolean";
 }

@@ -1,5 +1,6 @@
 package xiao.battleroyale.config.common.loot.type;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -69,5 +70,53 @@ public class ItemEntry extends AbstractLootEntry implements IItemLootEntry {
             validNbtString = nbtString.substring(1, nbtString.length() - 1); // 去掉最外层的{}
         }
         return new EntityEntry("minecraft:item", String.format("{Item:{%s,count:%s,id:\"%s\"}}", validNbtString, count, itemString), 1, 0);
+    }
+
+    @Override
+    public JsonObject toLootTable() {
+        /*
+            {
+                "type": "minecraft:item",
+                "name": "minecraft:grass_block",
+                "functions": [
+                    {
+                        "function": "minecraft:set_count",
+                        "count": 64
+                    },
+                    {
+                        "function": "minecraft:set_nbt",
+                        "tag": "{}"
+                    }
+                ]
+            }
+        */
+
+        JsonObject entry = new JsonObject();
+        entry.addProperty("type", "minecraft:item");
+        entry.addProperty("name", this.itemString);
+
+        JsonArray functions = new JsonArray();
+
+        // 处理物品数量
+        if (this.count > 0) {
+            JsonObject setCount = new JsonObject();
+            setCount.addProperty("function", "minecraft:set_count");
+            setCount.addProperty("count", this.count);
+            functions.add(setCount);
+        }
+
+        // 处理 NBT 数据
+        if (this.nbtString != null && !this.nbtString.isEmpty() && !this.nbtString.equals("{}")) {
+            JsonObject setNbt = new JsonObject();
+            setNbt.addProperty("function", "minecraft:set_nbt");
+            setNbt.addProperty("tag", this.nbtString);
+            functions.add(setNbt);
+        }
+
+        if (!functions.isEmpty()) {
+            entry.add("functions", functions);
+        }
+
+        return entry;
     }
 }
