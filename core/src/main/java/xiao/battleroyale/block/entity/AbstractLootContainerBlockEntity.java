@@ -13,10 +13,12 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlockEntity implements Container, Clearable {
+    protected static final AABB RELATIVE_RENDER_AABB = new AABB(0, 0, 0, 1, 1, 1); // 1格高
     private static final String ITEMS_TAG = "Items";
     private static final String SLOT_TAG = "Slot";
     protected NonNullList<ItemStack> items;
@@ -159,5 +161,11 @@ public abstract class AbstractLootContainerBlockEntity extends AbstractLootBlock
             this.load(tag);
         }
         // 不需要额外触发重绘，Minecraft 会自动处理 BlockEntity 数据更新后的渲染刷新
+    }
+
+    // 兼容没有 IForgeBlockEntity 又调用了该方法的版本 (neoforge1.20.4)
+    // 这个默认实现没什么用
+    public AABB getRenderBoundingBox() {
+        return RELATIVE_RENDER_AABB.move(this.worldPosition);
     }
 }
