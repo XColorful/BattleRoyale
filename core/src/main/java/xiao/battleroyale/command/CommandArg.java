@@ -116,4 +116,8 @@ public class CommandArg {
     public static final String GAME_TEAM_ONLY = "gameTeamOnly";
 
     public static final String BOOL = "boolean";
+
+    // --------API--------
+    public static final String API = "api";
+
 }
