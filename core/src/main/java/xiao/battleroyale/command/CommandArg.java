@@ -127,6 +127,7 @@ public class CommandArg {
     public static final String BY_ID = "byId";
     public static final String WITH_MEMBERS = "withMembers";
     public static final String WITH_TEAM = "withTeam";
+    public static final String DETAIL_LEVEL = "detailLevel";
 
     // GameManager
     public static final String GAME_MANAGER = "gameMamager";
@@ -155,4 +156,25 @@ public class CommandArg {
     public static final String GET_SPAWN_CONFIG_ID = "getSpawnConfigId";
     public static final String GET_STATS_CONFIG_ID = "getStatsConfigId";
     public static final String GET_BOT_CONFIG_ID = "getBotConfigId";
+
+    // TeamManager
+    public static final String TEAM_MANAGER = "teamMamager";
+    public static final String GET_PLAYER_LIMIT = "getPlayerLimit";
+    public static final String GET_GAME_PLAYER_ID = "getGamePlayerId";
+    public static final String GET_GAME_PLAYER = "getGamePlayer";
+    public static final String HAS_STANDING_GAMEPLAYER = "hasStandingGamePlayer";
+    public static final String ONLY_REMAIN_BOT_TEAM = "onlyRemainBotTeam";
+    public static final String GET_GAME_TEAM_ID = "getGameTeamId";
+    public static final String GET_GAME_TEAM = "getGameTeam";
+    public static final String GET_GAME_PLAYERS_TOTAL = "getGamePlayersTotal";
+    public static final String GET_GAME_PLAYERS = "getGamePlayers";
+    public static final String GET_GAME_TEAMS_TOTAL = "getGameTeamsTotal";
+    public static final String GET_GAME_TEAMS = "getGameTeams";
+    public static final String GET_STANDING_GAME_PLAYERS_TOTAL = "getStandingGamePlayersTotal";
+    public static final String GET_STANDING_GAME_PLAYERS = "getStandingGamePlayers";
+    public static final String GET_STANDING_GAME_TEAMS_TOTAL = "getStandingGameTeamsTotal";
+    public static final String GET_STANDING_GAME_TEAMS = "getStandingGameTeams";
+    public static final String GET_RANDOM_STANDING_GAME_PLAYER_ID = "getRandomStandingGamePlayerId";
+    public static final String GET_NON_BOT_TEAM_COUNT = "getNonBotTeamCount";
+    public static final String GET_STANDING_PLAYER_TEAM_COUNT = "getStandingPlayerTeamCount";
 }

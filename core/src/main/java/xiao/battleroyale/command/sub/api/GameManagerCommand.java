@@ -10,8 +10,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
@@ -118,9 +116,9 @@ public class GameManagerCommand {
     }
     private static int getGlobalCenterOffset(CommandContext<CommandSourceStack> context) {
         IGameInfoGetter gameManager = BattleRoyale.getGameManager();
-        ResourceLocation nameSpace = BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, NAMESPACE));
-        CompoundTag posTag = NBTUtils.buildVec3Nbt(gameManager.getGlobalCenterOffset());
-        context.getSource().getServer().getCommandStorage().set(nameSpace, posTag);
+        context.getSource().getServer().getCommandStorage().set(
+                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, NAMESPACE)),
+                NBTUtils.buildVec3Nbt(gameManager.getGlobalCenterOffset()));
         return Command.SINGLE_SUCCESS;
     }
     private static int getMaxGameTime(CommandContext<CommandSourceStack> context) {
