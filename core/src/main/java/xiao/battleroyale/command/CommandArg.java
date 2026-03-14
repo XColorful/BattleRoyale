@@ -150,4 +150,9 @@ public class CommandArg {
     public static final String ADD_WINNER_GAME_PLAYER = "addWinnerGamePlayer";
     public static final String ADD_WINNER_GAME_TEAM = "addWinnerGameTeam";
     public static final String SET_REMAIN_RESTART_TIME = "setRemainRestartTime";
+
+    public static final String GET_GAMERULE_CONFIG_ID = "getGameruleConfigId";
+    public static final String GET_SPAWN_CONFIG_ID = "getSpawnConfigId";
+    public static final String GET_STATS_CONFIG_ID = "getStatsConfigId";
+    public static final String GET_BOT_CONFIG_ID = "getBotConfigId";
 }

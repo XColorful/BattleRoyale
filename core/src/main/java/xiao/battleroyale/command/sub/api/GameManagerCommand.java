@@ -16,12 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.game.IGameFunc;
-import xiao.battleroyale.api.game.IGameInfoGetter;
-import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.api.game.IGameStatusSetter;
-import xiao.battleroyale.api.game.team.ITeamManager;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.api.game.*;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.util.NBTUtils;
@@ -103,7 +98,12 @@ public class GameManagerCommand {
                         .then(Commands.argument(TIME, IntegerArgumentType.integer(0))
                                 .executes(GameManagerCommand::setRemainRestartTime)
                         )
-                );
+                )
+                // IGameConfigGetter
+                .then(Commands.literal(GET_GAMERULE_CONFIG_ID).executes(GameManagerCommand::getGameruleConfigId))
+                .then(Commands.literal(GET_SPAWN_CONFIG_ID).executes(GameManagerCommand::getSpawnConfigId))
+                .then(Commands.literal(GET_STATS_CONFIG_ID).executes(GameManagerCommand::getStatsConfigId))
+                .then(Commands.literal(GET_BOT_CONFIG_ID).executes(GameManagerCommand::getBotConfigId));
     }
 
     // --------IGameInfoGetter--------
@@ -228,7 +228,7 @@ public class GameManagerCommand {
         boolean withMembers = BoolArgumentType.getBool(context, WITH_MEMBERS);
         return addWinnerGameTeamByGameTeam(gameManager, gamePlayer.getTeam(), withMembers);
     }
-    private static int addWinnerGameTeamById(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int addWinnerGameTeamById(CommandContext<CommandSourceStack> context) {
         int teamId = IntegerArgumentType.getInteger(context, ID);
         IGameManager gameManager = BattleRoyale.getGameManager();
         @Nullable GameTeam gameTeam = gameManager.getTeamManager().getGameTeamById(teamId);
@@ -252,5 +252,24 @@ public class GameManagerCommand {
         IGameStatusSetter gameManager = BattleRoyale.getGameManager();
         int remainTime = IntegerArgumentType.getInteger(context, TIME);
         return gameManager.setRemainRestartTime(remainTime) ? Command.SINGLE_SUCCESS : 0;
+    }
+
+    // --------IGameConfigGetter--------
+
+    private static int getGameruleConfigId(CommandContext<CommandSourceStack> context) {
+        IGameConfigGetter gameManager = BattleRoyale.getGameManager();
+        return gameManager.getGameruleConfigId();
+    }
+    private static int getSpawnConfigId(CommandContext<CommandSourceStack> context) {
+        IGameConfigGetter gameManager = BattleRoyale.getGameManager();
+        return gameManager.getSpawnConfigId();
+    }
+    private static int getStatsConfigId(CommandContext<CommandSourceStack> context) {
+        IGameConfigGetter gameManager = BattleRoyale.getGameManager();
+        return gameManager.getStatsConfigId();
+    }
+    private static int getBotConfigId(CommandContext<CommandSourceStack> context) {
+        IGameConfigGetter gameManager = BattleRoyale.getGameManager();
+        return gameManager.getBotConfigId();
     }
 }
