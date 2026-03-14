@@ -2,6 +2,7 @@ package xiao.battleroyale.command.sub.api;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -12,9 +13,17 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameFunc;
 import xiao.battleroyale.api.game.IGameInfoGetter;
+import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.IGameStatusSetter;
+import xiao.battleroyale.api.game.team.ITeamManager;
+import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.util.NBTUtils;
 
 import static xiao.battleroyale.command.CommandArg.*;
@@ -44,7 +53,57 @@ public class GameManagerCommand {
                 .then(Commands.literal(FINISH_GAME)
                         .then(Commands.argument(HAS_WINNER, BoolArgumentType.bool())
                                 .executes(GameManagerCommand::finishGame)))
-                .then(Commands.literal(ADD_GAME_TIME_AND_TICK).executes(GameManagerCommand::addGameTimeAndTick));
+                .then(Commands.literal(ADD_GAME_TIME_AND_TICK).executes(GameManagerCommand::addGameTimeAndTick))
+                // IGameStatusSetter
+                .then(Commands.literal(ADD_FINISH_CHECK_AFTER_DEATH_EVENT).executes(GameManagerCommand::addFinishCheckAfterDeathEvent))
+                .then(Commands.literal(SET_HAS_WINNER)
+                        .then(Commands.argument(HAS_WINNER, BoolArgumentType.bool())
+                                .executes(GameManagerCommand::setHasWinner)
+                        )
+                )
+                .then(Commands.literal(CLEAR_WINNER_GAME_PLAYERS).executes(GameManagerCommand::clearWinnerGamePlayers))
+                .then(Commands.literal(CLEAR_WINNER_GAME_TEAMS).executes(GameManagerCommand::clearWinnerGameTeams))
+                .then(Commands.literal(ADD_WINNER_GAME_PLAYER)
+                        .then(Commands.literal(BY_PLAYER)
+                                .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                        .then(Commands.argument(WITH_MEMBERS, BoolArgumentType.bool())
+                                                .then(Commands.argument(WITH_TEAM, BoolArgumentType.bool())
+                                                        .executes(GameManagerCommand::addWinnerGamePlayerByPlayer)
+                                                )
+                                        )
+                                )
+                        )
+                        .then(Commands.literal(BY_ID)
+                                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                                        .then(Commands.argument(WITH_MEMBERS, BoolArgumentType.bool())
+                                                .then(Commands.argument(WITH_TEAM, BoolArgumentType.bool())
+                                                        .executes(GameManagerCommand::addWinnerGamePlayerById)
+                                                )
+                                        )
+                                )
+                        )
+                )
+                .then(Commands.literal(ADD_WINNER_GAME_TEAM)
+                        .then(Commands.literal(BY_PLAYER)
+                                .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                        .then(Commands.argument(WITH_MEMBERS, BoolArgumentType.bool())
+                                                .executes(GameManagerCommand::addWinnerGameTeamByPlayer)
+                                        )
+                                )
+                        )
+                        .then(Commands.literal(BY_ID)
+                                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                                        .then(Commands.argument(WITH_MEMBERS, BoolArgumentType.bool())
+                                                .executes(GameManagerCommand::addWinnerGameTeamById)
+                                        )
+                                )
+                        )
+                )
+                .then(Commands.literal(SET_REMAIN_RESTART_TIME)
+                        .then(Commands.argument(TIME, IntegerArgumentType.integer(0))
+                                .executes(GameManagerCommand::setRemainRestartTime)
+                        )
+                );
     }
 
     // --------IGameInfoGetter--------
@@ -103,5 +162,95 @@ public class GameManagerCommand {
         IGameFunc gameManager = BattleRoyale.getGameManager();
         gameManager.addGameTimeAndTick();
         return Command.SINGLE_SUCCESS;
+    }
+
+    // --------IGameStatusSetter--------
+
+    private static int addFinishCheckAfterDeathEvent(CommandContext<CommandSourceStack> context) {
+        IGameStatusSetter gameManager = BattleRoyale.getGameManager();
+        return gameManager.addFinishCheckAfterDeathEvent() ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int setHasWinner(CommandContext<CommandSourceStack> context) {
+        IGameStatusSetter gameManager = BattleRoyale.getGameManager();
+        boolean hasWinner = BoolArgumentType.getBool(context, HAS_WINNER);
+        return gameManager.setHasWinner(hasWinner) ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int clearWinnerGamePlayers(CommandContext<CommandSourceStack> context) {
+        IGameStatusSetter gameManager = BattleRoyale.getGameManager();
+        return gameManager.clearWinnerGamePlayers() ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int clearWinnerGameTeams(CommandContext<CommandSourceStack> context) {
+        IGameStatusSetter gameManager = BattleRoyale.getGameManager();
+        return gameManager.clearWinnerGameTeams() ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int addWinnerGamePlayerByPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity player = EntityArgument.getEntity(context, PLAYER);
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        @Nullable GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(player.getUUID());
+        if (gamePlayer == null) return 0;
+        boolean withMembers = BoolArgumentType.getBool(context, WITH_MEMBERS);
+        boolean withTeam = BoolArgumentType.getBool(context, WITH_TEAM);
+        return addWinnerGamePlayerByGamePlayer(gameManager, gamePlayer, withMembers, withTeam);
+    }
+    private static int addWinnerGamePlayerById(CommandContext<CommandSourceStack> context) {
+        int playerId = IntegerArgumentType.getInteger(context, ID);
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        @Nullable GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerBySingleId(playerId);
+        if (gamePlayer == null) return 0;
+        boolean withMembers = BoolArgumentType.getBool(context, WITH_MEMBERS);
+        boolean withTeam = BoolArgumentType.getBool(context, WITH_TEAM);
+        return addWinnerGamePlayerByGamePlayer(gameManager, gamePlayer, withMembers, withTeam);
+    }
+    private static int addWinnerGamePlayerByGamePlayer(IGameStatusSetter gameManager, GamePlayer gamePlayer, boolean withMembers, boolean withTeam) {
+        int cnt = 0;
+        if (gameManager.addWinnerGamePlayer(gamePlayer)) cnt++;
+        GameTeam gameTeam = gamePlayer.getTeam();
+        if (withTeam) {
+            gameManager.addWinnerGameTeam(gameTeam);
+        }
+        if (withMembers) {
+            for (GamePlayer member : gameTeam.getTeamMembers()) {
+                if (member.getGameSingleId() == gamePlayer.getGameSingleId()) {
+                    continue;
+                }
+                if (gameManager.addWinnerGamePlayer(member)) {
+                    cnt++;
+                }
+            }
+        }
+        return cnt;
+    }
+    private static int addWinnerGameTeamByPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity player = EntityArgument.getEntity(context, PLAYER);
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        @Nullable GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(player.getUUID());
+        if (gamePlayer == null) return 0;
+        boolean withMembers = BoolArgumentType.getBool(context, WITH_MEMBERS);
+        return addWinnerGameTeamByGameTeam(gameManager, gamePlayer.getTeam(), withMembers);
+    }
+    private static int addWinnerGameTeamById(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        int teamId = IntegerArgumentType.getInteger(context, ID);
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        @Nullable GameTeam gameTeam = gameManager.getTeamManager().getGameTeamById(teamId);
+        if (gameTeam == null) return 0;
+        boolean withMembers = BoolArgumentType.getBool(context, WITH_MEMBERS);
+        return addWinnerGameTeamByGameTeam(gameManager, gameTeam, withMembers);
+    }
+    private static int addWinnerGameTeamByGameTeam(IGameStatusSetter gameManager, GameTeam gameTeam, boolean withMembers) {
+        int cnt = 0;
+        if (gameManager.addWinnerGameTeam(gameTeam)) cnt++;
+        if (withMembers) {
+            for (GamePlayer member : gameTeam.getTeamMembers()) {
+                if (gameManager.addWinnerGamePlayer(member)) {
+                    cnt++;
+                }
+            }
+        }
+        return cnt;
+    }
+    private static int setRemainRestartTime(CommandContext<CommandSourceStack> context) {
+        IGameStatusSetter gameManager = BattleRoyale.getGameManager();
+        int remainTime = IntegerArgumentType.getInteger(context, TIME);
+        return gameManager.setRemainRestartTime(remainTime) ? Command.SINGLE_SUCCESS : 0;
     }
 }

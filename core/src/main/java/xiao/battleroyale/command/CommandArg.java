@@ -123,6 +123,10 @@ public class CommandArg {
     public static final String NAMESPACE = "namespace";
     public static final String PATH = "path";
     public static final String STORAGE_PATH = "storagePath";
+    public static final String BY_PLAYER = "byPlayer";
+    public static final String BY_ID = "byId";
+    public static final String WITH_MEMBERS = "withMembers";
+    public static final String WITH_TEAM = "withTeam";
 
     // GameManager
     public static final String GAME_MANAGER = "gameMamager";
@@ -138,4 +142,12 @@ public class CommandArg {
     public static final String SEND_GAME_SPECTATE_MESSAGE = "sendGameSpectateMessage";
     public static final String FINISH_GAME = "finishGame";
     public static final String ADD_GAME_TIME_AND_TICK = "addGameTimeAndTick";
+
+    public static final String ADD_FINISH_CHECK_AFTER_DEATH_EVENT = "addFinishCheckAfterDeathEvent";
+    public static final String SET_HAS_WINNER = "setHasWinner";
+    public static final String CLEAR_WINNER_GAME_PLAYERS = "clearWinnerGamePlayers";
+    public static final String CLEAR_WINNER_GAME_TEAMS = "clearWinnerGameTeams";
+    public static final String ADD_WINNER_GAME_PLAYER = "addWinnerGamePlayer";
+    public static final String ADD_WINNER_GAME_TEAM = "addWinnerGameTeam";
+    public static final String SET_REMAIN_RESTART_TIME = "setRemainRestartTime";
 }
