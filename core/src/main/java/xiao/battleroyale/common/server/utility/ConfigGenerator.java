@@ -116,6 +116,7 @@ public class ConfigGenerator {
                 if (source != null) {
                     source.sendSuccess(() -> Component.translatable("battleroyale.message.loot_table_generation_success", fullFilePath), true);
                     source.sendSuccess(() -> Component.translatable("battleroyale.message.please_not_use_loot_table", LootCommand.getLootPlayerResetCommand("@s", 0)), false);
+                    source.sendFailure(Component.literal("This feature is no longer supported"));
                 }
             }
 
@@ -134,7 +135,7 @@ public class ConfigGenerator {
                 JsonObject mcmetaJson = new JsonObject();
                 JsonObject packObject = new JsonObject();
                 packObject.addProperty("description", "Custom BattleRoyale Auto Generated Resources");
-                packObject.addProperty("pack_format", 15);
+                packObject.addProperty("pack_format", 48);
                 mcmetaJson.add("pack", packObject);
 
                 if (JsonUtils.writeJsonToFile(mcmetaPath, mcmetaJson)) {

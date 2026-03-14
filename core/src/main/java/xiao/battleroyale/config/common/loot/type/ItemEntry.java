@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.config.common.loot.LootEntryTag;
 import xiao.battleroyale.api.config.common.loot.item.IItemLootEntry;
 import xiao.battleroyale.api.loot.data.ILootData;
+import xiao.battleroyale.api.minecraft.ComponentsTag;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.data.ItemData;
 import xiao.battleroyale.util.JsonUtils;
@@ -84,8 +85,10 @@ public class ItemEntry extends AbstractLootEntry implements IItemLootEntry {
                         "count": 64
                     },
                     {
-                        "function": "minecraft:set_nbt",
-                        "tag": "{}"
+                        "function": "minecraft:set_components",
+                        "components": {
+                            "minecraft:custom_data": "{...}"
+                        }
                     }
                 ]
             }
@@ -105,12 +108,35 @@ public class ItemEntry extends AbstractLootEntry implements IItemLootEntry {
             functions.add(setCount);
         }
 
-        // 处理 NBT 数据
+        // 处理 Data Components (参考 ItemData 实现逻辑)
         if (this.nbtString != null && !this.nbtString.isEmpty() && !this.nbtString.equals("{}")) {
-            JsonObject setNbt = new JsonObject();
-            setNbt.addProperty("function", "minecraft:set_nbt");
-            setNbt.addProperty("tag", this.nbtString);
-            functions.add(setNbt);
+            JsonObject setComponents = new JsonObject();
+            setComponents.addProperty("function", "minecraft:set_components");
+
+            JsonObject componentsObj = new JsonObject();
+            CompoundTag tempNbt = this.nbt.copy();
+
+            // 如果包含 components 字段，则将其内部的 key 抽离
+            if (tempNbt.contains(ComponentsTag.COMPONENTS)) {
+                CompoundTag componentsNbt = tempNbt.getCompound(ComponentsTag.COMPONENTS);
+                tempNbt.remove(ComponentsTag.COMPONENTS);
+
+                // 将 components 里的所有组件 key 放入 JsonObject
+                for (String key : componentsNbt.getAllKeys()) {
+                    componentsObj.add(key, new JsonObject());
+                }
+
+                // 剩余部分移到 minecraft:custom_data
+                if (!tempNbt.isEmpty()) {
+                    componentsObj.addProperty(ComponentsTag.CUSTOM_DATA, tempNbt.toString());
+                }
+            } else {
+                // 全部放进 custom_data
+                componentsObj.addProperty(ComponentsTag.CUSTOM_DATA, this.nbtString);
+            }
+
+            setComponents.add("components", componentsObj);
+            functions.add(setComponents);
         }
 
         if (!functions.isEmpty()) {
