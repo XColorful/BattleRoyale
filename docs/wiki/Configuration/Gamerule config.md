@@ -108,6 +108,7 @@
 - teamMessageExpireSeconds：[申请入队](https://github.com/XColorful/BattleRoyale/wiki/Team-command#申请入队)/[邀请入队](https://github.com/XColorful/BattleRoyale/wiki/Team-command#邀请入队)消息的过期时长
 - teamColors：队伍序号颜色列表，格式为 _\#RRGGBBAA_
 - buildVanillaTeam：在[开始游戏](https://github.com/XColorful/BattleRoyale/wiki/Game-command#开始游戏)时为所有游戏玩家创建原版队伍
+- vanillaTeamFormat：创建原版队伍名称格式（底层为`String.format()`，接收队伍ID为参数）
 - hideVanillaTeamName：创建原版队伍是否隐藏队伍成员名称
 > - 通过任何方式（如指令）退出或修改原版队伍，都不会影响模组内部的队伍机制
 > - 由于模组使用的原版队伍名称无法通过原版指令创建，因此无法利用原版功能修改队伍规则，且玩家离开原版队伍会使隐藏名称失效
@@ -159,6 +160,7 @@
 		"#A0A0A0", "#158991", "#792AAC", "#35399D", "#724728", "#546D1B", "#A02722", "#141519"
 	],
 	"buildVanillaTeam": true,
+	"vanillaTeamFormat": "CBR Team %s",
 	"hideVanillaTeamName": true,
 	"maxPlayerInvalidTime": 1200,
 	"maxBotInvalidTime": 200,
@@ -341,6 +343,7 @@
 - teamMessageExpireSeconds: [Team request](https://github.com/XColorful/BattleRoyale/wiki/Team-command#Team-request)/[Team invitation](https://github.com/XColorful/BattleRoyale/wiki/Team-command#Team-invitation) message expiration time
 - teamColors: Team number color list, format _\#RRGGBBAA_
 - buildVanillaTeam: create vanilla teams for all game players in [Start game](https://github.com/XColorful/BattleRoyale/wiki/Game-command#Start-game)
+- vanillaTeamFormat: the format for creating vanilla team names (internally uses `String.format()` and accepts team ID as a parameter)
 - hideVanillaTeamName: hide the names of vanilla team members
 > - Manually leaving or modifying a vanilla team (e.g., via commands) will not affect the mod's internal team mechanism.
 > - Because the mod uses vanilla team names that cannot be created through vanilla commands, it's impossible to use vanilla functions to modify team rules. However, a player leaving the vanilla team will disable the hidden name effect.
@@ -392,6 +395,7 @@
 		"#A0A0A0", "#158991", "#792AAC", "#35399D", "#724728", "#546D1B", "#A02722", "#141519"
 	],
 	"buildVanillaTeam": true,
+	"vanillaTeamFormat": "CBR Team %s",
 	"hideVanillaTeamName": true,
 	"maxPlayerInvalidTime": 1200,
 	"maxBotInvalidTime": 200,

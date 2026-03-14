@@ -10,11 +10,13 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.common.server.utility.ConfigGenerator;
 import xiao.battleroyale.common.server.utility.SurvivalLobby;
 
@@ -56,6 +58,12 @@ public class UtilityCommand {
                                         )
                                 )
                         )
+                        .requires(source -> source.hasPermission(4)) // 战利品表读不了就直接进不了存档
+                        .then(Commands.literal(TO_LOOT_TABLE)
+                                .then(Commands.argument(FILE, StringArgumentType.string())
+                                        .executes(UtilityCommand::toLootTable)
+                                )
+                        )
                 )
         );
 
@@ -71,6 +79,24 @@ public class UtilityCommand {
                 .then(Commands.literal(LOAD)
                         .then(Commands.argument(ID, IntegerArgumentType.integer())
                                 .executes(UtilityCommand::loadProfile)
+                        )
+                )
+        );
+
+        utilityCommand.then(Commands.literal(TEAM)
+                .requires(source -> source.hasPermission(2))
+                .then(Commands.literal(REMOVE)
+                        .then(Commands.argument(GAME_TEAM_ONLY, BoolArgumentType.bool())
+                                .executes(UtilityCommand::removeVanillaTeam)
+                        )
+                )
+                .then(Commands.literal(REBUILD)
+                        .then(Commands.argument(FORMAT_STRING, StringArgumentType.string())
+                                .then(Commands.argument(HIDE_NAME, BoolArgumentType.bool())
+                                        .then(Commands.argument(FORCE_REBUILD, BoolArgumentType.bool())
+                                                .executes(UtilityCommand::rebuildVanillaTeam)
+                                        )
+                                )
                         )
                 )
         );
@@ -126,6 +152,16 @@ public class UtilityCommand {
             return 0;
         }
     }
+    private static int toLootTable(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        int id = IntegerArgumentType.getInteger(context, ID);
+        String fileName = StringArgumentType.getString(context, FILE);
+        if (ConfigGenerator.toLootTable(source, id, fileName)) {
+            return Command.SINGLE_SUCCESS;
+        } else {
+            return 0;
+        }
+    }
 
     private static int saveProfile(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
@@ -141,5 +177,33 @@ public class UtilityCommand {
 
         int loaded = BattleRoyale.getServerManager().getProfileManager().loadProfile(source, source.getLevel(), id);
         return loaded >= 0 ? Command.SINGLE_SUCCESS : 0;
+    }
+
+    private static int removeVanillaTeam(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        boolean removeGameTeamOnly = BoolArgumentType.getBool(context, GAME_TEAM_ONLY);
+        ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
+        int removedTotal = teamManager.removeVanillaTeam(source.getLevel(), removeGameTeamOnly);
+        if (removedTotal > 0) {
+            source.sendSuccess(() -> Component.translatable("battleroyale.message.remove_vanilla_team", removedTotal), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            source.sendFailure(Component.translatable("battleroyale.message.no_vanilla_team_removed"));
+            return 0;
+        }
+    }
+    private static int rebuildVanillaTeam(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        String formatString = StringArgumentType.getString(context, FORMAT_STRING);
+        boolean hideName = BoolArgumentType.getBool(context, HIDE_NAME);
+        boolean forceRebuild = BoolArgumentType.getBool(context, FORCE_REBUILD);
+        ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
+        if (teamManager.buildVanillaTeam(source.getLevel(), formatString, hideName, forceRebuild)) {
+            source.sendSuccess(() -> Component.translatable("battleroyale.message.rebuild_vanilla_team"), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            source.sendFailure(Component.translatable("battleroyale.message.no_vanilla_team_rebuild"));
+            return 0;
+        }
     }
 }

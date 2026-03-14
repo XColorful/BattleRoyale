@@ -1,5 +1,6 @@
 package xiao.battleroyale.config.common.loot.type;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -84,5 +85,71 @@ public class BiomeEntry extends AbstractLootEntry {
             jsonObject.add(LootEntryTag.ENTRY, entry.toJson());
         }
         return jsonObject;
+    }
+
+    @Override
+    public @Nullable JsonObject toLootTable() {
+        /*
+            期望生成的 JSON 样子（包裹 Item）：
+            {
+                "type": "minecraft:item",
+                "name": "...",
+                "conditions": [
+                    {
+                        "condition": "minecraft:location_check",
+                        "predicate": { "biome": "minecraft:plains" }
+                    }
+                ]
+            }
+
+            期望生成的 JSON 样子（包裹 Pool/Repeat）：
+            {
+                "rolls": 1,
+                "entries": [...],
+                "conditions": [
+                    {
+                        "condition": "minecraft:location_check",
+                        "predicate": { "biome": "minecraft:plains" }
+                    }
+                ]
+            }
+        */
+        if (entry == null) return null;
+        JsonObject json = entry.toLootTable();
+        if (json == null) return null;
+
+        // 如果 biomeList 为空，直接返回子项
+        if (biomeList.isEmpty()) return json;
+
+        // 构造 location_check 条件
+        JsonObject locationCheck = new JsonObject();
+        locationCheck.addProperty("condition", "minecraft:location_check");
+        JsonObject predicate = new JsonObject();
+        // 转换列表中的第一个群系 ID
+        predicate.addProperty("biome", biomeList.get(0));
+        locationCheck.add("predicate", predicate);
+
+        // 处理反转逻辑
+        JsonObject finalCondition;
+        if (this.invert) {
+            finalCondition = new JsonObject();
+            finalCondition.addProperty("condition", "minecraft:inverted");
+            finalCondition.add("term", locationCheck);
+        } else {
+            finalCondition = locationCheck;
+        }
+
+        // 无论 json 是 pool (有 rolls) 还是 entry (有 type)，原版都支持在根级放 conditions
+        JsonArray conditions;
+        if (json.has("conditions")) {
+            conditions = json.getAsJsonArray("conditions");
+        } else {
+            conditions = new JsonArray();
+            json.add("conditions", conditions);
+        }
+
+        conditions.add(finalCondition);
+
+        return json;
     }
 }
