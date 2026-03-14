@@ -2,7 +2,7 @@
 package xiao.battleroyale.api.game.team;
 
 public interface IVanillaTeam {
-	void buildVanillaTeam(@Nullable ServerLevel serverLevel, boolean hideName);
+	boolean buildVanillaTeam(@Nullable ServerLevel serverLevel, String vanillaTeamFormat, boolean hideName);
 	void clearVanillaTeam(@Nullable ServerLevel serverLevel);
 }
 ```

@@ -17,6 +17,7 @@ public class TeamConfig implements IStatsWriter {
     public boolean aiTeammate = false;
     public boolean aiEnemy = false;
     public boolean autoJoinGame = false;
+    public String vanillaTeamFormat = GameTeam.DEFAULT_VANILLA_TEAM_FORMAT;
 
     public int teamMsgExpireTimeMillis = 300 * 1000;
     public void setTeamMsgExpireTimeSeconds(int seconds) { teamMsgExpireTimeMillis = Math.max(seconds * 1000, 0); }
@@ -63,6 +64,7 @@ public class TeamConfig implements IStatsWriter {
         this.aiTeammate = brEntry.aiTeammate;
         this.aiEnemy = brEntry.aiEnemy;
         this.autoJoinGame = brEntry.autoJoinGame;
+        this.vanillaTeamFormat = gameEntry.vanillaTeamFormat;
 
         this.setTeamMsgExpireTimeSeconds(gameEntry.teamMsgExpireTimeSeconds);
         this.setTeamColors(gameEntry.teamColors);
