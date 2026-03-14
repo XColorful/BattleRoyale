@@ -121,9 +121,15 @@ public class TeamManagement {
                 Scoreboard scoreboard = serverLevel.getScoreboard();
                 PlayerTeam vanillaTeam;
                 if (targetTeam.getTeamMemberCount() == 1) { // 仅在GameTeam刚创建时移除同名队伍干扰
-                    vanillaTeam = TeamUtils.getClearedVanillaTeam(scoreboard, gameManager.getGameEntry().hideVanillaTeamName, targetTeam);
+                    vanillaTeam = TeamUtils.getClearedVanillaTeam(scoreboard,
+                            teamManager.teamConfig.vanillaTeamFormat,
+                            gameManager.getGameEntry().hideVanillaTeamName,
+                            targetTeam);
                 } else {
-                    vanillaTeam = TeamUtils.getOrCreateVanillaTeam(scoreboard, gameManager.getGameEntry().hideVanillaTeamName, targetTeam);
+                    vanillaTeam = TeamUtils.getOrCreateVanillaTeam(scoreboard,
+                            teamManager.teamConfig.vanillaTeamFormat,
+                            gameManager.getGameEntry().hideVanillaTeamName,
+                            targetTeam);
                 }
                 scoreboard.addPlayerToTeam(playerName, vanillaTeam);
             } catch (Exception e) {
@@ -357,7 +363,10 @@ public class TeamManagement {
                 ServerLevel serverLevel = gameManager.getServerLevel();
                 if (serverLevel != null) {
                     Scoreboard scoreboard = serverLevel.getScoreboard();
-                    PlayerTeam vanillaTeam = TeamUtils.getOrCreateVanillaTeam(scoreboard, gameManager.getGameEntry().hideVanillaTeamName, newTeam);
+                    PlayerTeam vanillaTeam = TeamUtils.getOrCreateVanillaTeam(scoreboard,
+                            teamManager.teamConfig.vanillaTeamFormat,
+                            gameManager.getGameEntry().hideVanillaTeamName,
+                            newTeam);
                     scoreboard.addPlayerToTeam(playerName, vanillaTeam);
                 } else {
                     BattleRoyale.LOGGER.warn("GameManager.serverLevel is null in TeamManagement::createNewTeamAndJoin, skipped build vanilla team");
