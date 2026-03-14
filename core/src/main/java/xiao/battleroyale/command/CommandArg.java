@@ -134,4 +134,8 @@ public class CommandArg {
     public static final String GET_REQUIRED_GAME_TEAM = "getRequiredGameTeam";
     public static final String HAS_WINNER = "hasWinner";
     public static final String GET_REMAIN_RESTART_TIME = "getRemainRestartTime";
+
+    public static final String SEND_GAME_SPECTATE_MESSAGE = "sendGameSpectateMessage";
+    public static final String FINISH_GAME = "finishGame";
+    public static final String ADD_GAME_TIME_AND_TICK = "addGameTimeAndTick";
 }

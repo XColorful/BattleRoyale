@@ -1,14 +1,19 @@
 package xiao.battleroyale.command.sub.api;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameFunc;
 import xiao.battleroyale.api.game.IGameInfoGetter;
 import xiao.battleroyale.util.NBTUtils;
 
@@ -30,7 +35,16 @@ public class GameManagerCommand {
                 .then(Commands.literal(GET_WINNER_TEAM_TOTAL).executes(GameManagerCommand::getWinnerTeamTotal))
                 .then(Commands.literal(GET_REQUIRED_GAME_TEAM).executes(GameManagerCommand::getRequiredGameTeam))
                 .then(Commands.literal(HAS_WINNER).executes(GameManagerCommand::hasWinner))
-                .then(Commands.literal(GET_REMAIN_RESTART_TIME).executes(GameManagerCommand::getRemainRestartTime));
+                .then(Commands.literal(GET_REMAIN_RESTART_TIME).executes(GameManagerCommand::getRemainRestartTime))
+                // IGameFunc
+                .then(Commands.literal(SEND_GAME_SPECTATE_MESSAGE)
+                        .then(Commands.argument(PLAYER, EntityArgument.player())
+                                .executes(GameManagerCommand::sendGameSpectateMessage))
+                )
+                .then(Commands.literal(FINISH_GAME)
+                        .then(Commands.argument(HAS_WINNER, BoolArgumentType.bool())
+                                .executes(GameManagerCommand::finishGame)))
+                .then(Commands.literal(ADD_GAME_TIME_AND_TICK).executes(GameManagerCommand::addGameTimeAndTick));
     }
 
     // --------IGameInfoGetter--------
@@ -69,5 +83,25 @@ public class GameManagerCommand {
     private static int getRemainRestartTime(CommandContext<CommandSourceStack> context) {
         IGameInfoGetter gameManager = BattleRoyale.getGameManager();
         return gameManager.getRemainRestartTime();
+    }
+
+    // --------IGameFunc--------
+
+    private static int sendGameSpectateMessage(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        IGameFunc gameManager = BattleRoyale.getGameManager();
+        ServerPlayer player = EntityArgument.getPlayer(context, PLAYER);
+        gameManager.sendGameSpectateMessage(player);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int finishGame(CommandContext<CommandSourceStack> context) {
+        IGameFunc gameManager = BattleRoyale.getGameManager();
+        boolean hasWinner = BoolArgumentType.getBool(context, HAS_WINNER);
+        gameManager.finishGame(hasWinner);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int addGameTimeAndTick(CommandContext<CommandSourceStack> context) {
+        IGameFunc gameManager = BattleRoyale.getGameManager();
+        gameManager.addGameTimeAndTick();
+        return Command.SINGLE_SUCCESS;
     }
 }
