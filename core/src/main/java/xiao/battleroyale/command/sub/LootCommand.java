@@ -22,6 +22,7 @@ import xiao.battleroyale.util.StringUtils;
 import java.util.List;
 
 import static xiao.battleroyale.command.CommandArg.*;
+import static xiao.battleroyale.util.StringUtils.buildCommandString;
 
 public class LootCommand {
 
@@ -160,5 +161,15 @@ public class LootCommand {
             source.sendFailure(Component.translatable("battleroyale.message.inventory_loot_failed"));
             return 0;
         }
+    }
+
+    public static String getLootPlayerResetCommand(String player, int lootId) {
+        return buildCommandString(
+                MOD_ID,
+                LOOT,
+                player,
+                Integer.toString(lootId),
+                RESET
+        );
     }
 }

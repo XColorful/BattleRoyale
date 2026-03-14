@@ -119,7 +119,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             }
         }
         if (gameManager.getGameEntry().buildVanillaTeam) {
-            buildVanillaTeam(serverLevel, gameManager.getGameEntry().hideVanillaTeamName);
+            buildVanillaTeam(serverLevel, this.teamConfig.vanillaTeamFormat, gameManager.getGameEntry().hideVanillaTeamName, false);
         }
 
         GameStatsManager.recordGamerule(teamConfig);
@@ -152,7 +152,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
         // TODO 处理人机填充
 
         if (gameManager.getGameEntry().buildVanillaTeam) {
-            buildVanillaTeam(serverLevel, gameManager.getGameEntry().hideVanillaTeamName);
+            buildVanillaTeam(serverLevel, this.teamConfig.vanillaTeamFormat, gameManager.getGameEntry().hideVanillaTeamName, false);
         }
 
         teamData.startGame();
@@ -429,17 +429,17 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
         return TeamUtils.hasEnoughPlayerTeamToStart(this);
     }
 
-    public void buildVanillaTeam(@Nullable ServerLevel serverLevel, boolean hideName) {
-        if (BattleRoyale.getGameManager().isInGame()) {
+    public boolean buildVanillaTeam(@Nullable ServerLevel serverLevel, String vanillaTeamFormat, boolean hideName, boolean allowBuildInGame) {
+        if (!allowBuildInGame && BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, reject to build vanilla team");
-            return;
+            return false;
         }
         if (serverLevel == null) {
             BattleRoyale.LOGGER.error("TeamManager::buildVanillaTeamForAllGameTeams received a null ServerLevel, skipped build vanilla team");
-            return;
+            return false;
         }
 
-        TeamUtils.buildVanillaTeamForAllGameTeams(this, serverLevel, hideName);
+        return TeamUtils.buildVanillaTeamForAllGameTeams(this, serverLevel, vanillaTeamFormat, hideName);
     }
     public void clearVanillaTeam(@Nullable ServerLevel serverLevel) {
         if (serverLevel == null) {
@@ -448,5 +448,8 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
         }
 
         TeamUtils.clearVanillaTeam(this, serverLevel);
+    }
+    public int removeVanillaTeam(@NotNull ServerLevel serverLevel, boolean gameTeamOnly) {
+        return TeamUtils.removeVanillaTeam(this, serverLevel, gameTeamOnly);
     }
 }

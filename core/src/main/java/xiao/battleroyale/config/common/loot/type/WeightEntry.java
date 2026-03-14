@@ -120,4 +120,61 @@ public class WeightEntry extends AbstractLootEntry {
         jsonObject.add(LootEntryTag.ENTRIES, itemsArray);
         return jsonObject;
     }
+
+    @Override
+    public JsonObject toLootTable() {
+        /*
+            {
+                "rolls": 1,
+                "entries": [
+                    { "type": "minecraft:item", "weight": 10, "name": "..." }
+                ]
+            }
+        */
+        JsonObject pool = new JsonObject();
+        pool.addProperty("rolls", 1);
+        JsonArray entriesArray = new JsonArray();
+        for (WeightedEntry weightedEntry : weightedEntries) {
+            JsonObject result = weightedEntry.entry.toLootTable();
+            if (result == null) continue;
+
+            // 如果子项返回 root（MultiEntry）
+            if (result.has("pools")) {
+                JsonArray pools = result.getAsJsonArray("pools");
+                for (JsonElement poolElement : pools) {
+                    JsonObject entry = new JsonObject();
+                    entry.addProperty("type", "minecraft:group");
+                    entry.addProperty("weight", (int) weightedEntry.weight);
+                    JsonArray children = new JsonArray();
+                    JsonObject poolObj = poolElement.getAsJsonObject();
+                    JsonArray subEntries = poolObj.getAsJsonArray("entries");
+                    for (JsonElement e : subEntries) {
+                        children.add(e);
+                    }
+                    entry.add("children", children);
+                    entriesArray.add(entry);
+                }
+            }
+            // 如果子项是 pool
+            else if (result.has("rolls")) {
+                JsonObject entry = new JsonObject();
+                entry.addProperty("type", "minecraft:group");
+                entry.addProperty("weight", (int) weightedEntry.weight);
+                JsonArray children = new JsonArray();
+                JsonArray subEntries = result.getAsJsonArray("entries");
+                for (JsonElement e : subEntries) {
+                    children.add(e);
+                }
+                entry.add("children", children);
+                entriesArray.add(entry);
+            }
+            // 普通 entry
+            else if (result.has("type")) {
+                result.addProperty("weight", (int) weightedEntry.weight);
+                entriesArray.add(result);
+            }
+        }
+        pool.add("entries", entriesArray);
+        return pool;
+    }
 }

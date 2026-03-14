@@ -1,5 +1,7 @@
 package xiao.battleroyale.config.common.loot.type;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
@@ -79,5 +81,53 @@ public class RepeatEntry extends AbstractLootEntry {
             jsonObject.add(LootEntryTag.ENTRY, this.entry.toJson());
         }
         return jsonObject;
+    }
+
+    @Override
+    public JsonObject toLootTable() {
+        /*
+
+            {
+                "rolls": { "min": 1, "max": 5 },
+                "entries": [
+                    { "type": "minecraft:item", "name": "..." }
+                ]
+            }
+        */
+        JsonObject pool = new JsonObject();
+        JsonObject rolls = new JsonObject();
+        rolls.addProperty("min", this.min);
+        rolls.addProperty("max", this.max);
+        pool.add("rolls", rolls);
+        JsonArray entriesArray = new JsonArray();
+        if (entry != null) {
+            JsonObject result = entry.toLootTable();
+            if (result != null) {
+                // root
+                if (result.has("pools")) {
+                    JsonArray pools = result.getAsJsonArray("pools");
+                    for (JsonElement poolElement : pools) {
+                        JsonObject poolObj = poolElement.getAsJsonObject();
+                        JsonArray subEntries = poolObj.getAsJsonArray("entries");
+                        for (JsonElement e : subEntries) {
+                            entriesArray.add(e);
+                        }
+                    }
+                }
+                // pool
+                else if (result.has("rolls")) {
+                    JsonArray subEntries = result.getAsJsonArray("entries");
+                    for (JsonElement e : subEntries) {
+                        entriesArray.add(e);
+                    }
+                }
+                // entry
+                else if (result.has("type")) {
+                    entriesArray.add(result);
+                }
+            }
+        }
+        pool.add("entries", entriesArray);
+        return pool;
     }
 }
