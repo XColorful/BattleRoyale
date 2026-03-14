@@ -1,5 +1,6 @@
 package xiao.battleroyale.api.config.common.loot;
 
+import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,4 +48,12 @@ public interface ILootEntry extends IConfigEntry {
     @Override
     @NotNull
     ILootEntry copy();
+
+    /**
+     * 序列化的字符串直接硬编码在具体类里
+     * 返回 null 即没有对应的原版战利品词条
+     */
+    default @Nullable JsonObject toLootTable() {
+        return null;
+    }
 }

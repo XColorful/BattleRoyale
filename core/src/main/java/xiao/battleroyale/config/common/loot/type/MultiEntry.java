@@ -87,4 +87,46 @@ public class MultiEntry extends AbstractLootEntry {
         jsonObject.add(LootEntryTag.ENTRIES, entriesArray);
         return jsonObject;
     }
+
+    @Override
+    public JsonObject toLootTable() {
+        /*
+            {
+                "pools": [
+                    { "rolls": 1, "entries": [...] }, // 子项是一个普通 Item
+                    { "rolls": { "min": 1, "max": 3 }, "entries": [...] } // 子项是一个 RepeatEntry
+                ]
+            }
+        */
+        JsonObject root = new JsonObject();
+        JsonArray poolsArray = new JsonArray();
+        for (ILootEntry entry : entries) {
+            JsonObject result = entry.toLootTable();
+            if (result == null) continue;
+
+            // 如果子项生成的是 root，需要展开 pools
+            if (result.has("pools")) {
+                JsonArray childPools = result.getAsJsonArray("pools");
+                for (JsonElement element : childPools) {
+                    poolsArray.add(element);
+                }
+            }
+            // 如果子项生成的是一个池
+            else if (result.has("rolls")) {
+                poolsArray.add(result);
+            }
+            // 如果子项生成的是一个 entry
+            else if (result.has("type")) {
+                JsonObject wrapper = new JsonObject();
+                wrapper.addProperty("rolls", 1);
+                JsonArray entryArray = new JsonArray();
+                entryArray.add(result);
+                wrapper.add("entries", entryArray);
+                poolsArray.add(wrapper);
+            }
+        }
+
+        root.add("pools", poolsArray);
+        return root;
+    }
 }
