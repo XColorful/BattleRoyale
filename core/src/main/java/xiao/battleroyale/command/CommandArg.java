@@ -120,4 +120,18 @@ public class CommandArg {
     // --------API--------
     public static final String API = "api";
 
+    public static final String NAMESPACE = "namespace";
+    public static final String PATH = "path";
+    public static final String STORAGE_PATH = "storagePath";
+
+    // GameManager
+    public static final String GAME_MANAGER = "gameMamager";
+    public static final String GET_GAME_TIME = "getGameTime";
+    public static final String IS_IN_GAME = "isInGame";
+    public static final String GET_GLOBAL_CENTER_OFFSET = "getGlobalCenterOffset";
+    public static final String GET_MAX_GAME_TIME = "getMaxGameTime";
+    public static final String GET_WINNER_TEAM_TOTAL = "getWinnerTeamTotal";
+    public static final String GET_REQUIRED_GAME_TEAM = "getRequiredGameTeam";
+    public static final String HAS_WINNER = "hasWinner";
+    public static final String GET_REMAIN_RESTART_TIME = "getRemainRestartTime";
 }
