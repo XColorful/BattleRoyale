@@ -7,6 +7,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.game.gamerule.GameEntryTag;
 import xiao.battleroyale.api.config.common.game.gamerule.IGameruleEntry;
 import xiao.battleroyale.api.config.sub.IConfigAppliable;
+import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.message.AbstractMessageManager;
 import xiao.battleroyale.util.ColorUtils;
 import xiao.battleroyale.util.JsonUtils;
@@ -44,6 +45,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     );
     public static final List<Float> DEFAULT_DOWN_DAMAGE = Arrays.asList(0.3333F, 0.4444F, 0.6667F, 1.3333F, 2F, 4F, 8F, 16F, 32F);
     public boolean buildVanillaTeam;
+    public String vanillaTeamFormat;
     public boolean hideVanillaTeamName;
 
     public int maxPlayerInvalidTime;
@@ -86,7 +88,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
 
     public static GameEntry DEFAULT_INSTANCE = new GameEntry();
     public GameEntry() {
-        this(true, 300, DEFAULT_TEAM_COLORS, true, true,
+        this(true, 300, DEFAULT_TEAM_COLORS, true, GameTeam.DEFAULT_VANILLA_TEAM_FORMAT, true,
                 20 * 60, 20 * 10, false,
                 true, false, true, false, DEFAULT_DOWN_DAMAGE, 20,
                 false, false, false, false,
@@ -95,7 +97,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
                 false, false, 20, 15,
                 20 * 7, 20 * 5, 20 * 5);
     }
-    public GameEntry(boolean teleportWhenInitGame, int teamMsgExpireTimeSeconds, List<String> teamColors, boolean buildVanillaTeam, boolean hideVanillaTeamName,
+    public GameEntry(boolean teleportWhenInitGame, int teamMsgExpireTimeSeconds, List<String> teamColors, boolean buildVanillaTeam, String vanillaTeamFormat, boolean hideVanillaTeamName,
                      int maxPlayerInvalidTime, int maxBotInvalidTime, boolean removeInvalidTeam,
                      boolean healAllAtStart, boolean friendlyFire, boolean canHurtNonGamePlayer, boolean downFire, List<Float> downDamageList, int downDamageFrequency,
                      boolean downShoot, boolean downReload, boolean downFireSelect, boolean downMelee,
@@ -107,6 +109,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         this.teamMsgExpireTimeSeconds = teamMsgExpireTimeSeconds;
         this.teamColors = teamColors;
         this.buildVanillaTeam = buildVanillaTeam;
+        this.vanillaTeamFormat = vanillaTeamFormat;
         this.hideVanillaTeamName = hideVanillaTeamName;
         this.maxPlayerInvalidTime = maxPlayerInvalidTime;
         this.maxBotInvalidTime = maxBotInvalidTime;
@@ -142,7 +145,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         this.messageSyncFreq = messageSyncFreq;
     }
     @Override public @NotNull GameEntry copy() {
-        return new GameEntry(teleportWhenInitGame, teamMsgExpireTimeSeconds, new ArrayList<>(teamColors), buildVanillaTeam, hideVanillaTeamName,
+        return new GameEntry(teleportWhenInitGame, teamMsgExpireTimeSeconds, new ArrayList<>(teamColors), buildVanillaTeam, vanillaTeamFormat, hideVanillaTeamName,
                 maxPlayerInvalidTime, maxBotInvalidTime, removeInvalidTeam,
                 healAllAtStart, friendlyFire, canHurtNonGamePlayer, downFire, new ArrayList<>(downDamageList), downDamageFrequency,
                 downShoot, downReload, downFireSelect, downMelee,
@@ -164,6 +167,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         jsonObject.addProperty(GameEntryTag.TEAM_MSG_EXPIRE_SECONDS, teamMsgExpireTimeSeconds);
         jsonObject.add(GameEntryTag.TEAM_COLORS, JsonUtils.writeStringListToJson(teamColors));
         jsonObject.addProperty(GameEntryTag.BUILD_VANILLA_TEAM, buildVanillaTeam);
+        jsonObject.addProperty(GameEntryTag.VANILLA_TEAM_FORMAT, vanillaTeamFormat);
         jsonObject.addProperty(GameEntryTag.HIDE_VANILLA_TEAM_NAME, hideVanillaTeamName);
 
         jsonObject.addProperty(GameEntryTag.MAX_PLAYER_INVALID_TIME, maxPlayerInvalidTime);
@@ -212,6 +216,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         int teamMsgExpireTimeSeconds = JsonUtils.getJsonInt(jsonObject, GameEntryTag.TEAM_MSG_EXPIRE_SECONDS, 300);
         List<String> teamColors = JsonUtils.getJsonStringList(jsonObject, GameEntryTag.TEAM_COLORS);
         boolean buildVanillaTeam = JsonUtils.getJsonBool(jsonObject, GameEntryTag.BUILD_VANILLA_TEAM, true);
+        String vanillaTeamFormat = JsonUtils.getJsonString(jsonObject, GameEntryTag.VANILLA_TEAM_FORMAT, GameTeam.DEFAULT_VANILLA_TEAM_FORMAT);
         boolean hideVanillaTeamName = JsonUtils.getJsonBool(jsonObject, GameEntryTag.HIDE_VANILLA_TEAM_NAME, true);
 
         int maxPlayerInvalidTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MAX_PLAYER_INVALID_TIME, 20 * 60);
@@ -252,7 +257,7 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
         int messageExpireTime = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_EXPIRE_TIME, 20 * 5);
         int messageSyncFreq = JsonUtils.getJsonInt(jsonObject, GameEntryTag.MESSAGE_FORCE_SYNC_FREQUENCY, 20 * 5);
 
-        return new GameEntry(teleportWhenInitGame, teamMsgExpireTimeSeconds, teamColors, buildVanillaTeam, hideVanillaTeamName,
+        return new GameEntry(teleportWhenInitGame, teamMsgExpireTimeSeconds, teamColors, buildVanillaTeam, vanillaTeamFormat, hideVanillaTeamName,
                 maxPlayerInvalidTime, maxBotInvalidTime, removeInvalidTeam,
                 healAllAtStart, friendlyFire, canHurtNonGamePlayer, downFire, downDamageList, downDamageFrequency,
                 downShoot, downReload, downFireSelect, downMelee,
