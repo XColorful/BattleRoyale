@@ -3,6 +3,7 @@ package xiao.battleroyale.config.common.game.gamerule.defaultconfigs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
@@ -39,7 +40,7 @@ public class CFHCGamerule {
                 true, true, true,
                 true, false, true,
                 false, false, true, 0);
-        GameEntry gameEntry = new GameEntry(true, 300, DEFAULT_TEAM_COLORS, true, true,
+        GameEntry gameEntry = new GameEntry(true, 300, DEFAULT_TEAM_COLORS, true, GameTeam.DEFAULT_VANILLA_TEAM_FORMAT, true,
                 20 * 60, 20 * 10, true,
                 true, true, true, false, DEFAULT_DOWN_DAMAGE, 20,
                 false, false, false, false,
