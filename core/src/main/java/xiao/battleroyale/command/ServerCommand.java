@@ -49,6 +49,8 @@ public class ServerCommand {
         ); // 部分指令不需要权限
         root.then(TempCommand.get()
                 .requires(source -> source.hasPermission(2)));
+        root.then(ApiCommand.get()
+                .requires(source -> source.hasPermission(2)));
         return root;
     }
 }

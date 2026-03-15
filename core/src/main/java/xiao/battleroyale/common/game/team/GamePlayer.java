@@ -1,10 +1,12 @@
 package xiao.battleroyale.common.game.team;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.common.effect.EffectManager;
+import xiao.battleroyale.util.NBTUtils;
 
 import java.util.UUID;
 
@@ -37,6 +39,35 @@ public class GamePlayer {
         this.team = team;
         this.invalidTime = 0;
         reset();
+    }
+    public CompoundTag toBasicTag() {
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("playerId", gameSingleId);
+        tag.putInt("teamId", getGameTeamId());
+        return tag;
+    }
+    public CompoundTag toSimpleTag() {
+        CompoundTag tag = toBasicTag();
+        tag.putString("playerName", playerName);
+        tag.putBoolean("isBot", bot);
+        tag.putBoolean("isLeader", isLeader);
+        return tag;
+    }
+    public CompoundTag toGameTag() {
+        CompoundTag tag = toSimpleTag();
+        tag.putBoolean("isAlive", isAlive);
+        tag.putBoolean("isEliminated", isEliminated);
+        tag.putBoolean("isActiveEntity", isActiveEntity);
+        return tag;
+    }
+    public CompoundTag toFullTag() {
+        CompoundTag tag = toGameTag();
+        tag.putString("uuid", playerUUID.toString());
+        tag.putString("teamColor", gameTeamColor);
+        tag.putInt("invalidTime", invalidTime);
+        tag.putFloat("lastHealth", lastHealth);
+        tag.put("lastPos", NBTUtils.buildVec3Nbt(lastPos));
+        return tag;
     }
 
     public void reset() {
