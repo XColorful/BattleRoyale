@@ -2,7 +2,6 @@ package xiao.battleroyale.command.sub.api;
 
 import com.google.common.base.Function;
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.team.IGameTeamReadApi;
 import xiao.battleroyale.api.game.team.ITeamManager;
-import xiao.battleroyale.api.game.team.ITeamPreManagement;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 
@@ -161,6 +159,12 @@ public class TeamManagerCommand {
                                 .then(Commands.argument(ID, IntegerArgumentType.integer(0))
                                         .executes(TeamManagerCommand::removePlayerFromTeamByGamePlayerId)
                                 )
+                        )
+                )
+                // ITeamNotification
+                .then(Commands.literal(SEND_PLAYER_TEAM_ID)
+                        .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                .executes(TeamManagerCommand::sendPlayerTeamId)
                         )
                 );
     }
@@ -384,5 +388,16 @@ public class TeamManagerCommand {
         @Nullable GamePlayer gamePlayer = teamManager.getGamePlayerBySingleId(playerId);
         if (gamePlayer == null) return 0;
         return teamManager.removePlayerFromTeam(gamePlayer.getPlayerUUID()) ? Command.SINGLE_SUCCESS : 0;
+    }
+
+    // --------ITeamNotification--------
+
+    private static int sendPlayerTeamId(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        if (entity instanceof ServerPlayer serverPlayer) {
+            BattleRoyale.getGameManager().getTeamManager().sendPlayerTeamId(serverPlayer);
+        }
+        @Nullable GamePlayer gamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerByUUID(entity.getUUID());
+        return gamePlayer != null ? Command.SINGLE_SUCCESS : 0;
     }
 }

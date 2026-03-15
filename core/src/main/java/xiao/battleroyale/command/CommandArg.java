@@ -183,4 +183,6 @@ public class CommandArg {
 
     public static final String FORCE_JOIN_TEAM = "forceJoinTeam";
     public static final String REMOVE_PLAYER_FROM_TEAM = "removePlayerFromTeam";
+
+    public static final String SEND_PLAYER_TEAM_ID = "sendPlayerTeamId";
 }
