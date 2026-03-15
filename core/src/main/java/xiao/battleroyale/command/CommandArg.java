@@ -178,6 +178,34 @@ public class CommandArg {
     public static final String TELEPORT_TO_LOBBY = "teleportToLobby";
     public static final String SET_LOBBY = "setLobby";
 
+    // GameLootManager
+    public static final String GAME_LOOT_MANAGER = "gameLootManager";
+    public static final String GET_MAX_LOOT_CHUNK_PER_TICK = "getMaxLootChunkPerTick";
+    public static final String GET_MAX_LOOT_DISTANCE = "getMaxLootDistance";
+    public static final String GET_TOLERANT_CENTER_DISTANCE = "getTolerantCenterDistance";
+    public static final String GET_MAX_CACHED_CENTER = "getMaxCachedCenter";
+    public static final String GET_MAX_QUEUED_CHUNK = "getMaxQueuedChunk";
+    public static final String GET_BFS_FREQUENCY = "getBfsFrequency";
+    public static final String IS_INSTANT_NEXT_BFS = "isInstantNextBfs";
+    public static final String GET_MAX_CACHED_LOOT_CHUNK = "getMaxCachedLootChunk";
+    public static final String GET_CLEAN_CACHED_CHUNK = "getCleanCachedChunk";
+    public static final String GET_SIMULATION_DISTANCE = "getSimulationDistance";
+
+    public static final String GET_LAST_BFS_TIME = "getLastBfsTime";
+    public static final String GET_LAST_BFS_PROCESSED_LOOT = "getLastBfsProcessedLoot";
+    public static final String QUEUED_CHUNKS_REF_SIZE = "queuedChunksRefSize";
+    public static final String PROCESSED_CHUNK_CACHE_SIZE = "processedChunkCacheSize";
+    public static final String CACHED_PLAYER_CENTER_CHUNKS_SIZE = "cachedPlayerCenterChunksSize";
+    public static final String CACHED_CENTER_OFFSET_SIZE = "cachedCenterOffsetSize";
+
+    public static final String IS_IN_QUEUED_CHUNKS_REF = "isInQueuedChunksRef";
+    public static final String IS_IN_PROCESSED_CHUNK_CACHE = "isInProcessedChunkCache";
+    public static final String IS_IN_CACHED_CENTER_OFFSET = "isInCachedCenterOffset";
+
+    public static final String FORCE_CLEAR_QUEUED_CHUNK_REF = "forceClearQueuedChunkRef";
+    public static final String FORCE_CLEAR_PROCESSED_CHUNK_CACHE = "forceClearProcessedChunkCache";
+    public static final String FORCE_CLEAR_PLAYER_CENTER_CHUNKS = "forceClearPlayerCenterChunks";
+
     // TeamManager
     public static final String TEAM_MANAGER = "teamMamager";
     public static final String SHOULD_AUTO_JOIN = "shouldAutoJoin";

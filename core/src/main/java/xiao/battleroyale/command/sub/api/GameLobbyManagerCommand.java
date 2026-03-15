@@ -41,7 +41,7 @@ public class GameLobbyManagerCommand {
                 .then(Commands.literal(TELEPORT_DROP_INVENTORY).executes(GameLobbyManagerCommand::teleportDropInventory))
                 .then(Commands.literal(TELEPORT_CLEAR_INVENTORY).executes(GameLobbyManagerCommand::teleportClearInventory))
                 .then(Commands.literal(IS_IN_LOBBY_RANGE)
-                        .then(Commands.argument(POS, Vec3Argument.vec3())
+                        .then(Commands.argument(XYZ, Vec3Argument.vec3())
                                 .executes(GameLobbyManagerCommand::isInLobbyRange)
                         )
                 )
@@ -118,7 +118,7 @@ public class GameLobbyManagerCommand {
         return BattleRoyale.getGameManager().getGameLobbyManager().teleportClearInventory() ? Command.SINGLE_SUCCESS : 0;
     }
     private static int isInLobbyRange(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Vec3 pos = Vec3Argument.getVec3(context, POS);
+        Vec3 pos = Vec3Argument.getVec3(context, XYZ);
         return BattleRoyale.getGameManager().getGameLobbyManager().isInLobbyRange(pos) ? Command.SINGLE_SUCCESS : 0;
     }
     private static int canMuteki(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
