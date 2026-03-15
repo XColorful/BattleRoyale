@@ -239,6 +239,12 @@ public class CommandArg {
     public static final String SPAWN_MANAGER = "spawnManager";
     public static final String RESPAWN = "respawn";
 
+    // StatsManager
+    public static final String STATS_MANAGER = "statsManager";
+    public static final String SHOULD_RECORD_STATS = "shouldRecordStats";
+    public static final String IS_IN_RECORD_GAME_PLAYERS = "isInRecordGamePlayers";
+    public static final String SAVE_STATS = "saveStats";
+
     // TeamManager
     public static final String TEAM_MANAGER = "teamMamager";
     public static final String SHOULD_AUTO_JOIN = "shouldAutoJoin";
