@@ -177,4 +177,7 @@ public class CommandArg {
     public static final String GET_RANDOM_STANDING_GAME_PLAYER_ID = "getRandomStandingGamePlayerId";
     public static final String GET_NON_BOT_TEAM_COUNT = "getNonBotTeamCount";
     public static final String GET_STANDING_PLAYER_TEAM_COUNT = "getStandingPlayerTeamCount";
+
+    public static final String FORCE_ELIMINATE_PLAYER_SILENCE = "forceEliminatePlayerSilence";
+    public static final String FORCE_ELIMINATE_PLAYER_FROM_TEAM = "forceEliminatePlayerFromTeam";
 }

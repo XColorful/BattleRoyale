@@ -16,6 +16,7 @@ import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.team.IGameTeamReadApi;
@@ -75,12 +76,12 @@ public class TeamManagerCommand {
                 .then(Commands.literal(GET_GAME_TEAM)
                         .then(Commands.argument(NAMESPACE, StringArgumentType.string())
                                 .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
-                                        .then(Commands.argument(BY_PLAYER, BoolArgumentType.bool())
+                                        .then(Commands.literal(BY_PLAYER)
                                                 .then(Commands.argument(PLAYER, EntityArgument.entity())
                                                         .executes(TeamManagerCommand::getGameTeamByPlayer)
                                                 )
                                         )
-                                        .then(Commands.argument(BY_ID, IntegerArgumentType.integer(0))
+                                        .then(Commands.literal(BY_ID)
                                                 .then(Commands.argument(ID, IntegerArgumentType.integer(0))
                                                         .executes(TeamManagerCommand::getGameTeamByGameTeamId)
                                                 )
@@ -122,7 +123,25 @@ public class TeamManagerCommand {
                 )
                 .then(Commands.literal(GET_RANDOM_STANDING_GAME_PLAYER_ID).executes(TeamManagerCommand::getRandomStandingGamePlayerId))
                 .then(Commands.literal(GET_NON_BOT_TEAM_COUNT).executes(TeamManagerCommand::getNonBotTeamCount))
-                .then(Commands.literal(GET_STANDING_PLAYER_TEAM_COUNT).executes(TeamManagerCommand::getStandingPlayerTeamCount));
+                .then(Commands.literal(GET_STANDING_PLAYER_TEAM_COUNT).executes(TeamManagerCommand::getStandingPlayerTeamCount))
+                // ITeamManagement
+                .then(Commands.literal(FORCE_ELIMINATE_PLAYER_SILENCE)
+                        .then(Commands.literal(BY_PLAYER)
+                                .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                        .executes(TeamManagerCommand::forceEliminatePlayerSilenceByPlayer)
+                                )
+                        )
+                        .then(Commands.literal(BY_ID)
+                                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                                        .executes(TeamManagerCommand::forceEliminatePlayerSilenceByGamePlayerId)
+                                )
+                        )
+                )
+                .then(Commands.literal(FORCE_ELIMINATE_PLAYER_FROM_TEAM)
+                        .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                .executes(TeamManagerCommand::forceEliminatePlayerFromTeam)
+                        )
+                );
     }
 
     // --------IGameTeamReadApi--------
@@ -300,6 +319,29 @@ public class TeamManagerCommand {
         tag.put("teams", teamsTag);
 
         context.getSource().getServer().getCommandStorage().set(nameSpace, tag);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    // --------ITeamManagement--------
+
+    private static int forceEliminatePlayerSilenceByPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        @Nullable GamePlayer gamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerByUUID(entity.getUUID());
+        if (gamePlayer == null) return 0;
+        return BattleRoyale.getGameManager().getTeamManager().forceEliminatePlayerSilence(gamePlayer) ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int forceEliminatePlayerSilenceByGamePlayerId(CommandContext<CommandSourceStack> context) {
+        int playerId = IntegerArgumentType.getInteger(context, ID);
+        @Nullable GamePlayer gamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerBySingleId(playerId);
+        if (gamePlayer == null) return 0;
+        return BattleRoyale.getGameManager().getTeamManager().forceEliminatePlayerSilence(gamePlayer) ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int forceEliminatePlayerFromTeam(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        if (!(entity instanceof LivingEntity livingEntity)) return 0;
+        @Nullable GamePlayer gamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerByUUID(livingEntity.getUUID());
+        if (gamePlayer == null) return 0;
+        BattleRoyale.getGameManager().getTeamManager().forceEliminatePlayerFromTeam(livingEntity);
         return Command.SINGLE_SUCCESS;
     }
 }
