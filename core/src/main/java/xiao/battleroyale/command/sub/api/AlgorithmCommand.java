@@ -167,7 +167,7 @@ public class AlgorithmCommand {
     }
     private static int rectangleGridBound(CommandContext<CommandSourceStack> context) {
         int minIndex = IntegerArgumentType.getInteger(context, MIN_POINT) - 1;
-        int maxIndex = IntegerArgumentType.getInteger(context, MAX_POINT) + 1;
+        int maxIndex = IntegerArgumentType.getInteger(context, MAX_POINT) - 1;
         LAST_RECTANGLE_GRID = ListUtils.getSubListSafely(LAST_RECTANGLE_GRID, minIndex, maxIndex);
         return LAST_RECTANGLE_GRID.size();
     }
@@ -226,7 +226,7 @@ public class AlgorithmCommand {
     }
     private static int goldenSpiralBound(CommandContext<CommandSourceStack> context) {
         int minIndex = IntegerArgumentType.getInteger(context, MIN_POINT) - 1;
-        int maxIndex = IntegerArgumentType.getInteger(context, MAX_POINT) + 1;
+        int maxIndex = IntegerArgumentType.getInteger(context, MAX_POINT) - 1;
         LAST_GOLDEN_SPIRAL = ListUtils.getSubListSafely(LAST_GOLDEN_SPIRAL, minIndex, maxIndex);
         return LAST_GOLDEN_SPIRAL.size();
     }
@@ -285,7 +285,7 @@ public class AlgorithmCommand {
     }
     private static int circleGridBound(CommandContext<CommandSourceStack> context) {
         int minIndex = IntegerArgumentType.getInteger(context, MIN_POINT) - 1;
-        int maxIndex = IntegerArgumentType.getInteger(context, MAX_POINT) + 1;
+        int maxIndex = IntegerArgumentType.getInteger(context, MAX_POINT) - 1;
         LAST_CIRCLE_GRID = ListUtils.getSubListSafely(LAST_CIRCLE_GRID, minIndex, maxIndex);
         return LAST_CIRCLE_GRID.size();
     }
