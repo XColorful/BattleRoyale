@@ -12,6 +12,9 @@ public class ApiCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         LiteralArgumentBuilder<CommandSourceStack> apiCommand = Commands.literal(API);
 
+        // Algorithm
+        apiCommand.then(AlgorithmCommand.get());
+
         // GameManager
         apiCommand.then(GameManagerCommand.get());
         apiCommand.then(GameruleManagerCommand.get());

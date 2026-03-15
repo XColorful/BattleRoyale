@@ -130,6 +130,19 @@ public class CommandArg {
     public static final String DETAIL_LEVEL = "detailLevel";
     public static final String PROGRESS = "progress";
 
+    // Algorithm
+    public static final String ALGORITHM = "algorithm";
+    public static final String RECTANGLE_GRID = "rectangleGrid";
+    public static final String GOLDEN_SPIRAL = "goldenSpiral";
+    public static final String CIRCLE_GRID = "circleGrid";
+    public static final String SHUFFLE = "shuffle";
+    public static final String BOUND = "bound";
+    public static final String MIN_POINT = "minPoint";
+    public static final String MAX_POINT = "maxPoint";
+    public static final String COUNT = "count";
+    public static final String ALLOW_ON_BORDER = "allowOnBorder";
+    public static final String GLOBAL_SHRINK_RATIO = "globalShrinkRatio";
+
     // GameManager
     public static final String GAME_MANAGER = "gameMamager";
     public static final String GET_GAME_TIME = "getGameTime";
