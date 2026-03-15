@@ -174,6 +174,10 @@ public class CommandArg {
     public static final String IS_IN_LOBBY_RANGE = "isInLobbyRange";
     public static final String CAN_MUTEKI = "canMuteki";
 
+    public static final String HEAL_PLAYER = "healPlayer";
+    public static final String TELEPORT_TO_LOBBY = "teleportToLobby";
+    public static final String SET_LOBBY = "setLobby";
+
     // TeamManager
     public static final String TEAM_MANAGER = "teamMamager";
     public static final String SHOULD_AUTO_JOIN = "shouldAutoJoin";

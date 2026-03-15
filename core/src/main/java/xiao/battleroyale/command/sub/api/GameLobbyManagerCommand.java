@@ -16,6 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.lobby.IGameLobbyManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
 import static xiao.battleroyale.command.CommandArg.*;
@@ -47,6 +48,36 @@ public class GameLobbyManagerCommand {
                 .then(Commands.literal(CAN_MUTEKI)
                         .then(Commands.argument(PLAYER, EntityArgument.entity())
                                 .executes(GameLobbyManagerCommand::canMuteki)
+                        )
+                )
+                // ILobbyFuncApi
+                .then(Commands.literal(HEAL_PLAYER)
+                        .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                .executes(GameLobbyManagerCommand::healPlayer)
+                        )
+                )
+                .then(Commands.literal(TELEPORT_TO_LOBBY)
+                        .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                .executes(GameLobbyManagerCommand::teleportToLobby)
+                        )
+                )
+                .then(Commands.literal(SET_LOBBY)
+                        .then(Commands.argument(POS, Vec3Argument.vec3())
+                                .executes(GameLobbyManagerCommand::setLobbyPosOnly)
+                                .then(Commands.argument(XYZ, Vec3Argument.vec3())
+                                        .executes(GameLobbyManagerCommand::setLobbyPosDimOnly)
+                                        .then(Commands.argument(LOBBY_MUTEKI, BoolArgumentType.bool())
+                                                .then(Commands.argument(LOBBY_HEAL, BoolArgumentType.bool())
+                                                        .then(Commands.argument(LOBBY_CHANGE_GAMEMODE, BoolArgumentType.bool())
+                                                                .then(Commands.argument(TELEPORT_DROP_INVENTORY, BoolArgumentType.bool())
+                                                                        .then(Commands.argument(TELEPORT_CLEAR_INVENTORY, BoolArgumentType.bool())
+                                                                                .executes(GameLobbyManagerCommand::setLobby)
+                                                                        )
+                                                                )
+                                                        )
+                                                )
+                                        )
+                                )
                         )
                 );
     }
@@ -94,5 +125,55 @@ public class GameLobbyManagerCommand {
         Entity entity = EntityArgument.getEntity(context, PLAYER);
         if (!(entity instanceof LivingEntity livingEntity)) return 0;
         return BattleRoyale.getGameManager().getGameLobbyManager().canMuteki(livingEntity) ? Command.SINGLE_SUCCESS : 0;
+    }
+
+    // --------ILobbyFuncApi--------
+
+    private static int healPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        if (!(entity instanceof LivingEntity livingEntity)) return 0;
+        BattleRoyale.getGameManager().getGameLobbyManager().healPlayer(livingEntity);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int teleportToLobby(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        if (!(entity instanceof LivingEntity livingEntity)) return 0;
+        return BattleRoyale.getGameManager().getGameLobbyManager().teleportToLobby(livingEntity) ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int setLobbyPosOnly(CommandContext<CommandSourceStack> context) {
+        IGameLobbyManager lobbyManager = BattleRoyale.getGameManager().getGameLobbyManager();
+        return lobbyManager.setLobby(
+                Vec3Argument.getVec3(context, POS),
+                lobbyManager.lobbyDimension(),
+                lobbyManager.lobbyMuteki(),
+                lobbyManager.lobbyHeal(),
+                lobbyManager.lobbyChangeGamemode(),
+                lobbyManager.teleportDropInventory(),
+                lobbyManager.teleportClearInventory()
+        ) ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int setLobbyPosDimOnly(CommandContext<CommandSourceStack> context) {
+        IGameLobbyManager lobbyManager = BattleRoyale.getGameManager().getGameLobbyManager();
+        return lobbyManager.setLobby(
+                Vec3Argument.getVec3(context, POS),
+                Vec3Argument.getVec3(context, XYZ),
+                lobbyManager.lobbyMuteki(),
+                lobbyManager.lobbyHeal(),
+                lobbyManager.lobbyChangeGamemode(),
+                lobbyManager.teleportDropInventory(),
+                lobbyManager.teleportClearInventory()
+        ) ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int setLobby(CommandContext<CommandSourceStack> context) {
+        IGameLobbyManager lobbyManager = BattleRoyale.getGameManager().getGameLobbyManager();
+        return lobbyManager.setLobby(
+                Vec3Argument.getVec3(context, POS),
+                Vec3Argument.getVec3(context, XYZ),
+                BoolArgumentType.getBool(context, LOBBY_MUTEKI),
+                BoolArgumentType.getBool(context, LOBBY_HEAL),
+                BoolArgumentType.getBool(context, LOBBY_CHANGE_GAMEMODE),
+                BoolArgumentType.getBool(context, TELEPORT_DROP_INVENTORY),
+                BoolArgumentType.getBool(context, TELEPORT_CLEAR_INVENTORY)
+        ) ? Command.SINGLE_SUCCESS : 0;
     }
 }
