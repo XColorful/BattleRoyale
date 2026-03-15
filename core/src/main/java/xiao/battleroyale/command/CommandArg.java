@@ -128,6 +128,7 @@ public class CommandArg {
     public static final String WITH_MEMBERS = "withMembers";
     public static final String WITH_TEAM = "withTeam";
     public static final String DETAIL_LEVEL = "detailLevel";
+    public static final String PROGRESS = "progress";
 
     // GameManager
     public static final String GAME_MANAGER = "gameMamager";
@@ -279,4 +280,31 @@ public class CommandArg {
     public static final String SEND_PLAYER_TEAM_ID = "sendPlayerTeamId";
 
     public static final String CLEAR_VANILLA_TEAM = "clearVanillaTeam";
+
+    // ZoneManager
+    public static final String ZONE_MANAGER = "zoneManager";
+    public static final String HAS_ENOUGH_ZONE_TO_START = "hasEnoughZoneToStart";
+    public static final String RANDOMIZE_ZONE_TICK_OFFSET = "randomizeZoneTickOffset";
+
+    public static final String GET_GAME_ZONE = "getGameZone";
+    public static final String GET_ZONE_DELAY = "getZoneDelay";
+    public static final String IS_CREATED = "isCreated";
+    public static final String IS_PRESENT = "isPresent";
+    public static final String IS_FINISHED = "isFinished";
+    public static final String TICKABLE_ZONE = "tickableZone";
+    public static final String IS_READY = "isReady";
+    public static final String GET_TICK_FREQUENCY = "getTickFrequency";
+    public static final String SET_TICK_FREQUENCY = "setTickFrequency";
+    public static final String TICK_FREQ = "tickFreq";
+    public static final String GET_TICK_OFFSET = "getTickOffset";
+    public static final String SET_TICK_OFFSET = "setTickOffset";
+    public static final String TICK_OFFSET = "tickOffset";
+    public static final String PLAYER_FUNC = "playerFunc";
+    public static final String GET_SHAPE_MOVE_DELAY = "getShapeMoveDelay";
+    public static final String GET_SHAPE_MOVE_TIME = "getShapeMoveTime";
+    public static final String SPATIAL_ZONE = "spatialZone";
+    public static final String IS_WITHIN_ZONE = "isWithinZone";
+    public static final String IS_DETERMINED = "isDetermined";
+    public static final String HAS_BAD_SHAPE = "hasBadShape";
+    public static final String GET_SEGMENTS = "getSegments";
 }

@@ -21,6 +21,7 @@ public class ApiCommand {
         apiCommand.then(SpawnManagerCommand.get());
         apiCommand.then(StatsManagerCommand.get());
         apiCommand.then(TeamManagerCommand.get());
+        apiCommand.then(ZoneManagerCommand.get());
 
         return apiCommand;
     }
