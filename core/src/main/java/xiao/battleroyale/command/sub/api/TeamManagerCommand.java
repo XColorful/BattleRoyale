@@ -15,11 +15,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.team.IGameTeamReadApi;
+import xiao.battleroyale.api.game.team.ITeamManager;
+import xiao.battleroyale.api.game.team.ITeamPreManagement;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 
@@ -140,6 +143,24 @@ public class TeamManagerCommand {
                 .then(Commands.literal(FORCE_ELIMINATE_PLAYER_FROM_TEAM)
                         .then(Commands.argument(PLAYER, EntityArgument.entity())
                                 .executes(TeamManagerCommand::forceEliminatePlayerFromTeam)
+                        )
+                )
+                // ITeamPreManagement
+                .then(Commands.literal(FORCE_JOIN_TEAM)
+                        .then(Commands.argument(PLAYER, EntityArgument.player())
+                                .executes(TeamManagerCommand::forceJoinTeam)
+                        )
+                )
+                .then(Commands.literal(REMOVE_PLAYER_FROM_TEAM)
+                        .then(Commands.literal(BY_PLAYER)
+                                .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                        .executes(TeamManagerCommand::removePlayerFromTeamByPlayer)
+                                )
+                        )
+                        .then(Commands.literal(BY_ID)
+                                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                                        .executes(TeamManagerCommand::removePlayerFromTeamByGamePlayerId)
+                                )
                         )
                 );
     }
@@ -343,5 +364,25 @@ public class TeamManagerCommand {
         if (gamePlayer == null) return 0;
         BattleRoyale.getGameManager().getTeamManager().forceEliminatePlayerFromTeam(livingEntity);
         return Command.SINGLE_SUCCESS;
+    }
+
+    // --------ITeamPreManagement--------
+
+    private static int forceJoinTeam(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
+        ServerPlayer player = EntityArgument.getPlayer(context, PLAYER);
+        teamManager.forceJoinTeam(player);
+        return teamManager.getGamePlayerByUUID(player.getUUID()) != null ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int removePlayerFromTeamByPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        return BattleRoyale.getGameManager().getTeamManager().removePlayerFromTeam(entity.getUUID()) ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int removePlayerFromTeamByGamePlayerId(CommandContext<CommandSourceStack> context) {
+        int playerId = IntegerArgumentType.getInteger(context, ID);
+        ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
+        @Nullable GamePlayer gamePlayer = teamManager.getGamePlayerBySingleId(playerId);
+        if (gamePlayer == null) return 0;
+        return teamManager.removePlayerFromTeam(gamePlayer.getPlayerUUID()) ? Command.SINGLE_SUCCESS : 0;
     }
 }

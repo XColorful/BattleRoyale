@@ -180,4 +180,7 @@ public class CommandArg {
 
     public static final String FORCE_ELIMINATE_PLAYER_SILENCE = "forceEliminatePlayerSilence";
     public static final String FORCE_ELIMINATE_PLAYER_FROM_TEAM = "forceEliminatePlayerFromTeam";
+
+    public static final String FORCE_JOIN_TEAM = "forceJoinTeam";
+    public static final String REMOVE_PLAYER_FROM_TEAM = "removePlayerFromTeam";
 }
