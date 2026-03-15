@@ -235,6 +235,10 @@ public class CommandArg {
     public static final String ADD_AND_TRACK_RESTANDING_GAME_PLAYER = "addAndTrackRestandingGamePlayer";
     public static final String RESPAWN_GAME_PLAYER = "respawnGamePlayer";
 
+    // SpawnManager
+    public static final String SPAWN_MANAGER = "spawnManager";
+    public static final String RESPAWN = "respawn";
+
     // TeamManager
     public static final String TEAM_MANAGER = "teamMamager";
     public static final String SHOULD_AUTO_JOIN = "shouldAutoJoin";

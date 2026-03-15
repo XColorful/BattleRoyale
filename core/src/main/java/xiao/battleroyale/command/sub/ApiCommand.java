@@ -18,6 +18,7 @@ public class ApiCommand {
         apiCommand.then(GameLobbyManagerCommand.get());
         apiCommand.then(GameLootManagerCommand.get());
         apiCommand.then(GameProcessManagerCommand.get());
+        apiCommand.then(SpawnManagerCommand.get());
         apiCommand.then(TeamManagerCommand.get());
 
         return apiCommand;
