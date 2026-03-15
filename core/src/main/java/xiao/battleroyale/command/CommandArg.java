@@ -185,4 +185,6 @@ public class CommandArg {
     public static final String REMOVE_PLAYER_FROM_TEAM = "removePlayerFromTeam";
 
     public static final String SEND_PLAYER_TEAM_ID = "sendPlayerTeamId";
+
+    public static final String CLEAR_VANILLA_TEAM = "clearVanillaTeam";
 }

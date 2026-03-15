@@ -166,7 +166,9 @@ public class TeamManagerCommand {
                         .then(Commands.argument(PLAYER, EntityArgument.entity())
                                 .executes(TeamManagerCommand::sendPlayerTeamId)
                         )
-                );
+                )
+                // IVanillaTeam
+                .then(Commands.literal(CLEAR_VANILLA_TEAM).executes(TeamManagerCommand::clearVanillaTeam));
     }
 
     // --------IGameTeamReadApi--------
@@ -399,5 +401,12 @@ public class TeamManagerCommand {
         }
         @Nullable GamePlayer gamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerByUUID(entity.getUUID());
         return gamePlayer != null ? Command.SINGLE_SUCCESS : 0;
+    }
+
+    // --------IVanillaTeam--------
+
+    private static int clearVanillaTeam(CommandContext<CommandSourceStack> context) {
+        BattleRoyale.getGameManager().getTeamManager().clearVanillaTeam(context.getSource().getLevel());
+        return Command.SINGLE_SUCCESS;
     }
 }
