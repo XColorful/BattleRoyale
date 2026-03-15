@@ -206,6 +206,27 @@ public class CommandArg {
     public static final String FORCE_CLEAR_PROCESSED_CHUNK_CACHE = "forceClearProcessedChunkCache";
     public static final String FORCE_CLEAR_PLAYER_CENTER_CHUNKS = "forceClearPlayerCenterChunks";
 
+    // GameProcessManager
+    public static final String GAME_PROCESS_MANAGER = "gameProcessManager";
+    public static final String CHECK_IF_GAME_SHOULD_END_AND_FINISH = "checkIfGameShouldEndAndFinish";
+    public static final String FINISH_GAME_IF_SHOULD_END = "finishGameIfShouldEnd";
+
+    public static final String CHECK_AND_UPDATE_INVALID_GAME_PLAYER = "checkAndUpdateInvalidGamePlayer";
+    public static final String TELEPORT_TO_LOBBY_IN_GAME = "teleportToLobbyInGame";
+    public static final String TELEPORT_AFTER_GAME = "teleportAfterGame";
+    public static final String TELEPORT_WINNER = "teleportWinner";
+    public static final String TELEPORT_NON_WINNER = "teleportNonWinner";
+    public static final String SPECTATE_GAME = "spectateGame";
+    public static final String HEAL_GAME_PLAYERS = "healGamePlayers";
+    public static final String FINISH_GAME_ADD_WINNER = "finishGameAddWinner";
+
+    public static final String SEND_WINNER_RESULT = "sendWinnerResult";
+    public static final String NOTIFY_WINNER = "notifyWinner";
+    public static final String ALLOW_SPECTATE = "allowSpectate";
+    public static final String SEND_DOWN_MESSAGE = "sendDownMessage";
+    public static final String SEND_REVIVE_MESSAGE = "sendReviveMessage";
+    public static final String SEND_ELIMINATE_MESSAGE = "sendEliminateMessage";
+
     // TeamManager
     public static final String TEAM_MANAGER = "teamMamager";
     public static final String SHOULD_AUTO_JOIN = "shouldAutoJoin";

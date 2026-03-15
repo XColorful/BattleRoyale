@@ -19,6 +19,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameMainManager;
+import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.team.IGameTeamReadApi;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -424,7 +426,8 @@ public class TeamManagerCommand {
     // --------IVanillaTeam--------
 
     private static int clearVanillaTeam(CommandContext<CommandSourceStack> context) {
-        BattleRoyale.getGameManager().getTeamManager().clearVanillaTeam(context.getSource().getLevel());
+        IGameMainManager gameManager = BattleRoyale.getGameManager();
+        gameManager.getTeamManager().clearVanillaTeam(gameManager.getServerLevel());
         return Command.SINGLE_SUCCESS;
     }
 }
