@@ -139,6 +139,7 @@ public class CommandArg {
     public static final String GET_REQUIRED_GAME_TEAM = "getRequiredGameTeam";
     public static final String HAS_WINNER = "hasWinner";
     public static final String GET_REMAIN_RESTART_TIME = "getRemainRestartTime";
+    public static final String IS_WINNER = "isWinner";
 
     public static final String SEND_GAME_SPECTATE_MESSAGE = "sendGameSpectateMessage";
     public static final String FINISH_GAME = "finishGame";
@@ -160,6 +161,18 @@ public class CommandArg {
     // GameruleManager
     public static final String GAMERULE_MANAGER = "gameruleManager";
     public static final String GET_GAME_MODE = "getGameMode";
+
+    // GameLobbyManager
+    public static final String GAME_LOBBY_MANAGER = "gameLobbyManager";
+    public static final String SEND_LOBBY_TELEPORT_MESSAGE = "sendLobbyTeleportMessage";
+    public static final String IS_LOBBY_CREATED = "isLobbyCreated";
+    public static final String LOBBY_MUTEKI = "lobbyMuteki";
+    public static final String LOBBY_HEAL = "lobbyHeal";
+    public static final String LOBBY_CHANGE_GAMEMODE = "lobbyChangeGameMode";
+    public static final String TELEPORT_DROP_INVENTORY = "teleportDropInventory";
+    public static final String TELEPORT_CLEAR_INVENTORY = "teleportClearInventory";
+    public static final String IS_IN_LOBBY_RANGE = "isInLobbyRange";
+    public static final String CAN_MUTEKI = "canMuteki";
 
     // TeamManager
     public static final String TEAM_MANAGER = "teamMamager";

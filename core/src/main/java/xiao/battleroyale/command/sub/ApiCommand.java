@@ -3,6 +3,7 @@ package xiao.battleroyale.command.sub;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import xiao.battleroyale.command.sub.api.GameLobbyManagerCommand;
 import xiao.battleroyale.command.sub.api.GameManagerCommand;
 import xiao.battleroyale.command.sub.api.GameruleManagerCommand;
 import xiao.battleroyale.command.sub.api.TeamManagerCommand;
@@ -17,6 +18,7 @@ public class ApiCommand {
         // GameManager
         apiCommand.then(GameManagerCommand.get());
         apiCommand.then(GameruleManagerCommand.get());
+        apiCommand.then(GameLobbyManagerCommand.get());
         apiCommand.then(TeamManagerCommand.get());
 
         return apiCommand;
