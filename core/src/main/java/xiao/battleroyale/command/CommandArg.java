@@ -136,6 +136,13 @@ public class CommandArg {
     public static final String GOLDEN_SPIRAL = "goldenSpiral";
     public static final String CIRCLE_GRID = "circleGrid";
     public static final String SHUFFLE = "shuffle";
+    public static final String RANDOM_RANGE = "randomRange";
+    public static final String RANGE_TYPE = "rangeType";
+    public static final String RANDOM_ADJUST_XYZ = "randomAdjustXYZ";
+    public static final String RANDOM_ADJUST_XZ_EXPAND_Y = "randomAdjustXZExpandY";
+    public static final String SCALE_XYZ = "scaleXYZ";
+    public static final String RANDOM_CIRCLE_XZ_EXPAND_Y = "randomCircleXZExpandY";
+    public static final String RANDOM_SPHERE_XYZ = "randomSphereXYZ";
     public static final String BOUND = "bound";
     public static final String MIN_POINT = "minPoint";
     public static final String MAX_POINT = "maxPoint";
