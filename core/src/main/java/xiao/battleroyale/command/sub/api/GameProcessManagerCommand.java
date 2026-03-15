@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameMainManager;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.command.sub.api.deathmatch.DeathMatchProcessManagerCommand;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
 import static xiao.battleroyale.command.CommandArg.*;
@@ -95,7 +96,10 @@ public class GameProcessManagerCommand {
                                         .executes(GameProcessManagerCommand::sendEliminateMessageByGamePlayerId)
                                 )
                         )
-                );
+                )
+
+                // IDeathMatchProcessManager
+                .then(DeathMatchProcessManagerCommand.get());
     }
 
     // --------IGameProcessManager--------

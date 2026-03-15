@@ -227,6 +227,14 @@ public class CommandArg {
     public static final String SEND_REVIVE_MESSAGE = "sendReviveMessage";
     public static final String SEND_ELIMINATE_MESSAGE = "sendEliminateMessage";
 
+    public static final String DEATH_MATCH = "deathMatch";
+    public static final String GET_CURRENT_MAX_KILL = "getCurrentMaxKill";
+    public static final String ADD_GAME_PLAYER_KILL = "addGamePlayerKill";
+    public static final String ADD_GAME_TEAM_KILL = "addGameTeamKill";
+    public static final String ADD_KILL = "addKill";
+    public static final String ADD_AND_TRACK_RESTANDING_GAME_PLAYER = "addAndTrackRestandingGamePlayer";
+    public static final String RESPAWN_GAME_PLAYER = "respawnGamePlayer";
+
     // TeamManager
     public static final String TEAM_MANAGER = "teamMamager";
     public static final String SHOULD_AUTO_JOIN = "shouldAutoJoin";
