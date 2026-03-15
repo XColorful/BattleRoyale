@@ -129,6 +129,9 @@ public class CommandArg {
     public static final String WITH_TEAM = "withTeam";
     public static final String DETAIL_LEVEL = "detailLevel";
     public static final String PROGRESS = "progress";
+    public static final String GAME_PLAYER = "gamePlayer";
+    public static final String GAME_PLAYERS = "gamePlayers";
+    public static final String STANDING_GAME_PLAYERS = "standingGamePlayers";
 
     // Algorithm
     public static final String ALGORITHM = "algorithm";
@@ -149,6 +152,9 @@ public class CommandArg {
     public static final String COUNT = "count";
     public static final String ALLOW_ON_BORDER = "allowOnBorder";
     public static final String GLOBAL_SHRINK_RATIO = "globalShrinkRatio";
+    public static final String TELEPORT = "teleport";
+    public static final String FIND_GROUND = "findGround";
+    public static final String MAX_HANG_TIME = "maxHandTime";
 
     // GameManager
     public static final String GAME_MANAGER = "gameMamager";

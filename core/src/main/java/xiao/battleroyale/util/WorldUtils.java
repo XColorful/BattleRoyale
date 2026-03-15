@@ -27,6 +27,12 @@ public class WorldUtils {
         BlockPos lookupPos = BlockPos.containing(x, maxBuildHeight, z);
         return serverLevel.getHeight(Heightmap.Types.MOTION_BLOCKING, lookupPos.getX(), lookupPos.getZ());
     }
+    /**
+     * 是否非虚空
+     */
+    public static boolean isGroundValid(@NotNull ServerLevel serverLevel, double y) {
+        return y >= serverLevel.getMinBuildHeight() + 2;
+    }
 
     /**
      * 向单个玩家发送/更新进度条

@@ -7,23 +7,26 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.algorithm.ICircleGrid;
 import xiao.battleroyale.api.algorithm.IGoldenSpiral;
 import xiao.battleroyale.api.algorithm.IRectangleGrid;
+import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.util.ListUtils;
 import xiao.battleroyale.util.Vec3Utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static xiao.battleroyale.command.CommandArg.*;
 
@@ -37,23 +40,32 @@ public class AlgorithmCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         return Commands.literal(ALGORITHM)
                 .then(getDistributionNode(RECTANGLE_GRID,
+                        // IRectangleGrid
                         AlgorithmCommand::rectangleGridShuffle,
                         AlgorithmCommand::rectangleGridBound,
                         AlgorithmCommand::rectangleGridRandomRange,
                         AlgorithmCommand::rectangleGrid,
-                        AlgorithmCommand::rectangleGridAtExecute))
+                        AlgorithmCommand::rectangleGridAtExecute,
+                        AlgorithmCommand::rectangleGridTeleportGamePlayers,
+                        AlgorithmCommand::rectangleGridTeleportPlayers))
                 .then(getDistributionNode(GOLDEN_SPIRAL,
+                        // IGoldenSpiral
                         AlgorithmCommand::goldenSpiralShuffle,
                         AlgorithmCommand::goldenSpiralBound,
                         AlgorithmCommand::goldenSpiralRandomRange,
                         AlgorithmCommand::goldenSpiral,
-                        AlgorithmCommand::goldenSpiralAtExecute))
+                        AlgorithmCommand::goldenSpiralAtExecute,
+                        AlgorithmCommand::goldenSpiralTeleportGamePlayers,
+                        AlgorithmCommand::goldenSpiralTeleportPlayers))
                 .then(getDistributionNode(CIRCLE_GRID,
+                        // ICircleGrid
                         AlgorithmCommand::circleGridShuffle,
                         AlgorithmCommand::circleGridBound,
                         AlgorithmCommand::circleGridRandomRange,
                         AlgorithmCommand::circleGrid,
-                        AlgorithmCommand::circleGridAtExecute));
+                        AlgorithmCommand::circleGridAtExecute,
+                        AlgorithmCommand::circleGridTeleportGamePlayers,
+                        AlgorithmCommand::circleGridTeleportPlayers));
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> getDistributionNode(
@@ -62,7 +74,9 @@ public class AlgorithmCommand {
             Command<CommandSourceStack> bound,
             Command<CommandSourceStack> randomRange,
             Command<CommandSourceStack> distribute,
-            Command<CommandSourceStack> distributeAt) {
+            Command<CommandSourceStack> distributeAt,
+            Command<CommandSourceStack> teleportGamePlayers,
+            Command<CommandSourceStack> teleportPlayers) {
 
         return Commands.literal(name)
                 .then(Commands.literal(SHUFFLE).executes(shuffle))
@@ -97,6 +111,29 @@ public class AlgorithmCommand {
                                 .then(Commands.argument(ALLOW_ON_BORDER, BoolArgumentType.bool())
                                         .then(Commands.argument(GLOBAL_SHRINK_RATIO, DoubleArgumentType.doubleArg())
                                                 .executes(distributeAt)
+                                        )
+                                )
+                        )
+                )
+
+                // TeleportScheduler
+                .then(Commands.literal(TELEPORT)
+                        .then(Commands.argument(FIND_GROUND, BoolArgumentType.bool())
+                                .then(Commands.argument(MAX_HANG_TIME, IntegerArgumentType.integer(0))
+                                        .then(Commands.literal(GAME_PLAYER)
+                                                .then(Commands.argument(TYPE, StringArgumentType.word())
+                                                        .suggests((context, builder) -> {
+                                                            builder.suggest(GAME_PLAYERS);
+                                                            builder.suggest(STANDING_GAME_PLAYERS);
+                                                            return builder.buildFuture();
+                                                        })
+                                                        .executes(teleportGamePlayers)
+                                                )
+                                        )
+                                        .then(Commands.literal(PLAYER)
+                                                .then(Commands.argument(ALL, EntityArgument.entities())
+                                                        .executes(teleportPlayers)
+                                                )
                                         )
                                 )
                         )
@@ -159,6 +196,27 @@ public class AlgorithmCommand {
         );
         return LAST_RECTANGLE_GRID.size();
     }
+    // TeleportScheduler
+    private static int rectangleGridTeleportGamePlayers(CommandContext<CommandSourceStack> context) {
+        boolean findGround = BoolArgumentType.getBool(context, FIND_GROUND);
+        int maxHangTime = IntegerArgumentType.getInteger(context, MAX_HANG_TIME);
+        List<GamePlayer> gamePlayers = switch (StringArgumentType.getString(context, TYPE)) {
+            case GAME_PLAYERS -> BattleRoyale.getGameManager().getTeamManager().getGamePlayers();
+            case STANDING_GAME_PLAYERS -> BattleRoyale.getGameManager().getTeamManager().getStandingGamePlayers();
+            default -> new ArrayList<>();
+        };
+        if (gamePlayers.isEmpty() || LAST_RECTANGLE_GRID.isEmpty()) return 0;
+        return TeleportScheduler.createWithGamePlayers(LAST_RECTANGLE_GRID, findGround, maxHangTime, gamePlayers)
+                ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int rectangleGridTeleportPlayers(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        boolean findGround = BoolArgumentType.getBool(context, FIND_GROUND);
+        int maxHangTime = IntegerArgumentType.getInteger(context, MAX_HANG_TIME);
+        Collection<? extends Entity> players = EntityArgument.getEntities(context, ALL);
+        if (players.isEmpty() || LAST_RECTANGLE_GRID.isEmpty()) return 0;
+        return TeleportScheduler.createWithPlayers(context.getSource().getLevel().dimension(), LAST_RECTANGLE_GRID, findGround, maxHangTime, players)
+                ? Command.SINGLE_SUCCESS : 0;
+    }
 
     // --------IGoldenSpiral--------
 
@@ -197,6 +255,27 @@ public class AlgorithmCommand {
         );
         return LAST_GOLDEN_SPIRAL.size();
     }
+    // TeleportScheduler
+    private static int goldenSpiralTeleportGamePlayers(CommandContext<CommandSourceStack> context) {
+        boolean findGround = BoolArgumentType.getBool(context, FIND_GROUND);
+        int maxHangTime = IntegerArgumentType.getInteger(context, MAX_HANG_TIME);
+        List<GamePlayer> gamePlayers = switch (StringArgumentType.getString(context, TYPE)) {
+            case GAME_PLAYERS -> BattleRoyale.getGameManager().getTeamManager().getGamePlayers();
+            case STANDING_GAME_PLAYERS -> BattleRoyale.getGameManager().getTeamManager().getStandingGamePlayers();
+            default -> new ArrayList<>();
+        };
+        if (gamePlayers.isEmpty() || LAST_GOLDEN_SPIRAL.isEmpty()) return 0;
+        return TeleportScheduler.createWithGamePlayers(LAST_GOLDEN_SPIRAL, findGround, maxHangTime, gamePlayers)
+                ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int goldenSpiralTeleportPlayers(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        boolean findGround = BoolArgumentType.getBool(context, FIND_GROUND);
+        int maxHangTime = IntegerArgumentType.getInteger(context, MAX_HANG_TIME);
+        Collection<? extends Entity> players = EntityArgument.getEntities(context, ALL);
+        if (players.isEmpty() || LAST_GOLDEN_SPIRAL.isEmpty()) return 0;
+        return TeleportScheduler.createWithPlayers(context.getSource().getLevel().dimension(), LAST_GOLDEN_SPIRAL, findGround, maxHangTime, players)
+                ? Command.SINGLE_SUCCESS : 0;
+    }
 
     // --------ICircleGrid--------
 
@@ -234,5 +313,26 @@ public class AlgorithmCommand {
                 DoubleArgumentType.getDouble(context, GLOBAL_SHRINK_RATIO)
         );
         return LAST_CIRCLE_GRID.size();
+    }
+    // TeleportScheduler
+    private static int circleGridTeleportGamePlayers(CommandContext<CommandSourceStack> context) {
+        boolean findGround = BoolArgumentType.getBool(context, FIND_GROUND);
+        int maxHangTime = IntegerArgumentType.getInteger(context, MAX_HANG_TIME);
+        List<GamePlayer> gamePlayers = switch (StringArgumentType.getString(context, TYPE)) {
+            case GAME_PLAYERS -> BattleRoyale.getGameManager().getTeamManager().getGamePlayers();
+            case STANDING_GAME_PLAYERS -> BattleRoyale.getGameManager().getTeamManager().getStandingGamePlayers();
+            default -> new ArrayList<>();
+        };
+        if (gamePlayers.isEmpty() || LAST_CIRCLE_GRID.isEmpty()) return 0;
+        return TeleportScheduler.createWithGamePlayers(LAST_CIRCLE_GRID, findGround, maxHangTime, gamePlayers)
+                ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int circleGridTeleportPlayers(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        boolean findGround = BoolArgumentType.getBool(context, FIND_GROUND);
+        int maxHangTime = IntegerArgumentType.getInteger(context, MAX_HANG_TIME);
+        Collection<? extends Entity> players = EntityArgument.getEntities(context, ALL);
+        if (players.isEmpty() || LAST_CIRCLE_GRID.isEmpty()) return 0;
+        return TeleportScheduler.createWithPlayers(context.getSource().getLevel().dimension(), LAST_CIRCLE_GRID, findGround, maxHangTime, players)
+                ? Command.SINGLE_SUCCESS : 0;
     }
 }
