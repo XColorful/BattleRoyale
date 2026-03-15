@@ -157,6 +157,10 @@ public class CommandArg {
     public static final String GET_STATS_CONFIG_ID = "getStatsConfigId";
     public static final String GET_BOT_CONFIG_ID = "getBotConfigId";
 
+    // GameruleManager
+    public static final String GAMERULE_MANAGER = "gameruleManager";
+    public static final String GET_GAME_MODE = "getGameMode";
+
     // TeamManager
     public static final String TEAM_MANAGER = "teamMamager";
     public static final String SHOULD_AUTO_JOIN = "shouldAutoJoin";
