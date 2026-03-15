@@ -33,6 +33,10 @@ public class TeamManagerCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         return Commands.literal(TEAM_MANAGER)
+                // ITeamManager
+                .then(Commands.literal(SHOULD_AUTO_JOIN).executes(TeamManagerCommand::shouldAutoJoin))
+                .then(Commands.literal(FIND_NOT_FULL_TEAM_ID).executes(TeamManagerCommand::findNotFullTeamId))
+                .then(Commands.literal(HAS_ENOUGH_PLAYER_TEAM_TO_START).executes(TeamManagerCommand::hasEnoughPlayerTeamToStart))
                 // IGameTeamReadApi
                 .then(Commands.literal(GET_PLAYER_LIMIT).executes(TeamManagerCommand::getPlayerLimit))
                 .then(Commands.literal(GET_GAME_PLAYER_ID)
@@ -169,6 +173,20 @@ public class TeamManagerCommand {
                 )
                 // IVanillaTeam
                 .then(Commands.literal(CLEAR_VANILLA_TEAM).executes(TeamManagerCommand::clearVanillaTeam));
+    }
+
+    // --------ITeamManager--------
+
+    private static int shouldAutoJoin(CommandContext<CommandSourceStack> context) {
+        return BattleRoyale.getGameManager().getTeamManager().shouldAutoJoin() ? Command.SINGLE_SUCCESS : 0;
+    }
+
+    private static int findNotFullTeamId(CommandContext<CommandSourceStack> context) {
+        return BattleRoyale.getGameManager().getTeamManager().findNotFullTeamId();
+    }
+
+    private static int hasEnoughPlayerTeamToStart(CommandContext<CommandSourceStack> context) {
+        return BattleRoyale.getGameManager().getTeamManager().hasEnoughPlayerTeamToStart() ? Command.SINGLE_SUCCESS : 0;
     }
 
     // --------IGameTeamReadApi--------

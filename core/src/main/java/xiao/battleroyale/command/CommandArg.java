@@ -159,6 +159,10 @@ public class CommandArg {
 
     // TeamManager
     public static final String TEAM_MANAGER = "teamMamager";
+    public static final String SHOULD_AUTO_JOIN = "shouldAutoJoin";
+    public static final String FIND_NOT_FULL_TEAM_ID = "findNotFullTeamId";
+    public static final String HAS_ENOUGH_PLAYER_TEAM_TO_START = "hasEnoughPlayerTeamToStart";
+
     public static final String GET_PLAYER_LIMIT = "getPlayerLimit";
     public static final String GET_GAME_PLAYER_ID = "getGamePlayerId";
     public static final String GET_GAME_PLAYER = "getGamePlayer";
