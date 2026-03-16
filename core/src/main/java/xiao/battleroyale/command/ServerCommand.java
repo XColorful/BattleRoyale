@@ -50,6 +50,8 @@ public class ServerCommand {
         ); // 部分指令不需要权限
         root.then(TempCommand.get()
                 .requires(source -> checkCommandLevel(source, 2)));
+        root.then(ApiCommand.get()
+                .requires(source -> checkCommandLevel(source, 2)));
         return root;
     }
 }

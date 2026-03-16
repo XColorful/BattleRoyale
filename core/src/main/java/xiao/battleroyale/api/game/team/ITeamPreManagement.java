@@ -18,5 +18,5 @@ public interface ITeamPreManagement {
      * 游戏未开始时将玩家移出队伍
      * @return 是否移出队伍
      */
-    boolean removePlayerFromTeam(@NotNull UUID playerId);
+    boolean removePlayerFromTeam(@NotNull UUID playerUUID);
 }

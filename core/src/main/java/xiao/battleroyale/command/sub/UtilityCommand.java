@@ -38,7 +38,7 @@ public class UtilityCommand {
         utilityCommand.then(Commands.literal(LOOT_CONFIG)
                 .requires(source -> checkCommandLevel(source, 3))
                 .then(Commands.argument(ID, IntegerArgumentType.integer())
-                        .then(Commands.argument(TYPE, StringArgumentType.string())
+                        .then(Commands.argument(TYPE, StringArgumentType.word())
                                 .suggests((context, builder) -> {
                                     builder.suggest(SLOT);
                                     builder.suggest(BLOCK);
