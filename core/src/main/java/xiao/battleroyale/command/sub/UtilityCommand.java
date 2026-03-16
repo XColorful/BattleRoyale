@@ -58,7 +58,7 @@ public class UtilityCommand {
                                         )
                                 )
                         )
-                        .requires(source -> source.hasPermission(4)) // 战利品表读不了就直接进不了存档
+                        .requires(source -> checkCommandLevel(source, 4)) // 战利品表读不了就直接进不了存档
                         .then(Commands.literal(TO_LOOT_TABLE)
                                 .then(Commands.argument(FILE, StringArgumentType.string())
                                         .executes(UtilityCommand::toLootTable)
@@ -84,7 +84,7 @@ public class UtilityCommand {
         );
 
         utilityCommand.then(Commands.literal(TEAM)
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> checkCommandLevel(source, 2))
                 .then(Commands.literal(REMOVE)
                         .then(Commands.argument(GAME_TEAM_ONLY, BoolArgumentType.bool())
                                 .executes(UtilityCommand::removeVanillaTeam)
