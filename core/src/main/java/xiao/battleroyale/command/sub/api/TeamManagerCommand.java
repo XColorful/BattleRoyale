@@ -13,7 +13,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -218,7 +218,7 @@ public class TeamManagerCommand {
                 BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, NAMESPACE)),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL));
     }
-    private static int getGamePlayerByGamePlayer(CommandContext<CommandSourceStack> context, GamePlayer gamePlayer, ResourceLocation nameSpace, int detailLevel) {
+    private static int getGamePlayerByGamePlayer(CommandContext<CommandSourceStack> context, GamePlayer gamePlayer, Identifier nameSpace, int detailLevel) {
         CompoundTag gamePlayerTag = detailLevel <= 0
                 ? gamePlayer.toBasicTag()
                 : switch (detailLevel) {
@@ -265,7 +265,7 @@ public class TeamManagerCommand {
                 BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, NAMESPACE)),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL));
     }
-    private static int getGameTeamByGameTeam(CommandContext<CommandSourceStack> context, GameTeam gameTeam, ResourceLocation nameSpace, int detailLevel) {
+    private static int getGameTeamByGameTeam(CommandContext<CommandSourceStack> context, GameTeam gameTeam, Identifier nameSpace, int detailLevel) {
         CompoundTag gameTeamTag = detailLevel <= 0
                 ? gameTeam.toBasicTag()
                 : switch (detailLevel) {
@@ -323,7 +323,7 @@ public class TeamManagerCommand {
         return BattleRoyale.getGameManager().getTeamManager().getStandingPlayerTeamCount();
     }
 
-    private static int getGamePlayersInternal(CommandContext<CommandSourceStack> context, List<GamePlayer> players, ResourceLocation nameSpace, int detailLevel) {
+    private static int getGamePlayersInternal(CommandContext<CommandSourceStack> context, List<GamePlayer> players, Identifier nameSpace, int detailLevel) {
         Function<GamePlayer, CompoundTag> toTag = detailLevel <= 0 ? GamePlayer::toBasicTag
                 : switch (detailLevel) {
             case 1 -> GamePlayer::toSimpleTag;
@@ -347,7 +347,7 @@ public class TeamManagerCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int getGameTeamsInternal(CommandContext<CommandSourceStack> context, List<GameTeam> teams, ResourceLocation nameSpace, int detailLevel) {
+    private static int getGameTeamsInternal(CommandContext<CommandSourceStack> context, List<GameTeam> teams, Identifier nameSpace, int detailLevel) {
         Function<GameTeam, CompoundTag> toTag = detailLevel <= 0 ? GameTeam::toBasicTag
                 : switch (detailLevel) {
             case 1 -> GameTeam::toSimpleTag;
