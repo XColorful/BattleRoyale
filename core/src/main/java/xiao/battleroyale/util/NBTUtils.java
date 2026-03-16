@@ -151,6 +151,15 @@ public class NBTUtils {
         }
     }
 
+    @NotNull
+    public static CompoundTag buildVec3Nbt(@NotNull Vec3 vec) {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putDouble("x", vec.x);
+        nbt.putDouble("y", vec.y);
+        nbt.putDouble("z", vec.z);
+        return nbt;
+    }
+
     /**
      * 解析MoJangson
      */
