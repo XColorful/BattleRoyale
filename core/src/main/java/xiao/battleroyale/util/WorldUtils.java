@@ -6,7 +6,9 @@ import net.minecraft.network.protocol.game.ClientboundBossEventPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -16,10 +18,20 @@ import java.util.UUID;
 
 public class WorldUtils {
 
+    public static ChunkPos getChunkPos(Vec3 pos) {
+        return new ChunkPos(BlockPos.containing(pos));
+    }
+
     public static int getGroundY(@NotNull ServerLevel serverLevel, double x, double z) {
         int maxBuildHeight = serverLevel.getMaxY();
         BlockPos lookupPos = BlockPos.containing(x, maxBuildHeight, z);
         return serverLevel.getHeight(Heightmap.Types.MOTION_BLOCKING, lookupPos.getX(), lookupPos.getZ());
+    }
+    /**
+     * 是否非虚空
+     */
+    public static boolean isGroundValid(@NotNull ServerLevel serverLevel, double y) {
+        return y >= serverLevel.getMinBuildHeight() + 2;
     }
 
     /**

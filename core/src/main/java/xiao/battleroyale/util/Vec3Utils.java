@@ -139,6 +139,9 @@ public class Vec3Utils {
     public static Vec3 scaleXYZ(@NotNull Vec3 v, double scale) {
         return v.multiply(scale, scale, scale);
     }
+    public static Vec3 scaleXYZ(@NotNull Vec3 v, double x, double y, double z) {
+        return v.multiply(x, y, z);
+    }
 
     /**
      * 以输入向量为基准，取dimension.x为半径，在XZ平面的圆内随机取点
