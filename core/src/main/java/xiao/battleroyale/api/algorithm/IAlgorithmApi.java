@@ -4,7 +4,10 @@ public interface IAlgorithmApi {
 
     IRectangleGrid rectangleGrid();
 
-    IGoldenSpiral golderSpiral();
+    IGoldenSpiral goldenSpiral();
+    @Deprecated default IGoldenSpiral golderSpiral() { // typo, lol
+        return goldenSpiral();
+    }
 
     ICircleGrid circleGrid();
 }

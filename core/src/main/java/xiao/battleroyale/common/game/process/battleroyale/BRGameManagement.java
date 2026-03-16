@@ -115,23 +115,24 @@ public class BRGameManagement {
     }
 
 
-    protected static void teleportToLobbyInGame(BRGameProcessManager brGameProcessManager, ServerPlayer player) {
+    protected static void teleportToLobbyInGame(BRGameProcessManager brGameProcessManager, LivingEntity player) {
         if (player == null || !player.isAlive()) {
             return;
         }
 
         IGameManager gameManager = BattleRoyale.getGameManager();
+        @Nullable ServerPlayer serverPlayer = player instanceof ServerPlayer sp ? sp : null;
         if (gameManager.getGameTeamReadApi().hasStandingGamePlayer(player.getUUID())) { // 游戏进行中，且未被淘汰
             if (gameManager.teleportToLobby(player)) { // 若成功传送，则淘汰该玩家
                 gameManager.getTeamManager().forceEliminatePlayerFromTeam(player); // 强制淘汰
             } else {
                 BattleRoyale.LOGGER.error("Teleport in game player while not has lobby");
-                ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
+                if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
             }
         } else if (gameManager.teleportToLobby(player)) { // 传送，且传送成功
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.teleported_to_lobby").withStyle(ChatFormatting.GREEN));
+            if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.teleported_to_lobby").withStyle(ChatFormatting.GREEN));
         } else {
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
+            if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
         }
     }
 

@@ -116,4 +116,221 @@ public class CommandArg {
     public static final String GAME_TEAM_ONLY = "gameTeamOnly";
 
     public static final String BOOL = "boolean";
+
+    // --------API--------
+    public static final String API = "api";
+
+    public static final String NAMESPACE = "namespace";
+    public static final String PATH = "path";
+    public static final String STORAGE_PATH = "storagePath";
+    public static final String BY_PLAYER = "byPlayer";
+    public static final String BY_ID = "byId";
+    public static final String WITH_MEMBERS = "withMembers";
+    public static final String WITH_TEAM = "withTeam";
+    public static final String DETAIL_LEVEL = "detailLevel";
+    public static final String PROGRESS = "progress";
+    public static final String GAME_PLAYER = "gamePlayer";
+    public static final String GAME_PLAYERS = "gamePlayers";
+    public static final String STANDING_GAME_PLAYERS = "standingGamePlayers";
+
+    // Algorithm
+    public static final String ALGORITHM = "algorithm";
+    public static final String RECTANGLE_GRID = "rectangleGrid";
+    public static final String GOLDEN_SPIRAL = "goldenSpiral";
+    public static final String CIRCLE_GRID = "circleGrid";
+    public static final String SHUFFLE = "shuffle";
+    public static final String RANDOM_RANGE = "randomRange";
+    public static final String RANGE_TYPE = "rangeType";
+    public static final String RANDOM_ADJUST_XYZ = "randomAdjustXYZ";
+    public static final String RANDOM_ADJUST_XZ_EXPAND_Y = "randomAdjustXZExpandY";
+    public static final String SCALE_XYZ = "scaleXYZ";
+    public static final String RANDOM_CIRCLE_XZ_EXPAND_Y = "randomCircleXZExpandY";
+    public static final String RANDOM_SPHERE_XYZ = "randomSphereXYZ";
+    public static final String BOUND = "bound";
+    public static final String MIN_POINT = "minPoint";
+    public static final String MAX_POINT = "maxPoint";
+    public static final String COUNT = "count";
+    public static final String ALLOW_ON_BORDER = "allowOnBorder";
+    public static final String GLOBAL_SHRINK_RATIO = "globalShrinkRatio";
+    public static final String TELEPORT = "teleport";
+    public static final String FIND_GROUND = "findGround";
+    public static final String MAX_HANG_TIME = "maxHandTime";
+
+    // GameManager
+    public static final String GAME_MANAGER = "gameMamager";
+    public static final String GET_GAME_TIME = "getGameTime";
+    public static final String IS_IN_GAME = "isInGame";
+    public static final String GET_GLOBAL_CENTER_OFFSET = "getGlobalCenterOffset";
+    public static final String GET_MAX_GAME_TIME = "getMaxGameTime";
+    public static final String GET_WINNER_TEAM_TOTAL = "getWinnerTeamTotal";
+    public static final String GET_REQUIRED_GAME_TEAM = "getRequiredGameTeam";
+    public static final String HAS_WINNER = "hasWinner";
+    public static final String GET_REMAIN_RESTART_TIME = "getRemainRestartTime";
+    public static final String IS_WINNER = "isWinner";
+
+    public static final String SEND_GAME_SPECTATE_MESSAGE = "sendGameSpectateMessage";
+    public static final String FINISH_GAME = "finishGame";
+    public static final String ADD_GAME_TIME_AND_TICK = "addGameTimeAndTick";
+
+    public static final String ADD_FINISH_CHECK_AFTER_DEATH_EVENT = "addFinishCheckAfterDeathEvent";
+    public static final String SET_HAS_WINNER = "setHasWinner";
+    public static final String CLEAR_WINNER_GAME_PLAYERS = "clearWinnerGamePlayers";
+    public static final String CLEAR_WINNER_GAME_TEAMS = "clearWinnerGameTeams";
+    public static final String ADD_WINNER_GAME_PLAYER = "addWinnerGamePlayer";
+    public static final String ADD_WINNER_GAME_TEAM = "addWinnerGameTeam";
+    public static final String SET_REMAIN_RESTART_TIME = "setRemainRestartTime";
+
+    public static final String GET_GAMERULE_CONFIG_ID = "getGameruleConfigId";
+    public static final String GET_SPAWN_CONFIG_ID = "getSpawnConfigId";
+    public static final String GET_STATS_CONFIG_ID = "getStatsConfigId";
+    public static final String GET_BOT_CONFIG_ID = "getBotConfigId";
+
+    // GameruleManager
+    public static final String GAMERULE_MANAGER = "gameruleManager";
+    public static final String GET_GAME_MODE = "getGameMode";
+
+    // GameLobbyManager
+    public static final String GAME_LOBBY_MANAGER = "gameLobbyManager";
+    public static final String SEND_LOBBY_TELEPORT_MESSAGE = "sendLobbyTeleportMessage";
+    public static final String IS_LOBBY_CREATED = "isLobbyCreated";
+    public static final String LOBBY_MUTEKI = "lobbyMuteki";
+    public static final String LOBBY_HEAL = "lobbyHeal";
+    public static final String LOBBY_CHANGE_GAMEMODE = "lobbyChangeGameMode";
+    public static final String TELEPORT_DROP_INVENTORY = "teleportDropInventory";
+    public static final String TELEPORT_CLEAR_INVENTORY = "teleportClearInventory";
+    public static final String IS_IN_LOBBY_RANGE = "isInLobbyRange";
+    public static final String CAN_MUTEKI = "canMuteki";
+
+    public static final String HEAL_PLAYER = "healPlayer";
+    public static final String TELEPORT_TO_LOBBY = "teleportToLobby";
+    public static final String SET_LOBBY = "setLobby";
+
+    // GameLootManager
+    public static final String GAME_LOOT_MANAGER = "gameLootManager";
+    public static final String GET_MAX_LOOT_CHUNK_PER_TICK = "getMaxLootChunkPerTick";
+    public static final String GET_MAX_LOOT_DISTANCE = "getMaxLootDistance";
+    public static final String GET_TOLERANT_CENTER_DISTANCE = "getTolerantCenterDistance";
+    public static final String GET_MAX_CACHED_CENTER = "getMaxCachedCenter";
+    public static final String GET_MAX_QUEUED_CHUNK = "getMaxQueuedChunk";
+    public static final String GET_BFS_FREQUENCY = "getBfsFrequency";
+    public static final String IS_INSTANT_NEXT_BFS = "isInstantNextBfs";
+    public static final String GET_MAX_CACHED_LOOT_CHUNK = "getMaxCachedLootChunk";
+    public static final String GET_CLEAN_CACHED_CHUNK = "getCleanCachedChunk";
+    public static final String GET_SIMULATION_DISTANCE = "getSimulationDistance";
+
+    public static final String GET_LAST_BFS_TIME = "getLastBfsTime";
+    public static final String GET_LAST_BFS_PROCESSED_LOOT = "getLastBfsProcessedLoot";
+    public static final String QUEUED_CHUNKS_REF_SIZE = "queuedChunksRefSize";
+    public static final String PROCESSED_CHUNK_CACHE_SIZE = "processedChunkCacheSize";
+    public static final String CACHED_PLAYER_CENTER_CHUNKS_SIZE = "cachedPlayerCenterChunksSize";
+    public static final String CACHED_CENTER_OFFSET_SIZE = "cachedCenterOffsetSize";
+
+    public static final String IS_IN_QUEUED_CHUNKS_REF = "isInQueuedChunksRef";
+    public static final String IS_IN_PROCESSED_CHUNK_CACHE = "isInProcessedChunkCache";
+    public static final String IS_IN_CACHED_CENTER_OFFSET = "isInCachedCenterOffset";
+
+    public static final String FORCE_CLEAR_QUEUED_CHUNK_REF = "forceClearQueuedChunkRef";
+    public static final String FORCE_CLEAR_PROCESSED_CHUNK_CACHE = "forceClearProcessedChunkCache";
+    public static final String FORCE_CLEAR_PLAYER_CENTER_CHUNKS = "forceClearPlayerCenterChunks";
+
+    // GameProcessManager
+    public static final String GAME_PROCESS_MANAGER = "gameProcessManager";
+    public static final String CHECK_IF_GAME_SHOULD_END_AND_FINISH = "checkIfGameShouldEndAndFinish";
+    public static final String FINISH_GAME_IF_SHOULD_END = "finishGameIfShouldEnd";
+
+    public static final String CHECK_AND_UPDATE_INVALID_GAME_PLAYER = "checkAndUpdateInvalidGamePlayer";
+    public static final String TELEPORT_TO_LOBBY_IN_GAME = "teleportToLobbyInGame";
+    public static final String TELEPORT_AFTER_GAME = "teleportAfterGame";
+    public static final String TELEPORT_WINNER = "teleportWinner";
+    public static final String TELEPORT_NON_WINNER = "teleportNonWinner";
+    public static final String SPECTATE_GAME = "spectateGame";
+    public static final String HEAL_GAME_PLAYERS = "healGamePlayers";
+    public static final String FINISH_GAME_ADD_WINNER = "finishGameAddWinner";
+
+    public static final String SEND_WINNER_RESULT = "sendWinnerResult";
+    public static final String NOTIFY_WINNER = "notifyWinner";
+    public static final String ALLOW_SPECTATE = "allowSpectate";
+    public static final String SEND_DOWN_MESSAGE = "sendDownMessage";
+    public static final String SEND_REVIVE_MESSAGE = "sendReviveMessage";
+    public static final String SEND_ELIMINATE_MESSAGE = "sendEliminateMessage";
+
+    public static final String DEATH_MATCH = "deathMatch";
+    public static final String GET_CURRENT_MAX_KILL = "getCurrentMaxKill";
+    public static final String ADD_GAME_PLAYER_KILL = "addGamePlayerKill";
+    public static final String ADD_GAME_TEAM_KILL = "addGameTeamKill";
+    public static final String ADD_KILL = "addKill";
+    public static final String ADD_AND_TRACK_RESTANDING_GAME_PLAYER = "addAndTrackRestandingGamePlayer";
+    public static final String RESPAWN_GAME_PLAYER = "respawnGamePlayer";
+
+    // SpawnManager
+    public static final String SPAWN_MANAGER = "spawnManager";
+    public static final String RESPAWN = "respawn";
+
+    // StatsManager
+    public static final String STATS_MANAGER = "statsManager";
+    public static final String SHOULD_RECORD_STATS = "shouldRecordStats";
+    public static final String IS_IN_RECORD_GAME_PLAYERS = "isInRecordGamePlayers";
+    public static final String SAVE_STATS = "saveStats";
+
+    // TeamManager
+    public static final String TEAM_MANAGER = "teamMamager";
+    public static final String SHOULD_AUTO_JOIN = "shouldAutoJoin";
+    public static final String FIND_NOT_FULL_TEAM_ID = "findNotFullTeamId";
+    public static final String HAS_ENOUGH_PLAYER_TEAM_TO_START = "hasEnoughPlayerTeamToStart";
+
+    public static final String GET_PLAYER_LIMIT = "getPlayerLimit";
+    public static final String GET_GAME_PLAYER_ID = "getGamePlayerId";
+    public static final String GET_GAME_PLAYER = "getGamePlayer";
+    public static final String HAS_STANDING_GAMEPLAYER = "hasStandingGamePlayer";
+    public static final String ONLY_REMAIN_BOT_TEAM = "onlyRemainBotTeam";
+    public static final String GET_GAME_TEAM_ID = "getGameTeamId";
+    public static final String GET_GAME_TEAM = "getGameTeam";
+    public static final String GET_GAME_PLAYERS_TOTAL = "getGamePlayersTotal";
+    public static final String GET_GAME_PLAYERS = "getGamePlayers";
+    public static final String GET_GAME_TEAMS_TOTAL = "getGameTeamsTotal";
+    public static final String GET_GAME_TEAMS = "getGameTeams";
+    public static final String GET_STANDING_GAME_PLAYERS_TOTAL = "getStandingGamePlayersTotal";
+    public static final String GET_STANDING_GAME_PLAYERS = "getStandingGamePlayers";
+    public static final String GET_STANDING_GAME_TEAMS_TOTAL = "getStandingGameTeamsTotal";
+    public static final String GET_STANDING_GAME_TEAMS = "getStandingGameTeams";
+    public static final String GET_RANDOM_STANDING_GAME_PLAYER_ID = "getRandomStandingGamePlayerId";
+    public static final String GET_NON_BOT_TEAM_COUNT = "getNonBotTeamCount";
+    public static final String GET_STANDING_PLAYER_TEAM_COUNT = "getStandingPlayerTeamCount";
+
+    public static final String FORCE_ELIMINATE_PLAYER_SILENCE = "forceEliminatePlayerSilence";
+    public static final String FORCE_ELIMINATE_PLAYER_FROM_TEAM = "forceEliminatePlayerFromTeam";
+
+    public static final String FORCE_JOIN_TEAM = "forceJoinTeam";
+    public static final String REMOVE_PLAYER_FROM_TEAM = "removePlayerFromTeam";
+
+    public static final String SEND_PLAYER_TEAM_ID = "sendPlayerTeamId";
+
+    public static final String CLEAR_VANILLA_TEAM = "clearVanillaTeam";
+
+    // ZoneManager
+    public static final String ZONE_MANAGER = "zoneManager";
+    public static final String HAS_ENOUGH_ZONE_TO_START = "hasEnoughZoneToStart";
+    public static final String RANDOMIZE_ZONE_TICK_OFFSET = "randomizeZoneTickOffset";
+
+    public static final String GET_GAME_ZONE = "getGameZone";
+    public static final String GET_ZONE_DELAY = "getZoneDelay";
+    public static final String IS_CREATED = "isCreated";
+    public static final String IS_PRESENT = "isPresent";
+    public static final String IS_FINISHED = "isFinished";
+    public static final String TICKABLE_ZONE = "tickableZone";
+    public static final String IS_READY = "isReady";
+    public static final String GET_TICK_FREQUENCY = "getTickFrequency";
+    public static final String SET_TICK_FREQUENCY = "setTickFrequency";
+    public static final String TICK_FREQ = "tickFreq";
+    public static final String GET_TICK_OFFSET = "getTickOffset";
+    public static final String SET_TICK_OFFSET = "setTickOffset";
+    public static final String TICK_OFFSET = "tickOffset";
+    public static final String PLAYER_FUNC = "playerFunc";
+    public static final String GET_SHAPE_MOVE_DELAY = "getShapeMoveDelay";
+    public static final String GET_SHAPE_MOVE_TIME = "getShapeMoveTime";
+    public static final String SPATIAL_ZONE = "spatialZone";
+    public static final String IS_WITHIN_ZONE = "isWithinZone";
+    public static final String IS_DETERMINED = "isDetermined";
+    public static final String HAS_BAD_SHAPE = "hasBadShape";
+    public static final String GET_SEGMENTS = "getSegments";
 }

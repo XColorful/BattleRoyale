@@ -402,13 +402,13 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
 
         TeamManagement.forceEliminatePlayerFromTeam(this, livingEntity);
     }
-    public boolean removePlayerFromTeam(@NotNull UUID playerId) {
+    public boolean removePlayerFromTeam(@NotNull UUID playerUUID) {
         if (BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, skipped removePlayerFromTeam");
             return false;
         }
 
-        return TeamManagement.removePlayerFromTeam(this, playerId);
+        return TeamManagement.removePlayerFromTeam(this, playerUUID);
     }
 
     // -------TeamUtils-------
