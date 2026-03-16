@@ -331,10 +331,11 @@ public class TeamManagerCommand {
             default -> GamePlayer::toFullTag;
         };
 
-        List<Integer> playerIds = new ArrayList<>(players.size());
+        int[] playerIds = new int[players.size()];
         ListTag playersTag = new ListTag();
-        for (GamePlayer player : players) {
-            playerIds.add(player.getGameSingleId());
+        for (int i = 0; i < players.size(); i++) {
+            GamePlayer player = players.get(i);
+            playerIds[i] = player.getGameSingleId();
             playersTag.add(toTag.apply(player));
         }
 
@@ -354,10 +355,11 @@ public class TeamManagerCommand {
             default -> GameTeam::toFullTag;
         };
 
-        List<Integer> teamIds = new ArrayList<>(teams.size());
+        int[] teamIds = new int[teams.size()];
         ListTag teamsTag = new ListTag();
-        for (GameTeam team : teams) {
-            teamIds.add(team.getGameTeamId());
+        for (int i = 0; i < teams.size(); i++) {
+            GameTeam team = teams.get(i);
+            teamIds[i] = team.getGameTeamId();
             teamsTag.add(toTag.apply(team));
         }
 

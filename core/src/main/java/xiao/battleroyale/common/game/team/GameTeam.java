@@ -42,7 +42,7 @@ public class GameTeam {
     }
     public CompoundTag toSimpleTag() {
         CompoundTag tag = toBasicTag();
-        tag.put("memberId", new IntArrayTag(getTeamMembers().stream().map(GamePlayer::getGameSingleId).toList()));
+        tag.put("memberId", new IntArrayTag(getTeamMembers().stream().mapToInt(GamePlayer::getGameSingleId).toArray()));
         return tag;
     }
     public CompoundTag toGameTag() {
