@@ -2,6 +2,7 @@ package xiao.battleroyale.api.game.process;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -26,7 +27,7 @@ public interface IGameManagement {
      * 传送玩家至大厅，如果正在游戏中则淘汰
      * @param player 需传送的玩家
      */
-    void teleportToLobbyInGame(ServerPlayer player);
+    void teleportToLobbyInGame(LivingEntity player);
 
     void teleportAfterGame(@Nullable ServerLevel serverLevel, Set<GamePlayer> winnerGamePlayers, Set<GameTeam> winnerGameTeams,
                            boolean teleportWinnerAfterGame, boolean teleportAfterGame);

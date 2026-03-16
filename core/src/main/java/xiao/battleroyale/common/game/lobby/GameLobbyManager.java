@@ -199,11 +199,11 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
     }
     @Override public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode, boolean teleportDropInventory, boolean teleportClearInventory) {
         if (BattleRoyale.getGameManager().isInGame()) {
-            BattleRoyale.LOGGER.debug("GameManager is in game, SpawnManager skipped set lobby");
+            BattleRoyale.LOGGER.debug("GameManager is in game, GameLobbyManager skipped set lobby");
             return false;
         }
         if (Vec3Utils.hasNegative(dimension)) {
-            BattleRoyale.LOGGER.warn("SpawnManager: dimension:{} has negative, reject to apply", dimension);
+            BattleRoyale.LOGGER.warn("GameLobbyManager: dimension:{} has negative, reject to apply", dimension);
             return false;
         }
         this.lobbyPos = centerPos;

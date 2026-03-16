@@ -1,0 +1,179 @@
+package xiao.battleroyale.command.sub.api;
+
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.lobby.IGameLobbyManager;
+import xiao.battleroyale.common.game.team.GamePlayer;
+
+import static xiao.battleroyale.command.CommandArg.*;
+
+public class GameLobbyManagerCommand {
+
+    public static LiteralArgumentBuilder<CommandSourceStack> get() {
+        return Commands.literal(GAME_LOBBY_MANAGER)
+                // IGameLobbyReadApi
+                .then(Commands.literal(SEND_LOBBY_TELEPORT_MESSAGE)
+                        .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                .executes(GameLobbyManagerCommand::sendLobbyTeleportMessageCheckWinner)
+                                .then(Commands.argument(IS_WINNER, BoolArgumentType.bool())
+                                        .executes(GameLobbyManagerCommand::sendLobbyTeleportMessage)
+                                )
+                        )
+                )
+                .then(Commands.literal(IS_LOBBY_CREATED).executes(GameLobbyManagerCommand::isLobbyCreated))
+                .then(Commands.literal(LOBBY_MUTEKI).executes(GameLobbyManagerCommand::lobbyMuteki))
+                .then(Commands.literal(LOBBY_HEAL).executes(GameLobbyManagerCommand::lobbyHeal))
+                .then(Commands.literal(LOBBY_CHANGE_GAMEMODE).executes(GameLobbyManagerCommand::lobbyChangeGameMode))
+                .then(Commands.literal(TELEPORT_DROP_INVENTORY).executes(GameLobbyManagerCommand::teleportDropInventory))
+                .then(Commands.literal(TELEPORT_CLEAR_INVENTORY).executes(GameLobbyManagerCommand::teleportClearInventory))
+                .then(Commands.literal(IS_IN_LOBBY_RANGE)
+                        .then(Commands.argument(XYZ, Vec3Argument.vec3())
+                                .executes(GameLobbyManagerCommand::isInLobbyRange)
+                        )
+                )
+                .then(Commands.literal(CAN_MUTEKI)
+                        .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                .executes(GameLobbyManagerCommand::canMuteki)
+                        )
+                )
+                // ILobbyFuncApi
+                .then(Commands.literal(HEAL_PLAYER)
+                        .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                .executes(GameLobbyManagerCommand::healPlayer)
+                        )
+                )
+                .then(Commands.literal(TELEPORT_TO_LOBBY)
+                        .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                .executes(GameLobbyManagerCommand::teleportToLobby)
+                        )
+                )
+                .then(Commands.literal(SET_LOBBY)
+                        .then(Commands.argument(POS, Vec3Argument.vec3())
+                                .executes(GameLobbyManagerCommand::setLobbyPosOnly)
+                                .then(Commands.argument(XYZ, Vec3Argument.vec3())
+                                        .executes(GameLobbyManagerCommand::setLobbyPosDimOnly)
+                                        .then(Commands.argument(LOBBY_MUTEKI, BoolArgumentType.bool())
+                                                .then(Commands.argument(LOBBY_HEAL, BoolArgumentType.bool())
+                                                        .then(Commands.argument(LOBBY_CHANGE_GAMEMODE, BoolArgumentType.bool())
+                                                                .then(Commands.argument(TELEPORT_DROP_INVENTORY, BoolArgumentType.bool())
+                                                                        .then(Commands.argument(TELEPORT_CLEAR_INVENTORY, BoolArgumentType.bool())
+                                                                                .executes(GameLobbyManagerCommand::setLobby)
+                                                                        )
+                                                                )
+                                                        )
+                                                )
+                                        )
+                                )
+                        )
+                );
+    }
+
+    // --------IGameLobbyReadApi--------
+
+    private static int sendLobbyTeleportMessageCheckWinner(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        if (!(entity instanceof ServerPlayer player)) return 0;
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        @Nullable GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(player.getUUID());
+        boolean isWinner = gamePlayer != null && gameManager.getWinnerGamePlayers().contains(gamePlayer);
+        gameManager.getGameLobbyManager().sendLobbyTeleportMessage(player, isWinner);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int sendLobbyTeleportMessage(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        if (!(entity instanceof ServerPlayer player)) return 0;
+        BattleRoyale.getGameManager().getGameLobbyManager().sendLobbyTeleportMessage(player, BoolArgumentType.getBool(context, IS_WINNER));
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int isLobbyCreated(CommandContext<CommandSourceStack> context) {
+        return BattleRoyale.getGameManager().getGameLobbyManager().isLobbyCreated() ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int lobbyMuteki(CommandContext<CommandSourceStack> context) {
+        return BattleRoyale.getGameManager().getGameLobbyManager().lobbyMuteki() ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int lobbyHeal(CommandContext<CommandSourceStack> context) {
+        return BattleRoyale.getGameManager().getGameLobbyManager().lobbyHeal() ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int lobbyChangeGameMode(CommandContext<CommandSourceStack> context) {
+        return BattleRoyale.getGameManager().getGameLobbyManager().lobbyChangeGamemode() ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int teleportDropInventory(CommandContext<CommandSourceStack> context) {
+        return BattleRoyale.getGameManager().getGameLobbyManager().teleportDropInventory() ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int teleportClearInventory(CommandContext<CommandSourceStack> context) {
+        return BattleRoyale.getGameManager().getGameLobbyManager().teleportClearInventory() ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int isInLobbyRange(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Vec3 pos = Vec3Argument.getVec3(context, XYZ);
+        return BattleRoyale.getGameManager().getGameLobbyManager().isInLobbyRange(pos) ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int canMuteki(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        if (!(entity instanceof LivingEntity livingEntity)) return 0;
+        return BattleRoyale.getGameManager().getGameLobbyManager().canMuteki(livingEntity) ? Command.SINGLE_SUCCESS : 0;
+    }
+
+    // --------ILobbyFuncApi--------
+
+    private static int healPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        if (!(entity instanceof LivingEntity livingEntity)) return 0;
+        BattleRoyale.getGameManager().getGameLobbyManager().healPlayer(livingEntity);
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int teleportToLobby(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        if (!(entity instanceof LivingEntity livingEntity)) return 0;
+        return BattleRoyale.getGameManager().getGameLobbyManager().teleportToLobby(livingEntity) ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int setLobbyPosOnly(CommandContext<CommandSourceStack> context) {
+        IGameLobbyManager lobbyManager = BattleRoyale.getGameManager().getGameLobbyManager();
+        return lobbyManager.setLobby(
+                Vec3Argument.getVec3(context, POS),
+                lobbyManager.lobbyDimension(),
+                lobbyManager.lobbyMuteki(),
+                lobbyManager.lobbyHeal(),
+                lobbyManager.lobbyChangeGamemode(),
+                lobbyManager.teleportDropInventory(),
+                lobbyManager.teleportClearInventory()
+        ) ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int setLobbyPosDimOnly(CommandContext<CommandSourceStack> context) {
+        IGameLobbyManager lobbyManager = BattleRoyale.getGameManager().getGameLobbyManager();
+        return lobbyManager.setLobby(
+                Vec3Argument.getVec3(context, POS),
+                Vec3Argument.getVec3(context, XYZ),
+                lobbyManager.lobbyMuteki(),
+                lobbyManager.lobbyHeal(),
+                lobbyManager.lobbyChangeGamemode(),
+                lobbyManager.teleportDropInventory(),
+                lobbyManager.teleportClearInventory()
+        ) ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int setLobby(CommandContext<CommandSourceStack> context) {
+        IGameLobbyManager lobbyManager = BattleRoyale.getGameManager().getGameLobbyManager();
+        return lobbyManager.setLobby(
+                Vec3Argument.getVec3(context, POS),
+                Vec3Argument.getVec3(context, XYZ),
+                BoolArgumentType.getBool(context, LOBBY_MUTEKI),
+                BoolArgumentType.getBool(context, LOBBY_HEAL),
+                BoolArgumentType.getBool(context, LOBBY_CHANGE_GAMEMODE),
+                BoolArgumentType.getBool(context, TELEPORT_DROP_INVENTORY),
+                BoolArgumentType.getBool(context, TELEPORT_CLEAR_INVENTORY)
+        ) ? Command.SINGLE_SUCCESS : 0;
+    }
+}

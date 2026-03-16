@@ -77,6 +77,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     protected boolean recordStats = false;
     public boolean shouldRecordStats() { return recordStats; }
     public Set<GamePlayer> getRecordGamePlayers() { return this.statsData.getRecordGamePlayers(); }
+    public boolean isInRecordGamePlayers(@NotNull GamePlayer player) { return this.statsData.isInRecordGamePlayers(player); }
 
     // 原版记分板
     protected boolean recordScoreboard = true;
