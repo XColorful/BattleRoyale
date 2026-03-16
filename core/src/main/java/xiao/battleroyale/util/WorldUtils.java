@@ -31,7 +31,7 @@ public class WorldUtils {
      * 是否非虚空
      */
     public static boolean isGroundValid(@NotNull ServerLevel serverLevel, double y) {
-        return y >= serverLevel.getMinBuildHeight() + 2;
+        return y >= serverLevel.dimensionType().minY() + 2;
     }
 
     /**
