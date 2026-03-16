@@ -118,11 +118,11 @@ public class ItemEntry extends AbstractLootEntry implements IItemLootEntry {
 
             // 如果包含 components 字段，则将其内部的 key 抽离
             if (tempNbt.contains(ComponentsTag.COMPONENTS)) {
-                CompoundTag componentsNbt = tempNbt.getCompound(ComponentsTag.COMPONENTS);
+                CompoundTag componentsNbt = tempNbt.getCompound(ComponentsTag.COMPONENTS).get();
                 tempNbt.remove(ComponentsTag.COMPONENTS);
 
                 // 将 components 里的所有组件 key 放入 JsonObject
-                for (String key : componentsNbt.getAllKeys()) {
+                for (String key : componentsNbt.keySet()) {
                     componentsObj.add(key, new JsonObject());
                 }
 
