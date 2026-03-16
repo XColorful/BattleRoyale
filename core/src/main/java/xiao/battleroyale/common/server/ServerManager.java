@@ -5,9 +5,11 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.server.IServerManager;
 import xiao.battleroyale.api.server.IServerSubManager;
+import xiao.battleroyale.api.server.function.IFunctionManager;
 import xiao.battleroyale.api.server.performance.IPerformanceManager;
 import xiao.battleroyale.api.server.profile.IProfileManager;
 import xiao.battleroyale.api.server.utilitity.IUtilityManager;
+import xiao.battleroyale.common.server.function.FunctionManager;
 import xiao.battleroyale.common.server.performance.PerformanceManager;
 import xiao.battleroyale.common.server.profile.ProfileManager;
 import xiao.battleroyale.common.server.utility.UtilityManager;
@@ -31,6 +33,7 @@ public class ServerManager implements IServerManager {
         UtilityManager.init(mcSide);
     }
 
+    private @NotNull IFunctionManager functionManager = FunctionManager.get();
     private @NotNull IPerformanceManager performanceManager = PerformanceManager.get();
     private @NotNull IProfileManager profileManager = ProfileManager.get();
     private @NotNull IUtilityManager utilityManager = UtilityManager.get();
@@ -40,6 +43,11 @@ public class ServerManager implements IServerManager {
         BattleRoyale.LOGGER.debug("Register new ServerSubManager {} to server manager", newManager.getClass().getSimpleName());
     }
 
+    @Override public boolean setFunctionManager(@NotNull IFunctionManager functionManager) {
+        registerNewManager(this.functionManager, functionManager);
+        this.functionManager = functionManager;
+        return true;
+    }
     @Override public boolean setPerformanceManager(@NotNull IPerformanceManager performanceManager) {
         registerNewManager(this.performanceManager, performanceManager);
         this.performanceManager = performanceManager;
@@ -54,6 +62,9 @@ public class ServerManager implements IServerManager {
         registerNewManager(this.utilityManager, utilityManager);
         this.utilityManager = utilityManager;
         return true;
+    }
+    @Override public @NotNull IFunctionManager getFunctionManager() {
+        return functionManager;
     }
     @Override public @NotNull IPerformanceManager getPerformanceManager() {
         return performanceManager;
