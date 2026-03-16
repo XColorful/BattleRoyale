@@ -1,5 +1,6 @@
 package xiao.battleroyale.api.game.stats;
 
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.IGameSubManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
@@ -12,6 +13,7 @@ public interface IStatsManager extends IGameSubManager, IGameEventStatsRecorder,
 
     // 参与记录的 GamePlayer 列表
     Set<GamePlayer> getRecordGamePlayers();
+    boolean isInRecordGamePlayers(@NotNull GamePlayer player);
 
     String getStatsFilePath();
     default void saveStats() {

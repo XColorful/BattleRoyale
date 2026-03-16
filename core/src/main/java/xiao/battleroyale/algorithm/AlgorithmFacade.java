@@ -19,7 +19,7 @@ public class AlgorithmFacade implements IAlgorithmApi {
     }
 
     @Override
-    public IGoldenSpiral golderSpiral() {
+    public IGoldenSpiral goldenSpiral() {
         return Distribution.GoldenSpiral.get();
     }
 

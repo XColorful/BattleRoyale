@@ -63,6 +63,9 @@ public class StatsData extends AbstractGameManagerData {
     public Set<GamePlayer> getRecordGamePlayers() {
         return this.gamePlayerStats.keySet();
     }
+    public boolean isInRecordGamePlayers(GamePlayer player) {
+        return this.gamePlayerStats.containsKey(player);
+    }
 
     public List<GamePlayerStats> getRecordGamePlayerStats() {
         return new ArrayList<>(this.gamePlayerStats.values());
