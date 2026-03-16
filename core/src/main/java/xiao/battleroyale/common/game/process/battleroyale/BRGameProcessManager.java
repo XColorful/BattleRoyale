@@ -2,6 +2,7 @@ package xiao.battleroyale.common.game.process.battleroyale;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -183,7 +184,7 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
         checkAndUpdateGamePlayerPre(serverLevel);
         BRGameManagement.checkAndUpdateInvalidGamePlayer(serverLevel);
     }
-    @Override public void teleportToLobbyInGame(ServerPlayer player) {
+    @Override public void teleportToLobbyInGame(LivingEntity player) {
         BRGameManagement.teleportToLobbyInGame(this, player);
     }
     @Override public void teleportAfterGame(@Nullable ServerLevel serverLevel, Set<GamePlayer> winnerGamePlayers, Set<GameTeam> winnerGameTeams,
