@@ -21,6 +21,7 @@ public class CommandArg {
     public static final String RENDER = "render";
     public static final String DISPLAY = "display";
     public static final String SERVER = "server";
+    public static final String FUNCTION = "function";
     public static final String PERFORMANCE = "performance";
     public static final String PROFILE = "profile";
     public static final String UTILITY = "utility";

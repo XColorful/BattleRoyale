@@ -5,6 +5,7 @@ import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.common.server.IServerConfigManager;
 import xiao.battleroyale.config.AbstractConfigManager;
 import xiao.battleroyale.config.ModConfigManager;
+import xiao.battleroyale.config.common.server.function.FunctionConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
 import xiao.battleroyale.config.common.server.profile.ProfileConfigManager;
 import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
@@ -32,6 +33,7 @@ public class ServerConfigManager extends AbstractConfigManager implements IServe
             return;
         }
         BattleRoyale.getModConfigManager().registerConfigManager(get());
+        FunctionConfigManager.init();
         PerformanceConfigManager.init();
         ProfileConfigManager.init();
         UtilityConfigManager.init();
