@@ -1,5 +1,10 @@
 package xiao.battleroyale.api.event;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public enum CustomEventType {
     // finish
     GAME_COMPLETE_EVENT,
@@ -55,5 +60,22 @@ public enum CustomEventType {
     // register
     REGISTER_MANAGER_EVENT,
     // custom
-    CUSTOM_EVENT
+    CUSTOM_EVENT;
+
+    private static final Map<String, CustomEventType> CUSTOM_EVENT_TYPES = new HashMap<>();
+
+    static {
+        for (CustomEventType type : values()) {
+            CUSTOM_EVENT_TYPES.put(type.name(), type);
+        }
+    }
+
+    public static @Nullable CustomEventType fromString(String name) {
+        if (name == null) return null;
+        return CUSTOM_EVENT_TYPES.get(name);
+    }
+
+    public String getName() {
+        return this.name();
+    }
 }
