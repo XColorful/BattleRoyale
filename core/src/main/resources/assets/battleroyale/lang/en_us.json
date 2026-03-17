@@ -138,6 +138,7 @@
   "battleroyale.message.display_config_saved": "Saved display configs",
   "battleroyale.message.server_config_saved": "Saved all server configs",
   "battleroyale.message.performance_config_saved": "Saved performance configs",
+  "battleroyale.message.profile_config_saved": "Saved profile configs",
   "battleroyale.message.utility_config_saved": "Saved utility configs",
 
   "battleroyale.message.unknown_loot_sub_type": "Unknown loot sub-type: %s",

@@ -138,6 +138,7 @@
   "battleroyale.message.display_config_saved": "已保存显示配置",
   "battleroyale.message.server_config_saved": "已保存所有服务端配置",
   "battleroyale.message.performance_config_saved": "已保存性能配置",
+  "battleroyale.message.profile_config_saved": "已保存预设配置",
   "battleroyale.message.utility_config_saved": "已保存实用配置",
 
   "battleroyale.message.unknown_loot_sub_type": "未知物资刷新配置子类型: %s",
