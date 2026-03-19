@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.ILivingAttackEvent;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 
 public class ForgeLivingAttackEvent extends ForgeEvent implements ILivingAttackEvent {
 
@@ -53,7 +54,7 @@ public class ForgeLivingAttackEvent extends ForgeEvent implements ILivingAttackE
                 entity.position(),
                 Vec2.ZERO,
                 (ServerLevel) entity.level(),
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 entity.getServer(),

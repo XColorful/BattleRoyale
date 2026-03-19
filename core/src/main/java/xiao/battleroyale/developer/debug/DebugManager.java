@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.data.DevDataTag;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.data.io.DevDataManager;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils.GameTimeFormat;
@@ -44,7 +45,7 @@ public class DebugManager {
         debugPlayers.putAll(loadedDebugPlayers);
     }
     public static boolean hasDebugPermission(CommandSourceStack source) {
-        if (source.hasPermission(DEBUG_PERMISSION_LEVEL)) {
+        if (CommandLevel.hasPermission(source, DEBUG_PERMISSION_LEVEL)) {
             return true;
         }
         if (source.source instanceof ServerPlayer player) { // 用source.getEntity()不能防止命令方块篡改来源
