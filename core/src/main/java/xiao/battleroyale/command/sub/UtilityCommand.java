@@ -17,11 +17,11 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.team.ITeamManager;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.server.utility.ConfigGenerator;
 import xiao.battleroyale.common.server.utility.SurvivalLobby;
 
 import static xiao.battleroyale.command.CommandArg.*;
-import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 
 public class UtilityCommand {
 
@@ -36,7 +36,7 @@ public class UtilityCommand {
 
         // 需要权限
         utilityCommand.then(Commands.literal(LOOT_CONFIG)
-                .requires(source -> checkCommandLevel(source, 3))
+                .requires(CommandLevel.hasPermission(3))
                 .then(Commands.argument(ID, IntegerArgumentType.integer())
                         .then(Commands.argument(TYPE, StringArgumentType.word())
                                 .suggests((context, builder) -> {
@@ -58,7 +58,7 @@ public class UtilityCommand {
                                         )
                                 )
                         )
-                        .requires(source -> checkCommandLevel(source, 4)) // 战利品表读不了就直接进不了存档
+                        .requires(CommandLevel.hasPermission(4)) // 战利品表读不了就直接进不了存档
                         .then(Commands.literal(TO_LOOT_TABLE)
                                 .then(Commands.argument(FILE, StringArgumentType.string())
                                         .executes(UtilityCommand::toLootTable)
@@ -68,7 +68,7 @@ public class UtilityCommand {
         );
 
         utilityCommand.then(Commands.literal(PROFILE)
-                .requires(source -> checkCommandLevel(source, 2))
+                .requires(CommandLevel.hasPermission(2))
                 .then(Commands.literal(SAVE)
                         .then(Commands.argument(ID, IntegerArgumentType.integer())
                                 .then(Commands.argument(OVERWRITE, BoolArgumentType.bool())
@@ -84,7 +84,7 @@ public class UtilityCommand {
         );
 
         utilityCommand.then(Commands.literal(TEAM)
-                .requires(source -> checkCommandLevel(source, 2))
+                .requires(CommandLevel.hasPermission(2))
                 .then(Commands.literal(REMOVE)
                         .then(Commands.argument(GAME_TEAM_ONLY, BoolArgumentType.bool())
                                 .executes(UtilityCommand::removeVanillaTeam)

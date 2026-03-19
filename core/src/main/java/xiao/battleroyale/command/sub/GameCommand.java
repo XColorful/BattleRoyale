@@ -14,10 +14,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.game.GameNotification;
 
 import static xiao.battleroyale.command.CommandArg.*;
-import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 import static xiao.battleroyale.util.StringUtils.buildCommandString;
 
 public class GameCommand {
@@ -39,19 +39,19 @@ public class GameCommand {
 
         // 需要权限
         gameCommand.then(Commands.literal(LOAD)
-                        .requires(source -> checkCommandLevel(source, 2))
+                        .requires(CommandLevel.hasPermission(2))
                         .executes(GameCommand::loadGameConfig))
                 .then(Commands.literal(INIT)
-                        .requires(source -> checkCommandLevel(source, 2))
+                        .requires(CommandLevel.hasPermission(2))
                         .executes(GameCommand::initGame))
                 .then(Commands.literal(START)
-                        .requires(source -> checkCommandLevel(source, 2))
+                        .requires(CommandLevel.hasPermission(2))
                         .executes(GameCommand::startGame))
                 .then(Commands.literal(STOP)
-                        .requires(source -> checkCommandLevel(source, 2))
+                        .requires(CommandLevel.hasPermission(2))
                         .executes(GameCommand::stopGame))
                 .then(Commands.literal(OFFSET)
-                        .requires(source -> checkCommandLevel(source, 2))
+                        .requires(CommandLevel.hasPermission(2))
                         .executes(GameCommand::getGlobalOffset)
                         .then(Commands.argument(XYZ, Vec3Argument.vec3())
                                 .executes(GameCommand::globalOffset)));

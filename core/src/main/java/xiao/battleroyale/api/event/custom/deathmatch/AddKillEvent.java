@@ -12,6 +12,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEvent;
 import xiao.battleroyale.api.game.process.IGameProcessManager;
 import xiao.battleroyale.api.game.process.deathmatch.IDeathMatchProcessManager;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.util.GameUtils;
@@ -47,7 +48,7 @@ public abstract class AddKillEvent extends CustomEvent {
                 Vec3.ZERO,
                 Vec2.ZERO,
                 BattleRoyale.getGameManager().getServerLevel(),
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 BattleRoyale.getMinecraftServer(),

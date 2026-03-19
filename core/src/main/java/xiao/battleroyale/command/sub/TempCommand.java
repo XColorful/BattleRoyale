@@ -9,11 +9,11 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.data.io.TempDataManager;
 
 import static xiao.battleroyale.api.data.TempDataTag.*;
 import static xiao.battleroyale.command.CommandArg.*;
-import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 
 public class TempCommand {
 
@@ -31,7 +31,7 @@ public class TempCommand {
                         .then(Commands.argument(INTERVAL, IntegerArgumentType.integer())
                                 .executes(TempCommand::changeGameStep)))
                 .then(Commands.literal(CLEAR)
-                        .requires(source -> checkCommandLevel(source, 3))
+                        .requires(CommandLevel.hasPermission(3))
                         .executes(TempCommand::clearAllTempData)
                 );
     }

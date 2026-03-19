@@ -12,13 +12,13 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.effect.boost.BoostData;
 
 import java.util.Collection;
 
 import static xiao.battleroyale.command.CommandArg.*;
-import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 
 public class BoostCommand {
 
@@ -41,7 +41,7 @@ public class BoostCommand {
 
         // boost clear [players] / boost clear
         LiteralArgumentBuilder<CommandSourceStack> clearCommand = Commands.literal(CLEAR)
-                .requires(source -> checkCommandLevel(source, 3));
+                .requires(CommandLevel.hasPermission(3));
 
         // boost clear=
         clearCommand.executes(BoostCommand::clearAllBoost);

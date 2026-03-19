@@ -14,11 +14,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 
 import java.util.List;
 
 import static xiao.battleroyale.command.CommandArg.*;
-import static xiao.battleroyale.command.CommandPermission.checkCommandLevel;
 import static xiao.battleroyale.util.StringUtils.buildCommandString;
 
 public class TeamCommand {
@@ -79,7 +79,7 @@ public class TeamCommand {
                         .executes(TeamCommand::queryPlayerTeamId)
                 )
                 .then(Commands.literal(ADD)
-                        .requires(source -> checkCommandLevel(source, 2))
+                        .requires(CommandLevel.hasPermission(2))
                         .then(Commands.argument(PLAYER, EntityArgument.entity())
                                 .then(Commands.argument(TEAM_ID, IntegerArgumentType.integer(1))
                                         .executes(TeamCommand::addToTeam)
@@ -87,7 +87,7 @@ public class TeamCommand {
                         )
                 )
                 .then(Commands.literal(BUILD)
-                        .requires(source -> checkCommandLevel(source, 2))
+                        .requires(CommandLevel.hasPermission(2))
                         .then(Commands.argument(PLAYER, EntityArgument.entities())
                                 .then(Commands.argument(SIZE, IntegerArgumentType.integer(1))
                                         .executes(context -> buildTeamForAll(context, false))
