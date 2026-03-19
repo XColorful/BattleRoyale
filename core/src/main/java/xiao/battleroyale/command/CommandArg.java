@@ -133,6 +133,12 @@ public class CommandArg {
     public static final String GAME_PLAYER = "gamePlayer";
     public static final String GAME_PLAYERS = "gamePlayers";
     public static final String STANDING_GAME_PLAYERS = "standingGamePlayers";
+    public static final String EVENT_TYPE = "eventType";
+    public static final String CUSTOM_EVENT_TYPE = "customEventType";
+    public static final String EVENT_CLASS = "eventClass";
+    public static final String EVENT_NAME = "event";
+    public static final String EVENT_PRIORITY = "eventPriority";
+    public static final String RECEIVE_CANCELED = "receiveCanceled";
 
     // Algorithm
     public static final String ALGORITHM = "algorithm";
@@ -334,4 +340,12 @@ public class CommandArg {
     public static final String IS_DETERMINED = "isDetermined";
     public static final String HAS_BAD_SHAPE = "hasBadShape";
     public static final String GET_SEGMENTS = "getSegments";
+
+    // FunctionManager
+    public static final String FUNCTION_MANAGER = "functionManager";
+    public static final String CLEAR_CONFIG_FUNCTION = "clearConfigFunction";
+    public static final String CLEAR_API_FUNCTION = "clearApiFunction";
+    public static final String REGISTER_EVENT = "registerEvent";
+    public static final String UNREGISTER_EVENT = "unregisterEvent";
+    public static final String IS_TAG = "isTag";
 }
