@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.ILivingHurtEvent;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 
 public class NeoLivingHurtEvent extends NeoEvent implements ILivingHurtEvent {
 
@@ -58,7 +59,7 @@ public class NeoLivingHurtEvent extends NeoEvent implements ILivingHurtEvent {
                 entity.position(),
                 Vec2.ZERO,
                 (ServerLevel) entity.level(),
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 entity.getServer(),
