@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.game.AbstractGameStatsEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 
 public abstract class AbstractZoneEvent extends AbstractGameStatsEvent {
 
@@ -31,7 +32,7 @@ public abstract class AbstractZoneEvent extends AbstractGameStatsEvent {
                 zoneCenter != null ? zoneCenter : Vec3.ZERO,
                 Vec2.ZERO,
                 gameManager.getServerLevel(),
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 gameManager.getServerLevel().getServer(),
