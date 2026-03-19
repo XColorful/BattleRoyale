@@ -34,6 +34,7 @@ public class ModEvent implements IModEvent {
         IGameManager gameManager = BattleRoyale.getGameManager();
         gameManager.onServerStopping();
         gameManager.getGameLootManager().awaitTerminationOnShutdown();
+        BattleRoyale.getServerManager().onServerStopping();
         BattleRoyale.setMinecraftServer(null);
     }
 }

@@ -26,6 +26,9 @@ public class ApiCommand {
         apiCommand.then(TeamManagerCommand.get());
         apiCommand.then(ZoneManagerCommand.get());
 
+        // FunctionManager
+        apiCommand.then(FunctionManagerCommand.get());
+
         return apiCommand;
     }
 }
