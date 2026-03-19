@@ -13,6 +13,7 @@ import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.config.common.server.profile.IProfileSingleEntry;
 import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.api.server.profile.IProfileManager;
+import xiao.battleroyale.common.server.AbstractServerManager;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.profile.ProfileConfigManager;
 import xiao.battleroyale.config.common.server.profile.ProfileConfigManager.ProfileConfig;
@@ -28,7 +29,7 @@ import java.util.List;
 
 import static xiao.battleroyale.util.JsonUtils.writeJsonToFile;
 
-public class ProfileManager implements IProfileManager {
+public class ProfileManager extends AbstractServerManager implements IProfileManager {
 
     private static class ProfileManagerHolder {
         private static final ProfileManager INSTANCE = new ProfileManager();

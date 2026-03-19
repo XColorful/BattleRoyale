@@ -212,6 +212,8 @@
 > _./common/server_
 
 - [ServerManager](./common/server/server-manager.md)：服务端管理器
+- Function：函数
+	- [FunctionManager](./common/server/function/function-manager.md)：函数管理器
 - Performance：性能
 	- [PerformanceManager](./common/server/performance/performance-manager.md)：性能管理器
 - Profile：预设
@@ -587,6 +589,8 @@ Module division based on the `xiao.battleroyale` top-level package
 > _./common/server_
 
 - [ServerManager](./common/server/server-manager.md): Server manager
+- Function:
+	- [FunctionManager](./common/server/function/function-manager.md#English): Function manager
 - Performance:
 	- [PerformanceManager](./common/server/performance/performance-manager.md#English): Performance manager
 - Profile:

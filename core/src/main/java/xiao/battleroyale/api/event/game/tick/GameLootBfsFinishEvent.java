@@ -1,5 +1,6 @@
 package xiao.battleroyale.api.event.game.tick;
 
+import net.minecraft.network.chat.Component;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.game.IGameManager;
 
@@ -32,5 +33,12 @@ public class GameLootBfsFinishEvent extends AbstractGameTickFinishEvent {
 
     public long getDurationMillis() {
         return TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
+    }
+
+    @Override public String getTextName() {
+        return "CBR GameLootBfsFinishEvent";
+    }
+    @Override public Component getDisplayName() {
+        return Component.literal(getTextName());
     }
 }

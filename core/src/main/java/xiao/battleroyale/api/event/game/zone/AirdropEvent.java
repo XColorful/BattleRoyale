@@ -2,6 +2,7 @@ package xiao.battleroyale.api.event.game.zone;
 
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.config.common.loot.ILootEntry;
@@ -49,6 +50,13 @@ public class AirdropEvent extends AbstractSpecialZoneEvent {
 
     public List<ItemStack> generateLoot() {
         return LootGenerator.generateLootItem(lootContext, lootEntry);
+    }
+
+    @Override public String getTextName() {
+        return "CBR AirdropEvent";
+    }
+    @Override public Component getDisplayName() {
+        return Component.literal(getTextName());
     }
 }
 

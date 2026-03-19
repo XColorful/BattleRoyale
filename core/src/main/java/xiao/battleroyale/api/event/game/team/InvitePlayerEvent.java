@@ -8,8 +8,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 
 public class InvitePlayerEvent extends AbstractSenderEvent {
 
-    protected @NotNull
-    final GamePlayer senderGamePlayer;
+    protected @NotNull final GamePlayer senderGamePlayer;
 
     public InvitePlayerEvent(IGameManager gameManager, @NotNull GamePlayer senderGamePlayer, ServerPlayer sender, ServerPlayer targetPlayer) {
         super(gameManager, sender, targetPlayer);

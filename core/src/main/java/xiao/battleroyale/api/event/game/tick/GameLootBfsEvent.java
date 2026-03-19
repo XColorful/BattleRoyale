@@ -1,5 +1,6 @@
 package xiao.battleroyale.api.event.game.tick;
 
+import net.minecraft.network.chat.Component;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.game.IGameManager;
 
@@ -17,5 +18,12 @@ public class GameLootBfsEvent extends AbstractGameTickEvent {
     
     public int getLastBfsProcessedLoot() {
         return this.lastBfsProcessedLoot;
+    }
+
+    @Override public String getTextName() {
+        return "CBR GameLootBfsEvent";
+    }
+    @Override public Component getDisplayName() {
+        return Component.literal(getTextName());
     }
 }
