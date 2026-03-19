@@ -46,7 +46,7 @@ public class NeoPlayerLoggedOutEvent extends NeoEvent implements IPlayerLoggedOu
                 4,
                 this.getTextName(),
                 this.getDisplayName(),
-                entity.getServer(),
+                entity.level().getServer(),
                 entity
         );
     }

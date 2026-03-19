@@ -61,7 +61,7 @@ public class NeoLivingHurtEvent extends NeoEvent implements ILivingHurtEvent {
                 4,
                 this.getTextName(),
                 this.getDisplayName(),
-                entity.getServer(),
+                entity.level().getServer(),
                 entity
         );
     }

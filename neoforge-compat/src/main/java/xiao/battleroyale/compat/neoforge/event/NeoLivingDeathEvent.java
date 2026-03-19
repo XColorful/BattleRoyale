@@ -51,7 +51,7 @@ public class NeoLivingDeathEvent extends NeoEvent implements ILivingDeathEvent {
                 4,
                 this.getTextName(),
                 this.getDisplayName(),
-                entity.getServer(),
+                entity.level().getServer(),
                 entity
         );
     }

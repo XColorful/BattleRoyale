@@ -46,7 +46,7 @@ public class NeoPlayerLoggedInEvent extends NeoEvent implements IPlayerLoggedInE
                 4,
                 this.getTextName(),
                 this.getDisplayName(),
-                entity.getServer(),
+                entity.level().getServer(),
                 entity
         );
     }
