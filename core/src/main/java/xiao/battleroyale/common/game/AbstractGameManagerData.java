@@ -1,14 +1,14 @@
 package xiao.battleroyale.common.game;
 
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.data.data.AbstractNameData;
 
-public abstract class AbstractGameManagerData {
+public abstract class AbstractGameManagerData extends AbstractNameData {
 
-    protected final String dataName;
     protected boolean locked = false;
 
     public AbstractGameManagerData(String dataName) {
-        this.dataName = dataName;
+        super(dataName);
     }
 
     protected void lockData() {
@@ -20,8 +20,6 @@ public abstract class AbstractGameManagerData {
         this.locked = false;
         BattleRoyale.LOGGER.debug("{} unlocked", dataName);
     }
-
-    public abstract void clear();
 
     public abstract void startGame();
 

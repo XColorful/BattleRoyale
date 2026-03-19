@@ -168,7 +168,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
             return;
         }
 
-        ZoneContext zoneContext = new ZoneContext(serverLevel, GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), gameManager.getRandom(), gameTime);
+        ZoneContext zoneContext = new ZoneContext(this, serverLevel, GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), gameManager.getRandom(), gameTime);
         this.isTicking = true;
 
         Set<Integer> finishedZoneId = new HashSet<>();
@@ -213,7 +213,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
         if (!gameManager.isInGame() || serverLevel == null) {
             return null;
         }
-        return new ZoneContext(serverLevel, GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), gameManager.getRandom(), gameManager.getGameTime());
+        return new ZoneContext(this, serverLevel, GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), gameManager.getRandom(), gameManager.getGameTime());
     }
     public @Nullable ZoneContext getCommonZoneContext() {
         IGameManager gameManager = BattleRoyale.getGameManager();
@@ -222,10 +222,11 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
             return null;
         }
         List<GamePlayer> gamePlayers = gameManager.isInGame() ? GameTeamManager.getStandingGamePlayers() : GameTeamManager.getGamePlayers();
-        return new ZoneContext(serverLevel, gamePlayers, this.zoneData.getGameZones(), gameManager.getRandom(), gameManager.getGameTime());
+        return new ZoneContext(this, serverLevel, gamePlayers, this.zoneData.getGameZones(), gameManager.getRandom(), gameManager.getGameTime());
     }
 
     public static class ZoneContext {
+        public @NotNull final IZoneManager zoneManager;
         public @NotNull final ServerLevel serverLevel;
         public final List<GamePlayer> gamePlayers;
         public final Map<Integer, IGameZone> gameZones;
@@ -233,13 +234,16 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
         public final int gameTime;
         /**
          * tick当前圈的功能
+         * @param zoneManager 当前区域管理器
          * @param serverLevel 当前世界
          * @param gamePlayers 当前游戏玩家列表
          * @param gameZones 当前游戏所有圈实例，但通常圈自身逻辑与其他圈无关
          * @param random 随机数生产者
          * @param gameTime 游戏进行时间
          */
-        public ZoneContext(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
+        public ZoneContext(@NotNull IZoneManager zoneManager, @NotNull ServerLevel serverLevel,
+                           List<GamePlayer> gamePlayers, Map<Integer, IGameZone> gameZones, Supplier<Float> random, int gameTime) {
+            this.zoneManager = zoneManager;
             this.serverLevel = serverLevel;
             this.gamePlayers = gamePlayers;
             this.gameZones = gameZones;
@@ -256,7 +260,8 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
          * @param spatialZone 提供圈的状态，计算与玩家相关的逻辑
          */
         public ZoneTickContext(ZoneContext zoneContext, int zoneId, double progress, ISpatialZone spatialZone) {
-            super(zoneContext.serverLevel, zoneContext.gamePlayers, zoneContext.gameZones, zoneContext.random, zoneContext.gameTime);
+            super(zoneContext.zoneManager, zoneContext.serverLevel,
+                    zoneContext.gamePlayers, zoneContext.gameZones, zoneContext.random, zoneContext.gameTime);
             this.zoneId = zoneId;
             this.progress = progress;
             this.spatialZone = spatialZone;

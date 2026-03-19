@@ -1,9 +1,14 @@
 package xiao.battleroyale.compat.forge.event;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IRenderLevelStageEvent;
 import xiao.battleroyale.api.event.RenderLevelStage;
 
@@ -16,6 +21,9 @@ public class ForgeRenderLevelStageEvent extends ForgeEvent implements IRenderLev
         super(event);
         this.typedEvent = event;
         this.stage = ForgeRenderLevelStage.fromStage(event.getStage());
+    }
+    @Override public EventType getType() {
+        return EventType.RENDER_LEVEL_STAGE_EVENT;
     }
 
     @Override
@@ -46,5 +54,17 @@ public class ForgeRenderLevelStageEvent extends ForgeEvent implements IRenderLev
          * 能保证渲染位置与玩家坐标插值（LERP）逻辑完全同步。
          */
         return Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+    }
+
+    @Override
+    public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
+        return null;
+    }
+
+    @Override public String getTextName() {
+        return "ForgeRenderLevelStageEvent";
+    }
+    @Override public Component getDisplayName() {
+        return Component.literal(getTextName());
     }
 }
