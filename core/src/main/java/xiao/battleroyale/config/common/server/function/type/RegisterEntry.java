@@ -113,6 +113,7 @@ public class RegisterEntry implements IFunctionEntry, IConfigAppliable {
             if (detail.eventClass != null) {
                 detailObject.addProperty(RegisterEntryTag.EVENT_CLASS, detail.eventClass);
             }
+            detailArray.add(detailObject);
         }
         jsonObject.add(RegisterEntryTag.DETAILS, detailArray);
         return jsonObject;
