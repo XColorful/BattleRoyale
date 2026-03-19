@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.command.sub.LootCommand;
 import xiao.battleroyale.command.sub.ReloadCommand;
@@ -42,7 +43,7 @@ public class PubgmcCommand {
                         .executes(PubgmcCommand::lobbyInfo))
                 .then(Commands.literal(LEAVE)
                         .executes(PubgmcCommand::leaveGame))
-                .requires(source -> source.hasPermission(2))
+                .requires(CommandLevel.hasPermission(2))
                 .then(Commands.literal(INIT)
                         .executes(PubgmcCommand::initGame))
                 .then(Commands.literal(START)
@@ -74,7 +75,7 @@ public class PubgmcCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> getLoot() {
         return Commands.literal(GENERATOR)
-                .requires(source -> source.hasPermission(2))
+                .requires(CommandLevel.hasPermission(2))
                 .then(Commands.literal(GENERATE)
                         .executes(PubgmcCommand::generatorGenerate));
     }

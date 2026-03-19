@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEvent;
 import xiao.battleroyale.api.event.CustomEventType;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.util.StringUtils;
 
 public class RegisterManagerEvent extends CustomEvent {
@@ -45,7 +46,7 @@ public class RegisterManagerEvent extends CustomEvent {
                 Vec3.ZERO,
                 Vec2.ZERO,
                 BattleRoyale.getGameManager().getServerLevel(),
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 BattleRoyale.getMinecraftServer(),

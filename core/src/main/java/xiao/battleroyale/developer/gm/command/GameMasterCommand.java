@@ -6,6 +6,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.api.data.DevDataTag;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.data.io.DevDataManager;
 import xiao.battleroyale.developer.gm.command.sub.*;
 import xiao.battleroyale.developer.gm.command.sub.original.*;
@@ -42,7 +43,7 @@ public class GameMasterCommand {
     private static LiteralArgumentBuilder<CommandSourceStack> get(String rootName, boolean useFullName) {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(rootName);
         // TODO 删除测试
-        root.requires(source -> source.hasPermission(4)); // root.requires(GameMasterCommand::isGameMasterCall);
+        root.requires(CommandLevel.hasPermission(4)); // root.requires(GameMasterCommand::isGameMasterCall);
 
         // GM
         LiteralArgumentBuilder<CommandSourceStack> gmCommand = Commands.literal(useFullName ? GAME_MASTER : GAME_MASTER_SHORT);
