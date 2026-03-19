@@ -1,4 +1,4 @@
 package xiao.battleroyale.api.server;
 
-public interface IServerSubManager {
+public interface IServerSubManager extends IServerStopHandler {
 }

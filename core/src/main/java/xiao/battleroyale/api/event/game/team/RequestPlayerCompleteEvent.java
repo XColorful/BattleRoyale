@@ -1,6 +1,10 @@
 package xiao.battleroyale.api.event.game.team;
 
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.game.IGameManager;
 
@@ -18,5 +22,11 @@ public class RequestPlayerCompleteEvent extends AbstractSenderEvent {
 
     public boolean isAccept() {
         return accept;
+    }
+
+    @Override
+    public @NotNull CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
+        return super.createCommandSourceStack(source)
+                .withEntity(targetPlayer);
     }
 }

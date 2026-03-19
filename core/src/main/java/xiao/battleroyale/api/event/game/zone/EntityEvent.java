@@ -2,6 +2,7 @@ package xiao.battleroyale.api.event.game.zone;
 
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.config.common.loot.ILootEntry;
@@ -49,5 +50,12 @@ public class EntityEvent extends AbstractSpecialZoneEvent {
 
     public List<Entity> generateLoot() {
         return LootGenerator.generateLootEntities(lootContext, lootEntry);
+    }
+
+    @Override public String getTextName() {
+        return "CBR EntityEvent";
+    }
+    @Override public Component getDisplayName() {
+        return Component.literal(getTextName());
     }
 }

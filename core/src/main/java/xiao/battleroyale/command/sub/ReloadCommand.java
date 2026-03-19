@@ -24,6 +24,7 @@ import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
+import xiao.battleroyale.config.common.server.function.FunctionConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
 import xiao.battleroyale.config.common.server.profile.ProfileConfigManager;
 import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
@@ -67,6 +68,8 @@ public class ReloadCommand {
                                 .executes(context -> reloadEffectConfigs(context, PARTICLE))))
                 .then(Commands.literal(SERVER)
                         .executes(context -> reloadServerConfigs(context, null))
+                        .then(Commands.literal(FUNCTION)
+                                .executes(context -> reloadServerConfigs(context, FUNCTION)))
                         .then(Commands.literal(PERFORMANCE)
                                 .executes(context -> reloadServerConfigs(context, PERFORMANCE)))
                         .then(Commands.literal(PROFILE)
@@ -261,6 +264,10 @@ public class ReloadCommand {
         } else {
             String subManagerNameKey;
             switch (subType) {
+                case FUNCTION:
+                    subManagerNameKey = FunctionConfigManager.get().getNameKey();
+                    messageKey = "battleroyale.message.function_config_reloaded";
+                    break;
                 case PERFORMANCE:
                     subManagerNameKey = PerformanceConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.performance_config_reloaded";
