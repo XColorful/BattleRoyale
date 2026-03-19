@@ -121,7 +121,7 @@ public class CommandArg {
     // --------API--------
     public static final String API = "api";
 
-    public static final String NAMESPACE = "namespace";
+    public static final String RESOURCE_LOCATION = "resourceLocation";
     public static final String PATH = "path";
     public static final String STORAGE_PATH = "storagePath";
     public static final String BY_PLAYER = "byPlayer";

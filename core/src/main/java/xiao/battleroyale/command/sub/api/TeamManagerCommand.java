@@ -20,13 +20,11 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameMainManager;
-import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.team.IGameTeamReadApi;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static xiao.battleroyale.command.CommandArg.*;
@@ -47,7 +45,7 @@ public class TeamManagerCommand {
                         )
                 )
                 .then(Commands.literal(GET_GAME_PLAYER)
-                        .then(Commands.argument(NAMESPACE, StringArgumentType.string())
+                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
                                 .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
                                         .then(Commands.literal(BY_PLAYER)
                                                 .then(Commands.argument(PLAYER, EntityArgument.entity())
@@ -81,7 +79,7 @@ public class TeamManagerCommand {
                         )
                 )
                 .then(Commands.literal(GET_GAME_TEAM)
-                        .then(Commands.argument(NAMESPACE, StringArgumentType.string())
+                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
                                 .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
                                         .then(Commands.literal(BY_PLAYER)
                                                 .then(Commands.argument(PLAYER, EntityArgument.entity())
@@ -98,7 +96,7 @@ public class TeamManagerCommand {
                 )
                 .then(Commands.literal(GET_GAME_PLAYERS_TOTAL).executes(TeamManagerCommand::getGamePlayersTotal))
                 .then(Commands.literal(GET_GAME_PLAYERS)
-                        .then(Commands.argument(NAMESPACE, StringArgumentType.string())
+                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
                                 .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
                                         .executes(TeamManagerCommand::getGamePlayers)
                                 )
@@ -106,7 +104,7 @@ public class TeamManagerCommand {
                 )
                 .then(Commands.literal(GET_GAME_TEAMS_TOTAL).executes(TeamManagerCommand::getGameTeamsTotal))
                 .then(Commands.literal(GET_GAME_TEAMS)
-                        .then(Commands.argument(NAMESPACE, StringArgumentType.string())
+                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
                                 .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
                                         .executes(TeamManagerCommand::getGameTeams)
                                 )
@@ -114,7 +112,7 @@ public class TeamManagerCommand {
                 )
                 .then(Commands.literal(GET_STANDING_GAME_PLAYERS_TOTAL).executes(TeamManagerCommand::getStandingGamePlayersTotal))
                 .then(Commands.literal(GET_STANDING_GAME_PLAYERS)
-                        .then(Commands.argument(NAMESPACE, StringArgumentType.string())
+                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
                                 .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
                                         .executes(TeamManagerCommand::getStandingGamePlayers)
                                 )
@@ -122,7 +120,7 @@ public class TeamManagerCommand {
                 )
                 .then(Commands.literal(GET_STANDING_GAME_TEAMS_TOTAL).executes(TeamManagerCommand::getStandingGameTeamsTotal))
                 .then(Commands.literal(GET_STANDING_GAME_TEAMS)
-                        .then(Commands.argument(NAMESPACE, StringArgumentType.string())
+                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
                                 .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
                                         .executes(TeamManagerCommand::getStandingGameTeams)
                                 )
@@ -207,7 +205,7 @@ public class TeamManagerCommand {
         @Nullable GamePlayer gamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerByUUID(player.getUUID());
         if (gamePlayer == null) return 0;
         return getGamePlayerByGamePlayer(context, gamePlayer,
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, NAMESPACE)),
+                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL));
     }
     private static int getGamePlayerByGamePlayerId(CommandContext<CommandSourceStack> context) {
@@ -215,7 +213,7 @@ public class TeamManagerCommand {
         @Nullable GamePlayer gamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerBySingleId(playerId);
         if (gamePlayer == null) return 0;
         return getGamePlayerByGamePlayer(context, gamePlayer,
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, NAMESPACE)),
+                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL));
     }
     private static int getGamePlayerByGamePlayer(CommandContext<CommandSourceStack> context, GamePlayer gamePlayer, ResourceLocation nameSpace, int detailLevel) {
@@ -254,7 +252,7 @@ public class TeamManagerCommand {
         @Nullable GamePlayer gamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerByUUID(player.getUUID());
         if (gamePlayer == null) return 0;
         return getGameTeamByGameTeam(context, gamePlayer.getTeam(),
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, NAMESPACE)),
+                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL));
     }
     private static int getGameTeamByGameTeamId(CommandContext<CommandSourceStack> context) {
@@ -262,7 +260,7 @@ public class TeamManagerCommand {
         @Nullable GameTeam gameTeam = BattleRoyale.getGameManager().getTeamManager().getGameTeamById(teamId);
         if (gameTeam == null) return 0;
         return getGameTeamByGameTeam(context, gameTeam,
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, NAMESPACE)),
+                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL));
     }
     private static int getGameTeamByGameTeam(CommandContext<CommandSourceStack> context, GameTeam gameTeam, ResourceLocation nameSpace, int detailLevel) {
@@ -281,7 +279,7 @@ public class TeamManagerCommand {
     }
     private static int getGamePlayers(CommandContext<CommandSourceStack> context) {
         return getGamePlayersInternal(context, BattleRoyale.getGameManager().getTeamManager().getGamePlayers(),
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, NAMESPACE)),
+                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL)
         );
     }
@@ -290,7 +288,7 @@ public class TeamManagerCommand {
     }
     private static int getGameTeams(CommandContext<CommandSourceStack> context) {
         return getGameTeamsInternal(context, BattleRoyale.getGameManager().getTeamManager().getGameTeams(),
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, NAMESPACE)),
+                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL)
         );
     }
@@ -299,7 +297,7 @@ public class TeamManagerCommand {
     }
     private static int getStandingGamePlayers(CommandContext<CommandSourceStack> context) {
         return getGamePlayersInternal(context, BattleRoyale.getGameManager().getTeamManager().getStandingGamePlayers(),
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, NAMESPACE)),
+                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL)
         );
     }
@@ -308,7 +306,7 @@ public class TeamManagerCommand {
     }
     private static int getStandingGameTeams(CommandContext<CommandSourceStack> context) {
         return getGameTeamsInternal(context, BattleRoyale.getGameManager().getTeamManager().getStandingGameTeams(),
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, NAMESPACE)),
+                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL)
         );
     }
