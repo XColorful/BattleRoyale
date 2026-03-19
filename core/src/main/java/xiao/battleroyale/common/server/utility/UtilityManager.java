@@ -2,8 +2,9 @@ package xiao.battleroyale.common.server.utility;
 
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.server.utilitity.IUtilityManager;
+import xiao.battleroyale.common.server.AbstractServerManager;
 
-public class UtilityManager implements IUtilityManager {
+public class UtilityManager extends AbstractServerManager implements IUtilityManager {
 
     private static class UtilityManagerHolder {
         private static final UtilityManager INSTANCE = new UtilityManager();
