@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.loot.AbstractLootEvent;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.loot.LootGenerator;
 
 public abstract class AbstractGenerateEvent<T extends BlockEntity> extends AbstractLootEvent {
@@ -34,7 +35,7 @@ public abstract class AbstractGenerateEvent<T extends BlockEntity> extends Abstr
                 target.getBlockPos().getCenter(),
                 Vec2.ZERO,
                 lootContext.serverLevel,
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 lootContext.serverLevel.getServer(),

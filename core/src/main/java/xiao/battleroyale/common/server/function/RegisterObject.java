@@ -78,10 +78,11 @@ public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implem
                 if (result[0] <= -1) {
                     event.setCanceled(true);
                     if (event.isCanceled()) {
-                        BattleRoyale.LOGGER.debug("{} canceled by function return value {} after executed {} lines", event.getTextName(), result[0], executedLines);
+                        BattleRoyale.LOGGER.debug("{} canceled by function (return value: {}) after executed {} functions", event.getTextName(), result[0], executedLines);
                         return;
                     } else {
-                        BattleRoyale.LOGGER.debug("{} (Cancellable: {}) not cancenled by function return value {} after executed {} lines", event.getTextName(), event.isCancelable(), result[0], executedLines);
+                        BattleRoyale.LOGGER.debug("{} (Cancelable: {}) not cancenled by function (return value: {}) after executed {} functions",
+                                event.getTextName(), event.isCancelable(), result[0], executedLines);
                     }
                 }
             }
@@ -93,10 +94,11 @@ public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implem
                 if (result[0] <= -1) {
                     event.setCanceled(true);
                     if (event.isCanceled()) {
-                        BattleRoyale.LOGGER.debug("{} canceled by function return value {} after executed {} lines", event.getTextName(), result[0], executedLines);
+                        BattleRoyale.LOGGER.debug("{} canceled by function (return value: {}) after executed {} functions", event.getTextName(), result[0], executedLines);
                         return;
                     } else {
-                        BattleRoyale.LOGGER.debug("{} (Cancellable: {}) not cancenled by function return value {} after executed {} lines", event.getTextName(), event.isCancelable(), result[0], executedLines);
+                        BattleRoyale.LOGGER.debug("{} (Cancelable: {}) not cancenled by function (return value: {}) after executed {} functions",
+                                event.getTextName(), event.isCancelable(), result[0], executedLines);
                     }
                 }
             }

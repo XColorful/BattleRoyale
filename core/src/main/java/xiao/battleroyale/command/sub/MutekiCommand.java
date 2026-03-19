@@ -13,6 +13,7 @@ import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.effect.EffectManager;
 
 import java.util.Collection;
@@ -37,7 +38,7 @@ public class MutekiCommand {
 
         // muteki clear
         LiteralArgumentBuilder<CommandSourceStack> clearCommand = Commands.literal(CLEAR)
-                .requires(source -> source.hasPermission(3));
+                .requires(CommandLevel.hasPermission(3));
         clearCommand.executes(MutekiCommand::clearAllMuteki);
 
         // muteki clear <players>
