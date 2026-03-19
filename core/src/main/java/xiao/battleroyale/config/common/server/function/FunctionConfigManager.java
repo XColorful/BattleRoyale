@@ -12,6 +12,7 @@ import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
 import xiao.battleroyale.config.common.server.function.defaultconfigs.DefaultFunctionConfigGenerator;
+import xiao.battleroyale.config.common.server.function.type.RegisterEntry;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.nio.file.Path;
@@ -48,14 +49,17 @@ public class FunctionConfigManager
     public static class FunctionConfig extends AbstractSingleConfig implements IFunctionSingleEntry {
         public static final String CONFIG_TYPE = "FunctionConfig";
 
-        public FunctionConfig(int id, String name, String color) {
-            this(id, name, color, false);
+        public final RegisterEntry registerEntry;
+
+        public FunctionConfig(int id, String name, String color, RegisterEntry registerEntry) {
+            this(id, name, color, false, registerEntry);
         }
-        public FunctionConfig(int id, String name, String color, boolean isDefault) {
+        public FunctionConfig(int id, String name, String color, boolean isDefault, RegisterEntry registerEntry) {
             super(id, name, color, isDefault);
+            this.registerEntry = registerEntry;
         }
         @Override public @NotNull FunctionConfig copy() {
-            return new FunctionConfig(id, name, color, isDefault);
+            return new FunctionConfig(id, name, color, isDefault, registerEntry.copy());
         }
 
         @Override
@@ -72,12 +76,31 @@ public class FunctionConfigManager
             }
             jsonObject.addProperty(FunctionConfigTag.NAME, name);
             jsonObject.addProperty(FunctionConfigTag.COLOR, color);
+            if (registerEntry != null) {
+                jsonObject.add(FunctionConfigTag.REGISTER_ENTRY, registerEntry.toJson());
+            }
 
             return jsonObject;
         }
 
+        public static RegisterEntry deserializeRegisterEntry(JsonObject jsonObject) {
+            try {
+                RegisterEntry registerEntry = RegisterEntry.fromJson(jsonObject);
+                if (registerEntry != null) {
+                    return registerEntry;
+                } else {
+                    BattleRoyale.LOGGER.warn("Skipped invalid RegisterEntry");
+                    return null;
+                }
+            } catch (Exception e) {
+                BattleRoyale.LOGGER.error("Failed to deserialize RegisterEntry: {}", e.getMessage());
+                return null;
+            }
+        }
+
         @Override
         public void applyDefault() {
+            this.registerEntry.applyDefault();
         }
     }
 
@@ -121,15 +144,21 @@ public class FunctionConfigManager
     public FunctionConfig parseConfigEntry(JsonObject configObject, Path filePath, int folderId) {
         try {
             int id = JsonUtils.getJsonInt(configObject, FunctionConfigTag.ID, -1);
-            if (id < 0) {
+            JsonObject functionRegisterEntryObject = JsonUtils.getJsonObject(configObject, FunctionConfigTag.REGISTER_ENTRY, null);
+            if (id < 0 || functionRegisterEntryObject == null) {
                 BattleRoyale.LOGGER.warn("Skipped invalid function config in {}", filePath);
                 return null;
             }
             boolean isDefault = JsonUtils.getJsonBool(configObject, FunctionConfigTag.DEFAULT, false);
             String name = JsonUtils.getJsonString(configObject, FunctionConfigTag.NAME, "");
             String color = JsonUtils.getJsonString(configObject, FunctionConfigTag.COLOR, "#FFFFFF");
+            RegisterEntry registerEntry = FunctionConfig.deserializeRegisterEntry(functionRegisterEntryObject);
+            if (registerEntry == null) {
+                BattleRoyale.LOGGER.error("Failed to deserialize function entry for id: {}, in {}", id, filePath);
+                return null;
+            }
 
-            return new FunctionConfig(id, name, color, isDefault);
+            return new FunctionConfig(id, name, color, isDefault, registerEntry);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Error parsing {} entry in {}: {}", getFolderType(folderId), filePath, e.getMessage());
             return null;

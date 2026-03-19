@@ -14,7 +14,10 @@ import xiao.battleroyale.common.server.performance.PerformanceManager;
 import xiao.battleroyale.common.server.profile.ProfileManager;
 import xiao.battleroyale.common.server.utility.UtilityManager;
 
-public class ServerManager implements IServerManager {
+import java.util.Arrays;
+import java.util.List;
+
+public class ServerManager extends AbstractServerManager implements IServerManager {
 
     private static class ServerManagerHolder {
         private static final ServerManager INSTANCE = new ServerManager();
@@ -74,5 +77,12 @@ public class ServerManager implements IServerManager {
     }
     @Override public @NotNull IUtilityManager getUtilityManager() {
         return utilityManager;
+    }
+    private List<IServerSubManager> getServerSubManagers() {
+        return Arrays.asList(getFunctionManager(), getPerformanceManager(), getProfileManager(), getUtilityManager());
+    }
+
+    @Override public void onServerStopping() {
+        getServerSubManagers().forEach(IServerSubManager::onServerStopping);
     }
 }
