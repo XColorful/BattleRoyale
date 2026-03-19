@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.fml.LogicalSide;
 import net.minecraft.world.phys.Vec2;
-import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.tacz.IGunMeleeEvent;
@@ -32,7 +31,6 @@ public class TaczGunMeleeEvent extends NeoEvent implements IGunMeleeEvent {
     public LivingEntity getShooter() {
         return gunMeleeEvent.getShooter();
     }
-}
 
     @Override
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
