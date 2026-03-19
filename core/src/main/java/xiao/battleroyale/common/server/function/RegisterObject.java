@@ -3,7 +3,7 @@ package xiao.battleroyale.common.server.function;
 import net.minecraft.commands.functions.CommandFunction;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.ServerFunctionManager;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -18,14 +18,14 @@ import java.util.Optional;
  */
 public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implements IEventHandler, ICustomEventHandler {
     public final String handlerName;
-    public final ResourceLocation rl;
+    public final Identifier rl;
     public final boolean isTag;
     public final T eventType;
     public final EventPriority priority;
     public final boolean receiveCanceled;
     public abstract boolean register(ICustomEventRegister eventRegister);
     public abstract boolean unregister(ICustomEventRegister eventRegister);
-    public RegisterObject(ResourceLocation rl, boolean isTag, T eventType, EventPriority priority, boolean receiveCanceled) {
+    public RegisterObject(Identifier rl, boolean isTag, T eventType, EventPriority priority, boolean receiveCanceled) {
         this.rl = rl;
         this.isTag = isTag;
         this.eventType = eventType;
@@ -109,7 +109,7 @@ public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implem
 
     // 模组事件
     public static class EventRegister extends RegisterObject<EventType, IEvent> {
-        public EventRegister(ResourceLocation rl, boolean isTag, EventType eventType, EventPriority priority, boolean receiveCanceled) {
+        public EventRegister(Identifier rl, boolean isTag, EventType eventType, EventPriority priority, boolean receiveCanceled) {
             super(rl, isTag, eventType, priority, receiveCanceled);
         }
         @Override public boolean register(ICustomEventRegister eventRegister) {
@@ -125,7 +125,7 @@ public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implem
 
     // 自定义事件
     public static class CustomEventRegister extends RegisterObject<CustomEventType, ICustomEvent> {
-        public CustomEventRegister(ResourceLocation rl, boolean isTag, CustomEventType eventType, EventPriority priority, boolean receiveCanceled) {
+        public CustomEventRegister(Identifier rl, boolean isTag, CustomEventType eventType, EventPriority priority, boolean receiveCanceled) {
             super(rl, isTag, eventType, priority, receiveCanceled);
         }
         @Override public boolean register(ICustomEventRegister eventRegister) {
@@ -142,7 +142,7 @@ public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implem
     // 自定义事件类
     public static class ClassEventRegister<T extends ICustomEvent> extends CustomEventRegister {
         public final Class<T> eventClass;
-        public ClassEventRegister(ResourceLocation rl, boolean isTag, Class<T> clazz, EventPriority priority, boolean receiveCanceled) {
+        public ClassEventRegister(Identifier rl, boolean isTag, Class<T> clazz, EventPriority priority, boolean receiveCanceled) {
             super(rl, isTag, CustomEventType.CUSTOM_EVENT, priority, receiveCanceled);
             this.eventClass = clazz;
         }

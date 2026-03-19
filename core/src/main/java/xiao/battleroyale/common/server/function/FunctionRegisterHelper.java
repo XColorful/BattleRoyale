@@ -1,6 +1,6 @@
 package xiao.battleroyale.common.server.function;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.EventPriority;
@@ -44,7 +44,7 @@ public class FunctionRegisterHelper {
         IMcRegistry mcRegistry = BattleRoyale.getMcRegistry();
 
         for (RegisterEntry.RegisterDetail detail : entry.registerDetails) {
-            ResourceLocation rl = mcRegistry.createResourceLocation(detail.rl);
+            Identifier rl = mcRegistry.createResourceLocation(detail.rl);
             if (rl == null) {
                 BattleRoyale.LOGGER.debug("FunctionRegisterHelper: skipped invalid rl string: {}", detail.rl);
                 continue;
@@ -90,7 +90,7 @@ public class FunctionRegisterHelper {
     // --------IFunctionRegisterApi--------
 
     protected static boolean registerEventClass(FunctionData apiFunction, String rlStr, boolean isTag, String eventClassStr, String priorityStr, boolean receiveCanceled) {
-        ResourceLocation rl = BattleRoyale.getMcRegistry().createResourceLocation(rlStr);
+        Identifier rl = BattleRoyale.getMcRegistry().createResourceLocation(rlStr);
         Class<? extends ICustomEvent> eventClass = string_to_eventClass.get(eventClassStr);
         EventPriority priority = EventPriority.fromString(priorityStr);
         if (rl == null || eventClass == null || priority == null) {
@@ -99,7 +99,7 @@ public class FunctionRegisterHelper {
         return apiFunction.registerFunction(BattleRoyale.getEventRegister(), rl, isTag, eventClass, priority, receiveCanceled);
     }
     protected static boolean unregisterEventClass(FunctionData apiFunction, String rlStr, boolean isTag, String eventClassStr) {
-        ResourceLocation rl = BattleRoyale.getMcRegistry().createResourceLocation(rlStr);
+        Identifier rl = BattleRoyale.getMcRegistry().createResourceLocation(rlStr);
         Class<? extends ICustomEvent> eventClass = string_to_eventClass.get(eventClassStr);
         if (rl == null || eventClass == null) {
             return false;

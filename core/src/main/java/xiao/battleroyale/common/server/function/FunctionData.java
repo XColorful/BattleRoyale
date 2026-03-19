@@ -1,6 +1,6 @@
 package xiao.battleroyale.common.server.function;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.data.data.AbstractNameData;
@@ -12,8 +12,8 @@ public class FunctionData extends AbstractNameData {
 
     private static final String DATA_NAME = "FunctionData";
 
-    private final Map<ResourceLocation, RegisterObject<?, ?>> registeredFunction;
-    private final Map<ResourceLocation, RegisterObject<?, ?>> registeredTag;
+    private final Map<Identifier, RegisterObject<?, ?>> registeredFunction;
+    private final Map<Identifier, RegisterObject<?, ?>> registeredTag;
 
     public FunctionData() {
         super(DATA_NAME);
@@ -22,11 +22,11 @@ public class FunctionData extends AbstractNameData {
     }
 
     public boolean registerFunction(ICustomEventRegister eventRegister,
-                                    ResourceLocation rl, boolean isTag,
+                                    Identifier rl, boolean isTag,
                                     EventType eventType, EventPriority priority, boolean receiveCanceled) {
         RegisterObject<?, IEvent> registerObject = new RegisterObject.EventRegister(rl, isTag, eventType, priority, receiveCanceled);
         if (registerObject.register(eventRegister)) {
-            Map<ResourceLocation, RegisterObject<?, ?>> registry = isTag ? registeredTag : registeredFunction;
+            Map<Identifier, RegisterObject<?, ?>> registry = isTag ? registeredTag : registeredFunction;
             registry.put(rl, registerObject);
             return true;
         } else {
@@ -34,11 +34,11 @@ public class FunctionData extends AbstractNameData {
         }
     }
     public boolean registerFunction(ICustomEventRegister eventRegister,
-                                    ResourceLocation rl, boolean isTag,
+                                    Identifier rl, boolean isTag,
                                     CustomEventType customEventType, EventPriority priority, boolean receiveCanceled) {
         RegisterObject<?, ICustomEvent> registerObject = new RegisterObject.CustomEventRegister(rl, isTag, customEventType, priority, receiveCanceled);
         if (registerObject.register(eventRegister)) {
-            Map<ResourceLocation, RegisterObject<?, ?>> registry = isTag ? registeredTag : registeredFunction;
+            Map<Identifier, RegisterObject<?, ?>> registry = isTag ? registeredTag : registeredFunction;
             registry.put(rl, registerObject);
             return true;
         } else {
@@ -46,11 +46,11 @@ public class FunctionData extends AbstractNameData {
         }
     }
     public boolean registerFunction(ICustomEventRegister eventRegister,
-                                    ResourceLocation rl, boolean isTag,
+                                    Identifier rl, boolean isTag,
                                     Class<? extends ICustomEvent> eventClass, EventPriority priority, boolean receiveCanceled) {
         RegisterObject<?, ICustomEvent> registerObject = new RegisterObject.ClassEventRegister<>(rl, isTag, eventClass, priority, receiveCanceled);
         if (registerObject.register(eventRegister)) {
-            Map<ResourceLocation, RegisterObject<?, ?>> registry = isTag ? registeredTag : registeredFunction;
+            Map<Identifier, RegisterObject<?, ?>> registry = isTag ? registeredTag : registeredFunction;
             registry.put(rl, registerObject);
             return true;
         } else {
@@ -59,9 +59,9 @@ public class FunctionData extends AbstractNameData {
     }
 
     public boolean unregisterFunction(ICustomEventRegister eventRegister,
-                                      ResourceLocation rl, boolean isTag,
+                                      Identifier rl, boolean isTag,
                                       EventType eventType) {
-        Map<ResourceLocation, RegisterObject<?, ?>> registry = isTag ? registeredTag : registeredFunction;
+        Map<Identifier, RegisterObject<?, ?>> registry = isTag ? registeredTag : registeredFunction;
         RegisterObject<?, ?> registerObject = registry.get(rl);
         if (registerObject instanceof RegisterObject.EventRegister eventRegisterObject) {
             if (eventRegisterObject.eventType != eventType) {
@@ -76,9 +76,9 @@ public class FunctionData extends AbstractNameData {
         }
     }
     public boolean unregisterFunction(ICustomEventRegister eventRegister,
-                                      ResourceLocation rl, boolean isTag,
+                                      Identifier rl, boolean isTag,
                                       CustomEventType customEventType) {
-        Map<ResourceLocation, RegisterObject<?, ?>> registry = isTag ? registeredTag : registeredFunction;
+        Map<Identifier, RegisterObject<?, ?>> registry = isTag ? registeredTag : registeredFunction;
         RegisterObject<?, ?> registerObject = registry.get(rl);
         if (registerObject instanceof RegisterObject.CustomEventRegister customEventRegisterObject) {
             if (customEventRegisterObject.eventType != customEventType) {
@@ -93,9 +93,9 @@ public class FunctionData extends AbstractNameData {
         }
     }
     public boolean unregisterFunction(ICustomEventRegister eventRegister,
-                                      ResourceLocation rl, boolean isTag,
+                                      Identifier rl, boolean isTag,
                                       Class<? extends ICustomEvent> eventClass) {
-        Map<ResourceLocation, RegisterObject<?, ?>> registry = isTag ? registeredTag : registeredFunction;
+        Map<Identifier, RegisterObject<?, ?>> registry = isTag ? registeredTag : registeredFunction;
         RegisterObject<?, ?> registerObject = registry.get(rl);
         if (registerObject instanceof RegisterObject.ClassEventRegister<?> classEventRegisterObject) {
             if (classEventRegisterObject.eventClass != eventClass) {

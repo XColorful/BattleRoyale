@@ -1,6 +1,6 @@
 package xiao.battleroyale.common.server.function;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.*;
@@ -59,26 +59,26 @@ public class FunctionManager extends AbstractServerManager implements IFunctionM
 
     // --------IFunctionRegisterApi--------
 
-    @Override public boolean registerFunction(ResourceLocation rl, boolean isTag, EventType eventType, EventPriority priority, boolean receiveCanceled) {
+    @Override public boolean registerFunction(Identifier rl, boolean isTag, EventType eventType, EventPriority priority, boolean receiveCanceled) {
         return this.apiFunction.registerFunction(BattleRoyale.getEventRegister(), rl, isTag, eventType, priority, receiveCanceled);
     }
-    @Override public boolean registerFunction(ResourceLocation rl, boolean isTag, CustomEventType customEventType, EventPriority priority, boolean receiveCanceled) {
+    @Override public boolean registerFunction(Identifier rl, boolean isTag, CustomEventType customEventType, EventPriority priority, boolean receiveCanceled) {
         return this.apiFunction.registerFunction(BattleRoyale.getEventRegister(), rl, isTag, customEventType, priority, receiveCanceled);
     }
-    @Override public boolean registerFunction(ResourceLocation rl, boolean isTag, Class<? extends ICustomEvent> eventClass, EventPriority priority, boolean receiveCanceled) {
+    @Override public boolean registerFunction(Identifier rl, boolean isTag, Class<? extends ICustomEvent> eventClass, EventPriority priority, boolean receiveCanceled) {
         return this.apiFunction.registerFunction(BattleRoyale.getEventRegister(), rl, isTag, eventClass, priority, receiveCanceled);
     }
     @Override public boolean registerFunctionToEventClass(String rlStr, boolean isTag, String eventClassStr, String priorityStr, boolean receiveCanceled) {
         return FunctionRegisterHelper.registerEventClass(this.apiFunction, rlStr, isTag, eventClassStr, priorityStr, receiveCanceled);
     }
 
-    @Override public boolean unregisterFunction(ResourceLocation rl, boolean isTag, EventType eventType) {
+    @Override public boolean unregisterFunction(Identifier rl, boolean isTag, EventType eventType) {
         return this.apiFunction.unregisterFunction(BattleRoyale.getEventRegister(), rl, isTag, eventType);
     }
-    @Override public boolean unregisterFunction(ResourceLocation rl, boolean isTag, CustomEventType customEventType) {
+    @Override public boolean unregisterFunction(Identifier rl, boolean isTag, CustomEventType customEventType) {
         return this.apiFunction.unregisterFunction(BattleRoyale.getEventRegister(), rl, isTag, customEventType);
     }
-    @Override public boolean unregisterFunction(ResourceLocation rl, boolean isTag, Class<? extends ICustomEvent> eventClass) {
+    @Override public boolean unregisterFunction(Identifier rl, boolean isTag, Class<? extends ICustomEvent> eventClass) {
         return this.apiFunction.unregisterFunction(BattleRoyale.getEventRegister(), rl, isTag, eventClass);
     }
     @Override public boolean unregisterFunctionToEventClass(String rlStr, boolean isTag, String eventClassStr) {
