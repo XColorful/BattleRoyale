@@ -1,5 +1,6 @@
 package xiao.battleroyale.api.event.game.finish;
 
+import net.minecraft.network.chat.Component;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.game.AbstractGameEvent;
 import xiao.battleroyale.api.game.IGameManager;
@@ -28,5 +29,12 @@ public class GameCompleteEvent extends AbstractGameEvent {
 
     public List<GamePlayer> getGamePlayers() {
         return Collections.unmodifiableList(gamePlayers);
+    }
+
+    @Override public String getTextName() {
+        return "CBR GameCompleteEvent";
+    }
+    @Override public Component getDisplayName() {
+        return Component.literal(getTextName());
     }
 }

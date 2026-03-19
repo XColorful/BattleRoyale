@@ -1,5 +1,6 @@
 package xiao.battleroyale.api.event.game.finish;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.CustomEventType;
@@ -9,8 +10,7 @@ import xiao.battleroyale.api.game.IGameManager;
 // 既有直接GameManager::stopGame触发，又有GameManager::finishGame里触发
 public class GameStopEvent extends AbstractGameStatsEvent {
 
-    protected @Nullable
-    final ServerLevel serverLevel;
+    protected @Nullable final ServerLevel serverLevel;
 
     public GameStopEvent(IGameManager gameManager, @Nullable ServerLevel serverLevel) {
         super(gameManager);
@@ -22,5 +22,12 @@ public class GameStopEvent extends AbstractGameStatsEvent {
 
     public @Nullable ServerLevel getServerLevel() {
         return this.serverLevel;
+    }
+
+    @Override public String getTextName() {
+        return "CBR GameStopEvent";
+    }
+    @Override public Component getDisplayName() {
+        return Component.literal(getTextName());
     }
 }

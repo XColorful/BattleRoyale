@@ -1,8 +1,12 @@
 package xiao.battleroyale.compat.forge.event;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IRenderGuiEvent;
 
@@ -25,5 +29,17 @@ public class ForgeRenderGuiEvent extends ForgeEvent implements IRenderGuiEvent {
     @Override
     public GuiGraphics getGuiGraphics() {
         return this.event.getGuiGraphics();
+    }
+
+    @Override
+    public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
+        return null;
+    }
+
+    @Override public String getTextName() {
+        return "ForgeRenderGuiEvent";
+    }
+    @Override public Component getDisplayName() {
+        return Component.literal(getTextName());
     }
 }

@@ -1,6 +1,10 @@
 package xiao.battleroyale.compat.forge.event;
 
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 
@@ -29,5 +33,17 @@ public class ForgeEvent implements IEvent {
 
     public Object getEvent() {
         return this.event;
+    }
+
+    @Override
+    public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
+        return null;
+    }
+
+    @Override public String getTextName() {
+        return null;
+    }
+    @Override public Component getDisplayName() {
+        return null;
     }
 }
