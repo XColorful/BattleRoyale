@@ -1,6 +1,7 @@
 package xiao.battleroyale.api.event.client.render;
 
 import com.google.gson.JsonObject;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
@@ -54,5 +55,12 @@ public class SpecialZoneRenderEvent extends AbstractSpecialRenderEvent {
 
     public ClientSingleZoneData getZoneData() {
         return zoneData;
+    }
+
+    @Override public String getTextName() {
+        return "CBR client SpecialZoneRenderEvent";
+    }
+    @Override public Component getDisplayName() {
+        return Component.literal(getTextName());
     }
 }

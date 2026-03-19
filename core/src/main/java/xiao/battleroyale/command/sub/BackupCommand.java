@@ -24,6 +24,7 @@ import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
+import xiao.battleroyale.config.common.server.function.FunctionConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
 import xiao.battleroyale.config.common.server.profile.ProfileConfigManager;
 import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
@@ -67,6 +68,8 @@ public class BackupCommand {
                                 .executes(context -> backupEffectConfigs(context, PARTICLE))))
                 .then(Commands.literal(SERVER)
                         .executes(context -> backupServerConfigs(context, null))
+                        .then(Commands.literal(FUNCTION)
+                                .executes(context -> backupServerConfigs(context, FUNCTION)))
                         .then(Commands.literal(PERFORMANCE)
                                 .executes(context -> backupServerConfigs(context, PERFORMANCE)))
                         .then(Commands.literal(PROFILE)
@@ -256,6 +259,10 @@ public class BackupCommand {
         } else {
             String subManagerNameKey;
             switch (subType) {
+                case FUNCTION:
+                    subManagerNameKey = FunctionConfigManager.get().getNameKey();
+                    messageKey = "battleroyale.message.function_config_backed_up";
+                    break;
                 case PERFORMANCE:
                     subManagerNameKey = PerformanceConfigManager.get().getNameKey();
                     messageKey = "battleroyale.message.performance_config_backed_up";

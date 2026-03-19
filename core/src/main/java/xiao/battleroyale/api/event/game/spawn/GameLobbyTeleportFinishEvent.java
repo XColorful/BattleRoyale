@@ -1,5 +1,8 @@
 package xiao.battleroyale.api.event.game.spawn;
 
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -10,8 +13,7 @@ import xiao.battleroyale.api.game.IGameManager;
 
 public class GameLobbyTeleportFinishEvent extends AbstractGameStatsEvent {
 
-    protected @NotNull
-    final LivingEntity livingEntity;
+    protected @NotNull final LivingEntity livingEntity;
 
     public GameLobbyTeleportFinishEvent(IGameManager gameManager, @NotNull LivingEntity livingEntity) {
         super(gameManager);
@@ -27,5 +29,18 @@ public class GameLobbyTeleportFinishEvent extends AbstractGameStatsEvent {
     @Deprecated
     public @Nullable ServerPlayer getPlayer() {
         return this.livingEntity instanceof ServerPlayer player ? player : null;
+    }
+
+    @Override
+    public @NotNull CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
+        return super.createCommandSourceStack(source)
+                .withEntity(livingEntity);
+    }
+
+    @Override public String getTextName() {
+        return livingEntity.getName().getString();
+    }
+    @Override public Component getDisplayName() {
+        return livingEntity.getDisplayName();
     }
 }
