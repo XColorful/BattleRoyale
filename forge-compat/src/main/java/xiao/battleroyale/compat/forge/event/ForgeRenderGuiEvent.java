@@ -5,7 +5,6 @@ import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
