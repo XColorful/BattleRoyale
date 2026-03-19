@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.ILivingDamageEvent;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 
 public class NeoLivingDamageEvent extends NeoEvent implements ILivingDamageEvent {
 
@@ -59,7 +60,7 @@ public class NeoLivingDamageEvent extends NeoEvent implements ILivingDamageEvent
                 entity.position(),
                 Vec2.ZERO,
                 (ServerLevel) entity.level(),
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 entity.getServer(),
