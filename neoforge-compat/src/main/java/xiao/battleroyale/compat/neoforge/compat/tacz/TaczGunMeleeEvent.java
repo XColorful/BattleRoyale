@@ -11,6 +11,7 @@ import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.tacz.IGunMeleeEvent;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.compat.neoforge.event.NeoEvent;
 
 public class TaczGunMeleeEvent extends NeoEvent implements IGunMeleeEvent {
@@ -41,7 +42,7 @@ public class TaczGunMeleeEvent extends NeoEvent implements IGunMeleeEvent {
                 shooter.position(),
                 Vec2.ZERO,
                 (ServerLevel) shooter.level(),
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 shooter.getServer(),

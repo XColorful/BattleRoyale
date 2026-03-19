@@ -11,6 +11,7 @@ import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.tacz.IGunReloadEvent;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.compat.neoforge.event.NeoEvent;
 
 public class TaczGunReloadEvent extends NeoEvent implements IGunReloadEvent {
@@ -41,7 +42,7 @@ public class TaczGunReloadEvent extends NeoEvent implements IGunReloadEvent {
                 entity.position(),
                 Vec2.ZERO,
                 (ServerLevel) entity.level(),
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 entity.getServer(),

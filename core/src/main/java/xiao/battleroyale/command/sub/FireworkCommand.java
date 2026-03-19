@@ -16,6 +16,7 @@ import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.effect.EffectManager;
 
 import static xiao.battleroyale.command.CommandArg.*;
@@ -69,7 +70,7 @@ public class FireworkCommand {
         fireworkCommand.then(coordBase);
         fireworkCommand.then(playerBase);
         fireworkCommand.then(Commands.literal(CLEAR)
-                .requires(source -> source.hasPermission(3))
+                .requires(CommandLevel.hasPermission(3))
                 .executes(FireworkCommand::executeClearFireworks));
 
         return fireworkCommand;

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.game.AbstractGameStatsEvent;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 
 public abstract class AbstractGameTickFinishEvent extends AbstractGameStatsEvent {
 
@@ -28,7 +29,7 @@ public abstract class AbstractGameTickFinishEvent extends AbstractGameStatsEvent
                 gameManager.getGlobalCenterOffset(),
                 Vec2.ZERO,
                 gameManager.getServerLevel(),
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 getGameManager().getServerLevel().getServer(),
