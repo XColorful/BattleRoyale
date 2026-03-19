@@ -11,6 +11,7 @@ import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.tacz.IGunShootEvent;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.compat.forge.event.ForgeEvent;
 
 public class TaczGunShootEvent extends ForgeEvent implements IGunShootEvent {
@@ -41,7 +42,7 @@ public class TaczGunShootEvent extends ForgeEvent implements IGunShootEvent {
                 shooter.position(),
                 Vec2.ZERO,
                 (ServerLevel) shooter.level(),
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 shooter.getServer(),

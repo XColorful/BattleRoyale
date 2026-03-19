@@ -16,4 +16,11 @@ public class CommandLevel {
     public static Predicate<CommandSourceStack> hasPermission(int level) {
         return source -> source.hasPermission(level);
     }
+
+    /**
+     * 1.21.11 改为 net.minecraft.server.permissions.PermissionSet
+     */
+    public static int permission(int level) {
+        return level;
+    }
 }

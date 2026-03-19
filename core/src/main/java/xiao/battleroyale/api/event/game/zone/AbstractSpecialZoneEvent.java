@@ -11,6 +11,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.game.AbstractGameEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 
 public abstract class AbstractSpecialZoneEvent extends AbstractGameEvent {
@@ -54,7 +55,7 @@ public abstract class AbstractSpecialZoneEvent extends AbstractGameEvent {
                 zoneCenter != null ? zoneCenter : Vec3.ZERO,
                 Vec2.ZERO,
                 zoneTickContext.serverLevel,
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 zoneTickContext.serverLevel.getServer(),

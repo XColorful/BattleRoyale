@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.CustomEvent;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 
 public abstract class AbstractGameEvent extends CustomEvent {
 
@@ -37,7 +38,7 @@ public abstract class AbstractGameEvent extends CustomEvent {
                 gameManager.getGlobalCenterOffset(),
                 Vec2.ZERO,
                 gameManager.getServerLevel(),
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 gameManager.getServerLevel().getServer(),
