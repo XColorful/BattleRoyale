@@ -1,5 +1,6 @@
 package xiao.battleroyale.api.event.game.tick;
 
+import net.minecraft.network.chat.Component;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.game.IGameManager;
 
@@ -30,5 +31,12 @@ public class GameLootFinishEvent extends AbstractGameTickFinishEvent {
 
     public int getClearedPlayerCenterChunk() {
         return this.clearedPlayerCenterChunk;
+    }
+
+    @Override public String getTextName() {
+        return "GameLootFinishEvent";
+    }
+    @Override public Component getDisplayName() {
+        return Component.literal(getTextName());
     }
 }

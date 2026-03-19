@@ -1,6 +1,7 @@
 package xiao.battleroyale.api.event.loot.generate;
 
 import com.google.gson.JsonObject;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.event.CustomEventType;
@@ -24,5 +25,12 @@ public class CustomGenerateEvent <T extends BlockEntity> extends AbstractSpecial
 
     public List<ILootData> getLootData() {
         return lootData;
+    }
+
+    @Override public String getTextName() {
+        return "CBR CustomGenerateEvent";
+    }
+    @Override public Component getDisplayName() {
+        return Component.literal(getTextName());
     }
 }
