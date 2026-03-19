@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IServerTickEvent;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 
 public class NeoServerTickEvent extends NeoEvent implements IServerTickEvent {
 
@@ -42,7 +43,7 @@ public class NeoServerTickEvent extends NeoEvent implements IServerTickEvent {
                 Vec3.ZERO,
                 Vec2.ZERO,
                 server.overworld(),
-                4,
+                CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 server,
