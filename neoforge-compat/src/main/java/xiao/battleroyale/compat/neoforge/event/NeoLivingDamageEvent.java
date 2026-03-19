@@ -62,7 +62,7 @@ public class NeoLivingDamageEvent extends NeoEvent implements ILivingDamageEvent
                 4,
                 this.getTextName(),
                 this.getDisplayName(),
-                entity.getServer(),
+                entity.level().getServer(),
                 entity
         );
     }

@@ -56,7 +56,7 @@ public class NeoLivingAttackEvent extends NeoEvent implements ILivingAttackEvent
                 4,
                 this.getTextName(),
                 this.getDisplayName(),
-                entity.getServer(),
+                entity.level().getServer(),
                 entity
         );
     }
