@@ -25,6 +25,7 @@ import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
 import xiao.battleroyale.config.common.server.ServerConfigManager;
+import xiao.battleroyale.config.common.server.function.FunctionConfigManager;
 import xiao.battleroyale.config.common.server.performance.PerformanceConfigManager;
 import xiao.battleroyale.config.common.server.profile.ProfileConfigManager;
 import xiao.battleroyale.config.common.server.utility.UtilityConfigManager;
@@ -141,6 +142,16 @@ public class ConfigCommand {
                         )
                 )
                 .then(Commands.literal(SERVER)
+                        .then(Commands.literal(FUNCTION)
+                                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                                        .executes(ConfigCommand::applyFunctionConfig))
+                                .then(Commands.literal(SWITCH)
+                                        .executes(ConfigCommand::switchNextFunctionConfig)
+                                        .then(Commands.argument(FILE, StringArgumentType.string())
+                                                .executes(ConfigCommand::switchFunctionConfig)
+                                        )
+                                )
+                        )
                         .then(Commands.literal(PERFORMANCE)
                                 .then(Commands.argument(ID, IntegerArgumentType.integer(0))
                                         .executes(ConfigCommand::applyPerformanceConfig))
@@ -430,6 +441,51 @@ public class ConfigCommand {
         }
     }
 
+    private static int applyFunctionConfig(CommandContext<CommandSourceStack> context) {
+        IConfigSubManager<?> functionConfigManager = getConfigSubManager(context, ServerConfigManager.get().getNameKey(), FunctionConfigManager.get().getNameKey());
+        if (functionConfigManager == null) return 0;
+
+        int id = IntegerArgumentType.getInteger(context, ID);
+        IConfigSingleEntry functionConfig = functionConfigManager.getConfigEntry(id);
+        if (functionConfig != null) {
+            functionConfig.applyDefault();
+            functionConfigManager.setLastAppliedConfigId(functionConfig.getConfigId());
+            BattleRoyale.LOGGER.info("Applied function config {} via command", id);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.function_config_applied", id, functionConfig.getName()), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.invalid_function_config_id", id));
+            return 0;
+        }
+    }
+    private static int switchNextFunctionConfig(CommandContext<CommandSourceStack> context) {
+        IConfigSubManager<?> functionConfigManager = getConfigSubManager(context, ServerConfigManager.get().getNameKey(), FunctionConfigManager.get().getNameKey());
+        if (functionConfigManager == null) return 0;
+
+        if (functionConfigManager.switchConfigFile()) {
+            String currentFileName = functionConfigManager.getCurrentSelectedFileName();
+            BattleRoyale.LOGGER.info("Switch function config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_function_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_function_config_available"));
+            return 0;
+        }
+    }
+    private static int switchFunctionConfig(CommandContext<CommandSourceStack> context) {
+        IConfigSubManager<?> functionConfigManager = getConfigSubManager(context, ServerConfigManager.get().getNameKey(), FunctionConfigManager.get().getNameKey());
+        if (functionConfigManager == null) return 0;
+
+        String currentFileName = StringArgumentType.getString(context, FILE);
+        if (functionConfigManager.switchConfigFile(currentFileName)) {
+            BattleRoyale.LOGGER.info("Switch function config file to {} via command", currentFileName);
+            context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.switch_function_config_file", currentFileName), true);
+            return Command.SINGLE_SUCCESS;
+        } else {
+            context.getSource().sendFailure(Component.translatable("battleroyale.message.no_function_config_file", currentFileName));
+            return 0;
+        }
+    }
     private static int applyPerformanceConfig(CommandContext<CommandSourceStack> context) {
         IConfigSubManager<?> performanceConfigManager = getConfigSubManager(context, ServerConfigManager.get().getNameKey(), PerformanceConfigManager.get().getNameKey());
         if (performanceConfigManager == null) return 0;

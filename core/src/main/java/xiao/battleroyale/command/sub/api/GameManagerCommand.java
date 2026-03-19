@@ -29,7 +29,7 @@ public class GameManagerCommand {
                 .then(Commands.literal(GET_GAME_TIME).executes(GameManagerCommand::getGameTime))
                 .then(Commands.literal(IS_IN_GAME).executes(GameManagerCommand::isInGame))
                 .then(Commands.literal(GET_GLOBAL_CENTER_OFFSET)
-                        .then(Commands.argument(NAMESPACE, StringArgumentType.string())
+                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
                                 .executes(GameManagerCommand::getGlobalCenterOffset)
                         )
                 )
@@ -117,7 +117,7 @@ public class GameManagerCommand {
     private static int getGlobalCenterOffset(CommandContext<CommandSourceStack> context) {
         IGameInfoGetter gameManager = BattleRoyale.getGameManager();
         context.getSource().getServer().getCommandStorage().set(
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, NAMESPACE)),
+                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
                 NBTUtils.buildVec3Nbt(gameManager.getGlobalCenterOffset()));
         return Command.SINGLE_SUCCESS;
     }
