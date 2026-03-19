@@ -3,6 +3,7 @@ package xiao.battleroyale.compat.forge.event;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Event;
+import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IPlayerLoggedOutEvent;
 
 public class ForgePlayerLoggedOutEvent extends ForgeEvent implements IPlayerLoggedOutEvent {
@@ -16,6 +17,9 @@ public class ForgePlayerLoggedOutEvent extends ForgeEvent implements IPlayerLogg
         } else {
             throw new RuntimeException("Expected PlayerLoggedOutEvent but received: " + event.getClass().getName());
         }
+    }
+    @Override public EventType getType() {
+        return EventType.PLAYER_LOGGED_OUT_EVENT;
     }
     
     @Override

@@ -3,6 +3,7 @@ package xiao.battleroyale.compat.forge.event;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
+import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IRenderLevelStageEvent;
 import xiao.battleroyale.api.event.RenderLevelStage;
 
@@ -15,6 +16,9 @@ public class ForgeRenderLevelStageEvent extends ForgeEvent implements IRenderLev
         super(event);
         this.typedEvent = event;
         this.stage = ForgeRenderLevelStage.fromStage(event.getStage());
+    }
+    @Override public EventType getType() {
+        return EventType.RENDER_LEVEL_STAGE_EVENT;
     }
 
     @Override

@@ -5,6 +5,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.ILivingDamageEvent;
 
 public class ForgeLivingDamageEvent extends ForgeEvent implements ILivingDamageEvent {
@@ -18,6 +19,9 @@ public class ForgeLivingDamageEvent extends ForgeEvent implements ILivingDamageE
         } else {
             throw new RuntimeException("Expected LivingDamageEvent but received: " + event.getClass().getName());
         }
+    }
+    @Override public EventType getType() {
+        return EventType.LIVING_DAMAGE_EVENT;
     }
 
     @Override

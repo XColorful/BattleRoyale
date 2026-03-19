@@ -2,6 +2,7 @@ package xiao.battleroyale.compat.forge.event;
 
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Event;
+import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IClientTickEvent;
 
 public class ForgeClientTickEvent extends ForgeEvent implements IClientTickEvent {
@@ -15,5 +16,8 @@ public class ForgeClientTickEvent extends ForgeEvent implements IClientTickEvent
         } else {
             throw new RuntimeException("Expected ClientTickEvent but received: " + event.getClass().getName());
         }
+    }
+    @Override public EventType getType() {
+        return EventType.CLIENT_TICK_EVENT;
     }
 }

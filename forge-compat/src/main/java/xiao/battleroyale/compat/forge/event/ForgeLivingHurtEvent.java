@@ -5,6 +5,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.ILivingHurtEvent;
 
 public class ForgeLivingHurtEvent extends ForgeEvent implements ILivingHurtEvent {
@@ -18,6 +19,9 @@ public class ForgeLivingHurtEvent extends ForgeEvent implements ILivingHurtEvent
         } else {
             throw new RuntimeException("Expected LivingHurtEvent but received: " + event.getClass().getName());
         }
+    }
+    @Override public EventType getType() {
+        return EventType.LIVING_HURT_EVENT;
     }
 
     @Override

@@ -3,6 +3,7 @@ package xiao.battleroyale.compat.forge.event;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.eventbus.api.Event;
+import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IRenderGuiEvent;
 
 public class ForgeRenderGuiEvent extends ForgeEvent implements IRenderGuiEvent {
@@ -16,6 +17,9 @@ public class ForgeRenderGuiEvent extends ForgeEvent implements IRenderGuiEvent {
         } else {
             throw new RuntimeException("Expected RenderGuiEvent but received: " + event.getClass().getName());
         }
+    }
+    @Override public EventType getType() {
+        return EventType.RENDER_GUI_EVENT;
     }
 
     @Override

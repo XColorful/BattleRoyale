@@ -1,6 +1,7 @@
 package xiao.battleroyale.compat.forge.event;
 
 import net.minecraftforge.eventbus.api.Event;
+import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEvent;
 
 public class ForgeEvent implements IEvent {
@@ -10,13 +11,19 @@ public class ForgeEvent implements IEvent {
     public ForgeEvent(Event event) {
         this.event = event;
     }
+    @Override public EventType getType() {
+        return null;
+    }
+    @Override public boolean isCancelable() {
+        return event.isCancelable();
+    }
 
     public boolean isCanceled() {
         return this.event.isCanceled();
     }
 
     public void setCanceled(boolean cancel) {
-        if (event.isCancelable())
+        if (this.isCancelable())
             this.event.setCanceled(cancel);
     }
 

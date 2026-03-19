@@ -5,6 +5,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 
 public class ForgeLivingDeathEvent extends ForgeEvent implements ILivingDeathEvent {
@@ -18,6 +19,9 @@ public class ForgeLivingDeathEvent extends ForgeEvent implements ILivingDeathEve
         } else {
             throw new RuntimeException("Expected LivingDeathEvent but received: " + event.getClass().getName());
         }
+    }
+    @Override public EventType getType() {
+        return EventType.LIVING_DEATH_EVENT;
     }
 
     @Override
