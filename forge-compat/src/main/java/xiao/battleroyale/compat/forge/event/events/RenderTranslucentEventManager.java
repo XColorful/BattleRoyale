@@ -24,11 +24,11 @@ public class RenderTranslucentEventManager {
 
     private static AbstractEventCommon getProxy(EventPriority priority) {
         return switch (priority) {
-            case HIGHEST -> Highest.INSTANCE;
-            case HIGH -> High.INSTANCE;
-            case NORMAL -> Normal.INSTANCE;
-            case LOW -> Low.INSTANCE;
-            case LOWEST -> Lowest.INSTANCE;
+            case HIGHEST -> RenderTranslucentProxyHighest.INSTANCE;
+            case HIGH -> RenderTranslucentProxyHigh.INSTANCE;
+            case NORMAL -> RenderTranslucentProxyNormal.INSTANCE;
+            case LOW -> RenderTranslucentProxyLow.INSTANCE;
+            case LOWEST -> RenderTranslucentProxyLowest.INSTANCE;
         };
     }
 
@@ -59,32 +59,32 @@ public class RenderTranslucentEventManager {
         }
     }
 
-    public static class Highest extends RenderTranslucentProxy {
-        static final Highest INSTANCE = new Highest();
+    public static class RenderTranslucentProxyHighest extends RenderTranslucentProxy {
+        static final RenderTranslucentProxyHighest INSTANCE = new RenderTranslucentProxyHighest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGHEST, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
 
-    public static class High extends RenderTranslucentProxy {
-        static final High INSTANCE = new High();
+    public static class RenderTranslucentProxyHigh extends RenderTranslucentProxy {
+        static final RenderTranslucentProxyHigh INSTANCE = new RenderTranslucentProxyHigh();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGH, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
 
-    public static class Normal extends RenderTranslucentProxy {
-        static final Normal INSTANCE = new Normal();
+    public static class RenderTranslucentProxyNormal extends RenderTranslucentProxy {
+        static final RenderTranslucentProxyNormal INSTANCE = new RenderTranslucentProxyNormal();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.NORMAL, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
 
-    public static class Low extends RenderTranslucentProxy {
-        static final Low INSTANCE = new Low();
+    public static class RenderTranslucentProxyLow extends RenderTranslucentProxy {
+        static final RenderTranslucentProxyLow INSTANCE = new RenderTranslucentProxyLow();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOW, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
 
-    public static class Lowest extends RenderTranslucentProxy {
-        static final Lowest INSTANCE = new Lowest();
+    public static class RenderTranslucentProxyLowest extends RenderTranslucentProxy {
+        static final RenderTranslucentProxyLowest INSTANCE = new RenderTranslucentProxyLowest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
