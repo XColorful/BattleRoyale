@@ -22,11 +22,11 @@ public class NeoPlayerLoggedInEventManager {
 
     private static AbstractNeoEventCommon getProxy(EventPriority priority) {
         return switch (priority) {
-            case HIGHEST -> Highest.INSTANCE;
-            case HIGH -> High.INSTANCE;
-            case NORMAL -> Normal.INSTANCE;
-            case LOW -> Low.INSTANCE;
-            case LOWEST -> Lowest.INSTANCE;
+            case HIGHEST -> NeoPlayerLoggedInProxyHighest.INSTANCE;
+            case HIGH -> NeoPlayerLoggedInProxyHigh.INSTANCE;
+            case NORMAL -> NeoPlayerLoggedInProxyNormal.INSTANCE;
+            case LOW -> NeoPlayerLoggedInProxyLow.INSTANCE;
+            case LOWEST -> NeoPlayerLoggedInProxyLowest.INSTANCE;
         };
     }
 
@@ -55,32 +55,32 @@ public class NeoPlayerLoggedInEventManager {
         }
     }
 
-    public static class Highest extends NeoPlayerLoggedInProxy {
-        static final Highest INSTANCE = new Highest();
+    public static class NeoPlayerLoggedInProxyHighest extends NeoPlayerLoggedInProxy {
+        static final NeoPlayerLoggedInProxyHighest INSTANCE = new NeoPlayerLoggedInProxyHighest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGHEST, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
     }
 
-    public static class High extends NeoPlayerLoggedInProxy {
-        static final High INSTANCE = new High();
+    public static class NeoPlayerLoggedInProxyHigh extends NeoPlayerLoggedInProxy {
+        static final NeoPlayerLoggedInProxyHigh INSTANCE = new NeoPlayerLoggedInProxyHigh();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGH, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
     }
 
-    public static class Normal extends NeoPlayerLoggedInProxy {
-        static final Normal INSTANCE = new Normal();
+    public static class NeoPlayerLoggedInProxyNormal extends NeoPlayerLoggedInProxy {
+        static final NeoPlayerLoggedInProxyNormal INSTANCE = new NeoPlayerLoggedInProxyNormal();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.NORMAL, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
     }
 
-    public static class Low extends NeoPlayerLoggedInProxy {
-        static final Low INSTANCE = new Low();
+    public static class NeoPlayerLoggedInProxyLow extends NeoPlayerLoggedInProxy {
+        static final NeoPlayerLoggedInProxyLow INSTANCE = new NeoPlayerLoggedInProxyLow();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOW, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
     }
 
-    public static class Lowest extends NeoPlayerLoggedInProxy {
-        static final Lowest INSTANCE = new Lowest();
+    public static class NeoPlayerLoggedInProxyLowest extends NeoPlayerLoggedInProxy {
+        static final NeoPlayerLoggedInProxyLowest INSTANCE = new NeoPlayerLoggedInProxyLowest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
     }

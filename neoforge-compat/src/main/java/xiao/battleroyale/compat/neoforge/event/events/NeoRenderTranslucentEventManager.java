@@ -22,11 +22,11 @@ public class NeoRenderTranslucentEventManager {
 
     private static AbstractNeoEventCommon getProxy(EventPriority priority) {
         return switch (priority) {
-            case HIGHEST -> Highest.INSTANCE;
-            case HIGH -> High.INSTANCE;
-            case NORMAL -> Normal.INSTANCE;
-            case LOW -> Low.INSTANCE;
-            case LOWEST -> Lowest.INSTANCE;
+            case HIGHEST -> NeoRenderTranslucentProxyHighest.INSTANCE;
+            case HIGH -> NeoRenderTranslucentProxyHigh.INSTANCE;
+            case NORMAL -> NeoRenderTranslucentProxyNormal.INSTANCE;
+            case LOW -> NeoRenderTranslucentProxyLow.INSTANCE;
+            case LOWEST -> NeoRenderTranslucentProxyLowest.INSTANCE;
         };
     }
 
@@ -55,32 +55,32 @@ public class NeoRenderTranslucentEventManager {
         }
     }
 
-    public static class Highest extends NeoRenderTranslucentProxy {
-        static final Highest INSTANCE = new Highest();
+    public static class NeoRenderTranslucentProxyHighest extends NeoRenderTranslucentProxy {
+        static final NeoRenderTranslucentProxyHighest INSTANCE = new NeoRenderTranslucentProxyHighest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGHEST, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent.AfterTranslucentBlocks e) { handle(e); }
     }
 
-    public static class High extends NeoRenderTranslucentProxy {
-        static final High INSTANCE = new High();
+    public static class NeoRenderTranslucentProxyHigh extends NeoRenderTranslucentProxy {
+        static final NeoRenderTranslucentProxyHigh INSTANCE = new NeoRenderTranslucentProxyHigh();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGH, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent.AfterTranslucentBlocks e) { handle(e); }
     }
 
-    public static class Normal extends NeoRenderTranslucentProxy {
-        static final Normal INSTANCE = new Normal();
+    public static class NeoRenderTranslucentProxyNormal extends NeoRenderTranslucentProxy {
+        static final NeoRenderTranslucentProxyNormal INSTANCE = new NeoRenderTranslucentProxyNormal();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.NORMAL, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent.AfterTranslucentBlocks e) { handle(e); }
     }
 
-    public static class Low extends NeoRenderTranslucentProxy {
-        static final Low INSTANCE = new Low();
+    public static class NeoRenderTranslucentProxyLow extends NeoRenderTranslucentProxy {
+        static final NeoRenderTranslucentProxyLow INSTANCE = new NeoRenderTranslucentProxyLow();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOW, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent.AfterTranslucentBlocks e) { handle(e); }
     }
 
-    public static class Lowest extends NeoRenderTranslucentProxy {
-        static final Lowest INSTANCE = new Lowest();
+    public static class NeoRenderTranslucentProxyLowest extends NeoRenderTranslucentProxy {
+        static final NeoRenderTranslucentProxyLowest INSTANCE = new NeoRenderTranslucentProxyLowest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent.AfterTranslucentBlocks e) { handle(e); }
     }
