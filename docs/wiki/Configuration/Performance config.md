@@ -116,7 +116,7 @@
 	"name": "Default performance",
 	"color": "#FFFFFF",
 	"generator": {
-		// LOOT GENERATOR ENTRY
+		LOOT GENERATOR ENTRY
 	}
 }
 ```
