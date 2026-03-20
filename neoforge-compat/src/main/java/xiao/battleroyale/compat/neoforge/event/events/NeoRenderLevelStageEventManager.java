@@ -22,11 +22,11 @@ public class NeoRenderLevelStageEventManager {
 
     private static AbstractNeoEventCommon getProxy(EventPriority priority) {
         return switch (priority) {
-            case HIGHEST -> Highest.INSTANCE;
-            case HIGH -> High.INSTANCE;
-            case NORMAL -> Normal.INSTANCE;
-            case LOW -> Low.INSTANCE;
-            case LOWEST -> Lowest.INSTANCE;
+            case HIGHEST -> NeoRenderLevelStageProxyHighest.INSTANCE;
+            case HIGH -> NeoRenderLevelStageProxyHigh.INSTANCE;
+            case NORMAL -> NeoRenderLevelStageProxyNormal.INSTANCE;
+            case LOW -> NeoRenderLevelStageProxyLow.INSTANCE;
+            case LOWEST -> NeoRenderLevelStageProxyLowest.INSTANCE;
         };
     }
 
@@ -55,32 +55,32 @@ public class NeoRenderLevelStageEventManager {
         }
     }
 
-    public static class Highest extends NeoRenderLevelStageProxy {
-        static final Highest INSTANCE = new Highest();
+    public static class NeoRenderLevelStageProxyHighest extends NeoRenderLevelStageProxy {
+        static final NeoRenderLevelStageProxyHighest INSTANCE = new NeoRenderLevelStageProxyHighest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGHEST, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
 
-    public static class High extends NeoRenderLevelStageProxy {
-        static final High INSTANCE = new High();
+    public static class NeoRenderLevelStageProxyHigh extends NeoRenderLevelStageProxy {
+        static final NeoRenderLevelStageProxyHigh INSTANCE = new NeoRenderLevelStageProxyHigh();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGH, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
 
-    public static class Normal extends NeoRenderLevelStageProxy {
-        static final Normal INSTANCE = new Normal();
+    public static class NeoRenderLevelStageProxyNormal extends NeoRenderLevelStageProxy {
+        static final NeoRenderLevelStageProxyNormal INSTANCE = new NeoRenderLevelStageProxyNormal();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.NORMAL, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
 
-    public static class Low extends NeoRenderLevelStageProxy {
-        static final Low INSTANCE = new Low();
+    public static class NeoRenderLevelStageProxyLow extends NeoRenderLevelStageProxy {
+        static final NeoRenderLevelStageProxyLow INSTANCE = new NeoRenderLevelStageProxyLow();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOW, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
 
-    public static class Lowest extends NeoRenderLevelStageProxy {
-        static final Lowest INSTANCE = new Lowest();
+    public static class NeoRenderLevelStageProxyLowest extends NeoRenderLevelStageProxy {
+        static final NeoRenderLevelStageProxyLowest INSTANCE = new NeoRenderLevelStageProxyLowest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }

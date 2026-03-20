@@ -22,11 +22,11 @@ public class NeoPlayerLoggedOutEventManager {
 
     private static AbstractNeoEventCommon getProxy(EventPriority priority) {
         return switch (priority) {
-            case HIGHEST -> Highest.INSTANCE;
-            case HIGH -> High.INSTANCE;
-            case NORMAL -> Normal.INSTANCE;
-            case LOW -> Low.INSTANCE;
-            case LOWEST -> Lowest.INSTANCE;
+            case HIGHEST -> NeoPlayerLoggedOutProxyHighest.INSTANCE;
+            case HIGH -> NeoPlayerLoggedOutProxyHigh.INSTANCE;
+            case NORMAL -> NeoPlayerLoggedOutProxyNormal.INSTANCE;
+            case LOW -> NeoPlayerLoggedOutProxyLow.INSTANCE;
+            case LOWEST -> NeoPlayerLoggedOutProxyLowest.INSTANCE;
         };
     }
 
@@ -55,32 +55,32 @@ public class NeoPlayerLoggedOutEventManager {
         }
     }
 
-    public static class Highest extends NeoPlayerLoggedOutProxy {
-        static final Highest INSTANCE = new Highest();
+    public static class NeoPlayerLoggedOutProxyHighest extends NeoPlayerLoggedOutProxy {
+        static final NeoPlayerLoggedOutProxyHighest INSTANCE = new NeoPlayerLoggedOutProxyHighest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGHEST, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedOutEvent e) { handle(e); }
     }
 
-    public static class High extends NeoPlayerLoggedOutProxy {
-        static final High INSTANCE = new High();
+    public static class NeoPlayerLoggedOutProxyHigh extends NeoPlayerLoggedOutProxy {
+        static final NeoPlayerLoggedOutProxyHigh INSTANCE = new NeoPlayerLoggedOutProxyHigh();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGH, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedOutEvent e) { handle(e); }
     }
 
-    public static class Normal extends NeoPlayerLoggedOutProxy {
-        static final Normal INSTANCE = new Normal();
+    public static class NeoPlayerLoggedOutProxyNormal extends NeoPlayerLoggedOutProxy {
+        static final NeoPlayerLoggedOutProxyNormal INSTANCE = new NeoPlayerLoggedOutProxyNormal();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.NORMAL, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedOutEvent e) { handle(e); }
     }
 
-    public static class Low extends NeoPlayerLoggedOutProxy {
-        static final Low INSTANCE = new Low();
+    public static class NeoPlayerLoggedOutProxyLow extends NeoPlayerLoggedOutProxy {
+        static final NeoPlayerLoggedOutProxyLow INSTANCE = new NeoPlayerLoggedOutProxyLow();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOW, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedOutEvent e) { handle(e); }
     }
 
-    public static class Lowest extends NeoPlayerLoggedOutProxy {
-        static final Lowest INSTANCE = new Lowest();
+    public static class NeoPlayerLoggedOutProxyLowest extends NeoPlayerLoggedOutProxy {
+        static final NeoPlayerLoggedOutProxyLowest INSTANCE = new NeoPlayerLoggedOutProxyLowest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedOutEvent e) { handle(e); }
     }

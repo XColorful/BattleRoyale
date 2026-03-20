@@ -22,11 +22,11 @@ public class NeoLivingHurtEventManager {
 
     private static AbstractNeoEventCommon getProxy(EventPriority priority) {
         return switch (priority) {
-            case HIGHEST -> Highest.INSTANCE;
-            case HIGH -> High.INSTANCE;
-            case NORMAL -> Normal.INSTANCE;
-            case LOW -> Low.INSTANCE;
-            case LOWEST -> Lowest.INSTANCE;
+            case HIGHEST -> NeoLivingHurtProxyHighest.INSTANCE;
+            case HIGH -> NeoLivingHurtProxyHigh.INSTANCE;
+            case NORMAL -> NeoLivingHurtProxyNormal.INSTANCE;
+            case LOW -> NeoLivingHurtProxyLow.INSTANCE;
+            case LOWEST -> NeoLivingHurtProxyLowest.INSTANCE;
         };
     }
 
@@ -42,32 +42,32 @@ public class NeoLivingHurtEventManager {
         protected void handle(LivingHurtEvent event) { super.onEvent(event); }
     }
 
-    public static class Highest extends NeoLivingHurtProxy {
-        static final Highest INSTANCE = new Highest();
+    public static class NeoLivingHurtProxyHighest extends NeoLivingHurtProxy {
+        static final NeoLivingHurtProxyHighest INSTANCE = new NeoLivingHurtProxyHighest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGHEST, receiveCanceled = true)
         public void onEvent(LivingHurtEvent e) { handle(e); }
     }
 
-    public static class High extends NeoLivingHurtProxy {
-        static final High INSTANCE = new High();
+    public static class NeoLivingHurtProxyHigh extends NeoLivingHurtProxy {
+        static final NeoLivingHurtProxyHigh INSTANCE = new NeoLivingHurtProxyHigh();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGH, receiveCanceled = true)
         public void onEvent(LivingHurtEvent e) { handle(e); }
     }
 
-    public static class Normal extends NeoLivingHurtProxy {
-        static final Normal INSTANCE = new Normal();
+    public static class NeoLivingHurtProxyNormal extends NeoLivingHurtProxy {
+        static final NeoLivingHurtProxyNormal INSTANCE = new NeoLivingHurtProxyNormal();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.NORMAL, receiveCanceled = true)
         public void onEvent(LivingHurtEvent e) { handle(e); }
     }
 
-    public static class Low extends NeoLivingHurtProxy {
-        static final Low INSTANCE = new Low();
+    public static class NeoLivingHurtProxyLow extends NeoLivingHurtProxy {
+        static final NeoLivingHurtProxyLow INSTANCE = new NeoLivingHurtProxyLow();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOW, receiveCanceled = true)
         public void onEvent(LivingHurtEvent e) { handle(e); }
     }
 
-    public static class Lowest extends NeoLivingHurtProxy {
-        static final Lowest INSTANCE = new Lowest();
+    public static class NeoLivingHurtProxyLowest extends NeoLivingHurtProxy {
+        static final NeoLivingHurtProxyLowest INSTANCE = new NeoLivingHurtProxyLowest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST, receiveCanceled = true)
         public void onEvent(LivingHurtEvent e) { handle(e); }
     }
