@@ -22,11 +22,11 @@ public class ClientTickEventManager {
 
     private static AbstractEventCommon getProxy(EventPriority priority) {
         return switch (priority) {
-            case HIGHEST -> Highest.INSTANCE;
-            case HIGH -> High.INSTANCE;
-            case NORMAL -> Normal.INSTANCE;
-            case LOW -> Low.INSTANCE;
-            case LOWEST -> Lowest.INSTANCE;
+            case HIGHEST -> ClientTickProxyHighest.INSTANCE;
+            case HIGH -> ClientTickProxyHigh.INSTANCE;
+            case NORMAL -> ClientTickProxyNormal.INSTANCE;
+            case LOW -> ClientTickProxyLow.INSTANCE;
+            case LOWEST -> ClientTickProxyLowest.INSTANCE;
         };
     }
 
@@ -57,32 +57,32 @@ public class ClientTickEventManager {
         }
     }
 
-    public static class Highest extends ClientTickProxy {
-        static final Highest INSTANCE = new Highest();
+    public static class ClientTickProxyHighest extends ClientTickProxy {
+        static final ClientTickProxyHighest INSTANCE = new ClientTickProxyHighest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGHEST, receiveCanceled = true)
         public void onEvent(TickEvent.ClientTickEvent e) { handle(e); }
     }
 
-    public static class High extends ClientTickProxy {
-        static final High INSTANCE = new High();
+    public static class ClientTickProxyHigh extends ClientTickProxy {
+        static final ClientTickProxyHigh INSTANCE = new ClientTickProxyHigh();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGH, receiveCanceled = true)
         public void onEvent(TickEvent.ClientTickEvent e) { handle(e); }
     }
 
-    public static class Normal extends ClientTickProxy {
-        static final Normal INSTANCE = new Normal();
+    public static class ClientTickProxyNormal extends ClientTickProxy {
+        static final ClientTickProxyNormal INSTANCE = new ClientTickProxyNormal();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.NORMAL, receiveCanceled = true)
         public void onEvent(TickEvent.ClientTickEvent e) { handle(e); }
     }
 
-    public static class Low extends ClientTickProxy {
-        static final Low INSTANCE = new Low();
+    public static class ClientTickProxyLow extends ClientTickProxy {
+        static final ClientTickProxyLow INSTANCE = new ClientTickProxyLow();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOW, receiveCanceled = true)
         public void onEvent(TickEvent.ClientTickEvent e) { handle(e); }
     }
 
-    public static class Lowest extends ClientTickProxy {
-        static final Lowest INSTANCE = new Lowest();
+    public static class ClientTickProxyLowest extends ClientTickProxy {
+        static final ClientTickProxyLowest INSTANCE = new ClientTickProxyLowest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST, receiveCanceled = true)
         public void onEvent(TickEvent.ClientTickEvent e) { handle(e); }
     }
