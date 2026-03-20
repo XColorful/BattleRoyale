@@ -68,6 +68,7 @@
 		- [Particle config](https://github.com/XColorful/BattleRoyale/wiki/Particle-config#English)
 		- [Render](https://github.com/XColorful/BattleRoyale/wiki/Render-config#English)
 		- [Display](https://github.com/XColorful/BattleRoyale/wiki/Display-config#English)
+		- [Function](https://github.com/XColorful/BattleRoyale/wiki/Function-config#English)
 		- [Performance](https://github.com/XColorful/BattleRoyale/wiki/Performance-config#English)
 		- [Profile](https://github.com/XColorful/BattleRoyale/wiki/Profile-config#English)
 		- [Utility](https://github.com/XColorful/BattleRoyale/wiki/Utility-config#English)
