@@ -22,11 +22,11 @@ public class PlayerLoggedOutEventManager {
 
     private static AbstractEventCommon getProxy(EventPriority priority) {
         return switch (priority) {
-            case HIGHEST -> Highest.INSTANCE;
-            case HIGH -> High.INSTANCE;
-            case NORMAL -> Normal.INSTANCE;
-            case LOW -> Low.INSTANCE;
-            case LOWEST -> Lowest.INSTANCE;
+            case HIGHEST -> PlayerLoggedOutProxyHighest.INSTANCE;
+            case HIGH -> PlayerLoggedOutProxyHigh.INSTANCE;
+            case NORMAL -> PlayerLoggedOutProxyNormal.INSTANCE;
+            case LOW -> PlayerLoggedOutProxyLow.INSTANCE;
+            case LOWEST -> PlayerLoggedOutProxyLowest.INSTANCE;
         };
     }
 
@@ -55,32 +55,32 @@ public class PlayerLoggedOutEventManager {
         }
     }
 
-    public static class Highest extends PlayerLoggedOutProxy {
-        static final Highest INSTANCE = new Highest();
+    public static class PlayerLoggedOutProxyHighest extends PlayerLoggedOutProxy {
+        static final PlayerLoggedOutProxyHighest INSTANCE = new PlayerLoggedOutProxyHighest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGHEST, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedOutEvent e) { handle(e); }
     }
 
-    public static class High extends PlayerLoggedOutProxy {
-        static final High INSTANCE = new High();
+    public static class PlayerLoggedOutProxyHigh extends PlayerLoggedOutProxy {
+        static final PlayerLoggedOutProxyHigh INSTANCE = new PlayerLoggedOutProxyHigh();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGH, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedOutEvent e) { handle(e); }
     }
 
-    public static class Normal extends PlayerLoggedOutProxy {
-        static final Normal INSTANCE = new Normal();
+    public static class PlayerLoggedOutProxyNormal extends PlayerLoggedOutProxy {
+        static final PlayerLoggedOutProxyNormal INSTANCE = new PlayerLoggedOutProxyNormal();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.NORMAL, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedOutEvent e) { handle(e); }
     }
 
-    public static class Low extends PlayerLoggedOutProxy {
-        static final Low INSTANCE = new Low();
+    public static class PlayerLoggedOutProxyLow extends PlayerLoggedOutProxy {
+        static final PlayerLoggedOutProxyLow INSTANCE = new PlayerLoggedOutProxyLow();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOW, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedOutEvent e) { handle(e); }
     }
 
-    public static class Lowest extends PlayerLoggedOutProxy {
-        static final Lowest INSTANCE = new Lowest();
+    public static class PlayerLoggedOutProxyLowest extends PlayerLoggedOutProxy {
+        static final PlayerLoggedOutProxyLowest INSTANCE = new PlayerLoggedOutProxyLowest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedOutEvent e) { handle(e); }
     }

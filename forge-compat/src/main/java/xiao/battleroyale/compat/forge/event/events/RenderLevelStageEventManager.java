@@ -22,11 +22,11 @@ public class RenderLevelStageEventManager {
 
     private static AbstractEventCommon getProxy(EventPriority priority) {
         return switch (priority) {
-            case HIGHEST -> Highest.INSTANCE;
-            case HIGH -> High.INSTANCE;
-            case NORMAL -> Normal.INSTANCE;
-            case LOW -> Low.INSTANCE;
-            case LOWEST -> Lowest.INSTANCE;
+            case HIGHEST -> RenderLevelStageProxyHighest.INSTANCE;
+            case HIGH -> RenderLevelStageProxyHigh.INSTANCE;
+            case NORMAL -> RenderLevelStageProxyNormal.INSTANCE;
+            case LOW -> RenderLevelStageProxyLow.INSTANCE;
+            case LOWEST -> RenderLevelStageProxyLowest.INSTANCE;
         };
     }
 
@@ -55,32 +55,32 @@ public class RenderLevelStageEventManager {
         }
     }
 
-    public static class Highest extends RenderLevelStageProxy {
-        static final Highest INSTANCE = new Highest();
+    public static class RenderLevelStageProxyHighest extends RenderLevelStageProxy {
+        static final RenderLevelStageProxyHighest INSTANCE = new RenderLevelStageProxyHighest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGHEST, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
 
-    public static class High extends RenderLevelStageProxy {
-        static final High INSTANCE = new High();
+    public static class RenderLevelStageProxyHigh extends RenderLevelStageProxy {
+        static final RenderLevelStageProxyHigh INSTANCE = new RenderLevelStageProxyHigh();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGH, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
 
-    public static class Normal extends RenderLevelStageProxy {
-        static final Normal INSTANCE = new Normal();
+    public static class RenderLevelStageProxyNormal extends RenderLevelStageProxy {
+        static final RenderLevelStageProxyNormal INSTANCE = new RenderLevelStageProxyNormal();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.NORMAL, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
 
-    public static class Low extends RenderLevelStageProxy {
-        static final Low INSTANCE = new Low();
+    public static class RenderLevelStageProxyLow extends RenderLevelStageProxy {
+        static final RenderLevelStageProxyLow INSTANCE = new RenderLevelStageProxyLow();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOW, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
 
-    public static class Lowest extends RenderLevelStageProxy {
-        static final Lowest INSTANCE = new Lowest();
+    public static class RenderLevelStageProxyLowest extends RenderLevelStageProxy {
+        static final RenderLevelStageProxyLowest INSTANCE = new RenderLevelStageProxyLowest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST, receiveCanceled = true)
         public void onEvent(RenderLevelStageEvent e) { handle(e); }
     }
