@@ -22,11 +22,11 @@ public class LivingDeathEventManager {
 
     private static AbstractEventCommon getProxy(EventPriority priority) {
         return switch (priority) {
-            case HIGHEST -> Highest.INSTANCE;
-            case HIGH -> High.INSTANCE;
-            case NORMAL -> Normal.INSTANCE;
-            case LOW -> Low.INSTANCE;
-            case LOWEST -> Lowest.INSTANCE;
+            case HIGHEST -> LivingDeathProxyHighest.INSTANCE;
+            case HIGH -> LivingDeathProxyHigh.INSTANCE;
+            case NORMAL -> LivingDeathProxyNormal.INSTANCE;
+            case LOW -> LivingDeathProxyLow.INSTANCE;
+            case LOWEST -> LivingDeathProxyLowest.INSTANCE;
         };
     }
 
@@ -55,32 +55,32 @@ public class LivingDeathEventManager {
         }
     }
 
-    public static class Highest extends LivingDeathProxy {
-        static final Highest INSTANCE = new Highest();
+    public static class LivingDeathProxyHighest extends LivingDeathProxy {
+        static final LivingDeathProxyHighest INSTANCE = new LivingDeathProxyHighest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGHEST, receiveCanceled = true)
         public void onEvent(LivingDeathEvent e) { handle(e); }
     }
 
-    public static class High extends LivingDeathProxy {
-        static final High INSTANCE = new High();
+    public static class LivingDeathProxyHigh extends LivingDeathProxy {
+        static final LivingDeathProxyHigh INSTANCE = new LivingDeathProxyHigh();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGH, receiveCanceled = true)
         public void onEvent(LivingDeathEvent e) { handle(e); }
     }
 
-    public static class Normal extends LivingDeathProxy {
-        static final Normal INSTANCE = new Normal();
+    public static class LivingDeathProxyNormal extends LivingDeathProxy {
+        static final LivingDeathProxyNormal INSTANCE = new LivingDeathProxyNormal();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.NORMAL, receiveCanceled = true)
         public void onEvent(LivingDeathEvent e) { handle(e); }
     }
 
-    public static class Low extends LivingDeathProxy {
-        static final Low INSTANCE = new Low();
+    public static class LivingDeathProxyLow extends LivingDeathProxy {
+        static final LivingDeathProxyLow INSTANCE = new LivingDeathProxyLow();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOW, receiveCanceled = true)
         public void onEvent(LivingDeathEvent e) { handle(e); }
     }
 
-    public static class Lowest extends LivingDeathProxy {
-        static final Lowest INSTANCE = new Lowest();
+    public static class LivingDeathProxyLowest extends LivingDeathProxy {
+        static final LivingDeathProxyLowest INSTANCE = new LivingDeathProxyLowest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST, receiveCanceled = true)
         public void onEvent(LivingDeathEvent e) { handle(e); }
     }
