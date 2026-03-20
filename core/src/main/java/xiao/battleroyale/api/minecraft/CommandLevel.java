@@ -14,7 +14,7 @@ public class CommandLevel {
     }
 
     public static Predicate<CommandSourceStack> hasPermission(int level) {
-        return source -> source.hasPermission(level);
+        return source -> hasPermission(source, level);
     }
 
     /**
