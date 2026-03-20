@@ -22,11 +22,11 @@ public class NeoRenderGuiEventManager {
 
     private static AbstractNeoEventCommon getProxy(EventPriority priority) {
         return switch (priority) {
-            case HIGHEST -> Highest.INSTANCE;
-            case HIGH -> High.INSTANCE;
-            case NORMAL -> Normal.INSTANCE;
-            case LOW -> Low.INSTANCE;
-            case LOWEST -> Lowest.INSTANCE;
+            case HIGHEST -> NeoRenderGuiProxyHighest.INSTANCE;
+            case HIGH -> NeoRenderGuiProxyHigh.INSTANCE;
+            case NORMAL -> NeoRenderGuiProxyNormal.INSTANCE;
+            case LOW -> NeoRenderGuiProxyLow.INSTANCE;
+            case LOWEST -> NeoRenderGuiProxyLowest.INSTANCE;
         };
     }
 
@@ -55,32 +55,32 @@ public class NeoRenderGuiEventManager {
         }
     }
 
-    public static class Highest extends NeoRenderGuiProxy {
-        static final Highest INSTANCE = new Highest();
+    public static class NeoRenderGuiProxyHighest extends NeoRenderGuiProxy {
+        static final NeoRenderGuiProxyHighest INSTANCE = new NeoRenderGuiProxyHighest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGHEST, receiveCanceled = true)
         public void onEvent(RenderGuiEvent.Post e) { handle(e); }
     }
 
-    public static class High extends NeoRenderGuiProxy {
-        static final High INSTANCE = new High();
+    public static class NeoRenderGuiProxyHigh extends NeoRenderGuiProxy {
+        static final NeoRenderGuiProxyHigh INSTANCE = new NeoRenderGuiProxyHigh();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGH, receiveCanceled = true)
         public void onEvent(RenderGuiEvent.Post e) { handle(e); }
     }
 
-    public static class Normal extends NeoRenderGuiProxy {
-        static final Normal INSTANCE = new Normal();
+    public static class NeoRenderGuiProxyNormal extends NeoRenderGuiProxy {
+        static final NeoRenderGuiProxyNormal INSTANCE = new NeoRenderGuiProxyNormal();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.NORMAL, receiveCanceled = true)
         public void onEvent(RenderGuiEvent.Post e) { handle(e); }
     }
 
-    public static class Low extends NeoRenderGuiProxy {
-        static final Low INSTANCE = new Low();
+    public static class NeoRenderGuiProxyLow extends NeoRenderGuiProxy {
+        static final NeoRenderGuiProxyLow INSTANCE = new NeoRenderGuiProxyLow();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOW, receiveCanceled = true)
         public void onEvent(RenderGuiEvent.Post e) { handle(e); }
     }
 
-    public static class Lowest extends NeoRenderGuiProxy {
-        static final Lowest INSTANCE = new Lowest();
+    public static class NeoRenderGuiProxyLowest extends NeoRenderGuiProxy {
+        static final NeoRenderGuiProxyLowest INSTANCE = new NeoRenderGuiProxyLowest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST, receiveCanceled = true)
         public void onEvent(RenderGuiEvent.Post e) { handle(e); }
     }
