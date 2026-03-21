@@ -80,7 +80,7 @@
 ### 游戏刷新设置
 
 - maxGameTickLootChunk：每tick最多刷新的区块数，范围[5, 100000]
-- maxLootDistance：最远刷新区块的曼哈顿（区块）距离，范围[3, 128]
+- maxLootDistance：最远刷新区块的曼哈顿距离，范围[3, 128]
 - bfsTolerantCenterDistance：中心容忍距离，使玩家在上次刷新位置一定范围内不立即完整刷新，范围[0, 10]
 - maxCachedCenter：缓存记录的中心数量，达到上限自动清理30%，范围[0, 50000]
 - maxQueuedChunk：最大待处理区块数，范围[100, 200000]
@@ -183,11 +183,11 @@
 ### In-game loot Settings
 
 - maxGameTickLootChunk: The maximum number of chunks to loot per tick, with a range of [5, 100000]
-- maxLootDistance: The maximum Manhattan (chunk) distance for refreshing, with a range of [3, 128]
+- maxLootDistance: The maximum Manhattan chunk distance for generation, with a range of [3, 128]
 - bfsTolerantCenterDistance: The tolerant center distance for BFS, which prevents a full refresh for players within a certain range of their last refresh location, with a range of [0, 10]
 - maxCachedCenter: The maximum number of cached center chunks. When the limit is reached, 30% are automatically cleared. The range is [0, 50000]
 - maxQueuedChunk: The maximum number of chunks in the queue waiting to be processed, with a range of [100, 200000]
-- bfsFrequency: The frequency of a full loot, with a range of [100, 2147483647]
+- bfsFrequency: The frequency of a full generation, with a range of [100, 2147483647]
 - instantNextBfs: Determines whether to start the next loot immediately if the current one finishes within the bfsFrequency
 - maxCachedLootChunk: The maximum number of processed chunks to cache, with a range of [100, 300000]
 - cleanCachedChunk: The number of cached chunks to remove during cleanup, with a range of [10, 10000].
