@@ -51,6 +51,7 @@
 - `返回值`：当前剩余的[自动重开游戏次数](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config#游戏配置)
 
 #### 游戏功能
+> _IGameFunc_
 
 ##### 发送观战消息
 > _/battleroyale api gameManager sendGameSpectateMessage [player]_
@@ -200,6 +201,7 @@ Saves the [Global offset](https://github.com/XColorful/BattleRoyale/wiki/Game-co
 - `return value`: current remaining [automatic game restarts](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config#Game-config)
 
 #### Game functions
+> _IGameFunc_
 
 ##### Send spectate message
 > _/battleroyale api gameManager sendGameSpectateMessage [player]_
@@ -221,7 +223,7 @@ Forcefully increases game time by 1 tick and processes it:
 - `return value`: 1
 
 #### Game status setter
-_IGameStatusSetter_
+> _IGameStatusSetter_
 
 ##### Add finish check after death event
 > _/battleroyale api gameManager addFinishCheckAfterDeathEvent_
