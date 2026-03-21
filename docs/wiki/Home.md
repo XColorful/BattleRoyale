@@ -66,6 +66,13 @@
 - [临时数据](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command)
 - [PUBGMC兼容](https://github.com/XColorful/BattleRoyale/wiki/PUBGMC-compatibility)
 
+### API指令
+
+- [API指令](https://github.com/XColorful/BattleRoyale/wiki/API-command)
+	- [算法API指令](https://github.com/XColorful/BattleRoyale/wiki/Algorithm-API-command)
+	- [游戏API指令](https://github.com/XColorful/BattleRoyale/wiki/Game-API-command)
+	- [函数API指令](https://github.com/XColorful/BattleRoyale/wiki/Function-API-command)
+
 ## 游戏类型
 
 [游戏类型说明](https://github.com/XColorful/BattleRoyale/wiki/Game-type-introduction)
@@ -174,6 +181,13 @@
 - [Utility](https://github.com/XColorful/BattleRoyale/wiki/Utility-command#English)
 - [Temporary data](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#English)
 - [PUBGMC compatibility](https://github.com/XColorful/BattleRoyale/wiki/PUBGMC-compatibility#English)
+
+### API command
+
+- [API command](https://github.com/XColorful/BattleRoyale/wiki/API-command#English)
+	- [Algorithm API command](https://github.com/XColorful/BattleRoyale/wiki/Algorithm-API-command#English)
+	- [Game API command](https://github.com/XColorful/BattleRoyale/wiki/Game-API-command#English)
+	- [Function API command](https://github.com/XColorful/BattleRoyale/wiki/Function-API-command#English)
 
 ## Game type
 
