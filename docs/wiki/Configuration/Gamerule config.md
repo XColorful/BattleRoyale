@@ -40,7 +40,7 @@
 - aiEnemy：是否允许人机敌人
 - requiredTeamToStart：开始大逃杀游戏需要的队伍数量
 - maxGameTime：最大游戏时长
-- winnerTeamTotal：队伍数量小于等于该值时大逃杀游戏结束
+- winnerTeamTotal：获胜队伍总数，队伍数量小于等于该值时大逃杀游戏结束
 - lobbyCenter：大厅坐标
 - lobbyDimension：大厅的规模，以lobbyCenter为中心向x、y、z正负方向扩展，最终为长方体
 - lobbyMuteki：大厅内是否无敌，对未被淘汰的玩家无效
@@ -276,7 +276,7 @@
 - aiEnemy: whether AI enemies are allowed
 - requiredTeamToStart: the number of teams required to start BattleRoyale
 - maxGameTime: maximum BattleRoyale game time
-- winnerTeamTotal: the BattleRoyale ends when the number of teams is less than or equal to this value
+- winnerTeamTotal: total number of winner teams, the BattleRoyale ends when the number of teams is less than or equal to this value
 - lobbyCenter: lobby coordinates
 - lobbyDimension: the size of the lobby, which expands in the positive and negative directions of x, y, and z with lobbyCenter as the center, and finally becomes a rectangular block
 - lobbyMuteki: whether player is invulnerable in lobby, has no effect on not eliminated game player
