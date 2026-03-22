@@ -87,5 +87,3 @@ This mod is designed to create game modes with **highly customizable and extreme
 - PlayerRevive: Sets the number of downs and adds consistent health loss for non-eliminated game players.
 - Optional PUBGMC Command Compatibility: Allows command blocks using PUBGMC commands to work without modification.
 - TaCZ: Provides out-of-the-box loot configuration example, and can disables guns in the PlayerRevive downed state
-
-## 

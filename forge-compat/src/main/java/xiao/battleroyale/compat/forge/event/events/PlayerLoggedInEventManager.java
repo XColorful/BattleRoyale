@@ -22,11 +22,11 @@ public class PlayerLoggedInEventManager {
 
     private static AbstractEventCommon getProxy(EventPriority priority) {
         return switch (priority) {
-            case HIGHEST -> Highest.INSTANCE;
-            case HIGH -> High.INSTANCE;
-            case NORMAL -> Normal.INSTANCE;
-            case LOW -> Low.INSTANCE;
-            case LOWEST -> Lowest.INSTANCE;
+            case HIGHEST -> PlayerLoggedInProxyHighest.INSTANCE;
+            case HIGH -> PlayerLoggedInProxyHigh.INSTANCE;
+            case NORMAL -> PlayerLoggedInProxyNormal.INSTANCE;
+            case LOW -> PlayerLoggedInProxyLow.INSTANCE;
+            case LOWEST -> PlayerLoggedInProxyLowest.INSTANCE;
         };
     }
 
@@ -55,32 +55,32 @@ public class PlayerLoggedInEventManager {
         }
     }
 
-    public static class Highest extends PlayerLoggedInProxy {
-        static final Highest INSTANCE = new Highest();
+    public static class PlayerLoggedInProxyHighest extends PlayerLoggedInProxy {
+        static final PlayerLoggedInProxyHighest INSTANCE = new PlayerLoggedInProxyHighest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGHEST, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
     }
 
-    public static class High extends PlayerLoggedInProxy {
-        static final High INSTANCE = new High();
+    public static class PlayerLoggedInProxyHigh extends PlayerLoggedInProxy {
+        static final PlayerLoggedInProxyHigh INSTANCE = new PlayerLoggedInProxyHigh();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGH, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
     }
 
-    public static class Normal extends PlayerLoggedInProxy {
-        static final Normal INSTANCE = new Normal();
+    public static class PlayerLoggedInProxyNormal extends PlayerLoggedInProxy {
+        static final PlayerLoggedInProxyNormal INSTANCE = new PlayerLoggedInProxyNormal();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.NORMAL, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
     }
 
-    public static class Low extends PlayerLoggedInProxy {
-        static final Low INSTANCE = new Low();
+    public static class PlayerLoggedInProxyLow extends PlayerLoggedInProxy {
+        static final PlayerLoggedInProxyLow INSTANCE = new PlayerLoggedInProxyLow();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOW, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
     }
 
-    public static class Lowest extends PlayerLoggedInProxy {
-        static final Lowest INSTANCE = new Lowest();
+    public static class PlayerLoggedInProxyLowest extends PlayerLoggedInProxy {
+        static final PlayerLoggedInProxyLowest INSTANCE = new PlayerLoggedInProxyLowest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST, receiveCanceled = true)
         public void onEvent(PlayerEvent.PlayerLoggedInEvent e) { handle(e); }
     }

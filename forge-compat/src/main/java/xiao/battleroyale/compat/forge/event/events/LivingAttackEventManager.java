@@ -22,11 +22,11 @@ public class LivingAttackEventManager {
 
     private static AbstractEventCommon getProxy(EventPriority priority) {
         return switch (priority) {
-            case HIGHEST -> Highest.INSTANCE;
-            case HIGH -> High.INSTANCE;
-            case NORMAL -> Normal.INSTANCE;
-            case LOW -> Low.INSTANCE;
-            case LOWEST -> Lowest.INSTANCE;
+            case HIGHEST -> LivingAttackProxyHighest.INSTANCE;
+            case HIGH -> LivingAttackProxyHigh.INSTANCE;
+            case NORMAL -> LivingAttackProxyNormal.INSTANCE;
+            case LOW -> LivingAttackProxyLow.INSTANCE;
+            case LOWEST -> LivingAttackProxyLowest.INSTANCE;
         };
     }
 
@@ -42,32 +42,32 @@ public class LivingAttackEventManager {
         protected void handle(LivingAttackEvent event) { super.onEvent(event); }
     }
 
-    public static class Highest extends LivingAttackProxy {
-        static final Highest INSTANCE = new Highest();
+    public static class LivingAttackProxyHighest extends LivingAttackProxy {
+        static final LivingAttackProxyHighest INSTANCE = new LivingAttackProxyHighest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGHEST, receiveCanceled = true)
         public void onEvent(LivingAttackEvent e) { handle(e); }
     }
 
-    public static class High extends LivingAttackProxy {
-        static final High INSTANCE = new High();
+    public static class LivingAttackProxyHigh extends LivingAttackProxy {
+        static final LivingAttackProxyHigh INSTANCE = new LivingAttackProxyHigh();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGH, receiveCanceled = true)
         public void onEvent(LivingAttackEvent e) { handle(e); }
     }
 
-    public static class Normal extends LivingAttackProxy {
-        static final Normal INSTANCE = new Normal();
+    public static class LivingAttackProxyNormal extends LivingAttackProxy {
+        static final LivingAttackProxyNormal INSTANCE = new LivingAttackProxyNormal();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.NORMAL, receiveCanceled = true)
         public void onEvent(LivingAttackEvent e) { handle(e); }
     }
 
-    public static class Low extends LivingAttackProxy {
-        static final Low INSTANCE = new Low();
+    public static class LivingAttackProxyLow extends LivingAttackProxy {
+        static final LivingAttackProxyLow INSTANCE = new LivingAttackProxyLow();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOW, receiveCanceled = true)
         public void onEvent(LivingAttackEvent e) { handle(e); }
     }
 
-    public static class Lowest extends LivingAttackProxy {
-        static final Lowest INSTANCE = new Lowest();
+    public static class LivingAttackProxyLowest extends LivingAttackProxy {
+        static final LivingAttackProxyLowest INSTANCE = new LivingAttackProxyLowest();
         @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST, receiveCanceled = true)
         public void onEvent(LivingAttackEvent e) { handle(e); }
     }
