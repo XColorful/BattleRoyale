@@ -7,8 +7,10 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
@@ -47,6 +49,7 @@ public class TeamManagerCommand {
                 .then(Commands.literal(GET_GAME_PLAYER)
                         .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
                                 .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
+                                        .suggests(DETAIL_LEVEL_SUGGESTS)
                                         .then(Commands.literal(BY_PLAYER)
                                                 .then(Commands.argument(PLAYER, EntityArgument.entity())
                                                         .executes(TeamManagerCommand::getGamePlayerByPlayer)
@@ -81,6 +84,7 @@ public class TeamManagerCommand {
                 .then(Commands.literal(GET_GAME_TEAM)
                         .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
                                 .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
+                                        .suggests(DETAIL_LEVEL_SUGGESTS)
                                         .then(Commands.literal(BY_PLAYER)
                                                 .then(Commands.argument(PLAYER, EntityArgument.entity())
                                                         .executes(TeamManagerCommand::getGameTeamByPlayer)
@@ -98,6 +102,7 @@ public class TeamManagerCommand {
                 .then(Commands.literal(GET_GAME_PLAYERS)
                         .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
                                 .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
+                                        .suggests(DETAIL_LEVEL_SUGGESTS)
                                         .executes(TeamManagerCommand::getGamePlayers)
                                 )
                         )
@@ -106,6 +111,7 @@ public class TeamManagerCommand {
                 .then(Commands.literal(GET_GAME_TEAMS)
                         .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
                                 .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
+                                        .suggests(DETAIL_LEVEL_SUGGESTS)
                                         .executes(TeamManagerCommand::getGameTeams)
                                 )
                         )
@@ -114,6 +120,7 @@ public class TeamManagerCommand {
                 .then(Commands.literal(GET_STANDING_GAME_PLAYERS)
                         .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
                                 .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
+                                        .suggests(DETAIL_LEVEL_SUGGESTS)
                                         .executes(TeamManagerCommand::getStandingGamePlayers)
                                 )
                         )
@@ -122,6 +129,7 @@ public class TeamManagerCommand {
                 .then(Commands.literal(GET_STANDING_GAME_TEAMS)
                         .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
                                 .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
+                                        .suggests(DETAIL_LEVEL_SUGGESTS)
                                         .executes(TeamManagerCommand::getStandingGameTeams)
                                 )
                         )
@@ -174,6 +182,14 @@ public class TeamManagerCommand {
                 // IVanillaTeam
                 .then(Commands.literal(CLEAR_VANILLA_TEAM).executes(TeamManagerCommand::clearVanillaTeam));
     }
+
+    private static final SuggestionProvider<CommandSourceStack> DETAIL_LEVEL_SUGGESTS = (context, builder) ->
+            SharedSuggestionProvider.suggest(new String[]{
+                    "0", // basic
+                    "1", // simple
+                    "2", // game
+                    "3" // full
+            }, builder);
 
     // --------ITeamManager--------
 
