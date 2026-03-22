@@ -10,8 +10,13 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.NbtPathArgument;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.storage.CommandStorage;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.*;
@@ -29,8 +34,10 @@ public class GameManagerCommand {
                 .then(Commands.literal(GET_GAME_TIME).executes(GameManagerCommand::getGameTime))
                 .then(Commands.literal(IS_IN_GAME).executes(GameManagerCommand::isInGame))
                 .then(Commands.literal(GET_GLOBAL_CENTER_OFFSET)
-                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
-                                .executes(GameManagerCommand::getGlobalCenterOffset)
+                        .then(Commands.argument(RESOURCE_LOCATION, ResourceLocationArgument.id())
+                                .then(Commands.argument(STORAGE_PATH, NbtPathArgument.nbtPath())
+                                        .executes(GameManagerCommand::getGlobalCenterOffset)
+                                )
                         )
                 )
                 .then(Commands.literal(GET_MAX_GAME_TIME).executes(GameManagerCommand::getMaxGameTime))
@@ -114,11 +121,14 @@ public class GameManagerCommand {
         IGameInfoGetter gameManager = BattleRoyale.getGameManager();
         return gameManager.isInGame() ? Command.SINGLE_SUCCESS : 0;
     }
-    private static int getGlobalCenterOffset(CommandContext<CommandSourceStack> context) {
-        IGameInfoGetter gameManager = BattleRoyale.getGameManager();
-        context.getSource().getServer().getCommandStorage().set(
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
-                NBTUtils.buildVec3Nbt(gameManager.getGlobalCenterOffset()));
+    private static int getGlobalCenterOffset(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ResourceLocation storageId = ResourceLocationArgument.getId(context, RESOURCE_LOCATION);
+        CommandStorage storage = context.getSource().getServer().getCommandStorage();
+        CompoundTag compoundtag = storage.get(storageId);
+        NbtPathArgument.NbtPath path = NbtPathArgument.getPath(context, STORAGE_PATH);
+        path.getOrCreate(compoundtag, CompoundTag::new);
+        path.set(compoundtag, NBTUtils.buildVec3Nbt(BattleRoyale.getGameManager().getGlobalCenterOffset()));
+        storage.set(storageId, compoundtag);
         return Command.SINGLE_SUCCESS;
     }
     private static int getMaxGameTime(CommandContext<CommandSourceStack> context) {
