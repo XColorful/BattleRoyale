@@ -62,7 +62,7 @@ customEventRegister.register(handler, customEventType, priority, receiveCanceled
 #### 注册模组事件处理器
 
  ```java
- EventRegister eventRegister = xiao.battleroyale.event.EventRegister.get(); // 模组事件注册API
+ EventRegister eventRegister = xiao.battleroyale.BattleRoyale.getEventRegister(); // 模组事件注册API
  EventHandler handler; // 模组事件处理器
  IEventType eventType; // 模组事件类型
  Priority priority; // 事件优先级
@@ -132,7 +132,7 @@ customEventRegister.register(handler, customEventType, priority, receiveCanceled
 #### Register mod event handler
 
  ```java
- EventRegister eventRegister = xiao.battleroyale.event.EventRegister.get(); // Mod event registration API
+ EventRegister eventRegister = xiao.battleroyale.BattleRoyale.getEventRegister(); // Mod event registration API
  EventHandler handler; // Mod event handler
  IEventType eventType; // Mod event type
  Priority priority; // Event priority

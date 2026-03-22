@@ -13,7 +13,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.common.game.team.GamePlayer;
-import xiao.battleroyale.event.EventRegister;
 import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.WorldUtils;
 
@@ -34,8 +33,7 @@ public abstract class TeleportScheduler<T> implements IEventHandler {
                 .map(Entity::getUUID)
                 .toList();
         if (playersUUID.isEmpty()) return false;
-        new PlayerTeleportScheduler(levelKey, teleportPos, findGround, maxHangTime, playersUUID).register();
-        return true;
+        return new PlayerTeleportScheduler(levelKey, teleportPos, findGround, maxHangTime, playersUUID).register();
     }
     private TeleportScheduler(List<Vec3> teleportPos, boolean findGround, int maxHangTime, List<T> players) {
         this.startTime = String.valueOf(LocalDateTime.now());
@@ -66,12 +64,12 @@ public abstract class TeleportScheduler<T> implements IEventHandler {
     protected abstract void getAndSetServerLevel();
 
     @ApiStatus.Internal
-    protected void register() {
-        EventRegister.get().register(this, EventType.SERVER_TICK_EVENT, EventPriority.HIGH, true);
+    protected boolean register() {
+        return BattleRoyale.getEventRegister().register(this, EventType.SERVER_TICK_EVENT, EventPriority.HIGH, true);
     }
     @ApiStatus.Internal
-    protected void unregister() {
-        EventRegister.get().unregister(this, EventType.SERVER_TICK_EVENT, EventPriority.HIGH, true);
+    protected boolean unregister() {
+        return BattleRoyale.getEventRegister().unregister(this, EventType.SERVER_TICK_EVENT, EventPriority.HIGH, true);
     }
 
     @Override
