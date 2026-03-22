@@ -33,7 +33,6 @@ import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.api.game.zone.IZoneManager;
-import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.lobby.GameLobbyManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
@@ -117,7 +116,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         StatsManager.init(mcSide);
         TeamManager.init(mcSide);
         ZoneManager.init(mcSide);
-        BattleRoyale.getEventRegister().register(GameManagerRegister.get(), CustomEventType.REGISTER_MANAGER_EVENT);
+        BattleRoyale.getEventRegister().register(_GameManagerRegister.get(), CustomEventType.REGISTER_MANAGER_EVENT);
     }
 
     @Override public String getManagerName() {
@@ -378,9 +377,9 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         customEventRegister.unregister(get(), CustomEventType.GAME_START_FINISH_EVENT);
         customEventRegister.unregister(get(), CustomEventType.GAME_STOP_FINISH_EVENT);
         customEventRegister.unregister(get(), CustomEventType.GAME_COMPLETE_FINISH_EVENT);
-        LoopEventHandler.unregister();
-        PlayerDamageEventHandler.unregister();
-        PlayerDeathEventHandler.unregister();
+        _LoopEventHandler.unregister();
+        _PlayerDamageEventHandler.unregister();
+        _PlayerDeathEventHandler.unregister();
         return true;
     }
     @Override
@@ -391,20 +390,20 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     public void handleEvent(CustomEventType customEventType, ICustomEvent event) {
         switch (customEventType) {
             case GAME_START_FINISH_EVENT -> {
-                LoopEventHandler.register();
-                PlayerDamageEventHandler.register();
-                PlayerDeathEventHandler.register();
+                _LoopEventHandler.register();
+                _PlayerDamageEventHandler.register();
+                _PlayerDeathEventHandler.register();
                 BleedingHandler.get().clear();
             }
             case GAME_STOP_FINISH_EVENT -> {
-                LoopEventHandler.unregister();
-                PlayerDamageEventHandler.unregister();
-                PlayerDeathEventHandler.unregister();
+                _LoopEventHandler.unregister();
+                _PlayerDamageEventHandler.unregister();
+                _PlayerDeathEventHandler.unregister();
                 BleedingHandler.unregister();
-                GameScheduler.delayedRestartAfterGame(this);
+                _GameScheduler.delayedRestartAfterGame(this);
             }
             case GAME_COMPLETE_FINISH_EVENT -> {
-                GameScheduler.delayedInitAfterGame(this);
+                _GameScheduler.delayedInitAfterGame(this);
             }
             default -> {
                 onReceiveWrongEvent(customEventType);
@@ -432,12 +431,12 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         setServerLevel(serverLevel);
         setGameLevelKey(serverLevel.dimension());
 
-        if (!GameStarter.initGameConfigSetup(this)) {
+        if (!_GameStarter.initGameConfigSetup(this)) {
             return;
         }
-        GameStarter.initGameConfigSubManager(this, serverLevel);
+        _GameStarter.initGameConfigSubManager(this, serverLevel);
 
-        if (GameStarter.gameConfigAllReady(this)) {
+        if (_GameStarter.gameConfigAllReady(this)) {
             this.configPrepared = true;
             EventPoster.postEvent(new GameLoadFinishEvent(this));
         } else {
@@ -448,7 +447,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     @Override
     public boolean isConfigPrepared() {
         return this.configPrepared
-                && GameStarter.gameConfigAllReady(this); // 防止游戏前GameSubManager改了但没自动读取配置
+                && _GameStarter.gameConfigAllReady(this); // 防止游戏前GameSubManager改了但没自动读取配置
     }
 
     /**
@@ -479,8 +478,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         setGameId(newGameId);
         this.isInsidePlayerDeath = false;
         clearPendingFinishCheck();
-        GameStarter.initGameSetup(this);
-        GameStarter.initGameSubManager(this, serverLevel);
+        _GameStarter.initGameSetup(this);
+        _GameStarter.initGameSubManager(this, serverLevel);
         if (!isReady()) {
             setGameId(preGameId); // 回退GameId
             return;
@@ -497,10 +496,10 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         if (isInGame()) {
             return false;
         }
-        if (!GameStarter.isStartReady(this) || this.serverLevel != serverLevel) {  // Team会变动，用isStartReady
+        if (!_GameStarter.isStartReady(this) || this.serverLevel != serverLevel) {  // Team会变动，用isStartReady
             BattleRoyale.LOGGER.info("GameManager isn't startReady, attempt to initGame");
             initGame(serverLevel);
-            if (!GameStarter.isStartReady(this)) {
+            if (!_GameStarter.isStartReady(this)) {
                 BattleRoyale.LOGGER.info("GameManager failed to auto initGame, cancel startGame");
                 return false;
             }
@@ -511,8 +510,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             return false;
         }
 
-        if (GameStarter.startGameSubManager(this, this.serverLevel)) {
-            GameStarter.startGameSetup(this); // 子Manager成功了再启动(重置)GameManager
+        if (_GameStarter.startGameSubManager(this, this.serverLevel)) {
+            _GameStarter.startGameSetup(this); // 子Manager成功了再启动(重置)GameManager
             this.inGame = true;
             GameInfoMessageManager.get().startGame(serverLevel);
             EventPoster.postEvent(new GameStartFinishEvent(this));
@@ -741,7 +740,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public boolean isReady() {
-        return GameStarter.isReady(this);
+        return _GameStarter.isReady(this);
     }
 
     @Override

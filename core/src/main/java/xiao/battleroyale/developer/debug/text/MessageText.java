@@ -10,7 +10,7 @@ import xiao.battleroyale.api.network.message.zone.GameZoneTag;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.message.AbstractMessageManager;
 import xiao.battleroyale.common.message.game.GameInfoMessage;
@@ -243,7 +243,7 @@ public class MessageText {
 
         String messageCommand = GetMessage.getTeamMessageCommand(displayId);
         String gameTeamCommand = GetGame.getGameTeamCommand(displayId);
-        GameTeam gameTeam = GameTeamManager.getGameTeamById(displayId);
+        GameTeam gameTeam = _GameTeamManager.getGameTeamById(displayId);
         String gameTeamColor = gameTeam != null ? gameTeam.getGameTeamColor() : "";
         TextColor gameTeamTextColor = TextColor.fromRgb(ColorUtils.parseColorToInt(gameTeamColor));
 

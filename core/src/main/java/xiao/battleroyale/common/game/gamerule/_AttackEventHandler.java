@@ -1,0 +1,140 @@
+package xiao.battleroyale.common.game.gamerule;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.*;
+import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.team.ITeamManager;
+import xiao.battleroyale.common.game.GameMessageManager;
+import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.compat.playerrevive.PlayerRevive;
+import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
+import xiao.battleroyale.util.ChatUtils;
+
+/**
+ * 伤害数值调整
+ */
+public class _AttackEventHandler implements IEventHandler {
+
+    private _AttackEventHandler() {}
+
+    private static class AttackEventHandlerHolder {
+        private static final _AttackEventHandler INSTANCE = new _AttackEventHandler();
+    }
+
+    public static _AttackEventHandler get() {
+        return AttackEventHandlerHolder.INSTANCE;
+    }
+
+    @Override public String getEventHandlerName() {
+        return String.format("%s:AttackEventHandler", BattleRoyale.MOD_ID);
+    }
+
+    protected static void register() {
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.register(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGH, false);
+    }
+
+    protected static void unregister() {
+        IEventRegister eventRegister = BattleRoyale.getEventRegister();
+        eventRegister.unregister(get(), EventType.LIVING_ATTACK_EVENT, EventPriority.HIGH, false);
+    }
+
+    @Override
+    public void handleEvent(EventType eventType, IEvent event) {
+        if (eventType == EventType.LIVING_ATTACK_EVENT) {
+            checkDamage((ILivingAttackEvent) event);
+        } else {
+            onReceiveWrongEvent(eventType);
+        }
+    }
+
+    /**
+     * 监听实体受到伤害事件
+     * 取消存活游戏玩家与非存活游戏玩家之间的伤害
+     * 通知队伍更新成员信息
+     * @param event 实体受到伤害事件
+     */
+    private void checkDamage(ILivingAttackEvent event) {
+        LivingEntity damagedEntity = event.getEntity(); // 被攻击方
+        DamageSource damageSource = event.getSource(); // 攻击方
+
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        ITeamManager teamManager = gameManager.getTeamManager();
+
+        GamePlayer targetGamePlayer = teamManager.hasStandingGamePlayer(damagedEntity.getUUID()) ? teamManager.getGamePlayerByUUID(damagedEntity.getUUID()) : null;
+        if (targetGamePlayer != null && targetGamePlayer.isEliminated()) {
+            targetGamePlayer = null;
+        }
+        GamePlayer attackerGamePlayer = null;
+        if (damageSource.getEntity() instanceof LivingEntity attackerEntity) {
+            attackerGamePlayer = teamManager.hasStandingGamePlayer(attackerEntity.getUUID()) ? teamManager.getGamePlayerByUUID(attackerEntity.getUUID()) : null;
+            if (attackerGamePlayer != null && attackerGamePlayer.isEliminated()) {
+                attackerGamePlayer = null;
+            }
+        }
+
+        GameEntry gameEntry = gameManager.getGameEntry();
+
+        // 游戏玩家之间的伤害
+        if (attackerGamePlayer != null && targetGamePlayer != null) {
+            // 如果双方在同一队伍，且友伤关闭，则取消伤害
+            if (attackerGamePlayer.getGameTeamId() == targetGamePlayer.getGameTeamId()
+                    && !gameEntry.friendlyFire) {
+                event.setCanceled(true);
+            }
+            if (!gameEntry.downFire) {
+                if (damageSource.getEntity() instanceof ServerPlayer attackPlayer
+                        && PlayerRevive.get().isBleeding(attackPlayer)) {
+                    ChatUtils.sendComponentMessageToPlayer(attackPlayer, Component.translatable("battleroyale.message.down_fire_not_enabled").withStyle(ChatFormatting.RED));
+                    event.setCanceled(true);
+                }
+            }
+            // 通知队伍更新成员信息
+            GameMessageManager.notifyTeamChange(targetGamePlayer.getGameTeamId());
+        }
+        // 游戏玩家攻击非游戏玩家
+        else if (attackerGamePlayer != null) {
+            if (!gameEntry.canHurtNonGamePlayer) {
+                event.setCanceled(true);
+            }
+            if (damagedEntity instanceof ServerPlayer interfererPlayer) {
+                // 把不参与游戏的[ServerPlayer玩家]tp回大厅
+                if (gameEntry.teleportInterfererToLobby
+                        && damageSource.getEntity() instanceof ServerPlayer) {
+                    BattleRoyale.getGameManager().getGameLobbyManager().teleportToLobby(interfererPlayer);
+                    ServerLevel serverLevel = gameManager.getServerLevel();
+                    if (serverLevel != null) {
+                        ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.teleport_non_game_player_to_lobby", interfererPlayer.getName().getString());
+                        gameManager.sendGameSpectateMessage(interfererPlayer); // 提供观战指令
+                    }
+                }
+            }
+        }
+        // 非游戏玩家攻击游戏玩家
+        else if (targetGamePlayer != null) {
+            if (damageSource.getEntity() instanceof LivingEntity livingEntity) {
+                if (!gameEntry.allowInterfererDamage) {
+                    event.setCanceled(true);
+                }
+                if (livingEntity instanceof ServerPlayer interfererPlayer) {
+                    // 把不参与游戏的[ServerPlayer玩家]tp回大厅
+                    if (gameEntry.teleportInterfererToLobby) {
+                        BattleRoyale.getGameManager().getGameLobbyManager().teleportToLobby(interfererPlayer);
+                        ServerLevel serverLevel = gameManager.getServerLevel();
+                        if (serverLevel != null) {
+                            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.teleport_non_game_player_to_lobby", interfererPlayer.getName().getString());
+                            gameManager.sendGameSpectateMessage(interfererPlayer); // 提供观战指令
+                        }
+                    }
+                }
+            }
+        }
+        // 非游戏玩家打非游戏玩家
+    }
+}
