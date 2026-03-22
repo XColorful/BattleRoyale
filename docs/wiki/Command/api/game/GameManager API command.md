@@ -19,10 +19,11 @@
 - `返回值`：当前是否在游戏中
 
 ##### 全局偏移
-> _/battleroyale api gameManager getGlobalCenterOffset [resourceLocation]_
+> _/battleroyale api gameManager getGlobalCenterOffset [resourceLocation] [storagePath]_
 
 将[全局偏移](https://github.com/XColorful/BattleRoyale/wiki/Game-command#全局偏移)存入指定`命令存储`
 - resourceLocation：标识符
+- storagePath：NBT路径
 - `返回值`：1
 
 ##### 最大游戏时长
@@ -170,10 +171,11 @@
 - `return value`: whether the game is currently in progress
 
 ##### Global offset
-> _/battleroyale api gameManager getGlobalCenterOffset [resourceLocation]_
+> _/battleroyale api gameManager getGlobalCenterOffset [resourceLocation] [storagePath]_
 
 Saves the [Global offset](https://github.com/XColorful/BattleRoyale/wiki/Game-command#Global-offset) to the specified `command storage`:
 - resourceLocation: identifier
+- storagePath: NBT path
 - `return value`: 1
 
 ##### Maximum game time
