@@ -255,7 +255,7 @@ If currently within a game player death event (_IGameMangaer::onPlayerDeath_), a
 
 - player: selects game player using an entity selector
 - id: selects game player using a game player ID
-- If the player does not exist, the `return value` is 0.
+- If the game player does not exist, the `return value` is 0.
 - withMembers: whether to add game player's all team members to the winner game players
 - withTeam: whether to add the player's game team to the winner game teams
 - `return value`: number of successfully added game players
@@ -267,7 +267,7 @@ If currently within a game player death event (_IGameMangaer::onPlayerDeath_), a
 
 - player: selects game player using an entity selector
 - id: selects game team using a game team ID
-- If the player or team does not exist, the `return value` is 0.
+- If the game player or team does not exist, the `return value` is 0.
 - withMembers: whether to add all game team members to the winner game players
 - `return value`: number of successfully added game teams and players
 

@@ -125,6 +125,67 @@
 - 发送该游戏玩家淘汰消息
 - `返回值`：1
 
+### 游戏进程管理器（死斗模式）
+> _IDeathMatchProcessManager_
+
+> _/battleroyale api gameProcessManager deathMatch [...]_
+
+#### 死斗模式信息获取
+> _IDeathMatchInfoGetter_
+
+##### 获取当前最大击杀数
+> _/battleroyale api gameProcessManager deathMatch getCurrentMaxKill_
+
+- `返回值`：当前最大游戏玩家或游戏队伍击杀数
+
+#### 死斗模式数据管理
+> _IDeathMatchDataManagement_
+
+##### 添加游戏玩家击杀数
+> _/battleroyale api gameProcessManager deathMatch addGamePlayerKill [addKill] byPlayer [player]_
+> 
+> _/battleroyale api gameProcessManager deathMatch addGamePlayerKill [addKill] byId [id]_
+
+- addKill：添加的击杀数
+- player：用实体选择器选中并获取游戏玩家
+- id：用游戏玩家ID获取游戏玩家
+- 若不存在对应的游戏玩家，`返回值`为 0
+- `返回值`：是否计入成功
+
+##### 添加游戏队伍击杀数
+> _/battleroyale api gameProcessManager deathMatch addGameTeamKill [addKill] byPlayer [player]_
+> 
+> _/battleroyale api gameProcessManager deathMatch addGameTeamKill [addKill] byId [id]_
+
+- addKill：添加的击杀数
+- player：用实体选择器选中并获取游戏玩家
+- id：用游戏队伍ID选中游戏队伍
+- 若不存在对应的游戏玩家或游戏队伍，`返回值`为0
+- `返回值`：是否计入成功
+
+##### 添加并跟踪再出生玩家
+> _/battleroyale api gameProcessManager deathMatch addAndTrackRestandingGamePlayer byPlayer [player]_
+> 
+> _/battleroyale api gameProcessManager deathMatch addAndTrackRestandingGamePlayer byId [id]_
+
+- player：用实体选择器选中并获取游戏玩家
+- id：用游戏玩家ID获取游戏玩家
+- 若不存在对应的游戏玩家，`返回值`为 0
+- `返回值`：是否添加成功
+
+#### 死斗模式游戏管理
+> _IDeathMatchGameManagement_
+
+##### 再出生玩家
+> _/battleroyale api gameProcessManager deathMatch respawnGamePlayer byPlayer [player]_
+> 
+> _/battleroyale api gameProcessManager deathMatch respawnGamePlayer byId [id]_
+
+- player：用实体选择器选中并获取游戏玩家
+- id：用游戏玩家ID获取游戏玩家
+- 若不存在对应的游戏玩家，`返回值`为 0
+- `返回值`：是否成功再出生
+
 # English
 
 ### Game process manager
@@ -251,3 +312,64 @@ Immediately updates the last recorded status of game players and eliminates inva
 - If the corresponding game player does not exist, the `return value` is 0.
 - Sends the "eliminated" message for the specified game player.
 - `return value`: 1
+
+### Game process manager (DeathMatch)
+> _IDeathMatchProcessManager_
+
+> _/battleroyale api gameProcessManager deathMatch [...]_
+
+#### DeathMatch info getter
+> _IDeathMatchInfoGetter_
+
+##### Get current max kill
+> _/battleroyale api gameProcessManager deathMatch getCurrentMaxKill_
+
+- `return value`: the current maximum number of kills among game players or teams
+
+#### DeathMatch data management
+> _IDeathMatchDataManagement_
+
+##### Add game player kill
+> _/battleroyale api gameProcessManager deathMatch addGamePlayerKill [addKill] byPlayer [player]_
+> 
+> _/battleroyale api gameProcessManager deathMatch addGamePlayerKill [addKill] byId [id]_
+
+- addKill: the number of kills to add
+- player: selects game player using an entity selector
+- id: selects game player using a game player ID
+- If the game player does not exist, the `return value` is 0.
+- `return value`: whether the record was successfully added
+
+##### Add game team kill
+> _/battleroyale api gameProcessManager deathMatch addGameTeamKill [addKill] byPlayer [player]_
+> 
+> _/battleroyale api gameProcessManager deathMatch addGameTeamKill [addKill] byId [id]_
+
+- addKill: the number of kills to add
+- player: selects game player using an entity selector
+- id: selects game team using a game team ID
+- If the game player or team does not exist, the `return value` is 0.
+- `return value`: whether the record was successfully added
+
+##### Add and track restanding game player
+> _/battleroyale api gameProcessManager deathMatch addAndTrackRestandingGamePlayer byPlayer [player]_
+> 
+> _/battleroyale api gameProcessManager deathMatch addAndTrackRestandingGamePlayer byId [id]_
+
+- player: selects game player using an entity selector
+- id: selects game player using a game player ID
+- If the game player does not exist, the `return value` is 0.
+- `return value`: whether the addition was successful
+
+#### DeathMatch game management
+> _IDeathMatchGameManagement_
+
+##### Respawn game player
+> _/battleroyale api gameProcessManager deathMatch respawnGamePlayer byPlayer [player]_
+> 
+> _/battleroyale api gameProcessManager deathMatch respawnGamePlayer byId [id]_
+
+- player: selects game player using an entity selector
+- id: selects game player using a game player ID
+- If the game player does not exist, the `return value` is 0.
+- `return value`: whether the respawn was successful
