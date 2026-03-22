@@ -17,8 +17,8 @@ import xiao.battleroyale.api.event.ICustomEventRegister;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.gamerule.IGameruleManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameStatsManager;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameStatsManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.gamerule.storage.McRuleStorage;
 import xiao.battleroyale.common.game.gamerule.storage.PlayerModeStorage;
 import xiao.battleroyale.common.game.team.GamePlayer;
@@ -71,8 +71,8 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
         customEventRegister.unregister(get(), CustomEventType.GAME_LOAD_FINISH_EVENT);
         customEventRegister.unregister(get(), CustomEventType.GAME_START_FINISH_EVENT);
         customEventRegister.unregister(get(), CustomEventType.GAME_STOP_FINISH_EVENT);
-        LogEventHandler.unregister();
-        AttackEventHandler.unregister();
+        _LogEventHandler.unregister();
+        _AttackEventHandler.unregister();
         return true;
     }
     @Override
@@ -83,14 +83,14 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
     public void handleEvent(CustomEventType customEventType, ICustomEvent event) {
         switch (customEventType) {
             case GAME_LOAD_FINISH_EVENT -> {
-                LogEventHandler.register(); // 后续玩家登录可根据配置直接加入队伍
+                _LogEventHandler.register(); // 后续玩家登录可根据配置直接加入队伍
             }
             case GAME_START_FINISH_EVENT -> {
-                AttackEventHandler.register();
+                _AttackEventHandler.register();
             }
             case GAME_STOP_FINISH_EVENT -> {
-                LogEventHandler.unregister();
-                AttackEventHandler.unregister();
+                _LogEventHandler.unregister();
+                _AttackEventHandler.unregister();
             }
             default -> {
                 onReceiveWrongEvent(customEventType);
@@ -135,9 +135,9 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
             return;
         }
 
-        List<GamePlayer> gamePlayerList = GameTeamManager.getGamePlayers();
+        List<GamePlayer> gamePlayerList = _GameTeamManager.getGamePlayers();
         this.gameruleBackup.apply(serverLevel, gamePlayerList);
-        GameStatsManager.recordGamerule(this.gameruleBackup);
+        _GameStatsManager.recordGamerule(this.gameruleBackup);
 
         this.ready = true;
         this.configPrepared = false;
@@ -150,11 +150,11 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
             return false;
         }
 
-        List<GamePlayer> gamePlayerList = GameTeamManager.getStandingGamePlayers();
+        List<GamePlayer> gamePlayerList = _GameTeamManager.getStandingGamePlayers();
         this.gamemodeBackup.clear();
         this.gamemodeBackup.store(mcEntry, serverLevel, gamePlayerList);
         this.gamemodeBackup.apply(serverLevel, gamePlayerList);
-        GameStatsManager.recordGamerule(this.gamemodeBackup);
+        _GameStatsManager.recordGamerule(this.gamemodeBackup);
         if (mcEntry.clearInventory) {
             GameUtils.clearGamePlayersInventory(serverLevel, gamePlayerList);
         }
@@ -178,7 +178,7 @@ public class GameruleManager extends AbstractGameManager implements IGameruleMan
             if (serverLevel == null) {
                 return;
             }
-            for (GamePlayer gamePlayer : GameTeamManager.getStandingGamePlayers()) {
+            for (GamePlayer gamePlayer : _GameTeamManager.getStandingGamePlayers()) {
                 if (!gamePlayer.isActiveEntity()) {
                     continue;
                 }

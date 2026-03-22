@@ -1,0 +1,224 @@
+package xiao.battleroyale.common.game.team;
+
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.Team;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.game.team.ITeamManager;
+import xiao.battleroyale.util.ColorUtils;
+import xiao.battleroyale.util.GameUtils;
+
+import java.util.*;
+
+public class _TeamUtils {
+
+    @ApiStatus.Internal
+    public static int getNonBotTeamCount(TeamManager teamManager) {
+        int count = 0;
+        Set<Integer> playerTeamId = new HashSet<>();
+        for (GamePlayer gamePlayer : teamManager.getGamePlayers()) {
+            if (!gamePlayer.isBot()) {
+                int teamId = gamePlayer.getGameTeamId();
+                if (!playerTeamId.contains(teamId)) {
+                    playerTeamId.add(teamId);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    @ApiStatus.Internal
+    public static int getStandingPlayerTeamCount(TeamManager teamManager) {
+        int count = 0;
+        Set<Integer> playerTeamId = new HashSet<>();
+        for (GamePlayer gamePlayer : teamManager.getStandingGamePlayers()) {
+            if (!gamePlayer.isBot()) {
+                int teamId = gamePlayer.getGameTeamId();
+                if (!playerTeamId.contains(teamId)) {
+                    playerTeamId.add(teamId);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    @ApiStatus.Internal
+    public static boolean isPlayerLeader(TeamManager teamManager, UUID playerUUID) {
+        GamePlayer gamePlayer = teamManager.teamData.getGamePlayerByUUID(playerUUID);
+        if (gamePlayer == null) {
+            return false;
+        }
+        GameTeam gameTeam = gamePlayer.getTeam();
+        return gameTeam.isLeader(playerUUID);
+    }
+
+    /**
+     * 找到第一个未满员队伍
+     * @return 可用的队伍，如无则返回 -1
+     */
+    @ApiStatus.Internal
+    public static int findNotFullTeamId(TeamManager teamManager) {
+        if (teamManager.teamData.getGamePlayersTotal() >= teamManager.teamConfig.playerLimit) {
+            return -1;
+        }
+
+        // 寻找已有的未满员队伍
+        List<Integer> idList = new ArrayList<>();
+        for (GameTeam team : teamManager.teamData.getGameTeamsList()) {
+            if (team.getTeamMembers().size() < teamManager.teamConfig.teamSize) {
+                idList.add(team.getGameTeamId());
+            }
+        }
+        Collections.shuffle(idList);
+        if (idList.isEmpty()) {
+            return -1;
+        }
+        return idList.get(0);
+    }
+
+    /**
+     * 判断是否有足够队伍开始游戏
+     */
+    @ApiStatus.Internal
+    public static boolean hasEnoughPlayerTeamToStart(TeamManager teamManager) {
+        int minTeam = BattleRoyale.getGameManager().getRequiredGameTeam();
+        boolean allowBot = teamManager.teamConfig.aiEnemy;
+
+        // 根据是否允许 AI 队伍过滤
+        List<GameTeam> validTeams = teamManager.getGameTeams().stream()
+                .filter(team -> allowBot || !team.onlyHasBotMember())
+                .toList();
+
+        // 不允许剩余人机打架 -> 开局不能直接只剩人机队
+        if (!BattleRoyale.getGameManager().getGameEntry().allowRemainingBot
+                && validTeams.stream().allMatch(GameTeam::onlyHasBotMember)) {
+            BattleRoyale.LOGGER.debug("TeamUtils: Not allow remaining bot");
+            return false;
+        }
+
+        return validTeams.size() >= minTeam;
+    }
+
+    /**
+     * 在传入的 ServerLevel 下为全体 GamePlayer 构建原版队伍
+     * @param serverLevel 用于从 GamePlayer 获取 LivingEntity 的维度
+     * @param hideName 是否向其他队伍隐藏名称
+     */
+    public static boolean buildVanillaTeamForAllGameTeams(ITeamManager teamManager, @NotNull ServerLevel serverLevel, String vanillaTeamFormat, boolean hideName) {
+        try {
+            boolean hasBuild = false;
+            Scoreboard scoreboard = serverLevel.getScoreboard();
+            for (GameTeam gameTeam : teamManager.getGameTeams()) {
+                PlayerTeam vanillaTeam = getClearedVanillaTeam(scoreboard,
+                        vanillaTeamFormat,
+                        hideName,
+                        gameTeam);
+                for (GamePlayer gamePlayer : gameTeam.getTeamMembers()) { // 原版队伍没有队长，直接遍历
+                    @Nullable LivingEntity memberPlayer = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
+                    if (memberPlayer == null) {
+                        BattleRoyale.LOGGER.warn("Failed to get GamePlayer[{}][{}]{}, skipped build vanilla team", gamePlayer.getGameTeamId(), gamePlayer.getGameSingleId(), gamePlayer.getPlayerName());
+                        continue;
+                    }
+                    String playerName = memberPlayer.getName().getString();
+//                    // 离开队伍
+//                    scoreboard.removePlayerFromTeam(playerName);
+                    // 加入队伍（原版已经处理了离开队伍）
+                    scoreboard.addPlayerToTeam(playerName, vanillaTeam);
+                    hasBuild = true;
+                }
+            }
+            BattleRoyale.LOGGER.debug("TeamManager finished build vanilla team");
+            return hasBuild;
+        } catch (Exception e) {
+            BattleRoyale.LOGGER.error("Error in TeamUtils::buildVanillaTeamForAllGameTeams, in build vanilla team: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * 在传入的 ServerLevel 下为全体 GamePlayer 退出原版队伍
+     * @param serverLevel 用于从 GamePlayer 获取 ServerPlayer 的维度
+     */
+    public static void clearVanillaTeam(TeamManager teamManager, @NotNull ServerLevel serverLevel) {
+        Scoreboard scoreboard = serverLevel.getScoreboard();
+        for (GamePlayer gamePlayer : teamManager.getGamePlayers()) {
+            @Nullable LivingEntity player = GameUtils.getLivingEntity(serverLevel, gamePlayer.getPlayerUUID());
+            if (player == null) {
+                BattleRoyale.LOGGER.warn("Failed to get GamePlayer {}, skipped clear vanilla team", gamePlayer.getNameWithId());
+                continue;
+            }
+            String playerName = player.getName().getString();
+            scoreboard.removePlayerFromTeam(playerName);
+        }
+    }
+
+    public static @NotNull PlayerTeam getOrCreateVanillaTeam(Scoreboard scoreboard, String vanillaTeamFormat, boolean hideName, GameTeam gameTeam) {
+        String vanillaTeamName = gameTeam.createVanillaTeamName(vanillaTeamFormat);
+
+        PlayerTeam existingTeam = scoreboard.getPlayerTeam(vanillaTeamName);
+        return Objects.requireNonNullElseGet(existingTeam, () -> getClearedVanillaTeam(scoreboard, vanillaTeamFormat, hideName, gameTeam));
+    }
+
+    public static @NotNull PlayerTeam getClearedVanillaTeam(Scoreboard scoreboard, String vanillaTeamFormat, boolean hideName, GameTeam gameTeam) {
+        String vanillaTeamName = gameTeam.createVanillaTeamName(vanillaTeamFormat);
+
+        // 移除同名Vanilla队伍
+        PlayerTeam existingTeam = scoreboard.getPlayerTeam(vanillaTeamName);
+        if (existingTeam != null) {
+            scoreboard.removePlayerTeam(existingTeam);
+            BattleRoyale.LOGGER.debug("Removed vanilla team {}", vanillaTeamName);
+        }
+
+        // 创建Vanilla队伍
+        PlayerTeam vanillaTeam = scoreboard.getPlayerTeam(vanillaTeamName);
+        if (vanillaTeam == null) {
+            vanillaTeam = scoreboard.addPlayerTeam(vanillaTeamName);
+        }
+
+        // 友伤由模组监听的事件处理免伤
+        vanillaTeam.setAllowFriendlyFire(true);
+        if (hideName) { // 对其他队伍隐藏名称
+            vanillaTeam.setNameTagVisibility(Team.Visibility.HIDE_FOR_OTHER_TEAMS);
+        } else {
+            vanillaTeam.setNameTagVisibility(Team.Visibility.ALWAYS);
+        }
+
+        // 队伍颜色取与GameTeam最近的（原版api限制）
+        vanillaTeam.setColor(ColorUtils.getClosestChatFormatting(gameTeam.getGameTeamColor()));
+        return vanillaTeam;
+    }
+
+    /**
+     * 在传入的 ServerLevel 下移除原版队伍
+     * @param gameTeamOnly 是否仅移除 GameTeam 的原版队伍
+     * @return 是否有移除任意队伍
+     */
+    public static int removeVanillaTeam(TeamManager teamManager, @NotNull ServerLevel serverLevel, boolean gameTeamOnly) {
+        Scoreboard scoreboard = serverLevel.getScoreboard();
+        List<String> targetsToRemove = gameTeamOnly
+                ? teamManager.getGameTeams().stream()
+                .map(gameTeam -> gameTeam.createVanillaTeamName(teamManager.teamConfig.vanillaTeamFormat))
+                .toList()
+                : new ArrayList<>(scoreboard.getTeamNames());
+        return removeVanillaTeams(scoreboard, targetsToRemove);
+    }
+
+    private static int removeVanillaTeams(Scoreboard scoreboard, Collection<String> teamNames) {
+        int removedTotal = 0;
+        for (String teamName : teamNames) {
+            PlayerTeam playerTeam = scoreboard.getPlayerTeam(teamName);
+            if (playerTeam != null) {
+                scoreboard.removePlayerTeam(playerTeam);
+                removedTotal++;
+            }
+        }
+        return removedTotal;
+    }
+}
