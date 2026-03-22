@@ -14,7 +14,7 @@ import xiao.battleroyale.api.config.common.game.zone.shape.ZoneShapeTag;
 import xiao.battleroyale.api.config.common.game.zone.special.IZoneSpecialEntry;
 import xiao.battleroyale.api.config.common.game.zone.special.ZoneSpecialTag;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
-import xiao.battleroyale.common.game.zone.GameZoneBuilder;
+import xiao.battleroyale.common.game.zone._GameZoneBuilder;
 import xiao.battleroyale.config.AbstractConfigSubManager;
 import xiao.battleroyale.config.AbstractSingleConfig;
 import xiao.battleroyale.config.FolderConfigData;
@@ -115,7 +115,7 @@ public class ZoneConfigManager
 
         @Nullable
         public IGameZone generateZone() {
-            return new GameZoneBuilder()
+            return new _GameZoneBuilder()
                     .withZoneConfig(this)
                     .build();
         }

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.IGameSubManager;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.message.AbstractMessageManager;
 import xiao.battleroyale.common.message.MessageManager;
@@ -56,7 +56,7 @@ public class GameInfoMessageManager extends AbstractMessageManager<GameInfoMessa
         IGameManager gameManager = BattleRoyale.getGameManager();
         boolean inGame = gameManager.isInGame();
         if (inGame) {
-            int aliveTotal = GameTeamManager.getStandingGamePlayers().size();
+            int aliveTotal = _GameTeamManager.getStandingGamePlayers().size();
             GameInfoMessage message = getOrCreateMessage(ALIVE_CHANNEL);
             message.updateMessage(aliveTotal, gameManager.getGameId());
             message.nbt = message.toNBT();

@@ -15,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.minecraft.CommandLevel;
-import xiao.battleroyale.common.game.GameNotification;
+import xiao.battleroyale.common.game._GameNotification;
 
 import static xiao.battleroyale.command.CommandArg.*;
 import static xiao.battleroyale.util.StringUtils.buildCommandString;
@@ -201,10 +201,10 @@ public class GameCommand {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) { // 向调用的玩家发送消息
             ServerPlayer player = context.getSource().getPlayerOrException();
-            GameNotification.sendSelectedConfigsInfo(BattleRoyale.getGameManager(), player);
+            _GameNotification.sendSelectedConfigsInfo(BattleRoyale.getGameManager(), player);
         } else { // 向全体玩家发送消息
             ServerLevel serverLevel = source.getLevel();
-            GameNotification.sendSelectedConfigsInfo(BattleRoyale.getGameManager(), serverLevel);
+            _GameNotification.sendSelectedConfigsInfo(BattleRoyale.getGameManager(), serverLevel);
         }
 
         return Command.SINGLE_SUCCESS;
@@ -227,10 +227,10 @@ public class GameCommand {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) { // 向调用的玩家发送消息
             ServerPlayer player = context.getSource().getPlayerOrException();
-            GameNotification.sendGameIdInfo(BattleRoyale.getGameManager(), player);
+            _GameNotification.sendGameIdInfo(BattleRoyale.getGameManager(), player);
         } else {
             ServerLevel serverLevel = source.getLevel();
-            GameNotification.sendGameIdInfo(BattleRoyale.getGameManager(), serverLevel);
+            _GameNotification.sendGameIdInfo(BattleRoyale.getGameManager(), serverLevel);
         }
         return Command.SINGLE_SUCCESS;
     }

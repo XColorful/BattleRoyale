@@ -20,7 +20,7 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.lobby.IGameLobbyManager;
 import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
@@ -113,7 +113,7 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
 
         // 传送至大厅
         if (this.initGameTeleport) {
-            List<GamePlayer> gamePlayerList = GameTeamManager.getGamePlayers();
+            List<GamePlayer> gamePlayerList = _GameTeamManager.getGamePlayers();
             for (GamePlayer gamePlayer : gamePlayerList) {
                 teleportGamePlayerToLobby(gamePlayer, serverLevel);
             }
@@ -210,9 +210,9 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
         this.lobbyMuteki = shouldMuteki;
         // 大厅无敌（监听伤害事件）
         if (this.lobbyMuteki) {
-            LobbyEventHandler.register();
+            _LobbyEventHandler.register();
         } else {
-            LobbyEventHandler.unregister();
+            _LobbyEventHandler.unregister();
         }
         this.lobbyHeal = shouldHeal;
         this.lobbyDimension = dimension;
@@ -285,7 +285,7 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
                 pos.z >= minZ && pos.z <= maxZ;
     }
     @Override public boolean canMuteki(@NotNull LivingEntity livingEntity) {
-        if (!isLobbyCreated() || GameTeamManager.hasStandingGamePlayer(livingEntity.getUUID())) { // 游戏中的玩家不能无敌
+        if (!isLobbyCreated() || _GameTeamManager.hasStandingGamePlayer(livingEntity.getUUID())) { // 游戏中的玩家不能无敌
             return false;
         }
 

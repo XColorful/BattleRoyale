@@ -7,7 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.effect.type.IBoostManager;
 import xiao.battleroyale.common.game.GameMessageManager;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.util.GameUtils;
 
@@ -91,7 +91,7 @@ public class BoostManager implements IBoostManager {
             }
             // 同步消息
             if (--data.syncCooldown <= 0) {
-                GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(data.uuid);
+                GamePlayer gamePlayer = _GameTeamManager.getGamePlayerByUUID(data.uuid);
                 if (gamePlayer != null) {
                     GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
                 }
@@ -120,7 +120,7 @@ public class BoostManager implements IBoostManager {
             data.effectCooldown = 0;
         }
         // 通知立即更新
-        GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(entityUUID);
+        GamePlayer gamePlayer = _GameTeamManager.getGamePlayerByUUID(entityUUID);
         if (gamePlayer != null) {
             GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
         }
@@ -153,7 +153,7 @@ public class BoostManager implements IBoostManager {
     public void clear(UUID entityUUID) {
         BoostData data = boostData.remove(entityUUID);
         if (data != null) {
-            GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(data.uuid);
+            GamePlayer gamePlayer = _GameTeamManager.getGamePlayerByUUID(data.uuid);
             if (gamePlayer != null) {
                 GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
             }
@@ -165,7 +165,7 @@ public class BoostManager implements IBoostManager {
         // 通知所有队伍立即更新
         boostData.entrySet().removeIf(entry -> {
             BoostData data = entry.getValue();
-            GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(data.uuid);
+            GamePlayer gamePlayer = _GameTeamManager.getGamePlayerByUUID(data.uuid);
             if (gamePlayer != null) {
                 GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
             }

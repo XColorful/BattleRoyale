@@ -17,7 +17,7 @@ import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.command.sub.TeamCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
-import xiao.battleroyale.common.game.GameStatsManager;
+import xiao.battleroyale.common.game._GameStatsManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager.GameruleConfig;
@@ -84,7 +84,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamManagement.removeOfflineGamePlayer(this, BattleRoyale.getGameManager().getServerLevel());
+        _TeamManagement.removeOfflineGamePlayer(this, BattleRoyale.getGameManager().getServerLevel());
         clearOrUpdateTeamIfLimitChanged();
         this.configPrepared = true;
         BattleRoyale.LOGGER.debug("TeamManager complete initGameConfig");
@@ -122,7 +122,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             buildVanillaTeam(serverLevel, this.teamConfig.vanillaTeamFormat, gameManager.getGameEntry().hideVanillaTeamName, false);
         }
 
-        GameStatsManager.recordGamerule(teamConfig);
+        _GameStatsManager.recordGamerule(teamConfig);
         if (!hasEnoughPlayerTeamToStart()) { // 初始化游戏时检查并提示
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
         }
@@ -143,8 +143,8 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return false;
         }
 
-        TeamManagement.removeNoTeamGamePlayer(this); // 确保玩家均有队伍
-        TeamManagement.removeNoGamePlayerTeam(this); // 确保队伍均有玩家
+        _TeamManagement.removeNoTeamGamePlayer(this); // 确保玩家均有队伍
+        _TeamManagement.removeNoGamePlayerTeam(this); // 确保队伍均有玩家
         if (!hasEnoughPlayerTeamToStart()) { // init之后可能都退出了队伍，开始游戏前再次检查
             return false;
         }
@@ -283,7 +283,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
     // -------TeamNofitication-------
 
     public void sendPlayerTeamId(ServerPlayer player) {
-        TeamNotification.sendPlayerTeamId(getGamePlayerByUUID(player.getUUID()), player);
+        _TeamNotification.sendPlayerTeamId(getGamePlayerByUUID(player.getUUID()), player);
     }
 
     // -------TeamExternal-------
@@ -294,7 +294,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.joinTeam(this, player);
+        _TeamExternal.joinTeam(this, player);
     }
     public void joinTeamSpecific(ServerPlayer player, int teamId) {
         if (BattleRoyale.getGameManager().isInGame()) {
@@ -302,7 +302,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.joinTeamSpecific(this, player, teamId);
+        _TeamExternal.joinTeamSpecific(this, player, teamId);
     }
     public void kickPlayer(ServerPlayer sender, ServerPlayer targetPlayer) {
         if (BattleRoyale.getGameManager().isInGame()) {
@@ -310,7 +310,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.kickPlayer(this, sender, targetPlayer);
+        _TeamExternal.kickPlayer(this, sender, targetPlayer);
     }
     public void invitePlayer(ServerPlayer sender, ServerPlayer targetPlayer) {
         if (BattleRoyale.getGameManager().isInGame()) {
@@ -318,7 +318,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.invitePlayer(this, sender, targetPlayer);
+        _TeamExternal.invitePlayer(this, sender, targetPlayer);
     }
     public void acceptInvite(ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
         if (BattleRoyale.getGameManager().isInGame()) {
@@ -326,7 +326,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.acceptInvite(this, player, senderPlayer);
+        _TeamExternal.acceptInvite(this, player, senderPlayer);
     }
     public void declineInvite(ServerPlayer player, ServerPlayer senderPlayer) { // 接收者，发送者名称
         if (BattleRoyale.getGameManager().isInGame()) {
@@ -334,7 +334,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.declineInvite(this, player, senderPlayer);
+        _TeamExternal.declineInvite(this, player, senderPlayer);
     }
     public void requestPlayer(ServerPlayer sender, ServerPlayer targetPlayer) { // 申请者，目标玩家
         if (BattleRoyale.getGameManager().isInGame()) {
@@ -342,7 +342,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.requestPlayer(this, sender, targetPlayer);
+        _TeamExternal.requestPlayer(this, sender, targetPlayer);
     }
     public void acceptRequest(ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
         if (BattleRoyale.getGameManager().isInGame()) {
@@ -350,7 +350,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.acceptRequest(this, teamLeader, requesterPlayer);
+        _TeamExternal.acceptRequest(this, teamLeader, requesterPlayer);
     }
     public void declineRequest(ServerPlayer teamLeader, ServerPlayer requesterPlayer) { // 队长，申请者名称
         if (BattleRoyale.getGameManager().isInGame()) {
@@ -358,16 +358,16 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamExternal.declineRequest(this, teamLeader, requesterPlayer);
+        _TeamExternal.declineRequest(this, teamLeader, requesterPlayer);
     }
     public boolean leaveTeam(@NotNull ServerPlayer player) {
-        return TeamExternal.leaveTeam(this, player);
+        return _TeamExternal.leaveTeam(this, player);
     }
     public boolean addToTeam(@Nullable CommandSourceStack source, LivingEntity player, int teamId) {
-        return TeamExternal.addToTeam(this, source, player, teamId);
+        return _TeamExternal.addToTeam(this, source, player, teamId);
     }
     public int buildTeamForAll(@Nullable CommandSourceStack source, List<LivingEntity> players, int targetSize, boolean forceRebuild) {
-        return TeamExternal.buildTeamForAll(this, source, players, targetSize, forceRebuild);
+        return _TeamExternal.buildTeamForAll(this, source, players, targetSize, forceRebuild);
     }
 
     // -------TeamManagement-------
@@ -383,7 +383,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamManagement.forceJoinTeam(this, player);
+        _TeamManagement.forceJoinTeam(this, player);
     }
 
     public boolean forceEliminatePlayerSilence(GamePlayer gamePlayer) {
@@ -392,7 +392,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return false;
         }
 
-        return TeamManagement.forceEliminatePlayerSilence(this, gamePlayer);
+        return _TeamManagement.forceEliminatePlayerSilence(this, gamePlayer);
     }
     public void forceEliminatePlayerFromTeam(LivingEntity livingEntity) {
         if (!BattleRoyale.getGameManager().isInGame()) {
@@ -400,7 +400,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamManagement.forceEliminatePlayerFromTeam(this, livingEntity);
+        _TeamManagement.forceEliminatePlayerFromTeam(this, livingEntity);
     }
     public boolean removePlayerFromTeam(@NotNull UUID playerUUID) {
         if (BattleRoyale.getGameManager().isInGame()) {
@@ -408,25 +408,25 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return false;
         }
 
-        return TeamManagement.removePlayerFromTeam(this, playerUUID);
+        return _TeamManagement.removePlayerFromTeam(this, playerUUID);
     }
 
     // -------TeamUtils-------
 
     public int getNonBotTeamCount() {
-        return TeamUtils.getNonBotTeamCount(this);
+        return _TeamUtils.getNonBotTeamCount(this);
     }
     public int getStandingPlayerTeamCount() {
-        return TeamUtils.getStandingPlayerTeamCount(this);
+        return _TeamUtils.getStandingPlayerTeamCount(this);
     }
     public int getStandingTeamCount() {
         return this.teamData.getTotalStandingTeamCount();
     }
     public int findNotFullTeamId() {
-        return TeamUtils.findNotFullTeamId(this);
+        return _TeamUtils.findNotFullTeamId(this);
     }
     public boolean hasEnoughPlayerTeamToStart() {
-        return TeamUtils.hasEnoughPlayerTeamToStart(this);
+        return _TeamUtils.hasEnoughPlayerTeamToStart(this);
     }
 
     public boolean buildVanillaTeam(@Nullable ServerLevel serverLevel, String vanillaTeamFormat, boolean hideName, boolean allowBuildInGame) {
@@ -439,7 +439,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return false;
         }
 
-        return TeamUtils.buildVanillaTeamForAllGameTeams(this, serverLevel, vanillaTeamFormat, hideName);
+        return _TeamUtils.buildVanillaTeamForAllGameTeams(this, serverLevel, vanillaTeamFormat, hideName);
     }
     public void clearVanillaTeam(@Nullable ServerLevel serverLevel) {
         if (serverLevel == null) {
@@ -447,9 +447,9 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             return;
         }
 
-        TeamUtils.clearVanillaTeam(this, serverLevel);
+        _TeamUtils.clearVanillaTeam(this, serverLevel);
     }
     public int removeVanillaTeam(@NotNull ServerLevel serverLevel, boolean gameTeamOnly) {
-        return TeamUtils.removeVanillaTeam(this, serverLevel, gameTeamOnly);
+        return _TeamUtils.removeVanillaTeam(this, serverLevel, gameTeamOnly);
     }
 }
