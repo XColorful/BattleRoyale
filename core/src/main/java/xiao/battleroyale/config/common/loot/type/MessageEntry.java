@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.config.common.loot.LootEntryTag;
 import xiao.battleroyale.api.loot.data.ILootData;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.util.ChatUtils;
@@ -67,7 +67,7 @@ public class MessageEntry extends AbstractLootEntry {
         }
 
         if (onlyGamePlayer) {
-            List<GamePlayer> gamePlayers = GameTeamManager.getGamePlayers();
+            List<GamePlayer> gamePlayers = _GameTeamManager.getGamePlayers();
             for (GamePlayer gamePlayer : gamePlayers) {
                 if (gamePlayer == null) {
                     continue;

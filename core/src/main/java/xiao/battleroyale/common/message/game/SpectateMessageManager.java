@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.message.AbstractMessageManager;
 import xiao.battleroyale.network.message.ClientMessageSpectateInfo;
@@ -55,7 +55,7 @@ public class SpectateMessageManager extends AbstractMessageManager<SpectateMessa
     public void notifyNbtChange(int nbtId) {
         changedId.add(nbtId);
         if (!messages.containsKey(nbtId)) { // 初次创建时才传入完整GamePlayers
-            messages.put(nbtId, new SpectateMessage(new CompoundTag(), currentTime, GameTeamManager.getGamePlayers()));
+            messages.put(nbtId, new SpectateMessage(new CompoundTag(), currentTime, _GameTeamManager.getGamePlayers()));
         }
     }
 
@@ -83,7 +83,7 @@ public class SpectateMessageManager extends AbstractMessageManager<SpectateMessa
             message.nbt = message.toNBT(sendPlayerPerMessage);
             if (!message.nbt.isEmpty()) {
                 sendGamePlayer.clear();
-                sendGamePlayer.add(GameTeamManager.getGamePlayerBySingleId(id));
+                sendGamePlayer.add(_GameTeamManager.getGamePlayerBySingleId(id));
                 if (serverLevel != null) {
                     sendMessageToGamePlayers(sendGamePlayer, message.nbt, serverLevel);
                 }

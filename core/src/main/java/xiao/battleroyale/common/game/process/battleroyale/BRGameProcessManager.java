@@ -182,73 +182,73 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
 
     @Override public void checkAndUpdateInvalidGamePlayer(ServerLevel serverLevel) {
         checkAndUpdateGamePlayerPre(serverLevel);
-        BRGameManagement.checkAndUpdateInvalidGamePlayer(serverLevel);
+        _BRGameManagement.checkAndUpdateInvalidGamePlayer(serverLevel);
     }
     @Override public void teleportToLobbyInGame(LivingEntity player) {
-        BRGameManagement.teleportToLobbyInGame(this, player);
+        _BRGameManagement.teleportToLobbyInGame(this, player);
     }
     @Override public void teleportAfterGame(@Nullable ServerLevel serverLevel, Set<GamePlayer> winnerGamePlayers, Set<GameTeam> winnerGameTeams,
                                             boolean teleportWinnerAfterGame, boolean teleportAfterGame) {
         if (BattleRoyale.getGameManager().isInGame()) { // 防止在1tick里既stopGame又startGame
             return;
         }
-        BRGameManagement.teleportAfterGame(serverLevel, winnerGamePlayers, winnerGameTeams, teleportWinnerAfterGame, teleportAfterGame);
+        _BRGameManagement.teleportAfterGame(serverLevel, winnerGamePlayers, winnerGameTeams, teleportWinnerAfterGame, teleportAfterGame);
     }
     @Override public boolean spectateGame(ServerPlayer player) {
         if (player == null) {
             return false;
         }
-        return switch (BRGameManagement.spectateGame(player, BattleRoyale.getGameManager().isInGame())) {
+        return switch (_BRGameManagement.spectateGame(player, BattleRoyale.getGameManager().isInGame())) {
             case CHANGE_FROM_SPECTATOR, GAME_PLAYER_SPECTATE, NON_GAME_PLAYER_SPECTATE -> true;
             default -> false;
         };
     }
     @Override public void healGamePlayers(@NotNull ServerLevel serverLevel, List<GamePlayer> gamePlayers) {
-        BRGameManagement.healGamePlayers(serverLevel, gamePlayers);
+        _BRGameManagement.healGamePlayers(serverLevel, gamePlayers);
     }
     @Override public void finishGameAddWinner(boolean hasWinner) {
-        BRGameManagement.finishGameAddWinner(BattleRoyale.getGameManager(), hasWinner);
+        _BRGameManagement.finishGameAddWinner(BattleRoyale.getGameManager(), hasWinner);
     }
 
     // --------IGameNotification--------
 
     @Override public void sendWinnerResult(@Nullable ServerLevel serverLevel, Set<GamePlayer> winnerGamePlayers, Set<GameTeam> winnerGameTeams, int gameTime) {
-        BRGameNotification.sendWinnerResult(this, serverLevel, winnerGamePlayers, winnerGameTeams, gameTime);
+        _BRGameNotification.sendWinnerResult(this, serverLevel, winnerGamePlayers, winnerGameTeams, gameTime);
     }
     @Override public void notifyWinner(@Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer, int winnerParticleId) {
-        BRGameNotification.notifyWinner(serverLevel, gamePlayer, winnerParticleId);
+        _BRGameNotification.notifyWinner(serverLevel, gamePlayer, winnerParticleId);
     }
     @Override public void sendGameSpectateMessage(@NotNull ServerPlayer player, boolean allowSpectate) {
-        BRGameNotification.sendGameSpectateMessage(player, allowSpectate);
+        _BRGameNotification.sendGameSpectateMessage(player, allowSpectate);
     }
     @Override public void sendDownMessage(@Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
-        BRGameNotification.sendDownMessage(serverLevel, gamePlayer);
+        _BRGameNotification.sendDownMessage(serverLevel, gamePlayer);
     }
     @Override public void sendReviveMessage(@Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
-        BRGameNotification.sendReviveMessage(serverLevel, gamePlayer);
+        _BRGameNotification.sendReviveMessage(serverLevel, gamePlayer);
     }
     @Override public void sendEliminateMessage(@Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
-        BRGameNotification.sendEliminateMessage(serverLevel, gamePlayer);
+        _BRGameNotification.sendEliminateMessage(serverLevel, gamePlayer);
     }
 
     // --------IGameEventHandler--------
 
     @Override public void onPlayerLoggedIn(@NotNull ServerLevel serverLevel, ServerPlayer player, boolean onlyGamePlayerSpectate) {
-        BRGameEventHandler.onPlayerLoggedIn(this, serverLevel, player, onlyGamePlayerSpectate);
+        _BRGameEventHandler.onPlayerLoggedIn(this, serverLevel, player, onlyGamePlayerSpectate);
     }
     @Override public void onPlayerLoggedOut(boolean isInGame, ServerPlayer player) {
-        BRGameEventHandler.onPlayerLoggedOut(this, isInGame, player);
+        _BRGameEventHandler.onPlayerLoggedOut(this, isInGame, player);
     }
     @Override public boolean onPlayerDamage(ILivingDamageEvent event, @NotNull GamePlayer gamePlayer) {
-        return BRGameEventHandler.onPlayerDamage(this, event, gamePlayer);
+        return _BRGameEventHandler.onPlayerDamage(this, event, gamePlayer);
     }
     @Override public boolean onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, boolean removeInvalidTeam) {
-        return BRGameEventHandler.onPlayerDown(this, event, gamePlayer, removeInvalidTeam);
+        return _BRGameEventHandler.onPlayerDown(this, event, gamePlayer, removeInvalidTeam);
     }
     @Override public boolean onPlayerDeath(@Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
-        return BRGameEventHandler.onPlayerDeath(this, event, serverLevel, gamePlayer);
+        return _BRGameEventHandler.onPlayerDeath(this, event, serverLevel, gamePlayer);
     }
     @Override public boolean onPlayerRevived(@NotNull GamePlayer gamePlayer) {
-        return BRGameEventHandler.onPlayerRevived(this, gamePlayer);
+        return _BRGameEventHandler.onPlayerRevived(this, gamePlayer);
     }
 }
