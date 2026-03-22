@@ -139,6 +139,10 @@ public class Vec3Utils {
     public static Vec3 scaleXYZ(@NotNull Vec3 v, double scale) {
         return v.multiply(scale, scale, scale);
     }
+
+    /**
+     * 以输入向量为基准，缩放XYZ方向
+     */
     public static Vec3 scaleXYZ(@NotNull Vec3 v, double x, double y, double z) {
         return v.multiply(x, y, z);
     }
@@ -161,6 +165,9 @@ public class Vec3Utils {
         return baseVec.add(radius * Math.cos(angle), dimension.y * random.get(), radius * Math.sin(angle));
     }
 
+    /**
+     * 以输入向量为基准，取dimension.y为半径，在XYZ球内随机偏移
+     */
     public static Vec3 randomSphereXYZ(@NotNull Vec3 baseVec, Vec3 dimension, Supplier<Float> random) {
         double radius = dimension.y * Math.cbrt(random.get());
         double theta = 2 * Math.PI * random.get();

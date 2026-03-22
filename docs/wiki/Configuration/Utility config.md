@@ -90,7 +90,7 @@
 ### Survival mode lobby
 
 - levelKey: the dimension where the lobby is located
-- allowGamePlayerTeleport: Whether game players who have not been eliminated can teleport to the lobby
+- allowGamePlayerTeleport: Whether non-eliminated game players can teleport to the lobby
 - lobbyCenter: lobby coordinates
 - lobbyDimension: the size of the lobby, which expands in the positive and negative directions of x, y, and z with lobbyCenter as the center, and finally becomes a rectangular block
 - lobbyMuteki: whether player is invulnerable in lobby, this applies to all players
