@@ -18,7 +18,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.server.utilitity.ILobbyReadApi;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.util.ChatUtils;
@@ -67,7 +67,7 @@ public class SurvivalLobby implements ILobbyReadApi {
             ChatUtils.sendTranslatableMessageToPlayer(player, "battleroyale.message.no_lobby");
             return;
         }
-        if (!allowGamePlayerTeleport && GameTeamManager.hasStandingGamePlayer(player.getUUID())) {
+        if (!allowGamePlayerTeleport && _GameTeamManager.hasStandingGamePlayer(player.getUUID())) {
             ChatUtils.sendTranslatableMessageToPlayer(player, "battleroyale.message.not_allow_standing_gameplayer_teleport");
             return;
         }
@@ -213,7 +213,7 @@ public class SurvivalLobby implements ILobbyReadApi {
                 pos.z >= minZ && pos.z <= maxZ;
     }
     @Override public boolean canMuteki(@NotNull LivingEntity livingEntity) {
-        if (!isLobbyCreated() || GameTeamManager.hasStandingGamePlayer(livingEntity.getUUID())) {
+        if (!isLobbyCreated() || _GameTeamManager.hasStandingGamePlayer(livingEntity.getUUID())) {
             return false;
         }
 

@@ -5,7 +5,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.game.spawn.type.SpawnTypeTag;
 import xiao.battleroyale.api.config.common.game.spawn.type.shape.SpawnShapeTag;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
-import xiao.battleroyale.common.game.GameStatsManager;
+import xiao.battleroyale.common.game._GameStatsManager;
 import xiao.battleroyale.config.common.game.spawn.type.detail.AbstractDetailEntry;
 import xiao.battleroyale.config.common.game.spawn.type.detail.CommonDetailType;
 import xiao.battleroyale.config.common.game.spawn.type.shape.SpawnShapeType;
@@ -48,7 +48,7 @@ public abstract class AbstractSimpleSpawner<T extends AbstractDetailEntry<T>> im
         stringWriter.put(SpawnShapeTag.CENTER, StringUtils.vectorToString(centerPos));
         stringWriter.put(SpawnShapeTag.DIMENSION, StringUtils.vectorToString(dimension));
         addSpawnDetailProperty();
-        GameStatsManager.recordSpawnString(SPAWNER_KEY_TAG, stringWriter);
+        _GameStatsManager.recordSpawnString(SPAWNER_KEY_TAG, stringWriter);
     }
 
     protected abstract String getSpawnerTypeString();
