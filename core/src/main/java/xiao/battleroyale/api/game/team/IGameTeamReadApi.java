@@ -21,10 +21,14 @@ public interface IGameTeamReadApi {
     int getStandingGamePlayerSize();
     List<GameTeam> getStandingGameTeams();
     @Nullable GamePlayer getRandomStandingGamePlayer();
-    int getTotalMembers();
+
+    int getGamePlayersTotal();
+    @Deprecated default int getTotalMembers() {
+        return getGamePlayersTotal();
+    }
 
     /**
-     * @return 非人机队伍数量
+     * @return 非人机队伍总数
      */
     int getNonBotTeamCount();
     /**

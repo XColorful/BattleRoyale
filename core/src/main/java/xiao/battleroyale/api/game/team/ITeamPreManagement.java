@@ -8,7 +8,7 @@ import java.util.UUID;
 public interface ITeamPreManagement {
 
     /**
-     * 玩家强制加入队伍，优先加入已有队伍，其次创建新队伍
+     * 游戏未开始时强制玩家加入队伍，优先加入已有队伍，其次创建新队伍
      * 适用于管理员指令或游戏初始化时的强制分配。
      * @param player 需要加入队伍的玩家
      */
