@@ -56,7 +56,8 @@
 ##### 发送观战消息
 > _/battleroyale api gameManager sendGameSpectateMessage [player]_
 
-向玩家发送观战消息，自动填入[onlyGamePlayerSpectate](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config#游戏配置)
+- player：玩家选择器
+向玩家[发送观战消息](https://github.com/XColorful/BattleRoyale/wiki/GameProcessManager-API-command#发送观战消息)，自动填入[onlyGamePlayerSpectate](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config#游戏配置)
 - `返回值`：1
 
 ##### 结算游戏
@@ -206,7 +207,8 @@ Saves the [Global offset](https://github.com/XColorful/BattleRoyale/wiki/Game-co
 ##### Send spectate message
 > _/battleroyale api gameManager sendGameSpectateMessage [player]_
 
-Sends a spectate message to the player, automatically filling in [onlyGamePlayerSpectate](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config#Game-config)
+- player: player selector
+[Sends spectate message](https://github.com/XColorful/BattleRoyale/wiki/GameProcessManager-API-command#Send-spectate-message) to the player, automatically filling in [onlyGamePlayerSpectate](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config#Game-config)
 - `return value`: 1
 
 ##### Finish game
