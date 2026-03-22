@@ -149,7 +149,7 @@ public class TeamData extends AbstractGameManagerData {
             return false;
         }
 
-        if (gamePlayers.containsKey(gamePlayer.getPlayerUUID()) || getTotalPlayerCount() >= maxPlayersLimit) {
+        if (gamePlayers.containsKey(gamePlayer.getPlayerUUID()) || getGamePlayersTotal() >= maxPlayersLimit) {
             return false;
         }
 
@@ -333,7 +333,12 @@ public class TeamData extends AbstractGameManagerData {
         return true;
     }
 
-    public int getTotalPlayerCount() { return gamePlayers.size(); }
+    @Deprecated public int getTotalPlayerCount() {
+        return getGamePlayersTotal();
+    }
+    public int getGamePlayersTotal() {
+        return gamePlayers.size();
+    }
     public int getTotalStandingPlayerCount() { return standingGamePlayers.size(); }
     public int getTotalTeamCount() { return gameTeams.size(); }
     public int getTotalStandingTeamCount() { // 调用不频繁，额外维护比较复杂

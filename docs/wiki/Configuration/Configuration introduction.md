@@ -48,6 +48,7 @@
 
 位于 _./minecraft/config/battleroyale/server_ 下的子文件夹：
 
+- function：[函数配置](https://github.com/XColorful/BattleRoyale/wiki/Function-config)
 - performance：[性能配置](https://github.com/XColorful/BattleRoyale/wiki/Performance-config)
 - profile：[预设配置](https://github.com/XColorful/BattleRoyale/wiki/Profile-config)
 - utility：[实用配置](https://github.com/XColorful/BattleRoyale/wiki/Utility-config)
@@ -100,6 +101,7 @@ Located in subfolders under _./minecraft/config/battleroyale/client_
 
 Located in subfolders under _./minecraft/config/battleroyale/server_
 
+- [function](https://github.com/XColorful/BattleRoyale/wiki/Function-config#English)
 - [performance](https://github.com/XColorful/BattleRoyale/wiki/Performance-config#English)
 - [profile](https://github.com/XColorful/BattleRoyale/wiki/Profile-config#English)
 - [utility](https://github.com/XColorful/BattleRoyale/wiki/Utility-config#English)

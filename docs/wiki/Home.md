@@ -2,6 +2,8 @@
 
 # 自定义大逃杀wiki
 
+> 推荐安装[Stylus](https://chromewebstore.google.com/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne)插件并使用配置[Stylus-Obsidian-Topaz-Nord.json](https://github.com/XColorful/XColorful.github.io/blob/main/stylus/Stylus-Obsidian-Topaz-Nord.json)
+
 ## 配置文件
 
 [配置文件说明](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction)
@@ -29,6 +31,7 @@
 
 ### 服务端配置
 
+- [函数配置](https://github.com/XColorful/BattleRoyale/wiki/Function-config)
 - [性能配置](https://github.com/XColorful/BattleRoyale/wiki/Performance-config)
 - [预设配置](https://github.com/XColorful/BattleRoyale/wiki/Profile-config)
 - [实用配置](https://github.com/XColorful/BattleRoyale/wiki/Utility-config)
@@ -64,6 +67,13 @@
 - [实用功能](https://github.com/XColorful/BattleRoyale/wiki/Utility-command)
 - [临时数据](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command)
 - [PUBGMC兼容](https://github.com/XColorful/BattleRoyale/wiki/PUBGMC-compatibility)
+
+### API指令
+
+- [API指令](https://github.com/XColorful/BattleRoyale/wiki/API-command)
+	- [算法API指令](https://github.com/XColorful/BattleRoyale/wiki/Algorithm-API-command)
+	- [游戏API指令](https://github.com/XColorful/BattleRoyale/wiki/Game-API-command)
+	- [函数API指令](https://github.com/XColorful/BattleRoyale/wiki/Function-API-command)
 
 ## 游戏类型
 
@@ -110,6 +120,8 @@
 
 # English
 
+> Recommend installing the [Stylus](https://chromewebstore.google.com/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne) extension and using the configuration [Stylus-Obsidian-Topaz-Nord.json](https://github.com/XColorful/XColorful.github.io/blob/main/stylus/Stylus-Obsidian-Topaz-Nord.json)
+
 ## Configuration
 
 [Configuration Introduction](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction#English)
@@ -137,6 +149,7 @@
 
 ### Server
 
+- [Function](https://github.com/XColorful/BattleRoyale/wiki/Function-config#English)
 - [Performance](https://github.com/XColorful/BattleRoyale/wiki/Performance-config#English)
 - [Profile](https://github.com/XColorful/BattleRoyale/wiki/Profile-config#English)
 - [Utility](https://github.com/XColorful/BattleRoyale/wiki/Utility-config#English)
@@ -172,6 +185,13 @@
 - [Utility](https://github.com/XColorful/BattleRoyale/wiki/Utility-command#English)
 - [Temporary data](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#English)
 - [PUBGMC compatibility](https://github.com/XColorful/BattleRoyale/wiki/PUBGMC-compatibility#English)
+
+### API command
+
+- [API command](https://github.com/XColorful/BattleRoyale/wiki/API-command#English)
+	- [Algorithm API command](https://github.com/XColorful/BattleRoyale/wiki/Algorithm-API-command#English)
+	- [Game API command](https://github.com/XColorful/BattleRoyale/wiki/Game-API-command#English)
+	- [Function API command](https://github.com/XColorful/BattleRoyale/wiki/Function-API-command#English)
 
 ## Game type
 
