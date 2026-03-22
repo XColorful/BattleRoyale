@@ -89,8 +89,7 @@ public class FunctionRegisterHelper {
 
     // --------IFunctionRegisterApi--------
 
-    protected static boolean registerEventClass(FunctionData apiFunction, String rlStr, boolean isTag, String eventClassStr, String priorityStr, boolean receiveCanceled) {
-        Identifier rl = BattleRoyale.getMcRegistry().createResourceLocation(rlStr);
+    protected static boolean registerEventClass(FunctionData apiFunction, Identifier rl, boolean isTag, String eventClassStr, String priorityStr, boolean receiveCanceled) {
         Class<? extends ICustomEvent> eventClass = string_to_eventClass.get(eventClassStr);
         EventPriority priority = EventPriority.fromString(priorityStr);
         if (rl == null || eventClass == null || priority == null) {
@@ -98,8 +97,7 @@ public class FunctionRegisterHelper {
         }
         return apiFunction.registerFunction(BattleRoyale.getEventRegister(), rl, isTag, eventClass, priority, receiveCanceled);
     }
-    protected static boolean unregisterEventClass(FunctionData apiFunction, String rlStr, boolean isTag, String eventClassStr) {
-        Identifier rl = BattleRoyale.getMcRegistry().createResourceLocation(rlStr);
+    protected static boolean unregisterEventClass(FunctionData apiFunction, Identifier rl, boolean isTag, String eventClassStr) {
         Class<? extends ICustomEvent> eventClass = string_to_eventClass.get(eventClassStr);
         if (rl == null || eventClass == null) {
             return false;

@@ -12,6 +12,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.NbtPathArgument;
+import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.nbt.ListTag;
@@ -19,6 +21,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.storage.CommandStorage;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameMainManager;
@@ -47,17 +50,19 @@ public class TeamManagerCommand {
                         )
                 )
                 .then(Commands.literal(GET_GAME_PLAYER)
-                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
-                                .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
-                                        .suggests(DETAIL_LEVEL_SUGGESTS)
-                                        .then(Commands.literal(BY_PLAYER)
-                                                .then(Commands.argument(PLAYER, EntityArgument.entity())
-                                                        .executes(TeamManagerCommand::getGamePlayerByPlayer)
+                        .then(Commands.argument(RESOURCE_LOCATION, IdentifierArgument.id())
+                                .then(Commands.argument(STORAGE_PATH, NbtPathArgument.nbtPath())
+                                        .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
+                                                .suggests(DETAIL_LEVEL_SUGGESTS)
+                                                .then(Commands.literal(BY_PLAYER)
+                                                        .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                                                .executes(TeamManagerCommand::getGamePlayerByPlayer)
+                                                        )
                                                 )
-                                        )
-                                        .then(Commands.literal(BY_ID)
-                                                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
-                                                        .executes(TeamManagerCommand::getGamePlayerByGamePlayerId)
+                                                .then(Commands.literal(BY_ID)
+                                                        .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                                                                .executes(TeamManagerCommand::getGamePlayerByGamePlayerId)
+                                                        )
                                                 )
                                         )
                                 )
@@ -82,17 +87,19 @@ public class TeamManagerCommand {
                         )
                 )
                 .then(Commands.literal(GET_GAME_TEAM)
-                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
-                                .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
-                                        .suggests(DETAIL_LEVEL_SUGGESTS)
-                                        .then(Commands.literal(BY_PLAYER)
-                                                .then(Commands.argument(PLAYER, EntityArgument.entity())
-                                                        .executes(TeamManagerCommand::getGameTeamByPlayer)
+                        .then(Commands.argument(RESOURCE_LOCATION, IdentifierArgument.id())
+                                .then(Commands.argument(STORAGE_PATH, NbtPathArgument.nbtPath())
+                                        .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
+                                                .suggests(DETAIL_LEVEL_SUGGESTS)
+                                                .then(Commands.literal(BY_PLAYER)
+                                                        .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                                                .executes(TeamManagerCommand::getGameTeamByPlayer)
+                                                        )
                                                 )
-                                        )
-                                        .then(Commands.literal(BY_ID)
-                                                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
-                                                        .executes(TeamManagerCommand::getGameTeamByGameTeamId)
+                                                .then(Commands.literal(BY_ID)
+                                                        .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                                                                .executes(TeamManagerCommand::getGameTeamByGameTeamId)
+                                                        )
                                                 )
                                         )
                                 )
@@ -100,37 +107,45 @@ public class TeamManagerCommand {
                 )
                 .then(Commands.literal(GET_GAME_PLAYERS_TOTAL).executes(TeamManagerCommand::getGamePlayersTotal))
                 .then(Commands.literal(GET_GAME_PLAYERS)
-                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
-                                .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
-                                        .suggests(DETAIL_LEVEL_SUGGESTS)
-                                        .executes(TeamManagerCommand::getGamePlayers)
+                        .then(Commands.argument(RESOURCE_LOCATION, IdentifierArgument.id())
+                                .then(Commands.argument(STORAGE_PATH, NbtPathArgument.nbtPath())
+                                        .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
+                                                .suggests(DETAIL_LEVEL_SUGGESTS)
+                                                .executes(TeamManagerCommand::getGamePlayers)
+                                        )
                                 )
                         )
                 )
                 .then(Commands.literal(GET_GAME_TEAMS_TOTAL).executes(TeamManagerCommand::getGameTeamsTotal))
                 .then(Commands.literal(GET_GAME_TEAMS)
-                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
-                                .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
-                                        .suggests(DETAIL_LEVEL_SUGGESTS)
-                                        .executes(TeamManagerCommand::getGameTeams)
+                        .then(Commands.argument(RESOURCE_LOCATION, IdentifierArgument.id())
+                                .then(Commands.argument(STORAGE_PATH, NbtPathArgument.nbtPath())
+                                        .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
+                                                .suggests(DETAIL_LEVEL_SUGGESTS)
+                                                .executes(TeamManagerCommand::getGameTeams)
+                                        )
                                 )
                         )
                 )
                 .then(Commands.literal(GET_STANDING_GAME_PLAYERS_TOTAL).executes(TeamManagerCommand::getStandingGamePlayersTotal))
                 .then(Commands.literal(GET_STANDING_GAME_PLAYERS)
-                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
-                                .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
-                                        .suggests(DETAIL_LEVEL_SUGGESTS)
-                                        .executes(TeamManagerCommand::getStandingGamePlayers)
+                        .then(Commands.argument(RESOURCE_LOCATION, IdentifierArgument.id())
+                                .then(Commands.argument(STORAGE_PATH, NbtPathArgument.nbtPath())
+                                        .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
+                                                .suggests(DETAIL_LEVEL_SUGGESTS)
+                                                .executes(TeamManagerCommand::getStandingGamePlayers)
+                                        )
                                 )
                         )
                 )
                 .then(Commands.literal(GET_STANDING_GAME_TEAMS_TOTAL).executes(TeamManagerCommand::getStandingGameTeamsTotal))
                 .then(Commands.literal(GET_STANDING_GAME_TEAMS)
-                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
-                                .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
-                                        .suggests(DETAIL_LEVEL_SUGGESTS)
-                                        .executes(TeamManagerCommand::getStandingGameTeams)
+                        .then(Commands.argument(RESOURCE_LOCATION, IdentifierArgument.id())
+                                .then(Commands.argument(STORAGE_PATH, NbtPathArgument.nbtPath())
+                                        .then(Commands.argument(DETAIL_LEVEL, IntegerArgumentType.integer(0))
+                                                .suggests(DETAIL_LEVEL_SUGGESTS)
+                                                .executes(TeamManagerCommand::getStandingGameTeams)
+                                        )
                                 )
                         )
                 )
@@ -221,18 +236,18 @@ public class TeamManagerCommand {
         @Nullable GamePlayer gamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerByUUID(player.getUUID());
         if (gamePlayer == null) return 0;
         return getGamePlayerByGamePlayer(context, gamePlayer,
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
+                IdentifierArgument.getId(context, RESOURCE_LOCATION),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL));
     }
-    private static int getGamePlayerByGamePlayerId(CommandContext<CommandSourceStack> context) {
+    private static int getGamePlayerByGamePlayerId(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         int playerId = IntegerArgumentType.getInteger(context, ID);
         @Nullable GamePlayer gamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerBySingleId(playerId);
         if (gamePlayer == null) return 0;
         return getGamePlayerByGamePlayer(context, gamePlayer,
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
+                IdentifierArgument.getId(context, RESOURCE_LOCATION),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL));
     }
-    private static int getGamePlayerByGamePlayer(CommandContext<CommandSourceStack> context, GamePlayer gamePlayer, Identifier nameSpace, int detailLevel) {
+    private static int getGamePlayerByGamePlayer(CommandContext<CommandSourceStack> context, GamePlayer gamePlayer, Identifier storageId, int detailLevel) throws CommandSyntaxException {
         CompoundTag gamePlayerTag = detailLevel <= 0
                 ? gamePlayer.toBasicTag()
                 : switch (detailLevel) {
@@ -240,7 +255,12 @@ public class TeamManagerCommand {
             case 2 -> gamePlayer.toGameTag();
             default -> gamePlayer.toFullTag();
         };
-        context.getSource().getServer().getCommandStorage().set(nameSpace, gamePlayerTag);
+        CommandStorage storage = context.getSource().getServer().getCommandStorage();
+        CompoundTag compoundtag = storage.get(storageId);
+        NbtPathArgument.NbtPath path = NbtPathArgument.getPath(context, STORAGE_PATH);
+        path.getOrCreate(compoundtag, CompoundTag::new);
+        path.set(compoundtag, gamePlayerTag);
+        storage.set(storageId, compoundtag);
         return Command.SINGLE_SUCCESS;
     }
     private static int hasStandingGamePlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -268,18 +288,18 @@ public class TeamManagerCommand {
         @Nullable GamePlayer gamePlayer = BattleRoyale.getGameManager().getTeamManager().getGamePlayerByUUID(player.getUUID());
         if (gamePlayer == null) return 0;
         return getGameTeamByGameTeam(context, gamePlayer.getTeam(),
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
+                IdentifierArgument.getId(context, RESOURCE_LOCATION),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL));
     }
-    private static int getGameTeamByGameTeamId(CommandContext<CommandSourceStack> context) {
+    private static int getGameTeamByGameTeamId(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         int teamId = IntegerArgumentType.getInteger(context, ID);
         @Nullable GameTeam gameTeam = BattleRoyale.getGameManager().getTeamManager().getGameTeamById(teamId);
         if (gameTeam == null) return 0;
         return getGameTeamByGameTeam(context, gameTeam,
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
+                IdentifierArgument.getId(context, RESOURCE_LOCATION),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL));
     }
-    private static int getGameTeamByGameTeam(CommandContext<CommandSourceStack> context, GameTeam gameTeam, Identifier nameSpace, int detailLevel) {
+    private static int getGameTeamByGameTeam(CommandContext<CommandSourceStack> context, GameTeam gameTeam, Identifier storageId, int detailLevel) throws CommandSyntaxException {
         CompoundTag gameTeamTag = detailLevel <= 0
                 ? gameTeam.toBasicTag()
                 : switch (detailLevel) {
@@ -287,42 +307,47 @@ public class TeamManagerCommand {
             case 2 -> gameTeam.toGameTag();
             default -> gameTeam.toFullTag();
         };
-        context.getSource().getServer().getCommandStorage().set(nameSpace, gameTeamTag);
+        CommandStorage storage = context.getSource().getServer().getCommandStorage();
+        CompoundTag compoundtag = storage.get(storageId);
+        NbtPathArgument.NbtPath path = NbtPathArgument.getPath(context, STORAGE_PATH);
+        path.getOrCreate(compoundtag, CompoundTag::new);
+        path.set(compoundtag, gameTeamTag);
+        storage.set(storageId, compoundtag);
         return Command.SINGLE_SUCCESS;
     }
     private static int getGamePlayersTotal(CommandContext<CommandSourceStack> context) {
         return BattleRoyale.getGameManager().getTeamManager().getGamePlayersTotal();
     }
-    private static int getGamePlayers(CommandContext<CommandSourceStack> context) {
+    private static int getGamePlayers(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         return getGamePlayersInternal(context, BattleRoyale.getGameManager().getTeamManager().getGamePlayers(),
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
+                IdentifierArgument.getId(context, RESOURCE_LOCATION),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL)
         );
     }
     private static int getGameTeamsTotal(CommandContext<CommandSourceStack> context) {
         return BattleRoyale.getGameManager().getTeamManager().getGameTeams().size();
     }
-    private static int getGameTeams(CommandContext<CommandSourceStack> context) {
+    private static int getGameTeams(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         return getGameTeamsInternal(context, BattleRoyale.getGameManager().getTeamManager().getGameTeams(),
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
+                IdentifierArgument.getId(context, RESOURCE_LOCATION),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL)
         );
     }
     private static int getStandingGamePlayersTotal(CommandContext<CommandSourceStack> context) {
         return BattleRoyale.getGameManager().getTeamManager().getStandingGamePlayerSize();
     }
-    private static int getStandingGamePlayers(CommandContext<CommandSourceStack> context) {
+    private static int getStandingGamePlayers(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         return getGamePlayersInternal(context, BattleRoyale.getGameManager().getTeamManager().getStandingGamePlayers(),
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
+                IdentifierArgument.getId(context, RESOURCE_LOCATION),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL)
         );
     }
     private static int getStandingGameTeamsTotal(CommandContext<CommandSourceStack> context) {
         return BattleRoyale.getGameManager().getTeamManager().getStandingGameTeams().size();
     }
-    private static int getStandingGameTeams(CommandContext<CommandSourceStack> context) {
+    private static int getStandingGameTeams(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         return getGameTeamsInternal(context, BattleRoyale.getGameManager().getTeamManager().getStandingGameTeams(),
-                BattleRoyale.getMcRegistry().createResourceLocation(StringArgumentType.getString(context, RESOURCE_LOCATION)),
+                IdentifierArgument.getId(context, RESOURCE_LOCATION),
                 IntegerArgumentType.getInteger(context, DETAIL_LEVEL)
         );
     }
@@ -337,7 +362,7 @@ public class TeamManagerCommand {
         return BattleRoyale.getGameManager().getTeamManager().getStandingPlayerTeamCount();
     }
 
-    private static int getGamePlayersInternal(CommandContext<CommandSourceStack> context, List<GamePlayer> players, Identifier nameSpace, int detailLevel) {
+    private static int getGamePlayersInternal(CommandContext<CommandSourceStack> context, List<GamePlayer> players, Identifier storageId, int detailLevel) throws CommandSyntaxException {
         Function<GamePlayer, CompoundTag> toTag = detailLevel <= 0 ? GamePlayer::toBasicTag
                 : switch (detailLevel) {
             case 1 -> GamePlayer::toSimpleTag;
@@ -357,11 +382,16 @@ public class TeamManagerCommand {
         tag.put("playerIds", new IntArrayTag(playerIds));
         tag.put("players", playersTag);
 
-        context.getSource().getServer().getCommandStorage().set(nameSpace, tag);
+        CommandStorage storage = context.getSource().getServer().getCommandStorage();
+        CompoundTag compoundtag = storage.get(storageId);
+        NbtPathArgument.NbtPath path = NbtPathArgument.getPath(context, STORAGE_PATH);
+        path.getOrCreate(compoundtag, CompoundTag::new);
+        path.set(compoundtag, tag);
+        storage.set(storageId, compoundtag);
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int getGameTeamsInternal(CommandContext<CommandSourceStack> context, List<GameTeam> teams, Identifier nameSpace, int detailLevel) {
+    private static int getGameTeamsInternal(CommandContext<CommandSourceStack> context, List<GameTeam> teams, Identifier storageId, int detailLevel) throws CommandSyntaxException {
         Function<GameTeam, CompoundTag> toTag = detailLevel <= 0 ? GameTeam::toBasicTag
                 : switch (detailLevel) {
             case 1 -> GameTeam::toSimpleTag;
@@ -381,7 +411,12 @@ public class TeamManagerCommand {
         tag.put("teamIds", new IntArrayTag(teamIds));
         tag.put("teams", teamsTag);
 
-        context.getSource().getServer().getCommandStorage().set(nameSpace, tag);
+        CommandStorage storage = context.getSource().getServer().getCommandStorage();
+        CompoundTag compoundtag = storage.get(storageId);
+        NbtPathArgument.NbtPath path = NbtPathArgument.getPath(context, STORAGE_PATH);
+        path.getOrCreate(compoundtag, CompoundTag::new);
+        path.set(compoundtag, tag);
+        storage.set(storageId, compoundtag);
         return Command.SINGLE_SUCCESS;
     }
 
