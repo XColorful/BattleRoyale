@@ -291,7 +291,7 @@ public class TeamManagerCommand {
         return Command.SINGLE_SUCCESS;
     }
     private static int getGamePlayersTotal(CommandContext<CommandSourceStack> context) {
-        return BattleRoyale.getGameManager().getTeamManager().getGamePlayers().size();
+        return BattleRoyale.getGameManager().getTeamManager().getGamePlayersTotal();
     }
     private static int getGamePlayers(CommandContext<CommandSourceStack> context) {
         return getGamePlayersInternal(context, BattleRoyale.getGameManager().getTeamManager().getGamePlayers(),

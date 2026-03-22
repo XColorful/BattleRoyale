@@ -127,7 +127,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.not_enough_team_to_start").withStyle(ChatFormatting.YELLOW));
         }
         this.configPrepared = false;
-        BattleRoyale.LOGGER.info("TeamManager complete initGame, total players: {}, total teams: {}", teamData.getTotalPlayerCount(), teamData.getGameTeamsList().size());
+        BattleRoyale.LOGGER.info("TeamManager complete initGame, total players: {}, total teams: {}", teamData.getGamePlayersTotal(), teamData.getGameTeamsList().size());
     }
 
     @Override
@@ -193,7 +193,7 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
         GameEntry gameEntry = gameManager.getGameEntry();
         if (gameEntry != null // 1.stopGame现在在每次服务器关闭都会触发，在未读取配置时关闭会触发; 2.配置被其他模组unregistered了，为空
                 && !gameEntry.keepTeamAfterGame) {
-            // 移除原版队伍
+            // 退出原版队伍
             clearVanillaTeam(serverLevel);
 
             for (GameTeam gameTeam : getGameTeams()) { // 新增双重保险，照理应该要能成功发送清空队伍的消息
@@ -276,8 +276,8 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
         }
         return standingGamePlayers.get(BattleRoyale.COMMON_RANDOM.nextInt(standingGamePlayers.size()));
     }
-    @Override public int getTotalMembers() {
-        return teamData.getTotalPlayerCount();
+    @Override public int getGamePlayersTotal() {
+        return teamData.getGamePlayersTotal();
     }
 
     // -------TeamNofitication-------

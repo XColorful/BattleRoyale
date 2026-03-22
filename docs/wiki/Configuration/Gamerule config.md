@@ -34,7 +34,7 @@
 ### 大逃杀规则配置
 
 - defaultLevelKey：未加载游戏时的初始游戏维度
-- playerTotal：玩家+人机总数
+- playerTotal：游戏玩家（玩家+人机）总数上限
 - teamSize：队伍最大人数
 - aiTeammate：是否允许人机队友
 - aiEnemy：是否允许人机敌人
@@ -270,7 +270,7 @@
 ### BattleRoyale gamerule
 
 - defaultLevelKey: the initial game dimension when the game is not loaded
-- playerTotal: total number of players + AI
+- playerTotal: maximum total number of game players (players + AI) 
 - teamSize: maximum number of team members
 - aiTeammate: whether AI teammates are allowed
 - aiEnemy: whether AI enemies are allowed
