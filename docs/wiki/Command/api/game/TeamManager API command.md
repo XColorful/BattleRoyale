@@ -36,12 +36,13 @@
 - `返回值`：游戏玩家ID
 
 ##### 获取游戏玩家
-> _/battleroyale api teamManager getGamePlayer [resourceLocation] [detailLevel] byPlayer [player]_
+> _/battleroyale api teamManager getGamePlayer [resourceLocation] [storagePath] [detailLevel] byPlayer [player]_
 > 
-> _/battleroyale api teamManager getGamePlayer [resourceLocation] [detailLevel] byId [id]_
+> _/battleroyale api teamManager getGamePlayer [resourceLocation] [storagePath] [detailLevel] byId [id]_
 
 将游戏玩家信息存入指定`命令存储`：
 - resourceLocation：标识符
+- storagePath：NBT路径
 - detailLevel：详细程度，范围[0, 3]
 - player：用实体选择器选中并获取游戏玩家
 - id：用游戏玩家ID选中游戏玩家
@@ -71,12 +72,13 @@
 - `返回值`：游戏玩家所在的游戏队伍ID
 
 ##### 获取游戏队伍
-> _/battleroyale api teamManager getGameTeam [resourceLocation] [detailLevel] byPlayer [player]_
+> _/battleroyale api teamManager getGameTeam [resourceLocation] [storagePath] [detailLevel] byPlayer [player]_
 > 
-> _/battleroyale api teamManager getGameTeam [resourceLocation] [detailLevel] byId [id]_
+> _/battleroyale api teamManager getGameTeam [resourceLocation] [storagePath] [detailLevel] byId [id]_
 
 将游戏队伍信息存入指定`命令存储`：
 - resourceLocation：标识符
+- storagePath：NBT路径
 - detailLevel：详细程度，范围[0, 3]
 - player：用实体选择器选中并获取游戏玩家
 - id：用游戏队伍ID选中游戏队伍
@@ -89,10 +91,11 @@
 - `返回值`：当前游戏玩家总数
 
 ##### 获取全部游戏玩家
-> _/battleroyale api teamManager getGamePlayers [resourceLocation] [detailLevel]_
+> _/battleroyale api teamManager getGamePlayers [resourceLocation] [storagePath] [detailLevel]_
 
 将所有游戏玩家信息存入指定`命令存储`：
 - resourceLocation：标识符
+- storagePath：NBT路径
 - detailLevel：详细程度，范围[0, 3]
 - `返回值`：1
 
@@ -102,10 +105,11 @@
 - `返回值`：当前游戏队伍总数
 
 ##### 获取全部游戏队伍
-> _/battleroyale api teamManager getGameTeams [resourceLocation] [detailLevel]_
+> _/battleroyale api teamManager getGameTeams [resourceLocation] [storagePath] [detailLevel]_
 
 将所有游戏队伍信息存入指定`命令存储`：
 - resourceLocation：标识符
+- storagePath：NBT路径
 - detailLevel：详细程度，范围[0, 3]
 - `返回值`：1
 
@@ -115,10 +119,11 @@
 - `返回值`：当前未被淘汰的游戏玩家数量
 
 ##### 获取全部未被淘汰的游戏玩家
-> _/battleroyale api teamManager getStandingGamePlayers [resourceLocation] [detailLevel]_
+> _/battleroyale api teamManager getStandingGamePlayers [resourceLocation] [storagePath] [detailLevel]_
 
 将所有未被淘汰的游戏玩家信息存入指定`命令存储`：
 - resourceLocation：标识符
+- storagePath：NBT路径
 - detailLevel：详细程度，范围[0, 3]
 - `返回值`：1
 
@@ -128,10 +133,11 @@
 - `返回值`：当前未被淘汰的游戏队伍数量
 
 ##### 获取全部未被淘汰的游戏队伍
-> _/battleroyale api teamManager getStandingGameTeams [resourceLocation] [detailLevel]_
+> _/battleroyale api teamManager getStandingGameTeams [resourceLocation] [storagePath] [detailLevel]_
 
 将所有未被淘汰的游戏队伍信息存入指定`命令存储`：
 - resourceLocation：标识符
+- storagePath：NBT路径
 - detailLevel：详细程度，范围[0, 3]
 - `返回值`：1
 
@@ -250,12 +256,13 @@
 - `return value`: the game player ID
 
 ##### Get game player
-> _/battleroyale api teamManager getGamePlayer [resourceLocation] [detailLevel] byPlayer [player]_
+> _/battleroyale api teamManager getGamePlayer [resourceLocation] [storagePath] [detailLevel] byPlayer [player]_
 > 
-> _/battleroyale api teamManager getGamePlayer [resourceLocation] [detailLevel] byId [id]_
+> _/battleroyale api teamManager getGamePlayer [resourceLocation] [storagePath] [detailLevel] byId [id]_
 
 Saves the game player's information to the specified `command storage`:
 - resourceLocation: identifier
+- storagePath: NBT path
 - detailLevel: detailed level, range [0, 3]
 - player: selects game player using an entity selector
 - id: selects game player using a game player ID
@@ -285,12 +292,13 @@ Saves the game player's information to the specified `command storage`:
 - `return value`: the game team ID the game player belongs to
 
 ##### Get game team
-> _/battleroyale api teamManager getGameTeam [resourceLocation] [detailLevel] byPlayer [player]_
+> _/battleroyale api teamManager getGameTeam [resourceLocation] [storagePath] [detailLevel] byPlayer [player]_
 > 
-> _/battleroyale api teamManager getGameTeam [resourceLocation] [detailLevel] byId [id]_
+> _/battleroyale api teamManager getGameTeam [resourceLocation] [storagePath] [detailLevel] byId [id]_
 
 Saves the game team's information to the specified `command storage`:
 - resourceLocation: identifier
+- storagePath: NBT path
 - detailLevel: detailed level, range [0, 3]
 - player: selects game player using an entity selector
 - id: selects game team using a game team ID
@@ -303,10 +311,11 @@ Saves the game team's information to the specified `command storage`:
 - `return value`: the current total number of game players
 
 ##### Get all game players
-> _/battleroyale api teamManager getGamePlayers [resourceLocation] [detailLevel]_
+> _/battleroyale api teamManager getGamePlayers [resourceLocation] [storagePath] [detailLevel]_
 
 Saves all the game players' information to the specified `command storage`:
 - resourceLocation: identifier
+- storagePath: NBT path
 - detailLevel: detailed level, range [0, 3]
 - `return value`: 1
 
@@ -316,10 +325,11 @@ Saves all the game players' information to the specified `command storage`:
 - `return value`: the current total number of game teams
 
 ##### Get all game teams
-> _/battleroyale api teamManager getGameTeams [resourceLocation] [detailLevel]_
+> _/battleroyale api teamManager getGameTeams [resourceLocation] [storagePath] [detailLevel]_
 
 Saves all the game teams' information to the specified `command storage`:
 - resourceLocation: identifier
+- storagePath: NBT path
 - detailLevel: detailed level, range [0, 3]
 - `return value`: 1
 
@@ -329,10 +339,11 @@ Saves all the game teams' information to the specified `command storage`:
 - `return value`: the current total number of non-eliminated game players
 
 ##### Get all standing game players
-> _/battleroyale api teamManager getStandingGamePlayers [resourceLocation] [detailLevel]_
+> _/battleroyale api teamManager getStandingGamePlayers [resourceLocation] [storagePath] [detailLevel]_
 
 Saves all the non-eliminated game players' information to the specified `command storage`:
 - resourceLocation: identifier
+- storagePath: NBT path
 - detailLevel: detailed level, range [0, 3]
 - `return value`: 1
 
@@ -342,10 +353,11 @@ Saves all the non-eliminated game players' information to the specified `command
 - `return value`: the current total number of non-eliminated game teams
 
 ##### Get all standing game teams
-> _/battleroyale api teamManager getStandingGameTeams [resourceLocation] [detailLevel]_
+> _/battleroyale api teamManager getStandingGameTeams [resourceLocation] [storagePath] [detailLevel]_
 
 Saves all the non-eliminated game teams' information to the specified `command storage`:
 - resourceLocation: identifier
+- storagePath: NBT path
 - detailLevel: detailed level, range [0, 3]
 - `return value`: 1
 
