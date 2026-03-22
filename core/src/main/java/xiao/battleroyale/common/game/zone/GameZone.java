@@ -18,7 +18,7 @@ import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
 import xiao.battleroyale.api.network.message.zone.GameZoneTag;
 import xiao.battleroyale.common.game.GameMessageManager;
-import xiao.battleroyale.common.game.GameStatsManager;
+import xiao.battleroyale.common.game._GameStatsManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
@@ -272,10 +272,10 @@ public class GameZone implements IGameZone {
         // special
         stringWriter.put(SPECIAL_TYPE_TAG, getSpecialType().getName());
 
-        GameStatsManager.recordZoneInt(this.zoneId, intWriter);
-        GameStatsManager.recordZoneBool(this.zoneId, boolWriter);
-        GameStatsManager.recordZoneDouble(this.zoneId, doubleWriter);
-        GameStatsManager.recordZoneString(this.zoneId, stringWriter);
+        _GameStatsManager.recordZoneInt(this.zoneId, intWriter);
+        _GameStatsManager.recordZoneBool(this.zoneId, boolWriter);
+        _GameStatsManager.recordZoneDouble(this.zoneId, doubleWriter);
+        _GameStatsManager.recordZoneString(this.zoneId, stringWriter);
     }
     protected void addFailedZoneProperty() {
         Map<String, Integer> intWriter = new HashMap<>();
@@ -285,8 +285,8 @@ public class GameZone implements IGameZone {
         intWriter.put(CREATE_TIME, BattleRoyale.getGameManager().getGameTime());
         stringWriter.put(ZONE_NAME_TAG, zoneName);
 
-        GameStatsManager.recordZoneInt(this.zoneId, intWriter);
-        GameStatsManager.recordZoneString(this.zoneId, stringWriter);
+        _GameStatsManager.recordZoneInt(this.zoneId, intWriter);
+        _GameStatsManager.recordZoneString(this.zoneId, stringWriter);
     }
 
     public static double allowedProgress(double progress) {

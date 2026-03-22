@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameSubManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
-import xiao.battleroyale.common.game.GameZoneManager;
+import xiao.battleroyale.common.game._GameZoneManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.message.AbstractMessageManager;
 import xiao.battleroyale.network.message.ClientMessageZoneInfo;
@@ -93,7 +93,7 @@ public class ZoneMessageManager extends AbstractMessageManager<ZoneMessage> impl
     public void onGameTick(int gameTime) {}
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        List<IGameZone> gameZones = GameZoneManager.getCurrentGameZones();
+        List<IGameZone> gameZones = _GameZoneManager.getCurrentGameZones();
         for (IGameZone gameZone : gameZones) {
             ZoneMessage zoneMessage = getOrCreateMessage(gameZone.getZoneId());
             zoneMessage.nbt = new CompoundTag();

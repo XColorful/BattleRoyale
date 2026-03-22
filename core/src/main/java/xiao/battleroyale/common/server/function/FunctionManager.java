@@ -54,7 +54,7 @@ public class FunctionManager extends AbstractServerManager implements IFunctionM
         if (registerEntry.clearPreviousBeforeApply) {
             clearConfigFunction();
         }
-        FunctionRegisterHelper.registerAll(this.configFunction, registerEntry);
+        _FunctionRegisterHelper.registerAll(this.configFunction, registerEntry);
     }
 
     // --------IFunctionRegisterApi--------
@@ -69,7 +69,7 @@ public class FunctionManager extends AbstractServerManager implements IFunctionM
         return this.apiFunction.registerFunction(BattleRoyale.getEventRegister(), rl, isTag, eventClass, priority, receiveCanceled);
     }
     @Override public boolean registerFunctionToEventClass(ResourceLocation rl, boolean isTag, String eventClassStr, String priorityStr, boolean receiveCanceled) {
-        return FunctionRegisterHelper.registerEventClass(this.apiFunction, rl, isTag, eventClassStr, priorityStr, receiveCanceled);
+        return _FunctionRegisterHelper.registerEventClass(this.apiFunction, rl, isTag, eventClassStr, priorityStr, receiveCanceled);
     }
 
     @Override public boolean unregisterFunction(ResourceLocation rl, boolean isTag, EventType eventType) {
@@ -82,6 +82,6 @@ public class FunctionManager extends AbstractServerManager implements IFunctionM
         return this.apiFunction.unregisterFunction(BattleRoyale.getEventRegister(), rl, isTag, eventClass);
     }
     @Override public boolean unregisterFunctionToEventClass(ResourceLocation rl, boolean isTag, String eventClassStr) {
-        return FunctionRegisterHelper.unregisterEventClass(this.apiFunction, rl, isTag, eventClassStr);
+        return _FunctionRegisterHelper.unregisterEventClass(this.apiFunction, rl, isTag, eventClassStr);
     }
 }

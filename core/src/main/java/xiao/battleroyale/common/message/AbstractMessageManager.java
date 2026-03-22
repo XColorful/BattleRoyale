@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.message.IMessageManager;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 
 import java.util.*;
@@ -81,7 +81,7 @@ public abstract class AbstractMessageManager<K extends AbstractCommonMessage> im
         if (serverLevel == null) {
             return;
         }
-        sendMessageToGamePlayers(GameTeamManager.getGamePlayers(), nbtPacket, serverLevel);
+        sendMessageToGamePlayers(_GameTeamManager.getGamePlayers(), nbtPacket, serverLevel);
         changedId.clear();
     }
 
