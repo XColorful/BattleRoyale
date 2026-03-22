@@ -63,10 +63,10 @@ public class _TeamManagement {
      * 不自动创建队伍，否则请使用 {@link _TeamManagement#createNewTeamAndJoin}
      * @param player 需要加入队伍的玩家
      * @param targetTeamId 目标队伍的 ID
-     * @param request 如果为 true，则尝试直接加入（跳过队长确认）；如果为 false，则当队伍有在线成员时发送申请。
+     * @param needRequest 如果为 false，则尝试直接加入（跳过队长确认）；如果为 true，则当队伍有在线成员时发送申请。
      */
     @ApiStatus.Internal
-    public static void addPlayerToTeamInternal(TeamManager teamManager, LivingEntity player, int targetTeamId, boolean request) {
+    public static void addPlayerToTeamInternal(TeamManager teamManager, LivingEntity player, int targetTeamId, boolean needRequest) {
         IGameManager gameManager = BattleRoyale.getGameManager();
         @Nullable ServerPlayer serverPlayer = player instanceof ServerPlayer ? (ServerPlayer) player : null;
 
@@ -94,7 +94,8 @@ public class _TeamManagement {
         }
 
         // 申请入队
-        if (request && targetTeam.getTeamMemberCount() != 0) { // 需要申请 + 已经有人
+        if (teamManager.teamConfig.freeToJoin) needRequest = false; // 自由入队
+        if (needRequest && targetTeam.getTeamMemberCount() != 0) { // 需要申请 + 已经有人
             ServerPlayer targetPlayer = GameUtils.getServerPlayerOrNull(serverLevel, targetTeam.getLeaderUUID());
             if (targetPlayer != null) {
                 if (serverPlayer != null) teamManager.requestPlayer(serverPlayer, targetPlayer);
