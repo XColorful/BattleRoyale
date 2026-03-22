@@ -2,7 +2,7 @@ package xiao.battleroyale.config.common.game.stats.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import xiao.battleroyale.common.game.stats.StatsConfigHelper.DeathMatchObjectiveName;
+import xiao.battleroyale.common.game.stats._StatsConfigHelper.DeathMatchObjectiveName;
 import xiao.battleroyale.config.common.game.stats.StatsConfigManager;
 import xiao.battleroyale.config.common.game.stats.scoreboard.*;
 

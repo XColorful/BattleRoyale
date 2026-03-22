@@ -15,7 +15,7 @@ import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.message.zone.ZoneMessageManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -168,7 +168,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
             return;
         }
 
-        ZoneContext zoneContext = new ZoneContext(this, serverLevel, GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), gameManager.getRandom(), gameTime);
+        ZoneContext zoneContext = new ZoneContext(this, serverLevel, _GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), gameManager.getRandom(), gameTime);
         this.isTicking = true;
 
         Set<Integer> finishedZoneId = new HashSet<>();
@@ -213,7 +213,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
         if (!gameManager.isInGame() || serverLevel == null) {
             return null;
         }
-        return new ZoneContext(this, serverLevel, GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), gameManager.getRandom(), gameManager.getGameTime());
+        return new ZoneContext(this, serverLevel, _GameTeamManager.getStandingGamePlayers(), this.zoneData.getGameZones(), gameManager.getRandom(), gameManager.getGameTime());
     }
     public @Nullable ZoneContext getCommonZoneContext() {
         IGameManager gameManager = BattleRoyale.getGameManager();
@@ -221,7 +221,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
         if (serverLevel == null) {
             return null;
         }
-        List<GamePlayer> gamePlayers = gameManager.isInGame() ? GameTeamManager.getStandingGamePlayers() : GameTeamManager.getGamePlayers();
+        List<GamePlayer> gamePlayers = gameManager.isInGame() ? _GameTeamManager.getStandingGamePlayers() : _GameTeamManager.getGamePlayers();
         return new ZoneContext(this, serverLevel, gamePlayers, this.zoneData.getGameZones(), gameManager.getRandom(), gameManager.getGameTime());
     }
 

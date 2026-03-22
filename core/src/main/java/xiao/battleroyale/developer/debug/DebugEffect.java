@@ -12,7 +12,7 @@ import xiao.battleroyale.common.effect.firework.FixedFireworkTask;
 import xiao.battleroyale.common.effect.firework.PlayerTrackingFireworkTask;
 import xiao.battleroyale.common.effect.muteki.EntityMutekiTask;
 import xiao.battleroyale.common.effect.particle.*;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.developer.debug.text.EffectText;
 
@@ -97,7 +97,7 @@ public class DebugEffect {
     public static final String GET_FIREWORK = "getFirework";
     public void getFirework(CommandSourceStack source, int singleId) {
         IFireworkManager fireworkManager = BattleRoyale.getEffectManager().getFireworkManager();
-        GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(singleId);
+        GamePlayer gamePlayer = _GameTeamManager.getGamePlayerBySingleId(singleId);
         List<PlayerTrackingFireworkTask> playerTasks = new ArrayList<>();
         if (gamePlayer != null) {
             UUID targetUUID = gamePlayer.getPlayerUUID();
@@ -142,7 +142,7 @@ public class DebugEffect {
     public static final String GET_MUTEKI = "getMuteki";
     public void getMuteki(CommandSourceStack source, int singleId) {
         IMutekiManager mutekiManager = BattleRoyale.getEffectManager().getMutekiManager();
-        GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(singleId);
+        GamePlayer gamePlayer = _GameTeamManager.getGamePlayerBySingleId(singleId);
         EntityMutekiTask mutekiTask = gamePlayer != null ? mutekiManager.getMutekiTasks().get(gamePlayer.getPlayerUUID()) : null;
 
         DebugManager.sendDebugMessage(source, GET_MUTEKI, EffectText.buildMutekiTask(source.getLevel(), mutekiTask));
@@ -173,7 +173,7 @@ public class DebugEffect {
     public static final String GET_BOOST = "getBoost";
     public void getBoost(CommandSourceStack source, int singleId) {
         IBoostManager boostManager = BattleRoyale.getEffectManager().getBoostManager();
-        GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(singleId);
+        GamePlayer gamePlayer = _GameTeamManager.getGamePlayerBySingleId(singleId);
         BoostData data = gamePlayer != null ? boostManager.getBoostData(gamePlayer.getPlayerUUID()) : null;
 
         DebugManager.sendDebugMessage(source, GET_BOOST, EffectText.buildBoost(source.getLevel(), data));
