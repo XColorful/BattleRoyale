@@ -2,6 +2,8 @@
 
 # 自定义大逃杀wiki
 
+> 推荐安装[Stylus](https://chromewebstore.google.com/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne)插件并使用配置[Stylus-Obsidian-Topaz-Nord.json](https://github.com/XColorful/XColorful.github.io/blob/main/stylus/Stylus-Obsidian-Topaz-Nord.json)
+
 ## 配置文件
 
 [配置文件说明](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction)
@@ -117,6 +119,8 @@
 - [跨版本模组开发](https://github.com/XColorful/BattleRoyale/wiki/Cross-version-mod-development)
 
 # English
+
+> Recommend installing the [Stylus](https://chromewebstore.google.com/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne) extension and using the configuration [Stylus-Obsidian-Topaz-Nord.json](https://github.com/XColorful/XColorful.github.io/blob/main/stylus/Stylus-Obsidian-Topaz-Nord.json)
 
 ## Configuration
 
