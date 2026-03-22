@@ -224,7 +224,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     // --------IGameManagement--------
 
     @Override public void finishGameAddWinner(boolean hasWinner) {
-        DMGameManagement.finishGameAddWinner(this, BattleRoyale.getGameManager(), hasWinner);
+        _DMGameManagement.finishGameAddWinner(this, BattleRoyale.getGameManager(), hasWinner);
     }
 
     // --------IDeathMatchGameManagement--------
@@ -353,11 +353,11 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     // --------IGameEventHandler--------
 
     @Override public boolean onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer, boolean removeInvalidTeam) {
-        return DMGameEventHandler.onPlayerDown(this, event, gamePlayer, removeInvalidTeam);
+        return _DMGameEventHandler.onPlayerDown(this, event, gamePlayer, removeInvalidTeam);
     }
 
     @Override public boolean onPlayerDeath(@Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {
-        return DMGameEventHandler.onPlayerDeath(this, event, serverLevel, gamePlayer);
+        return _DMGameEventHandler.onPlayerDeath(this, event, serverLevel, gamePlayer);
     }
 
     // --------IDeathMatchInfoGetter--------

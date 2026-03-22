@@ -3,8 +3,8 @@ package xiao.battleroyale.developer.debug;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.entity.Entity;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
-import xiao.battleroyale.common.game.GameTeamManager;
-import xiao.battleroyale.common.game.GameZoneManager;
+import xiao.battleroyale.common.game._GameTeamManager;
+import xiao.battleroyale.common.game._GameZoneManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.developer.debug.text.GameText;
@@ -31,7 +31,7 @@ public class DebugGame {
      */
     public static final String GET_GAME_PLAYERS = "getGamePlayers";
     public void getGamePlayers(CommandSourceStack source, int min, int max) {
-        List<GamePlayer> gamePlayers = GameTeamManager.getGamePlayers().stream()
+        List<GamePlayer> gamePlayers = _GameTeamManager.getGamePlayers().stream()
                 .filter(player -> player.getGameSingleId() >= min && player.getGameSingleId() <= max)
                 .sorted(Comparator.comparingInt(GamePlayer::getGameSingleId))
                 .toList();
@@ -43,14 +43,14 @@ public class DebugGame {
      * [调试]getGamePlayer:
      */
     public void getGamePlayer(CommandSourceStack source, int singleId) {
-        getGamePlayer(source, GameTeamManager.getGamePlayerBySingleId(singleId));
+        getGamePlayer(source, _GameTeamManager.getGamePlayerBySingleId(singleId));
     }
     public void getGamePlayer(CommandSourceStack source, Entity entity) {
-        getGamePlayer(source, GameTeamManager.getGamePlayerByUUID(entity.getUUID()));
+        getGamePlayer(source, _GameTeamManager.getGamePlayerByUUID(entity.getUUID()));
     }
     public void getGamePlayer(CommandSourceStack source, String playerName) {
         GamePlayer possibleGamePlayer = null;
-        for (GamePlayer gamePlayer : GameTeamManager.getGamePlayers()) {
+        for (GamePlayer gamePlayer : _GameTeamManager.getGamePlayers()) {
             if (gamePlayer.getPlayerName().equals(playerName)) {
                 possibleGamePlayer = gamePlayer;
                 break;
@@ -68,7 +68,7 @@ public class DebugGame {
      */
     public static final String GET_GAME_TEAMS = "getGameTeams";
     public void getGameTeams(CommandSourceStack source, int min, int max) {
-        List<GameTeam> gameTeams = GameTeamManager.getGameTeams().stream()
+        List<GameTeam> gameTeams = _GameTeamManager.getGameTeams().stream()
                 .filter(team -> team.getGameTeamId() >= min && team.getGameTeamId() <= max)
                 .sorted(Comparator.comparingInt(GameTeam::getGameTeamId))
                 .toList();
@@ -81,7 +81,7 @@ public class DebugGame {
      */
     public static final String GET_GAME_TEAM = "getGameTeam";
     public void getGameTeam(CommandSourceStack source, int teamId) {
-        DebugManager.sendDebugMessageWithGameTime(source, GET_GAME_TEAM, GameText.buildGameTeamDetail(GameTeamManager.getGameTeamById(teamId)));
+        DebugManager.sendDebugMessageWithGameTime(source, GET_GAME_TEAM, GameText.buildGameTeamDetail(_GameTeamManager.getGameTeamById(teamId)));
     }
 
     /**
@@ -89,7 +89,7 @@ public class DebugGame {
      */
     public static final String GET_GAME_ZONES = "getGameZones";
     public void getGameZones(CommandSourceStack source, int min, int max) {
-        List<IGameZone> gameZones = GameZoneManager.getGameZones().stream()
+        List<IGameZone> gameZones = _GameZoneManager.getGameZones().stream()
                 .filter(zone -> zone.getZoneId() >= min && zone.getZoneId() <= max)
                 .sorted(Comparator.comparingInt(IGameZone::getZoneId))
                 .toList();
@@ -102,11 +102,11 @@ public class DebugGame {
      */
     public static final String GET_GAME_ZONE = "getGameZone";
     public void getGameZone(CommandSourceStack source, int zoneId) {
-        getGameZone(source, GameZoneManager.getGameZone(zoneId));
+        getGameZone(source, _GameZoneManager.getGameZone(zoneId));
     }
     public void getGameZone(CommandSourceStack source, String zoneName) {
         IGameZone possibleGameZone = null;
-        for (IGameZone gameZone : GameZoneManager.getGameZones()) {
+        for (IGameZone gameZone : _GameZoneManager.getGameZones()) {
             if (gameZone.getZoneName().equals(zoneName)) {
                 possibleGameZone = gameZone;
                 break;

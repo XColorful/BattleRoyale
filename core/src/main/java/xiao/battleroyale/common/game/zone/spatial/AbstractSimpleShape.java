@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.GameZone;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneContext;
@@ -138,11 +138,11 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                         if (startEntry.selectStanding) {
                             playerId = zoneContext.gamePlayers.get((int) (zoneContext.random.get() * zoneContext.gamePlayers.size())).getGameSingleId();
                         } else {
-                            List<GamePlayer> gamePlayers = GameTeamManager.getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
+                            List<GamePlayer> gamePlayers = _GameTeamManager.getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
                             playerId = gamePlayers.get((int) (zoneContext.random.get() * gamePlayers.size())).getGameSingleId();
                         }
                     }
-                    GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
+                    GamePlayer gamePlayer = _GameTeamManager.getGamePlayerBySingleId(playerId);
                     if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
                         BattleRoyale.LOGGER.error("Failed to generate shape center: failed to get game player by id: {}", playerId);
                         return;
@@ -190,7 +190,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                         }
                         playerId = zoneContext.gamePlayers.get((int) (zoneContext.random.get() * zoneContext.gamePlayers.size())).getGameSingleId();
                     }
-                    GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
+                    GamePlayer gamePlayer = _GameTeamManager.getGamePlayerBySingleId(playerId);
                     if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
                         BattleRoyale.LOGGER.error("Failed to generate shape rotation: failed to get game player by id: {}", playerId);
                         return;
@@ -224,11 +224,11 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                         if (endEntry.selectStanding) {
                             playerId = zoneContext.gamePlayers.get((int) (zoneContext.random.get() * zoneContext.gamePlayers.size())).getGameSingleId();
                         } else {
-                            List<GamePlayer> gamePlayers = GameTeamManager.getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
+                            List<GamePlayer> gamePlayers = _GameTeamManager.getGamePlayers(); // 更不可能为空的情况，最好直接在下一行崩掉
                             playerId = gamePlayers.get((int) (zoneContext.random.get() * gamePlayers.size())).getGameSingleId();
                         }
                     }
-                    GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
+                    GamePlayer gamePlayer = _GameTeamManager.getGamePlayerBySingleId(playerId);
                     if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
                         BattleRoyale.LOGGER.error("Failed to generate end center: failed to get game player by id: {}", playerId);
                         return;
@@ -285,7 +285,7 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
                         }
                         playerId = zoneContext.gamePlayers.get((int) (zoneContext.random.get() * zoneContext.gamePlayers.size())).getGameSingleId();
                     }
-                    GamePlayer gamePlayer = GameTeamManager.getGamePlayerBySingleId(playerId);
+                    GamePlayer gamePlayer = _GameTeamManager.getGamePlayerBySingleId(playerId);
                     if (gamePlayer == null) { // 非预期，因为GameManager需要保证列表有效
                         BattleRoyale.LOGGER.error("Failed to generate end rotation: failed to get game player by id: {}", playerId);
                         return;

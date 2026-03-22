@@ -14,7 +14,7 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.spawn.IGameSpawner;
 import xiao.battleroyale.api.game.spawn.ISpawnManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -132,7 +132,7 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
         }
 
         this.gameSpawner.clear();
-        this.gameSpawner.init(gameManager.getRandom(), GameTeamManager.getPlayerLimit()); // 用玩家上限作为点位数量
+        this.gameSpawner.init(gameManager.getRandom(), _GameTeamManager.getPlayerLimit()); // 用玩家上限作为点位数量
         if (!isReady()) {
             return;
         }
@@ -164,7 +164,7 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
     public void onGameTick(int gameTime) {
         // 初始出生
         if (!gameSpawner.isSpawnTickComplete()) {
-            gameSpawner.spawnTick(gameTime, GameTeamManager.getGameTeams());
+            gameSpawner.spawnTick(gameTime, _GameTeamManager.getGameTeams());
             // 初始出生没结束前不再出生
             if (!gameSpawner.isSpawnTickComplete()) {
                 return;

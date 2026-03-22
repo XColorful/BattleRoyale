@@ -22,7 +22,7 @@ import xiao.battleroyale.common.effect.firework.FixedFireworkTask;
 import xiao.battleroyale.common.effect.firework.PlayerTrackingFireworkTask;
 import xiao.battleroyale.common.effect.muteki.EntityMutekiTask;
 import xiao.battleroyale.common.effect.particle.*;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.effect.particle.ParticleDetailEntry;
 import xiao.battleroyale.developer.debug.command.sub.get.GetEffect;
@@ -218,7 +218,7 @@ public class EffectText {
 
         // [singleId]
         UUID playerUUID = playerTask.getPlayerUUID();
-        GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(playerUUID);
+        GamePlayer gamePlayer = _GameTeamManager.getGamePlayerByUUID(playerUUID);
         if (gamePlayer != null) {
             int singleId = gamePlayer.getGameSingleId();
             String teamColor = gamePlayer.getGameTeamColor();
@@ -299,7 +299,7 @@ public class EffectText {
             Entity entity = GameUtils.getEntity(serverLevel, playerUUID);
             if (entity != null) {
                 component.append(Component.literal(" "));
-                GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(playerUUID);
+                GamePlayer gamePlayer = _GameTeamManager.getGamePlayerByUUID(playerUUID);
                 if (gamePlayer != null) {
                     int singleId = gamePlayer.getGameSingleId();
                     String teamColor = gamePlayer.getGameTeamColor();
@@ -344,7 +344,7 @@ public class EffectText {
         }
 
         // [singleId]
-        GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(mutekiTask.getEntityUUID());
+        GamePlayer gamePlayer = _GameTeamManager.getGamePlayerByUUID(mutekiTask.getEntityUUID());
         if (gamePlayer != null) {
             String command = GetEffect.getMutekiCommand(gamePlayer.getGameSingleId());
             TextColor textColor = TextColor.fromRgb(ColorUtils.parseColorToInt(gamePlayer.getGameTeamColor()));
@@ -445,7 +445,7 @@ public class EffectText {
         }
 
         // [singleId]
-        GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(data.uuid);
+        GamePlayer gamePlayer = _GameTeamManager.getGamePlayerByUUID(data.uuid);
         if (gamePlayer != null) {
             String command = GetEffect.getBoostCommand(gamePlayer.getGameSingleId());
             TextColor textColor = TextColor.fromRgb(ColorUtils.parseColorToInt(gamePlayer.getGameTeamColor()));
