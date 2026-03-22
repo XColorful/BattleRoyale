@@ -47,8 +47,8 @@
 
 - moveDelay：区域移动延迟，移动路径为两点间直线段
 - moveTime：区域移动时长，0表示立即移动至结束位置
-- tickFrequency：区域功能触发频率
-- tickOffset：区域功能触发延迟，设置为-1则随机取[0, tickFrequency)
+- tickFrequency：区域功能执行频率
+- tickOffset：区域功能执行的时间偏移，设置为-1则随机取[0, tickFrequency)
 ```json
 "zoneFunc": {
 	"zoneFuncType": 区域功能类型
@@ -278,10 +278,10 @@ At the start of the game, the zone configs are sorted in the order of "zoneDelay
 
 ### Zone simple function
 
-- moveDelay: delay in area movement, the movement path is a straight line segment between two points
-- moveTime: duration of area movement, 0 means immediate movement to the end position
-- tickFrequency: zone function trigger frequency
-- tickOffset: zone function trigger delay, set to -1 to randomly select [0, tickFrequency)
+- moveDelay: delay in zone movement, the movement path is a straight line segment between two points
+- moveTime: duration of zone movement, 0 means immediate movement to the end position
+- tickFrequency: zone function tick frequency
+- tickOffset: zone function tick time offset, set to -1 to randomly select [0, tickFrequency)
 ```json
 "zoneFunc": {
 	"zoneFuncType": ZONE FUNCTION TYPE

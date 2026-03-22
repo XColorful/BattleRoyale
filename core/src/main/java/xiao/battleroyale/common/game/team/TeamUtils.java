@@ -65,7 +65,7 @@ public class TeamUtils {
      */
     @ApiStatus.Internal
     public static int findNotFullTeamId(TeamManager teamManager) {
-        if (teamManager.teamData.getTotalPlayerCount() >= teamManager.teamConfig.playerLimit) {
+        if (teamManager.teamData.getGamePlayersTotal() >= teamManager.teamConfig.playerLimit) {
             return -1;
         }
 

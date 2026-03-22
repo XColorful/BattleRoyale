@@ -37,7 +37,7 @@ public class StatsManagerCommand {
                 )
                 .then(Commands.literal(SAVE_STATS)
                         .executes(StatsManagerCommand::saveStats)
-                        .then(Commands.argument(PATH, StringArgumentType.string())
+                        .then(Commands.argument(FILE_PATH, StringArgumentType.string())
                                 .executes(StatsManagerCommand::saveStatsWithPath)
                         )
                 );
@@ -69,7 +69,7 @@ public class StatsManagerCommand {
         }
     }
     private static int saveStatsWithPath(CommandContext<CommandSourceStack> context) {
-        String path = StringArgumentType.getString(context, PATH);
+        String path = StringArgumentType.getString(context, FILE_PATH);
         try {
             BattleRoyale.getGameManager().getStatsManager().saveStats(path);
             return Command.SINGLE_SUCCESS;

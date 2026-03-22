@@ -206,7 +206,7 @@ _（spawnShapeType为"circle"时可用）_
 - detailType: type of teleport entry
 - fixedPos: _(available when detailType is "fixed")_ Available fixed teleport point coordinates
 - teamTogether: whether players on the same team are teleported together
-- findGround: whether to teleport to the ground at the teleport point. The mod will try to find the ground continuously in the first _hangTime_ tick of the game. If it times out, it will fall from the height of 1145.14 at the point
+- findGround: Whether to teleport to the ground at the teleport point. The mod will try to find the ground continuously in the first _hangTime_ tick of the game. If it times out, it will fall from the height of 1145.14 at the point
 - randomRange: After determining the teleport point, randomly offset to [-randomRange, randomRange] in the x and z directions, and to [0, randomRange] in the y direction
 - hangTime: How long to keep the player airborne when the teleport target chunk is not loaded or the area is considered void (cannot pass ray tracing).
 
