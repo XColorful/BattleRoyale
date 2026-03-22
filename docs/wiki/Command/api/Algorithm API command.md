@@ -81,7 +81,7 @@ distributionType：分布类型
 
 # English
 
-## Algorithm
+## Algorithm API command
 > _IAlgorithmApi_
 
 > _/battleroyale api algorithm [...]_

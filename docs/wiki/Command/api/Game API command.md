@@ -1,6 +1,6 @@
 [English](#English)
 
-## 游戏
+## 游戏API指令
 > _/battleroyale api [...]_
 
 ### 游戏管理器
@@ -32,7 +32,7 @@
 
 # English
 
-## Game
+## Game API command
 > _/battleroyale api [...]_
 
 ### Game manager
