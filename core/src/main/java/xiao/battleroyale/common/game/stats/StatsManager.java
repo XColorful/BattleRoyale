@@ -25,8 +25,8 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.stats.IGamePlayerStats;
 import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameTeamManager;
-import xiao.battleroyale.common.game.stats.StatsConfigHelper.DefaultObjectiveName;
+import xiao.battleroyale.common.game._GameTeamManager;
+import xiao.battleroyale.common.game.stats._StatsConfigHelper.DefaultObjectiveName;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
@@ -199,7 +199,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
             return;
         }
 
-        if (!StatsConfigHelper.updateStats(this, statsConfig)) {
+        if (!_StatsConfigHelper.updateStats(this, statsConfig)) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_stats_config");
             return;
         }
@@ -225,8 +225,8 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     @Override
     public boolean startGame(ServerLevel serverLevel) {
         startotherTime = StringUtils.getTimestampString();
-        totalPlayers = GameTeamManager.getGamePlayers().size();
-        this.statsData.addRecordGamePlayers(GameTeamManager.getStandingGamePlayers());
+        totalPlayers = _GameTeamManager.getGamePlayers().size();
+        this.statsData.addRecordGamePlayers(_GameTeamManager.getStandingGamePlayers());
 
         this.statsData.startGame(); // 上锁
         return isReady();
@@ -271,75 +271,75 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     }
 
     @Override public void onRecordStart(GameStartFinishEvent event) {
-        StatsEventHandler.onGameStart(this, event);
+        _StatsEventHandler.onGameStart(this, event);
     }
 
     @Override public void onRecordGameTick(GameTickFinishEvent event) {
-        StatsEventHandler.onGameTick(this, event);
+        _StatsEventHandler.onGameTick(this, event);
     }
 
     @Override public void onRecordPlayerDamage(GamePlayerDamageFinishEvent event) {
-        StatsEventHandler.onGamePlayerDamage(this, event);
+        _StatsEventHandler.onGamePlayerDamage(this, event);
     }
 
     @Override public void onRecordPlayerDown(GamePlayerDownFinishEvent event) {
-        StatsEventHandler.onGamePlayerDown(this, event);
+        _StatsEventHandler.onGamePlayerDown(this, event);
     }
 
     @Override public void onRecordPlayerRevive(GamePlayerReviveFinishEvent event) {
-        StatsEventHandler.onGamePlayerRevive(this, event);
+        _StatsEventHandler.onGamePlayerRevive(this, event);
     }
 
     @Override public void onRecordPlayerDeath(GamePlayerDeathFinishEvent event) {
-        StatsEventHandler.onGamePlayerDeath(this, event);
+        _StatsEventHandler.onGamePlayerDeath(this, event);
     }
 
     @Override public void onRecordStop(GameStopFinishEvent event) {
-        StatsEventHandler.onGameStop(this, event);
+        _StatsEventHandler.onGameStop(this, event);
     }
 
     @Override public void onRecordComplete(GameCompleteFinishEvent event) {
-        StatsEventHandler.onGameComplete(this, event);
+        _StatsEventHandler.onGameComplete(this, event);
     }
 
     // ----Gamerule----
     public void onRecordIntGamerule(Map<String, Integer> intGamerule) {
-        GameSetupStatsHelper.onRecordIntGamerule(this, intGamerule);
+        _GameSetupStatsHelper.onRecordIntGamerule(this, intGamerule);
     }
     public void onRecordBoolGamerule(Map<String, Boolean> boolGamerule) {
-        GameSetupStatsHelper.onRecordBoolGamerule(this, boolGamerule);
+        _GameSetupStatsHelper.onRecordBoolGamerule(this, boolGamerule);
     }
     public void onRecordDoubleGamerule(Map<String, Double> doubleGamerule) {
-        GameSetupStatsHelper.onRecordDoubleGamerule(this, doubleGamerule);
+        _GameSetupStatsHelper.onRecordDoubleGamerule(this, doubleGamerule);
     }
     public void onRecordStringGamerule(Map<String, String> stringGamerule) {
-        GameSetupStatsHelper.onRecordStringGamerule(this, stringGamerule);
+        _GameSetupStatsHelper.onRecordStringGamerule(this, stringGamerule);
     }
     // ----Spawn----
     public void onRecordSpawnInt(String key, Map<String, Integer> spawnInt) {
-        GameSetupStatsHelper.onRecordSpawnInt(this, key, spawnInt);
+        _GameSetupStatsHelper.onRecordSpawnInt(this, key, spawnInt);
     }
     public void onRecordSpawnBool(String key, Map<String, Boolean> spawnBool) {
-        GameSetupStatsHelper.onRecordSpawnBool(this, key, spawnBool);
+        _GameSetupStatsHelper.onRecordSpawnBool(this, key, spawnBool);
     }
     public void onRecordSpawnDouble(String key, Map<String, Double> spawnDouble) {
-        GameSetupStatsHelper.onRecordSpawnDouble(this, key, spawnDouble);
+        _GameSetupStatsHelper.onRecordSpawnDouble(this, key, spawnDouble);
     }
     public void onRecordSpawnString(String key, Map<String, String> spawnString) {
-        GameSetupStatsHelper.onRecordSpawnString(this, key, spawnString);
+        _GameSetupStatsHelper.onRecordSpawnString(this, key, spawnString);
     }
     // ----Zone----
     public void onRecordZoneInt(int zoneId, Map<String, Integer> zoneInt) {
-        GameSetupStatsHelper.onRecordZoneInt(this, zoneId, zoneInt);
+        _GameSetupStatsHelper.onRecordZoneInt(this, zoneId, zoneInt);
     }
     public void onRecordZoneBool(int zoneId, Map<String, Boolean> zoneBool) {
-        GameSetupStatsHelper.onRecordZoneBool(this, zoneId, zoneBool);
+        _GameSetupStatsHelper.onRecordZoneBool(this, zoneId, zoneBool);
     }
     public void onRecordZoneDouble(int zoneId, Map<String, Double> zoneDouble) {
-        GameSetupStatsHelper.onRecordZoneDouble(this, zoneId, zoneDouble);
+        _GameSetupStatsHelper.onRecordZoneDouble(this, zoneId, zoneDouble);
     }
     public void onRecordZoneString(int zoneId, Map<String, String> zoneString) {
-        GameSetupStatsHelper.onRecordZoneString(this, zoneId, zoneString);
+        _GameSetupStatsHelper.onRecordZoneString(this, zoneId, zoneString);
     }
 
     private String generateStateDirectory() {
@@ -363,10 +363,10 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
 //        );
 
         JsonArray jsonArray = new JsonArray();
-        GameSetupStatsHelper.addGameSetupStats(this, jsonArray);
-        GameEventStatsHelper.addTeamStats(this, jsonArray);
-        GameEventStatsHelper.addPlayerStats(this, jsonArray);
-        GameEventStatsHelper.addTimelineStats(this, jsonArray, gamePlayerStatsList);
+        _GameSetupStatsHelper.addGameSetupStats(this, jsonArray);
+        _GameEventStatsHelper.addTeamStats(this, jsonArray);
+        _GameEventStatsHelper.addPlayerStats(this, jsonArray);
+        _GameEventStatsHelper.addTimelineStats(this, jsonArray, gamePlayerStatsList);
         JsonUtils.writeJsonToFile(filePath, jsonArray);
 
         ServerLevel serverLevel = BattleRoyale.getGameManager().getServerLevel();

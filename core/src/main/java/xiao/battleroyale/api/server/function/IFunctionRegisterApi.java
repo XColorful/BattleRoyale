@@ -44,8 +44,7 @@ public interface IFunctionRegisterApi {
     default boolean registerFunction(ResourceLocation functionRl, Class<? extends ICustomEvent> eventClass, EventPriority priority, boolean receiveCanceled) {
         return registerFunction(functionRl, false, eventClass, priority, receiveCanceled);
     }
-    default boolean registerFunctionToEvent(String rlStr, boolean isTag, String eventTypeStr, String priorityStr, boolean receiveCanceled) {
-        ResourceLocation rl = BattleRoyale.getMcRegistry().createResourceLocation(rlStr);
+    default boolean registerFunctionToEvent(ResourceLocation rl, boolean isTag, String eventTypeStr, String priorityStr, boolean receiveCanceled) {
         EventType eventType = EventType.fromString(eventTypeStr);
         EventPriority priority = EventPriority.fromString(priorityStr);
         if (rl == null || eventType == null || priority == null) {
@@ -53,8 +52,7 @@ public interface IFunctionRegisterApi {
         }
         return registerFunction(rl, isTag, eventType, priority, receiveCanceled);
     }
-    default boolean registerFunctionToCustomEvent(String rlStr, boolean isTag, String eventTypeStr, String priorityStr, boolean receiveCanceled) {
-        ResourceLocation rl = BattleRoyale.getMcRegistry().createResourceLocation(rlStr);
+    default boolean registerFunctionToCustomEvent(ResourceLocation rl, boolean isTag, String eventTypeStr, String priorityStr, boolean receiveCanceled) {
         CustomEventType eventType = CustomEventType.fromString(eventTypeStr);
         EventPriority priority = EventPriority.fromString(priorityStr);
         if (rl == null || eventType == null || priority == null) {
@@ -62,7 +60,7 @@ public interface IFunctionRegisterApi {
         }
         return registerFunction(rl, isTag, eventType, priority, receiveCanceled);
     }
-    boolean registerFunctionToEventClass(String rlStr, boolean isTag, String eventClassStr, String priorityStr, boolean receiveCanceled);
+    boolean registerFunctionToEventClass(ResourceLocation rl, boolean isTag, String eventClassStr, String priorityStr, boolean receiveCanceled);
 
     default boolean unregisterTag(ResourceLocation tagRl, EventType eventType) {
         return unregisterFunction(tagRl, true, eventType);
@@ -83,21 +81,19 @@ public interface IFunctionRegisterApi {
         return unregisterFunction(functionRl, false, eventClass);
     }
 
-    default boolean unregisterFunctionToEvent(String rlStr, boolean isTag, String eventTypeStr) {
-        ResourceLocation rl = BattleRoyale.getMcRegistry().createResourceLocation(rlStr);
+    default boolean unregisterFunctionToEvent(ResourceLocation rl, boolean isTag, String eventTypeStr) {
         EventType eventType = EventType.fromString(eventTypeStr);
         if (rl == null || eventType == null) {
             return false;
         }
         return unregisterFunction(rl, isTag, eventType);
     }
-    default boolean unregisterFunctionToCustomEvent(String rlStr, boolean isTag, String eventTypeStr) {
-        ResourceLocation rl = BattleRoyale.getMcRegistry().createResourceLocation(rlStr);
+    default boolean unregisterFunctionToCustomEvent(ResourceLocation rl, boolean isTag, String eventTypeStr) {
         CustomEventType eventType = CustomEventType.fromString(eventTypeStr);
         if (rl == null || eventType == null) {
             return false;
         }
         return unregisterFunction(rl, isTag, eventType);
     }
-    boolean unregisterFunctionToEventClass(String rlStr, boolean isTag, String eventClassStr);
+    boolean unregisterFunctionToEventClass(ResourceLocation rl, boolean isTag, String eventClassStr);
 }

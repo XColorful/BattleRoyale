@@ -17,7 +17,7 @@ import xiao.battleroyale.api.event.game.tick.GameLootFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.loot.IGameLootManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.LootGenerator.LootContext;
@@ -288,7 +288,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
         Queue<ChunkPos> newChunkQueue = new ArrayDeque<>();
         Set<ChunkPos> visitedInBfs = new HashSet<>();
 
-        List<GamePlayer> gamePlayers = GameTeamManager.getStandingGamePlayers();
+        List<GamePlayer> gamePlayers = _GameTeamManager.getStandingGamePlayers();
 
         // 如果玩家中心区块已在缓存中，则跳过对该玩家的BFS
         List<GamePlayer> playersToBFS = new ArrayList<>();

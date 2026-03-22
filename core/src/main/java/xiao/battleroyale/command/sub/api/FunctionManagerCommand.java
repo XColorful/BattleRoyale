@@ -9,6 +9,7 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.EventPriority;
@@ -28,7 +29,7 @@ public class FunctionManagerCommand {
                 .then(Commands.literal(CLEAR_API_FUNCTION).executes(FunctionManagerCommand::clearApiFunction))
                 // IFunctionRegisterApi
                 .then(Commands.literal(REGISTER_EVENT)
-                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
+                        .then(Commands.argument(RESOURCE_LOCATION, ResourceLocationArgument.id())
                                 .then(Commands.argument(IS_TAG, BoolArgumentType.bool())
                                         .then(Commands.literal(EVENT_TYPE)
                                                 .then(Commands.argument(EVENT_NAME, StringArgumentType.string())
@@ -66,7 +67,7 @@ public class FunctionManagerCommand {
                         )
                 )
                 .then(Commands.literal(UNREGISTER_EVENT)
-                        .then(Commands.argument(RESOURCE_LOCATION, StringArgumentType.string())
+                        .then(Commands.argument(RESOURCE_LOCATION, ResourceLocationArgument.id())
                                 .then(Commands.argument(IS_TAG, BoolArgumentType.bool())
                                         .then(Commands.literal(EVENT_TYPE)
                                                 .then(Commands.argument(EVENT_NAME, StringArgumentType.string())
@@ -116,7 +117,7 @@ public class FunctionManagerCommand {
 
     private static int registerFunctionToEvent(CommandContext<CommandSourceStack> context) {
         IFunctionRegisterApi functionManager = BattleRoyale.getServerManager().getFunctionManager();
-        return functionManager.registerFunctionToEvent(StringArgumentType.getString(context, RESOURCE_LOCATION),
+        return functionManager.registerFunctionToEvent(ResourceLocationArgument.getId(context, RESOURCE_LOCATION),
                 BoolArgumentType.getBool(context, IS_TAG),
                 StringArgumentType.getString(context, EVENT_NAME),
                 StringArgumentType.getString(context, EVENT_PRIORITY),
@@ -125,7 +126,7 @@ public class FunctionManagerCommand {
     }
     private static int registerFunctionToCustomEvent(CommandContext<CommandSourceStack> context) {
         IFunctionRegisterApi functionManager = BattleRoyale.getServerManager().getFunctionManager();
-        return functionManager.registerFunctionToCustomEvent(StringArgumentType.getString(context, RESOURCE_LOCATION),
+        return functionManager.registerFunctionToCustomEvent(ResourceLocationArgument.getId(context, RESOURCE_LOCATION),
                 BoolArgumentType.getBool(context, IS_TAG),
                 StringArgumentType.getString(context, EVENT_NAME),
                 StringArgumentType.getString(context, EVENT_PRIORITY),
@@ -134,7 +135,7 @@ public class FunctionManagerCommand {
     }
     private static int registerFunctionToEventClass(CommandContext<CommandSourceStack> context) {
         IFunctionRegisterApi functionManager = BattleRoyale.getServerManager().getFunctionManager();
-        return functionManager.registerFunctionToEventClass(StringArgumentType.getString(context, RESOURCE_LOCATION),
+        return functionManager.registerFunctionToEventClass(ResourceLocationArgument.getId(context, RESOURCE_LOCATION),
                 BoolArgumentType.getBool(context, IS_TAG),
                 StringArgumentType.getString(context, EVENT_NAME),
                 StringArgumentType.getString(context, EVENT_PRIORITY),
@@ -143,21 +144,21 @@ public class FunctionManagerCommand {
     }
     private static int unregisterFunctionToEvent(CommandContext<CommandSourceStack> context) {
         IFunctionRegisterApi functionManager = BattleRoyale.getServerManager().getFunctionManager();
-        return functionManager.unregisterFunctionToEvent(StringArgumentType.getString(context, RESOURCE_LOCATION),
+        return functionManager.unregisterFunctionToEvent(ResourceLocationArgument.getId(context, RESOURCE_LOCATION),
                 BoolArgumentType.getBool(context, IS_TAG),
                 StringArgumentType.getString(context, EVENT_NAME)
         ) ? Command.SINGLE_SUCCESS : 0;
     }
     private static int unregisterFunctionToCustomEvent(CommandContext<CommandSourceStack> context) {
         IFunctionRegisterApi functionManager = BattleRoyale.getServerManager().getFunctionManager();
-        return functionManager.unregisterFunctionToCustomEvent(StringArgumentType.getString(context, RESOURCE_LOCATION),
+        return functionManager.unregisterFunctionToCustomEvent(ResourceLocationArgument.getId(context, RESOURCE_LOCATION),
                 BoolArgumentType.getBool(context, IS_TAG),
                 StringArgumentType.getString(context, EVENT_NAME)
         ) ? Command.SINGLE_SUCCESS : 0;
     }
     private static int unregisterFunctionToEventClass(CommandContext<CommandSourceStack> context) {
         IFunctionRegisterApi functionManager = BattleRoyale.getServerManager().getFunctionManager();
-        return functionManager.unregisterFunctionToEventClass(StringArgumentType.getString(context, RESOURCE_LOCATION),
+        return functionManager.unregisterFunctionToEventClass(ResourceLocationArgument.getId(context, RESOURCE_LOCATION),
                 BoolArgumentType.getBool(context, IS_TAG),
                 StringArgumentType.getString(context, EVENT_NAME)
         ) ? Command.SINGLE_SUCCESS : 0;

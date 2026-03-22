@@ -134,7 +134,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         return inProperSide() && reloadConfigs(DEFAULT_CONFIG_FOLDER);
     }
     @Override public boolean reloadConfigs(int folderId) { // 读取子文件夹下所有文件数据
-        return inProperSide() && SubReloadConfigs.reloadConfigs(this, folderId);
+        return inProperSide() && _SubReloadConfigs.reloadConfigs(this, folderId);
     }
     @Override public @Nullable T parseConfigEntry(JsonObject jsonObject, Path filePath) {
         return parseConfigEntry(jsonObject, filePath, DEFAULT_CONFIG_FOLDER);
@@ -168,7 +168,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     }
     @Override
     public boolean switchConfigFile(int folderId) { // 切换下一个配置
-        return SubSwitchConfig.switchConfigFile(this, folderId);
+        return _SubSwitchConfig.switchConfigFile(this, folderId);
     }
     @Override
     public boolean switchConfigFile(String fileName) {
@@ -176,7 +176,7 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
     }
     @Override
     public boolean switchConfigFile(int folderId, String fileName) { // 指定文件名切换配置
-        return SubSwitchConfig.switchConfigFile(this, folderId, fileName);
+        return _SubSwitchConfig.switchConfigFile(this, folderId, fileName);
     }
 
     /**
@@ -221,13 +221,13 @@ public abstract class AbstractConfigSubManager<T extends IConfigSingleEntry> imp
         return saveConfigs(DEFAULT_CONFIG_FOLDER);
     }
     @Override public boolean saveConfigs(int folderId) {
-        return inProperSide() && SubSaveConfigs.saveConfigs(this, folderId);
+        return inProperSide() && _SubSaveConfigs.saveConfigs(this, folderId);
     }
 
     @Override public boolean backupConfigs(String backupRoot) {
         return backupConfigs(backupRoot, DEFAULT_CONFIG_FOLDER);
     }
     @Override public boolean backupConfigs(String backupRoot, int folderId) {
-        return inProperSide() && SubSaveConfigs.backupConfigs(this, backupRoot, folderId);
+        return inProperSide() && _SubSaveConfigs.backupConfigs(this, backupRoot, folderId);
     }
 }
