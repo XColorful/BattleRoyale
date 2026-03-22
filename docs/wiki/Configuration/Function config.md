@@ -55,7 +55,7 @@
 > 函数返回值 ≤ -1 即可取消事件（如 _/return -1_），对于不可取消的事件类型则无效
 
 （可选）自定义事件类：
-- event：任意（r注册时会被覆盖为 _CUSTOM\_EVENT_）
+- event：任意（注册时会被覆盖为 _CUSTOM\_EVENT_）
 - eventClass：自定义事件类名称，优先于`event`
 > 当包含`eventClass`时，若`eventClass`无效，则跳过该注册词条
 
