@@ -1,7 +1,11 @@
 package xiao.battleroyale.api.event;
 
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,4 +32,9 @@ public enum EventPriority {
     public String getName() {
         return this.name();
     }
+
+    public static final SuggestionProvider<CommandSourceStack> EVENT_PRIORITY_SUGGESTS = (context, builder) ->
+            SharedSuggestionProvider.suggest(Arrays.stream(EventPriority.values())
+                    .map(EventPriority::name)
+                    .toArray(String[]::new), builder);
 }
