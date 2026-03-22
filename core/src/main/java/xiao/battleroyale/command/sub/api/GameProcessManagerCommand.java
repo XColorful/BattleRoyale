@@ -144,8 +144,8 @@ public class GameProcessManagerCommand {
     private static int spectateGame(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Entity entity = EntityArgument.getEntity(context, PLAYER);
         if (!(entity instanceof ServerPlayer player)) return 0;
-        BattleRoyale.getGameManager().getGameProcessManager().spectateGame(player);
-        return Command.SINGLE_SUCCESS;
+        return BattleRoyale.getGameManager().getGameProcessManager().spectateGame(player)
+                ? Command.SINGLE_SUCCESS : 0;
     }
     private static int healGamePlayers(CommandContext<CommandSourceStack> context) {
         IGameManager gameManager = BattleRoyale.getGameManager();
