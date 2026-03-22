@@ -11,9 +11,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.NbtPathArgument;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.CommandStorage;
@@ -34,7 +34,7 @@ public class GameManagerCommand {
                 .then(Commands.literal(GET_GAME_TIME).executes(GameManagerCommand::getGameTime))
                 .then(Commands.literal(IS_IN_GAME).executes(GameManagerCommand::isInGame))
                 .then(Commands.literal(GET_GLOBAL_CENTER_OFFSET)
-                        .then(Commands.argument(RESOURCE_LOCATION, ResourceLocationArgument.id())
+                        .then(Commands.argument(RESOURCE_LOCATION, IdentifierArgument.id())
                                 .then(Commands.argument(STORAGE_PATH, NbtPathArgument.nbtPath())
                                         .executes(GameManagerCommand::getGlobalCenterOffset)
                                 )
@@ -122,7 +122,7 @@ public class GameManagerCommand {
         return gameManager.isInGame() ? Command.SINGLE_SUCCESS : 0;
     }
     private static int getGlobalCenterOffset(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        ResourceLocation storageId = ResourceLocationArgument.getId(context, RESOURCE_LOCATION);
+        Identifier storageId = IdentifierArgument.getId(context, RESOURCE_LOCATION);
         CommandStorage storage = context.getSource().getServer().getCommandStorage();
         CompoundTag compoundtag = storage.get(storageId);
         NbtPathArgument.NbtPath path = NbtPathArgument.getPath(context, STORAGE_PATH);
