@@ -500,7 +500,7 @@ Module division based on the `xiao.battleroyale` top-level package
 
 🤔Deeply customized game processing flow: [Replace GameSubManager](./common/game/replace-game-sub-manager.md#English)
 - Gamerule:
-	- [GameruleManager](./common/game/gamerule/gamerule-manager.md#English): Game rule manager
+	- [GameruleManager](./common/game/gamerule/gamerule-manager.md#English): Gamerule manager
 - Lobby:
 	- [GameLobbyManager](./common/game/lobby/game-lobby-manager.md#English): Game lobby manager
 - Loot:
