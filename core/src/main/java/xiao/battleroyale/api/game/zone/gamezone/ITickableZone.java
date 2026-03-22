@@ -15,7 +15,7 @@ public interface ITickableZone {
     void initFunc(ZoneContext zoneContext);
 
     /**
-     * 判断是否可以执行tick
+     * 判断是否可以执行 funcTick
      * @return 判定结果
      */
     boolean isReady();
@@ -37,20 +37,20 @@ public interface ITickableZone {
     void setTickOffset(int tickOffset);
 
     /**
-     * tick当前圈的功能
+     * tick 当前区域的功能
      */
     void funcTick(ZoneTickContext zoneTickContext);
     void playerFunc(@NotNull ServerLevel serverLevel, GamePlayer gamePlayer);
 
     /**
-     * @return 当前圈功能类型
+     * @return 当前区域功能类型
      */
     ZoneFuncType getFuncType();
 
     /**
-     * 结合自身管理的 moveDelay, moveTime 得出当前圈的进度
+     * 结合自身管理的 moveDelay, moveTime 得出当前区域形状的进度
      * @param currentGameTime 当前游戏进行的时间
-     * @param zoneDelay 圈生成延迟
+     * @param zoneDelay 区域生成延迟
      * @return [0,1] 的进度比例
      */
     double getShapeProgress(int currentGameTime, int zoneDelay);

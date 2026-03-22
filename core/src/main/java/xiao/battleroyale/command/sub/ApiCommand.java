@@ -12,10 +12,10 @@ public class ApiCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         LiteralArgumentBuilder<CommandSourceStack> apiCommand = Commands.literal(API);
 
-        // Algorithm
+        // Algorithm API
         apiCommand.then(AlgorithmCommand.get());
 
-        // GameManager
+        // Game API
         apiCommand.then(GameManagerCommand.get());
         apiCommand.then(GameruleManagerCommand.get());
         apiCommand.then(GameLobbyManagerCommand.get());
@@ -26,7 +26,7 @@ public class ApiCommand {
         apiCommand.then(TeamManagerCommand.get());
         apiCommand.then(ZoneManagerCommand.get());
 
-        // FunctionManager
+        // Function API
         apiCommand.then(FunctionManagerCommand.get());
 
         return apiCommand;
