@@ -7,7 +7,7 @@ import xiao.battleroyale.api.compat.tacz.IGunFireSelectEvent;
 import xiao.battleroyale.api.compat.tacz.IGunMeleeEvent;
 import xiao.battleroyale.api.compat.tacz.IGunReloadEvent;
 import xiao.battleroyale.api.compat.tacz.IGunShootEvent;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 
@@ -111,7 +111,7 @@ public class TaczBleedingHandler {
     }
 
     private static String getPlayerDebugName(LivingEntity player) {
-        GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(player.getUUID());
+        GamePlayer gamePlayer = _GameTeamManager.getGamePlayerByUUID(player.getUUID());
         if (gamePlayer != null) {
             return String.format("GamePlayer %s", gamePlayer.getNameWithId());
         } else {

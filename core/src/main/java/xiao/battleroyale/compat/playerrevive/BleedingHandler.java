@@ -6,7 +6,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.GameMessageManager;
-import xiao.battleroyale.common.game.GameTeamManager;
+import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.tacz.Tacz;
 
@@ -66,7 +66,7 @@ public class BleedingHandler implements IEventHandler {
         IGameManager gameManager = BattleRoyale.getGameManager();
         BattleRoyale.LOGGER.debug("GameTime:{} addBleedingPlayer {}", gameManager.getGameTime(), player.getName().getString());
         UUID playerUUID = player.getUUID();
-        GamePlayer gamePlayer = GameTeamManager.getGamePlayerByUUID(playerUUID);
+        GamePlayer gamePlayer = _GameTeamManager.getGamePlayerByUUID(playerUUID);
         if (gamePlayer == null) {
             BattleRoyale.LOGGER.warn("Attempt to add a non GamePlayer {} (UUID:{}) to bleeding player, skipped", player.getName().getString(), playerUUID);
             return;
@@ -157,7 +157,7 @@ public class BleedingHandler implements IEventHandler {
             return bleedPlayer != null
                     && !PlayerRevive.get().isBleeding(bleedPlayer) // 没有该流血玩家
                     && bleedPlayer.getHealth() > 0
-                    && GameTeamManager.hasStandingGamePlayer(bleedPlayer.getUUID());
+                    && _GameTeamManager.hasStandingGamePlayer(bleedPlayer.getUUID());
         }
         public boolean isBleeding() {
             return bleedPlayer != null
