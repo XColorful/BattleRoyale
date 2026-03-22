@@ -39,62 +39,48 @@ public class AlgorithmCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> get() {
         return Commands.literal(ALGORITHM)
+                // IDistribution
                 .then(getDistributionNode(RECTANGLE_GRID,
                         // IRectangleGrid
+                        AlgorithmCommand::rectangleGrid,
+                        AlgorithmCommand::rectangleGridAtExecute,
                         AlgorithmCommand::rectangleGridShuffle,
                         AlgorithmCommand::rectangleGridBound,
                         AlgorithmCommand::rectangleGridRandomRange,
-                        AlgorithmCommand::rectangleGrid,
-                        AlgorithmCommand::rectangleGridAtExecute,
                         AlgorithmCommand::rectangleGridTeleportGamePlayers,
                         AlgorithmCommand::rectangleGridTeleportPlayers))
                 .then(getDistributionNode(GOLDEN_SPIRAL,
                         // IGoldenSpiral
+                        AlgorithmCommand::goldenSpiral,
+                        AlgorithmCommand::goldenSpiralAtExecute,
                         AlgorithmCommand::goldenSpiralShuffle,
                         AlgorithmCommand::goldenSpiralBound,
                         AlgorithmCommand::goldenSpiralRandomRange,
-                        AlgorithmCommand::goldenSpiral,
-                        AlgorithmCommand::goldenSpiralAtExecute,
                         AlgorithmCommand::goldenSpiralTeleportGamePlayers,
                         AlgorithmCommand::goldenSpiralTeleportPlayers))
                 .then(getDistributionNode(CIRCLE_GRID,
                         // ICircleGrid
+                        AlgorithmCommand::circleGrid,
+                        AlgorithmCommand::circleGridAtExecute,
                         AlgorithmCommand::circleGridShuffle,
                         AlgorithmCommand::circleGridBound,
                         AlgorithmCommand::circleGridRandomRange,
-                        AlgorithmCommand::circleGrid,
-                        AlgorithmCommand::circleGridAtExecute,
                         AlgorithmCommand::circleGridTeleportGamePlayers,
                         AlgorithmCommand::circleGridTeleportPlayers));
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> getDistributionNode(
             String name,
+            Command<CommandSourceStack> distribute,
+            Command<CommandSourceStack> distributeAt,
             Command<CommandSourceStack> shuffle,
             Command<CommandSourceStack> bound,
             Command<CommandSourceStack> randomRange,
-            Command<CommandSourceStack> distribute,
-            Command<CommandSourceStack> distributeAt,
             Command<CommandSourceStack> teleportGamePlayers,
             Command<CommandSourceStack> teleportPlayers) {
 
         return Commands.literal(name)
-                .then(Commands.literal(SHUFFLE).executes(shuffle))
-                .then(Commands.literal(BOUND)
-                        .then(Commands.argument(MIN_POINT, IntegerArgumentType.integer(1))
-                                .then(Commands.argument(MAX_POINT, IntegerArgumentType.integer(MAX_DISTRIBUTED_COUNT))
-                                        .executes(bound)
-                                )
-                        )
-                )
-                .then(Commands.literal(RANDOM_RANGE)
-                        .then(Commands.argument(XYZ, Vec3Argument.vec3())
-                                .then(Commands.argument(RANGE_TYPE, StringArgumentType.word())
-                                        .suggests(RANGE_TYPE_SUGGESTS)
-                                        .executes(randomRange)
-                                )
-                        )
-                )
+                // 生成点位
                 .then(Commands.argument(POS, Vec3Argument.vec3())
                         .then(Commands.argument(XYZ, Vec3Argument.vec3())
                                 .then(Commands.argument(COUNT, IntegerArgumentType.integer(1, MAX_DISTRIBUTED_COUNT))
@@ -112,6 +98,23 @@ public class AlgorithmCommand {
                                         .then(Commands.argument(GLOBAL_SHRINK_RATIO, DoubleArgumentType.doubleArg())
                                                 .executes(distributeAt)
                                         )
+                                )
+                        )
+                )
+                // 操作点位
+                .then(Commands.literal(SHUFFLE).executes(shuffle))
+                .then(Commands.literal(BOUND)
+                        .then(Commands.argument(MIN_POINT, IntegerArgumentType.integer(1))
+                                .then(Commands.argument(MAX_POINT, IntegerArgumentType.integer(MAX_DISTRIBUTED_COUNT))
+                                        .executes(bound)
+                                )
+                        )
+                )
+                .then(Commands.literal(RANDOM_RANGE)
+                        .then(Commands.argument(XYZ, Vec3Argument.vec3())
+                                .then(Commands.argument(RANGE_TYPE, StringArgumentType.word())
+                                        .suggests(RANGE_TYPE_SUGGESTS)
+                                        .executes(randomRange)
                                 )
                         )
                 )

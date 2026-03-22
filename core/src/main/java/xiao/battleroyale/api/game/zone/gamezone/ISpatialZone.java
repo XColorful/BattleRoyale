@@ -18,7 +18,7 @@ public interface ISpatialZone {
     boolean isWithinZone(@Nullable Vec3 checkPos, double progress);
 
     /**
-     * @return 当前圈形状
+     * @return 当前区域形状
      */
     ZoneShapeType getShapeType();
 

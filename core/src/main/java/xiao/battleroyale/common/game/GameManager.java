@@ -579,7 +579,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
 
     /**
-     * 结束游戏，所有未淘汰队伍均胜利
+     * 结算游戏
+     * 大逃杀模式下所有未淘汰队伍均胜利
      */
     @Override
     public void finishGame(boolean hasWinner) { // IGameManager接口
