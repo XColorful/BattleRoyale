@@ -5,18 +5,14 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.IdentifierArgument;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.EventPriority;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.server.function.IFunctionRegisterApi;
-
-import java.util.Arrays;
 
 import static xiao.battleroyale.command.CommandArg.*;
 
@@ -33,9 +29,9 @@ public class FunctionManagerCommand {
                                 .then(Commands.argument(IS_TAG, BoolArgumentType.bool())
                                         .then(Commands.literal(EVENT_TYPE)
                                                 .then(Commands.argument(EVENT_NAME, StringArgumentType.string())
-                                                        .suggests(EVENT_TYPE_SUGGESTS)
+                                                        .suggests(EventType.EVENT_TYPE_SUGGESTS)
                                                         .then(Commands.argument(EVENT_PRIORITY, StringArgumentType.string())
-                                                                .suggests(EVENT_PRIORITY_SUGGESTS)
+                                                                .suggests(EventPriority.EVENT_PRIORITY_SUGGESTS)
                                                                 .then(Commands.argument(RECEIVE_CANCELED, BoolArgumentType.bool())
                                                                         .executes(FunctionManagerCommand::registerFunctionToEvent)
                                                                 )
@@ -44,9 +40,9 @@ public class FunctionManagerCommand {
                                         )
                                         .then(Commands.literal(CUSTOM_EVENT_TYPE)
                                                 .then(Commands.argument(EVENT_NAME, StringArgumentType.string())
-                                                        .suggests(CUSTOM_EVENT_TYPE_SUGGESTS)
+                                                        .suggests(CustomEventType.CUSTOM_EVENT_TYPE_SUGGESTS)
                                                         .then(Commands.argument(EVENT_PRIORITY, StringArgumentType.string())
-                                                                .suggests(EVENT_PRIORITY_SUGGESTS)
+                                                                .suggests(EventPriority.EVENT_PRIORITY_SUGGESTS)
                                                                 .then(Commands.argument(RECEIVE_CANCELED, BoolArgumentType.bool())
                                                                         .executes(FunctionManagerCommand::registerFunctionToCustomEvent)
                                                                 )
@@ -56,7 +52,7 @@ public class FunctionManagerCommand {
                                         .then(Commands.literal(EVENT_CLASS)
                                                 .then(Commands.argument(EVENT_NAME, StringArgumentType.string())
                                                         .then(Commands.argument(EVENT_PRIORITY, StringArgumentType.string())
-                                                                .suggests(EVENT_PRIORITY_SUGGESTS)
+                                                                .suggests(EventPriority.EVENT_PRIORITY_SUGGESTS)
                                                                 .then(Commands.argument(RECEIVE_CANCELED, BoolArgumentType.bool())
                                                                         .executes(FunctionManagerCommand::registerFunctionToEventClass)
                                                                 )
@@ -71,13 +67,13 @@ public class FunctionManagerCommand {
                                 .then(Commands.argument(IS_TAG, BoolArgumentType.bool())
                                         .then(Commands.literal(EVENT_TYPE)
                                                 .then(Commands.argument(EVENT_NAME, StringArgumentType.string())
-                                                        .suggests(EVENT_TYPE_SUGGESTS)
+                                                        .suggests(EventType.EVENT_TYPE_SUGGESTS)
                                                         .executes(FunctionManagerCommand::unregisterFunctionToEvent)
                                                 )
                                         )
                                         .then(Commands.literal(CUSTOM_EVENT_TYPE)
                                                 .then(Commands.argument(EVENT_NAME, StringArgumentType.string())
-                                                        .suggests(CUSTOM_EVENT_TYPE_SUGGESTS)
+                                                        .suggests(CustomEventType.CUSTOM_EVENT_TYPE_SUGGESTS)
                                                         .executes(FunctionManagerCommand::unregisterFunctionToCustomEvent)
                                                 )
                                         )
@@ -90,17 +86,6 @@ public class FunctionManagerCommand {
                         )
                 );
     }
-
-    private static final SuggestionProvider<CommandSourceStack> EVENT_TYPE_SUGGESTS = (context, builder) ->
-            SharedSuggestionProvider.suggest(new String[]{
-            }, builder);
-    private static final SuggestionProvider<CommandSourceStack> CUSTOM_EVENT_TYPE_SUGGESTS = (context, builder) ->
-            SharedSuggestionProvider.suggest(new String[]{
-            }, builder);
-    private static final SuggestionProvider<CommandSourceStack> EVENT_PRIORITY_SUGGESTS = (context, builder) ->
-            SharedSuggestionProvider.suggest(Arrays.stream(EventPriority.values())
-                    .map(EventPriority::name)
-                    .toArray(String[]::new), builder);
 
     // --------IFunctionManager--------
 

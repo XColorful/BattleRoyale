@@ -1,6 +1,6 @@
 package xiao.battleroyale.api.game.team;
 
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -12,7 +12,8 @@ public interface ITeamPreManagement {
      * 适用于管理员指令或游戏初始化时的强制分配。
      * @param player 需要加入队伍的玩家
      */
-    void forceJoinTeam(ServerPlayer player);
+    void forceJoinTeam(LivingEntity player);
+    void forceJoinTeam(LivingEntity player, int teamId);
 
     /**
      * 游戏未开始时将玩家移出队伍

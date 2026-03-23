@@ -20,6 +20,7 @@ public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
     public int teamSize;
     public boolean aiTeammate;
     public boolean aiEnemy;
+    public boolean freeToJoin;
     public int requiredTeamToStart;
     public int maxGameTime;
     public int winnerTeamTotal;
@@ -33,7 +34,7 @@ public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
     public boolean recordGameStats;
     public boolean autoJoinGame;
 
-    public BattleroyaleEntry(String defaultLevelKey, int playerTotal, int teamSize, boolean aiTeammate, boolean aiEnemy,
+    public BattleroyaleEntry(String defaultLevelKey, int playerTotal, int teamSize, boolean aiTeammate, boolean aiEnemy, boolean freeToJoin,
                              int requiredTeamToStart, int maxGameTime, int winnerTeamTotal,
                              Vec3 lobbyCenterPos, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal, boolean lobbyChangeGamemode, boolean lobbyTeleportDropInventory, boolean lobbyTeleportClearInventory,
                              boolean recordGameStats, boolean autoJoinGame) {
@@ -42,6 +43,7 @@ public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
         this.teamSize = teamSize;
         this.aiTeammate = aiTeammate;
         this.aiEnemy = aiEnemy;
+        this.freeToJoin = freeToJoin;
         this.requiredTeamToStart = requiredTeamToStart;
         this.maxGameTime = maxGameTime;
         this.winnerTeamTotal = winnerTeamTotal;
@@ -56,7 +58,7 @@ public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
         this.autoJoinGame = autoJoinGame;
     }
     @Override public @NotNull BattleroyaleEntry copy() {
-        return new BattleroyaleEntry(defaultLevelKey, playerTotal, teamSize, aiTeammate, aiEnemy,
+        return new BattleroyaleEntry(defaultLevelKey, playerTotal, teamSize, aiTeammate, aiEnemy, freeToJoin,
                 requiredTeamToStart, maxGameTime, winnerTeamTotal,
                 lobbyCenterPos, lobbyDimension, lobbyMuteki, lobbyHeal, lobbyChangeGamemode, lobbyTeleportDropInventory, lobbyTeleportClearInventory,
                 recordGameStats, autoJoinGame);
@@ -75,6 +77,7 @@ public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
         jsonObject.addProperty(BattleroyaleEntryTag.TEAM_SIZE, teamSize);
         jsonObject.addProperty(BattleroyaleEntryTag.AI_TEAMMATE, aiTeammate);
         jsonObject.addProperty(BattleroyaleEntryTag.AI_ENEMY, aiEnemy);
+        jsonObject.addProperty(BattleroyaleEntryTag.FREE_TO_JOIN, freeToJoin);
         jsonObject.addProperty(BattleroyaleEntryTag.REQUIRED_TEAM_TO_START, requiredTeamToStart);
         jsonObject.addProperty(BattleroyaleEntryTag.MAX_GAME_TIME, maxGameTime);
         jsonObject.addProperty(BattleroyaleEntryTag.WINNER_TEAM_TOTAL, winnerTeamTotal);
@@ -96,6 +99,7 @@ public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
         int teamSize = JsonUtils.getJsonInt(jsonObject, BattleroyaleEntryTag.TEAM_SIZE, 0);
         boolean aiTeammate = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.AI_TEAMMATE, false);
         boolean aiEnemy = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.AI_ENEMY, false);
+        boolean freeToJoin = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.FREE_TO_JOIN, false);
         int requiredTeamToStart = JsonUtils.getJsonInt(jsonObject, BattleroyaleEntryTag.REQUIRED_TEAM_TO_START, 2);
         int maxGameTime = JsonUtils.getJsonInt(jsonObject, BattleroyaleEntryTag.MAX_GAME_TIME, 0);
         int winnerTeamTotal = JsonUtils.getJsonInt(jsonObject, BattleroyaleEntryTag.WINNER_TEAM_TOTAL, 1);
@@ -112,7 +116,7 @@ public class BattleroyaleEntry implements IGameruleEntry, IConfigAppliable {
         boolean lobbyTeleportClearInventory = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.LOBBY_TELEPORT_CLEAR_INVENTORY, false);
         boolean recordGameStats = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.RECORD_STATS, true);
         boolean autoJoinGame = JsonUtils.getJsonBool(jsonObject, BattleroyaleEntryTag.AUTO_JOIN, false);
-        return new BattleroyaleEntry(defaultLevelKey, playerTotal, teamSize, aiTeammate, aiEnemy,
+        return new BattleroyaleEntry(defaultLevelKey, playerTotal, teamSize, aiTeammate, aiEnemy, freeToJoin,
                 requiredTeamToStart, maxGameTime, winnerTeamTotal,
                 lobbyCenterPos, lobbyDimension, lobbyMuteki, lobbyHeal, lobbyChangeGamemode, lobbyTeleportDropInventory, lobbyTeleportClearInventory,
                 recordGameStats, autoJoinGame);
