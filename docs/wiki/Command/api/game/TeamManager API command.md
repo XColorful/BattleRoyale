@@ -184,9 +184,13 @@
 
 ##### 强制加入队伍
 > _/battleroyale api teamManager forceJoinTeam [player]_
+> 
+> _/battleroyale api teamManager forceJoinTeam [player] [id]_
 
 游戏未开始时强制玩家加入队伍，优先加入已有队伍，其次创建新队伍：
-- player：玩家选择器
+- player：实体选择器
+- 若实体选择器不为生物，`返回值`为 0
+- id：指定加入的队伍ID
 - `返回值`：玩家是否为游戏玩家
 
 ##### 强制将玩家移出队伍
@@ -404,9 +408,13 @@ Forcefully eliminates the player during the game and sends a message to teammate
 
 ##### Force join team
 > _/battleroyale api teamManager forceJoinTeam [player]_
+> 
+> _/battleroyale api teamManager forceJoinTeam [player] [id]_
 
 Forcefully joins the player to a team before the game starts, prioritizing existing teams or creating a new one:
-- player: player selector
+- player: entity selector
+- If the entity selector is not a living entity, the `return value` is 0.
+- id: specific the team ID to join
 - `return value`: whether the player is a game player
 
 ##### Remove player from team

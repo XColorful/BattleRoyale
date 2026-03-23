@@ -21,6 +21,7 @@ public class CommonSetup implements ICommonSetup {
         NetworkHandler.get().registerMessages();
         BattleRoyale.LOGGER.debug("onCommonSetup, reloadAllConfigs:");
         BattleRoyale.getModConfigManager().reloadAllConfigs();
+        CommandSelector.get().setupSelectors(BattleRoyale.getSelectorRegistry());
         TempDataManager.get().saveTempData();
 
         // 所有扩展放在 onCommonSetup 执行

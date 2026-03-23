@@ -16,6 +16,7 @@ public class TeamConfig implements IStatsWriter {
     public int teamSize = 0;
     public boolean aiTeammate = false;
     public boolean aiEnemy = false;
+    public boolean freeToJoin = false;
     public boolean autoJoinGame = false;
     public String vanillaTeamFormat = GameTeam.DEFAULT_VANILLA_TEAM_FORMAT;
 
@@ -54,6 +55,7 @@ public class TeamConfig implements IStatsWriter {
         Map<String, Boolean> boolGamerule = new HashMap<>();
         boolGamerule.put(BattleroyaleEntryTag.AI_TEAMMATE, aiTeammate);
         boolGamerule.put(BattleroyaleEntryTag.AI_ENEMY, aiEnemy);
+        boolGamerule.put(BattleroyaleEntryTag.FREE_TO_JOIN, freeToJoin);
         boolGamerule.put(BattleroyaleEntryTag.AUTO_JOIN, autoJoinGame);
         return boolGamerule;
     }
@@ -63,6 +65,7 @@ public class TeamConfig implements IStatsWriter {
         this.teamSize = brEntry.teamSize;
         this.aiTeammate = brEntry.aiTeammate;
         this.aiEnemy = brEntry.aiEnemy;
+        this.freeToJoin = brEntry.freeToJoin;
         this.autoJoinGame = brEntry.autoJoinGame;
         this.vanillaTeamFormat = gameEntry.vanillaTeamFormat;
 

@@ -9,6 +9,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.IEventRegister;
+import xiao.battleroyale.api.init.ISelectorRegistry;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
 import xiao.battleroyale.api.network.INetworkAdapter;
@@ -17,6 +18,7 @@ import xiao.battleroyale.compat.forge.client.renderer.ForgeBlockModelRenderer;
 import xiao.battleroyale.compat.forge.compat.journeymap.JmApi;
 import xiao.battleroyale.compat.forge.event.ForgeEventRegister;
 import xiao.battleroyale.compat.forge.init.registry.ForgeRegistrarFactory;
+import xiao.battleroyale.compat.forge.init.ForgeSelectorRegistry;
 import xiao.battleroyale.compat.forge.minecraft.ForgeRegistry;
 import xiao.battleroyale.compat.forge.network.ForgeNetworkAdapter;
 import xiao.battleroyale.compat.forge.network.ForgeNetworkHook;
@@ -26,6 +28,7 @@ import xiao.battleroyale.init.registry.*;
 public class BattleRoyaleForge {
 
     public static IRegistrarFactory registrarFactory;
+    public static ISelectorRegistry selectorRegistry;
     public static IMcRegistry mcRegistry;
     public static INetworkAdapter networkAdapter;
     public static INetworkHook networkHook;
@@ -35,6 +38,7 @@ public class BattleRoyaleForge {
 
     public BattleRoyaleForge() {
         BattleRoyaleForge.registrarFactory = new ForgeRegistrarFactory();
+        BattleRoyaleForge.selectorRegistry = new ForgeSelectorRegistry();
         BattleRoyaleForge.mcRegistry = new ForgeRegistry();
         BattleRoyaleForge.networkAdapter = new ForgeNetworkAdapter();
         BattleRoyaleForge.networkHook = new ForgeNetworkHook();
@@ -46,7 +50,7 @@ public class BattleRoyaleForge {
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
 
         BattleRoyale.init(mcSide,
-                BattleRoyaleForge.registrarFactory, BattleRoyaleForge.mcRegistry,
+                BattleRoyaleForge.registrarFactory, BattleRoyaleForge.selectorRegistry, BattleRoyaleForge.mcRegistry,
                 BattleRoyaleForge.networkAdapter, BattleRoyaleForge.networkHook,
                 BattleRoyaleForge.eventRegister,
                 BattleRoyaleForge.blockModelRenderer,
