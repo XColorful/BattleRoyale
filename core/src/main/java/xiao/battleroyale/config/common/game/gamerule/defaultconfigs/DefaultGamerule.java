@@ -24,7 +24,7 @@ public class DefaultGamerule {
     }
 
     private static JsonObject generateDefaultGameruleConfig0() {
-        BattleroyaleEntry brEntry = new BattleroyaleEntry(OVERWORLD_LEVEL_KEY, 100, 4, true, true,
+        BattleroyaleEntry brEntry = new BattleroyaleEntry(OVERWORLD_LEVEL_KEY, 100, 4, true, true, false,
                 2, 12000, 1,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10),
                 true, true, true, false, false,
@@ -43,7 +43,7 @@ public class DefaultGamerule {
     }
 
     private static JsonObject generateDefaultGameruleConfig1() {
-        BattleroyaleEntry brEntry = new BattleroyaleEntry(OVERWORLD_LEVEL_KEY, 100, 4, false, false,
+        BattleroyaleEntry brEntry = new BattleroyaleEntry(OVERWORLD_LEVEL_KEY, 100, 4, false, false, false,
                 2, 12000, 1,
                 new Vec3(128, -60, 128), new Vec3(10, 10, 10),
                 true, true, true, false, false,

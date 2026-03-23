@@ -21,6 +21,7 @@ import xiao.battleroyale.api.event.ICustomEventRegister;
 import xiao.battleroyale.api.event.IEventRegister;
 import xiao.battleroyale.api.event.register.RegisterManagerEvent;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.init.ISelectorRegistry;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.loot.ICommonInventoryManager;
 import xiao.battleroyale.api.loot.ICommonLootManager;
@@ -56,12 +57,13 @@ public class BattleRoyale {
     protected static McSide mcSide = McSide.CLIENT;
     protected static MinecraftServer minecraftServer;
     private static IRegistrarFactory registrarFactory;
+    private static ISelectorRegistry selectorRegistry;
     private static IMcRegistry mcRegistry;
     public record CompatApi(IJmApi jmApi) {}
     private static CompatApi compatApi;
 
     public static void init(McSide mcSide,
-                            IRegistrarFactory factory, IMcRegistry mcRegistry,
+                            IRegistrarFactory factory, ISelectorRegistry selectorRegistry, IMcRegistry mcRegistry,
                             INetworkAdapter networkAdapter, INetworkHook networkHook,
                             IEventRegister eventRegister,
                             IBlockModelRenderer blockModelRenderer,
@@ -70,6 +72,7 @@ public class BattleRoyale {
 
         BattleRoyale.mcSide = mcSide;
         BattleRoyale.registrarFactory = factory;
+        BattleRoyale.selectorRegistry = selectorRegistry;
         BattleRoyale.mcRegistry = mcRegistry;
 
         // 最早可使用的事件机制
@@ -121,6 +124,12 @@ public class BattleRoyale {
             throw new IllegalStateException("Registrar factory has not been initialized. Call init() first.");
         }
         return registrarFactory;
+    }
+    public static ISelectorRegistry getSelectorRegistry() {
+        if (selectorRegistry == null) {
+            throw new IllegalStateException("Selector registry has not been initialized. Call init() first.");
+        }
+        return selectorRegistry;
     }
     public static IMcRegistry getMcRegistry() {
         if (mcRegistry == null) {
