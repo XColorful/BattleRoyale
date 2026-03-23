@@ -82,6 +82,9 @@ public class GamePlayer {
     public UUID getPlayerUUID() { return playerUUID; }
     public String getPlayerName() { return playerName; }
     public boolean isAlive() { return isAlive; }
+    public boolean isDowned() {
+        return !isAlive() && !isEliminated();
+    }
     public boolean isEliminated() { return isEliminated; }
     public int getGameSingleId() { return gameSingleId; }
     public int getGameTeamId() {
