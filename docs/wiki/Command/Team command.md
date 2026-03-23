@@ -202,13 +202,13 @@ _/battleroyale team [add/build] [player] [teamId/size] [forceRebuild]_
 
 Require permission level 2
 
-### 加进队伍
+### Add to team
 _/battleroyale team add [player] [teamId]_
 
 Add a living entity to the specified team
 - If the entity is already in a team, it will leave the current team before attempting to join
 
-### 组建队伍
+### Build team
 _/battleroyale team build [player] [size] [forceRebuild]_
 
 Build teams based on size after shuffling selected entities randomly

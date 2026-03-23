@@ -30,6 +30,7 @@ public class CommandArg {
     public static final String BACKUP = "backup";
     public static final String REGISTER = "register";
     public static final String TEMP = "temp";
+    public static final String ENTITY_SELECTOR = "entitySelector";
     public static final String PUBGMC = "pubgmc";
     public static final String INIT_STACK_ZONE_CONFIG = "initStackZoneConfig";
     public static final String GAME_STEP = "gameStep";

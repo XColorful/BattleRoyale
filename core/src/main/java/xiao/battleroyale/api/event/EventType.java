@@ -1,5 +1,8 @@
 package xiao.battleroyale.api.event;
 
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -34,4 +37,19 @@ public enum EventType {
     public String getName() {
         return this.name();
     }
+
+    public static final SuggestionProvider<CommandSourceStack> EVENT_TYPE_SUGGESTS = (context, builder) ->
+            SharedSuggestionProvider.suggest(new String[]{
+                    SERVER_TICK_EVENT.getName(),
+//                    CLIENT_TICK_EVENT.getName(),
+                    LIVING_ATTACK_EVENT.getName(),
+                    LIVING_HURT_EVENT.getName(),
+                    LIVING_DAMAGE_EVENT.getName(),
+                    LIVING_DEATH_EVENT.getName(),
+                    PLAYER_LOGGED_IN_EVENT.getName(),
+                    PLAYER_LOGGED_OUT_EVENT.getName(),
+//                    RENDER_LEVEL_STAGE_EVENT.getName(),
+//                    RENDER_TRANSLUCENT_EVENT.getName(),
+//                    RENDER_GUI_EVENT.getName(),
+            }, builder);
 }
