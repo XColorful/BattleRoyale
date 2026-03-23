@@ -172,8 +172,11 @@ public class TeamManagerCommand {
                 )
                 // ITeamPreManagement
                 .then(Commands.literal(FORCE_JOIN_TEAM)
-                        .then(Commands.argument(PLAYER, EntityArgument.player())
+                        .then(Commands.argument(PLAYER, EntityArgument.entity())
                                 .executes(TeamManagerCommand::forceJoinTeam)
+                                .then(Commands.argument(ID, IntegerArgumentType.integer(0))
+                                        .executes(TeamManagerCommand::forceJoinSpecificTeam)
+                                )
                         )
                 )
                 .then(Commands.literal(REMOVE_PLAYER_FROM_TEAM)
@@ -447,8 +450,16 @@ public class TeamManagerCommand {
 
     private static int forceJoinTeam(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
-        ServerPlayer player = EntityArgument.getPlayer(context, PLAYER);
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        if (!(entity instanceof LivingEntity player)) return 0;
         teamManager.forceJoinTeam(player);
+        return teamManager.getGamePlayerByUUID(player.getUUID()) != null ? Command.SINGLE_SUCCESS : 0;
+    }
+    private static int forceJoinSpecificTeam(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        if (!(entity instanceof LivingEntity player)) return 0;
+        teamManager.forceJoinTeam(player, IntegerArgumentType.getInteger(context, ID));
         return teamManager.getGamePlayerByUUID(player.getUUID()) != null ? Command.SINGLE_SUCCESS : 0;
     }
     private static int removePlayerFromTeamByPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
