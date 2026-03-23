@@ -8,6 +8,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.IEventRegister;
+import xiao.battleroyale.api.init.ISelectorRegistry;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
 import xiao.battleroyale.api.minecraft.IMcRegistry;
 import xiao.battleroyale.api.network.INetworkAdapter;
@@ -15,6 +16,7 @@ import xiao.battleroyale.api.network.INetworkHook;
 import xiao.battleroyale.compat.neoforge.client.renderer.NeoBlockModelRenderer;
 import xiao.battleroyale.compat.neoforge.compat.journeymap.JmApi;
 import xiao.battleroyale.compat.neoforge.event.NeoEventRegister;
+import xiao.battleroyale.compat.neoforge.init.NeoCommandSelectorRegistry;
 import xiao.battleroyale.compat.neoforge.init.registry.NeoRegistrarFactory;
 import xiao.battleroyale.compat.neoforge.minecraft.NeoRegistry;
 import xiao.battleroyale.compat.neoforge.network.NeoNetworkAdapter;
@@ -25,6 +27,7 @@ import xiao.battleroyale.init.registry.*;
 public class BattleRoyaleNeoforge {
 
     public static IRegistrarFactory registrarFactory;
+    public static ISelectorRegistry selectorRegistry;
     public static IMcRegistry mcRegistry;
     public static INetworkAdapter networkAdapter;
     public static INetworkHook networkHook;
@@ -33,8 +36,8 @@ public class BattleRoyaleNeoforge {
     public static BattleRoyale.CompatApi compatApi;
 
     public BattleRoyaleNeoforge(IEventBus modEventBus) {
-
         BattleRoyaleNeoforge.registrarFactory = new NeoRegistrarFactory();
+        BattleRoyaleNeoforge.selectorRegistry = new NeoCommandSelectorRegistry();
         BattleRoyaleNeoforge.mcRegistry = new NeoRegistry();
         BattleRoyaleNeoforge.networkAdapter = new NeoNetworkAdapter();
         BattleRoyaleNeoforge.networkHook = new NeoNetworkHook();
@@ -46,7 +49,7 @@ public class BattleRoyaleNeoforge {
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
 
         BattleRoyale.init(mcSide,
-                BattleRoyaleNeoforge.registrarFactory, BattleRoyaleNeoforge.mcRegistry,
+                BattleRoyaleNeoforge.registrarFactory, BattleRoyaleNeoforge.selectorRegistry, BattleRoyaleNeoforge.mcRegistry,
                 BattleRoyaleNeoforge.networkAdapter, BattleRoyaleNeoforge.networkHook,
                 BattleRoyaleNeoforge.eventRegister,
                 BattleRoyaleNeoforge.blockModelRenderer,
