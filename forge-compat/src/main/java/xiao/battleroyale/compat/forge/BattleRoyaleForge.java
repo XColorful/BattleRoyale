@@ -17,8 +17,8 @@ import xiao.battleroyale.api.network.INetworkHook;
 import xiao.battleroyale.compat.forge.client.renderer.ForgeBlockModelRenderer;
 import xiao.battleroyale.compat.forge.compat.journeymap.JmApi;
 import xiao.battleroyale.compat.forge.event.ForgeEventRegister;
+import xiao.battleroyale.compat.forge.init.ForgeCommandSelectorRegistry;
 import xiao.battleroyale.compat.forge.init.registry.ForgeRegistrarFactory;
-import xiao.battleroyale.compat.forge.init.ForgeSelectorRegistry;
 import xiao.battleroyale.compat.forge.minecraft.ForgeRegistry;
 import xiao.battleroyale.compat.forge.network.ForgeNetworkAdapter;
 import xiao.battleroyale.compat.forge.network.ForgeNetworkHook;
@@ -38,7 +38,7 @@ public class BattleRoyaleForge {
 
     public BattleRoyaleForge() {
         BattleRoyaleForge.registrarFactory = new ForgeRegistrarFactory();
-        BattleRoyaleForge.selectorRegistry = new ForgeSelectorRegistry();
+        BattleRoyaleForge.selectorRegistry = new ForgeCommandSelectorRegistry();
         BattleRoyaleForge.mcRegistry = new ForgeRegistry();
         BattleRoyaleForge.networkAdapter = new ForgeNetworkAdapter();
         BattleRoyaleForge.networkHook = new ForgeNetworkHook();
