@@ -10,7 +10,7 @@ import xiao.battleroyale.api.init.ISelectorRegistry;
 
 import java.util.function.Predicate;
 
-public class ForgeSelectorRegistry implements ISelectorRegistry {
+public class ForgeCommandSelectorRegistry implements ISelectorRegistry {
 
     @Override
     public void registerSelector(String token, Predicate<Entity> filter, int maxResults, boolean includeEntities, Component tooltip) {
