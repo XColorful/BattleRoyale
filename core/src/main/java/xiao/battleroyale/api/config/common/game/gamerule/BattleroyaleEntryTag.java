@@ -6,10 +6,10 @@ public class BattleroyaleEntryTag extends ConfigEntryTag {
 
     public static final String DEFAULT_LEVEL_KEY = "defaultLevelKey";
     public static final String PLAYER_TOTAL = "playerTotal";
-    public static final String VANILLA_TEAM_FORMAT = "vanillaTeamFormat";
     public static final String TEAM_SIZE = "teamSize";
     public static final String AI_TEAMMATE = "aiTeammate";
     public static final String AI_ENEMY = "aiEnemy";
+    public static final String FREE_TO_JOIN = "freeToJoin";
     public static final String REQUIRED_TEAM_TO_START = "requiredTeamToStart";
     public static final String MAX_GAME_TIME = "maxGameTime";
     public static final String WINNER_TEAM_TOTAL = "winnerTeamTotal";
