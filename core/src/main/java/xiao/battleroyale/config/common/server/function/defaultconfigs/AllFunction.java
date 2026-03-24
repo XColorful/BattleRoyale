@@ -138,13 +138,13 @@ public class AllFunction {
 
                         // --------CustomEventClass--------
 
-                        new RegisterEntry.RegisterDetail(null, "battleroyale:deathmatch/on_add_player_kill", null,
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:deathmatch/on_add_player_kill", CustomEventType.CUSTOM_EVENT.getName(),
                                 EventPriority.HIGHEST, true, AddKillEvent.AddPlayerKillEvent.class.getName()),
-                        new RegisterEntry.RegisterDetail(null, "battleroyale:deathmatch/on_add_player_kill_finish", null,
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:deathmatch/on_add_player_kill_finish", CustomEventType.CUSTOM_EVENT.getName(),
                                 EventPriority.LOWEST, false, AddKillEvent.AddPlayerKillFinishEvent.class.getName()),
-                        new RegisterEntry.RegisterDetail(null, "battleroyale:deathmatch/on_add_team_kill", null,
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:deathmatch/on_add_team_kill", CustomEventType.CUSTOM_EVENT.getName(),
                                 EventPriority.HIGHEST, true, AddKillEvent.AddTeamKillEvent.class.getName()),
-                        new RegisterEntry.RegisterDetail(null, "battleroyale:deathmatch/on_add_team_kill_finish", null,
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:deathmatch/on_add_team_kill_finish", CustomEventType.CUSTOM_EVENT.getName(),
                                 EventPriority.LOWEST, false, AddKillEvent.AddTeamKillFinishEvent.class.getName())
                 )
         );

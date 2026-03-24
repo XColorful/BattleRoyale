@@ -89,10 +89,10 @@ public class RegisterEntry implements IFunctionEntry, IConfigAppliable {
                 String tagRl = JsonUtils.getJsonString(detailObject, RegisterEntryTag.TAG_RL, null);
                 if (functionRl == null && tagRl == null) continue;
                 String event = JsonUtils.getJsonString(detailObject, RegisterEntryTag.EVENT, null);
-                if (event == null) continue;
+                String eventClass = JsonUtils.getJsonString(detailObject, RegisterEntryTag.EVENT_CLASS, null);
+                if (event == null && eventClass == null) continue;
                 EventPriority priority = EventPriority.fromString(JsonUtils.getJsonString(detailObject, RegisterEntryTag.PRIORITY, null));
                 boolean receiveCanceled = JsonUtils.getJsonBool(detailObject, RegisterEntryTag.RECEIVE_CANCELED, false);
-                String eventClass = JsonUtils.getJsonString(detailObject, RegisterEntryTag.EVENT_CLASS, null);
                 registerDetails.add(new RegisterDetail(functionRl, tagRl, event, priority, receiveCanceled, eventClass));
             }
         }
