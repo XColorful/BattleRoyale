@@ -12,9 +12,24 @@
 ### 注册项
 _./minecraft/battleroyale/temp/registry.json_
 
+- entitySelector：是否[启用实体选择器](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#启用实体选择器)
+- selector.\*：是否[启用实体选择器类型](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#启用实体选择器类型)
 - pubgmcCommand：是否启用[PUBGMC兼容](https://github.com/XColorful/BattleRoyale/wiki/PUBGMC-compatibility)
 ```json
 {
+	"entitySelector": true,
+	"selector.gameplayers": true,
+	"selector.nongameplayers.player": true,
+	"selector.gameplayers.player": true,
+	"selector.gameplayers.bot": true,
+	"selector.gameplayers.downed": true,
+	"selector.standinggameplayers": true,
+	"selector.nonstandinggameplayers.player": true,
+	"selector.standinggameplayers.player": true,
+	"selector.standinggameplayers.bot": true,
+	"selector.eliminatedgameplayers": true,
+	"selector.eliminatedgameplayers.player": true,
+	"selector.eliminatedgameplayers.bot": true,
 	"pubgmcCommand": true
 }
 ```
@@ -77,9 +92,24 @@ Temporary data directory located in all json files under _./minecraft/battleroya
 ### Registry entry
 _./minecraft/battleroyale/temp/registry.json_
 
+- entitySelector: whether to [Enable entity selector](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#Enable-entity-selector)
+- selector.\*: whether to [Enable entity selector type](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#Enable-entity-selector-type)
 - pubgmcCommand: Enables/disables [PUBGMC compatibility](https://github.com/XColorful/BattleRoyale/wiki/PUBGMC-compatibility#English)
 ```json
 {
+	"entitySelector": true,
+	"selector.gameplayers": true,
+	"selector.nongameplayers.player": true,
+	"selector.gameplayers.player": true,
+	"selector.gameplayers.bot": true,
+	"selector.gameplayers.downed": true,
+	"selector.standinggameplayers": true,
+	"selector.nonstandinggameplayers.player": true,
+	"selector.standinggameplayers.player": true,
+	"selector.standinggameplayers.bot": true,
+	"selector.eliminatedgameplayers": true,
+	"selector.eliminatedgameplayers.player": true,
+	"selector.eliminatedgameplayers.bot": true,
 	"pubgmcCommand": true
 }
 ```

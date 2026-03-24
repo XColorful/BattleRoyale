@@ -38,6 +38,7 @@
 - teamSize：队伍最大人数
 - aiTeammate：是否允许人机队友
 - aiEnemy：是否允许人机敌人
+- freeToJoin：是否允许自由[加入队伍](https://github.com/XColorful/BattleRoyale/wiki/Team-command#加入队伍)
 - requiredTeamToStart：开始大逃杀游戏需要的队伍数量
 - maxGameTime：最大游戏时长
 - winnerTeamTotal：获胜队伍总数，队伍数量小于等于该值时大逃杀游戏结束
@@ -57,6 +58,7 @@
 	"teamSize": 4,
 	"aiTeammate": true,
 	"aiEnemy": true,
+	"freeToJoin": false,
 	"requiredTeamToStart": 2,
 	"maxGameTime": 12000,
 	"winnerTeamTotal": 1,
@@ -274,6 +276,7 @@
 - teamSize: maximum number of team members
 - aiTeammate: whether AI teammates are allowed
 - aiEnemy: whether AI enemies are allowed
+- freeToJoin: whether it is allowed to freely [Join a team](https://github.com/XColorful/BattleRoyale/wiki/Team-command#Join-a-team)
 - requiredTeamToStart: the number of teams required to start BattleRoyale
 - maxGameTime: maximum BattleRoyale game time
 - winnerTeamTotal: total number of winner teams, the BattleRoyale ends when the number of teams is less than or equal to this value
@@ -293,6 +296,7 @@
 	"teamSize": 4,
 	"aiTeammate": true,
 	"aiEnemy": true,
+	"freeToJoin": false,
 	"requiredTeamToStart": 2,
 	"maxGameTime": 12000,
 	"winnerTeamTotal": 1,

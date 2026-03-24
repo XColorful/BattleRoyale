@@ -284,6 +284,7 @@
   > 	- TaCZ物资刷新配置
   > - 物资刷新配置类型
   - [服务端配置管理器](./config/common/server/server-config-manager.md)：
+	  - [函数配置管理器](./config/common/server/function/function-config-manager.md)：管理[函数配置](/docs/wiki/Configuration/Function%20config.md)
 	  - [性能配置管理器](./config/common/server/performance/performance-config-manager.md)：管理[性能配置](/docs/wiki/Configuration/Performance%20config.md)
       > - 生成性能配置：
       > 	- CFHC性能配置
@@ -335,6 +336,7 @@
 	- ModMenuTypes：模组 GUI 类型（物资刷新方块 GUI 界面）
 	- ModSounds：模组声音（暂未使用）
 - CommandRegistry：指令注册
+- CommandSelector：指令实体选择器
 - CommonSetup：双端设置
 - CompatInit：联动模组初始化
 - ModEvent：模组事件
@@ -661,6 +663,7 @@ Module division based on the `xiao.battleroyale` top-level package
   > 	- TaCZ loot config
   > - Loot config type
   - [Server Config Manager](./config/common/server/server-config-manager.md#English):
+	  - [Function Config Manager](./config/common/server/function/function-config-manager.md#English): Manage [Function config](/docs/wiki/Configuration/Function%20config.md#English)
 	  - [Performance Config Manager](./config/common/server/performance/performance-config-manager.md#English): Manage [Performance config](/docs/wiki/Configuration/Performance%20config.md#English)
       > - Generate performance config:
       > 	- CFHC performance config
@@ -712,6 +715,7 @@ Module division based on the `xiao.battleroyale` top-level package
 	- ModMenuTypes: Mod GUI types (Loot spawner block GUI interface)
 	- ModSounds: Mod sounds (Not used yet)
 - CommandRegistry: Command registration
+- CommandSelector: Command entity selector
 - CommonSetup: Common set up
 - CompatInit: Compat mod initialization
 - ModEvent: Mod event
@@ -752,4 +756,4 @@ Module division based on the `xiao.battleroyale` top-level package
 - SendUtils: Encapsulate the sending of network messages, decoupling `NetworkHandler` from the project main body
 - StringUtils: Parse/convert various format strings, build strings
 - Vec3Utils: Vector random offset, vector addition/subtraction/linear interpolation, etc.
-- -WorldUtils: In-game world related operations
+- WorldUtils: In-game world related operations

@@ -30,6 +30,7 @@ public class CommandArg {
     public static final String BACKUP = "backup";
     public static final String REGISTER = "register";
     public static final String TEMP = "temp";
+    public static final String ENTITY_SELECTOR = "entitySelector";
     public static final String PUBGMC = "pubgmc";
     public static final String INIT_STACK_ZONE_CONFIG = "initStackZoneConfig";
     public static final String GAME_STEP = "gameStep";
@@ -161,10 +162,10 @@ public class CommandArg {
     public static final String GLOBAL_SHRINK_RATIO = "globalShrinkRatio";
     public static final String TELEPORT = "teleport";
     public static final String FIND_GROUND = "findGround";
-    public static final String MAX_HANG_TIME = "maxHandTime";
+    public static final String MAX_HANG_TIME = "maxHangTime";
 
     // GameManager
-    public static final String GAME_MANAGER = "gameMamager";
+    public static final String GAME_MANAGER = "gameManager";
     public static final String GET_GAME_TIME = "getGameTime";
     public static final String IS_IN_GAME = "isInGame";
     public static final String GET_GLOBAL_CENTER_OFFSET = "getGlobalCenterOffset";
@@ -280,7 +281,7 @@ public class CommandArg {
     public static final String SAVE_STATS = "saveStats";
 
     // TeamManager
-    public static final String TEAM_MANAGER = "teamMamager";
+    public static final String TEAM_MANAGER = "teamManager";
     public static final String SHOULD_AUTO_JOIN = "shouldAutoJoin";
     public static final String FIND_NOT_FULL_TEAM_ID = "findNotFullTeamId";
     public static final String HAS_ENOUGH_PLAYER_TEAM_TO_START = "hasEnoughPlayerTeamToStart";

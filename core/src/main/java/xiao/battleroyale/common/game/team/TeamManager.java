@@ -377,13 +377,25 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
      * 适用于管理员指令或游戏初始化时的强制分配。
      * @param player 需要加入队伍的玩家
      */
-    public void forceJoinTeam(ServerPlayer player) {
+    public void forceJoinTeam(LivingEntity player) {
         if (BattleRoyale.getGameManager().isInGame()) {
-            ChatUtils.sendComponentMessageToPlayer(player, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            if (player instanceof ServerPlayer serverPlayer) {
+                ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            }
             return;
         }
 
         _TeamManagement.forceJoinTeam(this, player);
+    }
+    public void forceJoinTeam(LivingEntity player, int teamId) {
+        if (BattleRoyale.getGameManager().isInGame()) {
+            if (player instanceof ServerPlayer serverPlayer) {
+                ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.game_in_progress").withStyle(ChatFormatting.RED));
+            }
+            return;
+        }
+
+        _TeamManagement.forceJoinTeam(this, player, teamId);
     }
 
     public boolean forceEliminatePlayerSilence(GamePlayer gamePlayer) {
