@@ -25,9 +25,13 @@ public class _FunctionRegisterHelper {
                     Class<?> clazz = Class.forName(k);
                     if (ICustomEvent.class.isAssignableFrom(clazz)) {
                         return (Class<? extends ICustomEvent>) clazz;
+                    } else {
+                        BattleRoyale.LOGGER.warn("FunctionRegisterHelper: {} is not ICustomEvent", classString);
                     }
-                } catch (ClassNotFoundException ignored) {
-                    BattleRoyale.LOGGER.warn("FunctionRegisterHelper: {} is not ICustomEvent", classString);
+                } catch (ClassNotFoundException e) {
+                    BattleRoyale.LOGGER.warn("Class not found (check your config path): {}", k);
+                } catch (LinkageError e) {
+                    BattleRoyale.LOGGER.error("Class found but failed to link/load dependencies (Server/Client side issue?): {}", k, e);
                 } catch (Exception e) {
                     BattleRoyale.LOGGER.error("Error loading event class: {}", k, e);
                 }

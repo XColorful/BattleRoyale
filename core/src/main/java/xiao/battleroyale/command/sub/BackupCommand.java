@@ -104,32 +104,32 @@ public class BackupCommand {
         if (lootConfigManager == null) return 0;
 
         int success;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = lootConfigManager.backupAllConfigs();
-            messageKey = "battleroyale.message.loot_config_backed_up";
+            message = Component.translatable("battleroyale.message.loot_config_backed_up");
         } else {
             int folderId;
             switch (subType) {
                 case LOOT_SPAWNER:
                     folderId = LootConfigTypeEnum.LOOT_SPAWNER;
-                    messageKey = "battleroyale.message.loot_spawner_config_backed_up";
+                    message = Component.translatable("battleroyale.message.loot_spawner_config_backed_up");
                     break;
                 case ENTITY_SPAWNER:
                     folderId = LootConfigTypeEnum.ENTITY_SPAWNER;
-                    messageKey = "battleroyale.message.entity_spawner_config_backed_up";
+                    message = Component.translatable("battleroyale.message.entity_spawner_config_backed_up");
                     break;
                 case AIRDROP:
                     folderId = LootConfigTypeEnum.AIRDROP;
-                    messageKey = "battleroyale.message.airdrop_config_backed_up";
+                    message = Component.translatable("battleroyale.message.airdrop_config_backed_up");
                     break;
                 case AIRDROP_SPECIAL:
                     folderId = LootConfigTypeEnum.AIRDROP_SPECIAL;
-                    messageKey = "battleroyale.message.airdrop_special_config_backed_up";
+                    message = Component.translatable("battleroyale.message.airdrop_special_config_backed_up");
                     break;
                 case SECRET_ROOM:
                     folderId = LootConfigTypeEnum.SECRET_ROOM;
-                    messageKey = "battleroyale.message.secret_room_config_backed_up";
+                    message = Component.translatable("battleroyale.message.secret_room_config_backed_up");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_loot_sub_type", subType));
@@ -138,7 +138,7 @@ public class BackupCommand {
             }
             success = (lootConfigManager.backupConfigs(folderId) ? 1 : 0);
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Backed up {} configs via command", subType != null ? subType : "all loot");
         return Command.SINGLE_SUCCESS;
     }
@@ -148,32 +148,32 @@ public class BackupCommand {
         if (gameConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = gameConfigManager.backupAllConfigs();
-            messageKey = "battleroyale.message.game_config_backed_up";
+            message = Component.translatable("battleroyale.message.game_config_backed_up");
         } else {
             String subManagerNameKey;
             switch (subType) {
                 case ZONE:
                     subManagerNameKey = ZoneConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.zone_config_backed_up";
+                    message = Component.translatable("battleroyale.message.zone_config_backed_up");
                     break;
                 case SPAWN:
                     subManagerNameKey = SpawnConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.spawn_config_backed_up";
+                    message = Component.translatable("battleroyale.message.spawn_config_backed_up");
                     break;
                 case STATS:
                     subManagerNameKey = StatsConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.stats_config_backed_up";
+                    message = Component.translatable("battleroyale.message.stats_config_backed_up");
                     break;
                 case GAMERULE:
                     subManagerNameKey = GameruleConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.gamerule_config_backed_up";
+                    message = Component.translatable("battleroyale.message.gamerule_config_backed_up");
                     break;
                 case BOT:
                     subManagerNameKey = BotConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.bot_config_backed_up";
+                    message = Component.translatable("battleroyale.message.bot_config_backed_up");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_game_sub_type", subType));
@@ -182,7 +182,7 @@ public class BackupCommand {
             }
             success = gameConfigManager.backupConfigs(subManagerNameKey);
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Backed up {} configs via command", subType != null ? subType : "all game");
         return Command.SINGLE_SUCCESS;
     }
@@ -192,16 +192,16 @@ public class BackupCommand {
         if (effectConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = effectConfigManager.backupAllConfigs();
-            messageKey = "battleroyale.message.effect_config_backed_up";
+            message = Component.translatable("battleroyale.message.effect_config_backed_up");
         } else {
             String subManagerNameKey;
             switch (subType) {
                 case PARTICLE:
                     subManagerNameKey = ParticleConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.particle_config_backed_up";
+                    message = Component.translatable("battleroyale.message.particle_config_backed_up");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_effect_sub_type", subType));
@@ -210,7 +210,7 @@ public class BackupCommand {
             }
             success = effectConfigManager.backupConfigs(subManagerNameKey);
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Backed up {} configs via command", subType != null ? subType : "all effect");
         return Command.SINGLE_SUCCESS;
     }
@@ -220,20 +220,20 @@ public class BackupCommand {
         if (clientConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = clientConfigManager.backupAllConfigs();
-            messageKey = "battleroyale.message.client_config_backed_up";
+            message = Component.translatable("battleroyale.message.client_config_backed_up");
         } else {
             String subManagerNameKey;
             switch (subType) {
                 case RENDER:
                     subManagerNameKey = RenderConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.render_config_backed_up";
+                    message = Component.translatable("battleroyale.message.render_config_backed_up");
                     break;
                 case DISPLAY:
                     subManagerNameKey = DisplayConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.display_config_backed_up";
+                    message = Component.translatable("battleroyale.message.display_config_backed_up");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_client_sub_type", subType));
@@ -242,7 +242,7 @@ public class BackupCommand {
             }
             success = clientConfigManager.backupConfigs(subManagerNameKey);
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Backed up {} configs via command", subType != null ? subType : "all client");
         return Command.SINGLE_SUCCESS;
     }
@@ -252,28 +252,28 @@ public class BackupCommand {
         if (serverConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = serverConfigManager.backupAllConfigs();
-            messageKey = "battleroyale.message.server_config_backed_up";
+            message = Component.translatable("battleroyale.message.server_config_backed_up");
         } else {
             String subManagerNameKey;
             switch (subType) {
                 case FUNCTION:
                     subManagerNameKey = FunctionConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.function_config_backed_up";
+                    message = Component.translatable("battleroyale.message.function_config_backed_up");
                     break;
                 case PERFORMANCE:
                     subManagerNameKey = PerformanceConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.performance_config_backed_up";
+                    message = Component.translatable("battleroyale.message.performance_config_backed_up");
                     break;
                 case PROFILE:
                     subManagerNameKey = ProfileConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.profile_config_backed_up";
+                    message = Component.translatable("battleroyale.message.profile_config_backed_up");
                     break;
                 case UTILITY:
                     subManagerNameKey = UtilityConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.utility_config_backed_up";
+                    message = Component.translatable("battleroyale.message.utility_config_backed_up");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_server_sub_type", subType));
@@ -282,7 +282,7 @@ public class BackupCommand {
             }
             success = serverConfigManager.backupConfigs(subManagerNameKey);
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Backed up {} configs via command", subType != null ? subType : "all server");
         return Command.SINGLE_SUCCESS;
     }
