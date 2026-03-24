@@ -1,5 +1,42 @@
 ### 0.5.x
 
+#### 0.5.2
+- Add event-driven function execution with command source context
+- Add function config in ./config/battleroyale/server/function
+- Add game player related entity selector by '/cbr temp entitySelector'
+- Remove & rebuild vanilla team via command
+
+Wiki update:
+- Recommend installing the Stylus extension for colorful titles
+
+Gamerule config:
+- Build vanilla team with configurable String.format
+- Add freeToJoin to gamerule config
+
+Add API commands:
+- Add Algorithm, GameManager, FunctionManager api command
+- Add TeleportScheduler to api command to teleport with AlgorithmApi
+
+Other:
+- Write gameId, configId to cloned EntitySpawner item
+- Distinguish between items and entities in loot generator cleanup logs
+- Add missing profile save translation key
+- Reduce logo resolution to 256x256
+- Never gonna give loot up (Add '/cbr utility lootconfig [id] toLootTable', but should use '/cbr loot [player]' instead)
+
+For developer:
+- Add ZoneManager to ZoneManager.ZoneContext
+- Prefix '_' to isolate internal entropy via class fractaling
+
+forge1.20.4 & forge1.21.1:
+- Fix Forge crash issue
+
+1.20.4neoforge:
+- Fix loot spawner render issue
+
+1.21.11:
+- Correct debug permission check for non-player source
+
 #### 0.5.1
 - Fix 'clearPreviousContent' write 'clearCachedChunk' tag
 - Fix duplicate death stats in DeathMatch
