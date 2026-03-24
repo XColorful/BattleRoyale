@@ -104,31 +104,31 @@ public class ExampleCommand {
         if (lootConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = lootConfigManager.generateAllDefaultConfigs();
-            messageKey = "battleroyale.message.default_loot_config_generated";
+            message = Component.translatable("battleroyale.message.default_loot_config_generated");
         } else {
             switch (subType) {
                 case LOOT_SPAWNER:
                     success = lootConfigManager.generateDefaultConfigs(LootConfigTypeEnum.LOOT_SPAWNER) ? 1 : 0;
-                    messageKey = "battleroyale.message.default_loot_spawner_config_generated";
+                    message = Component.translatable("battleroyale.message.default_loot_spawner_config_generated");
                     break;
                 case ENTITY_SPAWNER:
                     success = lootConfigManager.generateDefaultConfigs(LootConfigTypeEnum.ENTITY_SPAWNER) ? 1 : 0;
-                    messageKey = "battleroyale.message.default_entity_spawner_config_generated";
+                    message = Component.translatable("battleroyale.message.default_entity_spawner_config_generated");
                     break;
                 case AIRDROP:
                     success = lootConfigManager.generateDefaultConfigs(LootConfigTypeEnum.AIRDROP) ? 1 : 0;
-                    messageKey = "battleroyale.message.default_airdrop_config_generated";
+                    message = Component.translatable("battleroyale.message.default_airdrop_config_generated");
                     break;
                 case AIRDROP_SPECIAL:
                     success = lootConfigManager.generateDefaultConfigs(LootConfigTypeEnum.AIRDROP_SPECIAL) ? 1 : 0;
-                    messageKey = "battleroyale.message.default_airdrop_special_config_generated";
+                    message = Component.translatable("battleroyale.message.default_airdrop_special_config_generated");
                     break;
                 case SECRET_ROOM:
                     success = lootConfigManager.generateDefaultConfigs(LootConfigTypeEnum.SECRET_ROOM) ? 1 : 0;
-                    messageKey = "battleroyale.message.default_secret_room_config_generated";
+                    message = Component.translatable("battleroyale.message.default_secret_room_config_generated");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_loot_sub_type", subType));
@@ -136,7 +136,7 @@ public class ExampleCommand {
                     return 0;
             }
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Generated {} configs via command", subType != null ? subType : "all loot");
         return Command.SINGLE_SUCCESS;
     }
@@ -146,32 +146,32 @@ public class ExampleCommand {
         if (gameConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = gameConfigManager.generateAllDefaultConfigs();
-            messageKey = "battleroyale.message.default_game_config_generated";
+            message = Component.translatable("battleroyale.message.default_game_config_generated");
         } else {
             String subManagerNameKey;
             switch (subType) {
                 case ZONE:
                     subManagerNameKey = ZoneConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.default_zone_config_generated";
+                    message = Component.translatable("battleroyale.message.default_zone_config_generated");
                     break;
                 case STATS:
                     subManagerNameKey = StatsConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.default_stats_config_generated";
+                    message = Component.translatable("battleroyale.message.default_stats_config_generated");
                     break;
                 case SPAWN:
                     subManagerNameKey = SpawnConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.default_spawn_config_generated";
+                    message = Component.translatable("battleroyale.message.default_spawn_config_generated");
                     break;
                 case GAMERULE:
                     subManagerNameKey = GameruleConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.default_gamerule_config_generated";
+                    message = Component.translatable("battleroyale.message.default_gamerule_config_generated");
                     break;
                 case BOT:
                     subManagerNameKey = BotConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.default_bot_config_generated";
+                    message = Component.translatable("battleroyale.message.default_bot_config_generated");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_game_sub_type", subType));
@@ -183,7 +183,7 @@ public class ExampleCommand {
 
             success = configSubManager.generateAllDefaultConfigs();
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Generated {} configs via command", subType != null ? subType : "all game");
         return Command.SINGLE_SUCCESS;
     }
@@ -193,16 +193,16 @@ public class ExampleCommand {
         if (effectConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = effectConfigManager.generateAllDefaultConfigs();
-            messageKey = "battleroyale.message.default_effect_config_generated";
+            message = Component.translatable("battleroyale.message.default_effect_config_generated");
         } else {
             String subManagerNameKey;
             switch (subType) {
                 case PARTICLE:
                     subManagerNameKey = ParticleConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.default_particle_config_generated";
+                    message = Component.translatable("battleroyale.message.default_particle_config_generated");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_effect_sub_type", subType));
@@ -214,7 +214,7 @@ public class ExampleCommand {
 
             success = configSubManager.generateAllDefaultConfigs();
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Generated {} effect configs via command", subType != null ? subType : "all effect");
         return Command.SINGLE_SUCCESS;
     }
@@ -224,20 +224,20 @@ public class ExampleCommand {
         if (clientConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = clientConfigManager.generateAllDefaultConfigs();
-            messageKey = "battleroyale.message.default_client_config_generated";
+            message = Component.translatable("battleroyale.message.default_client_config_generated");
         } else {
             String subManagerNameKey;
             switch (subType) {
                 case RENDER:
                     subManagerNameKey = RenderConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.default_render_config_generated";
+                    message = Component.translatable("battleroyale.message.default_render_config_generated");
                     break;
                 case DISPLAY:
                     subManagerNameKey = DisplayConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.default_display_config_generated";
+                    message = Component.translatable("battleroyale.message.default_display_config_generated");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_client_sub_type", subType));
@@ -249,7 +249,7 @@ public class ExampleCommand {
 
             success = configSubManager.generateAllDefaultConfigs();
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Generated {} client configs via command", subType != null ? subType : "all client");
         return Command.SINGLE_SUCCESS;
     }
@@ -259,28 +259,28 @@ public class ExampleCommand {
         if (serverConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = serverConfigManager.generateAllDefaultConfigs();
-            messageKey = "battleroyale.message.default_server_config_generated";
+            message = Component.translatable("battleroyale.message.default_server_config_generated");
         } else {
             String subManagerNameKey;
             switch (subType) {
                 case FUNCTION:
                     subManagerNameKey = FunctionConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.default_function_config_generated";
+                    message = Component.translatable("battleroyale.message.default_function_config_generated");
                     break;
                 case PERFORMANCE:
                     subManagerNameKey = PerformanceConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.default_performance_config_generated";
+                    message = Component.translatable("battleroyale.message.default_performance_config_generated");
                     break;
                 case PROFILE:
                     subManagerNameKey = ProfileConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.default_profile_config_generated";
+                    message = Component.translatable("battleroyale.message.default_profile_config_generated");
                     break;
                 case UTILITY:
                     subManagerNameKey = UtilityConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.default_utility_config_generated";
+                    message = Component.translatable("battleroyale.message.default_utility_config_generated");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_server_sub_type", subType));
@@ -293,7 +293,7 @@ public class ExampleCommand {
             success = configSubManager.generateAllDefaultConfigs();
         }
 
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Generated {} server configs via command", subType != null ? subType : "all server");
         return Command.SINGLE_SUCCESS;
     }

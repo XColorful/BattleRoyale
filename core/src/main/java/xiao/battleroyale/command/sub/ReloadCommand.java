@@ -100,32 +100,32 @@ public class ReloadCommand {
         if (lootConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = lootConfigManager.reloadAllConfigs();
-            messageKey = "battleroyale.message.loot_config_reloaded";
+            message = Component.translatable("battleroyale.message.loot_config_reloaded");
         } else {
             int folderId;
             switch (subType) {
                 case LOOT_SPAWNER:
                     folderId = LootConfigTypeEnum.LOOT_SPAWNER;
-                    messageKey = "battleroyale.message.loot_spawner_config_reloaded";
+                    message = Component.translatable("battleroyale.message.loot_spawner_config_reloaded");
                     break;
                 case ENTITY_SPAWNER:
                     folderId = LootConfigTypeEnum.ENTITY_SPAWNER;
-                    messageKey = "battleroyale.message.entity_spawner_config_reloaded";
+                    message = Component.translatable("battleroyale.message.entity_spawner_config_reloaded");
                     break;
                 case AIRDROP:
                     folderId = LootConfigTypeEnum.AIRDROP;
-                    messageKey = "battleroyale.message.airdrop_config_reloaded";
+                    message = Component.translatable("battleroyale.message.airdrop_config_reloaded");
                     break;
                 case AIRDROP_SPECIAL:
                     folderId = LootConfigTypeEnum.AIRDROP_SPECIAL;
-                    messageKey = "battleroyale.message.airdrop_special_config_reloaded";
+                    message = Component.translatable("battleroyale.message.airdrop_special_config_reloaded");
                     break;
                 case SECRET_ROOM:
                     folderId = LootConfigTypeEnum.SECRET_ROOM;
-                    messageKey = "battleroyale.message.secret_room_config_reloaded";
+                    message = Component.translatable("battleroyale.message.secret_room_config_reloaded");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_loot_sub_type", subType));
@@ -134,7 +134,7 @@ public class ReloadCommand {
             }
             success = lootConfigManager.reloadConfigs(folderId) ? 1 : 0;
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Reloaded {} configs via command", subType != null ? subType : "all loot");
         return Command.SINGLE_SUCCESS;
     }
@@ -144,32 +144,32 @@ public class ReloadCommand {
         if (gameConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = gameConfigManager.reloadAllConfigs();
-            messageKey = "battleroyale.message.game_config_reloaded";
+            message = Component.translatable("battleroyale.message.game_config_reloaded");
         } else {
             String subManagerNameKey;
             switch (subType) {
                 case ZONE:
                     subManagerNameKey = ZoneConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.zone_config_reloaded";
+                    message = Component.translatable("battleroyale.message.zone_config_reloaded");
                     break;
                 case STATS:
                     subManagerNameKey = StatsConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.stats_config_reloaded";
+                    message = Component.translatable("battleroyale.message.stats_config_reloaded");
                     break;
                 case SPAWN:
                     subManagerNameKey = SpawnConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.spawn_config_reloaded";
+                    message = Component.translatable("battleroyale.message.spawn_config_reloaded");
                     break;
                 case GAMERULE:
                     subManagerNameKey = GameruleConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.gamerule_config_reloaded";
+                    message = Component.translatable("battleroyale.message.gamerule_config_reloaded");
                     break;
                 case BOT:
                     subManagerNameKey = BotConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.bot_config_reloaded";
+                    message = Component.translatable("battleroyale.message.bot_config_reloaded");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_game_sub_type", subType));
@@ -181,7 +181,7 @@ public class ReloadCommand {
 
             success = configSubManager.reloadAllConfigs();
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Reloaded {} configs via command", subType != null ? subType : "all game");
         return Command.SINGLE_SUCCESS;
     }
@@ -191,16 +191,16 @@ public class ReloadCommand {
         if (effectConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = effectConfigManager.reloadAllConfigs();
-            messageKey = "battleroyale.message.effect_config_reloaded";
+            message = Component.translatable("battleroyale.message.effect_config_reloaded");
         } else {
             String subManagerNameKey;
             switch (subType) {
                 case PARTICLE:
                     subManagerNameKey = ParticleConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.particle_config_reloaded";
+                    message = Component.translatable("battleroyale.message.particle_config_reloaded");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_effect_sub_type", subType));
@@ -212,7 +212,7 @@ public class ReloadCommand {
 
             success = configSubManager.reloadAllConfigs();
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Reloaded {} effect configs via command", subType != null ? subType : "all effect");
         return Command.SINGLE_SUCCESS;
     }
@@ -222,20 +222,20 @@ public class ReloadCommand {
         if (clientConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = clientConfigManager.reloadAllConfigs();
-            messageKey = "battleroyale.message.client_config_reloaded";
+            message = Component.translatable("battleroyale.message.client_config_reloaded");
         } else {
             String subManagerNameKey;
             switch (subType) {
                 case RENDER:
                     subManagerNameKey = RenderConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.render_config_reloaded";
+                    message = Component.translatable("battleroyale.message.render_config_reloaded");
                     break;
                 case DISPLAY:
                     subManagerNameKey = DisplayConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.display_config_reloaded";
+                    message = Component.translatable("battleroyale.message.display_config_reloaded");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_client_sub_type", subType));
@@ -247,7 +247,7 @@ public class ReloadCommand {
 
             success = configSubManager.reloadAllConfigs();
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Reloaded {} client configs via command", subType != null ? subType : "all client");
         return Command.SINGLE_SUCCESS;
     }
@@ -257,28 +257,28 @@ public class ReloadCommand {
         if (serverConfigManager == null) return 0;
 
         int success = 0;
-        String messageKey;
+        Component message;
         if (subType == null) {
             success = serverConfigManager.reloadAllConfigs();
-            messageKey = "battleroyale.message.server_config_reloaded";
+            message = Component.translatable("battleroyale.message.server_config_reloaded");
         } else {
             String subManagerNameKey;
             switch (subType) {
                 case FUNCTION:
                     subManagerNameKey = FunctionConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.function_config_reloaded";
+                    message = Component.translatable("battleroyale.message.function_config_reloaded");
                     break;
                 case PERFORMANCE:
                     subManagerNameKey = PerformanceConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.performance_config_reloaded";
+                    message = Component.translatable("battleroyale.message.performance_config_reloaded");
                     break;
                 case PROFILE:
                     subManagerNameKey = ProfileConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.profile_config_reloaded";
+                    message = Component.translatable("battleroyale.message.profile_config_reloaded");
                     break;
                 case UTILITY:
                     subManagerNameKey = UtilityConfigManager.get().getNameKey();
-                    messageKey = "battleroyale.message.utility_config_reloaded";
+                    message = Component.translatable("battleroyale.message.utility_config_reloaded");
                     break;
                 default:
                     context.getSource().sendFailure(Component.translatable("battleroyale.message.unknown_server_sub_type", subType));
@@ -290,7 +290,7 @@ public class ReloadCommand {
 
             success = configSubManager.reloadAllConfigs();
         }
-        context.getSource().sendSuccess(() -> Component.translatable(messageKey), true);
+        context.getSource().sendSuccess(() -> message, true);
         BattleRoyale.LOGGER.info("Reloaded {} server configs via command", subType != null ? subType : "all server");
         return Command.SINGLE_SUCCESS;
     }
