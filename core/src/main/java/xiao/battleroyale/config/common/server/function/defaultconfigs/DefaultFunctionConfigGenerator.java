@@ -8,5 +8,6 @@ public class DefaultFunctionConfigGenerator {
 
     public static void generateDefaultFunctionConfig(String configDirPath) {
         DefaultFunction.generateDefaultConfigs(configDirPath);
+        AllFunction.generateDefaultConfigs(configDirPath);
     }
 }
