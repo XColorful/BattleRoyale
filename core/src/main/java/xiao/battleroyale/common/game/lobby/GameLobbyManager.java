@@ -149,12 +149,12 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
     @Override public boolean teleportToLobby(@NotNull LivingEntity livingEntity) {
         IGameManager gameManager = BattleRoyale.getGameManager();
         if (EventPoster.postEvent(new GameLobbyTeleportEvent(gameManager, livingEntity))) {
-            BattleRoyale.LOGGER.debug("LobbyTeleportEvent canceled, skipped teleportToLobbyInGame (LivingEntity {})", livingEntity.getName().getString());
+            BattleRoyale.LOGGER.debug("GameLobbyManager: LobbyTeleportEvent canceled, skipped teleportToLobbyInGame (LivingEntity {})", livingEntity.getName().getString());
             return false;
         }
 
         if (!isLobbyCreated()) {
-            BattleRoyale.LOGGER.debug("Lobby is not created, failed to teleport livingEntity {} (UUID:{}) to lobby", livingEntity.getName().getString(), livingEntity.getUUID());
+            BattleRoyale.LOGGER.debug("GameLobbyManager: Lobby is not created, failed to teleport livingEntity {} (UUID:{}) to lobby", livingEntity.getName().getString(), livingEntity.getUUID());
             return false;
         }
 
