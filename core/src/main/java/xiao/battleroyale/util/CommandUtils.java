@@ -17,7 +17,7 @@ import net.minecraft.server.ServerFunctionManager;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 
@@ -290,10 +290,10 @@ public class CommandUtils {
      * 但去掉了对 CURRENT_EXECUTION_CONTEXT 的检查
      */
     public static void executeCommandInContext(CommandSourceStack source, Consumer<ExecutionContext<CommandSourceStack>> task) {
-        MinecraftServer server = source.getServer();
         if (true) {
-            int i = Math.max(1, server.getGameRules().getInt(GameRules.RULE_MAX_COMMAND_CHAIN_LENGTH));
-            int j = server.getGameRules().getInt(GameRules.RULE_MAX_COMMAND_FORK_COUNT);
+            GameRules gamerules = source.getLevel().getGameRules();
+            int i = Math.max(1, (Integer) gamerules.get(GameRules.MAX_COMMAND_SEQUENCE_LENGTH));
+            int j = (Integer) gamerules.get(GameRules.MAX_COMMAND_FORKS);
 
             try {
                 ExecutionContext<CommandSourceStack> executioncontext1 = new ExecutionContext<>(i, j, Profiler.get());
