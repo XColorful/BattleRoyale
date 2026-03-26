@@ -1,11 +1,13 @@
 package xiao.battleroyale.util;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.functions.CommandFunction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.TagType;
 import net.minecraft.network.chat.*;
+import net.minecraft.server.ServerFunctionManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
@@ -245,5 +247,13 @@ public class CommandUtils {
         }
 
         return nbtComponent;
+    }
+
+    /**
+     * (封装方法) 立即执行 function
+     * 规避 1.20.4 指令队列
+     */
+    public static void executeCommand(ServerFunctionManager manager, CommandFunction<CommandSourceStack> function, CommandSourceStack source, int[] executedLines) {
+        manager.execute(function, source);
     }
 }
