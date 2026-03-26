@@ -271,7 +271,7 @@ public class CommandUtils {
 
         try {
             InstantiatedFunction<CommandSourceStack> instantiated =
-                    function.instantiate(null, manager.getDispatcher(), source);
+                    function.instantiate(null, manager.getDispatcher());
             executeCommandInContext(source, (context) -> {
                 ExecutionContext.queueInitialFunctionCall(context, instantiated, source, CommandResultCallback.EMPTY);
             });
