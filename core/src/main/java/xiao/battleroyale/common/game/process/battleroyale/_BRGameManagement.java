@@ -125,9 +125,11 @@ public class _BRGameManagement {
         if (gameManager.getGameTeamReadApi().hasStandingGamePlayer(player.getUUID())) { // 游戏进行中，且未被淘汰
             if (gameManager.teleportToLobby(player)) { // 若成功传送，则淘汰该玩家
                 gameManager.getTeamManager().forceEliminatePlayerFromTeam(player); // 强制淘汰
-            } else {
-                BattleRoyale.LOGGER.error("Teleport in game player while not has lobby");
+            } else if (!gameManager.getGameLobbyManager().isLobbyCreated()) {
+                BattleRoyale.LOGGER.error("BRGameManagement: Teleport in game player while not has lobby");
                 if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
+            } else {
+                BattleRoyale.LOGGER.debug("BRGameManagement: Failed to teleport to lobby in game");
             }
         } else if (gameManager.teleportToLobby(player)) { // 传送，且传送成功
             if (serverPlayer != null) ChatUtils.sendComponentMessageToPlayer(serverPlayer, Component.translatable("battleroyale.message.teleported_to_lobby").withStyle(ChatFormatting.GREEN));
