@@ -78,7 +78,8 @@ public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implem
             for (CommandFunction<CommandSourceStack> function : functions) {
                 boolean canceledBefore = event.isCanceled();
                 if (!receiveCanceled && canceledBefore) return;
-                CommandUtils.executeCommand(serverFunctionManager, function, finalSourceStack, executedLines);
+                CommandUtils.executeCommand(serverFunctionManager, function, finalSourceStack);
+                BattleRoyale.LOGGER.debug("rl: {}, executedLines[0] {}, result[0] {}", this.rl, executedLines[0], result[0]);
                 if (result[0] <= -1) {
                     event.setCanceled(true);
                     if (event.isCanceled()) {
@@ -96,7 +97,7 @@ public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implem
             if (function.isPresent()) {
                 boolean canceledBefore = event.isCanceled();
                 if (!receiveCanceled && canceledBefore) return;
-                CommandUtils.executeCommand(serverFunctionManager, function.get(), finalSourceStack, executedLines);
+                CommandUtils.executeCommand(serverFunctionManager, function.get(), finalSourceStack);
                 if (result[0] <= -1) {
                     event.setCanceled(true);
                     if (event.isCanceled()) {
