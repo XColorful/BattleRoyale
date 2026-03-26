@@ -14,6 +14,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerFunctionManager;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.GameRules;
@@ -265,8 +266,7 @@ public class CommandUtils {
      * 替换原先的 {@link ServerFunctionManager#execute(CommandFunction, CommandSourceStack)}
      */
     public static void executeCommand(ServerFunctionManager manager, CommandFunction<CommandSourceStack> function, CommandSourceStack source) {
-        MinecraftServer server = source.getServer();
-        ProfilerFiller profiler = server.getProfiler();
+        ProfilerFiller profiler = Profiler.get();
         profiler.push(() -> "function " + function.id());
 
         try {
@@ -296,7 +296,7 @@ public class CommandUtils {
             int j = server.getGameRules().getInt(GameRules.RULE_MAX_COMMAND_FORK_COUNT);
 
             try {
-                ExecutionContext<CommandSourceStack> executioncontext1 = new ExecutionContext<>(i, j, server.getProfiler());
+                ExecutionContext<CommandSourceStack> executioncontext1 = new ExecutionContext<>(i, j, Profiler.get());
 
                 try {
                     task.accept(executioncontext1);
