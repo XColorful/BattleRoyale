@@ -8,6 +8,7 @@ import net.minecraft.server.ServerFunctionManager;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
+import xiao.battleroyale.util.CommandUtils;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -66,22 +67,24 @@ public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implem
         final int[] result = {0};
         final int[] executedLines = {0};
 
-        sourceStack = sourceStack.withCallback((success, val) -> {
+        final CommandSourceStack finalSourceStack = sourceStack.withCallback((success, val) -> {
             executedLines[0]++;
             result[0] = val;
         });
-        ServerFunctionManager serverFunctionManager = sourceStack.getServer().getFunctions();
+        ServerFunctionManager serverFunctionManager = finalSourceStack.getServer().getFunctions();
 
         if (this.isTag) {
             Collection<CommandFunction<CommandSourceStack>> functions = serverFunctionManager.getTag(this.rl);
             for (CommandFunction<CommandSourceStack> function : functions) {
-                if (event.isCanceled()) return;
-                serverFunctionManager.execute(function, sourceStack);
+                boolean canceledBefore = event.isCanceled();
+                if (!receiveCanceled && canceledBefore) return;
+                CommandUtils.executeCommand(serverFunctionManager, function, finalSourceStack, executedLines);
                 if (result[0] <= -1) {
                     event.setCanceled(true);
                     if (event.isCanceled()) {
-                        BattleRoyale.LOGGER.debug("{} canceled by function (return value: {}) after executed {} functions", event.getTextName(), result[0], executedLines[0]);
-                        return;
+                        BattleRoyale.LOGGER.debug("{} {}canceled by function (return value: {}) after executed {} functions",
+                                event.getTextName(), canceledBefore ? "(already canceled before) " : "", result[0], executedLines[0]);
+                        if (!receiveCanceled) return;
                     } else {
                         BattleRoyale.LOGGER.debug("{} (Cancelable: {}) not cancenled by function (return value: {}) after executed {} functions",
                                 event.getTextName(), event.isCancelable(), result[0], executedLines[0]);
@@ -91,13 +94,15 @@ public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implem
         } else {
             Optional<CommandFunction<CommandSourceStack>> function = serverFunctionManager.get(this.rl);
             if (function.isPresent()) {
-                if (event.isCanceled()) return;
-                serverFunctionManager.execute(function.get(), sourceStack);
+                boolean canceledBefore = event.isCanceled();
+                if (!receiveCanceled && canceledBefore) return;
+                CommandUtils.executeCommand(serverFunctionManager, function.get(), finalSourceStack, executedLines);
                 if (result[0] <= -1) {
                     event.setCanceled(true);
                     if (event.isCanceled()) {
-                        BattleRoyale.LOGGER.debug("{} canceled by function (return value: {}) after executed {} functions", event.getTextName(), result[0], executedLines[0]);
-                        return;
+                        BattleRoyale.LOGGER.debug("{} {}canceled by function (return value: {}) after executed {} functions",
+                                event.getTextName(), canceledBefore ? "(already canceled before) " : "", result[0], executedLines[0]);
+                        if (!receiveCanceled) return;
                     } else {
                         BattleRoyale.LOGGER.debug("{} (Cancelable: {}) not cancenled by function (return value: {}) after executed {} functions",
                                 event.getTextName(), event.isCancelable(), result[0], executedLines[0]);
