@@ -119,6 +119,8 @@ public class _DMGameEventHandler {
         GameTeam gameTeam = gamePlayer.getTeam();
         if (!teamEliminatedBefore && gameTeam.isTeamEliminated()) {
             BattleRoyale.LOGGER.info("Team {} has been eliminated, updating member to eliminated", gameTeam.getGameTeamId());
+            // 区别于 BattleRoyale
+            // DeathMatch 不使用 TeamManager 级别的淘汰判定，自行维护状态位
             List<GamePlayer> nonEliminatedMember = gameTeam.getTeamMembers().stream().filter(member -> !member.isEliminated()).toList();
 
             // 队伍淘汰则倒地队友全部 kill
@@ -129,7 +131,7 @@ public class _DMGameEventHandler {
                 }
                 // dmGameProcessManager.sendEliminateMessage(serverLevel, member); // 不需要通知 eliminate，有效的 eliminate 已提前发消息
 
-                // 有倒地状态就让 PlayerRevive 的 kill 后自动处理 onPlayerDeath
+                // 有倒地状态就让 PlayerRevive 的 kill，连带触发的 onPlayerDeath 会在开头被拦截
                 @Nullable LivingEntity player = serverLevel != null ? GameUtils.getLivingEntity(serverLevel, member.getPlayerUUID()) : null;
                 if (player != null && playerRevive.isBleeding(player)) {
                     playerRevive.kill(player);
