@@ -11,6 +11,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.ILivingDamageEvent;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.team.ITeamManagement;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game._GameTeamManager;
@@ -142,9 +143,10 @@ public class _BRGameEventHandler {
 
         // 死亡事件本身已经跳过非 standingPlayer
         // 单独淘汰，连带淘汰放在后面进行
+        ITeamManager teamManager = gameManager.getTeamManager();
         if (!playerEliminatedBefore) { // 第一次淘汰才尝试kill，避免重复kill
             gamePlayer.setEliminated(true); // GamePlayer 内部会自动让 GameTeam 更新 eliminated
-            gameManager.getTeamManager().forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer 信息
+            teamManager.forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer 信息
             brGameProcessManager.sendEliminateMessage(serverLevel, gamePlayer);
 
             // 最后再 kill，此时再触发 onPlayerDeath 已提前被 eliminated 拦截
@@ -162,14 +164,17 @@ public class _BRGameEventHandler {
         GameTeam gameTeam = gamePlayer.getTeam();
         if (!teamEliminatedBefore && gameTeam.isTeamEliminated()) {
             BattleRoyale.LOGGER.info("Team {} has been eliminated, updating member to eliminated", gameTeam.getGameTeamId());
-            List<GamePlayer> nonEliminatedMember = gameTeam.getTeamMembers().stream().filter(member -> !member.isEliminated()).toList();
+            // GamePlayer成员设置 isEliminated 会更新其他成员
+            // 所以直接用 TeamManager 级别的判定
+            List<GamePlayer> nonEliminatedMember = gameTeam.getTeamMembers().stream().filter(member -> teamManager.hasStandingGamePlayer(member.getPlayerUUID())).toList();
 
             // 队伍淘汰则倒地队友全部 kill
             nonEliminatedMember.forEach(member -> member.setEliminated(true)); // 提前设置 eliminate 以跳过下一次 kill 触发的 onPlayerDeath 开头检查
+            nonEliminatedMember.forEach(teamManager::forceEliminatePlayerSilence); // 提醒 TeamManager 内部更新 standingPlayer 信息
             for (GamePlayer member : nonEliminatedMember) {
                 brGameProcessManager.sendEliminateMessage(serverLevel, member);
 
-                // 有倒地状态就让 PlayerRevive 的 kill 后自动处理 onPlayerDeath
+                // 有倒地状态就让 PlayerRevive 的 kill，连带触发的 onPlayerDeath 会在开头被拦截
                 @Nullable LivingEntity player = serverLevel != null ? GameUtils.getLivingEntity(serverLevel, member.getPlayerUUID()) : null;
                 if (player != null && playerRevive.isBleeding(player)) {
                     playerRevive.kill(player);

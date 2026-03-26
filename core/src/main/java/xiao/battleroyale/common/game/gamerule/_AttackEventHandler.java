@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.api.game.IGameManager;
@@ -67,17 +68,10 @@ public class _AttackEventHandler implements IEventHandler {
         IGameManager gameManager = BattleRoyale.getGameManager();
         ITeamManager teamManager = gameManager.getTeamManager();
 
-        GamePlayer targetGamePlayer = teamManager.hasStandingGamePlayer(damagedEntity.getUUID()) ? teamManager.getGamePlayerByUUID(damagedEntity.getUUID()) : null;
-        if (targetGamePlayer != null && targetGamePlayer.isEliminated()) {
-            targetGamePlayer = null;
-        }
-        GamePlayer attackerGamePlayer = null;
-        if (damageSource.getEntity() instanceof LivingEntity attackerEntity) {
-            attackerGamePlayer = teamManager.hasStandingGamePlayer(attackerEntity.getUUID()) ? teamManager.getGamePlayerByUUID(attackerEntity.getUUID()) : null;
-            if (attackerGamePlayer != null && attackerGamePlayer.isEliminated()) {
-                attackerGamePlayer = null;
-            }
-        }
+        // 只使用 TeamManager 级别的淘汰，不使用 GamePlayer标志位
+        @Nullable GamePlayer targetGamePlayer = teamManager.getGamePlayerByUUID(damagedEntity.getUUID());
+        @Nullable GamePlayer attackerGamePlayer = damageSource.getEntity() instanceof LivingEntity attackerEntity
+                ? teamManager.getGamePlayerByUUID(attackerEntity.getUUID()) : null;
 
         GameEntry gameEntry = gameManager.getGameEntry();
 
