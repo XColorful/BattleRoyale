@@ -17,5 +17,10 @@ public interface IFarmlandTrampleEvent extends IEvent {
     BlockState getBlockState();
 
     Entity getEntity();
-    float getFallDistance();
+
+    /**
+     * 1.20.1-1.21.4 为 float
+     * 1.21.6 NeoForge 改成了 double
+     */
+    double getFallDistance();
 }
