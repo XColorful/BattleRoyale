@@ -63,7 +63,7 @@ public class ForgeFarmlandTrampleEvent extends ForgeEvent implements IFarmlandTr
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         Entity entity = getEntity();
         Level level = entity.level();
-        if (level != null && level.isClientSide) return null;
+        if (level != null && level.isClientSide()) return null;
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getBlockPos().getCenter(),

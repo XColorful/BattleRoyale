@@ -64,7 +64,7 @@ public class LootSpawner extends AbstractLootBlock {
 
     @Override
     public @NotNull InteractionResult useLootBlock(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof LootSpawnerBlockEntity lootSpawnerBlockEntity) {
                 if (player.isCreative() && player.isCrouching()) { // 切换物资刷新配置
