@@ -15,8 +15,8 @@ public class ForgeClientTickEvent extends ForgeEvent implements IClientTickEvent
 
     public ForgeClientTickEvent(Event event) {
         super(event);
-        if (event instanceof TickEvent.ClientTickEvent clientTickEvent) {
-            this.clientTickEvent = clientTickEvent;
+        if (event instanceof TickEvent.ClientTickEvent eventIn) {
+            this.clientTickEvent = eventIn;
         } else {
             throw new RuntimeException("Expected ClientTickEvent but received: " + event.getClass().getName());
         }
