@@ -76,7 +76,7 @@ public class EntitySpawner extends AbstractLootBlock {
 
     @Override
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof EntitySpawnerBlockEntity entitySpawnerBlockEntity) {
                 if (player.isCreative() && player.isCrouching()) { // 切换实体刷新配置
@@ -100,6 +100,6 @@ public class EntitySpawner extends AbstractLootBlock {
                 }
             }
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.sidedSuccess(level.isClientSide());
     }
 }
