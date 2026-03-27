@@ -91,7 +91,7 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
     @Override
     public void setPlacedBy(@NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         super.setPlacedBy(world, pos, state, placer, stack);
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
             BlockEntity blockentity = world.getBlockEntity(pos);
             if (blockentity instanceof AbstractLootBlockEntity e) {
                 CompoundTag nbt = stack.getTag();
