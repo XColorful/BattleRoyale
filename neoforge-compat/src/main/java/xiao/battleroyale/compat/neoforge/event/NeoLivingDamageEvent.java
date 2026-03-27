@@ -57,7 +57,7 @@ public class NeoLivingDamageEvent extends NeoEvent implements ILivingDamageEvent
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         @NotNull LivingEntity entity = this.getEntity();
         Level level = entity.level();
-        if (level != null && level.isClientSide) return null;
+        if (level != null && level.isClientSide()) return null;
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
                 entity.position(),
