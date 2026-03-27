@@ -113,7 +113,7 @@ public class NeoRightClickBlockEvent extends NeoEvent implements IRightClickBloc
     @Override
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         Level level = getLevel();
-        if (level != null && level.isClientSide) return null;
+        if (level != null && level.isClientSide()) return null;
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getBlockPos().getCenter(),
