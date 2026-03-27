@@ -68,7 +68,7 @@ public class NeoEntityPlaceBlockEvent extends NeoEvent implements IEntityPlaceBl
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         Entity entity = getEntity();
         Level level = entity != null ? entity.level() : null;
-        if (level != null && level.isClientSide) return null;
+        if (level != null && level.isClientSide()) return null;
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getBlockPos().getCenter(),
