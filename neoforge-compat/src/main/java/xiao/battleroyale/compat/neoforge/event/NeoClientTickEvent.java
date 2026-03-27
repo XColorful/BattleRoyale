@@ -15,8 +15,8 @@ public class NeoClientTickEvent extends NeoEvent implements IClientTickEvent {
 
     public NeoClientTickEvent(Event event) {
         super(event);
-        if (event instanceof ClientTickEvent.Post clientTickEvent) {
-            this.clientTickEvent = clientTickEvent;
+        if (event instanceof ClientTickEvent.Post eventIn) {
+            this.clientTickEvent = eventIn;
         } else {
             throw new RuntimeException("Expected ClientTickEvent but received: " + event.getClass().getName());
         }
