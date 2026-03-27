@@ -2,9 +2,7 @@ package xiao.battleroyale.util;
 
 import com.google.gson.JsonObject;
 import com.mojang.serialization.DataResult;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.TagParser;
+import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -150,12 +148,12 @@ public class NBTUtils {
     }
 
     @NotNull
-    public static CompoundTag buildVec3Nbt(@NotNull Vec3 vec) {
-        CompoundTag nbt = new CompoundTag();
-        nbt.putDouble("x", vec.x);
-        nbt.putDouble("y", vec.y);
-        nbt.putDouble("z", vec.z);
-        return nbt;
+    public static ListTag buildVec3Nbt(@NotNull Vec3 vec) {
+        ListTag nbtList = new ListTag();
+        nbtList.add(DoubleTag.valueOf(vec.x));
+        nbtList.add(DoubleTag.valueOf(vec.y));
+        nbtList.add(DoubleTag.valueOf(vec.z));
+        return nbtList;
     }
 
     /**
