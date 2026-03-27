@@ -1,6 +1,6 @@
 package xiao.battleroyale.compat.neoforge.minecraft;
 
-import net.neoforged.neoforge.common.util.TriState;
+import net.minecraft.util.TriState;
 import xiao.battleroyale.api.minecraft.TriResult;
 
 public class TriResultHelper {
