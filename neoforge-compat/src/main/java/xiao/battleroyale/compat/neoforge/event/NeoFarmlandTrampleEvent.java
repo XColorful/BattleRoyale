@@ -55,7 +55,7 @@ public class NeoFarmlandTrampleEvent extends NeoEvent implements IFarmlandTrampl
     }
 
     @Override
-    public float getFallDistance() {
+    public double getFallDistance() {
         return farmlandTrampleEvent.getFallDistance();
     }
 
