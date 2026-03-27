@@ -55,7 +55,7 @@ public class ForgeFarmlandTrampleEvent extends ForgeEvent implements IFarmlandTr
     }
 
     @Override
-    public float getFallDistance() {
+    public double getFallDistance() {
         return farmlandTrampleEvent.getFallDistance();
     }
 
