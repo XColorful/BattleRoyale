@@ -2,64 +2,66 @@ package xiao.battleroyale.compat.forge.event;
 
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec2;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.Event;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
-import xiao.battleroyale.api.event.ILivingHurtEvent;
+import xiao.battleroyale.api.event.IBlockBreakEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 
-public class ForgeLivingHurtEvent extends ForgeEvent implements ILivingHurtEvent {
+public class ForgeBlockBreakEvent extends ForgeEvent implements IBlockBreakEvent {
 
-    protected LivingHurtEvent livingHurtEvent;
+    protected BlockEvent.BreakEvent blockBreakEvent;
 
-    public ForgeLivingHurtEvent(Event event) {
+    public ForgeBlockBreakEvent(Event event) {
         super(event);
-        if (event instanceof LivingHurtEvent eventIn) {
-            this.livingHurtEvent = eventIn;
+        if (event instanceof BlockEvent.BreakEvent eventIn) {
+            this.blockBreakEvent = eventIn;
         } else {
-            throw new RuntimeException("Expected LivingHurtEvent but received: " + event.getClass().getName());
+            throw new RuntimeException("Expected BreakEvent but received: " + event.getClass().getName());
         }
     }
     @Override public EventType getType() {
-        return EventType.LIVING_HURT_EVENT;
+        return EventType.BLOCK_BREAK_EVENT;
     }
 
     @Override
-    public @NotNull LivingEntity getEntity() {
-        return livingHurtEvent.getEntity();
+    public LevelAccessor getLevelAccessor() {
+        return blockBreakEvent.getLevel();
     }
 
     @Override
-    public @NotNull DamageSource getSource() {
-        return livingHurtEvent.getSource();
+    public BlockPos getBlockPos() {
+        return blockBreakEvent.getPos();
     }
 
     @Override
-    public float getDamageAmount() {
-        return livingHurtEvent.getAmount();
+    public BlockState getBlockState() {
+        return blockBreakEvent.getState();
     }
 
     @Override
-    public void setDamageAmount(float amount) {
-        this.livingHurtEvent.setAmount(amount);
+    public Player getPlayer() {
+        return blockBreakEvent.getPlayer();
     }
 
     @Override
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
-        @NotNull LivingEntity entity = this.getEntity();
+        Entity entity = getPlayer();
         Level level = entity.level();
         if (level != null && level.isClientSide()) return null;
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
-                entity.position(),
+                this.getBlockPos().getCenter(),
                 Vec2.ZERO,
                 (ServerLevel) level,
                 CommandLevel.permission(4),
@@ -71,9 +73,9 @@ public class ForgeLivingHurtEvent extends ForgeEvent implements ILivingHurtEvent
     }
 
     @Override public String getTextName() {
-        return this.getEntity().getName().getString();
+        return "ForgeBlockBreakEvent";
     }
     @Override public Component getDisplayName() {
-        return this.getEntity().getDisplayName();
+        return Component.literal(getTextName());
     }
 }
