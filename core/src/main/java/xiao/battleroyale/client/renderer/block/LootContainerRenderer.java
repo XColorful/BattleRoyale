@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.BlockPos;
@@ -140,7 +140,7 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
         // ---4. 视锥体---
         // 剔除视野外的(头顶和楼下)
         if (false && DO_FRUSTUM_CHECK) { // 1.21.1neoforge默认管线已经做了优化
-            Frustum frustum = mc.levelRenderer.getCapturedFrustum();
+            Frustum frustum = cameraState.cullFrustum;
 //            if (!frustum.isVisible(blockEntity.getRenderBoundingBox())) return;
         }
         // --5. 射线检测---

@@ -1,7 +1,11 @@
 package xiao.battleroyale.common.game.gamerule.storage;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.clock.WorldClock;
+import net.minecraft.world.clock.WorldClocks;
 import net.minecraft.world.level.gamerules.GameRules;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
@@ -76,7 +80,11 @@ public class McRuleStorage implements IRuleStorage {
                 gameRules.get(GameRules.KEEP_INVENTORY),
                 gameRules.get(GameRules.IMMEDIATE_RESPAWN),
                 mcEntry.doTimeSet,
-                serverLevel.getDayTime()
+                serverLevel.clockManager().getTotalTicks(
+                        serverLevel.registryAccess()
+                                .lookupOrThrow(Registries.WORLD_CLOCK)
+                                .getOrThrow(WorldClocks.OVERWORLD) // 这 TM 得单独加一个配置？默认就当作只在主世界玩吧
+                )
                 );
     }
 
@@ -102,7 +110,10 @@ public class McRuleStorage implements IRuleStorage {
         gameRules.set(GameRules.IMMEDIATE_RESPAWN, this.currentRule.doImmediateRespawn(), mcServer);
         if (this.currentRule.doTimeSet()) {
             BattleRoyale.LOGGER.info("Set {} game time from {} to {}", serverLevel, serverLevel.getGameTime(), this.currentRule.timeSet());
-            serverLevel.setDayTime(this.currentRule.timeSet());
+            Holder<WorldClock> clockHolder = serverLevel.registryAccess()
+                    .lookupOrThrow(Registries.WORLD_CLOCK)
+                    .getOrThrow(WorldClocks.OVERWORLD);
+            serverLevel.clockManager().setTotalTicks(clockHolder, this.currentRule.timeSet());
             BattleRoyale.LOGGER.info("{} current game time: {}", serverLevel, serverLevel.getGameTime());
         } else {
             BattleRoyale.LOGGER.info("Skipped game time apply, {} current game time: {}", serverLevel, serverLevel.getGameTime());
@@ -130,7 +141,10 @@ public class McRuleStorage implements IRuleStorage {
         gameRules.set(GameRules.IMMEDIATE_RESPAWN, this.backupRule.doImmediateRespawn(), mcServer);
         if (this.backupRule.doTimeSet()) {
             BattleRoyale.LOGGER.info("Revert {} game time from {} to {}", serverLevel, serverLevel.getGameTime(), this.backupRule.timeSet());
-            serverLevel.setDayTime(this.backupRule.timeSet());
+            Holder<WorldClock> clockHolder = serverLevel.registryAccess()
+                    .lookupOrThrow(Registries.WORLD_CLOCK)
+                    .getOrThrow(WorldClocks.OVERWORLD);
+            serverLevel.clockManager().setTotalTicks(clockHolder, this.backupRule.timeSet());
             BattleRoyale.LOGGER.info("{} current game time: {}", serverLevel, serverLevel.getGameTime());
         } else {
             BattleRoyale.LOGGER.info("Skipped game time revert, {} current game time: {}", serverLevel, serverLevel.getGameTime());

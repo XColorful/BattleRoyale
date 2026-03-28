@@ -126,7 +126,7 @@ public class LootText {
         component.append(Component.literal(" "));
 
         // xyz status
-        ChunkPos chunkPos = new ChunkPos(BlockPos.containing(pos));
+        ChunkPos chunkPos = ChunkPos.containing(BlockPos.containing(pos));
         boolean s1 = gameLootManager.isInQueuedChunksRef(chunkPos);
         boolean s2 = gameLootManager.isInProcessedChunkCache(chunkPos);
         boolean s3 = gameLootManager.isInCachedCenterOffset(chunkPos);

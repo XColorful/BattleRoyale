@@ -43,18 +43,18 @@ public class LootConfigGenerator {
                                                       int lootId, String name,
                                                       String type, Vec3 centerPos,
                                                       int repeat, int weight, int radius) {
-        ChunkPos centerChunk = new ChunkPos(BlockPos.containing(centerPos.x, centerPos.y, centerPos.z));
+        ChunkPos centerChunk = ChunkPos.containing(BlockPos.containing(centerPos.x, centerPos.y, centerPos.z));
         List<ChunkPos> chunks = new ArrayList<>();
         List<List<Offset2D>> layers = BfsCalculator.calculateCenterOffset(radius);
         for (List<Offset2D> layer : layers) {
             for (Offset2D offset : layer) {
-                chunks.add(new ChunkPos(centerChunk.x + offset.x(), centerChunk.z + offset.z()));
+                chunks.add(new ChunkPos(centerChunk.x() + offset.x(), centerChunk.z() + offset.z()));
             }
         }
 
         List<WeightedEntry> weightedEntries = new ArrayList<>();
         for (ChunkPos chunkPos : chunks) {
-            LevelChunk chunk = serverLevel.getChunk(chunkPos.x, chunkPos.z);
+            LevelChunk chunk = serverLevel.getChunk(chunkPos.x(), chunkPos.z());
             // 区块列表<容器物品列表<ItemStack>>
             List<List<ItemStack>> containerGroup = getItemsFromChunk(chunk);
             switch (type) {

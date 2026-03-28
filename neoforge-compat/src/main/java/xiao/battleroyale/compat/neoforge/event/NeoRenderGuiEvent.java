@@ -1,6 +1,6 @@
 package xiao.battleroyale.compat.neoforge.event;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -27,7 +27,7 @@ public class NeoRenderGuiEvent extends NeoEvent implements IRenderGuiEvent {
     }
 
     @Override
-    public GuiGraphics getGuiGraphics() {
+    public GuiGraphicsExtractor getGuiGraphics() {
         return this.event.getGuiGraphics();
     }
 

@@ -19,7 +19,7 @@ import java.util.UUID;
 public class WorldUtils {
 
     public static ChunkPos getChunkPos(Vec3 pos) {
-        return new ChunkPos(BlockPos.containing(pos));
+        return ChunkPos.containing(BlockPos.containing(pos));
     }
 
     public static int getGroundY(@NotNull ServerLevel serverLevel, double x, double z) {

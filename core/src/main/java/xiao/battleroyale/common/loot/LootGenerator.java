@@ -320,7 +320,7 @@ public class LootGenerator {
      */
     public static <T extends ILootSingleEntry> int refreshLootInChunk(ILootConfigManager<T> lootConfigManager, LootContext lootContext) {
         int refreshedCount = 0;
-        LevelChunk chunk = lootContext.serverLevel.getChunkSource().getChunkNow(lootContext.chunkPos.x, lootContext.chunkPos.z);
+        LevelChunk chunk = lootContext.serverLevel.getChunkSource().getChunkNow(lootContext.chunkPos.x(), lootContext.chunkPos.z());
 
         if (chunk == null) { // 区块未加载不算作已刷新，返回特殊标记
             return CHUNK_NOT_LOADED;
@@ -395,7 +395,7 @@ public class LootGenerator {
         public final UUID gameId;
         public final Supplier<Float> random;
         public LootContext(@NotNull ServerLevel serverLevel, Vec3 pos, UUID gameId) {
-            this(serverLevel, new ChunkPos(BlockPos.containing(pos)), gameId);
+            this(serverLevel, ChunkPos.containing(BlockPos.containing(pos)), gameId);
         }
         public LootContext(@NotNull ServerLevel serverLevel, ChunkPos chunkPos, UUID gameId) {
             this.serverLevel = serverLevel;

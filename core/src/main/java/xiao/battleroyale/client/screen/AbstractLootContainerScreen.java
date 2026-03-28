@@ -1,6 +1,6 @@
 package xiao.battleroyale.client.screen;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -15,8 +15,8 @@ public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> ex
     protected int textureWidth = 256;
     protected int textureHeight = 256;
 
-    public AbstractLootContainerScreen(L menu, Inventory inventory, Component title) {
-        super(menu, inventory, title);
+    public AbstractLootContainerScreen(L menu, Inventory inventory, Component title, int imageWidth, int imageHeight) {
+        super(menu, inventory, title, imageWidth, imageHeight);
     }
 
     protected void initScreen() {
@@ -51,8 +51,9 @@ public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> ex
     protected abstract void adjustTextureSize();
 
     protected void adjustTextureSize(int width, int height) {
-        this.imageWidth = width;
-        this.imageHeight = height;
+        // 26.1 移到构造函数里设置final字段
+//        this.imageWidth = width;
+//        this.imageHeight = height;
     }
 
     protected abstract void adjustTexture();
@@ -68,14 +69,14 @@ public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> ex
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+//        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick); // 移到extractRenderState调用的extractContents里
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
+//        this.extractTooltip(guiGraphics, mouseX, mouseY); // 26.1 super.extractRenderState已经有了
     }
 
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+//    @Override
+    protected void renderBg(GuiGraphicsExtractor guiGraphics, float partialTick, int mouseX, int mouseY) {
         int x = getGuiLeft() + this.textureOffX;
         int y = getGuiTop() + this.textureOffY;
         guiGraphics.blit(
@@ -86,5 +87,12 @@ public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> ex
                 this.imageWidth, this.imageHeight,
                 256, 256
         );
+    }
+    @Override
+    public void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // 先画背景材质
+        renderBg(guiGraphics, partialTick, mouseX, mouseY);
+        // 再画其他的
+        super.extractContents(guiGraphics, mouseX, mouseY, partialTick);
     }
 }

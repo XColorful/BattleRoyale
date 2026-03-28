@@ -2,7 +2,7 @@ package xiao.battleroyale.client.renderer.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.IRenderGuiEvent;
 import xiao.battleroyale.api.client.render.gui.IClientTeamInfoRenderer;
@@ -103,7 +103,7 @@ public class TeamInfoRenderer implements IClientTeamInfoRenderer, IEventHandler 
             return;
         }
 
-        GuiGraphics guiGraphics = event.getGuiGraphics();
+        GuiGraphicsExtractor guiGraphics = event.getGuiGraphics();
         Font fontRenderer = mc.font;
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
@@ -131,8 +131,8 @@ public class TeamInfoRenderer implements IClientTeamInfoRenderer, IEventHandler 
             [id] playerName
             ---------------（血条）
              */
-            guiGraphics.drawString(fontRenderer, playerId, posX, currentY, idColor, true); // 个别颜色不带阴影看不见
-            guiGraphics.drawString(fontRenderer, playerName, posX + fontRenderer.width(playerId) + 1, currentY, nameColor, true);
+            guiGraphics.text(fontRenderer, playerId, posX, currentY, idColor, true); // 个别颜色不带阴影看不见
+            guiGraphics.text(fontRenderer, playerName, posX + fontRenderer.width(playerId) + 1, currentY, nameColor, true);
             boolean alive = memberInfo.alive;
             int healthStartY = currentY + HEALTH_OFFSET; // 血条左上角
             renderHealthBar(health, posX, healthStartY, guiGraphics,
@@ -143,7 +143,7 @@ public class TeamInfoRenderer implements IClientTeamInfoRenderer, IEventHandler 
         }
     }
 
-    private void renderHealthBar(double health, int posX, int posY, GuiGraphics guiGraphics, int healthColor) {
+    private void renderHealthBar(double health, int posX, int posY, GuiGraphicsExtractor guiGraphics, int healthColor) {
         int healthEndX = posX + HEALTH_BAR_LENGTH;
         guiGraphics.fill(posX, posY, healthEndX, posY + HEALTH_BAR_HEIGHT, HEALTH_BACKGROUND_COLOR);
         if (health > 0) { // 小于0为特殊标记，不用渲染血条
@@ -152,7 +152,7 @@ public class TeamInfoRenderer implements IClientTeamInfoRenderer, IEventHandler 
         }
     }
 
-    private void renderBoostBar(int boost, int posX, int posY, GuiGraphics guiGraphics) {
+    private void renderBoostBar(int boost, int posX, int posY, GuiGraphicsExtractor guiGraphics) {
         int boostLevel = BoostData.getBoostLevel(boost);
         double boostPercentage = BoostData.getBoostPercentage(boost);
         switch (boostLevel) {

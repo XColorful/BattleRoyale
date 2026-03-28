@@ -85,7 +85,7 @@ public class CommonLootManager implements ICommonLootManager {
                 if (blockEntity == null) {
                     return LootStatus.UNAVAILABLE;
                 }
-                return LootGenerator.refreshLootObject(new LootGenerator.LootContext(serverLevel, new ChunkPos(blockPos), UUID.randomUUID()), blockEntity)
+                return LootGenerator.refreshLootObject(new LootGenerator.LootContext(serverLevel, ChunkPos.containing(blockPos), UUID.randomUUID()), blockEntity)
                         ? LootStatus.AVAILABLE : LootStatus.UNAVAILABLE;
             }
             case PROCESSING, REJECT -> {
@@ -138,7 +138,7 @@ public class CommonLootManager implements ICommonLootManager {
         Set<ChunkPos> centers = new HashSet<>();
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             if (player != null && player.level() == this.currentGenerationLevel) {
-                centers.add(new ChunkPos(player.blockPosition()));
+                centers.add(ChunkPos.containing(player.blockPosition()));
             }
         }
 
@@ -147,7 +147,7 @@ public class CommonLootManager implements ICommonLootManager {
         for (List<Offset2D> layer : offsets) { // 从距离0的区块开始，确保距离d的区块一定比d+1先入队
             for (ChunkPos center : centers) { // 玩家中心
                 for (Offset2D offset : layer) { // 遍历当前距离
-                    ChunkPos target = new ChunkPos(center.x + offset.x(), center.z + offset.z());
+                    ChunkPos target = new ChunkPos((center.x()) + offset.x(), center.z() + offset.z());
                     if (this.processedChunkTracker.add(target)) {
                         this.chunksToProcess.add(target);
                     }

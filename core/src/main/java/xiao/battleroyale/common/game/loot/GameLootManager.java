@@ -318,7 +318,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
                 ChunkPos playerChunkPos = new ChunkPos((int) (lastPos.x() / 16), (int) (lastPos.z() / 16));
 
                 for (Offset2D offset2D : centerOffset) {
-                    ChunkPos newChunkPos = new ChunkPos(playerChunkPos.x + offset2D.x(), playerChunkPos.z + offset2D.z());
+                    ChunkPos newChunkPos = new ChunkPos(playerChunkPos.x() + offset2D.x(), playerChunkPos.z() + offset2D.z());
                     if (!visitedInBfs.add(newChunkPos) || processedChunkCache.contains(newChunkPos)) {
                         continue;
                     }

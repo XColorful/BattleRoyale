@@ -2,7 +2,7 @@ package xiao.battleroyale.client.renderer.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.IRenderGuiEvent;
@@ -88,7 +88,7 @@ public class GameInfoRenderer implements IClientGameInfoRenderer, IEventHandler 
             return;
         }
 
-        GuiGraphics guiGraphics = event.getGuiGraphics();
+        GuiGraphicsExtractor guiGraphics = event.getGuiGraphics();
         Font fontRenderer = mc.font;
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
@@ -103,10 +103,10 @@ public class GameInfoRenderer implements IClientGameInfoRenderer, IEventHandler 
         }
     }
 
-    private void renderAliveTotal(int posX, int posY, int aliveTotal, GuiGraphics guiGraphics, Font fontRenderer) {
+    private void renderAliveTotal(int posX, int posY, int aliveTotal, GuiGraphicsExtractor guiGraphics, Font fontRenderer) {
         String alive = Component.translatable("battleroyale.label.alive").getString() + ":";
         String total = Integer.toString(aliveTotal);
-        guiGraphics.drawString(fontRenderer, alive, posX, posY, ALIVE_COLOR, true);
-        guiGraphics.drawString(fontRenderer, total, posX + fontRenderer.width(alive) + 2, posY, ALIVE_COUNT_COLOR, true);
+        guiGraphics.text(fontRenderer, alive, posX, posY, ALIVE_COLOR, true);
+        guiGraphics.text(fontRenderer, total, posX + fontRenderer.width(alive) + 2, posY, ALIVE_COUNT_COLOR, true);
     }
 }

@@ -72,7 +72,7 @@ public class ParticleData {
             options = new BlockParticleOption(blockParticleType, blockState);
         } else if (typeObj == ParticleTypes.ITEM && parsedNbt.contains("item")) {
             ItemStack itemStack = NBTUtils.readItemStack(parsedNbt.getCompound("item").orElse(new CompoundTag()));
-            options = new ItemParticleOption(ParticleTypes.ITEM, itemStack);
+            options = new ItemParticleOption(ParticleTypes.ITEM, itemStack.getItem());
         } else if (typeObj instanceof SimpleParticleType) {
             options = (SimpleParticleType) typeObj;
         }

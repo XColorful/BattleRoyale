@@ -4,13 +4,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -24,24 +26,32 @@ import xiao.battleroyale.client.renderer.BlockModelRenderer;
 
 public abstract class AbstractBlockRenderer<T extends AbstractLootBlockEntity, S extends BlockEntityRenderState> implements BlockEntityRenderer<T, S> {
 
-    protected final BlockRenderDispatcher blockRenderDispatcher;
+    protected final BlockModelResolver blockModelResolver;
+    protected final ModelBlockRenderer modelBlockRenderer;
 
     public AbstractBlockRenderer(BlockEntityRendererProvider.Context context) {
-        this.blockRenderDispatcher = context.blockRenderDispatcher();
+        this.blockModelResolver = context.blockModelResolver();
+        this.modelBlockRenderer = new ModelBlockRenderer(
+                Minecraft.getInstance().options.ambientOcclusion().get(),
+                true,
+                Minecraft.getInstance().getBlockColors()
+        );
     }
 
     protected void renderBlockModel(@NotNull BlockEntity blockEntity, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         BlockState blockState = blockEntity.getBlockState();
-        BlockStateModel bakedModel = this.blockRenderDispatcher.getBlockModel(blockState);
-        ModelBlockRenderer modelBlockRenderer = this.blockRenderDispatcher.getModelRenderer();
+        ModelManager modelManager = Minecraft.getInstance().getModelManager();
+        BlockModel blockModel = modelManager.getBlockModelSet().get(blockState);
 
-        BlockModelRenderer.get().renderBlockModel(blockState,
-                bakedModel,
-                modelBlockRenderer,
+        BlockModelRenderer.get().renderBlockModel(
+                blockState,
+                (BlockStateModel) blockModel,
+                this.modelBlockRenderer,
                 poseStack,
                 bufferIn,
                 combinedLightIn,
-                combinedOverlayIn);
+                combinedOverlayIn
+        );
     }
 
     @Override

@@ -1,8 +1,8 @@
 package xiao.battleroyale.api.event;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public interface IRenderGuiEvent {
 
-    GuiGraphics getGuiGraphics();
+    GuiGraphicsExtractor getGuiGraphics();
 }

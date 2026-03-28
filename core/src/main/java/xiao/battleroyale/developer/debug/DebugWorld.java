@@ -45,8 +45,8 @@ public class DebugWorld {
     public static final String GET_BLOCKENTITIES_NBT = "getBlockEntitiesNBT";
     public void getBlockEntitiesNbt(CommandSourceStack source, Vec3 pos) {
         ServerLevel serverLevel = source.getLevel();
-        ChunkPos chunkPos = new ChunkPos(BlockPos.containing(pos));
-        LevelChunk chunk = serverLevel.getChunkSource().getChunkNow(chunkPos.x, chunkPos.z);
+        ChunkPos chunkPos = ChunkPos.containing(BlockPos.containing(pos));
+        LevelChunk chunk = serverLevel.getChunkSource().getChunkNow(chunkPos.x(), chunkPos.z());
         Map<BlockPos, BlockEntity> blockEntities = chunk != null ? chunk.getBlockEntities() : null;
 
         DebugManager.sendDebugMessage(source, GET_BLOCKENTITIES_NBT, WorldText.buildBlockEntitesNbt(serverLevel, blockEntities));

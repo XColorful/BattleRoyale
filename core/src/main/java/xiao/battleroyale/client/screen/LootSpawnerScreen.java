@@ -6,8 +6,10 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.inventory.LootSpawnerMenu;
 
 public class LootSpawnerScreen extends AbstractLootContainerScreen<LootSpawnerMenu> {
+    public static int IMAGE_WIDTH = 176;
+    public static int IMAGE_HEIGHT = 149;
     public LootSpawnerScreen(LootSpawnerMenu menu, Inventory inventory, Component title) {
-        super(menu, inventory, title);
+        super(menu, inventory, title, IMAGE_WIDTH, IMAGE_HEIGHT);
         initScreen();
     }
 
@@ -28,7 +30,7 @@ public class LootSpawnerScreen extends AbstractLootContainerScreen<LootSpawnerMe
 
     @Override
     protected void adjustTextureSize() {
-        super.adjustTextureSize(176, 149);
+        super.adjustTextureSize(IMAGE_WIDTH, IMAGE_HEIGHT);
     }
 
     @Override
