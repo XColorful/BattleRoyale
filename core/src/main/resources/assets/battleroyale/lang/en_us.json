@@ -49,7 +49,7 @@
   "battleroyale.command.cbr_team_decline_invite": "Decline invitation",
   "battleroyale.command.cbr_team_kick": "Kick out of the team",
   "battleroyale.command.cbr_team_leave": "Leave the team",
-  "battleroyale.command.cbr_team_id": "Check the team id",
+  "battleroyale.command.cbr_team_id": "Team information",
   "battleroyale.command.cbr_team_add": "Add to team",
   "battleroyale.command.cbr_team_build": "Build team",
   "battleroyale.command.cbr_loot": "Loot command",

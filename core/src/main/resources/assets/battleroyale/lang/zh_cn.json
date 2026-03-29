@@ -49,7 +49,7 @@
   "battleroyale.command.cbr_team_decline_invite": "拒绝邀请",
   "battleroyale.command.cbr_team_kick": "踢出队伍",
   "battleroyale.command.cbr_team_leave": "离开队伍",
-  "battleroyale.command.cbr_team_id": "查看队伍id",
+  "battleroyale.command.cbr_team_id": "队伍信息",
   "battleroyale.command.cbr_team_add": "加进队伍",
   "battleroyale.command.cbr_team_build": "组建队伍",
   "battleroyale.command.cbr_loot": "手动刷新",
