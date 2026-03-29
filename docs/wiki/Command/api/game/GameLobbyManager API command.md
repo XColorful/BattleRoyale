@@ -49,6 +49,7 @@
 ##### 测试是否处于游戏大厅内
 > _/battleroyale api gameLobbyManager isInLobbyRange [xyz]_
 
+在指令 _/execute in_ 维度测试：
 - xyz：指定的测试位置
 - `返回值`：测试位置是否位于大厅范围内
 
@@ -143,6 +144,7 @@
 ##### Is in lobby range
 > _/battleroyale api gameLobbyManager isInLobbyRange [xyz]_
 
+Test in the _/execute in_ dimension:
 - xyz: specified test position
 - `return value`: whether the test position is within the lobby range
 

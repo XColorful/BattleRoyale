@@ -6,12 +6,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface ILobbyReadApi {
 
     boolean isLobbyCreated();
-    ResourceKey<Level> lobbyLevelKey();
+    @Nullable ResourceKey<Level> lobbyLevelKey();
     Vec3 lobbyPos();
     Vec3 lobbyDimension();
     boolean lobbyMuteki();
@@ -20,7 +22,9 @@ public interface ILobbyReadApi {
     boolean teleportDropInventory();
     boolean teleportClearInventory();
 
-    boolean isInLobbyRange(Vec3 pos);
+    @ApiStatus.Internal
+    @Deprecated boolean isInLobbyRange(Vec3 pos);
+    boolean isInLobbyRange(Vec3 pos, @Nullable ServerLevel serverLevel);
     boolean canMuteki(@NotNull LivingEntity livingEntity);
 
     void sendLobbyInfo(ServerPlayer player);
