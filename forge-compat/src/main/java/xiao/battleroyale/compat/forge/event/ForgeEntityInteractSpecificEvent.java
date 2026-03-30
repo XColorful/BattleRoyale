@@ -97,6 +97,7 @@ public class ForgeEntityInteractSpecificEvent extends ForgeEvent implements IEnt
 
     @Override
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
+        if (getHand() != InteractionHand.MAIN_HAND) return null; // 只给 function 传主手触发的事件
         Level level = getLevel();
         if (level != null && level.isClientSide()) return null;
         return new CommandSourceStack(

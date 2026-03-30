@@ -26,8 +26,6 @@ _/battleroyale utility [lootconfig] [id] [type/toLootTable] [...]_
 ### 生成物资刷新配置文件
 _/battleroyale utility lootconfig [id] [slot/block/chunk] [xyz] [repeat] [baseWeight] [chunkRadius] [autoReload]_
 
-_/battleroyale utility lootconfig [xyz] [id] [slot/block/chunk] [xyz] [repeat] [baseWeight] [chunkRadius] [autoReload]_
-
 需要权限等级3
 
 新建[物资刷新器配置文件](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction#物资刷新配置)：
@@ -209,8 +207,6 @@ _/battleroyale utility [lootconfig] [id] [type] [...]_
 
 ### Generate loot spawner configuration
 _/battleroyale utility lootconfig [id] [slot/block/chunk] [xyz] [repeat] [baseWeight] [chunkRadius] [autoReload]_
-
-_/battleroyale utility lootconfig [xyz] [id] [slot/block/chunk] [xyz] [repeat] [baseWeight] [chunkRadius] [autoReload]_
 
 Require permission level 3
 

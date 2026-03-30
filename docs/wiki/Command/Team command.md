@@ -1,7 +1,7 @@
 [English](#English)
 
 # 队伍管理
-_/battleroyale team [join/leave/kick/invite/request/accept/decline/id/add/build] [player/senderName/requesterName/teamId] [teamId/size] [forceRebuild]_
+_/battleroyale team [join/leave/kick/invite/request/accept/decline/id/add/build] [player/request/invite/teamId] [senderName/requesterName/teamId/size] [forceRebuild]_
 
 非[权限指令](#权限指令)均不需要权限
 
@@ -35,13 +35,13 @@ _/battleroyale team request [player]_
 - 若对方不是队长，则申请无效
 
 ### 同意申请
-_/battleroyale team accept [requesterName]_
+_/battleroyale team accept request [requesterName]_
 
 - 同意指定玩家的入队申请
 - 若自己已不是队长，则同意无效
 
 ### 拒绝申请
-_/battleroyale team decline [requesterName]_
+_/battleroyale team decline request [requesterName]_
 
 - 拒绝指定玩家的入队申请
 - 若自己已不是队长，则拒绝无效
@@ -59,13 +59,13 @@ _/battleroyale team invite [player]_
 - 若自己不是队长，则邀请无效
 
 ### 同意邀请
-_/battleroyale team accept [senderName]_
+_/battleroyale team accept invite [senderName]_
 
 - 同意指定玩家的入队邀请
 - 若已经向其他玩家发送邀请，对方已不是队长或已在队伍中，则同意无效
 
 ### 拒绝邀请
-_/battleroyale team decline [senderName]_
+_/battleroyale team decline invite [senderName]_
 
 - 拒绝指定玩家的入队邀请
 
@@ -109,7 +109,7 @@ _/battleroyale team build [player] [size] [forceRebuild]_
 - forceRebuild：强制重新组建队伍
 
 # English
-_/battleroyale team [join/leave/kick/invite/request/accept/decline/id/add/build] [player/senderName/requesterName/teamId] [teamId/size] [forceRebuild]_
+_/battleroyale team [join/leave/kick/invite/request/accept/decline/id/add/build] [player/request/invite/teamId] [senderName/requesterName/teamId/size] [forceRebuild]_
 
 All commands other than [Permission Command](#Permission-command) do not require permissions
 
@@ -143,13 +143,13 @@ _/battleroyale team request [player]_
 - If the target player is not the team leader, the request is invalid
 
 ### Accept the request
-_/battleroyale team accept [requesterName]_
+_/battleroyale team accept request [requesterName]_
 
 - Accept the requester player to join the team
 - If you are no longer the team leader, the approval is invalid
 
 ### Decline the request
-_/battleroyale team decline [requesterName]_
+_/battleroyale team decline request [requesterName]_
 
 - Reject the requester player to join the team
 - If you are no longer the team leader, the decline is invalid
@@ -167,13 +167,13 @@ _/battleroyale team invite [player]_
 - If you are not the team leader, the invitation is invalid
 
 ### Accept the invitation
-_/battleroyale team accept [senderName]_
+_/battleroyale team accept invite [senderName]_
 
 - Accept to join the sender player's team
 - If an invitation has been sent to another player, the sender player is no longer the team leader or you are already in the team, the approval is invalid
 
 ### Decline invitation
-_/battleroyale team decline [senderName]_
+_/battleroyale team decline invite [senderName]_
 
 - Decline to join the sender player's team
 
