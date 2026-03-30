@@ -14,6 +14,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.game.IGameIdReadApi;
@@ -210,6 +211,11 @@ public class SurvivalLobby implements ILobbyReadApi {
         return pos.x >= minX && pos.x <= maxX &&
                 pos.y >= minY && pos.y <= maxY &&
                 pos.z >= minZ && pos.z <= maxZ;
+    }
+    @Override public boolean isInLobbyRange(Vec3 pos, @Nullable ServerLevel serverLevel) {
+        if (serverLevel == null) return false;
+        return serverLevel.dimension().equals(this.lobbyLevelKey())
+                && isInLobbyRange(pos);
     }
     @Override public boolean canMuteki(@NotNull LivingEntity livingEntity) {
         if (!isLobbyCreated() || _GameTeamManager.hasStandingGamePlayer(livingEntity.getUUID())) {

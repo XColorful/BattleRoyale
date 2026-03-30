@@ -117,9 +117,9 @@ public class GameLobbyManagerCommand {
     private static int teleportClearInventory(CommandContext<CommandSourceStack> context) {
         return BattleRoyale.getGameManager().getGameLobbyManager().teleportClearInventory() ? Command.SINGLE_SUCCESS : 0;
     }
-    private static int isInLobbyRange(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int isInLobbyRange(CommandContext<CommandSourceStack> context) {
         Vec3 pos = Vec3Argument.getVec3(context, XYZ);
-        return BattleRoyale.getGameManager().getGameLobbyManager().isInLobbyRange(pos) ? Command.SINGLE_SUCCESS : 0;
+        return BattleRoyale.getGameManager().getGameLobbyManager().isInLobbyRange(pos, context.getSource().getLevel()) ? Command.SINGLE_SUCCESS : 0;
     }
     private static int canMuteki(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Entity entity = EntityArgument.getEntity(context, PLAYER);

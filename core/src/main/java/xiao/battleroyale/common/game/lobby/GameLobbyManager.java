@@ -284,6 +284,11 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
                 pos.y >= minY && pos.y <= maxY &&
                 pos.z >= minZ && pos.z <= maxZ;
     }
+    @Override public boolean isInLobbyRange(Vec3 pos, @Nullable ServerLevel serverLevel) {
+        if (serverLevel == null) return false;
+        return serverLevel.dimension().equals(this.lobbyLevelKey())
+                && isInLobbyRange(pos);
+    }
     @Override public boolean canMuteki(@NotNull LivingEntity livingEntity) {
         if (!isLobbyCreated() || _GameTeamManager.hasStandingGamePlayer(livingEntity.getUUID())) { // 游戏中的玩家不能无敌
             return false;
