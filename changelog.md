@@ -1,5 +1,8 @@
 ### 0.5.x
 
+#### 0.5.3
+> Add 26.1neoforge
+
 #### 0.5.2
 - Add event-driven function execution with command source context
 - Add function config in ./config/battleroyale/server/function
@@ -167,7 +170,7 @@ For developer:
 - Replaced all new BlockPos() with BlockPos.containing()
 
 #### 0.4.6
-> Add neoforge1.21.11
+> Add 1.21.11neoforge
 - Update creative tab translation
 - Send game player down message
 - Add zone special entry
@@ -231,7 +234,7 @@ Fix:
 - Correct loot config written directory
 
 #### 0.4.2
-> Add neoforge1.21.6, neoforge1.21.10
+> Add 1.21.6neoforge, 1.21.10neoforge
 BattleRoyale related:
 - Add distributed teleport type: Grid distribution (rectangle & square), Double center grid distribution (circle), Golden Spiral Distribution (circle)
 - Use temp data to pre calculate double center grid distribution result
@@ -255,14 +258,14 @@ Other:
 - Adjust horse vehicle entity spawner config
 
 #### 0.4.1-1
-> Add neoforge1.21.4
+> Add 1.21.4neoforge
 - Make item lootType nbt usage same as 1.20.1 (consider 1.21.1components as a special nbt tag)
 - Adjust example loot spawner config
 - Adjust example Tacz & Cbrg loot config
 - Adjust example horse vehicle entity loot config
 
 #### 0.4.1
-> Add forge1.21.1, neoforge1.21.1
+> Add 1.21.1forge, 1.21.1neoforge
 - Only reload all configs once on mod setup
 - Add Items & GameId to '/cbr db get benbt'
 - Add '/cbr db get pi' to get ItemStack NBT
@@ -272,11 +275,11 @@ Other:
 - Fix message zone config manual reload requirement (proceed additional reload on server starting)
 
 #### 0.4.0-1
-> Add forge1.20.4, neoforge1.20.4
+> Add 1.20.4forge, 1.20.4neoforge
 - Fix '/cbr reload' not reload loot configs
 
 #### 0.4.0
-> Add forge1.20.2, neoforge1.20.2
+> Add 1.20.2forge, 1.20.2neoforge
 - Decouple mod from Forge API
 - Fix entity loot amount
 

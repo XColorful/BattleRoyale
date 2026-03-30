@@ -32,7 +32,6 @@ public class GameCommand {
                 .then(Commands.literal(SELECTED)
                         .executes(GameCommand::selectedConfigs))
                 .then(Commands.literal(SPECTATE)
-                        .requires(CommandSourceStack::isPlayer)
                         .executes(GameCommand::spectateGame))
                 .then(Commands.literal(GAME_ID)
                         .executes(GameCommand::gameId));
