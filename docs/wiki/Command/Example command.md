@@ -125,12 +125,17 @@ _/battleroyale example example display_
 在 _./minecraft/config/battleroyale/client/display_ 下写入配置文件
 
 ### 全部服务端配置
-_/battleroyale example server [performance/profile/utility]_
+_/battleroyale example server [function/performance/profile/utility]_
 
 在 _./minecraft/config/battleroyale/server_ 下写入配置文件
 
 _/battleroyale example server_
 处理所有子命令
+
+#### 函数配置
+_/battleroyale example server function_
+
+在 _./minecraft/config/battleroyale/server/function_ 下写入配置文件
 
 #### 性能配置
 _/battleroyale example server performance_
@@ -271,12 +276,17 @@ _/battleroyale example client display_
 Writes configuration files under _./minecraft/config/battleroyale/client/display_.
 
 ### All server config
-_/battleroyale example server [performance/profile/utility]_
+_/battleroyale example server [function/performance/profile/utility]_
 
 Writes configuration files under _./minecraft/config/battleroyale/server_.
 
 _/battleroyale example server_
 Processes all subcommands.
+
+#### Function config
+_/battleroyale example server function_
+
+Writes configuration files under _./minecraft/config/battleroyale/server/function_.
 
 #### Performance config
 _/battleroyale example server performance_
