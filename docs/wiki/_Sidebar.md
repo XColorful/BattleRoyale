@@ -99,7 +99,6 @@
 		- [Boost effect](https://github.com/XColorful/BattleRoyale/wiki/Boost-command#English)
 		- [Loot generation](https://github.com/XColorful/BattleRoyale/wiki/Loot-command#English)
 		- [Generate config](https://github.com/XColorful/BattleRoyale/wiki/Example-command#English)
-		- [Function](https://github.com/XColorful/BattleRoyale/wiki/Function-config#English)
 		- [Utility](https://github.com/XColorful/BattleRoyale/wiki/Utility-command#English)
 		- [Temporary data](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#English)
 		- [PUBGMC compatibility](https://github.com/XColorful/BattleRoyale/wiki/PUBGMC-compatibility#English)
