@@ -35,7 +35,7 @@ public class TriggerEvent extends CustomEvent {
         this.triggerBool = triggerBool;
     }
     @Override public CustomEventType getEventType() {
-        return CustomEventType.REGISTER_MANAGER_EVENT;
+        return CustomEventType.TRIGGER_EVENT;
     }
 
     public @Nullable CommandSourceStack getSource() {
