@@ -2,10 +2,12 @@ package xiao.battleroyale.config.common.server.function.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.EventPriority;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.custom.deathmatch.AddKillEvent;
+import xiao.battleroyale.compat.cbraddon.CbrAddon;
 import xiao.battleroyale.config.common.server.function.FunctionConfigManager;
 import xiao.battleroyale.config.common.server.function.type.RegisterEntry;
 
@@ -169,7 +171,8 @@ public class AllFunction {
                 )
         );
 
-        FunctionConfigManager.FunctionConfig functionConfig = new FunctionConfigManager.FunctionConfig(0, "Register all event tags", "#FFFFFF", registerEntry);
+        boolean cbraddonLoaded = BattleRoyale.getMcRegistry().isModLoaded(CbrAddon.get().getModId());
+        FunctionConfigManager.FunctionConfig functionConfig = new FunctionConfigManager.FunctionConfig(0, "Register all event tags", "#FFFFFF", cbraddonLoaded, registerEntry);
 
         return functionConfig.toJson();
     }
