@@ -3,6 +3,8 @@
 # 触发指令
 _/battleroyale trigger [...]_
 
+**此命令不需要权限等级**
+
 ## 触发事件
 _/battleroyale trigger [...]_
 
@@ -23,6 +25,8 @@ _/battleroyale trigger [protocol] [pos] [int] [double] [boolean]_
 
 # English
 _/battleroyale trigger [...]_
+
+**This command doesn't require permission level**
 
 ## Trigger event
 _/battleroyale trigger [...]_
