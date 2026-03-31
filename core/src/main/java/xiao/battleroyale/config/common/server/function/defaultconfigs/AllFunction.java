@@ -117,8 +117,10 @@ public class AllFunction {
                         // generate
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_custom_generate", CustomEventType.CUSTOM_GENERATE_EVENT.getName(),
                                 EventPriority.HIGHEST, true, null),
-                        // register
+                        // special
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_register_manager", CustomEventType.REGISTER_MANAGER_EVENT.getName(),
+                                EventPriority.LOWEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_trigger", CustomEventType.TRIGGER_EVENT.getName(),
                                 EventPriority.LOWEST, false, null),
 
                         // --------EventType--------
