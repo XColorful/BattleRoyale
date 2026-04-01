@@ -128,7 +128,7 @@ public abstract class AddKillEvent extends CustomEvent {
 }
 ```
 
-## Single Configuration
+## Single function config
 
 - id: unique function id
 - name: name the config, can be repeated

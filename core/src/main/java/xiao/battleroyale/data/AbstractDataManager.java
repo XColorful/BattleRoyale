@@ -19,6 +19,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 public abstract class AbstractDataManager {
@@ -28,6 +31,25 @@ public abstract class AbstractDataManager {
     protected volatile Map<String, JsonObject> filenameToJson = new ConcurrentHashMap<>();
     protected final String subPath;
     protected final String DATA_PATH;
+
+    /**
+     * 标记当前是否正在进行 IO 写入操作
+     */
+    private final AtomicBoolean isSaving = new AtomicBoolean(false);
+    /**
+     * 标记在写入期间是否有新的保存请求进来
+     */
+    private final AtomicBoolean pendingSave = new AtomicBoolean(false);
+
+    /**
+     * 内部维护的单线程池，确保该实例的所有 IO 操作顺序执行
+     * 每个子类实例拥有独立的线程
+     */
+    private final ExecutorService ioExecutor = Executors.newSingleThreadExecutor(r -> {
+        Thread t = new Thread(r, "Data-IO:" + getSubPath());
+        t.setDaemon(true);
+        return t;
+    });
 
     public AbstractDataManager() {
         this(MOD_DATA_PATH);
@@ -176,69 +198,92 @@ public abstract class AbstractDataManager {
     }
 
     /**
-     * 将数据异步保存到 JSON 文件
-     * 获取当前 Map 的快照，并在后台线程中写入文件
-     * 从而不阻塞主线程和任何读写操作
+     * 实际执行保存逻辑的方法，包含尾随检查逻辑
      */
-    private CompletableFuture<Void> dataToJsonAsync() {
-        // 获取当前 Map 的快照
+    private void performSaveInternal() {
+        // 抓取当前快照
         final Map<String, JsonObject> snapshot = new HashMap<>(this.filenameToJson);
-        return CompletableFuture.runAsync(() -> {
-            for (Map.Entry<String, JsonObject> entry : snapshot.entrySet()) {
-                String fileName = entry.getKey();
-                JsonObject jsonObject = entry.getValue();
-                Path filePath = Paths.get(DATA_PATH, fileName + ".json");
-                try {
-                    String jsonString = JsonUtils.toJsonString(jsonObject);
-                    if (!Files.exists(filePath.getParent())) {
-                        Files.createDirectories(filePath.getParent());
+        // 清除 pending 标记，因为将要开始写最新的快照
+        pendingSave.set(false);
+
+        CompletableFuture.runAsync(() -> {
+            try {
+                for (Map.Entry<String, JsonObject> entry : snapshot.entrySet()) {
+                    String fileName = entry.getKey();
+                    JsonObject jsonObject = entry.getValue();
+                    Path filePath = Paths.get(DATA_PATH, fileName + ".json");
+                    try {
+                        String jsonString = JsonUtils.toJsonString(jsonObject);
+                        if (!Files.exists(filePath.getParent())) {
+                            Files.createDirectories(filePath.getParent());
+                        }
+                        Files.writeString(filePath, jsonString);
+                    } catch (IOException e) {
+                        BattleRoyale.LOGGER.error("Failed to write {} data to file {}: {}", subPath, filePath, e.getMessage());
                     }
-                    Files.writeString(filePath, jsonString);
-                    BattleRoyale.LOGGER.debug("Wrote {} data to file: {}", subPath, filePath);
-                } catch (IOException e) {
-                    BattleRoyale.LOGGER.error("Failed to write {} data to file {}: {}", subPath, filePath, e.getMessage());
+                }
+            } finally {
+                isSaving.set(false);
+                // 检查在写入期间是否又有新请求
+                if (pendingSave.get()) {
+                    BattleRoyale.LOGGER.debug("Previous save finished, but new changes detected. Triggering follow-up save for {}.", subPath);
+                    saveData();
+                } else {
+                    BattleRoyale.LOGGER.debug("Asynchronous {} data write completed", subPath);
                 }
             }
+        }, ioExecutor).exceptionally(ex -> {
+            BattleRoyale.LOGGER.error("Asynchronous {} data write failed: {}", subPath, ex.getMessage());
+            isSaving.set(false);
+            return null;
         });
     }
 
     protected void saveData() {
-        dataToJsonAsync()
-                .thenRun(() -> BattleRoyale.LOGGER.debug("Asynchronous {} data write completed", subPath))
-                .exceptionally(ex -> {
-                    BattleRoyale.LOGGER.error("Asynchronous {} data write failed: {}", subPath, ex.getMessage());
-                    return null;
-                });
+        if (!isSaving.compareAndSet(false, true)) {
+            pendingSave.set(true);
+            BattleRoyale.LOGGER.debug("Data save queued for {}: previous write still in progress.", subPath);
+            return;
+        }
+
+        performSaveInternal();
     }
 
     /**
      * 异步删除已有json文件名并清空当前 Map
      */
     protected CompletableFuture<Void> clearDataToJson() {
+        // 清空内存 Map (主线程原子操作)
+        this.filenameToJson = new ConcurrentHashMap<>();
+        pendingSave.set(false); // 清空操作覆盖所有保存请求
+
+        // 使用 ioExecutor 保证删除操作与保存操作不会冲突
         return CompletableFuture.runAsync(() -> {
-            // 清空内存 Map
-            this.filenameToJson = new ConcurrentHashMap<>(); // 原子替换，旧 Map 变为可被 GC
-            Path dirPath = Paths.get(DATA_PATH);
-            if (Files.exists(dirPath)) {
-                try (Stream<Path> paths = Files.walk(dirPath)) {
-                    paths.filter(Files::isRegularFile)
-                            .filter(path -> path.toString().endsWith(".json"))
-                            .forEach(path -> {
-                                try {
-                                    Files.delete(path);
-                                    BattleRoyale.LOGGER.debug("Deleted {} data file: {}", subPath, path);
-                                } catch (IOException e) {
-                                    BattleRoyale.LOGGER.error("Failed to delete {} data file {}: {}", subPath, path, e.getMessage());
-                                }
-                            });
-                    // 尝试删除目录，如果为空的话
-                    Files.deleteIfExists(dirPath);
-                    BattleRoyale.LOGGER.info("Cleared all {} data files.", subPath);
-                } catch (IOException e) {
-                    BattleRoyale.LOGGER.error("Failed to walk or delete {} data directory: {}", subPath, e.getMessage());
+            isSaving.set(true);
+            try {
+                Path dirPath = Paths.get(DATA_PATH);
+                if (Files.exists(dirPath)) {
+                    try (Stream<Path> paths = Files.walk(dirPath)) {
+                        paths.filter(Files::isRegularFile)
+                                .filter(path -> path.toString().endsWith(".json"))
+                                .forEach(path -> {
+                                    try {
+                                        Files.delete(path);
+                                        BattleRoyale.LOGGER.debug("Deleted {} data file: {}", subPath, path);
+                                    } catch (IOException e) {
+                                        BattleRoyale.LOGGER.error("Failed to delete {} data file {}: {}", subPath, path, e.getMessage());
+                                    }
+                                });
+                        Files.deleteIfExists(dirPath);
+                        BattleRoyale.LOGGER.info("Cleared all {} data files.", subPath);
+                    } catch (IOException e) {
+                        BattleRoyale.LOGGER.error("Failed to walk or delete {} data directory: {}", subPath, e.getMessage());
+                    }
                 }
+            } finally {
+                isSaving.set(false);
             }
-        });
+        }, ioExecutor);
     }
 
     /**

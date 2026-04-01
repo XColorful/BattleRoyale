@@ -31,6 +31,7 @@
 - [生成配置](https://github.com/XColorful/BattleRoyale/wiki/Example-command): _/battleroyale example_
 - [实用功能](https://github.com/XColorful/BattleRoyale/wiki/Utility-command): _/battleroyale utility_
 - [临时数据](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command)：_/battleroyale temp_
+- [触发指令](https://github.com/XColorful/BattleRoyale/wiki/Trigger-command)：_/battleroyale trigger_
 - [PUBGMC兼容](https://github.com/XColorful/BattleRoyale/wiki/PUBGMC-compatibility)
 
 ### API指令
@@ -70,6 +71,7 @@ Start with _/battleroyale_
 - [Generate config](https://github.com/XColorful/BattleRoyale/wiki/Example-command#English): _/battleroyale example_
 - [Utility](https://github.com/XColorful/BattleRoyale/wiki/Utility-command#English): _/battleroyale utility_
 - [Temporary data](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#English)：_/battleroyale temp_
+- [Trigger](https://github.com/XColorful/BattleRoyale/wiki/Trigger-command#English): _/battleroyale trigger_
 - [PUBGMC compatibility](https://github.com/XColorful/BattleRoyale/wiki/PUBGMC-compatibility#English)
 
 ### API command
