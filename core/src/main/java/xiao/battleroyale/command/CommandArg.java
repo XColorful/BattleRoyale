@@ -29,6 +29,7 @@ public class CommandArg {
     public static final String SAVE = "save";
     public static final String BACKUP = "backup";
     public static final String REGISTER = "register";
+    public static final String TRIGGER = "trigger";
     public static final String TEMP = "temp";
     public static final String ENTITY_SELECTOR = "entitySelector";
     public static final String PUBGMC = "pubgmc";
@@ -117,6 +118,8 @@ public class CommandArg {
     public static final String OVERWRITE = "overwrite";
     public static final String GAME_TEAM_ONLY = "gameTeamOnly";
 
+    public static final String INT = "int";
+    public static final String DOUBLE = "double";
     public static final String BOOL = "boolean";
 
     // --------API--------

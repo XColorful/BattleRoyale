@@ -125,12 +125,17 @@ _/battleroyale example example display_
 在 _./minecraft/config/battleroyale/client/display_ 下写入配置文件
 
 ### 全部服务端配置
-_/battleroyale example server [performance/profile/utility]_
+_/battleroyale example server [function/performance/profile/utility]_
 
 在 _./minecraft/config/battleroyale/server_ 下写入配置文件
 
 _/battleroyale example server_
 处理所有子命令
+
+#### 函数配置
+_/battleroyale example server function_
+
+在 _./minecraft/config/battleroyale/server/function_ 下写入配置文件
 
 #### 性能配置
 _/battleroyale example server performance_
@@ -165,7 +170,7 @@ _/battleroyale example [loot/game/effect/client/server] [subType]_
 ### All Loot Config
 _/battleroyale example loot [loot_spawner/entity_spawner/airdrop/airdrop_special/secret_room]_
 
-Writes configuration files under _./minecraft/config/battleroyale/loot/_.
+Writes configuration files under _./minecraft/config/battleroyale/loot_.
 
 _/battleroyale example loot_
 Processes all subcommands.
@@ -173,35 +178,35 @@ Processes all subcommands.
 #### Loot Spawner
 _/battleroyale example loot loot_spawner_
 
-Writes configuration files under _./minecraft/config/battleroyale/loot/loot_spawner/_.
+Writes configuration files under _./minecraft/config/battleroyale/loot/loot_spawner_.
 - This example configuration file serves as a general loot config example.
 - When any version of [TaCZ](https://github.com/MCModderAnchor/TACZ/tree/1.20.1) is loaded, additionally generates loot configurations primarily based on the [TaCZ](https://github.com/MCModderAnchor/TACZ/tree/1.20.1) default gun pack, suitable for [Custom BattleRoyale Complete](https://github.com/XColorful/Custom-BattleRoyale-Complete).
 
 #### Entity Spawner
 _/battleroyale example loot entity_spawner_
 
-Writes configuration files under _./minecraft/config/battleroyale/loot/entity_spawner/_.
+Writes configuration files under _./minecraft/config/battleroyale/loot/entity_spawner_.
 - Additionallly generates vehicle configurations based on vanilla mounts
 
 #### Airdrop
 _/battleroyale example loot airdrop_
 
-Writes configuration files under _./minecraft/config/battleroyale/loot/airdrop/_.
+Writes configuration files under _./minecraft/config/battleroyale/loot/airdrop_.
 
 #### Special Airdrop
 _/battleroyale example loot airdrop_special_
 
-Writes configuration files under _./minecraft/config/battleroyale/loot/airdrop_special/_.
+Writes configuration files under _./minecraft/config/battleroyale/loot/airdrop_special_.
 
 #### Secret Room
 _/battleroyale example loot secret_room_
 
-Writes configuration files under _./minecraft/config/battleroyale/loot/secret_room/_.
+Writes configuration files under _./minecraft/config/battleroyale/loot/secret_room_.
 
 ### All BattleRoyale game config
 _/battleroyale example game [gamerule/spawn/zone/bot]_
 
-Writes configuration files under _./minecraft/config/battleroyale/game/_.
+Writes configuration files under _./minecraft/config/battleroyale/game_.
 
 _/battleroyale example game_
 Processes all subcommands.
@@ -209,25 +214,25 @@ Processes all subcommands.
 #### Gamerule config
 _/battleroyale example game gamerule_
 
-Writes configuration files under _./minecraft/config/battleroyale/game/gamerule/_.
+Writes configuration files under _./minecraft/config/battleroyale/game/gamerule_.
 
 - Additionally generates classic BattleRoyale rule configurations (100/64 players, team size 4).
 
 #### Spawn config
 _/battleroyale example game spawn_
 
-Writes configuration files under _./minecraft/config/battleroyale/game/spawn/_.
+Writes configuration files under _./minecraft/config/battleroyale/game/spawn_.
 - Additionally generates classic BattleRoyale spawn configurations (classic 8000x8000, radius 2670, radius 881).
 
 #### Stats config
 _/battleroyale example game stats_
 
-Writes configuration files under _./minecraft/config/battleroyale/game/stats/_.
+Writes configuration files under _./minecraft/config/battleroyale/game/stats_.
 
 #### Zone config
 _/battleroyale example game zone_
 
-Writes configuration files under _./minecraft/config/battleroyale/game/zone/_.
+Writes configuration files under _./minecraft/config/battleroyale/game/zone_.
 - Additionally generates two classic BattleRoyale 8000x8000 zone configurations.
 - Additionally generates classic BattleRoyale 5340x5340 zone configuration.
 - Additionally generates classic BattleRoyale 881x881 zone configuration.
@@ -235,12 +240,12 @@ Writes configuration files under _./minecraft/config/battleroyale/game/zone/_.
 #### Bot config
 _/battleroyale example game bot_
 
-Writes configuration files under _./minecraft/config/battleroyale/game/bot/_.
+Writes configuration files under _./minecraft/config/battleroyale/game/bot_.
 
 ### All effect config
 _/battleroyale example effect [particle]_
 
-Writes configuration files under _./minecraft/config/battleroyale/effect/_.
+Writes configuration files under _./minecraft/config/battleroyale/effect_.
 
 _/battleroyale example effect_
 Processes all subcommands.
@@ -248,14 +253,14 @@ Processes all subcommands.
 #### Particle config
 _/battleroyale example effect particle_
 
-Writes configuration files under _./minecraft/config/battleroyale/effect/particle/_.
+Writes configuration files under _./minecraft/config/battleroyale/effect/particle_.
 
 ### All client config
 _/battleroyale example client [render/display]_
 
 **Client commands do not require permission level.**
 
-Writes configuration files under _./minecraft/config/battleroyale/client/_.
+Writes configuration files under _./minecraft/config/battleroyale/client_.
 
 _/battleroyale example client_
 Processes all subcommands.
@@ -263,30 +268,35 @@ Processes all subcommands.
 #### Render config
 _/battleroyale example client render_
 
-Writes configuration files under _./minecraft/config/battleroyale/client/render/_.
+Writes configuration files under _./minecraft/config/battleroyale/client/render_.
 
 #### Display config
 _/battleroyale example client display_
 
-Writes configuration files under _./minecraft/config/battleroyale/client/display/_.
+Writes configuration files under _./minecraft/config/battleroyale/client/display_.
 
 ### All server config
-_/battleroyale example server [performance/profile/utility]_
+_/battleroyale example server [function/performance/profile/utility]_
 
-Writes configuration files under _./minecraft/config/battleroyale/server/_.
+Writes configuration files under _./minecraft/config/battleroyale/server_.
 
 _/battleroyale example server_
 Processes all subcommands.
 
+#### Function config
+_/battleroyale example server function_
+
+Writes configuration files under _./minecraft/config/battleroyale/server/function_.
+
 #### Performance config
 _/battleroyale example server performance_
 
-Writes configuration files under _./minecraft/config/battleroyale/server/performance/_.
+Writes configuration files under _./minecraft/config/battleroyale/server/performance_.
 
 #### Profile config
 _/battleroyale example server profile_
 
-Writes configuration files under _./minecraft/config/battleroyale/server/profile/_.
+Writes configuration files under _./minecraft/config/battleroyale/server/profile_.
 
 #### Utility config
 _/battleroyale example server utility_

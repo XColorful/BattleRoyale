@@ -4,7 +4,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.ICustomEvent;
 import xiao.battleroyale.api.event.ICustomEventHandler;
-import xiao.battleroyale.api.event.register.RegisterManagerEvent;
+import xiao.battleroyale.api.event.special.RegisterManagerEvent;
 import xiao.battleroyale.util.StringUtils;
 
 public class _DMRegister implements ICustomEventHandler {
