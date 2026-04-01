@@ -2,6 +2,23 @@
 
 #### 0.5.3
 > Add 26.1neoforge
+- Fix softlock caused by unhandled PlayerRevive kill logic onGamePlayerDeath (Issue #55)
+- Fix data consistency issues during frequent temp data saving
+- Fix functions in function tags continuing to process after event cancellation
+
+Function update:
+- GameManager, teamManager api command store Vec3 as ListTag to make datapack happy
+- Add client side check to CommandSourceStack creation
+- Add main hand filter to PlayerInteractEvents for mcfunction dispatching (prevents double triggers)
+- Remove player-source restriction for '/cbr game spectate' to allow datapack execution
+- Add game, team, loot, utility command translation key (for CBR addon)
+
+Other:
+- Set function config example_all_event_tags.json to default if CBR addon loaded
+- Add dimension check to '/cbr api gameLobbyManager isInLobbyRange'
+- Add BlockEvent, PlayerInteractEvent to EventType
+- Add Trigger command, add TRIGGER_EVENT to CustomEventType
+- Correct teleportToLobbyInGame log when event canceled
 
 #### 0.5.2
 - Add event-driven function execution with command source context
