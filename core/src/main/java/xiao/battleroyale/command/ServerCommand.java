@@ -34,8 +34,9 @@ public class ServerCommand {
         root.then(GameCommand.get()
         ); // 部分指令不需要权限
         root.then(RegisterCommand.get()
-                .requires(CommandLevel.hasPermission(2))
-        );
+                .requires(CommandLevel.hasPermission(2)));
+        root.then(TriggerCommand.get()
+        ); // 不需要权限
         root.then(FireworkCommand.get()
                 .requires(CommandLevel.hasPermission(2)));
         root.then(MutekiCommand.get()
