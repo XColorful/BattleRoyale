@@ -60,8 +60,9 @@ public enum CustomEventType {
     CUSTOM_GENERATE_EVENT,
     // client
     SPECIAL_ZONE_RENDER_EVENT,
-    // register
+    // special
     REGISTER_MANAGER_EVENT,
+    TRIGGER_EVENT,
     // custom
     CUSTOM_EVENT;
 
@@ -137,6 +138,7 @@ public enum CustomEventType {
 //                    SPECIAL_ZONE_RENDER_EVENT.getName(),
                     // register
                     REGISTER_MANAGER_EVENT.getName(),
+                    TRIGGER_EVENT.getName()
                     // custom
 //                    CUSTOM_EVENT.getName()
             }, builder);

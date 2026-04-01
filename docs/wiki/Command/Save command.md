@@ -116,12 +116,17 @@ _/battleroyale save client display_
 将已加载的显示配置保存至 _./minecraft/config/battleroyale/client/display_
 
 ### 全部服务端配置
-_/battleroyale save server [performance/profile/utility]_
+_/battleroyale save server [function/performance/profile/utility]_
 
 将已加载的服务端配置保存至 _./minecraft/config/battleroyale/server_
 
 _/battleroyale save server_
 处理所有子命令
+
+#### 函数配置
+_/battleroyale save server function_
+
+将已加载的函数配置保存至 _./minecraft/config/battleroyale/server/function_
 
 #### 性能配置
 _/battleroyale save server performance_
@@ -256,12 +261,17 @@ _/battleroyale save client display_
 Save loaded display config to _./minecraft/config/battleroyale/client/display_
 
 ### All server config
-_/battleroyale save server [performance/profile/utility]_
+_/battleroyale save server [function/performance/profile/utility]_
 
 Save loaded server configs to _./minecraft/config/battleroyale/server_
 
 _/battleroyale save server_
 Process all sub commands
+
+#### Function config
+_/battleroyale save server function_
+
+Save loaded performance config to _./minecraft/config/battleroyale/server/function_
 
 #### Performance config
 _/battleroyale save server performance_
