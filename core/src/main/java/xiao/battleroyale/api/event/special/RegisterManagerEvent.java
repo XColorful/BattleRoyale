@@ -1,4 +1,4 @@
-package xiao.battleroyale.api.event.register;
+package xiao.battleroyale.api.event.special;
 
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
@@ -21,6 +21,9 @@ public class RegisterManagerEvent extends CustomEvent {
         this.source = source;
         this.protocolString = new StringUtils.ProtocolString(protocol);
     }
+    @Override public CustomEventType getEventType() {
+        return CustomEventType.REGISTER_MANAGER_EVENT;
+    }
 
     public @Nullable CommandSourceStack getSource() {
         return source;
@@ -32,11 +35,6 @@ public class RegisterManagerEvent extends CustomEvent {
     }
     public StringUtils.ProtocolString getProtocolString() {
         return protocolString;
-    }
-
-    @Override
-    public CustomEventType getEventType() {
-        return CustomEventType.REGISTER_MANAGER_EVENT;
     }
 
     @Override

@@ -3,6 +3,8 @@
 # 注册指令
 _/battleroyale register manager [protocol]_
 
+需要权限等级2
+
 ## 注册管理器
 _/battleroyale register manager [protocol]_
 
@@ -22,6 +24,8 @@ _/battleroyale register manager battleroyale:DMGameProcessManager_
 
 # English
 _/battleroyale register manager [protocol]_
+
+Require permission level 2
 
 ## Register manager
 _/battleroyale register manager [protocol]_

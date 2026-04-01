@@ -21,7 +21,7 @@ import xiao.battleroyale.api.effect.IEffectManager;
 import xiao.battleroyale.api.event.ICustomEventPoster;
 import xiao.battleroyale.api.event.ICustomEventRegister;
 import xiao.battleroyale.api.event.IEventRegister;
-import xiao.battleroyale.api.event.register.RegisterManagerEvent;
+import xiao.battleroyale.api.event.special.RegisterManagerEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.init.ISelectorRegistry;
 import xiao.battleroyale.api.init.registry.IRegistrarFactory;
