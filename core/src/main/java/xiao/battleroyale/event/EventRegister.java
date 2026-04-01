@@ -5,7 +5,8 @@ import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.event.client.ClientRenderEventHandler;
 import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.event.loot.LootGenerateEventsHandler;
-import xiao.battleroyale.event.register.RegisterManagerEventsHandler;
+import xiao.battleroyale.event.special.RegisterManagerEventsHandler;
+import xiao.battleroyale.event.special.TriggerEventsHandler;
 
 public class EventRegister implements ICustomEventRegister {
 
@@ -97,8 +98,9 @@ public class EventRegister implements ICustomEventRegister {
             case CUSTOM_GENERATE_EVENT -> LootGenerateEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             // client
             case SPECIAL_ZONE_RENDER_EVENT -> ClientRenderEventHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
-            // register
+            // special
             case REGISTER_MANAGER_EVENT -> RegisterManagerEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
+            case TRIGGER_EVENT -> TriggerEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             default -> {
                 BattleRoyale.LOGGER.warn("Attempted to register handler for unassigned CustomEventType: {}. Registration aborted.", customEventType);
                 yield false;
@@ -164,8 +166,9 @@ public class EventRegister implements ICustomEventRegister {
             case CUSTOM_GENERATE_EVENT -> LootGenerateEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
             // client
             case SPECIAL_ZONE_RENDER_EVENT -> ClientRenderEventHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
-            // register
+            // special
             case REGISTER_MANAGER_EVENT -> RegisterManagerEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
+            case TRIGGER_EVENT -> TriggerEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
             default -> {
                 BattleRoyale.LOGGER.warn("Attempted to unregister handler for unassigned CustomEventType: {}. Unregistration aborted.", customEventType);
                 yield false;

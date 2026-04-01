@@ -2,10 +2,12 @@ package xiao.battleroyale.config.common.server.function.defaultconfigs;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.EventPriority;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.custom.deathmatch.AddKillEvent;
+import xiao.battleroyale.compat.cbraddon.CbrAddon;
 import xiao.battleroyale.config.common.server.function.FunctionConfigManager;
 import xiao.battleroyale.config.common.server.function.type.RegisterEntry;
 
@@ -115,8 +117,10 @@ public class AllFunction {
                         // generate
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_custom_generate", CustomEventType.CUSTOM_GENERATE_EVENT.getName(),
                                 EventPriority.HIGHEST, true, null),
-                        // register
+                        // special
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_register_manager", CustomEventType.REGISTER_MANAGER_EVENT.getName(),
+                                EventPriority.LOWEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_trigger", CustomEventType.TRIGGER_EVENT.getName(),
                                 EventPriority.LOWEST, false, null),
 
                         // --------EventType--------
@@ -169,7 +173,8 @@ public class AllFunction {
                 )
         );
 
-        FunctionConfigManager.FunctionConfig functionConfig = new FunctionConfigManager.FunctionConfig(0, "Register all event tags", "#FFFFFF", registerEntry);
+        boolean cbraddonLoaded = BattleRoyale.getMcRegistry().isModLoaded(CbrAddon.get().getModId());
+        FunctionConfigManager.FunctionConfig functionConfig = new FunctionConfigManager.FunctionConfig(0, "Register all event tags", "#FFFFFF", cbraddonLoaded, registerEntry);
 
         return functionConfig.toJson();
     }
