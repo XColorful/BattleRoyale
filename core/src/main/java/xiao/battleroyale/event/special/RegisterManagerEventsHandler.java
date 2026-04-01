@@ -1,4 +1,4 @@
-package xiao.battleroyale.event.register;
+package xiao.battleroyale.event.special;
 
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.event.AbstractEventHandler;

@@ -47,8 +47,9 @@ _/battleroyale config client [render/display] switch [fileName]_
 - 显示配置文件：_/battleroyale config client display switch [fileName]_
 
 ### 服务端配置
-_/battleroyale config server [performance/profile/utility] switch [fileName]_
+_/battleroyale config server [function/performance/profile/utility] switch [fileName]_
 
+- 函数配置文件：_/battleroyale config server function switch [fileName]_
 - 性能配置文件：_/battleroyale config server performance switch [fileName]_
 - 预设配置文件：_/battleroyale config server profile switch [fileName]_
 - 实用配置文件：_/battleroyale config server utility switch [fileName]_
@@ -77,11 +78,12 @@ _/battleroyale config client [render/display] [id]_
 > 区域渲染将在下一次接收服务端区域消息时生效，通常有几秒的延迟
 
 ## 应用选中的服务端配置
-_/battleroyale config server [performance/utility] [id]_
+_/battleroyale config server [function/performance/utility] [id]_
 
 应用特定配置
 - 如不存在相应id的配置则不应用
 
+- 函数配置：_/battleroyale config function [id]_
 - 性能配置：_/battleroyale config performance [id]_
 - 实用配置：_/battleroyale config utility [id]_
 
@@ -132,8 +134,9 @@ _/battleroyale config client [render/display] switch [fileName]_
 - Display config file: _/battleroyale config client display switch [fileName]_
 
 ### Server config
-_/battleroyale config server [performance/profile/utility] switch [fileName]_
+_/battleroyale config server [function/performance/profile/utility] switch [fileName]_
 
+- Function config file: _/battleroyale config server function switch [fileName]_
 - Performance config file: _/battleroyale config server performance switch [fileName]_
 - Profile config file: _/battleroyale config server profile switch [fileName]_
 - Utility config file: _/battleroyale config server utility switch [fileName]_
@@ -162,10 +165,11 @@ Apply specific configuration
 > Zone rendering will take effect the next time a zone message is received from the server, usually with a delay of several seconds
 
 ## Apply selected Server config
-_/battleroyale config server [performance/utility] [id]_
+_/battleroyale config server [function/performance/utility] [id]_
 
 Apply specific configuration
 - If there is no configuration with the corresponding id, it will not be applied
 
+- Function config：_/battleroyale config function [id]_
 - Performance config：_/battleroyale config performance [id]_
 - Utility config: _/battleroyale config utility [id]_

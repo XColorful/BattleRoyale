@@ -99,6 +99,7 @@
 	- SaveCommand：[保存配置](/docs/wiki/Command/Save%20command.md)
 	- TeamCommand：[队伍管理](/docs/wiki/Command/Team%20command.md)
 	- TempCommand：[临时数据](/docs/wiki/Command/Temp%20data%20command.md)
+	- TriggerCommand：[触发指令](/docs/wiki/Command/Trigger%20command.md)
 	- UtilityCommand：[实用功能](/docs/wiki/Command/Utility%20command.md)
 
 ### 核心机制
@@ -478,6 +479,7 @@ Module division based on the `xiao.battleroyale` top-level package
 	- SaveCommand: [Save Command](/docs/wiki/Command/Save%20command.md#English)
 	- TeamCommand: [Team Command](/docs/wiki/Command/Team%20command.md#English)
 	- TempCommand: [Temp Data Command](/docs/wiki/Command/Temp%20data%20command.md#English)
+	- TriggerCommand: [Trigger Command](/docs/wiki/Command/Trigger%20command.md#English)
 	- UtilityCommand: [Utility Command](/docs/wiki/Command/Utility%20command.md#English)
 
 ### Common Mechanism

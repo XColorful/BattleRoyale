@@ -122,12 +122,17 @@ _/battleroyale reload client display_
 从 _./minecraft/config/battleroyale/client/display_ 重新读取配置文件
 
 ### 全部服务端配置
-_/battleroyale reload server [performance/profile/utility]_
+_/battleroyale reload server [function/performance/profile/utility]_
 
 从 _./minecraft/config/battleroyale/server_ 重新读取配置文件
 
 _/battleroyale reload server_
 处理所有子命令
+
+#### 函数配置
+_/battleroyale reload server function_
+
+从 _./minecraft/config/battleroyale/server/function_ 重新读取配置文件
 
 #### 性能配置
 _/battleroyale reload server performance_
@@ -266,12 +271,17 @@ _/battleroyale reload client display_
 Re-read config files from _./minecraft/config/battleroyale/client/display_
 
 ### All server config
-_/battleroyale reload server [performance/profile/utility]_
+_/battleroyale reload server [function/performance/profile/utility]_
 
 Re-read config files from _./minecraft/config/battleroyale/server_
 
 _/battleroyale reload server_
 Process all sub commands
+
+#### Function config
+_/battleroyale reload server function_
+
+Re-read config files from _./minecraft/config/battleroyale/server/function_
 
 #### Performance config
 _/battleroyale reload server performance_
