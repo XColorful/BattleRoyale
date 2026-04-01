@@ -66,6 +66,7 @@
 - [生成配置](https://github.com/XColorful/BattleRoyale/wiki/Example-command)
 - [实用功能](https://github.com/XColorful/BattleRoyale/wiki/Utility-command)
 - [临时数据](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command)
+- [触发指令](https://github.com/XColorful/BattleRoyale/wiki/Trigger-command)
 - [PUBGMC兼容](https://github.com/XColorful/BattleRoyale/wiki/PUBGMC-compatibility)
 
 ### API指令
@@ -184,6 +185,7 @@
 - [Generate config](https://github.com/XColorful/BattleRoyale/wiki/Example-command#English)
 - [Utility](https://github.com/XColorful/BattleRoyale/wiki/Utility-command#English)
 - [Temporary data](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#English)
+- [Trigger](https://github.com/XColorful/BattleRoyale/wiki/Trigger-command#English)
 - [PUBGMC compatibility](https://github.com/XColorful/BattleRoyale/wiki/PUBGMC-compatibility#English)
 
 ### API command
