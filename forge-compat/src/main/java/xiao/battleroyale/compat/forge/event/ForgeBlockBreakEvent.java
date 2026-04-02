@@ -62,7 +62,7 @@ public class ForgeBlockBreakEvent extends ForgeEvent implements IBlockBreakEvent
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getBlockPos().getCenter(),
-                Vec2.ZERO,
+                entity.getRotationVector(),
                 (ServerLevel) level,
                 CommandLevel.permission(4),
                 this.getTextName(),
