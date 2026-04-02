@@ -105,16 +105,17 @@ public class NeoLeftClickBlockEvent extends NeoEvent implements ILeftClickBlockE
         if (getHand() != InteractionHand.MAIN_HAND) return null; // 只给 function 传主手触发的事件
         Level level = getLevel();
         if (level != null && level.isClientSide()) return null;
+        Player player = this.getEntity();
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getBlockPos().getCenter(),
-                Vec2.ZERO,
+                player.getRotationVector(),
                 (ServerLevel) level,
                 CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 level.getServer(),
-                this.getEntity()
+                player
         );
     }
 
