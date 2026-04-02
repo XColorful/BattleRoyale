@@ -7,6 +7,7 @@ import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.EventPriority;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.custom.deathmatch.AddKillEvent;
+import xiao.battleroyale.api.event.custom.stats.GamePlayerRecordEvent;
 import xiao.battleroyale.compat.cbraddon.CbrAddon;
 import xiao.battleroyale.config.common.server.function.FunctionConfigManager;
 import xiao.battleroyale.config.common.server.function.type.RegisterEntry;
@@ -169,7 +170,21 @@ public class AllFunction {
                         new RegisterEntry.RegisterDetail(null, "battleroyale:deathmatch/on_add_team_kill", CustomEventType.CUSTOM_EVENT.getName(),
                                 EventPriority.HIGHEST, true, AddKillEvent.AddTeamKillEvent.class.getName()),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:deathmatch/on_add_team_kill_finish", CustomEventType.CUSTOM_EVENT.getName(),
-                                EventPriority.LOWEST, false, AddKillEvent.AddTeamKillFinishEvent.class.getName())
+                                EventPriority.LOWEST, false, AddKillEvent.AddTeamKillFinishEvent.class.getName()),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:stats/on_damage_record", CustomEventType.CUSTOM_EVENT.getName(),
+                                EventPriority.HIGHEST, true, GamePlayerRecordEvent.DamageRecordEvent.class.getName()),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:stats/on_hurt_record", CustomEventType.CUSTOM_EVENT.getName(),
+                                EventPriority.HIGHEST, true, GamePlayerRecordEvent.HurtRecordEvent.class.getName()),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:stats/on_down_record", CustomEventType.CUSTOM_EVENT.getName(),
+                                EventPriority.HIGHEST, true, GamePlayerRecordEvent.DownRecordEvent.class.getName()),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:stats/on_knock_record", CustomEventType.CUSTOM_EVENT.getName(),
+                                EventPriority.HIGHEST, true, GamePlayerRecordEvent.KnockRecordEvent.class.getName()),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:stats/on_revive_record", CustomEventType.CUSTOM_EVENT.getName(),
+                                EventPriority.HIGHEST, true, GamePlayerRecordEvent.ReviveRecordEvent.class.getName()),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:stats/on_death_record", CustomEventType.CUSTOM_EVENT.getName(),
+                                EventPriority.HIGHEST, true, GamePlayerRecordEvent.DeathRecordEvent.class.getName()),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:stats/on_kill_record", CustomEventType.CUSTOM_EVENT.getName(),
+                                EventPriority.HIGHEST, true, GamePlayerRecordEvent.KillRecordEvent.class.getName())
                 )
         );
 
