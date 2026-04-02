@@ -39,6 +39,7 @@ public class GamePlayerReviveFinishEvent extends AbstractGameStatsEvent {
         if (livingEntity == null) return super.createCommandSourceStack(source);
         return super.createCommandSourceStack(source)
                 .withPosition(livingEntity.position())
+                .withRotation(livingEntity.getRotationVector())
                 .withEntity(livingEntity);
     }
 
