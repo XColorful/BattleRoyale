@@ -60,7 +60,7 @@ public class NeoLivingDamageEvent extends NeoEvent implements ILivingDamageEvent
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
                 entity.position(),
-                Vec2.ZERO,
+                entity != null ? entity.getRotationVector() : Vec2.ZERO,
                 (ServerLevel) level,
                 CommandLevel.permission(4),
                 this.getTextName(),
