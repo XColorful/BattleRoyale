@@ -16,14 +16,15 @@ public class EventPoster implements ICustomEventPoster {
         private static final EventPoster INSTANCE = new EventPoster();
     }
 
-    public static EventPoster get() {
+    public static ICustomEventPoster get() {
         return EventPosterHolder.INSTANCE;
     }
 
     protected EventPoster() {}
 
+    @Deprecated(forRemoval = false)
     public static boolean postEvent(ICustomEvent customEvent) {
-        return get().postCustomEvent(customEvent);
+        return BattleRoyale.getEventPoster().postCustomEvent(customEvent);
     }
     public boolean postCustomEvent(ICustomEvent customEvent) {
         CustomEventType customEventType = customEvent.getEventType();

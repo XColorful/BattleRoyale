@@ -14,6 +14,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.IModConfigManager;
+import xiao.battleroyale.api.event.ICustomEventPoster;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportEvent;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
@@ -28,7 +29,6 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
-import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.Vec3Utils;
@@ -148,7 +148,8 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
 
     @Override public boolean teleportToLobby(@NotNull LivingEntity livingEntity) {
         IGameManager gameManager = BattleRoyale.getGameManager();
-        if (EventPoster.postEvent(new GameLobbyTeleportEvent(gameManager, livingEntity))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new GameLobbyTeleportEvent(gameManager, livingEntity))) {
             BattleRoyale.LOGGER.debug("GameLobbyManager: LobbyTeleportEvent canceled, skipped teleportToLobbyInGame (LivingEntity {})", livingEntity.getName().getString());
             return false;
         }
@@ -183,7 +184,7 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
             GameUtilsFunction.safeTeleport(livingEntity, lobbyPos);
         }
         BattleRoyale.LOGGER.info("Teleport livingEntity {} (UUID: {}) to lobby ({}, {}, {})", livingEntity.getName().getString(), livingEntity.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
-        EventPoster.postEvent(new GameLobbyTeleportFinishEvent(gameManager, livingEntity));
+        eventPoster.postCustomEvent(new GameLobbyTeleportFinishEvent(gameManager, livingEntity));
         return true;
     }
     @Override public void healPlayer(@NotNull LivingEntity livingEntity) {
