@@ -5,6 +5,7 @@ import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.event.client.ClientRenderEventHandler;
 import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.event.loot.LootGenerateEventsHandler;
+import xiao.battleroyale.event.server.ServerUtilityEventsHandler;
 import xiao.battleroyale.event.special.RegisterManagerEventsHandler;
 import xiao.battleroyale.event.special.TriggerEventsHandler;
 
@@ -98,6 +99,9 @@ public class EventRegister implements ICustomEventRegister {
             case CUSTOM_GENERATE_EVENT -> LootGenerateEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             // client
             case SPECIAL_ZONE_RENDER_EVENT -> ClientRenderEventHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
+            // utility
+            case SURVIVAL_LOBBY_TELEPORT_EVENT -> ServerUtilityEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
+            case SURVIVAL_LOBBY_TELEPORT_FINISH_EVENT -> ServerUtilityEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             // special
             case REGISTER_MANAGER_EVENT -> RegisterManagerEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
             case TRIGGER_EVENT -> TriggerEventsHandler.get().registerHandler(eventHandler, customEventType, priority, receiveCanceled);
@@ -166,6 +170,9 @@ public class EventRegister implements ICustomEventRegister {
             case CUSTOM_GENERATE_EVENT -> LootGenerateEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
             // client
             case SPECIAL_ZONE_RENDER_EVENT -> ClientRenderEventHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
+            // utility
+            case SURVIVAL_LOBBY_TELEPORT_EVENT -> ServerUtilityEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
+            case SURVIVAL_LOBBY_TELEPORT_FINISH_EVENT -> ServerUtilityEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
             // special
             case REGISTER_MANAGER_EVENT -> RegisterManagerEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
             case TRIGGER_EVENT -> TriggerEventsHandler.get().unregisterHandler(eventHandler, customEventType, priority, receiveCanceled);
