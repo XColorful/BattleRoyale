@@ -7,8 +7,10 @@ import net.minecraft.world.scores.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.ICustomEventPoster;
 import xiao.battleroyale.api.event.ILivingDamageEvent;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
+import xiao.battleroyale.api.event.custom.stats.GamePlayerRecordEvent;
 import xiao.battleroyale.api.event.game.finish.GameCompleteFinishEvent;
 import xiao.battleroyale.api.event.game.finish.GameStopFinishEvent;
 import xiao.battleroyale.api.event.game.game.GamePlayerDamageFinishEvent;
@@ -167,14 +169,24 @@ public class _StatsEventHandler {
 
         // ----Stats记录----
         int gameTime = event.getGameTime();
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
         if (attackerGamePlayer != null) {
-            IGamePlayerStats attackerStats = statsManager.getGamePlayerStats(attackerGamePlayer);
-            attackerStats.addHurtRecord(new HurtRecord(gameTime, getTimeOrderAndIncrease(), attackerGamePlayer, victimGamePlayer, damageAmount));
-            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
-            victimStats.addDamageRecord(new DamageRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, attackerGamePlayer, damageAmount));
+            // Attacker record
+            HurtRecord hurtRecord = new HurtRecord(gameTime, getTimeOrderAndIncrease(), attackerGamePlayer, victimGamePlayer, damageAmount);
+            if (!eventPoster.postCustomEvent(new GamePlayerRecordEvent.HurtRecordEvent(statsManager, hurtRecord))) {
+                statsManager.getGamePlayerStats(attackerGamePlayer).addHurtRecord(hurtRecord);
+            }
+            // Victim record
+            DamageRecord damageRecord = new DamageRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, attackerGamePlayer, damageAmount);
+            if (!eventPoster.postCustomEvent(new GamePlayerRecordEvent.DamageRecordEvent(statsManager, damageRecord))) {
+                statsManager.getGamePlayerStats(victimGamePlayer).addDamageRecord(damageRecord);
+            }
         } else {
-            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
-            victimStats.addDamageRecord(new DamageRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, damageSource, damageAmount));
+            // Victim record
+            DamageRecord damageRecord = new DamageRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, damageSource, damageAmount);
+            if (!eventPoster.postCustomEvent(new GamePlayerRecordEvent.DamageRecordEvent(statsManager, damageRecord))) {
+                statsManager.getGamePlayerStats(victimGamePlayer).addDamageRecord(damageRecord);
+            }
         }
 
         // ----记分板----
@@ -233,14 +245,24 @@ public class _StatsEventHandler {
 
         // ----Stats记录----
         int gameTime = event.getGameTime();
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
         if (attackerGamePlayer != null) {
-            IGamePlayerStats attackerStats = statsManager.getGamePlayerStats(attackerGamePlayer);
-            attackerStats.addKnockRecord(new KnockRecord(gameTime, getTimeOrderAndIncrease(), attackerGamePlayer, victimGamePlayer));
-            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
-            victimStats.addDownRecord(new DownRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, attackerGamePlayer));
+            // Attacker record
+            KnockRecord knockRecord = new KnockRecord(gameTime, getTimeOrderAndIncrease(), attackerGamePlayer, victimGamePlayer);
+            if (!eventPoster.postCustomEvent(new GamePlayerRecordEvent.KnockRecordEvent(statsManager, knockRecord))) {
+                statsManager.getGamePlayerStats(attackerGamePlayer).addKnockRecord(knockRecord);
+            }
+            // Victim record
+            DownRecord downRecord = new DownRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, attackerGamePlayer);
+            if (!eventPoster.postCustomEvent(new GamePlayerRecordEvent.DownRecordEvent(statsManager, downRecord))) {
+                statsManager.getGamePlayerStats(victimGamePlayer).addDownRecord(downRecord);
+            }
         } else {
-            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
-            victimStats.addDownRecord(new DownRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, damageSource));
+            // Victim record
+            DownRecord downRecord = new DownRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, damageSource);
+            if (!eventPoster.postCustomEvent(new GamePlayerRecordEvent.DownRecordEvent(statsManager, downRecord))) {
+                statsManager.getGamePlayerStats(victimGamePlayer).addDownRecord(downRecord);
+            }
         }
 
         // ----记分板----
@@ -274,8 +296,13 @@ public class _StatsEventHandler {
 
         // ----Stats记录----
         int gameTime = event.getGameTime();
-        IGamePlayerStats gamePlayerStats = statsManager.getGamePlayerStats(gamePlayer);
-        gamePlayerStats.addReviveRecord(new ReviveRecord(gameTime, getTimeOrderAndIncrease(), gamePlayer, gamePlayer));
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        { // 目前没有处理更多 PlayerRevive 逻辑
+            ReviveRecord reviveRecord = new ReviveRecord(gameTime, getTimeOrderAndIncrease(), gamePlayer, gamePlayer);
+            if (!eventPoster.postCustomEvent(new GamePlayerRecordEvent.ReviveRecordEvent(statsManager, reviveRecord))) {
+                statsManager.getGamePlayerStats(gamePlayer).addReviveRecord(reviveRecord);
+            }
+        }
 
         // ----记分板----
         if (statsManager.recordScoreboard) {
@@ -308,14 +335,24 @@ public class _StatsEventHandler {
 
         // ----Stats记录----
         int gameTime = event.getGameTime();
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
         if (attackerGamePlayer != null) {
-            IGamePlayerStats attackerStats = statsManager.getGamePlayerStats(attackerGamePlayer);
-            attackerStats.addKillRecord(new KillRecord(gameTime, getTimeOrderAndIncrease(), attackerGamePlayer, victimGamePlayer));
-            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
-            victimStats.addDeathRecord(new DeathRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, attackerGamePlayer));
+            // Attacker record
+            KillRecord killRecord = new KillRecord(gameTime, getTimeOrderAndIncrease(), attackerGamePlayer, victimGamePlayer);
+            if (!eventPoster.postCustomEvent(new GamePlayerRecordEvent.KillRecordEvent(statsManager, killRecord))) {
+                statsManager.getGamePlayerStats(attackerGamePlayer).addKillRecord(killRecord);
+            }
+            // Victim record
+            DeathRecord deathRecord = new DeathRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, attackerGamePlayer);
+            if (!eventPoster.postCustomEvent(new GamePlayerRecordEvent.DeathRecordEvent(statsManager, deathRecord))) {
+                statsManager.getGamePlayerStats(victimGamePlayer).addDeathRecord(deathRecord);
+            }
         } else {
-            IGamePlayerStats victimStats = statsManager.getGamePlayerStats(victimGamePlayer);
-            victimStats.addDeathRecord(new DeathRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, damageSource));
+            // Victim record
+            DeathRecord deathRecord = new DeathRecord(gameTime, getTimeOrderAndIncrease(), victimGamePlayer, damageSource);
+            if (!eventPoster.postCustomEvent(new GamePlayerRecordEvent.DeathRecordEvent(statsManager, deathRecord))) {
+                statsManager.getGamePlayerStats(victimGamePlayer).addDeathRecord(deathRecord);
+            }
         }
 
         // ----记分板----

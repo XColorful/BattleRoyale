@@ -210,6 +210,10 @@ public class BattleRoyale {
     /**
      * @deprecated 除非需要深度定制, 否则不应该调用
      */
+    @Deprecated(forRemoval = false)
+    public static void setEventPoster(@NotNull ICustomEventPoster eventPoster) {
+        BattleRoyale.eventPoster = eventPoster;
+    }
     @Deprecated(forRemoval=false)
     public static void setGameManager(@NotNull IGameManager gameManager) {
         setGameManagerInternal(gameManager);
