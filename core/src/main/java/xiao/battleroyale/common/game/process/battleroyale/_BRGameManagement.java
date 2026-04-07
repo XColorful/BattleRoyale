@@ -20,7 +20,6 @@ import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.message.MessageManager;
-import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils;
 
@@ -197,7 +196,7 @@ public class _BRGameManagement {
         GamePlayer gamePlayer = _GameTeamManager.getGamePlayerByUUID(player.getUUID());
         GameSpectateResult result = getSpectateGameResult(gameManager, gamePlayer, isInGame);
 
-        if (EventPoster.postEvent(new GameSpectateEvent(gameManager, player, result))) {
+        if (BattleRoyale.getEventPoster().postCustomEvent(new GameSpectateEvent(gameManager, player, result))) {
             return GameSpectateResult.EVENT_CANCELED;
         }
 

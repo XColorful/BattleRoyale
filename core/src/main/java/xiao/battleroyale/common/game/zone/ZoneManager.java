@@ -7,6 +7,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.IModConfigManager;
+import xiao.battleroyale.api.event.ICustomEventPoster;
 import xiao.battleroyale.api.event.game.tick.ZoneTickEvent;
 import xiao.battleroyale.api.event.game.tick.ZoneTickFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
@@ -21,7 +22,6 @@ import xiao.battleroyale.common.message.zone.ZoneMessageManager;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager.ZoneConfig;
-import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.*;
@@ -159,7 +159,8 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
     @Override
     public void onGameTick(int gameTime) {
         IGameManager gameManager = BattleRoyale.getGameManager();
-        if (EventPoster.postEvent(new ZoneTickEvent(gameManager, gameTime))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new ZoneTickEvent(gameManager, gameTime))) {
             return;
         }
 
@@ -196,7 +197,7 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
             }
         }
         this.isTicking = false;
-        EventPoster.postEvent(new ZoneTickFinishEvent(gameManager, gameTime));
+        eventPoster.postCustomEvent(new ZoneTickFinishEvent(gameManager, gameTime));
 
         if (shouldStopGame) { // 在移除区域前执行，防止区域结束的tick没有发送消息
             clear(serverLevel);

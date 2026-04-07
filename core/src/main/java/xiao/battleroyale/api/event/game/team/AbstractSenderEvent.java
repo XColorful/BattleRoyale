@@ -31,6 +31,7 @@ public abstract class AbstractSenderEvent extends AbstractGameEvent {
     @Override
     public @NotNull CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         return super.createCommandSourceStack(source)
+                .withRotation(sender.getRotationVector())
                 .withEntity(sender);
     }
 

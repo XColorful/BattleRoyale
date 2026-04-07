@@ -18,7 +18,6 @@ import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
-import xiao.battleroyale.event.EventPoster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +68,7 @@ public class EntityFunc extends AbstractEventFunc {
         lootEntities.clear();
         lootEntities.addAll(LootGenerator.generateLootEntities(lootContext, entityConfig.entry));
 
-        if (EventPoster.postEvent(new EntityEvent(gameManager, zoneTickContext, protocol, jsonTag,
+        if (BattleRoyale.getEventPoster().postCustomEvent(new EntityEvent(gameManager, zoneTickContext, protocol, jsonTag,
                 lootEntities, lastLootEntities, nbt,
                 lootContext, entityConfig.entry))) {
             BattleRoyale.LOGGER.debug("Entity Func canceled");

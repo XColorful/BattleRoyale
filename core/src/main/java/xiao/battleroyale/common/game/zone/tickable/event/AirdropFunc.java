@@ -18,7 +18,6 @@ import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
-import xiao.battleroyale.event.EventPoster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +68,7 @@ public class AirdropFunc extends AbstractEventFunc {
         lootItems.clear();
         lootItems.addAll(LootGenerator.generateLootItem(lootContext, airdropConfig.entry));
 
-        EventPoster.postEvent(new AirdropEvent(gameManager, zoneTickContext, protocol, jsonTag,
+        BattleRoyale.getEventPoster().postCustomEvent(new AirdropEvent(gameManager, zoneTickContext, protocol, jsonTag,
                 lootItems, lastLootItems, nbt,
                 lootContext, airdropConfig.entry));
     }

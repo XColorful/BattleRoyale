@@ -38,6 +38,7 @@
 - lobbyDimension：大厅的规模，以lobbyCenter为中心向x、y、z正负方向扩展，最终为长方体
 - lobbyMuteki：大厅内是否无敌，对所有玩家生效
 - lobbyHeal：传送至大厅是否自动补满血量
+- lobbyChangeGamemode：传送至大厅是否修改成生存模式
 - dropInventory：是否在传送至大厅时吐出玩家背包物品
 - dropGameItemOnly：是否仅吐出物资刷新器刷新的物品
 - clearInventory：是否在传送至大厅时清除玩家背包
@@ -50,6 +51,7 @@
 	"lobbyDimension": "8.0,160.0,8.0",
 	"lobbyMuteki": false,
 	"lobbyHeal": false,
+	"lobbyChangeGamemode": true,
 	"dropInventory": true,
 	"dropGameItemOnly": true,
 	"clearInventory": true,
@@ -95,6 +97,7 @@
 - lobbyDimension: the size of the lobby, which expands in the positive and negative directions of x, y, and z with lobbyCenter as the center, and finally becomes a rectangular block
 - lobbyMuteki: whether player is invulnerable in lobby, this applies to all players
 - lobbyHeal: Whether to automatically replenish health when teleporting to the lobby
+- lobbyChangeGamemode: Whether to change the gamemode to survival mode when teleporting to the lobby
 - dropInventory: Whether to drop items in the player's inventory when teleporting to the lobby
 - dropGameItemOnly: Whether to only drop generated loot item
 - clearInventory: Whether to clear the player's inventory when teleporting to the lobby
@@ -107,6 +110,7 @@
 	"lobbyDimension": "8.0,160.0,8.0",
 	"lobbyMuteki": false,
 	"lobbyHeal": false,
+	"lobbyChangeGamemode": true,
 	"dropInventory": true,
 	"dropGameItemOnly": true,
 	"clearInventory": true,

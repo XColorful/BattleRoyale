@@ -13,6 +13,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.IModConfigManager;
+import xiao.battleroyale.api.event.ICustomEventPoster;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.event.custom.deathmatch.AddKillEvent;
 import xiao.battleroyale.api.game.IGameManager;
@@ -28,7 +29,6 @@ import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.ExtraRuleEntry;
-import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.*;
 
 import java.util.*;
@@ -299,7 +299,8 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     @Override
     public boolean addGamePlayerKill(GamePlayer gamePlayer, int addKill) {
         int preMaxKill = this.deathMatchData.getCurrentMaxKill();
-        if (EventPoster.postEvent(new AddKillEvent.AddPlayerKillEvent(this, preMaxKill, addKill, gamePlayer))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new AddKillEvent.AddPlayerKillEvent(this, preMaxKill, addKill, gamePlayer))) {
             BattleRoyale.LOGGER.debug("AddPlayerKillEvent canceled, skipped GamePlayer {} (addKill {})", gamePlayer.getNameWithId(), addKill);
             return false;
         }
@@ -315,7 +316,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
             BattleRoyale.LOGGER.debug("GamePlayer {} add {} kill and ticked {} zone func", gamePlayer.getNameWithId(), addKill, tickedFunc);
         }
 
-        EventPoster.postEvent(new AddKillEvent.AddPlayerKillFinishEvent(this, preMaxKill, addKill, gamePlayer));
+        eventPoster.postCustomEvent(new AddKillEvent.AddPlayerKillFinishEvent(this, preMaxKill, addKill, gamePlayer));
         return true;
     }
 
@@ -325,7 +326,8 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
         int preMaxKill = this.deathMatchData.getCurrentMaxKill();
 
-        if (EventPoster.postEvent(new AddKillEvent.AddTeamKillEvent(this, preMaxKill, addKill, gameTeam))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new AddKillEvent.AddTeamKillEvent(this, preMaxKill, addKill, gameTeam))) {
             BattleRoyale.LOGGER.debug("AddTeamKillEvent canceled, skipped GameTeam {} (addKill {})", gameTeam.getGameTeamId(), addKill);
             return false;
         }
@@ -339,7 +341,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
                     sendProgressBarToAll(gameManager.getServerLevel(), gameManager.getTeamManager().getGamePlayers(), current, this.targetKill);
                 }
             }
-            EventPoster.postEvent(new AddKillEvent.AddTeamKillFinishEvent(this, preMaxKill, addKill, gameTeam));
+            eventPoster.postCustomEvent(new AddKillEvent.AddTeamKillFinishEvent(this, preMaxKill, addKill, gameTeam));
             return true;
         } else {
             return false;

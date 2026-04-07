@@ -4,47 +4,41 @@ import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec2;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
-import xiao.battleroyale.api.event.ILivingAttackEvent;
+import xiao.battleroyale.api.event.IPlayerRespawnEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 
-public class ForgeLivingAttackEvent extends ForgeEvent implements ILivingAttackEvent {
+public class ForgePlayerRespawnEvent extends ForgeEvent implements IPlayerRespawnEvent {
 
-    protected LivingAttackEvent livingAttackEvent;
+    protected PlayerEvent.PlayerRespawnEvent playerRespawnEvent;
 
-    public ForgeLivingAttackEvent(Event event) {
+    public ForgePlayerRespawnEvent(Event event) {
         super(event);
-        if (event instanceof LivingAttackEvent eventIn) {
-            this.livingAttackEvent = eventIn;
+        if (event instanceof PlayerEvent.PlayerRespawnEvent eventIn) {
+            this.playerRespawnEvent = eventIn;
         } else {
-            throw new RuntimeException("Expected LivingAttackEvent but received: " + event.getClass().getName());
+            throw new RuntimeException("Expected PlayerRespawnEvent but received: " + event.getClass().getName());
         }
     }
     @Override public EventType getType() {
-        return EventType.LIVING_ATTACK_EVENT;
+        return EventType.PLAYER_RESPAWN_EVENT;
     }
 
     @Override
-    public @NotNull LivingEntity getEntity() {
-        return livingAttackEvent.getEntity();
+    public Player getEntity() {
+        return playerRespawnEvent.getEntity();
     }
 
     @Override
-    public @NotNull DamageSource getSource() {
-        return livingAttackEvent.getSource();
-    }
-
-    @Override
-    public float getDamageAmount() {
-        return livingAttackEvent.getAmount();
+    public boolean isEndConquered() {
+        return playerRespawnEvent.isEndConquered();
     }
 
     @Override
@@ -65,10 +59,13 @@ public class ForgeLivingAttackEvent extends ForgeEvent implements ILivingAttackE
         );
     }
 
-    @Override public String getTextName() {
+    @Override
+    public String getTextName() {
         return this.getEntity().getName().getString();
     }
-    @Override public Component getDisplayName() {
+
+    @Override
+    public Component getDisplayName() {
         return this.getEntity().getDisplayName();
     }
 }
