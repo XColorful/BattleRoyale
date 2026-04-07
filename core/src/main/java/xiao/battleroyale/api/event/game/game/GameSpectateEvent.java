@@ -36,6 +36,7 @@ public class GameSpectateEvent extends AbstractGameEvent {
     public @NotNull CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         return super.createCommandSourceStack(source)
                 .withPosition(player.position())
+                .withRotation(player.getRotationVector())
                 .withEntity(player);
     }
 

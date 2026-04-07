@@ -45,7 +45,7 @@ public class ForgePlayerLoggedOutEvent extends ForgeEvent implements IPlayerLogg
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
                 entity.position(),
-                Vec2.ZERO,
+                entity.getRotationVector(),
                 (ServerLevel) level,
                 CommandLevel.permission(4),
                 this.getTextName(),

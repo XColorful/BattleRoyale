@@ -66,19 +66,19 @@ public class ForgeEntityPlaceBlockEvent extends ForgeEvent implements IEntityPla
 
     @Override
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
-        Entity entity = getEntity();
+        Entity entity = this.getEntity();
         Level level = entity != null ? entity.level() : null;
         if (level != null && level.isClientSide()) return null;
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getBlockPos().getCenter(),
-                Vec2.ZERO,
+                entity != null ? entity.getRotationVector() : Vec2.ZERO,
                 (ServerLevel) level,
                 CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 level.getServer(),
-                this.getEntity()
+                entity
         );
     }
 

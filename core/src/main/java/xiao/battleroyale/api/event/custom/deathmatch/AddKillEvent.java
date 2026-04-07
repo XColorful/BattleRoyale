@@ -72,8 +72,8 @@ public abstract class AddKillEvent extends CustomEvent {
         @Override
         public @NotNull CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
             CommandSourceStack sourceStack = super.createCommandSourceStack(source)
-                    .withPosition(livingEntity != null ? livingEntity.position() : gamePlayer.getLastPos());
-            return livingEntity != null ? sourceStack.withEntity(livingEntity) : sourceStack;
+                    .withPosition(gamePlayer.getLastPos());
+            return livingEntity != null ? sourceStack.withRotation(livingEntity.getRotationVector()).withEntity(livingEntity) : sourceStack;
         }
 
         @Override public String getTextName() {
