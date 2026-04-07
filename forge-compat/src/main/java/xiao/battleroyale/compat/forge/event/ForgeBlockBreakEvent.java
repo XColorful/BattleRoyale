@@ -56,7 +56,7 @@ public class ForgeBlockBreakEvent extends ForgeEvent implements IBlockBreakEvent
 
     @Override
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
-        Entity entity = getPlayer();
+        Entity entity = this.getPlayer();
         Level level = entity.level();
         if (level != null && level.isClientSide()) return null;
         return new CommandSourceStack(

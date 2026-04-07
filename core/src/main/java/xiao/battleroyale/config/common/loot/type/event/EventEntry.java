@@ -4,11 +4,11 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.loot.LootEntryTag;
 import xiao.battleroyale.api.event.loot.generate.CustomGenerateEvent;
 import xiao.battleroyale.api.loot.data.ILootData;
 import xiao.battleroyale.common.loot.LootGenerator;
-import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.JsonUtils;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class EventEntry extends AbstractEventLootEntry {
     @Override
     public @NotNull <T extends BlockEntity> List<ILootData> generateLootData(LootGenerator.LootContext lootContext, @Nullable T target) {
         List<ILootData> lootData = new ArrayList<>();
-        if (EventPoster.postEvent(new CustomGenerateEvent<>(lootContext, target, protocol, jsonTag, lootData))) {
+        if (BattleRoyale.getEventPoster().postCustomEvent(new CustomGenerateEvent<>(lootContext, target, protocol, jsonTag, lootData))) {
             return lootData;
         } else {
             return Collections.emptyList();

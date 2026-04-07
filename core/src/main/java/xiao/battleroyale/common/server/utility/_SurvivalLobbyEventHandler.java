@@ -8,17 +8,17 @@ import xiao.battleroyale.api.event.*;
  * 优先级设置为HiGHEST，确保在其他伤害处理前执行
  *  * 注册该事件默认开启大厅无敌
  */
-public class SurvivalLobbyEventHandler implements IEventHandler {
+public class _SurvivalLobbyEventHandler implements IEventHandler {
 
     private static class SurvivalLobbyEventHandlerHolder {
-        private static final SurvivalLobbyEventHandler INSTANCE = new SurvivalLobbyEventHandler();
+        private static final _SurvivalLobbyEventHandler INSTANCE = new _SurvivalLobbyEventHandler();
     }
 
-    public static SurvivalLobbyEventHandler get() {
+    public static _SurvivalLobbyEventHandler get() {
         return SurvivalLobbyEventHandlerHolder.INSTANCE;
     }
 
-    private SurvivalLobbyEventHandler() {}
+    private _SurvivalLobbyEventHandler() {}
 
     @Override public String getEventHandlerName() {
         return String.format("%s:SurvivalLobbyEventHandler", BattleRoyale.MOD_ID);
@@ -37,7 +37,7 @@ public class SurvivalLobbyEventHandler implements IEventHandler {
     @Override
     public void handleEvent(EventType eventType, IEvent event){
         if (eventType == EventType.LIVING_ATTACK_EVENT){
-            if (SurvivalLobby.get().canMuteki(((ILivingAttackEvent) event).getEntity())) {
+            if (BattleRoyale.getServerManager().getUtilityManager().getSurvivalLobby().canMuteki(((ILivingAttackEvent) event).getEntity())) {
                 event.setCanceled(true);
             }
         } else {
