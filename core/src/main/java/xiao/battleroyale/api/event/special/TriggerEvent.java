@@ -65,16 +65,17 @@ public class TriggerEvent extends CustomEvent {
 
     @Override
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
+        @Nullable Entity triggerEntity = this.getTriggerEntity();
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getTriggerPos(),
-                Vec2.ZERO,
+                triggerEntity != null ? triggerEntity.getRotationVector() : Vec2.ZERO,
                 this.getTriggerLevel(),
                 CommandLevel.permission(4),
                 this.getTextName(),
                 this.getDisplayName(),
                 BattleRoyale.getMinecraftServer(),
-                this.getTriggerEntity()
+                triggerEntity
         );
     }
     public String getTextName() {

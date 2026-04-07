@@ -57,7 +57,6 @@ import xiao.battleroyale.config.common.game.stats.StatsConfigManager;
 import xiao.battleroyale.config.common.game.stats.StatsConfigManager.StatsConfig;
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.data.io.TempDataManager;
-import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.StringUtils;
 
@@ -423,7 +422,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             return;
         }
 
-        if (EventPoster.postEvent(new GameLoadEvent(this))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new GameLoadEvent(this))) {
             BattleRoyale.LOGGER.debug("GameLoadEvent canceled, skipped initGameConfig");
             return;
         }
@@ -438,7 +438,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
         if (_GameStarter.gameConfigAllReady(this)) {
             this.configPrepared = true;
-            EventPoster.postEvent(new GameLoadFinishEvent(this));
+            eventPoster.postCustomEvent(new GameLoadFinishEvent(this));
         } else {
             this.configPrepared = false;
         }
@@ -468,7 +468,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             }
         }
 
-        if (EventPoster.postEvent(new GameInitEvent(this))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new GameInitEvent(this))) {
             BattleRoyale.LOGGER.debug("GameInitEvent canceled, skipped initGame");
             return;
         }
@@ -485,7 +486,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             return;
         }
 
-        EventPoster.postEvent(new GameInitFinishEvent(this));
+        eventPoster.postCustomEvent(new GameInitFinishEvent(this));
     }
 
     /**
@@ -505,7 +506,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             }
         }
 
-        if (EventPoster.postEvent(new GameStartEvent(this))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new GameStartEvent(this))) {
             BattleRoyale.LOGGER.debug("GameStartEvent canceled, skipped startGame");
             return false;
         }
@@ -514,7 +516,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             _GameStarter.startGameSetup(this); // 子Manager成功了再启动(重置)GameManager
             this.inGame = true;
             GameInfoMessageManager.get().startGame(serverLevel);
-            EventPoster.postEvent(new GameStartFinishEvent(this));
+            eventPoster.postCustomEvent(new GameStartFinishEvent(this));
             return true;
         } else {
             stopGame(this.serverLevel);
@@ -556,7 +558,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         this.gameTime = gameTime;
 
         try {
-            if (EventPoster.postEvent(new GameTickEvent(this, gameTime))) {
+            ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+            if (eventPoster.postCustomEvent(new GameTickEvent(this, gameTime))) {
                 BattleRoyale.LOGGER.debug("GameTickEvent canceled, skipped onGameTick (gameTime:{})", gameTime);
                 return;
             }
@@ -565,7 +568,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
             this.gameProcessManager.onGameTick(gameTime);
 
             // 不保证执行时本局游戏尚未结束
-            EventPoster.postEvent(new GameTickFinishEvent(this, gameTime));
+            eventPoster.postCustomEvent(new GameTickFinishEvent(this, gameTime));
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("An unexpected exception occurred during game tick at time {}: {}", gameTime, e);
             if (this.serverLevel != null) {
@@ -589,7 +592,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         }
 
         List<GamePlayer> gamePlayers = teamManager.getGamePlayers();
-        if (EventPoster.postEvent(new GameCompleteEvent(this, hasWinner, gamePlayers))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new GameCompleteEvent(this, hasWinner, gamePlayers))) {
             BattleRoyale.LOGGER.debug("GameCompleteEvent canceled, skipped finishGame (gameTime:{}, hasWinner:{})", gameTime, hasWinner);
             return;
         }
@@ -598,7 +602,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
         stopGame(this.serverLevel);
 
-        EventPoster.postEvent(new GameCompleteFinishEvent(this, hasWinner, gamePlayers, getWinnerGamePlayers(), getWinnerGameTeams()));
+        eventPoster.postCustomEvent(new GameCompleteFinishEvent(this, hasWinner, gamePlayers, getWinnerGamePlayers(), getWinnerGameTeams()));
     }
 
     /**
@@ -606,7 +610,8 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
      */
     @Override
     public void stopGame(@Nullable ServerLevel serverLevel) {
-        EventPoster.postEvent(new GameStopEvent(this, serverLevel));
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        eventPoster.postCustomEvent(new GameStopEvent(this, serverLevel));
         gameLootManager.stopGame(serverLevel);
         zoneManager.stopGame(serverLevel);
         spawnManager.stopGame(serverLevel);
@@ -626,18 +631,19 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
 
         // 游戏中途若修改配置，在游戏结束后生效
         setGameLevelKey(ResourceKey.create(Registries.DIMENSION, BattleRoyale.getMcRegistry().createResourceLocation(this.gameLevelKeyString)));
-        EventPoster.postEvent(new GameStopFinishEvent(this, serverLevel));
+        eventPoster.postCustomEvent(new GameStopFinishEvent(this, serverLevel));
     }
 
     @Override public void onServerStopping() {
-        EventPoster.postEvent(new ServerStopEvent(this));
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        eventPoster.postCustomEvent(new ServerStopEvent(this));
         isStopping = true;
         stopGame(serverLevel);
         BattleRoyale.getEffectManager().forceEnd();
         setServerLevel(null); // 手动设置为null，单人游戏重启之后也就失效了
         BattleRoyale.LOGGER.debug("Server stopped, GameManager.serverLevel set to null");
         isStopping = false;
-        EventPoster.postEvent(new ServerStopFinishEvent(this));
+        eventPoster.postCustomEvent(new ServerStopFinishEvent(this));
     }
 
     // 获取大逃杀游戏ServerLevel
@@ -785,40 +791,44 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         gameProcessManager.onPlayerLoggedOut(isInGame(), player);
     }
     public void onPlayerDamage(ILivingDamageEvent event, @NotNull GamePlayer gamePlayer) {
-        if (EventPoster.postEvent(new GamePlayerDamageEvent(this, gamePlayer, event))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new GamePlayerDamageEvent(this, gamePlayer, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDamageEvent canceled, skipped onPlayerDamage (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
         if (gameProcessManager.onPlayerDamage(event, gamePlayer)) {
-            EventPoster.postEvent(new GamePlayerDamageFinishEvent(this, gamePlayer, event));
+            eventPoster.postCustomEvent(new GamePlayerDamageFinishEvent(this, gamePlayer, event));
         } else {
             BattleRoyale.LOGGER.debug("{} canceled onPlayerDamage", gameProcessManager.getManagerName());
         }
     }
     public void onPlayerDown(ILivingDeathEvent event, @NotNull GamePlayer gamePlayer) {
-        if (EventPoster.postEvent(new GamePlayerDownEvent(this, gamePlayer, event))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new GamePlayerDownEvent(this, gamePlayer, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDownEvent canceled, skipped onPlayerDown (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
         if (gameProcessManager.onPlayerDown(event, gamePlayer, getGameEntry().removeInvalidTeam)) {
-            EventPoster.postEvent(new GamePlayerDownFinishEvent(this, gamePlayer, event));
+            eventPoster.postCustomEvent(new GamePlayerDownFinishEvent(this, gamePlayer, event));
         } else {
             BattleRoyale.LOGGER.debug("{} canceled onPlayerDown", gameProcessManager.getManagerName());
         }
     }
     public void onPlayerRevived(@NotNull GamePlayer gamePlayer) {
-        if (EventPoster.postEvent(new GamePlayerReviveEvent(this, gamePlayer))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new GamePlayerReviveEvent(this, gamePlayer))) {
             BattleRoyale.LOGGER.debug("GamePlayerReviveEvent canceled, skipped onPlayerRevive (GamePlayer {})", gamePlayer.getNameWithId());
             return;
         }
         if (gameProcessManager.onPlayerRevived(gamePlayer)) {
-            EventPoster.postEvent(new GamePlayerReviveFinishEvent(this, gamePlayer));
+            eventPoster.postCustomEvent(new GamePlayerReviveFinishEvent(this, gamePlayer));
         } else {
             BattleRoyale.LOGGER.debug("{} canceled onPlayerRevived", gameProcessManager.getManagerName());
         }
     }
     public void onPlayerDeath(@Nullable ILivingDeathEvent event, @NotNull GamePlayer gamePlayer) {
-        if (EventPoster.postEvent(new GamePlayerDeathEvent(this, gamePlayer, event))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new GamePlayerDeathEvent(this, gamePlayer, event))) {
             BattleRoyale.LOGGER.debug("GamePlayerDeathEvent canceled, skipped onPlayerDeath (GamePlayer{})", gamePlayer.getNameWithId());
             return;
         }
@@ -827,7 +837,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         isInsidePlayerDeath = true;
         try {
             if (gameProcessManager.onPlayerDeath(event, this.serverLevel, gamePlayer)) {
-                EventPoster.postEvent(new GamePlayerDeathFinishEvent(this, gamePlayer, event));
+                eventPoster.postCustomEvent(new GamePlayerDeathFinishEvent(this, gamePlayer, event));
             } else {
                 BattleRoyale.LOGGER.debug("{} canceled onPlayerDeath", gameProcessManager.getManagerName());
             }

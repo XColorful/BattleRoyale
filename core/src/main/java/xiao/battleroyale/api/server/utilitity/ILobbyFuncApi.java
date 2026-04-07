@@ -10,7 +10,9 @@ public interface ILobbyFuncApi {
 
     boolean teleportToLobby(@NotNull LivingEntity livingEntity);
 
-    boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode, boolean teleportDropInventory, boolean teleportClearInventory);
+    boolean setLobby(Vec3 centerPos, Vec3 dimension,
+                     boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode,
+                     boolean teleportDropInventory, boolean teleportClearInventory);
 
     boolean setLobby(Vec3 coords, double radius);
 }
