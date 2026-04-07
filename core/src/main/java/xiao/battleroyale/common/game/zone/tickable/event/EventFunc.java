@@ -10,7 +10,6 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.ZoneManager.ZoneTickContext;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
-import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.GameUtils;
 
 public class EventFunc extends AbstractEventFunc {
@@ -31,7 +30,7 @@ public class EventFunc extends AbstractEventFunc {
         for (GamePlayer gamePlayer : zoneTickContext.gamePlayers) {
             if (zoneTickContext.spatialZone.isWithinZone(gamePlayer.getLastPos(), zoneTickContext.progress)) {
                 @Nullable LivingEntity livingEntity = GameUtils.getLivingEntity(zoneTickContext.serverLevel, gamePlayer.getPlayerUUID());
-                EventPoster.postEvent(new CustomZoneEvent(gameManager, zoneTickContext, this.protocol, this.jsonTag, gamePlayer, livingEntity));
+                BattleRoyale.getEventPoster().postCustomEvent(new CustomZoneEvent(gameManager, zoneTickContext, this.protocol, this.jsonTag, gamePlayer, livingEntity));
             }
         }
     }

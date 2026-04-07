@@ -8,7 +8,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.server.utility.IUtilityEntry;
 import xiao.battleroyale.api.config.common.server.utility.SurvivalEntryTag;
 import xiao.battleroyale.api.config.sub.IConfigAppliable;
-import xiao.battleroyale.common.server.utility.SurvivalLobby;
+import xiao.battleroyale.api.server.utilitity.ISurvivalLobbyManager;
 import xiao.battleroyale.util.JsonUtils;
 import xiao.battleroyale.util.StringUtils;
 
@@ -21,12 +21,14 @@ public class SurvivalEntry implements IUtilityEntry, IConfigAppliable {
     public Vec3 lobbyDimension;
     public boolean lobbyMuteki;
     public boolean lobbyHeal;
+    public boolean lobbyChangeGamemode;
     public boolean dropInventory;
     public boolean dropGameItemOnly;
     public boolean clearInventory;
     public boolean clearGameItemOnly;
 
-    public SurvivalEntry(String levelKey, boolean allowGamePlayerTeleport, Vec3 lobbyCenter, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal,
+    public SurvivalEntry(String levelKey, boolean allowGamePlayerTeleport,
+                         Vec3 lobbyCenter, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal, boolean lobbyChangeGamemode,
                          boolean dropInventory, boolean dropGameItemOnly, boolean clearInventory, boolean clearGameItemOnly) {
         this.levelKey = levelKey;
         this.allowGamePlayerTeleport = allowGamePlayerTeleport;
@@ -34,13 +36,15 @@ public class SurvivalEntry implements IUtilityEntry, IConfigAppliable {
         this.lobbyDimension = lobbyDimension;
         this.lobbyMuteki = lobbyMuteki;
         this.lobbyHeal = lobbyHeal;
+        this.lobbyChangeGamemode = lobbyChangeGamemode;
         this.dropInventory = dropInventory;
         this.dropGameItemOnly = dropGameItemOnly;
         this.clearInventory = clearInventory;
         this.clearGameItemOnly = clearGameItemOnly;
     }
     @Override public @NotNull SurvivalEntry copy() {
-        return new SurvivalEntry(levelKey, allowGamePlayerTeleport, lobbyCenter, lobbyDimension, lobbyMuteki, lobbyHeal,
+        return new SurvivalEntry(levelKey, allowGamePlayerTeleport,
+                lobbyCenter, lobbyDimension, lobbyMuteki, lobbyHeal, lobbyChangeGamemode,
                 dropInventory, dropGameItemOnly, clearInventory, clearGameItemOnly);
     }
 
@@ -73,19 +77,22 @@ public class SurvivalEntry implements IUtilityEntry, IConfigAppliable {
         }
         boolean lobbyMuteki = JsonUtils.getJsonBool(survivalLobbyObject, SurvivalEntryTag.LOBBY_MUTEKI, false);
         boolean lobbyHeal = JsonUtils.getJsonBool(survivalLobbyObject, SurvivalEntryTag.LOBBY_HEAL, false);
+        boolean lobbyChangeGamemode = JsonUtils.getJsonBool(survivalLobbyObject, SurvivalEntryTag.LOBBY_CHANGE_GAMEMODE, true);
         boolean dropInventory = JsonUtils.getJsonBool(survivalLobbyObject, SurvivalEntryTag.DROP_INVENTORY, true);
         boolean dropGameItemOnly = JsonUtils.getJsonBool(survivalLobbyObject, SurvivalEntryTag.DROP_GAME_ITEM_ONLY, true);
         boolean clearInventory = JsonUtils.getJsonBool(survivalLobbyObject, SurvivalEntryTag.CLEAR_INVENTORY, true);
         boolean clearGameItemOnly = JsonUtils.getJsonBool(survivalLobbyObject, SurvivalEntryTag.CLEAR_GAME_ITEM_ONLY, true);
 
-        return new SurvivalEntry(levelDimension, allowGamePlayerTeleport, lobbyCenter, lobbyDimension, lobbyMuteki, lobbyHeal,
+        return new SurvivalEntry(levelDimension, allowGamePlayerTeleport,
+                lobbyCenter, lobbyDimension, lobbyMuteki, lobbyHeal, lobbyChangeGamemode,
                 dropInventory, dropGameItemOnly, clearInventory, clearGameItemOnly);
     }
 
     @Override
     public void applyDefault() {
-        SurvivalLobby.get().setLobby(levelKey, allowGamePlayerTeleport,
-                lobbyCenter, lobbyDimension, lobbyMuteki, lobbyHeal,
+        ISurvivalLobbyManager survivalLobby = BattleRoyale.getServerManager().getUtilityManager().getSurvivalLobby();
+        survivalLobby.setLobby(levelKey, allowGamePlayerTeleport,
+                lobbyCenter, lobbyDimension, lobbyMuteki, lobbyHeal, lobbyChangeGamemode,
                 dropInventory, dropGameItemOnly, clearInventory, clearGameItemOnly);
     }
 
@@ -98,6 +105,7 @@ public class SurvivalEntry implements IUtilityEntry, IConfigAppliable {
         jsonObject.addProperty(SurvivalEntryTag.LOBBY_DIMENSION, StringUtils.vectorToString(lobbyDimension));
         jsonObject.addProperty(SurvivalEntryTag.LOBBY_MUTEKI, lobbyMuteki);
         jsonObject.addProperty(SurvivalEntryTag.LOBBY_HEAL, lobbyHeal);
+        jsonObject.addProperty(SurvivalEntryTag.LOBBY_CHANGE_GAMEMODE, lobbyChangeGamemode);
         jsonObject.addProperty(SurvivalEntryTag.DROP_INVENTORY, dropInventory);
         jsonObject.addProperty(SurvivalEntryTag.DROP_GAME_ITEM_ONLY, dropGameItemOnly);
         jsonObject.addProperty(SurvivalEntryTag.CLEAR_INVENTORY, clearInventory);

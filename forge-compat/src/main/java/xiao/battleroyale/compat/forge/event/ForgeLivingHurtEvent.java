@@ -60,7 +60,7 @@ public class ForgeLivingHurtEvent extends ForgeEvent implements ILivingHurtEvent
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
                 entity.position(),
-                Vec2.ZERO,
+                entity.getRotationVector(),
                 (ServerLevel) level,
                 CommandLevel.permission(4),
                 this.getTextName(),

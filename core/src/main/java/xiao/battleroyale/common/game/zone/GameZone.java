@@ -26,7 +26,6 @@ import xiao.battleroyale.common.game.zone.additional.ZoneSpecialHandler;
 import xiao.battleroyale.common.message.MessageManager;
 import xiao.battleroyale.config.common.game.zone.zonefunc.ZoneFuncType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
-import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.NBTUtils;
 import xiao.battleroyale.util.StringUtils;
 
@@ -114,12 +113,12 @@ public class GameZone implements IGameZone {
             addZoneDetailProperty();
             created = true;
             present = true;
-            EventPoster.postEvent(new ZoneCreatedEvent(BattleRoyale.getGameManager(), this, true));
+            BattleRoyale.getEventPoster().postCustomEvent(new ZoneCreatedEvent(BattleRoyale.getGameManager(), this, true));
         } else {
             addFailedZoneProperty();
             present = false;
             finished = true;
-            EventPoster.postEvent(new ZoneCreatedEvent(BattleRoyale.getGameManager(), this, false));
+            BattleRoyale.getEventPoster().postCustomEvent(new ZoneCreatedEvent(BattleRoyale.getGameManager(), this, false));
         }
     }
 
@@ -157,7 +156,7 @@ public class GameZone implements IGameZone {
     public void gameTick(ZoneContext zoneContext) {
         if (!shouldTick(zoneContext.gameTime)) {
             GameMessageManager.addZoneNbtMessage(this.zoneId, null); // 传入null视为提醒置空NBT
-            EventPoster.postEvent(new ZoneCompleteEvent(BattleRoyale.getGameManager(), this));
+            BattleRoyale.getEventPoster().postCustomEvent(new ZoneCompleteEvent(BattleRoyale.getGameManager(), this));
             return;
         }
 

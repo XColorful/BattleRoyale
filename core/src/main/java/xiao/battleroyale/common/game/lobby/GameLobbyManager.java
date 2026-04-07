@@ -14,6 +14,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.IConfigSubManager;
 import xiao.battleroyale.api.config.IModConfigManager;
+import xiao.battleroyale.api.event.ICustomEventPoster;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportEvent;
 import xiao.battleroyale.api.event.game.spawn.GameLobbyTeleportFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
@@ -28,7 +29,6 @@ import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.GameEntry;
-import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.Vec3Utils;
@@ -148,8 +148,9 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
 
     @Override public boolean teleportToLobby(@NotNull LivingEntity livingEntity) {
         IGameManager gameManager = BattleRoyale.getGameManager();
-        if (EventPoster.postEvent(new GameLobbyTeleportEvent(gameManager, livingEntity))) {
-            BattleRoyale.LOGGER.debug("GameLobbyManager: LobbyTeleportEvent canceled, skipped teleportToLobbyInGame (LivingEntity {})", livingEntity.getName().getString());
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new GameLobbyTeleportEvent(gameManager, livingEntity))) {
+            BattleRoyale.LOGGER.debug("GameLobbyManager: LobbyTeleportEvent canceled, skipped teleportToLobby (LivingEntity {})", livingEntity.getName().getString());
             return false;
         }
 
@@ -183,7 +184,7 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
             GameUtilsFunction.safeTeleport(livingEntity, lobbyPos);
         }
         BattleRoyale.LOGGER.info("Teleport livingEntity {} (UUID: {}) to lobby ({}, {}, {})", livingEntity.getName().getString(), livingEntity.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
-        EventPoster.postEvent(new GameLobbyTeleportFinishEvent(gameManager, livingEntity));
+        eventPoster.postCustomEvent(new GameLobbyTeleportFinishEvent(gameManager, livingEntity));
         return true;
     }
     @Override public void healPlayer(@NotNull LivingEntity livingEntity) {
@@ -197,7 +198,9 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
             player.getFoodData().setFoodLevel(20);
         }
     }
-    @Override public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode, boolean teleportDropInventory, boolean teleportClearInventory) {
+    @Override public boolean setLobby(Vec3 centerPos, Vec3 dimension,
+                                      boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode,
+                                      boolean teleportDropInventory, boolean teleportClearInventory) {
         if (BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, GameLobbyManager skipped set lobby");
             return false;
@@ -236,7 +239,7 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
         teleportToLobby(livingEntity);
     }
 
-    // --------GameApi--------
+    // --------ILobbyReadApi--------
 
     @Override public boolean isLobbyCreated() {
         // return configPrepared || ready || BattleRoyale.getGameManager().isInGame(); // 任意阶段均保证大厅已创建
@@ -326,6 +329,9 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
         }
     }
+
+    // --------IGameLobbyReadApi--------
+
     @Override public void sendLobbyTeleportMessage(@NotNull ServerPlayer player, boolean isWinner) {
         String toLobbyCommand = GameCommand.toLobbyCommand();
 
