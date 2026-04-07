@@ -72,7 +72,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     protected int minRank = Integer.MAX_VALUE;
     protected int maxRank = Integer.MIN_VALUE;
     public static int DEFAULT_RANK = -1;
-    protected String startotherTime = ""; // 系统时间
+    protected String startSystemTime = ""; // 系统时间
     protected int totalPlayers = 0;
     protected boolean recordStats = false;
     public boolean shouldRecordStats() { return recordStats; }
@@ -219,12 +219,13 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     private void clearStats() {
         this.statsData.clear();
         timeOrder = 0;
+        startSystemTime = "";
         minRank = Integer.MAX_VALUE;
         maxRank = Integer.MIN_VALUE;
     }
     @Override
     public boolean startGame(ServerLevel serverLevel) {
-        startotherTime = StringUtils.getTimestampString();
+        startSystemTime = StringUtils.getTimestampString();
         totalPlayers = _GameTeamManager.getGamePlayers().size();
         this.statsData.addRecordGamePlayers(_GameTeamManager.getStandingGamePlayers());
 
@@ -343,7 +344,7 @@ public class StatsManager extends AbstractGameManager implements IStatsManager, 
     }
 
     private String generateStateDirectory() {
-        String fileName = startotherTime + "_" + totalPlayers + ".json";
+        String fileName = startSystemTime + "_" + totalPlayers + ".json";
         return Paths.get(STATS_PATH, fileName).toString();
     }
     public String getStatsFilePath() {

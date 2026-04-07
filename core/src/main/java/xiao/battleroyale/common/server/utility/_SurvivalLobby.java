@@ -17,80 +17,87 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.event.ICustomEventPoster;
+import xiao.battleroyale.api.event.server.utility.SurvivalLobbyTeleportEvent;
+import xiao.battleroyale.api.event.server.utility.SurvivalLobbyTeleportFinishEvent;
 import xiao.battleroyale.api.game.IGameIdReadApi;
-import xiao.battleroyale.api.server.utilitity.ILobbyReadApi;
+import xiao.battleroyale.api.server.IServerManager;
+import xiao.battleroyale.api.server.utilitity.ISurvivalLobbyManager;
 import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.Vec3Utils;
 
-public class SurvivalLobby implements ILobbyReadApi {
+public class _SurvivalLobby implements ISurvivalLobbyManager {
 
     private static class SurvivalLobbyHolder {
-        private static final SurvivalLobby INSTANCE = new SurvivalLobby();
+        private static final _SurvivalLobby INSTANCE = new _SurvivalLobby();
     }
 
-    public static SurvivalLobby get() {
+    public static _SurvivalLobby get() {
         return SurvivalLobbyHolder.INSTANCE;
     }
 
-    private SurvivalLobby() {}
+    protected _SurvivalLobby() {}
 
     public static void init(McSide mcSide) {
         ;
     }
 
-    private String levelKeyString;
-    private ResourceKey<Level> levelKey;
-    private boolean allowGamePlayerTeleport = false;
-    private Vec3 lobbyPos;
-    private Vec3 lobbyDimension;
-    private boolean lobbyMuteki = false;
-    private boolean lobbyHeal = false;
-    private boolean dropInventory = true;
-    private boolean dropGameItemOnly = true;
-    private boolean clearInventory = true;
-    private boolean clearGameItemOnly = true;
+    protected String levelKeyString;
+    protected ResourceKey<Level> levelKey;
+    protected boolean allowGamePlayerTeleport = false;
+    protected Vec3 lobbyPos;
+    protected Vec3 lobbyDimension;
+    protected boolean lobbyMuteki = false;
+    protected boolean lobbyHeal = false;
+    protected boolean changeGamemode = true;
+    protected boolean teleportDropInventory = true;
+    protected boolean dropGameItemOnly = true;
+    protected boolean teleportClearInventory = true;
+    protected boolean clearGameItemOnly = true;
 
-    public void healPlayer(@NotNull ServerPlayer player) {
-        if (PlayerRevive.get().isBleeding(player)) {
-            PlayerRevive.get().revive(player);
+    // --------ILobbyFuncApi--------
+
+    @Override public boolean teleportToLobby(@NotNull LivingEntity livingEntity) {
+        @Nullable ServerPlayer serverPlayer = livingEntity instanceof ServerPlayer player ? player : null;
+        IServerManager serverManager = BattleRoyale.getServerManager();
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new SurvivalLobbyTeleportEvent(serverManager, livingEntity))) {
+            BattleRoyale.LOGGER.debug("SurvivalLobbyManager: LobbyTeleportEvent canceled, skipped teleportToLobby (LivingEntity {})", livingEntity.getName().getString());
+            return false;
         }
-        player.removeAllEffects();
-        player.heal(player.getMaxHealth()); // heal会触发事件
-        player.getFoodData().setFoodLevel(20);
-    }
 
-    public void teleportToLobby(@NotNull ServerPlayer player) {
         if (!isLobbyCreated()) {
-            BattleRoyale.LOGGER.debug("Survival lobby is not created, failed to teleport player {} (UUID:{}) to lobby", player.getName().getString(), player.getUUID());
-            ChatUtils.sendTranslatableMessageToPlayer(player, "battleroyale.message.no_lobby");
-            return;
+            BattleRoyale.LOGGER.debug("Survival lobby is not created, failed to teleport livingEntity {} (UUID:{}) to lobby", livingEntity.getName().getString(), livingEntity.getUUID());
+            if (serverPlayer != null) ChatUtils.sendTranslatableMessageToPlayer(serverPlayer, "battleroyale.message.no_lobby");
+            return false;
         }
-        if (!allowGamePlayerTeleport && _GameTeamManager.hasStandingGamePlayer(player.getUUID())) {
-            ChatUtils.sendTranslatableMessageToPlayer(player, "battleroyale.message.not_allow_standing_gameplayer_teleport");
-            return;
+
+        if (!allowGamePlayerTeleport && _GameTeamManager.hasStandingGamePlayer(livingEntity.getUUID())) {
+            if (serverPlayer != null) ChatUtils.sendTranslatableMessageToPlayer(serverPlayer, "battleroyale.message.not_allow_standing_gameplayer_teleport");
+            return false;
         }
 
         // 获取大厅所在维度ServerLevel
-        MinecraftServer server = player.getServer();
+        MinecraftServer server = livingEntity.getServer();
         if (server == null) {
-            BattleRoyale.LOGGER.warn("Failed to get MinecraftServer from ServerPlayer {} (UUID:{})", player.getName().getString(), player.getUUID());
-            ChatUtils.sendMessageToPlayer(player, "Failed to get player's server");
-            return;
+            BattleRoyale.LOGGER.warn("Failed to get MinecraftServer from LivingEntity {} (UUID:{})", livingEntity.getName().getString(), livingEntity.getUUID());
+            if (serverPlayer != null) ChatUtils.sendMessageToPlayer(serverPlayer, "Failed to get player's server");
+            return false;
         }
         ServerLevel serverLevel = server.getLevel(levelKey);
         if (serverLevel == null) {
-            ChatUtils.sendTranslatableMessageToPlayer(player, "battleroyale.message.failed_lobby_teleport");
             BattleRoyale.LOGGER.warn("Failed to get ServerLevel by ResourceKey<Level>: {}, original string: {}", levelKey, levelKeyString);
-            return;
+            if (serverPlayer != null) ChatUtils.sendTranslatableMessageToPlayer(serverPlayer, "battleroyale.message.failed_lobby_teleport");
+            return false;
         }
 
-        if (dropInventory) {
+        if (serverPlayer != null && teleportDropInventory) {
             if (dropGameItemOnly) {
                 IGameIdReadApi gameIdReadApi = BattleRoyale.getGameManager().getGameIdReadApi();
-                Inventory inventory = player.getInventory();
+                Inventory inventory = serverPlayer.getInventory();
                 int keepCount = 0;
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
                     ItemStack itemStack = inventory.getItem(i);
@@ -98,23 +105,23 @@ public class SurvivalLobby implements ILobbyReadApi {
                         continue;
                     }
                     if (gameIdReadApi.getGameId(itemStack) != null) {
-                        player.drop(itemStack, true, false);
+                        serverPlayer.drop(itemStack, true, false);
                         inventory.setItem(i, ItemStack.EMPTY);
                     } else {
                         keepCount++;
                     }
                 }
-                BattleRoyale.LOGGER.info("DropGameItemOnly: {} has {} without gameId", player.getName().getString(), keepCount);
+                BattleRoyale.LOGGER.info("DropGameItemOnly: {} has {} without gameId", serverPlayer.getName().getString(), keepCount);
             } else {
-                player.getInventory().dropAll();
+                serverPlayer.getInventory().dropAll();
             }
-            BattleRoyale.LOGGER.debug("Droped {}'s inventory", player.getName().getString());
+            BattleRoyale.LOGGER.debug("Dropped {}'s inventory", serverPlayer.getName().getString());
         }
 
-        if (clearInventory) {
+        if (serverPlayer != null && teleportClearInventory) {
             if (clearGameItemOnly) { // 仅清理带GameId的物品
                 IGameIdReadApi gameIdReadApi = BattleRoyale.getGameManager().getGameIdReadApi();
-                Inventory inventory = player.getInventory();
+                Inventory inventory = serverPlayer.getInventory();
                 int keepCount = 0;
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
                     ItemStack itemStack = inventory.getItem(i);
@@ -127,24 +134,49 @@ public class SurvivalLobby implements ILobbyReadApi {
                         keepCount++;
                     }
                 }
-                BattleRoyale.LOGGER.info("ClearGameItemOnly: {} has {} without gameId", player.getName().getString(), keepCount);
+                BattleRoyale.LOGGER.info("ClearGameItemOnly: {} has {} without gameId", serverPlayer.getName().getString(), keepCount);
             } else {
-                player.getInventory().clearContent();
+                serverPlayer.getInventory().clearContent();
             }
-            BattleRoyale.LOGGER.debug("Cleared {}'s inventory", player.getName().getString());
+            BattleRoyale.LOGGER.debug("Cleared {}'s inventory", serverPlayer.getName().getString());
         }
 
         if (lobbyHeal) {
-            healPlayer(player);
+            healPlayer(livingEntity);
         }
-        player.setGameMode(GameType.SURVIVAL);
-        GameUtilsFunction.safeTeleport(player, serverLevel, lobbyPos, 0, 0); // 生存大厅传送
-        BattleRoyale.LOGGER.info("Teleport player {} (UUID:{}) to lobby ({}, {}, {})", player.getName().getString(), player.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
+        if (serverPlayer != null && changeGamemode) {
+            serverPlayer.setGameMode(GameType.SURVIVAL);
+        }
+        GameUtilsFunction.safeTeleport(livingEntity, serverLevel, lobbyPos, 0, 0); // 生存大厅传送
+        BattleRoyale.LOGGER.info("Teleport livingEntity {} (UUID:{}) to lobby ({}, {}, {})", livingEntity.getName().getString(), livingEntity.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
+        eventPoster.postCustomEvent(new SurvivalLobbyTeleportFinishEvent(serverManager, livingEntity));
+        return true;
     }
-
+    @Override public void healPlayer(@NotNull LivingEntity livingEntity) {
+        @Nullable ServerPlayer player = livingEntity instanceof ServerPlayer serverPlayer ? serverPlayer : null;
+        if (player != null && PlayerRevive.get().isBleeding(player)) {
+            PlayerRevive.get().revive(player);
+        }
+        livingEntity.removeAllEffects();
+        livingEntity.heal(livingEntity.getMaxHealth()); // heal会触发事件
+        if (player != null) {
+            player.getFoodData().setFoodLevel(20);
+        }
+    }
+    @Override public boolean setLobby(Vec3 centerPos, double radius) {
+        return setLobby(centerPos, new Vec3(radius, radius, radius), this.lobbyMuteki, this.lobbyHeal, this.changeGamemode, this.teleportDropInventory, this.teleportClearInventory);
+    }
+    @Override public boolean setLobby(Vec3 centerPos, Vec3 dimension,
+                            boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode,
+                            boolean teleportDropInventory, boolean teleportClearInventory) {
+        return setLobby(this.levelKeyString, this.allowGamePlayerTeleport,
+                centerPos, dimension, shouldHeal, shouldHeal, changeGamemode,
+                teleportDropInventory, this.dropGameItemOnly, teleportClearInventory, this.clearGameItemOnly);
+    }
+    @Override
     public boolean setLobby(String levelKeyString, boolean allowGamePlayerTeleport,
-                            Vec3 lobbyPos, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal,
-                            boolean dropInventory, boolean dropGameItemOnly, boolean clearInventory, boolean clearGameItemOnly) {
+                            Vec3 lobbyPos, Vec3 lobbyDimension, boolean lobbyMuteki, boolean lobbyHeal, boolean changeGamemode,
+                            boolean teleportDropInventory, boolean dropGameItemOnly, boolean teleportClearInventory, boolean clearGameItemOnly) {
         if (Vec3Utils.hasNegative(lobbyDimension)) {
             BattleRoyale.LOGGER.warn("SurvivalLobby: dimension:{} has negative, reject to apply", lobbyDimension);
             return false;
@@ -156,15 +188,16 @@ public class SurvivalLobby implements ILobbyReadApi {
         this.lobbyPos = lobbyPos;
         this.lobbyMuteki = lobbyMuteki;
         if (this.lobbyMuteki) {
-            SurvivalLobbyEventHandler.register();
+            _SurvivalLobbyEventHandler.register();
         } else {
-            SurvivalLobbyEventHandler.unregister();
+            _SurvivalLobbyEventHandler.unregister();
         }
         this.lobbyHeal = lobbyHeal;
+        this.changeGamemode = changeGamemode;
         this.lobbyDimension = lobbyDimension;
-        this.dropInventory = dropInventory;
+        this.teleportDropInventory = teleportDropInventory;
         this.dropGameItemOnly = dropGameItemOnly;
-        this.clearInventory = clearInventory;
+        this.teleportClearInventory = teleportClearInventory;
         this.clearGameItemOnly = clearGameItemOnly;
         BattleRoyale.LOGGER.debug("Successfully set survival lobby: levelKey:{}, center{}, dim{}", levelKey, lobbyPos, lobbyDimension);
         return true;
@@ -191,13 +224,13 @@ public class SurvivalLobby implements ILobbyReadApi {
         return this.lobbyHeal;
     }
     @Override public boolean lobbyChangeGamemode() {
-        return true;
+        return this.changeGamemode;
     }
     @Override public boolean teleportDropInventory() {
-        return this.dropInventory;
+        return this.teleportDropInventory;
     }
     @Override public boolean teleportClearInventory() {
-        return this.clearInventory;
+        return this.teleportClearInventory;
     }
 
     @Override public boolean isInLobbyRange(Vec3 pos) {

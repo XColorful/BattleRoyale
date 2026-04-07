@@ -80,13 +80,13 @@ public class ForgeBlockToolModificationEvent extends ForgeEvent implements IBloc
 
     @Override
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
-        Entity entity = getPlayer();
+        Entity entity = this.getPlayer();
         Level level = entity != null ? entity.level() : null;
         if (level != null && level.isClientSide()) return null;
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getBlockPos().getCenter(),
-                Vec2.ZERO,
+                entity != null ? entity.getRotationVector() : Vec2.ZERO,
                 (ServerLevel) level,
                 CommandLevel.permission(4),
                 this.getTextName(),

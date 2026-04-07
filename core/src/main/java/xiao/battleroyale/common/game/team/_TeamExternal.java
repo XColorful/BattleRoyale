@@ -18,7 +18,6 @@ import xiao.battleroyale.api.event.game.team.RequestPlayerCompleteEvent;
 import xiao.battleroyale.api.event.game.team.RequestPlayerEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.command.sub.TeamCommand;
-import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.ChatUtils;
 
 import java.util.ArrayList;
@@ -106,7 +105,7 @@ public class _TeamExternal {
             return;
         }
 
-        if (EventPoster.postEvent(new InvitePlayerEvent(BattleRoyale.getGameManager(), senderGamePlayer, sender, targetPlayer))) {
+        if (BattleRoyale.getEventPoster().postCustomEvent(new InvitePlayerEvent(BattleRoyale.getGameManager(), senderGamePlayer, sender, targetPlayer))) {
             BattleRoyale.LOGGER.debug("InvitePlayerEvent canceled, skipped invitePlayer ({} to {})", senderGamePlayer.getNameWithId(), targetPlayer.getName().getString());
             return;
         }
@@ -161,7 +160,7 @@ public class _TeamExternal {
             return;
         }
 
-        if (EventPoster.postEvent(new InvitePlayerCompleteEvent(gameManager, senderPlayer, player, true))) {
+        if (BattleRoyale.getEventPoster().postCustomEvent(new InvitePlayerCompleteEvent(gameManager, senderPlayer, player, true))) {
             BattleRoyale.LOGGER.debug("InvitePlayerCompleteEvent canceled, skipped acceptInvite ({} to {})", senderPlayer.getName().getString(), player.getName().getString());
             return;
         }
@@ -205,7 +204,7 @@ public class _TeamExternal {
             return;
         }
 
-        if (EventPoster.postEvent(new InvitePlayerCompleteEvent(gameManager, senderPlayer, player, false))) {
+        if (BattleRoyale.getEventPoster().postCustomEvent(new InvitePlayerCompleteEvent(gameManager, senderPlayer, player, false))) {
             BattleRoyale.LOGGER.debug("InvitePlayerCompleteEvent canceled, skipped declineInvite ({} to {})", senderPlayer.getName().getString(), player.getName().getString());
             return;
         }
@@ -242,7 +241,7 @@ public class _TeamExternal {
             return;
         }
 
-        if (EventPoster.postEvent(new RequestPlayerEvent(gameManager, sender, targetGamePlayer, targetPlayer))) {
+        if (BattleRoyale.getEventPoster().postCustomEvent(new RequestPlayerEvent(gameManager, sender, targetGamePlayer, targetPlayer))) {
             BattleRoyale.LOGGER.debug("RequestPlayerEvent canceled, skipped requestPlayer ({} to {})", sender.getName().getString(), targetGamePlayer.getNameWithId());
             return;
         }
@@ -316,7 +315,7 @@ public class _TeamExternal {
             return;
         }
 
-        if (EventPoster.postEvent(new RequestPlayerCompleteEvent(gameManager, requesterPlayer, teamLeader, true))) {
+        if (BattleRoyale.getEventPoster().postCustomEvent(new RequestPlayerCompleteEvent(gameManager, requesterPlayer, teamLeader, true))) {
             BattleRoyale.LOGGER.debug("RequestPlayerCompleteEvent canceled, skipped acceptRequest ({} to {})", requesterPlayer, teamLeader);
             return;
         }
@@ -361,7 +360,7 @@ public class _TeamExternal {
             return;
         }
 
-        if (EventPoster.postEvent(new RequestPlayerCompleteEvent(gameManager, requesterPlayer, teamLeader, false))) {
+        if (BattleRoyale.getEventPoster().postCustomEvent(new RequestPlayerCompleteEvent(gameManager, requesterPlayer, teamLeader, false))) {
             BattleRoyale.LOGGER.debug("RequestPlayerCompleteEvent canceled, skipped declineRequest ({} to {})", requesterPlayer, teamLeader);
             return;
         }
