@@ -118,6 +118,11 @@ public class AllFunction {
                         // generate
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_custom_generate", CustomEventType.CUSTOM_GENERATE_EVENT.getName(),
                                 EventPriority.HIGHEST, true, null),
+                        // utility
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_survival_lobby_teleport", CustomEventType.SURVIVAL_LOBBY_TELEPORT_EVENT.getName(),
+                                EventPriority.HIGHEST, true, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_survival_lobby_teleport_finish", CustomEventType.SURVIVAL_LOBBY_TELEPORT_FINISH_EVENT.getName(),
+                                EventPriority.LOWEST, false, null),
                         // special
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_register_manager", CustomEventType.REGISTER_MANAGER_EVENT.getName(),
                                 EventPriority.LOWEST, false, null),

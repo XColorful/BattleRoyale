@@ -150,7 +150,7 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
         IGameManager gameManager = BattleRoyale.getGameManager();
         ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
         if (eventPoster.postCustomEvent(new GameLobbyTeleportEvent(gameManager, livingEntity))) {
-            BattleRoyale.LOGGER.debug("GameLobbyManager: LobbyTeleportEvent canceled, skipped teleportToLobbyInGame (LivingEntity {})", livingEntity.getName().getString());
+            BattleRoyale.LOGGER.debug("GameLobbyManager: LobbyTeleportEvent canceled, skipped teleportToLobby (LivingEntity {})", livingEntity.getName().getString());
             return false;
         }
 
@@ -198,7 +198,9 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
             player.getFoodData().setFoodLevel(20);
         }
     }
-    @Override public boolean setLobby(Vec3 centerPos, Vec3 dimension, boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode, boolean teleportDropInventory, boolean teleportClearInventory) {
+    @Override public boolean setLobby(Vec3 centerPos, Vec3 dimension,
+                                      boolean shouldMuteki, boolean shouldHeal, boolean changeGamemode,
+                                      boolean teleportDropInventory, boolean teleportClearInventory) {
         if (BattleRoyale.getGameManager().isInGame()) {
             BattleRoyale.LOGGER.debug("GameManager is in game, GameLobbyManager skipped set lobby");
             return false;
@@ -237,7 +239,7 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
         teleportToLobby(livingEntity);
     }
 
-    // --------GameApi--------
+    // --------ILobbyReadApi--------
 
     @Override public boolean isLobbyCreated() {
         // return configPrepared || ready || BattleRoyale.getGameManager().isInGame(); // 任意阶段均保证大厅已创建
@@ -327,6 +329,9 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.no_lobby").withStyle(ChatFormatting.RED));
         }
     }
+
+    // --------IGameLobbyReadApi--------
+
     @Override public void sendLobbyTeleportMessage(@NotNull ServerPlayer player, boolean isWinner) {
         String toLobbyCommand = GameCommand.toLobbyCommand();
 

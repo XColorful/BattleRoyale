@@ -7,6 +7,7 @@ import xiao.battleroyale.api.event.ICustomEventPoster;
 import xiao.battleroyale.event.client.ClientRenderEventHandler;
 import xiao.battleroyale.event.game.*;
 import xiao.battleroyale.event.loot.LootGenerateEventsHandler;
+import xiao.battleroyale.event.server.ServerUtilityEventsHandler;
 import xiao.battleroyale.event.special.RegisterManagerEventsHandler;
 import xiao.battleroyale.event.special.TriggerEventsHandler;
 
@@ -80,6 +81,9 @@ public class EventPoster implements ICustomEventPoster {
             case CUSTOM_GENERATE_EVENT -> LootGenerateEventsHandler.get().handleEvent(customEvent);
             // client
             case SPECIAL_ZONE_RENDER_EVENT -> ClientRenderEventHandler.get().handleEvent(customEvent);
+            // utility
+            case SURVIVAL_LOBBY_TELEPORT_EVENT -> ServerUtilityEventsHandler.get().handleEvent(customEvent);
+            case SURVIVAL_LOBBY_TELEPORT_FINISH_EVENT -> ServerUtilityEventsHandler.get().handleEvent(customEvent);
             // special
             case REGISTER_MANAGER_EVENT -> RegisterManagerEventsHandler.get().handleEvent(customEvent);
             case TRIGGER_EVENT -> TriggerEventsHandler.get().handleEvent(customEvent);
