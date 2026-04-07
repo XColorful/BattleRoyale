@@ -60,6 +60,9 @@ public enum CustomEventType {
     CUSTOM_GENERATE_EVENT,
     // client
     SPECIAL_ZONE_RENDER_EVENT,
+    // utility
+    SURVIVAL_LOBBY_TELEPORT_EVENT,
+    SURVIVAL_LOBBY_TELEPORT_FINISH_EVENT,
     // special
     REGISTER_MANAGER_EVENT,
     TRIGGER_EVENT,
@@ -136,6 +139,9 @@ public enum CustomEventType {
                     CUSTOM_GENERATE_EVENT.getName(),
                     // client
 //                    SPECIAL_ZONE_RENDER_EVENT.getName(),
+                    // utility
+                    SURVIVAL_LOBBY_TELEPORT_EVENT.getName(),
+                    SURVIVAL_LOBBY_TELEPORT_FINISH_EVENT.getName(),
                     // register
                     REGISTER_MANAGER_EVENT.getName(),
                     TRIGGER_EVENT.getName()

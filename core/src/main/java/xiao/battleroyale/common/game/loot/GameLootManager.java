@@ -10,6 +10,7 @@ import xiao.battleroyale.algorithm.BfsCalculator.Offset2D;
 import xiao.battleroyale.api.common.ISideOnly;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.config.common.loot.ILootConfigManager;
+import xiao.battleroyale.api.event.ICustomEventPoster;
 import xiao.battleroyale.api.event.game.tick.GameLootBfsEvent;
 import xiao.battleroyale.api.event.game.tick.GameLootBfsFinishEvent;
 import xiao.battleroyale.api.event.game.tick.GameLootEvent;
@@ -22,7 +23,6 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.common.loot.LootGenerator.LootContext;
 import xiao.battleroyale.config.common.server.performance.type.GeneratorEntry;
-import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.ClassUtils;
 
 import java.util.*;
@@ -195,7 +195,8 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
      */
     public void onGameTick(int gameTime) {
         IGameManager gameManager = BattleRoyale.getGameManager();
-        if (EventPoster.postEvent(new GameLootEvent(gameManager, gameTime))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new GameLootEvent(gameManager, gameTime))) {
             return;
         }
 
@@ -241,7 +242,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
             BattleRoyale.LOGGER.debug("Cleaned {} cached center chunks. Remaining: {}", chunksToRemove, cachedPlayerCenterChunks.size());
         }
 
-        EventPoster.postEvent(new GameLootFinishEvent(gameManager, gameTime,
+        eventPoster.postCustomEvent(new GameLootFinishEvent(gameManager, gameTime,
                 lastProcessedCount, clearedCachedChunk, clearedPlayerCenterChunk));
     }
 
@@ -276,7 +277,8 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
      */
     protected void bfsQueuedChunkAsync() {
         IGameManager gameManager = BattleRoyale.getGameManager();
-        if (EventPoster.postEvent(new GameLootBfsEvent(gameManager, gameManager.getGameTime(), lastBfsProcessedLoot))) {
+        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
+        if (eventPoster.postCustomEvent(new GameLootBfsEvent(gameManager, gameManager.getGameTime(), lastBfsProcessedLoot))) {
             BattleRoyale.LOGGER.debug("GameLootBfsEvent canceled, skipped bfsQueuedChunkAsync");
             return;
         }
@@ -346,7 +348,7 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
 
         // 记录任务结束时间
         long endTime = System.nanoTime();
-        EventPoster.postEvent(new GameLootBfsFinishEvent(gameManager, gameManager.getGameTime(), startTime, endTime, oldQueueSize));
+        eventPoster.postCustomEvent(new GameLootBfsFinishEvent(gameManager, gameManager.getGameTime(), startTime, endTime, oldQueueSize));
     }
 
     protected int processLootGeneration() {

@@ -10,7 +10,6 @@ import xiao.battleroyale.api.client.render.level.IClientSimpleZoneRenderer;
 import xiao.battleroyale.api.event.client.render.SpecialZoneRenderEvent;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
-import xiao.battleroyale.event.EventPoster;
 import xiao.battleroyale.util.JsonUtils;
 
 public class AdditionalRender extends AbstractZoneSpecial {
@@ -54,6 +53,6 @@ public class AdditionalRender extends AbstractZoneSpecial {
     @Override
     public void additionalZoneRender(IRenderLevelStageEvent event, IClientSimpleZoneRenderer clientZoneRenderer, ClientSingleZoneData zoneData) {
         if (BattleRoyale.getMcSide().isServerSide()) return;
-        EventPoster.postEvent(new SpecialZoneRenderEvent(BattleRoyale.getClientGameDataManager(), protocol, jsonTag.deepCopy(), event, clientZoneRenderer, zoneData));
+        BattleRoyale.getEventPoster().postCustomEvent(new SpecialZoneRenderEvent(BattleRoyale.getClientGameDataManager(), protocol, jsonTag.deepCopy(), event, clientZoneRenderer, zoneData));
     }
 }

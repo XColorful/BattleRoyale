@@ -20,6 +20,7 @@ public class ForgeEventRegister implements IEventRegister {
             case LIVING_DEATH_EVENT -> LivingDeathEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_IN_EVENT -> PlayerLoggedInEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_OUT_EVENT -> PlayerLoggedOutEventManager.register(eventHandler, priority, receiveCanceled);
+            case PLAYER_RESPAWN_EVENT -> PlayerRespawnEventManager.register(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_EVENT -> EntityInteractEventManager.register(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_SPECIFIC_EVENT -> EntityInteractSpecificEventManager.register(eventHandler, priority, receiveCanceled);
             case LEFT_CLICK_BLOCK_EVENT -> LeftClickBlockEventManager.register(eventHandler, priority, receiveCanceled);
@@ -51,6 +52,7 @@ public class ForgeEventRegister implements IEventRegister {
             case LIVING_DEATH_EVENT -> LivingDeathEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_IN_EVENT -> PlayerLoggedInEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_OUT_EVENT -> PlayerLoggedOutEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case PLAYER_RESPAWN_EVENT -> PlayerRespawnEventManager.unregister(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_EVENT -> EntityInteractEventManager.unregister(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_SPECIFIC_EVENT -> EntityInteractSpecificEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LEFT_CLICK_BLOCK_EVENT -> LeftClickBlockEventManager.unregister(eventHandler, priority, receiveCanceled);
