@@ -20,6 +20,7 @@ public class NeoEventRegister implements IEventRegister {
             case LIVING_DEATH_EVENT -> NeoLivingDeathEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_IN_EVENT -> NeoPlayerLoggedInEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_OUT_EVENT -> NeoPlayerLoggedOutEventManager.register(eventHandler, priority, receiveCanceled);
+            case PLAYER_RESPAWN_EVENT -> NeoPlayerRespawnEventManager.register(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_EVENT -> NeoEntityInteractEventManager.register(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_SPECIFIC_EVENT -> NeoEntityInteractSpecificEventManager.register(eventHandler, priority, receiveCanceled);
             case LEFT_CLICK_BLOCK_EVENT -> NeoLeftClickBlockEventManager.register(eventHandler, priority, receiveCanceled);
@@ -51,6 +52,7 @@ public class NeoEventRegister implements IEventRegister {
             case LIVING_DEATH_EVENT -> NeoLivingDeathEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_IN_EVENT -> NeoPlayerLoggedInEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_OUT_EVENT -> NeoPlayerLoggedOutEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case PLAYER_RESPAWN_EVENT -> NeoPlayerRespawnEventManager.unregister(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_EVENT -> NeoEntityInteractEventManager.unregister(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_SPECIFIC_EVENT -> NeoEntityInteractSpecificEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LEFT_CLICK_BLOCK_EVENT -> NeoLeftClickBlockEventManager.unregister(eventHandler, priority, receiveCanceled);
