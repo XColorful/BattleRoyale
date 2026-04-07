@@ -34,6 +34,7 @@ public class GameLobbyTeleportFinishEvent extends AbstractGameStatsEvent {
     @Override
     public @NotNull CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         return super.createCommandSourceStack(source)
+                .withRotation(livingEntity.getRotationVector())
                 .withEntity(livingEntity);
     }
 

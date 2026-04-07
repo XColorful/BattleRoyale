@@ -27,6 +27,7 @@ public class RequestPlayerCompleteEvent extends AbstractSenderEvent {
     @Override
     public @NotNull CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         return super.createCommandSourceStack(source)
+                .withRotation(targetPlayer.getRotationVector())
                 .withEntity(targetPlayer);
     }
 }

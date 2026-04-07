@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.api.server.utilitity.ISurvivalLobbyManager;
 import xiao.battleroyale.common.server.utility.ConfigGenerator;
-import xiao.battleroyale.common.server.utility.SurvivalLobby;
 
 import static xiao.battleroyale.command.CommandArg.*;
 
@@ -104,14 +104,18 @@ public class UtilityCommand {
         return utilityCommand;
     }
 
+    private static ISurvivalLobbyManager getSurvivalLobby() {
+        return BattleRoyale.getServerManager().getUtilityManager().getSurvivalLobby();
+    }
+
     private static int survivalLobby(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) {
             ServerPlayer player = source.getPlayerOrException();
-            SurvivalLobby.get().sendLobbyInfo(player);
+            getSurvivalLobby().sendLobbyInfo(player);
         } else {
             ServerLevel serverLevel = source.getLevel();
-            SurvivalLobby.get().sendLobbyInfo(serverLevel);
+            getSurvivalLobby().sendLobbyInfo(serverLevel);
         }
         return Command.SINGLE_SUCCESS;
     }
@@ -120,7 +124,7 @@ public class UtilityCommand {
         CommandSourceStack source = context.getSource();
         if (source.isPlayer()) {
             ServerPlayer player = source.getPlayerOrException();
-            SurvivalLobby.get().teleportToLobby(player);
+            getSurvivalLobby().teleportToLobby(player);
             return Command.SINGLE_SUCCESS;
         } else {
             return 0;
