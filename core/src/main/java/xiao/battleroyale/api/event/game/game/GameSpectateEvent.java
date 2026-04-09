@@ -6,9 +6,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.game.AbstractGameEvent;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.event.EventDispatcher;
 
 public class GameSpectateEvent extends AbstractGameEvent {
 
@@ -45,5 +47,10 @@ public class GameSpectateEvent extends AbstractGameEvent {
     }
     @Override public Component getDisplayName() {
         return player.getDisplayName();
+    }
+
+    private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(GameSpectateEvent.class);
+    @Override public @NotNull EventDispatcher getEventDispatcher() {
+        return _EVENT_DISPATCHER;
     }
 }

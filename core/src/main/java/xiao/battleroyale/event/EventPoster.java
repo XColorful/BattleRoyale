@@ -1,15 +1,13 @@
 package xiao.battleroyale.event;
 
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.ICustomEvent;
 import xiao.battleroyale.api.event.ICustomEventPoster;
-import xiao.battleroyale.event.client.ClientRenderEventHandler;
-import xiao.battleroyale.event.game.*;
-import xiao.battleroyale.event.loot.LootGenerateEventsHandler;
-import xiao.battleroyale.event.server.ServerUtilityEventsHandler;
-import xiao.battleroyale.event.special.RegisterManagerEventsHandler;
-import xiao.battleroyale.event.special.TriggerEventsHandler;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EventPoster implements ICustomEventPoster {
 
@@ -23,76 +21,21 @@ public class EventPoster implements ICustomEventPoster {
 
     protected EventPoster() {}
 
+    // 统一管理 EventDispatcher
+    // 使得没有创建事件实例时也能获取，且事件类的静态 EventDispatcher 也从这统一获取
+    // ConcurrentHashMap 比全局锁要好
+    private final Map<Class<? extends ICustomEvent>, EventDispatcher> eventDispatchers = new ConcurrentHashMap<>();
+    @ApiStatus.Internal public @NotNull EventDispatcher getEventDispatcher(Class<? extends ICustomEvent> eventClass) {
+        return eventDispatchers.computeIfAbsent(eventClass, k -> new EventDispatcher());
+    }
+
     @Deprecated(forRemoval = false)
     public static boolean postEvent(ICustomEvent customEvent) {
         return BattleRoyale.getEventPoster().postCustomEvent(customEvent);
     }
+    // 事件发布入口
     public boolean postCustomEvent(ICustomEvent customEvent) {
-        CustomEventType customEventType = customEvent.getEventType();
-        switch (customEventType) {
-            // finish
-            case GAME_COMPLETE_EVENT,
-                 GAME_COMPLETE_FINISH_EVENT,
-                 GAME_STOP_EVENT,
-                 GAME_STOP_FINISH_EVENT,
-                 SERVER_STOP_EVENT,
-                 SERVER_STOP_FINISH_EVENT -> GameFinishEventsHandler.get().handleEvent(customEvent);
-            // game
-            case GAME_PLAYER_DAMAGE_EVENT,
-                 GAME_PLAYER_DAMAGE_FINISH_EVENT,
-                 GAME_PLAYER_DEATH_EVENT,
-                 GAME_PLAYER_DEATH_FINISH_EVENT,
-                 GAME_PLAYER_DOWN_EVENT,
-                 GAME_PLAYER_DOWN_FINISH_EVENT,
-                 GAME_PLAYER_REVIVE_EVENT,
-                 GAME_PLAYER_REVIVE_FINISH_EVENT,
-                 GAME_SPECTATE_EVENT -> GameGameEventsHandler.get().handleEvent(customEvent);
-            // spawn
-            case GAME_LOBBY_TELEPORT_EVENT,
-                 GAME_LOBBY_TELEPORT_FINISH_EVENT -> GameSpawnEventsHandler.get().handleEvent(customEvent);
-            // starter
-            case GAME_INIT_EVENT,
-                 GAME_INIT_FINISH_EVENT,
-                 GAME_LOAD_EVENT,
-                 GAME_LOAD_FINISH_EVENT,
-                 GAME_START_EVENT,
-                 GAME_START_FINISH_EVENT -> GameStarterEventsHandler.get().handleEvent(customEvent);
-            // team
-            case INVITE_PLAYER_EVENT,
-                 INVITE_PLAYER_COMPLETE_EVENT,
-                 REQUEST_PLAYER_EVENT,
-                 REQUEST_PLAYER_COMPLETE_EVENT -> GameTeamEventsHandler.get().handleEvent(customEvent);
-            // tick
-            case GAME_LOOT_BFS_EVENT,
-                 GAME_LOOT_BFS_FINISH_EVENT,
-                 GAME_LOOT_EVENT,
-                 GAME_LOOT_FINISH_EVENT,
-                 GAME_TICK_EVENT,
-                 GAME_TICK_FINISH_EVENT,
-                 ZONE_TICK_EVENT,
-                 ZONE_TICK_FINISH_EVENT -> GameTickEventsHandler.get().handleEvent(customEvent);
-            // zone
-            case ZONE_COMPLETE_EVENT,
-                 ZONE_CREATED_EVENT,
-                 CUSTOM_ZONE_EVENT,
-                 AIRDROP_EVENT,
-                 ENTITY_EVENT -> GameZoneEventsHandler.get().handleEvent(customEvent);
-            // generate
-            case CUSTOM_GENERATE_EVENT -> LootGenerateEventsHandler.get().handleEvent(customEvent);
-            // client
-            case SPECIAL_ZONE_RENDER_EVENT -> ClientRenderEventHandler.get().handleEvent(customEvent);
-            // utility
-            case SURVIVAL_LOBBY_TELEPORT_EVENT -> ServerUtilityEventsHandler.get().handleEvent(customEvent);
-            case SURVIVAL_LOBBY_TELEPORT_FINISH_EVENT -> ServerUtilityEventsHandler.get().handleEvent(customEvent);
-            // special
-            case REGISTER_MANAGER_EVENT -> RegisterManagerEventsHandler.get().handleEvent(customEvent);
-            case TRIGGER_EVENT -> TriggerEventsHandler.get().handleEvent(customEvent);
-            // custom
-            case CUSTOM_EVENT -> CustomEventsHandler.get().handleEvent(customEvent);
-            default -> {
-                BattleRoyale.LOGGER.error("Attempted to post event {} which has no assigned Event Handler! This is a serious configuration error.", customEventType);
-            }
-        }
+        customEvent.getEventDispatcher().dispatch(customEvent);
         return customEvent.isCanceled();
     }
 }

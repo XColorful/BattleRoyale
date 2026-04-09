@@ -5,8 +5,10 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.event.EventDispatcher;
 
 public class RequestPlayerCompleteEvent extends AbstractSenderEvent {
 
@@ -29,5 +31,10 @@ public class RequestPlayerCompleteEvent extends AbstractSenderEvent {
         return super.createCommandSourceStack(source)
                 .withRotation(targetPlayer.getRotationVector())
                 .withEntity(targetPlayer);
+    }
+
+    private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(RequestPlayerCompleteEvent.class);
+    @Override public @NotNull EventDispatcher getEventDispatcher() {
+        return _EVENT_DISPATCHER;
     }
 }

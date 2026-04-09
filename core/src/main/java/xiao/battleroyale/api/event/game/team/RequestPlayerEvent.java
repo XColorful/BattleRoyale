@@ -2,9 +2,11 @@ package xiao.battleroyale.api.event.game.team;
 
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.event.EventDispatcher;
 
 public class RequestPlayerEvent extends AbstractSenderEvent {
 
@@ -16,5 +18,10 @@ public class RequestPlayerEvent extends AbstractSenderEvent {
     }
     @Override public CustomEventType getEventType() {
         return CustomEventType.REQUEST_PLAYER_EVENT;
+    }
+
+    private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(RequestPlayerEvent.class);
+    @Override public @NotNull EventDispatcher getEventDispatcher() {
+        return _EVENT_DISPATCHER;
     }
 }

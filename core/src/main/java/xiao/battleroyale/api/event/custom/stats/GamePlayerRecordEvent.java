@@ -13,6 +13,7 @@ import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.game.stats.record.*;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.event.EventDispatcher;
 import xiao.battleroyale.util.GameUtils;
 
 public abstract class GamePlayerRecordEvent<T extends AbstractGamePlayerEventRecord<T>> extends CustomEvent {
@@ -64,35 +65,70 @@ public abstract class GamePlayerRecordEvent<T extends AbstractGamePlayerEventRec
         public DamageRecordEvent(@NotNull IStatsManager statsManager, @NotNull DamageRecord eventRecord) {
             super(statsManager, eventRecord);
         }
+
+        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(DamageRecordEvent.class);
+        @Override public @NotNull EventDispatcher getEventDispatcher() {
+            return _EVENT_DISPATCHER;
+        }
     }
     public static class HurtRecordEvent extends GamePlayerRecordEvent<HurtRecord> {
         public HurtRecordEvent(@NotNull IStatsManager statsManager, @NotNull HurtRecord hurtRecord) {
             super(statsManager, hurtRecord);
+        }
+
+        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(HurtRecordEvent.class);
+        @Override public @NotNull EventDispatcher getEventDispatcher() {
+            return _EVENT_DISPATCHER;
         }
     }
     public static class DownRecordEvent extends GamePlayerRecordEvent<DownRecord> {
         public DownRecordEvent(@NotNull IStatsManager statsManager, @NotNull DownRecord eventRecord) {
             super(statsManager, eventRecord);
         }
+
+        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(DownRecordEvent.class);
+        @Override public @NotNull EventDispatcher getEventDispatcher() {
+            return _EVENT_DISPATCHER;
+        }
     }
     public static class KnockRecordEvent extends GamePlayerRecordEvent<KnockRecord> {
         public KnockRecordEvent(@NotNull IStatsManager statsManager, @NotNull KnockRecord knockRecord) {
             super(statsManager, knockRecord);
+        }
+
+        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(KnockRecordEvent.class);
+        @Override public @NotNull EventDispatcher getEventDispatcher() {
+            return _EVENT_DISPATCHER;
         }
     }
     public static class ReviveRecordEvent extends GamePlayerRecordEvent<ReviveRecord> {
         public ReviveRecordEvent(@NotNull IStatsManager statsManager, @NotNull ReviveRecord eventRecord) {
             super(statsManager, eventRecord);
         }
+
+        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(ReviveRecordEvent.class);
+        @Override public @NotNull EventDispatcher getEventDispatcher() {
+            return _EVENT_DISPATCHER;
+        }
     }
     public static class DeathRecordEvent extends GamePlayerRecordEvent<DeathRecord> {
         public DeathRecordEvent(@NotNull IStatsManager statsManager, @NotNull DeathRecord eventRecord) {
             super(statsManager, eventRecord);
         }
+
+        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(DeathRecordEvent.class);
+        @Override public @NotNull EventDispatcher getEventDispatcher() {
+            return _EVENT_DISPATCHER;
+        }
     }
     public static class KillRecordEvent extends GamePlayerRecordEvent<KillRecord> {
         public KillRecordEvent(@NotNull IStatsManager statsManager, @NotNull KillRecord killRecord) {
             super(statsManager, killRecord);
+        }
+
+        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(KillRecordEvent.class);
+        @Override public @NotNull EventDispatcher getEventDispatcher() {
+            return _EVENT_DISPATCHER;
         }
     }
 }

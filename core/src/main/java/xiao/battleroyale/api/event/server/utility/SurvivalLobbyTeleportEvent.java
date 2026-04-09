@@ -6,12 +6,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.api.server.IServerManager;
+import xiao.battleroyale.event.EventDispatcher;
 
 public class SurvivalLobbyTeleportEvent extends AbstractUtilityEvent {
 
@@ -52,5 +53,10 @@ public class SurvivalLobbyTeleportEvent extends AbstractUtilityEvent {
 
     @Override public Component getDisplayName() {
         return livingEntity.getDisplayName();
+    }
+
+    private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(SurvivalLobbyTeleportEvent.class);
+    @Override public @NotNull EventDispatcher getEventDispatcher() {
+        return _EVENT_DISPATCHER;
     }
 }

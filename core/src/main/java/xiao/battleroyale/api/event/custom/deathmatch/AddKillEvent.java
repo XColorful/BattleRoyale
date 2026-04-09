@@ -15,6 +15,7 @@ import xiao.battleroyale.api.game.process.deathmatch.IDeathMatchProcessManager;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
+import xiao.battleroyale.event.EventDispatcher;
 import xiao.battleroyale.util.GameUtils;
 
 public abstract class AddKillEvent extends CustomEvent {
@@ -82,6 +83,11 @@ public abstract class AddKillEvent extends CustomEvent {
         @Override public Component getDisplayName() {
             return livingEntity != null ? livingEntity.getDisplayName() : Component.literal(getTextName());
         }
+
+        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(AddPlayerKillEvent.class);
+        @Override public @NotNull EventDispatcher getEventDispatcher() {
+            return _EVENT_DISPATCHER;
+        }
     }
     public static class AddPlayerKillFinishEvent extends AddPlayerKillEvent {
         public AddPlayerKillFinishEvent(@NotNull IDeathMatchProcessManager manager, int preMaxKill, int addKill, @NotNull GamePlayer gamePlayer) {
@@ -96,6 +102,11 @@ public abstract class AddKillEvent extends CustomEvent {
         }
         @Override public Component getDisplayName() {
             return livingEntity != null ? livingEntity.getDisplayName() : Component.literal(getTextName());
+        }
+
+        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(AddPlayerKillFinishEvent.class);
+        @Override public @NotNull EventDispatcher getEventDispatcher() {
+            return _EVENT_DISPATCHER;
         }
     }
     public static class AddTeamKillEvent extends AddKillEvent {
@@ -115,6 +126,11 @@ public abstract class AddKillEvent extends CustomEvent {
         @Override public Component getDisplayName() {
             return Component.literal(getTextName());
         }
+
+        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(AddTeamKillEvent.class);
+        @Override public @NotNull EventDispatcher getEventDispatcher() {
+            return _EVENT_DISPATCHER;
+        }
     }
     public static class AddTeamKillFinishEvent extends AddTeamKillEvent {
         public AddTeamKillFinishEvent(@NotNull IDeathMatchProcessManager manager, int preMaxKill, int addKill, @NotNull GameTeam gameTeam) {
@@ -126,6 +142,11 @@ public abstract class AddKillEvent extends CustomEvent {
 
         @Override public String getTextName() {
             return String.format("%s Add Team %s Kill Finish Event", manager.getManagerName(), gameTeam.getGameTeamId());
+        }
+
+        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(AddTeamKillFinishEvent.class);
+        @Override public @NotNull EventDispatcher getEventDispatcher() {
+            return _EVENT_DISPATCHER;
         }
     }
 }

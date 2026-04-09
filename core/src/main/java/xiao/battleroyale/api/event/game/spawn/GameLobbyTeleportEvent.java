@@ -7,9 +7,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.game.AbstractGameEvent;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.event.EventDispatcher;
 
 public class GameLobbyTeleportEvent extends AbstractGameEvent {
 
@@ -43,5 +45,10 @@ public class GameLobbyTeleportEvent extends AbstractGameEvent {
     }
     @Override public Component getDisplayName() {
         return livingEntity.getDisplayName();
+    }
+
+    private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(GameLobbyTeleportEvent.class);
+    @Override public @NotNull EventDispatcher getEventDispatcher() {
+        return _EVENT_DISPATCHER;
     }
 }
