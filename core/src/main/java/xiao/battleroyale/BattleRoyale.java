@@ -79,10 +79,8 @@ public class BattleRoyale {
         BattleRoyale.selectorRegistry = selectorRegistry;
         BattleRoyale.mcRegistry = mcRegistry;
 
-        // 最早可使用的事件机制
+        // 最早的事件机制初始化
         EventRegister.initialize(eventRegister);
-        BattleRoyale.eventRegister = EventRegister.get();
-        eventPoster = EventPoster.get();
 
         NetworkHandler.initialize(networkAdapter);
         NetworkHook.initialize(networkHook);
@@ -167,8 +165,8 @@ public class BattleRoyale {
         return AlgorithmFacade.get();
     }
 
-    private static ICustomEventRegister eventRegister;
-    private static ICustomEventPoster eventPoster;
+    private @NotNull static ICustomEventRegister eventRegister = EventRegister.get(); // 在模组加载前就能触发
+    private @NotNull static ICustomEventPoster eventPoster = EventPoster.get(); // 在模组加载前就能触发
     private static IGameManager gameManager;
     private static IModConfigManager modConfigManager;
     private static IEffectManager effectManager;
@@ -177,11 +175,11 @@ public class BattleRoyale {
     private static ICommonInventoryManager commonInventoryManager;
     private static IClientGameDataManager clientGameDataManager;
     private static IClientRenderer clientRenderer;
-    public static ICustomEventRegister getEventRegister() {
-        return BattleRoyale.eventRegister != null ? BattleRoyale.eventRegister : EventRegister.get(); // 在模组加载前就能触发
+    public @NotNull static ICustomEventRegister getEventRegister() {
+        return BattleRoyale.eventRegister;
     }
-    public static ICustomEventPoster getEventPoster() {
-        return BattleRoyale.eventPoster != null ? BattleRoyale.eventPoster : EventPoster.get();
+    public @NotNull static ICustomEventPoster getEventPoster() {
+        return BattleRoyale.eventPoster;
     }
     public static IGameManager getGameManager() {
         return BattleRoyale.gameManager;
@@ -210,6 +208,10 @@ public class BattleRoyale {
     /**
      * @deprecated 除非需要深度定制, 否则不应该调用
      */
+    @Deprecated(forRemoval = false)
+    public static void setEventRegister(@NotNull ICustomEventRegister eventRegister) {
+        BattleRoyale.eventRegister = eventRegister;
+    }
     @Deprecated(forRemoval = false)
     public static void setEventPoster(@NotNull ICustomEventPoster eventPoster) {
         BattleRoyale.eventPoster = eventPoster;
