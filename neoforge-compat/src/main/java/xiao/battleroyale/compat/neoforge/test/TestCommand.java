@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import xiao.battleroyale.BattleRoyale;
@@ -17,7 +17,7 @@ import xiao.battleroyale.BattleRoyale;
 /**
  * 同 {@link xiao.battleroyale.developer.debug.command.sub.TestCommand}
  */
-@Mod.EventBusSubscriber
+@EventBusSubscriber(modid = BattleRoyale.MOD_ID)
 public class TestCommand {
 
     @SubscribeEvent
