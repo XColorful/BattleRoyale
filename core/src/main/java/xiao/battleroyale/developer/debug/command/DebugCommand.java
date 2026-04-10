@@ -6,6 +6,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import xiao.battleroyale.developer.debug.DebugManager;
 import xiao.battleroyale.developer.debug.command.sub.GetCommand;
+import xiao.battleroyale.developer.debug.command.sub.TestCommand;
 
 import static xiao.battleroyale.developer.debug.command.CommandArg.*;
 
@@ -21,6 +22,7 @@ public class DebugCommand {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(rootName);
         LiteralArgumentBuilder<CommandSourceStack> debugCommand = Commands.literal(useFullName ? DEBUG : DEBUG_SHORT);
         debugCommand.then(GetCommand.getServer(useFullName));
+        debugCommand.then(TestCommand.getServer(useFullName));
         root.then(debugCommand);
         return root;
     }
