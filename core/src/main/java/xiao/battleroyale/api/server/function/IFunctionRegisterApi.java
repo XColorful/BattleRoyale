@@ -1,7 +1,6 @@
 package xiao.battleroyale.api.server.function;
 
 import net.minecraft.resources.ResourceLocation;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.EventPriority;
 import xiao.battleroyale.api.event.EventType;
