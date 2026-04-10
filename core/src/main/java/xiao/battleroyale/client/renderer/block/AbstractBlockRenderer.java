@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
-import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -41,11 +40,11 @@ public abstract class AbstractBlockRenderer<T extends AbstractLootBlockEntity, S
     protected void renderBlockModel(@NotNull BlockEntity blockEntity, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         BlockState blockState = blockEntity.getBlockState();
         ModelManager modelManager = Minecraft.getInstance().getModelManager();
-        BlockModel blockModel = modelManager.getBlockModelSet().get(blockState);
+        BlockStateModel blockStateModel = modelManager.getBlockStateModelSet().get(blockState);
 
         BlockModelRenderer.get().renderBlockModel(
                 blockState,
-                (BlockStateModel) blockModel,
+                blockStateModel,
                 this.modelBlockRenderer,
                 poseStack,
                 bufferIn,
