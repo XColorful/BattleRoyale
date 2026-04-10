@@ -4,9 +4,13 @@ import com.google.gson.JsonObject;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
+import xiao.battleroyale.api.event.ICustomEvent;
+import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.loot.data.ILootData;
 import xiao.battleroyale.common.loot.LootGenerator;
+import xiao.battleroyale.event.EventDispatcher;
 
 import java.util.List;
 
@@ -32,5 +36,10 @@ public class CustomGenerateEvent <T extends BlockEntity> extends AbstractSpecial
     }
     @Override public Component getDisplayName() {
         return Component.literal(getTextName());
+    }
+
+    private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(CustomGenerateEvent.class);
+    @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
+        return _EVENT_DISPATCHER;
     }
 }

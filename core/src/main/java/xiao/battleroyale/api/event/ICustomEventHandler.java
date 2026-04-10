@@ -2,12 +2,9 @@ package xiao.battleroyale.api.event;
 
 import xiao.battleroyale.BattleRoyale;
 
-public interface ICustomEventHandler {
+public interface ICustomEventHandler extends IHandler<CustomEventType, ICustomEvent> {
 
-    String getEventHandlerName();
-
-    void handleEvent(CustomEventType customEventType, ICustomEvent event);
-
+    @Override
     default void onReceiveWrongEvent(CustomEventType customEventType) {
         BattleRoyale.LOGGER.warn("{} received wrong custom event type: {}", getEventHandlerName(), customEventType);
     }
