@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEvent;
 import xiao.battleroyale.api.event.CustomEventType;
+import xiao.battleroyale.api.event.ICustomEvent;
+import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.event.EventDispatcher;
 import xiao.battleroyale.util.StringUtils;
@@ -60,8 +62,8 @@ public class RegisterManagerEvent extends CustomEvent {
         return Component.literal(getTextName());
     }
 
-    private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(RegisterManagerEvent.class);
-    @Override public @NotNull EventDispatcher getEventDispatcher() {
+    private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(RegisterManagerEvent.class);
+    @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
         return _EVENT_DISPATCHER;
     }
 }

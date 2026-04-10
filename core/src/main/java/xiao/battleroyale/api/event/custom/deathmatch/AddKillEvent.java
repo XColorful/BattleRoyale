@@ -10,6 +10,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEvent;
+import xiao.battleroyale.api.event.CustomEventType;
+import xiao.battleroyale.api.event.ICustomEvent;
+import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.game.process.IGameProcessManager;
 import xiao.battleroyale.api.game.process.deathmatch.IDeathMatchProcessManager;
 import xiao.battleroyale.api.minecraft.CommandLevel;
@@ -84,8 +87,8 @@ public abstract class AddKillEvent extends CustomEvent {
             return livingEntity != null ? livingEntity.getDisplayName() : Component.literal(getTextName());
         }
 
-        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(AddPlayerKillEvent.class);
-        @Override public @NotNull EventDispatcher getEventDispatcher() {
+        private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(AddPlayerKillEvent.class);
+        @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
             return _EVENT_DISPATCHER;
         }
     }
@@ -104,8 +107,8 @@ public abstract class AddKillEvent extends CustomEvent {
             return livingEntity != null ? livingEntity.getDisplayName() : Component.literal(getTextName());
         }
 
-        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(AddPlayerKillFinishEvent.class);
-        @Override public @NotNull EventDispatcher getEventDispatcher() {
+        private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(AddPlayerKillFinishEvent.class);
+        @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
             return _EVENT_DISPATCHER;
         }
     }
@@ -127,8 +130,8 @@ public abstract class AddKillEvent extends CustomEvent {
             return Component.literal(getTextName());
         }
 
-        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(AddTeamKillEvent.class);
-        @Override public @NotNull EventDispatcher getEventDispatcher() {
+        private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(AddTeamKillEvent.class);
+        @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
             return _EVENT_DISPATCHER;
         }
     }
@@ -144,8 +147,8 @@ public abstract class AddKillEvent extends CustomEvent {
             return String.format("%s Add Team %s Kill Finish Event", manager.getManagerName(), gameTeam.getGameTeamId());
         }
 
-        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(AddTeamKillFinishEvent.class);
-        @Override public @NotNull EventDispatcher getEventDispatcher() {
+        private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(AddTeamKillFinishEvent.class);
+        @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
             return _EVENT_DISPATCHER;
         }
     }

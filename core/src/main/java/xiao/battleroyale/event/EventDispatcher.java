@@ -1,19 +1,29 @@
 package xiao.battleroyale.event;
 
-import xiao.battleroyale.api.event.CustomEventType;
 import xiao.battleroyale.api.event.EventPriority;
-import xiao.battleroyale.api.event.ICustomEvent;
-import xiao.battleroyale.api.event.ICustomEventHandler;
+import xiao.battleroyale.api.event.IEvent;
+import xiao.battleroyale.api.event.IHandler;
 import xiao.battleroyale.util.ClassUtils;
 
-public class EventDispatcher {
-    private final _EventHandlerContainer container = new _EventHandlerContainer();
+import java.util.function.BiConsumer;
+
+/**
+ * @param <T> 处理器的类型 (IEventHandler 或 ICustomEventHandler)
+ * @param <E> 事件的类型 (IEvent 或 ICustomEvent)
+ * @param <Y> 事件类型枚举 (EventType 或 CustomEventType)
+ */
+public class EventDispatcher<T extends IHandler<Y, E>, E extends IEvent, Y> {
+    private final _EventHandlerContainer<T> container = new _EventHandlerContainer<>();
     private final Object lock = new Object();
 
-    private volatile _HandlerEntry[] fastPath = new _HandlerEntry[0];
+    private volatile _HandlerEntry<T>[] fastPath;
 
-    private record _HandlerEntry(ICustomEventHandler handler, boolean receivesCanceled) {
+    @SuppressWarnings("unchecked")
+    public EventDispatcher() {
+        this.fastPath = new _HandlerEntry[0];
     }
+
+    private record _HandlerEntry<T>(T handler, boolean receivesCanceled) {}
 
     private void buildFastPath() {
         // 预分配数组
@@ -24,18 +34,19 @@ public class EventDispatcher {
         }
 
         // 按优先级顺序填入数组
-        _HandlerEntry[] newPath = new _HandlerEntry[totalSize];
+        @SuppressWarnings("unchecked")
+        _HandlerEntry<T>[] newPath = new _HandlerEntry[totalSize];
         int currentIndex = 0;
         for (int i = 0; i < _EventHandlerContainer.PRIORITY_ORDER.length; i++) {
             // 普通事件
-            ClassUtils.ArraySet<ICustomEventHandler> regular = container.eventHandlers.getHandlersInOrder()[i];
+            ClassUtils.ArraySet<T> regular = container.eventHandlers.getHandlersInOrder()[i];
             for (int j = 0; j < regular.size(); j++) {
-                newPath[currentIndex++] = new _HandlerEntry(regular.get(j), false);
+                newPath[currentIndex++] = new _HandlerEntry<>(regular.get(j), false);
             }
             // Stats 监听器 (接收取消)
-            ClassUtils.ArraySet<ICustomEventHandler> stats = container.statsEventHandlers.getHandlersInOrder()[i];
+            ClassUtils.ArraySet<T> stats = container.statsEventHandlers.getHandlersInOrder()[i];
             for (int j = 0; j < stats.size(); j++) {
-                newPath[currentIndex++] = new _HandlerEntry(stats.get(j), true);
+                newPath[currentIndex++] = new _HandlerEntry<>(stats.get(j), true);
             }
         }
 
@@ -44,7 +55,7 @@ public class EventDispatcher {
     }
 
     // 注册事件处理器
-    public boolean registerHandler(ICustomEventHandler handler, EventPriority priority, boolean receivedCanceled) {
+    public boolean registerHandler(T handler, EventPriority priority, boolean receivedCanceled) {
         synchronized (lock) {
             boolean success = receivedCanceled ? container.statsEventHandlers.add(handler, priority) : container.eventHandlers.add(handler, priority);
             if (success) buildFastPath();
@@ -53,7 +64,7 @@ public class EventDispatcher {
     }
 
     // 取消注册事件处理器
-    public boolean unregisterHandler(ICustomEventHandler handler, EventPriority priority, boolean receivedCanceled) {
+    public boolean unregisterHandler(T handler, EventPriority priority, boolean receivedCanceled) {
         synchronized (lock) {
             boolean success = receivedCanceled ? container.statsEventHandlers.remove(handler, priority) : container.eventHandlers.remove(handler, priority);
             if (success) buildFastPath();
@@ -61,13 +72,21 @@ public class EventDispatcher {
         }
     }
 
-    public void dispatch(ICustomEvent event) {
-        _HandlerEntry[] handlerEntries = this.fastPath;
-        CustomEventType eventType = event.getEventType();
+    public boolean isEmpty() {
+        return container.isEmpty();
+    }
+
+    /**
+     * 高性能分发入口
+     * @param invoker 显式传递 invoker 逻辑，解决泛型擦除后无法直接调用 handleEvent 的问题
+     * 外部传入固定的 Lambda (Monomorphic Call Site) 能极大辅助 JIT 进行深度内联
+     */
+    public void dispatch(E event, BiConsumer<T, E> invoker) {
+        _HandlerEntry<T>[] handlerEntries = this.fastPath;
         for (int i = 0; i < handlerEntries.length; i++) {
-            _HandlerEntry entry = handlerEntries[i];
+            _HandlerEntry<T> entry = handlerEntries[i];
             if (event.isCanceled() && !entry.receivesCanceled) continue;
-            entry.handler.handleEvent(eventType, event);
+            invoker.accept(entry.handler, event);
         }
     }
 }

@@ -23,5 +23,5 @@ public interface ICustomEvent extends IEvent {
      * 具体类从 {@link BattleRoyale#getEventPoster()} {@link ICustomEventPoster#getEventDispatcher} 获取一个 static final 引用即可
      */
     @ApiStatus.Internal
-    @NotNull EventDispatcher getEventDispatcher();
+    @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher();
 }

@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
+import xiao.battleroyale.api.event.ICustomEvent;
+import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.event.game.AbstractGameEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.event.EventDispatcher;
@@ -47,8 +49,8 @@ public class GameLobbyTeleportEvent extends AbstractGameEvent {
         return livingEntity.getDisplayName();
     }
 
-    private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(GameLobbyTeleportEvent.class);
-    @Override public @NotNull EventDispatcher getEventDispatcher() {
+    private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(GameLobbyTeleportEvent.class);
+    @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
         return _EVENT_DISPATCHER;
     }
 }

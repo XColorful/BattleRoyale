@@ -9,5 +9,5 @@ public interface ICustomEventPoster {
     boolean postCustomEvent(ICustomEvent customEvent);
 
     @ApiStatus.Internal
-    @NotNull EventDispatcher getEventDispatcher(Class<? extends ICustomEvent> eventClass);
+    @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher(Class<? extends ICustomEvent> eventClass);
 }

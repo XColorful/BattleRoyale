@@ -4,6 +4,8 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
+import xiao.battleroyale.api.event.ICustomEvent;
+import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.server.IServerManager;
 import xiao.battleroyale.event.EventDispatcher;
 
@@ -16,8 +18,8 @@ public class SurvivalLobbyTeleportFinishEvent extends SurvivalLobbyTeleportEvent
         return CustomEventType.SURVIVAL_LOBBY_TELEPORT_FINISH_EVENT;
     }
 
-    private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(SurvivalLobbyTeleportFinishEvent.class);
-    @Override public @NotNull EventDispatcher getEventDispatcher() {
+    private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(SurvivalLobbyTeleportFinishEvent.class);
+    @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
         return _EVENT_DISPATCHER;
     }
 }

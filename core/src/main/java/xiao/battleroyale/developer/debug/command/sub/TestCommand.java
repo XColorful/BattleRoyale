@@ -40,7 +40,9 @@ public class TestCommand {
         ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
         if (postOnly) {
             for (int i = 0; i < total; i++) {
-                event.getEventDispatcher().dispatch(event); // post性能
+                event.getEventDispatcher().dispatch( // post性能
+                        event,
+                        (handler, customEvent) -> handler.handleEvent(customEvent.getEventType(), customEvent));
                 count++;
             }
         } else {

@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEvent;
+import xiao.battleroyale.api.event.CustomEventType;
+import xiao.battleroyale.api.event.ICustomEvent;
+import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.game.stats.record.*;
@@ -66,8 +69,8 @@ public abstract class GamePlayerRecordEvent<T extends AbstractGamePlayerEventRec
             super(statsManager, eventRecord);
         }
 
-        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(DamageRecordEvent.class);
-        @Override public @NotNull EventDispatcher getEventDispatcher() {
+        private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(DamageRecordEvent.class);
+        @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
             return _EVENT_DISPATCHER;
         }
     }
@@ -76,8 +79,8 @@ public abstract class GamePlayerRecordEvent<T extends AbstractGamePlayerEventRec
             super(statsManager, hurtRecord);
         }
 
-        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(HurtRecordEvent.class);
-        @Override public @NotNull EventDispatcher getEventDispatcher() {
+        private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(HurtRecordEvent.class);
+        @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
             return _EVENT_DISPATCHER;
         }
     }
@@ -86,8 +89,8 @@ public abstract class GamePlayerRecordEvent<T extends AbstractGamePlayerEventRec
             super(statsManager, eventRecord);
         }
 
-        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(DownRecordEvent.class);
-        @Override public @NotNull EventDispatcher getEventDispatcher() {
+        private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(DownRecordEvent.class);
+        @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
             return _EVENT_DISPATCHER;
         }
     }
@@ -96,8 +99,8 @@ public abstract class GamePlayerRecordEvent<T extends AbstractGamePlayerEventRec
             super(statsManager, knockRecord);
         }
 
-        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(KnockRecordEvent.class);
-        @Override public @NotNull EventDispatcher getEventDispatcher() {
+        private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(KnockRecordEvent.class);
+        @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
             return _EVENT_DISPATCHER;
         }
     }
@@ -106,8 +109,8 @@ public abstract class GamePlayerRecordEvent<T extends AbstractGamePlayerEventRec
             super(statsManager, eventRecord);
         }
 
-        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(ReviveRecordEvent.class);
-        @Override public @NotNull EventDispatcher getEventDispatcher() {
+        private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(ReviveRecordEvent.class);
+        @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
             return _EVENT_DISPATCHER;
         }
     }
@@ -116,8 +119,8 @@ public abstract class GamePlayerRecordEvent<T extends AbstractGamePlayerEventRec
             super(statsManager, eventRecord);
         }
 
-        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(DeathRecordEvent.class);
-        @Override public @NotNull EventDispatcher getEventDispatcher() {
+        private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(DeathRecordEvent.class);
+        @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
             return _EVENT_DISPATCHER;
         }
     }
@@ -126,8 +129,8 @@ public abstract class GamePlayerRecordEvent<T extends AbstractGamePlayerEventRec
             super(statsManager, killRecord);
         }
 
-        private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(KillRecordEvent.class);
-        @Override public @NotNull EventDispatcher getEventDispatcher() {
+        private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(KillRecordEvent.class);
+        @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
             return _EVENT_DISPATCHER;
         }
     }

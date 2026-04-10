@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
+import xiao.battleroyale.api.event.ICustomEvent;
+import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.event.game.AbstractGameEvent;
 import xiao.battleroyale.api.game.IGameManager;
@@ -59,8 +61,8 @@ public class GamePlayerDownEvent extends AbstractGameEvent {
         return livingEntity != null ? livingEntity.getDisplayName() : Component.literal(getTextName());
     }
 
-    private static final EventDispatcher _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(GamePlayerDownEvent.class);
-    @Override public @NotNull EventDispatcher getEventDispatcher() {
+    private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(GamePlayerDownEvent.class);
+    @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
         return _EVENT_DISPATCHER;
     }
 }
