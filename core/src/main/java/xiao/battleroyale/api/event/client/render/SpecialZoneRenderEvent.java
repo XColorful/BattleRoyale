@@ -5,11 +5,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
-import xiao.battleroyale.api.event.IRenderLevelStageEvent;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.game.IClientGameDataManager;
 import xiao.battleroyale.api.client.render.level.IClientSimpleZoneRenderer;
 import xiao.battleroyale.api.event.CustomEventType;
+import xiao.battleroyale.api.event.ICustomEvent;
+import xiao.battleroyale.api.event.ICustomEventHandler;
+import xiao.battleroyale.api.event.IRenderLevelStageEvent;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
+import xiao.battleroyale.event.EventDispatcher;
 
 public class SpecialZoneRenderEvent extends AbstractSpecialRenderEvent {
 
@@ -62,5 +66,10 @@ public class SpecialZoneRenderEvent extends AbstractSpecialRenderEvent {
     }
     @Override public Component getDisplayName() {
         return Component.literal(getTextName());
+    }
+
+    private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(SpecialZoneRenderEvent.class);
+    @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
+        return _EVENT_DISPATCHER;
     }
 }
