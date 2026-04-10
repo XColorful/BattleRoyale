@@ -17,15 +17,23 @@ import java.util.Optional;
 /**
  * 用于创建实例以注册事件的类
  */
-public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implements IEventHandler, ICustomEventHandler {
+public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> {
     public final String handlerName;
     public final Identifier rl;
     public final boolean isTag;
     public final T eventType;
     public final EventPriority priority;
     public final boolean receiveCanceled;
+    protected final IEventHandler eventProxy;
+    protected final ICustomEventHandler customEventProxy;
     public abstract boolean register(ICustomEventRegister eventRegister);
     public abstract boolean unregister(ICustomEventRegister eventRegister);
+    protected IEventHandler createEventProxy() {
+        return new EventProxy();
+    }
+    protected ICustomEventHandler createCustomEventProxy() {
+        return new CustomEventProxy();
+    }
     public RegisterObject(Identifier rl, boolean isTag, T eventType, EventPriority priority, boolean receiveCanceled) {
         this.rl = rl;
         this.isTag = isTag;
@@ -33,28 +41,41 @@ public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implem
         this.priority = priority;
         this.receiveCanceled = receiveCanceled;
         this.handlerName = String.format("RegisterObject %s %s %s %s %s", LocalDateTime.now(), rl, eventType, priority, receiveCanceled);
+        this.eventProxy = createEventProxy();
+        this.customEventProxy = createCustomEventProxy();
     }
-    @Override public String getEventHandlerName() {
+    public String getEventHandlerName() {
         return handlerName;
     }
-    @SuppressWarnings("unchecked")
-    @Override public void handleEvent(CustomEventType customEventType, ICustomEvent event) {
-        if (this.eventType == customEventType) {
-            handleEventInternal((T) customEventType, (K) event);
-        } else {
-            onReceiveWrongEvent(customEventType);
+
+    protected class EventProxy implements IEventHandler {
+        @Override public String getEventHandlerName() {
+            return handlerName;
+        }
+        @SuppressWarnings("unchecked")
+        @Override public void handleEvent(EventType eventType, IEvent event) {
+            if (RegisterObject.this.eventType == eventType) {
+                try {
+                    handleEventInternal((T) eventType, (K) event);
+                } catch (Exception e) {
+                    BattleRoyale.LOGGER.error("Encountered an exception in RegisterObject::handlerEvent: {}", e.getMessage());
+                }
+            } else {
+                onReceiveWrongEvent(eventType);
+            }
         }
     }
-    @SuppressWarnings("unchecked")
-    @Override public void handleEvent(EventType eventType, IEvent event) {
-        if (this.eventType == eventType) {
-            try {
-                handleEventInternal((T) eventType, (K) event);
-            } catch (Exception e) {
-                BattleRoyale.LOGGER.error("Encountered an exception in RegisterObject::handlerEvent: {}", e.getMessage());
+    protected class CustomEventProxy implements ICustomEventHandler {
+        @Override public String getEventHandlerName() {
+            return handlerName;
+        }
+        @SuppressWarnings("unchecked")
+        @Override public void handleEvent(CustomEventType customEventType, ICustomEvent event) {
+            if (RegisterObject.this.eventType == customEventType) {
+                handleEventInternal((T) customEventType, (K) event);
+            } else {
+                onReceiveWrongEvent(customEventType);
             }
-        } else {
-            onReceiveWrongEvent(eventType);
         }
     }
     protected void handleEventInternal(T eventType, K event) {
@@ -119,13 +140,10 @@ public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implem
             super(rl, isTag, eventType, priority, receiveCanceled);
         }
         @Override public boolean register(ICustomEventRegister eventRegister) {
-            return eventRegister.register(this, eventType, priority, receiveCanceled);
+            return eventRegister.register(this.eventProxy, eventType, priority, receiveCanceled);
         }
         @Override public boolean unregister(ICustomEventRegister eventRegister) {
-            return eventRegister.unregister(this, eventType, priority, receiveCanceled);
-        }
-        @Override public void handleEvent(CustomEventType customEventType, ICustomEvent event) {
-            unregister(BattleRoyale.getEventRegister());
+            return eventRegister.unregister(this.eventProxy, eventType, priority, receiveCanceled);
         }
     }
 
@@ -135,34 +153,37 @@ public abstract class RegisterObject<T extends Enum<T>, K extends IEvent> implem
             super(rl, isTag, eventType, priority, receiveCanceled);
         }
         @Override public boolean register(ICustomEventRegister eventRegister) {
-            return eventRegister.register(this, eventType, priority, receiveCanceled);
+            return eventRegister.register(this.customEventProxy, eventType, priority, receiveCanceled);
         }
         @Override public boolean unregister(ICustomEventRegister eventRegister) {
-            return eventRegister.unregister(this, eventType, priority, receiveCanceled);
-        }
-        @Override public void handleEvent(EventType eventType, IEvent event) {
-            unregister(BattleRoyale.getEventRegister());
+            return eventRegister.unregister(this.customEventProxy, eventType, priority, receiveCanceled);
         }
     }
 
     // 自定义事件类
     public static class ClassEventRegister<T extends ICustomEvent> extends CustomEventRegister {
         public final Class<T> eventClass;
+        @Override protected ICustomEventHandler createCustomEventProxy() {
+            return new ClassCustomEventProxy();
+        }
         public ClassEventRegister(Identifier rl, boolean isTag, Class<T> clazz, EventPriority priority, boolean receiveCanceled) {
             super(rl, isTag, CustomEventType.CUSTOM_EVENT, priority, receiveCanceled);
             this.eventClass = clazz;
         }
         @Override public boolean register(ICustomEventRegister eventRegister) {
-            return eventRegister.register(this, eventClass, priority, receiveCanceled);
+            return eventRegister.register(this.customEventProxy, eventClass, priority, receiveCanceled);
         }
         @Override public boolean unregister(ICustomEventRegister eventRegister) {
-            return eventRegister.unregister(this, eventClass, priority, receiveCanceled);
+            return eventRegister.unregister(this.customEventProxy, eventClass, priority, receiveCanceled);
         }
-        public void handleEvent(CustomEventType customEventType, ICustomEvent event) {
-            if (this.eventType == customEventType && eventClass.isInstance(event)) {
-                handleEventInternal(customEventType, event);
-            } else {
-                onReceiveWrongEvent(customEventType);
+        protected class ClassCustomEventProxy extends CustomEventProxy {
+            @Override
+            public void handleEvent(CustomEventType customEventType, ICustomEvent event) {
+                if (ClassEventRegister.this.eventType == customEventType && eventClass.isInstance(event)) {
+                    handleEventInternal(customEventType, event);
+                } else {
+                    onReceiveWrongEvent(customEventType);
+                }
             }
         }
     }
