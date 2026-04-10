@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ClipContext;
@@ -73,7 +74,7 @@ public abstract class AbstractBlockRenderer<T extends AbstractLootBlockEntity, S
         int combinedLightIn = renderState.lightCoords;
 
         int progress = renderState.breakProgress != null ? renderState.breakProgress.progress() : -1;
-        int combinedOverlayIn = progress != -1 ? getDestroyProgressOverlay(progress) : 0;
+        int combinedOverlayIn = progress != -1 ? getDestroyProgressOverlay(progress) : OverlayTexture.NO_OVERLAY;
 
         this.render(blockEntity, partialTick, poseStack, bufferIn, combinedLightIn, combinedOverlayIn, renderState, collector, cameraState);
     }

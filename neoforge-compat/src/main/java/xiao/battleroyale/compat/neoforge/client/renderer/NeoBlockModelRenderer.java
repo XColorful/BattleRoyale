@@ -33,7 +33,11 @@ public class NeoBlockModelRenderer implements IBlockModelRenderer {
         };
 
         modelBlockRenderer.tesselateBlock(
-                output,
+                (x, y, z, quad, instance) -> {
+                    instance.setLightCoords(combinedLightIn);
+                    instance.setOverlayCoords(combinedOverlayIn);
+                    output.put(x, y, z, quad, instance);
+                },
                 0.0F, 0.0F, 0.0F,
                 BlockAndTintGetter.EMPTY,
                 BlockPos.ZERO,
