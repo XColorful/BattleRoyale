@@ -66,10 +66,10 @@ public class TestCommand {
 
         MutableComponent timeLine = Component.literal("Timeline: ")
                 .append(Component.literal("[Start]").withStyle(s -> s.withColor(ChatFormatting.GRAY)
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Start: " + startTime + " ns")))))
+                        .withHoverEvent(new HoverEvent.ShowText(Component.literal("Start: " + startTime + " ns")))))
                 .append(Component.literal(" -> ").withStyle(ChatFormatting.DARK_GRAY))
                 .append(Component.literal("[End]").withStyle(s -> s.withColor(ChatFormatting.GRAY)
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("End: " + endTime + " ns")))));
+                        .withHoverEvent(new HoverEvent.ShowText(Component.literal("End: " + endTime + " ns")))));
 
         source.sendSuccess(() -> timeLine, false);
         source.sendSuccess(() -> Component.literal("Duration: ")
