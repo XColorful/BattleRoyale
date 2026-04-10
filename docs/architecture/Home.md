@@ -321,7 +321,7 @@
 	- ⭐往游戏流程中添加额外行为：[创建自定义事件处理器](./event/custom/create-custom-event-handler.md)
 	- 客户端：
 		- [SpecialRenderHandler](./event/custom/client/special-render-handler.md)：客户端特殊渲染处理器
-- [事件处理器框架](./event/event-handler.md)：_./event/AbstractEventHandler_
+- [事件派发器](./event/event-dispatcher.md)
 - [事件分发器](./event/event-poster.md)
 - [事件注册器](./event/event-register.md)
 
@@ -701,7 +701,7 @@ Module division based on the `xiao.battleroyale` top-level package
 	- ⭐Add extra behaviors to the game process: [Create CustomEvent handler](./event/custom/create-custom-event-handler.md#English)
 	- Client:
 		- [SpecialRenderHandler](./event/custom/client/special-render-handler.md#English): Client special render handler
-- [Event Handler Framework](./event/event-handler.md#English): _./event/AbstractEventHandler_
+- [Event Dispatcher](./event/event-dispatcher.md#English)
 - [Event Poster](./event/event-poster.md#English)
 - [Event Register](./event/event-register.md#English)
 

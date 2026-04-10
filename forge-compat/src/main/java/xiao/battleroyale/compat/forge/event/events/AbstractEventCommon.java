@@ -1,71 +1,46 @@
 package xiao.battleroyale.compat.forge.event.events;
 
 import net.minecraftforge.eventbus.api.Event;
+import xiao.battleroyale.api.event.EventPriority;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEventHandler;
+import xiao.battleroyale.api.event.IEvent;
 import xiao.battleroyale.compat.forge.event.ForgeEvent;
-import xiao.battleroyale.util.ClassUtils.ArraySet;
+import xiao.battleroyale.event.EventDispatcher;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.function.BiConsumer;
 
+/**
+ * 负责单个优先级的处理
+ */
 public abstract class AbstractEventCommon {
 
-    private final Object lock = new Object();
-
-    protected final ArraySet<IEventHandler> eventHandlers = new ArraySet<>(); // 先处理的事件
-    protected final ArraySet<IEventHandler> statsEventHandlers = new ArraySet<>(); // 接收canceled事件
+    /**
+     * 复用 core 的高性能中间件 {@link EventDispatcher}
+     */
+    protected final EventDispatcher<IEventHandler, IEvent, EventType> dispatcher = new EventDispatcher<>();
     protected final EventType eventType;
-    protected volatile boolean isDispatching = false; // 标志位，指示当前是否处于事件分发循环中
-    protected Queue<PendingOperation> pendingOperations = new LinkedList<>();
-    protected record PendingOperation(IEventHandler eventHandler, boolean receivedCanceled, boolean isRegistration) {}
 
     public AbstractEventCommon(EventType eventType) {
         this.eventType = eventType;
     }
 
-    protected final boolean addEventHandler(IEventHandler eventHandler, boolean receivedCanceled) {
-        synchronized (lock) {
-            if (isDispatching) {
-                pendingOperations.add(new PendingOperation(eventHandler, receivedCanceled, true));
-                return !receivedCanceled ? !eventHandlers.contains(eventHandler) : !statsEventHandlers.contains(eventHandler);
-            }
-            return addEventHandlerInternal(eventHandler, receivedCanceled);
-        }
-    }
-    protected final boolean addEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
-        boolean added;
-        if (!receivedCanceled) {
-            added = eventHandlers.add(eventHandler);
-            if (added && eventHandlers.size() == 1) {
-                registerToForge();
-            }
-        } else {
-            added = statsEventHandlers.add(eventHandler);
-            if (added && statsEventHandlers.size() == 1) {
-                registerToForge();
-            }
+    /**
+     * 因为 Proxy 已经是按优先级分的，统一用 NORMAL 即可
+     * 如 {@link ServerTickEventManager.ServerTickProxyHighest}
+     */
+    public final boolean addEventHandler(IEventHandler eventHandler, boolean receivedCanceled) {
+        boolean wasEmpty = dispatcher.isEmpty();
+        boolean added = dispatcher.registerHandler(eventHandler, EventPriority.NORMAL, receivedCanceled);
+
+        if (added && wasEmpty) {
+            registerToForge();
         }
         return added;
     }
-
-    public boolean removeEventHandler(IEventHandler eventHandler, boolean receivedCanceled) {
-        synchronized (lock) {
-            if (isDispatching) {
-                pendingOperations.add(new PendingOperation(eventHandler, receivedCanceled, false));
-                return !receivedCanceled ? eventHandlers.contains(eventHandler) : statsEventHandlers.contains(eventHandler);
-            }
-            return removeEventHandlerInternal(eventHandler, receivedCanceled);
-        }
-    }
-    protected final boolean removeEventHandlerInternal(IEventHandler eventHandler, boolean receivedCanceled) {
-        boolean removed;
-        if (!receivedCanceled) {
-            removed = eventHandlers.remove(eventHandler);
-        } else {
-            removed = statsEventHandlers.remove(eventHandler);
-        }
-        if (removed && eventHandlers.isEmpty() && statsEventHandlers.isEmpty()) {
+    public final boolean removeEventHandler(IEventHandler eventHandler, boolean receivedCanceled) {
+        boolean removed = dispatcher.unregisterHandler(eventHandler, EventPriority.NORMAL, receivedCanceled);
+        if (removed && dispatcher.isEmpty()) {
             unregisterToForge();
         }
         return removed;
@@ -78,50 +53,13 @@ public abstract class AbstractEventCommon {
         return new ForgeEvent(event);
     }
 
+    /**
+     * 调用同 {@link EventDispatcher#dispatch(IEvent, BiConsumer)}
+     */
     protected void onEvent(Event event) {
-        ForgeEvent forgeEvent = getForgeEventType(event);
-
-        boolean isNested;
-        synchronized (lock) {
-            isNested = isDispatching;
-            isDispatching = true;
-        }
-
-        try {
-            int handlerSize = eventHandlers.size();
-            for (int i = 0; i < handlerSize; i++) {
-                if (forgeEvent.isCanceled()) {
-                    break;
-                }
-                eventHandlers.get(i).handleEvent(this.eventType, forgeEvent);
-            }
-
-            int statsSize = statsEventHandlers.size();
-            for (int i = 0; i < statsSize; i++) {
-                statsEventHandlers.get(i).handleEvent(this.eventType, forgeEvent);
-            }
-        } finally {
-            if (!isNested) {
-                synchronized (lock) {
-                    processPendingOperations();
-                    isDispatching = false;
-                }
-            }
-        }
-    }
-
-    protected final void processPendingOperations() {
-        if (pendingOperations.isEmpty()) {
-            return;
-        }
-
-        PendingOperation op;
-        while ((op = pendingOperations.poll()) != null) {
-            if (op.isRegistration) {
-                addEventHandlerInternal(op.eventHandler, op.receivedCanceled);
-            } else {
-                removeEventHandlerInternal(op.eventHandler, op.receivedCanceled);
-            }
-        }
+        // 传入单态 Lambda
+        dispatcher.dispatch(getForgeEventType(event), (handler, e) -> {
+            handler.handleEvent(this.eventType, e);
+        });
     }
 }

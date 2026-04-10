@@ -6,11 +6,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.CustomEventType;
+import xiao.battleroyale.api.event.ICustomEvent;
+import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.event.game.AbstractGameEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
+import xiao.battleroyale.event.EventDispatcher;
 import xiao.battleroyale.util.GameUtils;
 
 public class GamePlayerDeathEvent extends AbstractGameEvent {
@@ -56,5 +60,10 @@ public class GamePlayerDeathEvent extends AbstractGameEvent {
     }
     @Override public Component getDisplayName() {
         return livingEntity != null ? livingEntity.getDisplayName() : Component.literal(getTextName());
+    }
+
+    private static final EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> _EVENT_DISPATCHER = BattleRoyale.getEventPoster().getEventDispatcher(GamePlayerDeathEvent.class);
+    @Override public @NotNull EventDispatcher<ICustomEventHandler, ICustomEvent, CustomEventType> getEventDispatcher() {
+        return _EVENT_DISPATCHER;
     }
 }
