@@ -1,8 +1,6 @@
-package xiao.battleroyale.developer.debug.command.sub;
+package xiao.battleroyale.compat.forge.test;
 
-import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -10,24 +8,35 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.event.*;
-import xiao.battleroyale.api.event.special.TriggerEvent;
 
+/**
+ * 同 {@link xiao.battleroyale.developer.debug.command.sub.TestCommand}
+ */
+@Mod.EventBusSubscriber
 public class TestCommand {
 
-    public static LiteralArgumentBuilder<CommandSourceStack> getServer(boolean useFullName) {
-        return Commands.literal("test")
-                .then(Commands.literal("postEvent")
-                        .then(Commands.argument("count", IntegerArgumentType.integer())
-                                .then(Commands.argument("postOnly", BoolArgumentType.bool())
-                                        .executes(TestCommand::testPostEvent)
+    @SubscribeEvent
+    public static void onServerCommandsRegister(RegisterCommandsEvent event) {
+        event.getDispatcher().register(Commands.literal("cbr")
+                .then(Commands.literal("db")
+                        .then(Commands.literal("testForge")
+                                .then(Commands.argument("count", IntegerArgumentType.integer(1))
+                                        .executes(TestCommand::testForgePostEvent)
                                 )
                         )
-                );
+                )
+        );
     }
 
-    public static int testPostEvent(CommandContext<CommandSourceStack> context) {
+    /**
+     * 对标 {@link xiao.battleroyale.developer.debug.command.sub.TestCommand#testPostEvent(CommandContext)}
+     */
+    private static int testForgePostEvent(CommandContext<CommandSourceStack> context) {
         if (BattleRoyale.getMinecraftServer().getPlayerCount() > 3) {
             context.getSource().sendFailure(Component.literal("Reject to benckmark for above 3 players in server"));
             return 0;
@@ -36,27 +45,15 @@ public class TestCommand {
         CommandSourceStack source = context.getSource();
         int count = 0;
         int total = IntegerArgumentType.getInteger(context, "count");
-        boolean postOnly = BoolArgumentType.getBool(context, "postOnly");
 
-        BattleRoyale.getEventRegister().register(_Handler.INSTANCE, CustomEventType.TRIGGER_EVENT, EventPriority.NORMAL, false);
+        MinecraftForge.EVENT_BUS.register(_Handler.INSTANCE);
 
         // 记录时间
         long startTime = System.nanoTime();
 
-        TriggerEvent event = new TriggerEvent(source, "");
-        ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
-        if (postOnly) {
-            for (int i = 0; i < total; i++) {
-                event.getEventDispatcher().dispatch( // post性能
-                        event,
-                        (handler, customEvent) -> handler.handleEvent(customEvent.getEventType(), customEvent));
-                count++;
-            }
-        } else {
-            for (int i = 0; i < total; i++) {
-                BattleRoyale.getEventPoster().postCustomEvent(new TriggerEvent(source, "")); // 实际性能
-                count++;
-            }
+        for (int i = 0; i < total; i++) {
+            MinecraftForge.EVENT_BUS.post(new ForgeTriggerTestEvent(source, ""));
+            count++;
         }
 
         // 记录时间
@@ -68,8 +65,8 @@ public class TestCommand {
 
         // 输出结果
         final int _count = count;
-        source.sendSuccess(() -> Component.literal(String.format("----Perf test (%s TriggerEvent)----", _count))
-                .withStyle(ChatFormatting.GOLD), false);
+        source.sendSuccess(() -> Component.literal(String.format("----Forge Native Perf test (%s TriggerEvent)----", _count))
+                .withStyle(ChatFormatting.LIGHT_PURPLE), false);
         MutableComponent timeLine = Component.literal("Timeline: ")
                 .append(Component.literal("[Start]")
                         .withStyle(style -> style.withColor(ChatFormatting.GRAY)
@@ -95,27 +92,20 @@ public class TestCommand {
                         .withStyle(ChatFormatting.AQUA))
                 .append(Component.literal(" ns")), false);
 
-        BattleRoyale.getEventRegister().unregister(_Handler.INSTANCE, CustomEventType.TRIGGER_EVENT, EventPriority.NORMAL, false);
+        MinecraftForge.EVENT_BUS.unregister(_Handler.INSTANCE);
 
         return 1;
     }
 
-    private static class _Handler implements ICustomEventHandler {
+    public static class _Handler {
         public static final _Handler INSTANCE = new _Handler();
         public static volatile String blackhole;
 
-        @Override
-        public String getEventHandlerName() {
-            return "";
-        }
-
-        @Override
-        public void handleEvent(CustomEventType type, ICustomEvent event) {
-            if (type == CustomEventType.TRIGGER_EVENT) {
-                // 强制逃逸
-                blackhole = ((TriggerEvent) event).getTriggerString();
-                event.setCanceled(true);
-            }
+        @SubscribeEvent
+        public void onForgeTest(ForgeTriggerTestEvent event) {
+            // 强制逃逸
+            blackhole = event.getTriggerString();
+            event.setCanceled(true);
         }
     }
 }
