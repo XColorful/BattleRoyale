@@ -284,6 +284,7 @@
   > 	- 马载具物资刷新配置
   > 	- TaCZ物资刷新配置
   > - 物资刷新配置类型
+  > - 特定方块刷新
   - [服务端配置管理器](./config/common/server/server-config-manager.md)：
 	  - [函数配置管理器](./config/common/server/function/function-config-manager.md)：管理[函数配置](/docs/wiki/Configuration/Function%20config.md)
 	  - [性能配置管理器](./config/common/server/performance/performance-config-manager.md)：管理[性能配置](/docs/wiki/Configuration/Performance%20config.md)
@@ -665,6 +666,7 @@ Module division based on the `xiao.battleroyale` top-level package
   > 	- Horse vehicle loot config
   > 	- TaCZ loot config
   > - Loot config type
+  > - Specific block loot
   - [Server Config Manager](./config/common/server/server-config-manager.md#English):
 	  - [Function Config Manager](./config/common/server/function/function-config-manager.md#English): Manage [Function config](/docs/wiki/Configuration/Function%20config.md#English)
 	  - [Performance Config Manager](./config/common/server/performance/performance-config-manager.md#English): Manage [Performance config](/docs/wiki/Configuration/Performance%20config.md#English)
