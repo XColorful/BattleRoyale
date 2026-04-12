@@ -116,12 +116,13 @@ public class Pubg5340x5340Casual {
 
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry, false);
 
-        ZoneConfig zoneConfig = new ZoneConfig(0, "Blue border", "#0000FFFF",
+        ZoneConfig zoneConfig = new ZoneConfig(0, "Blue border", "#0000FF0F",
                 -1, 0, GAME_TIME,
                 safeFuncEntry, circleEntry);
 
         zoneConfigJson.add(zoneConfig.toJson());
 
+        // Game Start
         MessageFuncEntry messageFuncEntry = new MessageFuncEntry(0, 0, 25, 10,
                 true, 10, 80, 20,
                 true, Component.literal("§6Game Start").withStyle(ChatFormatting.BOLD), Component.literal(""),
@@ -134,7 +135,7 @@ public class Pubg5340x5340Casual {
                 .addPreviousDimension(0, 1)
                 .addDimensionScale(0.99);
         circleEntry = new CircleEntry(startEntry, endEntry, false);
-        zoneConfig = new ZoneConfig(1, "Game Start Message", "#FFAA00AA",
+        zoneConfig = new ZoneConfig(1, "Game Start Message", "#FFAA003F",
                 0, 80,
                 messageFuncEntry, circleEntry);
         zoneConfigJson.add(zoneConfig.toJson());
@@ -153,7 +154,7 @@ public class Pubg5340x5340Casual {
                 new EndEntry().addPreviousCenter(0, 0).addPreviousDimension(0, 0).addRelativeDimension(new Vec3(-5, 64-384, -5)),
                 false
         );
-        zoneConfig = new ZoneConfig(4, mutekiSeconds + "s Muteki Time", "#FFD700AA", // 2和3是鞘翅区
+        zoneConfig = new ZoneConfig(4, mutekiSeconds + "s Muteki Time", "#FFD7003F", // 2和3是鞘翅区
                 0, muteki_zoneTime,
                 mutekiFuncEntry, circleEntry);
         zoneConfigJson.add(zoneConfig.toJson());
