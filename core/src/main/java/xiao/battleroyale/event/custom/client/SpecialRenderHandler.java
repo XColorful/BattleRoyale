@@ -131,11 +131,9 @@ public class SpecialRenderHandler implements ICustomEventHandler {
             }
 
             // 长方体中心 M 的世界坐标
-            Vec3 cuboidCenterWorld = new Vec3(
-                    px + deltaX / 2.0,
-                    py + renderProtocol.heightOffset,
-                    pz + deltaZ / 2.0
-            );
+            double centerX = px + deltaX / 2.0;
+            double centerY = py + renderProtocol.heightOffset;
+            double centerZ = pz + deltaZ / 2.0;
             // 绕Y轴的旋转角度 (弧度) - 使Z轴对齐向量(deltaX, deltaZ)
             double rotationRad = Math.atan2(deltaX, deltaZ);
 
@@ -143,7 +141,7 @@ public class SpecialRenderHandler implements ICustomEventHandler {
 
             // 创建基础模型视图矩阵 (平移到长方体中心 M)
             Matrix4f cuboidMatrix = ZoneRenderer.createCenterOffsetMatrix(
-                    renderEvent.getRenderEvent(), cuboidCenterWorld, cameraPos
+                    renderEvent.getRenderEvent(), centerX, centerY, centerZ, cameraPos
             );
             // 应用旋转
             // 绕Y轴旋转，使长方体局部Z轴（长边）对齐线段AB
