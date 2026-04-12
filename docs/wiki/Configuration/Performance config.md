@@ -71,9 +71,11 @@
 ### 指令刷新设置
 
 - maxNormalTickLootChunk：每tick最多刷新的区块数
+- allowNormalLootInGame：是否允许在游戏中执行指令刷新
 ```json
 "normal": {
-	"maxNormalTickLootChunk": 1000
+	"maxNormalTickLootChunk": 1000,
+	"allowNormalLootInGame": false
 }
 ```
 
@@ -174,9 +176,11 @@
 ### Command loot Settings
 
 - maxNormalTickLootChunk: The maximum number of chunks to loot per tick.
+- allowNormalLootInGame: Whether to allow command loot in game.
 ```json
 "normal": {
-	"maxNormalTickLootChunk": 1000
+	"maxNormalTickLootChunk": 1000,
+	"allowNormalLootInGame": false
 }
 ```
 

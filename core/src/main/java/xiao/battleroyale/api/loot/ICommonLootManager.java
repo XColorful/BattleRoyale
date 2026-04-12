@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.common.loot.LootStatus;
 
-public interface ICommonLootManager extends ILootManager, ILootStatus {
+public interface ICommonLootManager extends ILootManager, ILootStatus, ICommonLootOperator {
 
     int chunksToProcessSize();
     int processedChunkTrackerSize();

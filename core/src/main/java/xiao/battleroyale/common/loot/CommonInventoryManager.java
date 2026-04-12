@@ -15,6 +15,7 @@ import xiao.battleroyale.api.config.sub.IConfigSingleEntry;
 import xiao.battleroyale.api.loot.ICommonInventoryManager;
 import xiao.battleroyale.config.common.loot.LootConfigManager;
 import xiao.battleroyale.config.common.loot.LootConfigTypeEnum;
+import xiao.battleroyale.config.common.server.performance.type.GeneratorEntry;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,9 +35,15 @@ public class CommonInventoryManager implements ICommonInventoryManager {
     public static void init(McSide mcSide) {
     }
 
+    private static boolean ALLOW_LOOT_IN_GAME = false;
+    public static void setAllowLootInGame(boolean allow) { ALLOW_LOOT_IN_GAME = allow; }
+    @Override public void applyConfig(GeneratorEntry generatorEntry) {
+        setAllowLootInGame(generatorEntry.allowNormalLootInGame);
+    }
+
     @Override
     public LootStatus lootStatusCheck() {
-        return !BattleRoyale.getGameManager().isInGame() ? LootStatus.AVAILABLE : LootStatus.REJECT;
+        return !ALLOW_LOOT_IN_GAME && BattleRoyale.getGameManager().isInGame() ? LootStatus.REJECT : LootStatus.AVAILABLE;
     }
 
     @Override

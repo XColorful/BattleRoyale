@@ -57,8 +57,9 @@ public class GameLootManager extends AbstractGameManager implements ISideOnly, I
         }
     }
 
+    public static final String _MANAGER_NAME = String.format("%s:GameLootManager", BattleRoyale.MOD_ID);
     @Override public String getManagerName() {
-        return String.format("%s:GameLootManager", BattleRoyale.MOD_ID);
+        return _MANAGER_NAME;
     }
 
     @Override public boolean serverSideOnly() {
