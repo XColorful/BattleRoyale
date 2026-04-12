@@ -16,6 +16,7 @@ public class DefaultLootConfigGenerator {
 
     public static void generateDefaultLootSpawnerConfig(String configDirPath) {
         DefaultLootSpawner.generateDefaultConfigs(configDirPath);
+        LootSpecificBlock.generateDefaultConfigs(configDirPath);
         if (BattleRoyale.getMcRegistry().isModLoaded(CbrAddon.get().getModId())) {
             CFHCLootSpawner.generateDefaultConfigs(configDirPath);
         }

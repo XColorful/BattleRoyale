@@ -28,7 +28,7 @@ public class DefaultRender {
 
     private static JsonObject generateDefaultRenderConfig0() {
         BlockEntry blockEntry = new BlockEntry(16, true,
-                RenderConfigTag.VANILLA_ITEM_RENDER_SCALE, RenderConfigTag.VANILLA_ITEM_RENDER_HEIGHT,true, true,
+                0.5F, RenderConfigTag.VANILLA_ITEM_RENDER_HEIGHT,true, true,
                 RenderConfigTag.VANILLA_BOB_PHASE, RenderConfigTag.VANILLA_BOB_SPEED, RenderConfigTag.VANILLA_BOB_HEIGHT, RenderConfigTag.VANILLA_SPIN_SPEED,
                 16, true, true, 100);
         ZoneEntry zoneEntry = new ZoneEntry(false);
@@ -43,7 +43,7 @@ public class DefaultRender {
 
     private static JsonObject generateDefaultRenderConfig1() {
         BlockEntry blockEntry = new BlockEntry(8, false,
-                RenderConfigTag.VANILLA_ITEM_RENDER_SCALE, RenderConfigTag.VANILLA_ITEM_RENDER_HEIGHT, true, true,
+                0.5F, RenderConfigTag.VANILLA_ITEM_RENDER_HEIGHT, true, true,
                 RenderConfigTag.VANILLA_BOB_PHASE, RenderConfigTag.VANILLA_BOB_SPEED, RenderConfigTag.VANILLA_BOB_HEIGHT, RenderConfigTag.VANILLA_SPIN_SPEED,
                 0, true, true, 100);
         ZoneEntry zoneEntry = new ZoneEntry(true, "#0000FF", 64, 64, 64, 64);
