@@ -42,8 +42,9 @@ public class ZoneManager extends AbstractGameManager implements IZoneManager {
     public static void init(McSide mcSide) {
     }
 
+    public static final String _MANAGER_NAME = String.format("%s:ZoneManager", BattleRoyale.MOD_ID);
     @Override public String getManagerName() {
-        return String.format("%s:ZoneManager", BattleRoyale.MOD_ID);
+        return _MANAGER_NAME;
     }
 
     protected final ZoneData zoneData = new ZoneData();
