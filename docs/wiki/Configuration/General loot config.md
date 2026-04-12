@@ -243,12 +243,17 @@ lootId：
 {
 	"lootType": "regex",
 	"invert": false,
-	"regex": "",
+	"regex": "id:\"minecraft:chest\"",
 	"entry": {
 		刷新词条
 	}
 }
 ```
+> 方块的NBT字符串形如：
+> ```
+> "{ForgeData:{},Items:[],id:"minecraft:chest",x:0,y:0,z:0}"
+> ```
+> 如果需要精准匹配方块，避免容器内有容器方块，考虑使用 _"id:\\"minecraft:chest\\",x:"_
 
 #### 形状刷新
 
@@ -679,12 +684,17 @@ Generate loot if the block's NBT data matches a given regular expression.
 {
 	"lootType": "regex",
 	"invert": false,
-	"regex": "",
+	"regex": "id:\"minecraft:chest\"",
 	"entry": {
 		LOOT ENTRY
 	}
 }
 ```
+> The NBT string of a block looks like:
+> ```
+> "{ForgeData:{},Items:[],id:"minecraft:chest",x:0,y:0,z:0}"
+> ```
+> If you need precise block matching and want to avoid container blocks within containers, consider using _"id:\\"minecraft:chest\\",x:"_
 
 #### Shape loot
 
