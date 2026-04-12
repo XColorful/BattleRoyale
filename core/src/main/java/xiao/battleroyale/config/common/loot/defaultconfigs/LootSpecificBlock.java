@@ -4,10 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import xiao.battleroyale.api.config.common.loot.ILootEntry;
 import xiao.battleroyale.config.common.loot.LootConfigManager.LootConfig;
-import xiao.battleroyale.config.common.loot.type.MessageEntry;
-import xiao.battleroyale.config.common.loot.type.MultiEntry;
-import xiao.battleroyale.config.common.loot.type.NoneEntry;
-import xiao.battleroyale.config.common.loot.type.RegexEntry;
+import xiao.battleroyale.config.common.loot.type.*;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -25,15 +22,25 @@ public class LootSpecificBlock {
     }
 
     private static JsonObject generateMultiRegexSelector() {
-        ILootEntry multiEntry = new MultiEntry(Arrays.asList(
-                new RegexEntry(false, "id:\"minecraft:chest\"", generateChestMessage()),
-                new RegexEntry(false, "id:\"minecraft:barrel\"", generateBarrelMessage()),
-                new RegexEntry(false, "id:\"battleroyale:loot_spawner\"", generateLootSpawnerMessage()),
-                new RegexEntry(false, "", generateNothing())
+        ILootEntry abortEntry = new AbortEntry(1, 1, true,
+                Arrays.asList(
+                        new RegexEntry(false, "id:\"minecraft:chest\"", new MultiEntry(Arrays.asList(
+                                new EmptyEntry(EmptyEntry.TYPE_ITEM),
+                                generateChestMessage()
+                        ))),
+                        new RegexEntry(false, "id:\"minecraft:barrel\"", new MultiEntry(Arrays.asList(
+                                new EmptyEntry(EmptyEntry.TYPE_ITEM),
+                                generateBarrelMessage()
+                        ))),
+                        new RegexEntry(false, "id:\"battleroyale:loot_spawner\"", new MultiEntry(Arrays.asList(
+                                new EmptyEntry(EmptyEntry.TYPE_ITEM),
+                                generateLootSpawnerMessage()
+                        ))),
+                        new RegexEntry(false, "", generateNothing())
         ));
 
         LootConfig lootConfig = new LootConfig(0, "Loot specific block example", "#FFFFFFAA",
-                multiEntry);
+                abortEntry);
 
         return lootConfig.toJson();
     }
