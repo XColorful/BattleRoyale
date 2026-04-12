@@ -86,6 +86,14 @@ public class ClientGameDataManager implements IClientGameDataManager, IEventHand
         }
         if (hasZone) {
             activeZones.values().removeIf(data -> currentTick - data.getLastUpdateTick() > ZONE_EXPIRE_TICK); // 主线程引用
+            for (ClientSingleZoneData zoneData : activeZones.values()) {
+                zoneData.centerOld = zoneData.center;
+                zoneData.center = zoneData.centerNext;
+                zoneData.dimensionOld = zoneData.dimension;
+                zoneData.dimension = zoneData.dimensionNext;
+                zoneData.rotateDegreeOld = zoneData.rotateDegree;
+                zoneData.rotateDegree = zoneData.rotateDegreeNext;
+            }
         }
         if (hasTeam) {
             if (currentTick - teamData.getLastUpdateTick() > TEAM_EXPIRE_TICK) { // 主线程引用
