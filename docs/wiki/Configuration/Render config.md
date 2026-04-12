@@ -48,7 +48,7 @@
 "block": {
 	"itemRenderDistance": 16.0,
 	"renderItemBlockIfEmpty": true,
-	"itemRenderScale": 1.0,
+	"itemRenderScale": 0.5,
 	"itemRenderHeight": 0.0,
 	"doItemBobbing": true,
 	"doItemSpinning": true,
@@ -173,7 +173,7 @@
 "block": {
 	"itemRenderDistance": 16.0,
 	"renderItemBlockIfEmpty": true,
-	"itemRenderScale": 1.0,
+	"itemRenderScale": 0.5,
 	"itemRenderHeight": 0.0,
 	"doItemBobbing": true,
 	"doItemSpinning": true,

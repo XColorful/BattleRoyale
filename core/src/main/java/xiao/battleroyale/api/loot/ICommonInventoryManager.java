@@ -10,7 +10,7 @@ import xiao.battleroyale.common.loot.LootGenerator;
 
 import java.util.List;
 
-public interface ICommonInventoryManager extends IInventoryManager, ILootStatus {
+public interface ICommonInventoryManager extends IInventoryManager, ILootStatus, ICommonLootOperator {
 
     boolean resetInventoryWithLoot(@Nullable CommandSourceStack source, ServerLevel serverLevel, ServerPlayer player, int lootId);
     boolean resetInventoryWithLoot(Inventory inventory, LootGenerator.LootContext lootContext, ILootEntry entry);

@@ -98,8 +98,8 @@ public class MinecraftEntry implements IGameruleEntry {
                 || JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.TNT_EXPLOSION_DROP_DECAY_OLD, false); // 0.4.7及以前
         boolean spectatorGenerateChunks = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.SPECTATOR_GENERATE_CHUNKS, false);
         @SuppressWarnings("deprecation")
-        boolean clearInventory = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.CLEAR_INVENTORY_AT_START, true)
-                || JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.CLEAR_INVENTORY, true); // 0.5.0及以前
+        boolean clearInventory = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.CLEAR_INVENTORY_AT_START, false)
+                || JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.CLEAR_INVENTORY, false); // 0.5.0及以前
         boolean keepInventory = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.KEEP_INVENTORY, false);
         boolean doImmediateRespawn = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.DO_IMMEDIATE_RESPAWN, false);
         boolean doTimeSet = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.DO_TIME_SET, true);

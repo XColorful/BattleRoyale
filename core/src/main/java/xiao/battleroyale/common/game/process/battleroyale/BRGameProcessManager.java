@@ -2,6 +2,7 @@ package xiao.battleroyale.common.game.process.battleroyale;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,10 +11,12 @@ import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.api.event.game.finish.GameCompleteFinishEvent;
 import xiao.battleroyale.api.game.IGameManager;
+import xiao.battleroyale.api.game.gamerule.IGameruleManager;
 import xiao.battleroyale.api.game.process.IGameProcessManager;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
+import xiao.battleroyale.util.ServerUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -40,8 +43,9 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
     public static final int winnerMessageDelay = 1; // 延迟1tick发送消息，在当前tick的DeathEvent之后
     public static final int teleportAfterGameMessageDelay = 2; // 延迟2tick发送回大厅消息，在聊天栏最新位置
 
+    public static final String _MANAGER_NAME = String.format("%s:BRGameProcessManager", BattleRoyale.MOD_ID);
     @Override public String getManagerName() {
-        return String.format("%s:BRGameProcessManager", BattleRoyale.MOD_ID);
+        return _MANAGER_NAME;
     }
 
     @Override
@@ -127,13 +131,44 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
 
         // 暂时认为各Manager要按顺序tick，因此不改成监听GameTickEvent事件来触发
         // BattleRoyale模式按如下顺序调度, 提前/推迟需GameSubManager自行监听GameTickEvent
-        gameManager.getGameruleManager().onGameTick(gameTime);
-        gameManager.getTeamManager().onGameTick(gameTime); // 暂时没功能
-        gameManager.getSpawnManager().onGameTick(gameTime);
-        gameManager.getGameLobbyManager().onGameTick(gameTime);
-        gameManager.getGameLootManager().onGameTick(gameTime);
-        gameManager.getZoneManager().onGameTick(gameTime); // Zone可以提前触发stopGame，并且Zone需要延迟stopGame到tick结束
-        gameManager.getStatsManager().onGameTick(gameTime); // 基于事件主动记录，不用tick
+
+        ProfilerFiller profiler = BattleRoyale.getMinecraftServer().getProfiler();
+
+        // 游戏规则管理器
+        IGameruleManager gameruleManager = gameManager.getGameruleManager();
+        try (ServerUtils.ProfileSection s = new ServerUtils.ProfileSection(profiler, () -> gameruleManager.getManagerName() + "#onGameTick")) {
+            gameruleManager.onGameTick(gameTime);
+        }
+
+        // 队伍管理器
+        try (ServerUtils.ProfileSection s = new ServerUtils.ProfileSection(profiler, () -> gameManager.getTeamManager().getManagerName() + "#onGameTick")) {
+            gameManager.getTeamManager().onGameTick(gameTime); // 暂时没功能
+        }
+
+        // 出生管理器
+        try (ServerUtils.ProfileSection s = new ServerUtils.ProfileSection(profiler, () -> gameManager.getSpawnManager().getManagerName() + "#onGameTick")) {
+            gameManager.getSpawnManager().onGameTick(gameTime);
+        }
+
+        // 游戏大厅管理器
+        try (ServerUtils.ProfileSection s = new ServerUtils.ProfileSection(profiler, () -> gameManager.getGameLobbyManager().getManagerName() + "#onGameTick")) {
+            gameManager.getGameLobbyManager().onGameTick(gameTime);
+        }
+
+        // 游戏物资刷新管理器
+        try (ServerUtils.ProfileSection s = new ServerUtils.ProfileSection(profiler, () -> gameManager.getGameLootManager().getManagerName() + "#onGameTick")) {
+            gameManager.getGameLootManager().onGameTick(gameTime);
+        }
+
+        // 区域管理器
+        try (ServerUtils.ProfileSection s = new ServerUtils.ProfileSection(profiler, () -> gameManager.getZoneManager().getManagerName() + "#onGameTick")) {
+            gameManager.getZoneManager().onGameTick(gameTime); // Zone可以提前触发stopGame，并且Zone需要延迟stopGame到tick结束
+        }
+
+        // 统计管理器
+        try (ServerUtils.ProfileSection s = new ServerUtils.ProfileSection(profiler, () -> gameManager.getStatsManager().getManagerName() + "#onGameTick")) {
+            gameManager.getStatsManager().onGameTick(gameTime); // 基于事件主动记录，不用tick
+        }
 
         if (gameTime % 200 == 0) {
             finishGameIfShouldEnd(gameManager); // 每10秒保底检查游戏结束

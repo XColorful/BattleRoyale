@@ -27,7 +27,7 @@ public class DefaultPerformance {
         // 默认性能配置:
         // 玩家数量: 10人, 模拟距离: 16, BFS处理Tick: 5秒
         GeneratorEntry generatorEntry = new GeneratorEntry(false, true, true, true, true, new ArrayList<>(), new ArrayList<>(),
-                2000,
+                2000, false,
                 2000, 20, 3, 1500, 50000, 100, false, 100000, 10000);
 
         PerformanceConfig performanceConfig = new PerformanceConfig(0, "Default performance", "#FFFFFF", true, generatorEntry);
@@ -39,7 +39,7 @@ public class DefaultPerformance {
         // 最大质量配置:
         // 玩家数量: 20人, 模拟距离: 20, BFS处理Tick: 5秒
         GeneratorEntry generatorEntry = new GeneratorEntry(false, true, true, true, true, new ArrayList<>(), new ArrayList<>(),
-                3000,
+                3000, false,
                 3000, 32, 3, 1500, 50000, 100, true, 100000, 10000);
 
         PerformanceConfig performanceConfig = new PerformanceConfig(1, "Max quality", "#FFFFFF", generatorEntry);
@@ -51,7 +51,7 @@ public class DefaultPerformance {
         // 更好性能配置:
         // 玩家数量: 8人, 模拟距离: 8, BFS处理Tick: 5秒
         GeneratorEntry generatorEntry = new GeneratorEntry(false, true, true, true, true, new ArrayList<>(), new ArrayList<>(),
-                500,
+                500, false,
                 500, 16, 3, 500, 3000, 100, false, 50000, 10000);
 
         PerformanceConfig performanceConfig = new PerformanceConfig(2, "Better performance", "#FFFFFF", generatorEntry);
@@ -113,7 +113,7 @@ public class DefaultPerformance {
         // 12600KF狮城+Y城共两人64模拟距离物资刷新，只要100ms（含未加载区块的跳过），BFS频率最好是大一点，然后开启立即下一次BFS
 
         GeneratorEntry generatorEntry = new GeneratorEntry(false, true, true, true, true, new ArrayList<>(), new ArrayList<>(),
-                100000,
+                100000, false,
                 100000, 128, 0, 50000, 200000, 100, true, 300000, 10000);
 
         PerformanceConfig performanceConfig = new PerformanceConfig(3, "Developer Performance Test", "#FFFFFF", generatorEntry);

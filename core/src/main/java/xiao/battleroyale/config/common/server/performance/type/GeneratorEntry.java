@@ -7,7 +7,6 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.server.performance.GeneratorEntryTag;
 import xiao.battleroyale.api.config.common.server.performance.IPerformanceEntry;
 import xiao.battleroyale.api.config.sub.IConfigAppliable;
-import xiao.battleroyale.common.loot.CommonLootManager;
 import xiao.battleroyale.common.loot.LootGenerator;
 import xiao.battleroyale.util.JsonUtils;
 
@@ -26,6 +25,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
     public final List<String> blackListRegex;
     // normal
     public int maxNormalTickLootChunk;
+    public boolean allowNormalLootInGame;
     // game
     public int maxGameTickLootChunk;
     public int maxGameLootDistance;
@@ -38,7 +38,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
     public int cleanCachedChunk;
 
     public GeneratorEntry(boolean lootAnyBlockEntity, boolean lootVanillaChest, boolean removeLootTable, boolean clearPreviousContent, boolean removeInnocentEntity, @NotNull List<String> whiteListRegex, @NotNull List<String> blackListRegex,
-                          int maxNormalTickLootChunk,
+                          int maxNormalTickLootChunk, boolean allowNormalLootInGame,
                           int maxGameTickLootChunk, int maxGameLootDistance, int tolerantCenterDistance, int maxCachedCenter, int maxQueuedChunk, int bfsFrequency, boolean instantNextBfs, int maxCachedLootChunk, int cleanCachedChunk) {
         this.lootAnyBlockEntity = lootAnyBlockEntity;
         this.lootVanillaChest = lootVanillaChest;
@@ -48,6 +48,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         this.whiteListRegex = whiteListRegex;
         this.blackListRegex = blackListRegex;
         this.maxNormalTickLootChunk = maxNormalTickLootChunk;
+        this.allowNormalLootInGame = allowNormalLootInGame;
         this.maxGameTickLootChunk = maxGameTickLootChunk;
         this.maxGameLootDistance = maxGameLootDistance;
         this.tolerantCenterDistance = tolerantCenterDistance;
@@ -60,7 +61,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
     }
     @Override public @NotNull GeneratorEntry copy() {
         return new GeneratorEntry(lootAnyBlockEntity, lootVanillaChest, removeLootTable, clearPreviousContent,  removeInnocentEntity, new ArrayList<>(whiteListRegex), new ArrayList<>(blackListRegex),
-                maxNormalTickLootChunk,
+                maxNormalTickLootChunk, allowNormalLootInGame,
                 maxGameTickLootChunk, maxGameLootDistance, tolerantCenterDistance, maxCachedCenter, maxQueuedChunk, bfsFrequency, instantNextBfs, maxCachedLootChunk, cleanCachedChunk);
     }
 
@@ -96,6 +97,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         List<String> vainllaBlackList = JsonUtils.getJsonStringList(commonObject, GeneratorEntryTag.VANILLA_BLACK_LIST);
         // normal
         int maxNormalTickLootChunk = JsonUtils.getJsonInt(normalObject, GeneratorEntryTag.MAX_NORMAL_TICK_LOOT_CHUNK, 5);
+        boolean allowNormalLootInGame = JsonUtils.getJsonBool(normalObject, GeneratorEntryTag.ALLOW_NORMAL_LOOT_IN_GAME, false);
         // game
         int maxGameTickLootChunk = JsonUtils.getJsonInt(gameObject, GeneratorEntryTag.MAX_GAME_TICK_LOOT_CHUNK, 5);
         int maxGameLootDistance = JsonUtils.getJsonInt(gameObject, GeneratorEntryTag.MAX_GAME_LOOT_DISTANCE, 26);
@@ -108,7 +110,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         int cleanCachedChunk = JsonUtils.getJsonInt(gameObject, GeneratorEntryTag.CLEAN_CACHED_CHUNK, 2000);
 
         return new GeneratorEntry(lootAnyBlockEntity, lootVanillaChest, removeLootTable, clearPreviousContent, removeInnocentEntity, vanillaWhiteList, vainllaBlackList,
-                maxNormalTickLootChunk,
+                maxNormalTickLootChunk, allowNormalLootInGame,
                 maxGameTickLootChunk, maxGameLootDistance, tolerantCenterDistance, maxCachedCenter, maxQueuedChunk, bfsFrequency, instantNextBfs, maxCachedLootChunk, cleanCachedChunk);
     }
 
@@ -120,7 +122,8 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         LootGenerator.setClearPreviousContent(clearPreviousContent);
         LootGenerator.setRemoveInnocentEntity(removeInnocentEntity);
         LootGenerator.setLootBlockFilter(whiteListRegex, blackListRegex);
-        CommonLootManager.setMaxChunksPerTick(maxNormalTickLootChunk);
+        BattleRoyale.getCommonLootManager().applyConfig(this);
+        BattleRoyale.getCommonInventoryManager().applyConfig(this);
         BattleRoyale.getGameManager().getGameLootManager().applyConfig(this);
     }
 
@@ -141,6 +144,7 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
     private JsonObject generateNormalJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(GeneratorEntryTag.MAX_NORMAL_TICK_LOOT_CHUNK, maxNormalTickLootChunk);
+        jsonObject.addProperty(GeneratorEntryTag.ALLOW_NORMAL_LOOT_IN_GAME, allowNormalLootInGame);
         return jsonObject;
     }
 
