@@ -28,8 +28,9 @@ public class GameInfoMessageManager extends AbstractMessageManager<GameInfoMessa
         return GameMessageManagerHolder.INSTANCE;
     }
 
+    public static final String _MANAGER_NAME = String.format("%s:GameInfoMessageManager", BattleRoyale.MOD_ID);
     @Override public String getManagerName() {
-        return String.format("%s:GameInfoMessageManager", BattleRoyale.MOD_ID);
+        return _MANAGER_NAME;
     }
     @Override public boolean registerGameEventHandler() {
         return false;

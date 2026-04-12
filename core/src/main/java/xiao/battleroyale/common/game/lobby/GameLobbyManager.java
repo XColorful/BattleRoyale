@@ -52,8 +52,9 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
     public static void init(McSide mcSide) {
     }
 
+    public static final String _MANAGER_NAME = String.format("%s:GameLobbyManager", BattleRoyale.MOD_ID);
     @Override public String getManagerName() {
-        return String.format("%s:GameLobbyManager", BattleRoyale.MOD_ID);
+        return _MANAGER_NAME;
     }
 
     protected boolean initGameTeleport = true;

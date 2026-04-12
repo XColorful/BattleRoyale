@@ -15,6 +15,7 @@ public class GeneratorEntryTag extends ConfigEntryTag {
 
     public static final String NORMAL = "normal";
     public static final String MAX_NORMAL_TICK_LOOT_CHUNK = "maxNormalTickLootChunk";
+    public static final String ALLOW_NORMAL_LOOT_IN_GAME = "allowNormalLootInGame";
 
     public static final String GAME = "game";
     public static final String MAX_GAME_TICK_LOOT_CHUNK = "maxGameTickLootChunk";
