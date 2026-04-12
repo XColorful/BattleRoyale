@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -558,7 +559,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     public void onGameTick(int gameTime) {
         this.gameTime = gameTime;
 
-        try (ServerUtils.ProfileSection s = new ServerUtils.ProfileSection(BattleRoyale.getMinecraftServer().getProfiler(), () -> getManagerName() + "#onGameTick")) {
+        try (ServerUtils.ProfileSection s = new ServerUtils.ProfileSection(Profiler.get(), () -> getManagerName() + "#onGameTick")) {
             ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
             if (eventPoster.postCustomEvent(new GameTickEvent(this, gameTime))) {
                 BattleRoyale.LOGGER.debug("GameTickEvent canceled, skipped onGameTick (gameTime:{})", gameTime);
