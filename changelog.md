@@ -1,5 +1,37 @@
 ### 0.5.x
 
+#### 0.5.4
+> Add 26.1.2neoforge
+- Smooth zone rendering (no more jittering)
+- Fix clearInventoryAtStart cannot be disabled
+- Clear stats start system time at initGame
+
+Config:
+- Add (survival lobby) teleportChangeGamemode to utility config
+- Add example loot config of generate loot for specific block
+- Add abort entry to loot config for performance in multi-regex combination
+- Add allowNormalLootInGame to performance config
+- Adjust render scale in example client render config
+- Reduce zone transparency in example pubg zone configs
+
+API command:
+- Add PLAYER_RESPAWN_EVENT to EventType
+- Add SURVIVAL_LOBBY_TELEPORT_EVENT, SURVIVAL_LOBBY_TELEPORT_FINISH_EVENT to CustomEventType
+- Add stats record event hook
+- Add Vec2 rotation support for Entity-based events
+
+Performance:
+- Optimize custom event dispatching, replace lock with CopyOnWrite snapshot
+- Significant performance boost: ~45% faster than Forge event posting
+- Add benchmark commands for unified event dispatching
+- Add vanilla profiler to game tick
+
+For developer:
+- Decouple EventPoster from all
+
+26.1+
+- Fix crash on loot spawner & entity spawner rendering
+
 #### 0.5.3
 > Add 26.1neoforge
 - Fix softlock caused by unhandled PlayerRevive kill logic onGamePlayerDeath (Issue #55)
