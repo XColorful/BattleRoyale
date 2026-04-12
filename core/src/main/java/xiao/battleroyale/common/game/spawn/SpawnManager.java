@@ -81,8 +81,9 @@ public class SpawnManager extends AbstractGameManager implements ISideOnly, ISpa
 
     protected Map<GameTeam, ClassUtils.ArraySet<GamePlayer>> cachedRespawnTeamQueue;
 
+    public static final String _MANAGER_NAME = String.format("%s:SpawnManager", BattleRoyale.MOD_ID);
     @Override public String getManagerName() {
-        return String.format("%s:SpawnManager", BattleRoyale.MOD_ID);
+        return _MANAGER_NAME;
     }
 
     @Override public boolean serverSideOnly() {
