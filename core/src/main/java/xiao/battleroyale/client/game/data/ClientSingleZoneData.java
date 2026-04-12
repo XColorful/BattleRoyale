@@ -32,9 +32,15 @@ public class ClientSingleZoneData extends AbstractClientExpireData {
     public float a = 1;
     public ZoneFuncType funcType;
     public ZoneShapeType shapeType;
+    public Vec3 centerNext;
+    public Vec3 dimensionNext;
+    public double rotateDegreeNext;
     public Vec3 center;
     public Vec3 dimension;
     public double rotateDegree = 0;
+    public Vec3 centerOld;
+    public Vec3 dimensionOld;
+    public double rotateDegreeOld;
     public int segments = 3; // 供多边形和星形使用
     public double progress; // [0, 1]
     public @Nullable IAdditionalZone specialHandler;
@@ -81,11 +87,17 @@ public class ClientSingleZoneData extends AbstractClientExpireData {
             }
         }
         CompoundTag centerTag = nbt.getCompound(GameZoneTag.CENTER);
-        this.center = new Vec3(centerTag.getDouble("x"), centerTag.getDouble("y"), centerTag.getDouble("z"));
+        this.centerNext = new Vec3(centerTag.getDouble("x"), centerTag.getDouble("y"), centerTag.getDouble("z"));
         CompoundTag dimTag = nbt.getCompound(GameZoneTag.DIMENSION);
-        this.dimension = new Vec3(dimTag.getDouble("x"), dimTag.getDouble("y"), dimTag.getDouble("z"));
-        this.rotateDegree = nbt.contains(GameZoneTag.ROTATE) ? nbt.getDouble(GameZoneTag.ROTATE) : 0;
+        this.dimensionNext = new Vec3(dimTag.getDouble("x"), dimTag.getDouble("y"), dimTag.getDouble("z"));
+        this.rotateDegreeNext = nbt.contains(GameZoneTag.ROTATE) ? nbt.getDouble(GameZoneTag.ROTATE) : 0;
         this.progress = nbt.getDouble(GameZoneTag.SHAPE_PROGRESS);
+        // 第一次收到 Message 时触发
+        if (this.centerOld == null) {
+            this.centerOld = this.center = this.centerNext;
+            this.dimensionOld = this.dimension = this.dimensionNext;
+            this.rotateDegreeOld = this.rotateDegree = this.rotateDegreeNext;
+        }
 
         // zoneSpecial
         if (nbt.contains(GameZoneTag.SPECIAL) && nbt.contains(GameZoneTag.ADDITIONAL_TAG)) {

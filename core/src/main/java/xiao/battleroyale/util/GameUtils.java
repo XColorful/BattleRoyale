@@ -58,7 +58,7 @@ public class GameUtils {
      */
     public static Vec3 calculateCenterAndLerp(Vec3 startVec, List<GamePlayer> gamePlayers, double delta) {
         Vec3 playerCenter = calculatePlayerCenter(gamePlayers);
-        return Vec3Utils.lerp(startVec, playerCenter, delta);
+        return startVec.lerp(playerCenter, delta);
     }
 
     public record GameTimeFormat(int gameTime, int remainTick, float remainSeconds, int seconds, int minutes, int hours) {
