@@ -19,6 +19,7 @@ public enum LootEntryType {
     NONE(LootEntryTag.TYPE_NONE, NoneEntry::fromJson),
     REPEAT(LootEntryTag.TYPE_REPEAT, RepeatEntry::fromJson),
     TIME(LootEntryTag.TYPE_TIME, TimeEntry::fromJson),
+    ABORT(LootEntryTag.TYPE_ABORT, AbortEntry::fromJson),
     BOUND(LootEntryTag.TYPE_BOUND, BoundEntry::fromJson),
     EXTRA(LootEntryTag.TYPE_EXTRA, ExtraEntry::fromJson),
     SHUFFLE(LootEntryTag.TYPE_SHUFFLE, ShuffleEntry::fromJson),

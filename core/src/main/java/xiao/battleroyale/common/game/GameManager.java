@@ -58,6 +58,7 @@ import xiao.battleroyale.config.common.game.stats.StatsConfigManager.StatsConfig
 import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.data.io.TempDataManager;
 import xiao.battleroyale.util.ChatUtils;
+import xiao.battleroyale.util.ServerUtils;
 import xiao.battleroyale.util.StringUtils;
 
 import java.util.*;
@@ -557,7 +558,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     public void onGameTick(int gameTime) {
         this.gameTime = gameTime;
 
-        try {
+        try (ServerUtils.ProfileSection s = new ServerUtils.ProfileSection(BattleRoyale.getMinecraftServer().getProfiler(), () -> getManagerName() + "#onGameTick")) {
             ICustomEventPoster eventPoster = BattleRoyale.getEventPoster();
             if (eventPoster.postCustomEvent(new GameTickEvent(this, gameTime))) {
                 BattleRoyale.LOGGER.debug("GameTickEvent canceled, skipped onGameTick (gameTime:{})", gameTime);

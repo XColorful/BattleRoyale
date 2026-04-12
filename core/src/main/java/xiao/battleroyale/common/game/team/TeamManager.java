@@ -42,8 +42,9 @@ public class TeamManager extends AbstractGameManager implements ITeamManager {
     public static void init(McSide mcSide) {
     }
 
+    public static final String _MANAGER_NAME = String.format("%s:TeamManager", BattleRoyale.MOD_ID);
     @Override public String getManagerName() {
-        return String.format("%s:TeamManager", BattleRoyale.MOD_ID);
+        return _MANAGER_NAME;
     }
 
     protected final TeamConfig teamConfig = new TeamConfig();
