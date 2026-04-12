@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -183,18 +184,19 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
             }
 
             // 渲染
-            Vec3 lastTickPos = new Vec3(spectatePlayer.xOld, spectatePlayer.yOld, spectatePlayer.zOld);
-            Vec3 currentTickPos = spectatePlayer.position();
-            Vec3 interpolatedPos = lastTickPos.lerp(currentTickPos, partialTicks);
+            Vec3 currentPos = spectatePlayer.position();
+            double posX = Mth.lerp(partialTicks, spectatePlayer.xOld, currentPos.x);
+            double posY = Mth.lerp(partialTicks, spectatePlayer.yOld, currentPos.y);
+            double posZ = Mth.lerp(partialTicks, spectatePlayer.zOld, currentPos.z);
             AABB boundingBox = spectatePlayer.getBoundingBox();
             float playerHeight = (float) (boundingBox.maxY - boundingBox.minY);
             float baseWidth = (float) (boundingBox.maxX - boundingBox.minX);
             float baseDepth = (float) (boundingBox.maxZ - boundingBox.minZ);
 
-            float cylinderHeight = (float) (worldMaxBuildHeight - interpolatedPos.y - playerHeight);
+            float cylinderHeight = (float) (worldMaxBuildHeight - posY - playerHeight);
 
             // 将坐标系的原点平移到玩家的脚底中心
-            currentZoneMatrix = ZoneRenderer.createCenterOffsetMatrix(event, interpolatedPos, cameraPos);
+            currentZoneMatrix = ZoneRenderer.createCenterOffsetMatrix(event, posX, posY, posZ, cameraPos);
             consumer = currentConsumer;
 
             if (renderBoundingBox) {
