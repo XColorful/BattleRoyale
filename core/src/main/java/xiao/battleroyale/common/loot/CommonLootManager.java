@@ -18,6 +18,7 @@ import xiao.battleroyale.api.config.common.loot.ILootConfigManager;
 import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.loot.ICommonLootManager;
+import xiao.battleroyale.config.common.server.performance.type.GeneratorEntry;
 
 import java.util.*;
 
@@ -37,7 +38,13 @@ public class CommonLootManager implements ICommonLootManager {
     }
 
     private static int MAX_CHUNKS_PER_TICK = 5;
+    private static boolean ALLOW_LOOT_IN_GAME = false;
     public static void setMaxChunksPerTick(int chunks) { MAX_CHUNKS_PER_TICK = Math.min(Math.max(chunks, 5), 100000); } // 十万
+    public static void setAllowLootInGame(boolean allow) { ALLOW_LOOT_IN_GAME = allow; }
+    @Override public void applyConfig(GeneratorEntry generatorEntry) {
+        setMaxChunksPerTick(generatorEntry.maxNormalTickLootChunk);
+        setAllowLootInGame(generatorEntry.allowNormalLootInGame);
+    }
 
     private final Queue<ChunkPos> chunksToProcess = new ArrayDeque<>();
     private final Set<ChunkPos> processedChunkTracker = new HashSet<>(); // 用于去重和检查是否已在队列中
@@ -55,7 +62,7 @@ public class CommonLootManager implements ICommonLootManager {
 
     @Override
     public LootStatus lootStatusCheck() {
-        if (BattleRoyale.getGameManager().isInGame()) {
+        if (!ALLOW_LOOT_IN_GAME && BattleRoyale.getGameManager().isInGame()) {
             return LootStatus.REJECT;
         } else if (this.currentGenerationGameId != null || !this.chunksToProcess.isEmpty()) {
             return LootStatus.PROCESSING;
@@ -155,7 +162,7 @@ public class CommonLootManager implements ICommonLootManager {
             }
         }
 
-        LootGenerationEventHandler.register();
+        _LootGenerationEventHandler.register();
 
         BattleRoyale.LOGGER.info("Loot generation task initialized for {} chunks, loot gameId: {}", this.chunksToProcess.size(), gameId);
         return this.chunksToProcess.size();
@@ -174,9 +181,9 @@ public class CommonLootManager implements ICommonLootManager {
         }
 
         IGameManager gameManager = BattleRoyale.getGameManager();
-        boolean isInGame = gameManager.isInGame();
-        if (isInGame || chunksToProcess.isEmpty()) { // 游戏中(强制中断)或已结束
-            if (isInGame && initiatingCommandSource != null) {
+        boolean gameInterrupt = !ALLOW_LOOT_IN_GAME && gameManager.isInGame();
+        if (gameInterrupt || chunksToProcess.isEmpty()) { // 游戏中(强制中断)或已结束
+            if (gameInterrupt && initiatingCommandSource != null) {
                 initiatingCommandSource.sendFailure(Component.translatable("battleroyale.message.game_stop_loot"));
             }
             sendLootRefreshResult();

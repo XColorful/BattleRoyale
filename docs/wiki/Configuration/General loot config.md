@@ -120,6 +120,32 @@ lootId：
 }
 ```
 
+#### 急停刷新
+
+依次处理每一个刷新词条，刷新次数或物品数达标后停止
+- lootDistance：最小非空刷新次数
+- slotDistance：最小刷新物品数
+- countEmpty：空刷新是否加入计数
+```json
+{
+	"lootType": "abort",
+	"lootDistance": 1,
+	"slotDistance": 1,
+	"countEmpty": false,
+	"entries": [
+		{
+			刷新词条
+		},
+		{
+			刷新词条
+		},
+		{
+			...
+		}
+	]
+}
+```
+
 #### 限量刷新
 
 依次处理每一个刷新词条，刷新数在[min, max]范围内时刷新，否则无刷新
@@ -243,12 +269,17 @@ lootId：
 {
 	"lootType": "regex",
 	"invert": false,
-	"regex": "",
+	"regex": "id:\"minecraft:chest\"",
 	"entry": {
 		刷新词条
 	}
 }
 ```
+> 方块的NBT字符串形如：
+> ```
+> "{ForgeData:{},Items:[],id:"minecraft:chest",x:0,y:0,z:0}"
+> ```
+> 如果需要精准匹配方块，避免容器内有容器方块，考虑使用 _"id:\\"minecraft:chest\\",x:"_
 
 #### 形状刷新
 
@@ -556,6 +587,32 @@ Weighted selection of a single loot entry for processing, the probability of eac
 }
 ```
 
+#### Counter-strafing loot
+
+Process each loot entry in turn, stop once the loot hits or item count reaches the goal.
+- lootDistance: minimum non-empty loot hits
+- slotDistance: minimum item quantity
+- countEmpty: whether empty loot is counted as loot
+```json
+{
+	"lootType": "abort",
+	"lootDistance": 1,
+	"slotDistance": 1,
+	"countEmpty": false,
+	"entries": [
+		{
+			LOOT ENTRY
+		},
+		{
+			LOOT ENTRY
+		},
+		{
+			...
+		}
+	]
+}
+```
+
 #### Bound loot
 
 Process each loot entry in turn, loot when the loot count is within the range of [min, max], otherwise result in None loot.
@@ -679,12 +736,17 @@ Generate loot if the block's NBT data matches a given regular expression.
 {
 	"lootType": "regex",
 	"invert": false,
-	"regex": "",
+	"regex": "id:\"minecraft:chest\"",
 	"entry": {
 		LOOT ENTRY
 	}
 }
 ```
+> The NBT string of a block looks like:
+> ```
+> "{ForgeData:{},Items:[],id:"minecraft:chest",x:0,y:0,z:0}"
+> ```
+> If you need precise block matching and want to avoid container blocks within containers, consider using _"id:\\"minecraft:chest\\",x:"_
 
 #### Shape loot
 

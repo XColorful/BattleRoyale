@@ -3,15 +3,15 @@ package xiao.battleroyale.common.loot;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
 
-public class LootGenerationEventHandler implements IEventHandler {
+public class _LootGenerationEventHandler implements IEventHandler {
 
-    private LootGenerationEventHandler() {}
+    private _LootGenerationEventHandler() {}
 
     private static class LootGenerationEventHandlerHolder {
-        private static final LootGenerationEventHandler INSTANCE = new LootGenerationEventHandler();
+        private static final _LootGenerationEventHandler INSTANCE = new _LootGenerationEventHandler();
     }
 
-    public static LootGenerationEventHandler get() {
+    public static _LootGenerationEventHandler get() {
         return LootGenerationEventHandlerHolder.INSTANCE;
     }
 

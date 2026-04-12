@@ -284,6 +284,7 @@
   > 	- 马载具物资刷新配置
   > 	- TaCZ物资刷新配置
   > - 物资刷新配置类型
+  > - 特定方块刷新
   - [服务端配置管理器](./config/common/server/server-config-manager.md)：
 	  - [函数配置管理器](./config/common/server/function/function-config-manager.md)：管理[函数配置](/docs/wiki/Configuration/Function%20config.md)
 	  - [性能配置管理器](./config/common/server/performance/performance-config-manager.md)：管理[性能配置](/docs/wiki/Configuration/Performance%20config.md)
@@ -376,6 +377,7 @@
 - NBTUtils：NBT 序列化
 - ScoreUtils：封装记分板调用及版本差异
 - SendUtils：封装网络消息的发送，使网络处理器（`NetworkHandler`）与项目主体解耦
+- ServerUtils：服务端工具
 - StringUtils：解析/转换各种格式字符串、构建字符串
 - Vec3Utils：向量随机偏移、向量加减/线性插值等
 - WorldUtils：游戏内世界相关操作
@@ -664,6 +666,7 @@ Module division based on the `xiao.battleroyale` top-level package
   > 	- Horse vehicle loot config
   > 	- TaCZ loot config
   > - Loot config type
+  > - Specific block loot
   - [Server Config Manager](./config/common/server/server-config-manager.md#English):
 	  - [Function Config Manager](./config/common/server/function/function-config-manager.md#English): Manage [Function config](/docs/wiki/Configuration/Function%20config.md#English)
 	  - [Performance Config Manager](./config/common/server/performance/performance-config-manager.md#English): Manage [Performance config](/docs/wiki/Configuration/Performance%20config.md#English)
@@ -756,6 +759,7 @@ Module division based on the `xiao.battleroyale` top-level package
 - NBTUtils: NBT serialization
 - ScoreUtils: Encapsulate scoreboard operations and handle version differences
 - SendUtils: Encapsulate the sending of network messages, decoupling `NetworkHandler` from the project main body
+- ServerUtils: Server-side tools
 - StringUtils: Parse/convert various format strings, build strings
 - Vec3Utils: Vector random offset, vector addition/subtraction/linear interpolation, etc.
 - WorldUtils: In-game world related operations
