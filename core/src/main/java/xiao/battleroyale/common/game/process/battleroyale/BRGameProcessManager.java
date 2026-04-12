@@ -2,6 +2,7 @@ package xiao.battleroyale.common.game.process.battleroyale;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -132,7 +133,7 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
         // 暂时认为各Manager要按顺序tick，因此不改成监听GameTickEvent事件来触发
         // BattleRoyale模式按如下顺序调度, 提前/推迟需GameSubManager自行监听GameTickEvent
 
-        ProfilerFiller profiler = BattleRoyale.getMinecraftServer().getProfiler();
+        ProfilerFiller profiler = Profiler.get();
 
         // 游戏规则管理器
         IGameruleManager gameruleManager = gameManager.getGameruleManager();
