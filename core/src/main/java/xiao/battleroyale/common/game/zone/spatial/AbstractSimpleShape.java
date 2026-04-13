@@ -2,9 +2,11 @@ package xiao.battleroyale.common.game.zone.spatial;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.custom.zone.DetermineZoneEvent;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.common.game._GameTeamManager;
@@ -46,6 +48,8 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
     protected Vec3 centerDist = Vec3.ZERO;
     protected Vec3 dimensionDist = Vec3.ZERO;
     protected double rotateDist = 0;
+
+    @ApiStatus.Internal protected boolean _isNestedDetermination = false;
 
     public AbstractSimpleShape(StartEntry startEntry, EndEntry endEntry, boolean allowBadShape) {
         this.startEntry = startEntry;
@@ -301,6 +305,13 @@ public abstract class AbstractSimpleShape implements ISpatialZone {
             endRotateDegree += zoneContext.random.get() * endEntry.endRotateRange;
             endRotateDegree *= endEntry.endRotateScale;
         }
+
+        if (this._isNestedDetermination) return;
+        _isNestedDetermination = true;
+        boolean canceled = BattleRoyale.getEventPoster().postCustomEvent(new DetermineZoneEvent(zoneContext, this));
+        _isNestedDetermination = false;
+        if (canceled) return;
+
         if (startCenter != null && startDimension != null
                 && endCenter != null && endDimension != null
                 && additionalCalculationCheck()) { // 额外检查放最后
