@@ -159,6 +159,8 @@ public class AllFunction {
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_player_close_container", EventType.PLAYER_CLOSE_CONTAINER_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_critical_hit", EventType.CRITICAL_HIT_EVENT.getName(),
+                                EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_entity_interact", EventType.ENTITY_INTERACT_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_entity_interact_specific", EventType.ENTITY_INTERACT_SPECIFIC_EVENT.getName(),

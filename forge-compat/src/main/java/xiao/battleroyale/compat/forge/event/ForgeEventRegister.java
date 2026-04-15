@@ -27,6 +27,7 @@ public class ForgeEventRegister implements IEventRegister {
             case ITEM_TOSS_EVENT -> ItemTossEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_OPEN_CONTAINER_EVENT -> PlayerOpenContainerEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_CLOSE_CONTAINER_EVENT -> PlayerCloseContainerEventManager.register(eventHandler, priority, receiveCanceled);
+            case CRITICAL_HIT_EVENT -> CriticalHitEventManager.register(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_EVENT -> EntityInteractEventManager.register(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_SPECIFIC_EVENT -> EntityInteractSpecificEventManager.register(eventHandler, priority, receiveCanceled);
             case LEFT_CLICK_BLOCK_EVENT -> LeftClickBlockEventManager.register(eventHandler, priority, receiveCanceled);
@@ -67,6 +68,7 @@ public class ForgeEventRegister implements IEventRegister {
             case ITEM_TOSS_EVENT -> ItemTossEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_OPEN_CONTAINER_EVENT -> PlayerOpenContainerEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_CLOSE_CONTAINER_EVENT -> PlayerCloseContainerEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case CRITICAL_HIT_EVENT -> CriticalHitEventManager.unregister(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_EVENT -> EntityInteractEventManager.unregister(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_SPECIFIC_EVENT -> EntityInteractSpecificEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LEFT_CLICK_BLOCK_EVENT -> LeftClickBlockEventManager.unregister(eventHandler, priority, receiveCanceled);
