@@ -13,6 +13,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.minecraft.CommandLevel;
 
 /**
  * 同 {@link xiao.battleroyale.developer.debug.command.sub.TestCommand}
@@ -24,6 +25,7 @@ public class TestCommand {
     public static void onServerCommandsRegister(RegisterCommandsEvent event) {
         event.getDispatcher().register(Commands.literal("cbr")
                 .then(Commands.literal("db")
+                        .requires(CommandLevel.hasPermission(4))
                         .then(Commands.literal("testForge")
                                 .then(Commands.argument("count", IntegerArgumentType.integer(1))
                                         .executes(TestCommand::testForgePostEvent)
