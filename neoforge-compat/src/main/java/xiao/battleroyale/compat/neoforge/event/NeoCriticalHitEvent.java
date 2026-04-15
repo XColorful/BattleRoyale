@@ -34,6 +34,17 @@ public class NeoCriticalHitEvent extends NeoEvent implements ICriticalHitEvent {
         return EventType.CRITICAL_HIT_EVENT;
     }
 
+    @Override public boolean isCanceled() {
+        return super.isCanceled() || !this.criticalHitEvent.isCriticalHit();
+    }
+
+    @Override public void setCanceled(boolean cancel) {
+        super.setCanceled(cancel);
+        if (cancel) {
+            this.setCriticalHit(false);
+        }
+    }
+
     @Override
     public Player getEntity() {
         return criticalHitEvent.getEntity();
@@ -46,26 +57,22 @@ public class NeoCriticalHitEvent extends NeoEvent implements ICriticalHitEvent {
 
     @Override
     public float getDamageMultiplier() {
-        return criticalHitEvent.getDamageModifier();
+        return criticalHitEvent.getDamageMultiplier();
     }
 
     @Override
     public void setDamageMultiplier(float multiplier) {
-        criticalHitEvent.setDamageModifier(multiplier);
+        criticalHitEvent.setDamageMultiplier(multiplier);
     }
 
     @Override
     public boolean isCriticalHit() {
-        return switch (TriResultHelper.convert(criticalHitEvent.getResult())) {
-            case ALLOW -> true;
-            case DENY -> false;
-            default -> this.isVanillaCritical();
-        };
+        return criticalHitEvent.isCriticalHit();
     }
 
     @Override
     public void setCriticalHit(boolean isCriticalHit) {
-        criticalHitEvent.setResult(isCriticalHit ? TriResultHelper.convert(TriResult.ALLOW) : TriResultHelper.convert(TriResult.DENY));
+        criticalHitEvent.setCriticalHit(isCriticalHit);
     }
 
     @Override
@@ -75,11 +82,12 @@ public class NeoCriticalHitEvent extends NeoEvent implements ICriticalHitEvent {
 
     @Override
     public void setDisableSweep(boolean disableSweep) {
+        criticalHitEvent.setDisableSweep(disableSweep);
     }
 
     @Override
     public boolean isDisableSweep() {
-        return true;
+        return criticalHitEvent.disableSweep();
     }
 
     @Override
