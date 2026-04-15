@@ -24,6 +24,7 @@ public class ForgeEventRegister implements IEventRegister {
             case PLAYER_LOGGED_OUT_EVENT -> PlayerLoggedOutEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_RESPAWN_EVENT -> PlayerRespawnEventManager.register(eventHandler, priority, receiveCanceled);
             case ITEM_ENTITY_PICKUP_EVENT -> ItemEntityPickupEventManager.register(eventHandler, priority, receiveCanceled);
+            case ITEM_TOSS_EVENT -> ItemTossEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_OPEN_CONTAINER_EVENT -> PlayerOpenContainerEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_CLOSE_CONTAINER_EVENT -> PlayerCloseContainerEventManager.register(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_EVENT -> EntityInteractEventManager.register(eventHandler, priority, receiveCanceled);
@@ -63,6 +64,7 @@ public class ForgeEventRegister implements IEventRegister {
             case PLAYER_LOGGED_OUT_EVENT -> PlayerLoggedOutEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_RESPAWN_EVENT -> PlayerRespawnEventManager.unregister(eventHandler, priority, receiveCanceled);
             case ITEM_ENTITY_PICKUP_EVENT -> ItemEntityPickupEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case ITEM_TOSS_EVENT -> ItemTossEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_OPEN_CONTAINER_EVENT -> PlayerOpenContainerEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_CLOSE_CONTAINER_EVENT -> PlayerCloseContainerEventManager.unregister(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_EVENT -> EntityInteractEventManager.unregister(eventHandler, priority, receiveCanceled);

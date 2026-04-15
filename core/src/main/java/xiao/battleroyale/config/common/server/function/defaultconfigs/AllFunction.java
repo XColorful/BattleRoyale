@@ -153,6 +153,8 @@ public class AllFunction {
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_item_entity_pickup", EventType.ITEM_ENTITY_PICKUP_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_item_toss", EventType.ITEM_TOSS_EVENT.getName(),
+                                EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_player_open_container", EventType.PLAYER_OPEN_CONTAINER_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_player_close_container", EventType.PLAYER_CLOSE_CONTAINER_EVENT.getName(),
