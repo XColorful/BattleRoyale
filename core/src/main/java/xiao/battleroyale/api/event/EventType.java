@@ -43,7 +43,9 @@ public enum EventType {
     // render
     RENDER_LEVEL_STAGE_EVENT,
     RENDER_TRANSLUCENT_EVENT, // 单独拆一个事件，避免多次上锁，减少一点不必要的开销
-    RENDER_GUI_EVENT;
+    RENDER_GUI_EVENT,
+    // display
+    ITEM_TOOLTIP_EVENT;
 
     private static final Map<String, EventType> EVENT_TYPES = new HashMap<>();
 
@@ -92,5 +94,6 @@ public enum EventType {
 //                    RENDER_LEVEL_STAGE_EVENT.getName(),
 //                    RENDER_TRANSLUCENT_EVENT.getName(),
 //                    RENDER_GUI_EVENT.getName(),
+//                    ITEM_TOOLTIP_EVENT.getName(),
             }, builder);
 }

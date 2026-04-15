@@ -40,6 +40,7 @@ public class ForgeEventRegister implements IEventRegister {
             case RENDER_LEVEL_STAGE_EVENT -> RenderLevelStageEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_TRANSLUCENT_EVENT -> RenderTranslucentEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_GUI_EVENT -> RenderGuiEventManager.register(eventHandler, priority, receiveCanceled);
+            case ITEM_TOOLTIP_EVENT -> ItemTooltipEventManager.register(eventHandler, priority, receiveCanceled);
             default -> {
                 BattleRoyale.LOGGER.warn("Attempted to register handler for unassigned EventType: {}. Registration aborted.", eventType);
                 yield false;
@@ -78,6 +79,7 @@ public class ForgeEventRegister implements IEventRegister {
             case RENDER_LEVEL_STAGE_EVENT -> RenderLevelStageEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_TRANSLUCENT_EVENT -> RenderTranslucentEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_GUI_EVENT -> RenderGuiEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case ITEM_TOOLTIP_EVENT -> ItemTooltipEventManager.unregister(eventHandler, priority, receiveCanceled);
             default -> {
                 BattleRoyale.LOGGER.warn("Attempted to unregister handler for unassigned EventType: {}. Registration aborted.", eventType);
                 yield false;
