@@ -18,9 +18,16 @@ public class NeoEventRegister implements IEventRegister {
             case LIVING_HURT_EVENT -> NeoLivingHurtEventManager.register(eventHandler, priority, receiveCanceled);
             case LIVING_DAMAGE_EVENT -> NeoLivingDamageEventManager.register(eventHandler, priority, receiveCanceled);
             case LIVING_DEATH_EVENT -> NeoLivingDeathEventManager.register(eventHandler, priority, receiveCanceled);
+            case LIVING_HEAL_EVENT -> NeoLivingHealEventManager.register(eventHandler, priority, receiveCanceled);
+            case LIVING_USE_TOTEM_EVENT -> NeoLivingUseTotemEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_IN_EVENT -> NeoPlayerLoggedInEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_OUT_EVENT -> NeoPlayerLoggedOutEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_RESPAWN_EVENT -> NeoPlayerRespawnEventManager.register(eventHandler, priority, receiveCanceled);
+            case ITEM_ENTITY_PICKUP_EVENT -> NeoItemEntityPickupEventManager.register(eventHandler, priority, receiveCanceled);
+            case ITEM_TOSS_EVENT -> NeoItemTossEventManager.register(eventHandler, priority, receiveCanceled);
+            case PLAYER_OPEN_CONTAINER_EVENT -> NeoPlayerOpenContainerEventManager.register(eventHandler, priority, receiveCanceled);
+            case PLAYER_CLOSE_CONTAINER_EVENT -> NeoPlayerCloseContainerEventManager.register(eventHandler, priority, receiveCanceled);
+            case CRITICAL_HIT_EVENT -> NeoCriticalHitEventManager.register(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_EVENT -> NeoEntityInteractEventManager.register(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_SPECIFIC_EVENT -> NeoEntityInteractSpecificEventManager.register(eventHandler, priority, receiveCanceled);
             case LEFT_CLICK_BLOCK_EVENT -> NeoLeftClickBlockEventManager.register(eventHandler, priority, receiveCanceled);
@@ -31,9 +38,11 @@ public class NeoEventRegister implements IEventRegister {
             case ENTITY_PLACE_BLOCK_EVENT -> NeoEntityPlaceBlockEventManager.register(eventHandler, priority, receiveCanceled);
             case PORTAL_SPAWN_EVENT -> NeoPortalSpawnEventManager.register(eventHandler, priority, receiveCanceled);
             case FARMLAND_TRAMPLE_EVENT -> NeoFarmlandTrampleEventManager.register(eventHandler, priority, receiveCanceled);
+            case SERVER_CHAT_EVENT -> NeoServerChatEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_LEVEL_STAGE_EVENT -> NeoRenderLevelStageEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_TRANSLUCENT_EVENT -> NeoRenderTranslucentEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_GUI_EVENT -> NeoRenderGuiEventManager.register(eventHandler, priority, receiveCanceled);
+            case ITEM_TOOLTIP_EVENT -> NeoItemTooltipEventManager.register(eventHandler, priority, receiveCanceled);
             default -> {
                 BattleRoyale.LOGGER.warn("Attempted to register handler for unassigned EventType: {}. Registration aborted.", eventType);
                 yield false;
@@ -50,9 +59,16 @@ public class NeoEventRegister implements IEventRegister {
             case LIVING_HURT_EVENT -> NeoLivingHurtEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LIVING_DAMAGE_EVENT -> NeoLivingDamageEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LIVING_DEATH_EVENT -> NeoLivingDeathEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case LIVING_HEAL_EVENT -> NeoLivingHealEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case LIVING_USE_TOTEM_EVENT -> NeoLivingUseTotemEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_IN_EVENT -> NeoPlayerLoggedInEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_OUT_EVENT -> NeoPlayerLoggedOutEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_RESPAWN_EVENT -> NeoPlayerRespawnEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case ITEM_ENTITY_PICKUP_EVENT -> NeoItemEntityPickupEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case ITEM_TOSS_EVENT -> NeoItemTossEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case PLAYER_OPEN_CONTAINER_EVENT -> NeoPlayerOpenContainerEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case PLAYER_CLOSE_CONTAINER_EVENT -> NeoPlayerCloseContainerEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case CRITICAL_HIT_EVENT -> NeoCriticalHitEventManager.unregister(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_EVENT -> NeoEntityInteractEventManager.unregister(eventHandler, priority, receiveCanceled);
             case ENTITY_INTERACT_SPECIFIC_EVENT -> NeoEntityInteractSpecificEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LEFT_CLICK_BLOCK_EVENT -> NeoLeftClickBlockEventManager.unregister(eventHandler, priority, receiveCanceled);
@@ -63,9 +79,11 @@ public class NeoEventRegister implements IEventRegister {
             case ENTITY_PLACE_BLOCK_EVENT -> NeoEntityPlaceBlockEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PORTAL_SPAWN_EVENT -> NeoPortalSpawnEventManager.unregister(eventHandler, priority, receiveCanceled);
             case FARMLAND_TRAMPLE_EVENT -> NeoFarmlandTrampleEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case SERVER_CHAT_EVENT -> NeoServerChatEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_LEVEL_STAGE_EVENT -> NeoRenderLevelStageEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_TRANSLUCENT_EVENT -> NeoRenderTranslucentEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_GUI_EVENT -> NeoRenderGuiEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case ITEM_TOOLTIP_EVENT -> NeoItemTooltipEventManager.unregister(eventHandler, priority, receiveCanceled);
             default -> {
                 BattleRoyale.LOGGER.warn("Attempted to unregister handler for unassigned EventType: {}. Registration aborted.", eventType);
                 yield false;
