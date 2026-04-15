@@ -8,6 +8,7 @@ import xiao.battleroyale.api.event.EventPriority;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.custom.deathmatch.AddKillEvent;
 import xiao.battleroyale.api.event.custom.stats.GamePlayerRecordEvent;
+import xiao.battleroyale.api.event.custom.zone.DetermineZoneEvent;
 import xiao.battleroyale.compat.cbraddon.CbrAddon;
 import xiao.battleroyale.config.common.server.function.FunctionConfigManager;
 import xiao.battleroyale.config.common.server.function.type.RegisterEntry;
@@ -207,7 +208,9 @@ public class AllFunction {
                         new RegisterEntry.RegisterDetail(null, "battleroyale:stats/on_death_record", CustomEventType.CUSTOM_EVENT.getName(),
                                 EventPriority.HIGHEST, true, GamePlayerRecordEvent.DeathRecordEvent.class.getName()),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:stats/on_kill_record", CustomEventType.CUSTOM_EVENT.getName(),
-                                EventPriority.HIGHEST, true, GamePlayerRecordEvent.KillRecordEvent.class.getName())
+                                EventPriority.HIGHEST, true, GamePlayerRecordEvent.KillRecordEvent.class.getName()),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:zone/on_determine_zone", CustomEventType.CUSTOM_EVENT.getName(),
+                                EventPriority.HIGHEST, true, DetermineZoneEvent.class.getName())
                 )
         );
 
