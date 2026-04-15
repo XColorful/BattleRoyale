@@ -147,6 +147,8 @@ public class AllFunction {
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_player_respawn", EventType.PLAYER_RESPAWN_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_item_entity_pickup", EventType.ITEM_ENTITY_PICKUP_EVENT.getName(),
+                                EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_entity_interact", EventType.ENTITY_INTERACT_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_entity_interact_specific", EventType.ENTITY_INTERACT_SPECIFIC_EVENT.getName(),
