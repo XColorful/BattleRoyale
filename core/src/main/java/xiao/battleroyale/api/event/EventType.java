@@ -22,6 +22,8 @@ public enum EventType {
     PLAYER_LOGGED_OUT_EVENT,
     PLAYER_RESPAWN_EVENT,
     ITEM_ENTITY_PICKUP_EVENT,
+    PLAYER_OPEN_CONTAINER_EVENT,
+    PLAYER_CLOSE_CONTAINER_EVENT,
     // interact
     ENTITY_INTERACT_EVENT,
     ENTITY_INTERACT_SPECIFIC_EVENT,
@@ -70,6 +72,8 @@ public enum EventType {
                     PLAYER_LOGGED_OUT_EVENT.getName(),
                     PLAYER_RESPAWN_EVENT.getName(),
                     ITEM_ENTITY_PICKUP_EVENT.getName(),
+                    PLAYER_OPEN_CONTAINER_EVENT.getName(),
+                    PLAYER_CLOSE_CONTAINER_EVENT.getName(),
                     ENTITY_INTERACT_EVENT.getName(),
                     ENTITY_INTERACT_SPECIFIC_EVENT.getName(),
                     LEFT_CLICK_BLOCK_EVENT.getName(),
