@@ -33,6 +33,8 @@ public enum EventType {
     ENTITY_PLACE_BLOCK_EVENT,
     PORTAL_SPAWN_EVENT,
     FARMLAND_TRAMPLE_EVENT,
+    // server
+    SERVER_CHAT_EVENT,
     // render
     RENDER_LEVEL_STAGE_EVENT,
     RENDER_TRANSLUCENT_EVENT, // 单独拆一个事件，避免多次上锁，减少一点不必要的开销
@@ -76,6 +78,7 @@ public enum EventType {
                     ENTITY_PLACE_BLOCK_EVENT.getName(),
                     PORTAL_SPAWN_EVENT.getName(),
                     FARMLAND_TRAMPLE_EVENT.getName(),
+                    SERVER_CHAT_EVENT.getName(),
 //                    RENDER_LEVEL_STAGE_EVENT.getName(),
 //                    RENDER_TRANSLUCENT_EVENT.getName(),
 //                    RENDER_GUI_EVENT.getName(),

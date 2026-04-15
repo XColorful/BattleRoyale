@@ -31,6 +31,7 @@ public class ForgeEventRegister implements IEventRegister {
             case ENTITY_PLACE_BLOCK_EVENT -> EntityPlaceBlockEventManager.register(eventHandler, priority, receiveCanceled);
             case PORTAL_SPAWN_EVENT -> PortalSpawnEventManager.register(eventHandler, priority, receiveCanceled);
             case FARMLAND_TRAMPLE_EVENT -> FarmlandTrampleEventManager.register(eventHandler, priority, receiveCanceled);
+            case SERVER_CHAT_EVENT -> ServerChatEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_LEVEL_STAGE_EVENT -> RenderLevelStageEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_TRANSLUCENT_EVENT -> RenderTranslucentEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_GUI_EVENT -> RenderGuiEventManager.register(eventHandler, priority, receiveCanceled);
@@ -63,6 +64,7 @@ public class ForgeEventRegister implements IEventRegister {
             case ENTITY_PLACE_BLOCK_EVENT -> EntityPlaceBlockEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PORTAL_SPAWN_EVENT -> PortalSpawnEventManager.unregister(eventHandler, priority, receiveCanceled);
             case FARMLAND_TRAMPLE_EVENT -> FarmlandTrampleEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case SERVER_CHAT_EVENT -> ServerChatEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_LEVEL_STAGE_EVENT -> RenderLevelStageEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_TRANSLUCENT_EVENT -> RenderTranslucentEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_GUI_EVENT -> RenderGuiEventManager.unregister(eventHandler, priority, receiveCanceled);

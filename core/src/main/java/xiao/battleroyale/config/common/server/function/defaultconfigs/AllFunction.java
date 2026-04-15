@@ -167,6 +167,8 @@ public class AllFunction {
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_farmland_trample", EventType.FARMLAND_TRAMPLE_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_server_chat", EventType.SERVER_CHAT_EVENT.getName(),
+                                EventPriority.HIGHEST, false, null),
 
                         // --------CustomEventClass--------
 
