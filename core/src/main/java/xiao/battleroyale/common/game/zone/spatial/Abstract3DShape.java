@@ -5,6 +5,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.event.custom.zone.DetermineZoneEvent;
 import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.zone.GameZone;
@@ -284,6 +285,13 @@ public abstract class Abstract3DShape extends AbstractSimpleShape {
             endRotateDegree += zoneContext.random.get() * endEntry.endRotateRange;
             endRotateDegree *= endEntry.endRotateScale;
         }
+
+        if (this._isNestedDetermination) return;
+        _isNestedDetermination = true;
+        boolean canceled = BattleRoyale.getEventPoster().postCustomEvent(new DetermineZoneEvent(zoneContext, this));
+        _isNestedDetermination = false;
+        if (canceled) return;
+
         if (startCenter != null&& startDimension != null
                 && endCenter != null && endDimension != null
                 && additionalCalculationCheck()) { // 额外检查放最后
