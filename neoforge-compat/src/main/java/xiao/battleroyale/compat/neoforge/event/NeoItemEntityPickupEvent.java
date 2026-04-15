@@ -8,7 +8,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.Event;
-import net.neoforged.neoforge.event.entity.player.EntityItemPickupEvent;
+import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IItemEntityPickupEvent;
@@ -18,14 +18,14 @@ import xiao.battleroyale.compat.neoforge.minecraft.TriResultHelper;
 
 public class NeoItemEntityPickupEvent extends NeoEvent implements IItemEntityPickupEvent {
 
-    protected EntityItemPickupEvent itemEntityPickupEvent;
+    protected ItemEntityPickupEvent.Pre itemEntityPickupEvent;
 
     public NeoItemEntityPickupEvent(Event event) {
         super(event);
-        if (event instanceof EntityItemPickupEvent eventIn) {
+        if (event instanceof ItemEntityPickupEvent.Pre eventIn) {
             this.itemEntityPickupEvent = eventIn;
         } else {
-            throw new RuntimeException("Expected EntityItemPickupEvent but received: " + event.getClass().getName());
+            throw new RuntimeException("Expected EntityItemPickupEvent.Pre but received: " + event.getClass().getName());
         }
     }
 
@@ -47,22 +47,22 @@ public class NeoItemEntityPickupEvent extends NeoEvent implements IItemEntityPic
 
     @Override
     public Player getPlayer() {
-        return itemEntityPickupEvent.getEntity();
+        return itemEntityPickupEvent.getPlayer();
     }
 
     @Override
     public ItemEntity getItemEntity() {
-        return itemEntityPickupEvent.getItem();
+        return itemEntityPickupEvent.getItemEntity();
     }
 
     @Override
     public void setCanPickup(TriResult state) {
-        itemEntityPickupEvent.setResult(TriResultHelper.convert(state));
+        itemEntityPickupEvent.setCanPickup(TriResultHelper.convert(state));
     }
 
     @Override
     public TriResult canPickup() {
-        return TriResultHelper.convert(itemEntityPickupEvent.getResult());
+        return TriResultHelper.convert(itemEntityPickupEvent.canPickup());
     }
 
     @Override
