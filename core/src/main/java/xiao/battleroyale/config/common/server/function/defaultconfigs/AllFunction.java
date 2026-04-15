@@ -8,6 +8,7 @@ import xiao.battleroyale.api.event.EventPriority;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.custom.deathmatch.AddKillEvent;
 import xiao.battleroyale.api.event.custom.stats.GamePlayerRecordEvent;
+import xiao.battleroyale.api.event.custom.zone.DetermineZoneEvent;
 import xiao.battleroyale.compat.cbraddon.CbrAddon;
 import xiao.battleroyale.config.common.server.function.FunctionConfigManager;
 import xiao.battleroyale.config.common.server.function.type.RegisterEntry;
@@ -141,11 +142,25 @@ public class AllFunction {
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_living_death", EventType.LIVING_DEATH_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_living_heal", EventType.LIVING_HEAL_EVENT.getName(),
+                                EventPriority.HIGHEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_living_use_totem", EventType.LIVING_USE_TOTEM_EVENT.getName(),
+                                EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_player_logged_in", EventType.PLAYER_LOGGED_IN_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_player_logged_out", EventType.PLAYER_LOGGED_OUT_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_player_respawn", EventType.PLAYER_RESPAWN_EVENT.getName(),
+                                EventPriority.HIGHEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_item_entity_pickup", EventType.ITEM_ENTITY_PICKUP_EVENT.getName(),
+                                EventPriority.HIGHEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_item_toss", EventType.ITEM_TOSS_EVENT.getName(),
+                                EventPriority.HIGHEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_player_open_container", EventType.PLAYER_OPEN_CONTAINER_EVENT.getName(),
+                                EventPriority.HIGHEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_player_close_container", EventType.PLAYER_CLOSE_CONTAINER_EVENT.getName(),
+                                EventPriority.HIGHEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_critical_hit", EventType.CRITICAL_HIT_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_entity_interact", EventType.ENTITY_INTERACT_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
@@ -166,6 +181,8 @@ public class AllFunction {
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_portal_spawn", EventType.PORTAL_SPAWN_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_farmland_trample", EventType.FARMLAND_TRAMPLE_EVENT.getName(),
+                                EventPriority.HIGHEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_server_chat", EventType.SERVER_CHAT_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
 
                         // --------CustomEventClass--------
@@ -191,7 +208,9 @@ public class AllFunction {
                         new RegisterEntry.RegisterDetail(null, "battleroyale:stats/on_death_record", CustomEventType.CUSTOM_EVENT.getName(),
                                 EventPriority.HIGHEST, true, GamePlayerRecordEvent.DeathRecordEvent.class.getName()),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:stats/on_kill_record", CustomEventType.CUSTOM_EVENT.getName(),
-                                EventPriority.HIGHEST, true, GamePlayerRecordEvent.KillRecordEvent.class.getName())
+                                EventPriority.HIGHEST, true, GamePlayerRecordEvent.KillRecordEvent.class.getName()),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:zone/on_determine_zone", CustomEventType.CUSTOM_EVENT.getName(),
+                                EventPriority.HIGHEST, true, DetermineZoneEvent.class.getName())
                 )
         );
 
