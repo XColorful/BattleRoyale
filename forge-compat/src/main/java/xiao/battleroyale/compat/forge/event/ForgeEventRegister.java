@@ -18,6 +18,7 @@ public class ForgeEventRegister implements IEventRegister {
             case LIVING_HURT_EVENT -> LivingHurtEventManager.register(eventHandler, priority, receiveCanceled);
             case LIVING_DAMAGE_EVENT -> LivingDamageEventManager.register(eventHandler, priority, receiveCanceled);
             case LIVING_DEATH_EVENT -> LivingDeathEventManager.register(eventHandler, priority, receiveCanceled);
+            case LIVING_HEAL_EVENT -> LivingHealEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_IN_EVENT -> PlayerLoggedInEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_OUT_EVENT -> PlayerLoggedOutEventManager.register(eventHandler, priority, receiveCanceled);
             case PLAYER_RESPAWN_EVENT -> PlayerRespawnEventManager.register(eventHandler, priority, receiveCanceled);
@@ -54,6 +55,7 @@ public class ForgeEventRegister implements IEventRegister {
             case LIVING_HURT_EVENT -> LivingHurtEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LIVING_DAMAGE_EVENT -> LivingDamageEventManager.unregister(eventHandler, priority, receiveCanceled);
             case LIVING_DEATH_EVENT -> LivingDeathEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case LIVING_HEAL_EVENT -> LivingHealEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_IN_EVENT -> PlayerLoggedInEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_LOGGED_OUT_EVENT -> PlayerLoggedOutEventManager.unregister(eventHandler, priority, receiveCanceled);
             case PLAYER_RESPAWN_EVENT -> PlayerRespawnEventManager.unregister(eventHandler, priority, receiveCanceled);

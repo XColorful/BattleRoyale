@@ -17,6 +17,7 @@ public enum EventType {
     LIVING_HURT_EVENT,
     LIVING_DAMAGE_EVENT,
     LIVING_DEATH_EVENT,
+    LIVING_HEAL_EVENT,
     // player
     PLAYER_LOGGED_IN_EVENT,
     PLAYER_LOGGED_OUT_EVENT,
@@ -68,6 +69,7 @@ public enum EventType {
                     LIVING_HURT_EVENT.getName(),
                     LIVING_DAMAGE_EVENT.getName(),
                     LIVING_DEATH_EVENT.getName(),
+                    LIVING_HEAL_EVENT.getName(),
                     PLAYER_LOGGED_IN_EVENT.getName(),
                     PLAYER_LOGGED_OUT_EVENT.getName(),
                     PLAYER_RESPAWN_EVENT.getName(),

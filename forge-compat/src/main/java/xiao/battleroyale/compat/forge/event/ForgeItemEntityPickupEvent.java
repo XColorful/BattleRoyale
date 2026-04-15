@@ -69,6 +69,7 @@ public class ForgeItemEntityPickupEvent extends ForgeEvent implements IItemEntit
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         Player player = this.getPlayer();
         Level level = player.level();
+        if (level != null && level.isClientSide()) return null;
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
                 player.position(),
