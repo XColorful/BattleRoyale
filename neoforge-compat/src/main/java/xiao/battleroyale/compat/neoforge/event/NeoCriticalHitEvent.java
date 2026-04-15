@@ -34,6 +34,17 @@ public class NeoCriticalHitEvent extends NeoEvent implements ICriticalHitEvent {
         return EventType.CRITICAL_HIT_EVENT;
     }
 
+    @Override public boolean isCanceled() {
+        return super.isCanceled() || !this.isCriticalHit();
+    }
+
+    @Override public void setCanceled(boolean cancel) {
+        super.setCanceled(cancel);
+        if (cancel) {
+            this.setCriticalHit(false);
+        }
+    }
+
     @Override
     public Player getEntity() {
         return criticalHitEvent.getEntity();
