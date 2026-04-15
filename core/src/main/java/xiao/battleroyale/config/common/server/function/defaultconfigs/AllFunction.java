@@ -143,6 +143,8 @@ public class AllFunction {
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_living_heal", EventType.LIVING_HEAL_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
+                        new RegisterEntry.RegisterDetail(null, "battleroyale:on_living_use_totem", EventType.LIVING_USE_TOTEM_EVENT.getName(),
+                                EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_player_logged_in", EventType.PLAYER_LOGGED_IN_EVENT.getName(),
                                 EventPriority.HIGHEST, false, null),
                         new RegisterEntry.RegisterDetail(null, "battleroyale:on_player_logged_out", EventType.PLAYER_LOGGED_OUT_EVENT.getName(),
