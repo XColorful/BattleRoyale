@@ -16,8 +16,8 @@ import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.minecraft.CommandLevel;
-import xiao.battleroyale.common.effect.EffectManager;
 
 import static xiao.battleroyale.command.CommandArg.*;
 
@@ -78,14 +78,14 @@ public class FireworkCommand {
 
     private static int executeFixedFirework_XYZ(CommandContext<CommandSourceStack> context) {
         Vec3 pos = Vec3Argument.getVec3(context, XYZ);
-        EffectManager.get().spawnFirework(context.getSource().getLevel(), pos, DEFAULT_AMOUNT, DEFAULT_INTERVAL, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
+        BattleRoyale.getEffectManager().spawnFirework(context.getSource().getLevel(), pos, DEFAULT_AMOUNT, DEFAULT_INTERVAL, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_fixed_firework", String.format("%.2f", pos.x), String.format("%.2f", pos.y), String.format("%.2f", pos.z)), true);
         return Command.SINGLE_SUCCESS;
     }
     private static int executeFixedFirework_XYZ_Amount(CommandContext<CommandSourceStack> context) {
         Vec3 pos = Vec3Argument.getVec3(context, XYZ);
         int amount = IntegerArgumentType.getInteger(context, AMOUNT);
-        EffectManager.get().spawnFirework(context.getSource().getLevel(), pos, amount, DEFAULT_INTERVAL, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
+        BattleRoyale.getEffectManager().spawnFirework(context.getSource().getLevel(), pos, amount, DEFAULT_INTERVAL, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_fixed_firework", String.format("%.2f", pos.x), String.format("%.2f", pos.y), String.format("%.2f", pos.z)), true);
         return Command.SINGLE_SUCCESS;
     }
@@ -93,7 +93,7 @@ public class FireworkCommand {
         Vec3 pos = Vec3Argument.getVec3(context, XYZ);
         int amount = IntegerArgumentType.getInteger(context, AMOUNT);
         int interval = IntegerArgumentType.getInteger(context, INTERVAL);
-        EffectManager.get().spawnFirework(context.getSource().getLevel(), pos, amount, interval, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
+        BattleRoyale.getEffectManager().spawnFirework(context.getSource().getLevel(), pos, amount, interval, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_fixed_firework", String.format("%.2f", pos.x), String.format("%.2f", pos.y), String.format("%.2f", pos.z)), true);
         return Command.SINGLE_SUCCESS;
     }
@@ -102,7 +102,7 @@ public class FireworkCommand {
         int amount = IntegerArgumentType.getInteger(context, AMOUNT);
         int interval = IntegerArgumentType.getInteger(context, INTERVAL);
         float vRange = FloatArgumentType.getFloat(context, VERTICAL_RANGE);
-        EffectManager.get().spawnFirework(context.getSource().getLevel(), pos, amount, interval, vRange, DEFAULT_H_RANGE);
+        BattleRoyale.getEffectManager().spawnFirework(context.getSource().getLevel(), pos, amount, interval, vRange, DEFAULT_H_RANGE);
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_fixed_firework", String.format("%.2f", pos.x), String.format("%.2f", pos.y), String.format("%.2f", pos.z)), true);
         return Command.SINGLE_SUCCESS;
     }
@@ -112,21 +112,21 @@ public class FireworkCommand {
         int interval = IntegerArgumentType.getInteger(context, INTERVAL);
         float vRange = FloatArgumentType.getFloat(context, VERTICAL_RANGE);
         float hRange = FloatArgumentType.getFloat(context, HORIZONTAL_RANGE);
-        EffectManager.get().spawnFirework(context.getSource().getLevel(), pos, amount, interval, vRange, hRange);
+        BattleRoyale.getEffectManager().spawnFirework(context.getSource().getLevel(), pos, amount, interval, vRange, hRange);
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_fixed_firework", String.format("%.2f", pos.x), String.format("%.2f", pos.y), String.format("%.2f", pos.z)), true);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int executePlayerTrackingFirework_Player(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = EntityArgument.getPlayer(context, PLAYER);
-        EffectManager.get().spawnPlayerFirework(player, DEFAULT_AMOUNT, DEFAULT_INTERVAL, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
+        BattleRoyale.getEffectManager().spawnPlayerFirework(player, DEFAULT_AMOUNT, DEFAULT_INTERVAL, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_firework", player.getName()), true);
         return Command.SINGLE_SUCCESS;
     }
     private static int executePlayerTrackingFirework_Player_Amount(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = EntityArgument.getPlayer(context, PLAYER);
         int amount = IntegerArgumentType.getInteger(context, AMOUNT);
-        EffectManager.get().spawnPlayerFirework(player, amount, DEFAULT_INTERVAL, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
+        BattleRoyale.getEffectManager().spawnPlayerFirework(player, amount, DEFAULT_INTERVAL, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_firework", player.getName()), true);
         return Command.SINGLE_SUCCESS;
     }
@@ -134,7 +134,7 @@ public class FireworkCommand {
         ServerPlayer player = EntityArgument.getPlayer(context, PLAYER);
         int amount = IntegerArgumentType.getInteger(context, AMOUNT);
         int interval = IntegerArgumentType.getInteger(context, INTERVAL);
-        EffectManager.get().spawnPlayerFirework(player, amount, interval, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
+        BattleRoyale.getEffectManager().spawnPlayerFirework(player, amount, interval, DEFAULT_V_RANGE, DEFAULT_H_RANGE);
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_firework", player.getName()), true);
         return Command.SINGLE_SUCCESS;
     }
@@ -143,7 +143,7 @@ public class FireworkCommand {
         int amount = IntegerArgumentType.getInteger(context, AMOUNT);
         int interval = IntegerArgumentType.getInteger(context, INTERVAL);
         float vRange = FloatArgumentType.getFloat(context, VERTICAL_RANGE);
-        EffectManager.get().spawnPlayerFirework(player, amount, interval, vRange, DEFAULT_H_RANGE);
+        BattleRoyale.getEffectManager().spawnPlayerFirework(player, amount, interval, vRange, DEFAULT_H_RANGE);
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_firework", player.getName()), true);
         return Command.SINGLE_SUCCESS;
     }
@@ -153,13 +153,13 @@ public class FireworkCommand {
         int interval = IntegerArgumentType.getInteger(context, INTERVAL);
         float vRange = FloatArgumentType.getFloat(context, VERTICAL_RANGE);
         float hRange = FloatArgumentType.getFloat(context, HORIZONTAL_RANGE);
-        EffectManager.get().spawnPlayerFirework(player, amount, interval, vRange, hRange);
+        BattleRoyale.getEffectManager().spawnPlayerFirework(player, amount, interval, vRange, hRange);
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_firework", player.getName()), true);
         return Command.SINGLE_SUCCESS;
     }
 
     private static int executeClearFireworks(CommandContext<CommandSourceStack> context) {
-        EffectManager.get().clearFirework();
+        BattleRoyale.getEffectManager().clearFirework();
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.clear_firework_tracker"), true);
         return Command.SINGLE_SUCCESS;
     }

@@ -5,7 +5,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.util.NBTUtils;
 
 import java.util.UUID;
@@ -121,7 +120,7 @@ public class GamePlayer {
         }
 
         if (!isAlive) {
-            EffectManager.get().clearBoost(this.playerUUID);
+            BattleRoyale.getEffectManager().clearBoost(this.playerUUID);
         }
     }
 
