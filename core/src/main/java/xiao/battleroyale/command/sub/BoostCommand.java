@@ -12,8 +12,8 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.minecraft.CommandLevel;
-import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.effect.boost.BoostData;
 
 import java.util.Collection;
@@ -60,7 +60,7 @@ public class BoostCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create();
         }
         for (ServerPlayer player : players) {
-            EffectManager.get().addBoost(player.getUUID(), DEFAULT_BOOST, context.getSource().getLevel());
+            BattleRoyale.getEffectManager().addBoost(player.getUUID(), DEFAULT_BOOST, context.getSource().getLevel());
             int hundredInt = (int) (BoostData.getBoostPercentage(DEFAULT_BOOST) * 100);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_boost", player.getName(), hundredInt), false);
         }
@@ -74,7 +74,7 @@ public class BoostCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create();
         }
         for (ServerPlayer player : players) {
-            EffectManager.get().addBoost(player.getUUID(), amount, context.getSource().getLevel());
+            BattleRoyale.getEffectManager().addBoost(player.getUUID(), amount, context.getSource().getLevel());
             int hundredInt = (int) (BoostData.getBoostPercentage(amount) * 100);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_boost", player.getName(), hundredInt), false);
         }
@@ -82,7 +82,7 @@ public class BoostCommand {
     }
 
     private static int clearAllBoost(CommandContext<CommandSourceStack> context) {
-        EffectManager.get().clearBoost();
+        BattleRoyale.getEffectManager().clearBoost();
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.clear_all_boost"), true);
         return Command.SINGLE_SUCCESS;
     }
@@ -93,7 +93,7 @@ public class BoostCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create();
         }
         for (ServerPlayer player : players) {
-            EffectManager.get().clearBoost(player.getUUID());
+            BattleRoyale.getEffectManager().clearBoost(player.getUUID());
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.clear_player_boost", player.getName()), false);
         }
         return Command.SINGLE_SUCCESS;
