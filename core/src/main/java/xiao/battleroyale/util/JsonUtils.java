@@ -1,13 +1,16 @@
 package xiao.battleroyale.util;
 
 import com.google.gson.*;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.BossEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.api.config.common.game.gamerule.custom.DeathMatchConfigTag;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -120,6 +123,16 @@ public class JsonUtils {
         return map;
     }
 
+    public static String writeNBTToJson(CompoundTag nbt) {
+        return nbt.toString();
+    }
+    public static String writeBossBarColorToJson(BossEvent.BossBarColor bossBarColor) {
+        return bossBarColor.getName();
+    }
+    public static String writeBossBarOverlayToJson(BossEvent.BossBarOverlay bossBarOverlay) {
+        return bossBarOverlay.getName();
+    }
+
     @NotNull
     public static <T> JsonArray writeListToJson(List<T> list, Function<T, JsonElement> mapper) {
         JsonArray jsonArray = new JsonArray();
@@ -211,6 +224,18 @@ public class JsonUtils {
     }
     public static CompoundTag getJsonNBT(@Nullable JsonObject json, String key) {
         return getValueFromJson(json, key, new CompoundTag(), e -> NBTUtils.stringToNBT(e.getAsString()));
+    }
+    public static BossEvent.BossBarColor getBossBarColor(@Nullable JsonObject json, String key) {
+        return BossEvent.BossBarColor.CODEC.parse(JsonOps.INSTANCE,
+                        new JsonPrimitive(JsonUtils.getJsonString(json, DeathMatchConfigTag.PROGRESS_BAR_COLOR, "white")))
+                .result()
+                .orElse(BossEvent.BossBarColor.WHITE);
+    }
+    public static BossEvent.BossBarOverlay getBossBarOverlay(@Nullable JsonObject json, String key) {
+        return BossEvent.BossBarOverlay.CODEC.parse(JsonOps.INSTANCE,
+                        new JsonPrimitive(JsonUtils.getJsonString(json, DeathMatchConfigTag.PROGRESS_BAR_OVERLAY, "")))
+                .result()
+                .orElse(BossEvent.BossBarOverlay.PROGRESS);
     }
 
     @Deprecated
