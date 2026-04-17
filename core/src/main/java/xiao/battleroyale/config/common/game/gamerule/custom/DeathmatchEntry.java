@@ -69,8 +69,6 @@ public class DeathmatchEntry implements IGameruleEntry {
 
     @NotNull
     public static DeathmatchEntry fromJson(JsonObject jsonObject) {
-        if (jsonObject == null) return new DeathmatchEntry();
-
         int targetKill = JsonUtils.getJsonInt(jsonObject, DeathMatchConfigTag.TARGET_KILL, 50);
         List<Integer> killFuncs = JsonUtils.getJsonIntList(jsonObject, DeathMatchConfigTag.KILL_FUNCS);
         int respawnTrackDelay = JsonUtils.getJsonInt(jsonObject, DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 100);
