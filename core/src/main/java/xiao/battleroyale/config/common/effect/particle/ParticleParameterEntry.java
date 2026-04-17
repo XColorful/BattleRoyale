@@ -41,7 +41,7 @@ public class ParticleParameterEntry implements IConfigEntry {
         jsonObject.addProperty(ParticleConfigTag.COLOR, color);
         jsonObject.addProperty(ParticleConfigTag.SCALE, scale);
         jsonObject.addProperty(ParticleConfigTag.NOTE, note);
-        jsonObject.addProperty(ParticleConfigTag.NBT, nbt.toString());
+        jsonObject.addProperty(ParticleConfigTag.NBT, JsonUtils.writeNBTToJson(nbt));
 
         return jsonObject;
     }

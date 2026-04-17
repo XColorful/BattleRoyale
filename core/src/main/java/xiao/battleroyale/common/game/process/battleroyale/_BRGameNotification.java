@@ -15,7 +15,6 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.process.IGameProcessManager;
 import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.command.sub.TeamCommand;
-import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game._GameTeamManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
@@ -119,8 +118,8 @@ public class _BRGameNotification {
         if (notifiedServerPlayer != null) ChatUtils.sendTitlesToPlayer(notifiedServerPlayer, winnerTitle, teamWinMessage, 10, 80, 20);
 
         // 暂时硬编码
-        if (notifiedServerPlayer != null) EffectManager.get().spawnPlayerFirework(notifiedServerPlayer, 16, 4, 1.0F, 16.0F);
-        EffectManager.get().addGameParticle(serverLevel, notifiedPlayer.position(), winnerParticleId, 0);
+        if (notifiedServerPlayer != null) BattleRoyale.getEffectManager().spawnPlayerFirework(notifiedServerPlayer, 16, 4, 1.0F, 16.0F);
+        BattleRoyale.getEffectManager().addGameParticle(serverLevel, notifiedPlayer.position(), winnerParticleId, 0);
     }
 
     public static void sendGameSpectateMessage(@NotNull ServerPlayer player, boolean allowSpectate) {

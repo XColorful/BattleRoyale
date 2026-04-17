@@ -133,7 +133,7 @@
 	- BattleRoyale：大逃杀游戏进程
 		- [BRGameProcessManager](./common/game/process/battleroyale/br-game-process-manager.md)：游戏进程管理器（大逃杀游戏）
 	- DeathMatch：死斗模式游戏进程
-		- [DMGameProcessManager](./common/game/process/battleroyale/dm-game-process-manager.md)：游戏进程管理器（死斗模式）
+		- [DMGameProcessManager](./common/game/process/deathmatch/dm-game-process-manager.md)：游戏进程管理器（死斗模式）
 - Spawn：出生
 	- [SpawnManager](./common/game/spawn/spawn-manager.md)：出生管理器
 	- Vanilla：原版出生方式
