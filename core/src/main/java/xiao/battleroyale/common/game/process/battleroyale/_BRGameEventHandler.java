@@ -135,7 +135,7 @@ public class _BRGameEventHandler {
         boolean playerEliminatedBefore = gamePlayer.isEliminated();
         if (teamEliminatedBefore && playerEliminatedBefore) {
             BattleRoyale.LOGGER.debug("GamePlayer {} and GameTeam {} already eliminated, skipped onPlayerDeath", gamePlayer.getPlayerName(), gamePlayer.getTeam().getGameTeamId());
-            return false;
+            return true; // 只是避免重复 eliminate，但仍然要 GamePlayerDeathFinishEvent 事件
         }
 
         IGameManager gameManager = BattleRoyale.getGameManager();
@@ -147,6 +147,7 @@ public class _BRGameEventHandler {
         if (!playerEliminatedBefore) { // 第一次淘汰才尝试kill，避免重复kill
             gamePlayer.setEliminated(true); // GamePlayer 内部会自动让 GameTeam 更新 eliminated
             teamManager.forceEliminatePlayerSilence(gamePlayer); // 提醒 TeamManager 内部更新 standingPlayer 信息
+            // ↑ 这里拦截掉了，下面 PlayerRevive 的 kill 触发的 onPlayerDeath 会被 TeamManager 级别的 eliminated 过滤掉
             brGameProcessManager.sendEliminateMessage(serverLevel, gamePlayer);
 
             // 最后再 kill，此时再触发 onPlayerDeath 已提前被 eliminated 拦截
@@ -170,7 +171,6 @@ public class _BRGameEventHandler {
 
             // 队伍淘汰则倒地队友全部 kill
             nonEliminatedMember.forEach(member -> member.setEliminated(true)); // 提前设置 eliminate 以跳过下一次 kill 触发的 onPlayerDeath 开头检查
-            nonEliminatedMember.forEach(teamManager::forceEliminatePlayerSilence); // 提醒 TeamManager 内部更新 standingPlayer 信息
             for (GamePlayer member : nonEliminatedMember) {
                 brGameProcessManager.sendEliminateMessage(serverLevel, member);
 
@@ -182,6 +182,8 @@ public class _BRGameEventHandler {
                     gameManager.onPlayerDeath(null, member);
                 }
             }
+            // TeamManager 级别的 eliminate 放在之后，不然 onPlayerDeath 会被过滤掉
+            nonEliminatedMember.forEach(teamManager::forceEliminatePlayerSilence); // 提醒 TeamManager 内部更新 standingPlayer 信息
 
             // 发送队伍淘汰消息
             if (serverLevel != null) {
