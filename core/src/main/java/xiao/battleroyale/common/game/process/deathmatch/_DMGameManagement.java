@@ -14,7 +14,7 @@ public class _DMGameManagement {
         gameManager.setHasWinner(hasWinner);
         if (hasWinner) {
             int minWinnerTeam = gameManager.getWinnerTeamTotal();
-            NavigableMap<Integer, Set<GameTeam>> sortedKills = dmGameProcessManager.deathMatchData.getTeamKillsGreaterOrEqual(dmGameProcessManager.targetKill);
+            NavigableMap<Integer, Set<GameTeam>> sortedKills = dmGameProcessManager.deathMatchData.getTeamKillsGreaterOrEqual(dmGameProcessManager.configEntry.targetKill);
 
             int addedTeam = 0;
             for (Map.Entry<Integer, Set<GameTeam>> entry : sortedKills.entrySet()) {

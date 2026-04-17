@@ -3,7 +3,6 @@ package xiao.battleroyale.common.game.process.deathmatch;
 import com.google.gson.JsonObject;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +14,7 @@ import xiao.battleroyale.api.event.ICustomEventPoster;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.event.custom.deathmatch.AddKillEvent;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.api.game.process.deathmatch.DeathMatchConfigTag;
+import xiao.battleroyale.api.config.common.game.gamerule.custom.DeathMatchConfigTag;
 import xiao.battleroyale.api.game.process.deathmatch.IDeathMatchProcessManager;
 import xiao.battleroyale.api.game.spawn.ISpawnManager;
 import xiao.battleroyale.api.game.team.ITeamManager;
@@ -26,6 +25,7 @@ import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
+import xiao.battleroyale.config.common.game.gamerule.custom.DeathmatchEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.ExtraRuleEntry;
 import xiao.battleroyale.util.*;
 
@@ -49,15 +49,8 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     public static void init(McSide mcSide) {
     }
 
-    protected int targetKill = 50;
-    protected @NotNull List<Integer> killFuncs = new ArrayList<>();
-    protected int respawnTrackDelay = 20 * 5;
-    protected @NotNull List<Integer> retickZones = new ArrayList<>();
-    protected boolean sendProgressBar = false;
+    protected DeathmatchEntry configEntry;
     public final UUID progressBarUUID = UUID.nameUUIDFromBytes("battleroyale:deathmatch_progress".getBytes());
-    protected BossEvent.BossBarColor progressBarColor = BossEvent.BossBarColor.WHITE;
-    protected BossEvent.BossBarOverlay progressBarOverlay = BossEvent.BossBarOverlay.PROGRESS;
-    protected boolean allowAllWin = false; // 是否允许全部队伍胜利，赢麻了
 
     protected final @NotNull DMData deathMatchData = new DMData();
 
@@ -84,6 +77,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         int configId = gameManager.getGameruleConfigId();
         if (gameruleConfigManager == null || !(gameruleConfigManager.getConfigEntry(configId) instanceof GameruleConfigManager.GameruleConfig gameruleConfig)) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            configPrepared = false;
             return;
         }
 
@@ -92,27 +86,15 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         StringUtils.ProtocolString protocol = extraRuleEntry.protocol;
         boolean isDeathMatchConfig = (protocol.namespace.equals(BattleRoyale.MOD_ID) || protocol.namespace.equals(BattleRoyale.MOD_NAME_SHORT))
                 && (protocol.name.equals(DeathMatchConfigTag.PROTOCOL_NAME));
-        if (isDeathMatchConfig) {
-            this.targetKill = JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.TARGET_KILL, 50);
-            this.killFuncs = JsonUtils.getJsonIntList(jsonTag, DeathMatchConfigTag.KILL_FUNCS);
-            this.respawnTrackDelay = JsonUtils.getJsonInt(jsonTag, DeathMatchConfigTag.RESPAWN_TRACK_DELAY, 20 * 5);
-            this.retickZones = JsonUtils.getJsonIntList(jsonTag, DeathMatchConfigTag.RETICK_ZONES);
-            this.sendProgressBar = JsonUtils.getJsonBool(jsonTag, DeathMatchConfigTag.SEND_PROGRESS_BAR, false);
-            this.progressBarColor = BossEvent.BossBarColor.byName(JsonUtils.getJsonString(jsonTag, DeathMatchConfigTag.PROGRESS_BAR_COLOR, ""));
-            this.progressBarOverlay = BossEvent.BossBarOverlay.byName(JsonUtils.getJsonString(jsonTag, DeathMatchConfigTag.PROGRESS_BAR_OVERLAY, ""));
-            this.allowAllWin = JsonUtils.getJsonBool(jsonTag, DeathMatchConfigTag.ALLOW_ALL_WIN, false);
-        } else {
-            this.targetKill = 50;
-            this.killFuncs = new ArrayList<>();
-            this.respawnTrackDelay = 20 * 5;
-            this.retickZones = new ArrayList<>();
-            this.sendProgressBar = false;
-            this.progressBarColor = BossEvent.BossBarColor.WHITE;
-            this.progressBarOverlay = BossEvent.BossBarOverlay.PROGRESS;
-            this.allowAllWin = false;
+        this.configEntry = isDeathMatchConfig ? DeathmatchEntry.fromJson(jsonTag) : new DeathmatchEntry();
+        if (this.configEntry == null) {
+            ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
+            configPrepared = false;
+            return;
         }
-        if (this.targetKill < 1) this.targetKill = 1;
-        if (this.respawnTrackDelay < 20) this.respawnTrackDelay = 20;
+
+        if (this.configEntry.targetKill < 1) this.configEntry.targetKill = 1;
+        if (this.configEntry.respawnTrackDelay < 20) this.configEntry.respawnTrackDelay = 20;
 
         BattleRoyale.LOGGER.debug("DMGameProcessManager complete initGameConfig");
     }
@@ -140,7 +122,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
             return false;
         }
 
-        this.deathMatchData.adjustTrackDelay(respawnTrackDelay);
+        this.deathMatchData.adjustTrackDelay(this.configEntry.respawnTrackDelay);
         this.deathMatchData.startGame();
         return true;
     }
@@ -151,7 +133,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
         this.deathMatchData.endGame();
         // 清理进度条
-        if (this.sendProgressBar // 省流
+        if (this.configEntry.sendProgressBar // 省流
                 && serverLevel != null) {
             ITeamManager teamManager = BattleRoyale.getGameManager().getTeamManager();
             List<GamePlayer> gamePlayers = teamManager.getGamePlayers();
@@ -168,10 +150,10 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         super.onGameTick(gameTime);
 
         gameManager = BattleRoyale.getGameManager();
-        if (this.sendProgressBar
+        if (this.configEntry.sendProgressBar
                 && gameManager.isInGame() && gameId.equals(gameManager.getGameId()) // 防止 onGameTick 后结束游戏，又立即重开了游戏 (其他模组修改)
                 && gameTime % 200 == 0) { // 每10秒保底更新一次进度条
-            sendProgressBarToAll(gameManager.getServerLevel(), gameManager.getTeamManager().getGamePlayers(), this.deathMatchData.getCurrentMaxKill(), this.targetKill);
+            sendProgressBarToAll(gameManager.getServerLevel(), gameManager.getTeamManager().getGamePlayers(), this.deathMatchData.getCurrentMaxKill(), this.configEntry.targetKill);
         }
     }
 
@@ -187,7 +169,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
         // 游戏队伍不够胜利队伍数时终止游戏 (防止游戏逻辑卡住)
         int standingTeamTotal = gameManager.getTeamManager().getStandingTeamCount();
-        int minTeam = allowAllWin ? winnerTeamTotal : winnerTeamTotal + 1;
+        int minTeam = this.configEntry.allowAllWin ? winnerTeamTotal : winnerTeamTotal + 1;
         if (standingTeamTotal < minTeam) {
             BattleRoyale.LOGGER.debug("DMGameProcessManager: standingTeam < {}, finishGame without winner", minTeam);
             gameManager.finishGame(false);
@@ -196,10 +178,10 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
         // 检查是否有足够队伍满足淘汰数
         int currentMaxKill = this.deathMatchData.getCurrentMaxKill();
-        if (currentMaxKill < targetKill) {
+        if (currentMaxKill < this.configEntry.targetKill) {
             return;
         }
-        NavigableMap<Integer, Set<GameTeam>> sortedKills = this.deathMatchData.getTeamKillsGreaterOrEqual(targetKill);
+        NavigableMap<Integer, Set<GameTeam>> sortedKills = this.deathMatchData.getTeamKillsGreaterOrEqual(this.configEntry.targetKill);
         int sum = sortedKills.values().stream().mapToInt(Set::size).sum();
         if (sum >= winnerTeamTotal) {
             gameManager.finishGame(true);
@@ -276,10 +258,10 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         gamePlayer.setActiveEntity(true); // EffectFunc 基于此快速判断
 
         // 再刷一遍 zone function
-        if (!this.retickZones.isEmpty()) {
+        if (!this.configEntry.retickZones.isEmpty()) {
             IGameManager gameManager = BattleRoyale.getGameManager();
             List<Integer> tickedFunc = new ArrayList<>();
-            tickZoneFunc(gameManager.getZoneManager(), serverLevel, gamePlayer, this.retickZones, tickedFunc);
+            tickZoneFunc(gameManager.getZoneManager(), serverLevel, gamePlayer, this.configEntry.retickZones, tickedFunc);
             BattleRoyale.LOGGER.debug("Re-ticked {} zone func for GamePlayer {}", tickedFunc, gamePlayer.getNameWithId());
         }
 
@@ -303,9 +285,9 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
         IGameManager gameManager = BattleRoyale.getGameManager();
         ServerLevel serverLevel = gameManager.getServerLevel();
-        if (!this.killFuncs.isEmpty()) {
+        if (!this.configEntry.killFuncs.isEmpty()) {
             List<Integer> tickedFunc = new ArrayList<>();
-            tickZoneFunc(gameManager.getZoneManager(), serverLevel, gamePlayer, this.killFuncs, tickedFunc);
+            tickZoneFunc(gameManager.getZoneManager(), serverLevel, gamePlayer, this.configEntry.killFuncs, tickedFunc);
             BattleRoyale.LOGGER.debug("GamePlayer {} add {} kill and ticked {} zone func", gamePlayer.getNameWithId(), addKill, tickedFunc);
         }
 
@@ -327,11 +309,11 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
 
         if (this.deathMatchData.addGameTeamKill(gameTeam, addKill)) {
             // 发送全局进度条
-            if (this.sendProgressBar) {
+            if (this.configEntry.sendProgressBar) {
                 int current = this.deathMatchData.getCurrentMaxKill();
                 if (preMaxKill != current) {
                     IGameManager gameManager = BattleRoyale.getGameManager();
-                    sendProgressBarToAll(gameManager.getServerLevel(), gameManager.getTeamManager().getGamePlayers(), current, this.targetKill);
+                    sendProgressBarToAll(gameManager.getServerLevel(), gameManager.getTeamManager().getGamePlayers(), current, this.configEntry.targetKill);
                 }
             }
             eventPoster.postCustomEvent(new AddKillEvent.AddTeamKillFinishEvent(this, preMaxKill, addKill, gameTeam));
@@ -401,10 +383,10 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
                 serverLevel,
                 gamePlayers,
                 progressBarUUID,
-                Component.translatable("battleroyale.title.deathmatch_progress", currentKill, this.targetKill),
+                Component.translatable("battleroyale.title.deathmatch_progress", currentKill, this.configEntry.targetKill),
                 Math.min(1.0f, progress),
-                this.progressBarColor,
-                this.progressBarOverlay
+                this.configEntry.progressBarColor,
+                this.configEntry.progressBarOverlay
         );
     }
 }

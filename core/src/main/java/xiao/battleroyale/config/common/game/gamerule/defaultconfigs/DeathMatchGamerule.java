@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.game.process.deathmatch.DeathMatchConfigTag;
+import xiao.battleroyale.api.config.common.game.gamerule.custom.DeathMatchConfigTag;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.type.BattleroyaleEntry;
 import xiao.battleroyale.config.common.game.gamerule.type.ExtraRuleEntry;
