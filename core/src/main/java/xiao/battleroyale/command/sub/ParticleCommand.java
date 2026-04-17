@@ -14,7 +14,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.minecraft.CommandLevel;
-import xiao.battleroyale.common.effect.EffectManager;
 
 import static xiao.battleroyale.command.CommandArg.*;
 
@@ -104,7 +103,7 @@ public class ParticleCommand {
     private static int spawnParticle(CommandSourceStack source, Vec3 spawnPos, int particleId, int cooldown) {
         if (source.getEntity() instanceof ServerPlayer player) {
             String channelKey = player.getName().getString();
-            if (EffectManager.get().addParticle(source.getLevel(), spawnPos, channelKey, particleId, cooldown)) {
+            if (BattleRoyale.getEffectManager().addParticle(source.getLevel(), spawnPos, channelKey, particleId, cooldown)) {
                 source.sendSuccess(() -> Component.translatable("battleroyale.message.add_particle", particleId, String.format("%.2f", spawnPos.x), String.format("%.2f", spawnPos.y), String.format("%.2f", spawnPos.z)), true);
                 return Command.SINGLE_SUCCESS;
             } else {
@@ -112,7 +111,7 @@ public class ParticleCommand {
                 return 0;
             }
         } else {
-            if (EffectManager.get().addCommandParticle(source.getLevel(), spawnPos, particleId, cooldown)) {
+            if (BattleRoyale.getEffectManager().addCommandParticle(source.getLevel(), spawnPos, particleId, cooldown)) {
                 BattleRoyale.LOGGER.info("Add particle {} at {}", particleId, spawnPos);
                 return Command.SINGLE_SUCCESS;
             } else {
@@ -125,15 +124,15 @@ public class ParticleCommand {
     private static int executeClearParticles(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         if (source.getEntity() instanceof ServerPlayer player) {
-            EffectManager.get().clearParticle(player.getUUID());
+            BattleRoyale.getEffectManager().clearParticle(player.getUUID());
         } else {
-            EffectManager.get().clearCommandParticle();
+            BattleRoyale.getEffectManager().clearCommandParticle();
         }
         source.sendSuccess(() -> Component.translatable("battleroyale.message.clear_particle"), true);
         return Command.SINGLE_SUCCESS;
     }
     private static int executeClearAllParticles(CommandContext<CommandSourceStack> context) {
-        EffectManager.get().clearParticle();
+        BattleRoyale.getEffectManager().clearParticle();
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.clear_all_particle"), true);
         return Command.SINGLE_SUCCESS;
     }
