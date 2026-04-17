@@ -87,7 +87,7 @@ public class _DMGameEventHandler {
         boolean playerEliminatedBefore = gamePlayer.isEliminated();
         if (teamEliminatedBefore && playerEliminatedBefore) {
             BattleRoyale.LOGGER.debug("GamePlayer {} and GameTeam {} already eliminated, skipped onPlayerDeath", gamePlayer.getPlayerName(), gamePlayer.getTeam().getGameTeamId());
-            return false;
+            return true; // 只是避免重复 eliminate，但仍然要 GamePlayerDeathFinishEvent 事件
         }
 
         IGameManager gameManager = BattleRoyale.getGameManager();
@@ -96,6 +96,7 @@ public class _DMGameEventHandler {
 
         // 死亡事件本身已经跳过非 standingPlayer
         // 单独淘汰，连带淘汰放在后面进行
+        boolean killedByPlayerRevive = false;
         if (!playerEliminatedBefore) { // 第一次淘汰才尝试kill，避免重复kill
             gamePlayer.setEliminated(true); // GamePlayer 内部会自动让 GameTeam 更新 eliminated
             if (dmGameProcessManager.addAndTrackRestandingGamePlayer(gamePlayer)) { // 任意方式死亡都要重生
@@ -109,6 +110,7 @@ public class _DMGameEventHandler {
             if (player != null && playerRevive.isBleeding(player)) {
                 BattleRoyale.LOGGER.debug("Detected GamePlayer {} PlayerRevive.isBleeding, force kill", gamePlayer.getPlayerName());
                 playerRevive.kill(player);
+                killedByPlayerRevive = true;
             }
 
             GameMessageManager.notifyTeamChange(gamePlayer.getGameTeamId());
@@ -139,6 +141,7 @@ public class _DMGameEventHandler {
                     gameManager.onPlayerDeath(null, member);
                 }
             }
+            // nonEliminatedMember.forEach(gameManager.getTeamManager()::forceEliminatePlayerSilence); // 不需要 TeamManager 级别的 eliminate
 
             // 发送队伍淘汰消息
             if (serverLevel != null) {
@@ -155,7 +158,8 @@ public class _DMGameEventHandler {
         } else {
             BattleRoyale.LOGGER.debug("onPlayerDeath (GamePlayer {}) not detected attacker GamePlayer, skipped addFinishCheckAfterDeathEvent", gamePlayer.getNameWithId());
         }
-        return true; // 触发 Finish 事件 (记录 Stats)，但不参与死斗模式胜利判定
+        // 因为没有 TeamManager 级别的 eliminate 拦截 PlayerRevive kill 触发的 onPlayerDeath，所以需要取 kill 触发的 GamePlayerDeathFinishEvent
+        return !killedByPlayerRevive; // 触发 Finish 事件 (记录 Stats)，但不参与死斗模式胜利判定
     }
 
     private static boolean contributeDeathMatchKill(DMGameProcessManager dmGameProcessManager, IGameManager gameManager, @Nullable ILivingDeathEvent event, @Nullable ServerLevel serverLevel, @NotNull GamePlayer gamePlayer) {

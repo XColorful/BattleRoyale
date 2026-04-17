@@ -50,7 +50,7 @@ public class DeathmatchEntry implements IGameruleEntry {
 
     @Override
     public String getType() {
-        return "configEntry";
+        return "deathmatchEntry";
     }
 
     @Override
