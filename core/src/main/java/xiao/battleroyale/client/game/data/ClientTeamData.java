@@ -4,9 +4,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.message.team.GameTeamTag;
 import xiao.battleroyale.client.game.ClientGameDataManager;
-import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.util.ColorUtils;
@@ -98,7 +98,7 @@ public class ClientTeamData extends AbstractClientExpireData {
                         gamePlayer.getGameSingleId(),
                         gamePlayer.getPlayerName(),
                         playerHealth,
-                        EffectManager.get().getBoost(gamePlayer.getPlayerUUID()),
+                        BattleRoyale.getEffectManager().getBoost(gamePlayer.getPlayerUUID()),
                         gamePlayer.getPlayerUUID(),
                         gamePlayer.isAlive())
                 );

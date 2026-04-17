@@ -4,7 +4,6 @@ import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.ApiStatus;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
-import xiao.battleroyale.common.effect.EffectManager;
 import xiao.battleroyale.compat.playerrevive.BleedingHandler;
 import xiao.battleroyale.config.common.game.GameConfigManager;
 import xiao.battleroyale.config.common.game.gamerule.GameruleConfigManager;
@@ -96,7 +95,7 @@ public class _GameStarter {
     @ApiStatus.Internal
     public static void initGameSetup(GameManager gameManager) {
         // 清除游戏效果
-        EffectManager.get().forceEnd();
+        BattleRoyale.getEffectManager().forceEnd();
         gameManager.configPrepared = false;
     }
     @ApiStatus.Internal

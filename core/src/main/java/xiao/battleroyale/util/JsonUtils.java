@@ -4,6 +4,7 @@ import com.google.gson.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.BossEvent;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -120,6 +121,16 @@ public class JsonUtils {
         return map;
     }
 
+    public static String writeNBTToJson(CompoundTag nbt) {
+        return nbt.toString();
+    }
+    public static String writeBossBarColorToJson(BossEvent.BossBarColor bossBarColor) {
+        return bossBarColor.getName();
+    }
+    public static String writeBossBarOverlayToJson(BossEvent.BossBarOverlay bossBarOverlay) {
+        return bossBarOverlay.getName();
+    }
+
     @NotNull
     public static <T> JsonArray writeListToJson(List<T> list, Function<T, JsonElement> mapper) {
         JsonArray jsonArray = new JsonArray();
@@ -211,6 +222,14 @@ public class JsonUtils {
     }
     public static CompoundTag getJsonNBT(@Nullable JsonObject json, String key) {
         return getValueFromJson(json, key, new CompoundTag(), e -> NBTUtils.stringToNBT(e.getAsString()));
+    }
+    public static BossEvent.BossBarColor getBossBarColor(@Nullable JsonObject json, String key) {
+        return BossEvent.BossBarColor.byName(
+                JsonUtils.getJsonString(json, key, "white"));
+    }
+    public static BossEvent.BossBarOverlay getBossBarOverlay(@Nullable JsonObject json, String key) {
+        return BossEvent.BossBarOverlay.byName(
+                JsonUtils.getJsonString(json, key, "progress"));
     }
 
     @Deprecated
