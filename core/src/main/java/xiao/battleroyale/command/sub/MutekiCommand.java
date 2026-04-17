@@ -14,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.minecraft.CommandLevel;
-import xiao.battleroyale.common.effect.EffectManager;
 
 import java.util.Collection;
 
@@ -52,7 +51,7 @@ public class MutekiCommand {
     }
 
     private static int clearAllMuteki(CommandContext<CommandSourceStack> context) {
-        EffectManager.get().clearMuteki();
+        BattleRoyale.getEffectManager().clearMuteki();
         context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.clear_all_muteki"), true);
         return Command.SINGLE_SUCCESS;
     }
@@ -62,7 +61,7 @@ public class MutekiCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create(); // 与原版相同的提示
         }
         for (ServerPlayer player : players) {
-            if (EffectManager.get().clearMuteki(player.getUUID())) {
+            if (BattleRoyale.getEffectManager().clearMuteki(player.getUUID())) {
                 context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.clear_muteki", player.getName()), false);
             } else {
                 context.getSource().sendFailure(Component.translatable("battleroyale.message.player_not_muteki", player.getName()));
@@ -77,7 +76,7 @@ public class MutekiCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create(); // 与原版相同的提示
         }
         for (ServerPlayer player : players) {
-            EffectManager.get().addMutekiPlayer(context.getSource().getLevel(), player, DEFAULT_TIME);
+            BattleRoyale.getEffectManager().addMutekiPlayer(context.getSource().getLevel(), player, DEFAULT_TIME);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_muteki", player.getName()), false);
         }
         return Command.SINGLE_SUCCESS;
@@ -89,7 +88,7 @@ public class MutekiCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create(); // 与原版相同的提示
         }
         for (ServerPlayer player : players) {
-            EffectManager.get().addMutekiPlayer(context.getSource().getLevel(), player, time);
+            BattleRoyale.getEffectManager().addMutekiPlayer(context.getSource().getLevel(), player, time);
             context.getSource().sendSuccess(() -> Component.translatable("battleroyale.message.add_player_muteki", player.getName()), false);
         }
         return Command.SINGLE_SUCCESS;

@@ -1,6 +1,8 @@
-package xiao.battleroyale.api.game.process.deathmatch;
+package xiao.battleroyale.api.config.common.game.gamerule.custom;
 
-public class DeathMatchConfigTag {
+import xiao.battleroyale.api.config.sub.ConfigEntryTag;
+
+public class DeathMatchConfigTag extends ConfigEntryTag {
 
     public static final String PROTOCOL_NAME = "deathmatch";
     public static final String TARGET_KILL = "targetKill";
