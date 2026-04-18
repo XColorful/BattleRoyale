@@ -5,7 +5,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.RelativeMovement;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.IGameManager;
 
 import java.util.HashSet;
@@ -14,7 +13,8 @@ import java.util.Set;
 public class _GameUtilsFunction {
 
     @ApiStatus.Internal
-    public static void safeTeleport(@NotNull IGameManager gameManager, @NotNull LivingEntity livingEntity, double x, double y, double z) {
+    public static void safeTeleport(@NotNull IGameManager gameManager, @NotNull LivingEntity livingEntity,
+                                    double x, double y, double z) {
         if (gameManager.isOnServerStopping()) {
             return;
         }
@@ -24,8 +24,9 @@ public class _GameUtilsFunction {
 
     private static final Set<RelativeMovement> emptyRelativeMovement = new HashSet<>();
     @ApiStatus.Internal
-    public static void safeTeleport(@NotNull IGameManager gameManager, @NotNull LivingEntity livingEntity, @NotNull ServerLevel serverLevel, double x, double y, double z, float yaw, float pitch) {
-        if (BattleRoyale.getGameManager().isOnServerStopping()) {
+    public static void safeTeleport(@NotNull IGameManager gameManager, @NotNull LivingEntity livingEntity, @NotNull ServerLevel serverLevel,
+                                    double x, double y, double z, float yaw, float pitch) {
+        if (gameManager.isOnServerStopping()) {
             return;
         }
         livingEntity.fallDistance = 0;
