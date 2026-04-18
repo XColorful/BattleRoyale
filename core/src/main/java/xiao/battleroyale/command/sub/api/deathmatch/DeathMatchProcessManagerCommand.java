@@ -88,7 +88,7 @@ public class DeathMatchProcessManagerCommand {
 
     private static int getCurrentMaxKill(CommandContext<CommandSourceStack> context) {
         @Nullable IDeathMatchProcessManager dmProcessManager = getDMProcessManager(BattleRoyale.getGameManager());
-        return dmProcessManager != null ? dmProcessManager.getCurrentMaxKill() : 0;
+        return dmProcessManager != null ? dmProcessManager.getCurrentMaxKill() : -1;
     }
 
     // --------IDeathMatchDataManagement--------
@@ -96,7 +96,7 @@ public class DeathMatchProcessManagerCommand {
     private static int addGamePlayerKillByPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
         @Nullable IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
-        if (dmProcessManager == null) return 0;
+        if (dmProcessManager == null) return -1;
         Entity entity = EntityArgument.getEntity(context, PLAYER);
         GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(entity.getUUID());
         return gamePlayer != null && dmProcessManager.addGamePlayerKill(gamePlayer, IntegerArgumentType.getInteger(context, ADD_KILL)) ? Command.SINGLE_SUCCESS : 0;
@@ -104,7 +104,7 @@ public class DeathMatchProcessManagerCommand {
     private static int addGamePlayerKillByGamePlayerId(CommandContext<CommandSourceStack> context) {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
         @Nullable IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
-        if (dmProcessManager == null) return 0;
+        if (dmProcessManager == null) return -1;
         int playerId = IntegerArgumentType.getInteger(context, ID);
         GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerBySingleId(playerId);
         return gamePlayer != null && dmProcessManager.addGamePlayerKill(gamePlayer, IntegerArgumentType.getInteger(context, ADD_KILL)) ? Command.SINGLE_SUCCESS : 0;
@@ -112,7 +112,7 @@ public class DeathMatchProcessManagerCommand {
     private static int addGameTeamKillByPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
         @Nullable IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
-        if (dmProcessManager == null) return 0;
+        if (dmProcessManager == null) return -1;
         Entity entity = EntityArgument.getEntity(context, PLAYER);
         GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(entity.getUUID());
         return gamePlayer != null && dmProcessManager.addGameTeamKill(gamePlayer.getTeam(), IntegerArgumentType.getInteger(context, ADD_KILL)) ? Command.SINGLE_SUCCESS : 0;
@@ -120,7 +120,7 @@ public class DeathMatchProcessManagerCommand {
     private static int addGameTeamKillByGameTeamId(CommandContext<CommandSourceStack> context) {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
         IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
-        if (dmProcessManager == null) return 0;
+        if (dmProcessManager == null) return -1;
         int teamId = IntegerArgumentType.getInteger(context, ID);
         GameTeam gameTeam = gameManager.getTeamManager().getGameTeamById(teamId);
         return gameTeam != null && dmProcessManager.addGameTeamKill(gameTeam, IntegerArgumentType.getInteger(context, ADD_KILL)) ? Command.SINGLE_SUCCESS : 0;
@@ -128,7 +128,7 @@ public class DeathMatchProcessManagerCommand {
     private static int addAndTrackRestandingGamePlayerByPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException, CommandSyntaxException {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
         IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
-        if (dmProcessManager == null) return 0;
+        if (dmProcessManager == null) return -1;
         Entity entity = EntityArgument.getEntity(context, PLAYER);
         GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(entity.getUUID());
         return gamePlayer != null && dmProcessManager.addAndTrackRestandingGamePlayer(gamePlayer) ? Command.SINGLE_SUCCESS : 0;
@@ -136,7 +136,7 @@ public class DeathMatchProcessManagerCommand {
     private static int addAndTrackRestandingGamePlayerByGamePlayerId(CommandContext<CommandSourceStack> context) {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
         IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
-        if (dmProcessManager == null) return 0;
+        if (dmProcessManager == null) return -1;
         int playerId = IntegerArgumentType.getInteger(context, ID);
         GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerBySingleId(playerId);
         return gamePlayer != null && dmProcessManager.addAndTrackRestandingGamePlayer(gamePlayer) ? Command.SINGLE_SUCCESS : 0;
@@ -147,7 +147,7 @@ public class DeathMatchProcessManagerCommand {
     private static int respawnGamePlayerByPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
         IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
-        if (dmProcessManager == null) return 0;
+        if (dmProcessManager == null) return -1;
         Entity entity = EntityArgument.getEntity(context, PLAYER);
         GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(entity.getUUID());
         return gamePlayer != null && dmProcessManager.respawnGamePlayer(context.getSource().getLevel(), gamePlayer) ? Command.SINGLE_SUCCESS : 0;
@@ -155,7 +155,7 @@ public class DeathMatchProcessManagerCommand {
     private static int respawnGamePlayerByGamePlayerId(CommandContext<CommandSourceStack> context) {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
         IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
-        if (dmProcessManager == null) return 0;
+        if (dmProcessManager == null) return -1;
         int playerId = IntegerArgumentType.getInteger(context, ID);
         GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerBySingleId(playerId);
         return gamePlayer != null && dmProcessManager.respawnGamePlayer(context.getSource().getLevel(), gamePlayer) ? Command.SINGLE_SUCCESS : 0;
