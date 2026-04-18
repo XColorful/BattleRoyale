@@ -8,7 +8,8 @@ import xiao.battleroyale.api.game.zone.IGameZoneReadApi;
  * GameManager单例专用
  */
 public interface IGameManager extends IGameMainManager, IGameApiGetter, IGameConfigGetter,
-        IGameConfigSetter, IGameStatusSetter, IGameEventReceiver {
+        IGameConfigSetter, IGameStatusSetter, IGameEventReceiver,
+        IGameSaveTeleporter {
 
     @Override default IGameTeamReadApi getGameTeamReadApi() {
         return getTeamManager();

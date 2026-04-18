@@ -24,7 +24,6 @@ import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.server.IServerManager;
 import xiao.battleroyale.api.server.utilitity.ISurvivalLobbyManager;
 import xiao.battleroyale.common.game._GameTeamManager;
-import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.util.ChatUtils;
 import xiao.battleroyale.util.Vec3Utils;
@@ -147,7 +146,7 @@ public class _SurvivalLobby implements ISurvivalLobbyManager {
         if (serverPlayer != null && changeGamemode) {
             serverPlayer.setGameMode(GameType.SURVIVAL);
         }
-        GameUtilsFunction.safeTeleport(livingEntity, serverLevel, lobbyPos, 0, 0); // 生存大厅传送
+        BattleRoyale.getGameManager().safeTeleport(livingEntity, serverLevel, lobbyPos, 0, 0); // 生存大厅传送
         BattleRoyale.LOGGER.info("Teleport livingEntity {} (UUID:{}) to lobby ({}, {}, {})", livingEntity.getName().getString(), livingEntity.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
         eventPoster.postCustomEvent(new SurvivalLobbyTeleportFinishEvent(serverManager, livingEntity));
         return true;

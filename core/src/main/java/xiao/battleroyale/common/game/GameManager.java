@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -776,7 +777,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
 
 
-    // --------IGameEventHandler--------
+    // --------IGameEventReceiver--------
 
     // 玩家进入服务器
     public void onPlayerLoggedIn(ServerPlayer player) {
@@ -855,5 +856,14 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
                 }
             }
         }
+    }
+
+    // --------IGameSaveTeleporter--------
+
+    @Override public void safeTeleport(@NotNull LivingEntity livingEntity, double x, double y, double z) {
+        _GameUtilsFunction.safeTeleport(this, livingEntity, x, y, z);
+    }
+    @Override public void safeTeleport(@NotNull LivingEntity livingEntity, @NotNull ServerLevel serverLevel, double x, double y, double z, float yaw, float pitch) {
+        _GameUtilsFunction.safeTeleport(this, livingEntity, serverLevel, x, y, z, yaw, pitch);
     }
 }
