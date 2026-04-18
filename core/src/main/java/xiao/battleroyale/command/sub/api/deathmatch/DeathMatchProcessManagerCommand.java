@@ -98,66 +98,74 @@ public class DeathMatchProcessManagerCommand {
         @Nullable IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
         if (dmProcessManager == null) return -1;
         Entity entity = EntityArgument.getEntity(context, PLAYER);
-        GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(entity.getUUID());
-        return gamePlayer != null && dmProcessManager.addGamePlayerKill(gamePlayer, IntegerArgumentType.getInteger(context, ADD_KILL)) ? Command.SINGLE_SUCCESS : 0;
+        @Nullable GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(entity.getUUID());
+        if (gamePlayer == null) return -2;
+        return dmProcessManager.addGamePlayerKill(gamePlayer, IntegerArgumentType.getInteger(context, ADD_KILL)) ? Command.SINGLE_SUCCESS : 0;
     }
     private static int addGamePlayerKillByGamePlayerId(CommandContext<CommandSourceStack> context) {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
         @Nullable IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
         if (dmProcessManager == null) return -1;
         int playerId = IntegerArgumentType.getInteger(context, ID);
-        GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerBySingleId(playerId);
-        return gamePlayer != null && dmProcessManager.addGamePlayerKill(gamePlayer, IntegerArgumentType.getInteger(context, ADD_KILL)) ? Command.SINGLE_SUCCESS : 0;
+        @Nullable GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerBySingleId(playerId);
+        if (gamePlayer == null) return -2;
+        return dmProcessManager.addGamePlayerKill(gamePlayer, IntegerArgumentType.getInteger(context, ADD_KILL)) ? Command.SINGLE_SUCCESS : 0;
     }
     private static int addGameTeamKillByPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
         @Nullable IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
         if (dmProcessManager == null) return -1;
         Entity entity = EntityArgument.getEntity(context, PLAYER);
-        GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(entity.getUUID());
-        return gamePlayer != null && dmProcessManager.addGameTeamKill(gamePlayer.getTeam(), IntegerArgumentType.getInteger(context, ADD_KILL)) ? Command.SINGLE_SUCCESS : 0;
+        @Nullable GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(entity.getUUID());
+        if (gamePlayer == null) return -2;
+        return dmProcessManager.addGameTeamKill(gamePlayer.getTeam(), IntegerArgumentType.getInteger(context, ADD_KILL)) ? Command.SINGLE_SUCCESS : 0;
     }
     private static int addGameTeamKillByGameTeamId(CommandContext<CommandSourceStack> context) {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
-        IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
+        @Nullable IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
         if (dmProcessManager == null) return -1;
         int teamId = IntegerArgumentType.getInteger(context, ID);
-        GameTeam gameTeam = gameManager.getTeamManager().getGameTeamById(teamId);
-        return gameTeam != null && dmProcessManager.addGameTeamKill(gameTeam, IntegerArgumentType.getInteger(context, ADD_KILL)) ? Command.SINGLE_SUCCESS : 0;
+        @Nullable GameTeam gameTeam = gameManager.getTeamManager().getGameTeamById(teamId);
+        if (gameTeam == null) return -2;
+        return dmProcessManager.addGameTeamKill(gameTeam, IntegerArgumentType.getInteger(context, ADD_KILL)) ? Command.SINGLE_SUCCESS : 0;
     }
     private static int addAndTrackRestandingGamePlayerByPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException, CommandSyntaxException {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
-        IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
+        @Nullable IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
         if (dmProcessManager == null) return -1;
         Entity entity = EntityArgument.getEntity(context, PLAYER);
-        GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(entity.getUUID());
-        return gamePlayer != null && dmProcessManager.addAndTrackRestandingGamePlayer(gamePlayer) ? Command.SINGLE_SUCCESS : 0;
+        @Nullable GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(entity.getUUID());
+        if (gamePlayer == null) return -2;
+        return dmProcessManager.addAndTrackRestandingGamePlayer(gamePlayer) ? Command.SINGLE_SUCCESS : 0;
     }
     private static int addAndTrackRestandingGamePlayerByGamePlayerId(CommandContext<CommandSourceStack> context) {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
-        IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
+        @Nullable IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
         if (dmProcessManager == null) return -1;
         int playerId = IntegerArgumentType.getInteger(context, ID);
-        GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerBySingleId(playerId);
-        return gamePlayer != null && dmProcessManager.addAndTrackRestandingGamePlayer(gamePlayer) ? Command.SINGLE_SUCCESS : 0;
+        @Nullable GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerBySingleId(playerId);
+        if (gamePlayer == null) return -2;
+        return dmProcessManager.addAndTrackRestandingGamePlayer(gamePlayer) ? Command.SINGLE_SUCCESS : 0;
     }
 
     // --------IDeathMatchGameManagement--------
 
     private static int respawnGamePlayerByPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
-        IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
+        @Nullable IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
         if (dmProcessManager == null) return -1;
         Entity entity = EntityArgument.getEntity(context, PLAYER);
-        GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(entity.getUUID());
-        return gamePlayer != null && dmProcessManager.respawnGamePlayer(context.getSource().getLevel(), gamePlayer) ? Command.SINGLE_SUCCESS : 0;
+        @Nullable GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerByUUID(entity.getUUID());
+        if (gamePlayer == null) return -2;
+        return dmProcessManager.respawnGamePlayer(context.getSource().getLevel(), gamePlayer) ? Command.SINGLE_SUCCESS : 0;
     }
     private static int respawnGamePlayerByGamePlayerId(CommandContext<CommandSourceStack> context) {
         IGameMainManager gameManager = BattleRoyale.getGameManager();
-        IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
+        @Nullable IDeathMatchProcessManager dmProcessManager = getDMProcessManager(gameManager);
         if (dmProcessManager == null) return -1;
         int playerId = IntegerArgumentType.getInteger(context, ID);
-        GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerBySingleId(playerId);
-        return gamePlayer != null && dmProcessManager.respawnGamePlayer(context.getSource().getLevel(), gamePlayer) ? Command.SINGLE_SUCCESS : 0;
+        @Nullable GamePlayer gamePlayer = gameManager.getTeamManager().getGamePlayerBySingleId(playerId);
+        if (gamePlayer == null) return -2;
+        return dmProcessManager.respawnGamePlayer(context.getSource().getLevel(), gamePlayer) ? Command.SINGLE_SUCCESS : 0;
     }
 }

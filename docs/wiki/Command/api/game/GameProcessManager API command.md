@@ -130,6 +130,8 @@
 
 > _/battleroyale api gameProcessManager deathMatch [...]_
 
+- 若未[注册死斗模式游戏进程管理器](https://github.com/XColorful/BattleRoyale/wiki/Register-command#注册死斗模式游戏进程管理器)，`返回值`为 -1
+ 
 #### 死斗模式信息获取
 > _IDeathMatchInfoGetter_
 
@@ -149,7 +151,7 @@
 - addKill：添加的击杀数
 - player：用实体选择器选中并获取游戏玩家
 - id：用游戏玩家ID获取游戏玩家
-- 若不存在对应的游戏玩家，`返回值`为 0
+- 若不存在对应的游戏玩家，`返回值`为 -2
 - `返回值`：是否计入成功
 
 ##### 添加游戏队伍击杀数
@@ -160,7 +162,7 @@
 - addKill：添加的击杀数
 - player：用实体选择器选中并获取游戏玩家
 - id：用游戏队伍ID选中游戏队伍
-- 若不存在对应的游戏玩家或游戏队伍，`返回值`为0
+- 若不存在对应的游戏玩家或游戏队伍，`返回值`为 -2
 - `返回值`：是否计入成功
 
 ##### 添加并跟踪再出生玩家
@@ -170,7 +172,7 @@
 
 - player：用实体选择器选中并获取游戏玩家
 - id：用游戏玩家ID获取游戏玩家
-- 若不存在对应的游戏玩家，`返回值`为 0
+- 若不存在对应的游戏玩家，`返回值`为 -2
 - `返回值`：是否添加成功
 
 #### 死斗模式游戏管理
@@ -183,7 +185,7 @@
 
 - player：用实体选择器选中并获取游戏玩家
 - id：用游戏玩家ID获取游戏玩家
-- 若不存在对应的游戏玩家，`返回值`为 0
+- 若不存在对应的游戏玩家，`返回值`为 -2
 - `返回值`：是否成功再出生
 
 # English
@@ -318,6 +320,8 @@ Immediately updates the last recorded status of game players and eliminates inva
 
 > _/battleroyale api gameProcessManager deathMatch [...]_
 
+- If not [Register DeathMatch GameProcessManager](https://github.com/XColorful/BattleRoyale/wiki/Register-command#Register-DeathMatch-GameProcessManager), the `return value` is -1.
+
 #### DeathMatch info getter
 > _IDeathMatchInfoGetter_
 
@@ -337,7 +341,7 @@ Immediately updates the last recorded status of game players and eliminates inva
 - addKill: the number of kills to add
 - player: selects game player using an entity selector
 - id: selects game player using a game player ID
-- If the game player does not exist, the `return value` is 0.
+- If the game player does not exist, the `return value` is -2.
 - `return value`: whether the record was successfully added
 
 ##### Add game team kill
@@ -348,7 +352,7 @@ Immediately updates the last recorded status of game players and eliminates inva
 - addKill: the number of kills to add
 - player: selects game player using an entity selector
 - id: selects game team using a game team ID
-- If the game player or team does not exist, the `return value` is 0.
+- If the game player or team does not exist, the `return value` is -2.
 - `return value`: whether the record was successfully added
 
 ##### Add and track restanding game player
@@ -358,7 +362,7 @@ Immediately updates the last recorded status of game players and eliminates inva
 
 - player: selects game player using an entity selector
 - id: selects game player using a game player ID
-- If the game player does not exist, the `return value` is 0.
+- If the game player does not exist, the `return value` is -2.
 - `return value`: whether the addition was successful
 
 #### DeathMatch game management
@@ -371,5 +375,5 @@ Immediately updates the last recorded status of game players and eliminates inva
 
 - player: selects game player using an entity selector
 - id: selects game player using a game player ID
-- If the game player does not exist, the `return value` is 0.
+- If the game player does not exist, the `return value` is -2.
 - `return value`: whether the respawn was successful
