@@ -22,6 +22,8 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
         return GameIdHelperHolder.INSTANCE;
     }
 
+    protected GameIdHelper() {}
+
     /**
      * 获取物品掉落物或实体的GameUUID
      */
