@@ -135,13 +135,16 @@ public class GameUtils {
                 .append(Component.literal(gamePlayer.getPlayerName()).withStyle(nameColor));
     }
 
-    public static @Nullable Entity getEntity(ServerLevel serverLevel, UUID entityUUID) {
+    public static @Nullable Entity getEntity(@Nullable ServerLevel serverLevel, UUID entityUUID) {
+        if (serverLevel == null) return null;
         return serverLevel.getEntity(entityUUID);
     }
-    public static @Nullable LivingEntity getLivingEntity(ServerLevel serverLevel, UUID entityUUID) {
+    public static @Nullable LivingEntity getLivingEntity(@Nullable ServerLevel serverLevel, UUID entityUUID) {
+        if (serverLevel == null) return null;
         return serverLevel.getEntity(entityUUID) instanceof LivingEntity livingEntity ? livingEntity : null;
     }
-    public static @Nullable ServerPlayer getServerPlayerOrNull(ServerLevel serverLevel, UUID entityUUID) {
+    public static @Nullable ServerPlayer getServerPlayerOrNull(@Nullable ServerLevel serverLevel, UUID entityUUID) {
+        if (serverLevel == null) return null;
         return serverLevel.getPlayerByUUID(entityUUID) instanceof ServerPlayer serverPlayer ? serverPlayer : null ;
     }
 }

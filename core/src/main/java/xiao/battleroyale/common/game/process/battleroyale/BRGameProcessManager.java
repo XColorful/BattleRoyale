@@ -52,13 +52,13 @@ public class BRGameProcessManager extends AbstractGameManager implements IGamePr
     @Override
     public boolean registerGameEventHandler() {
         ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
-        customEventRegister.register(get(), CustomEventType.GAME_COMPLETE_FINISH_EVENT, EventPriority.LOW, true); // 最后发送胜利消息
+        customEventRegister.register(this, CustomEventType.GAME_COMPLETE_FINISH_EVENT, EventPriority.LOW, true); // 最后发送胜利消息
         return true;
     }
     @Override
     public boolean unregisterGameEventHandler() {
         ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
-        customEventRegister.unregister(get(), CustomEventType.GAME_COMPLETE_FINISH_EVENT, EventPriority.LOW, true);
+        customEventRegister.unregister(this, CustomEventType.GAME_COMPLETE_FINISH_EVENT, EventPriority.LOW, true);
         return true;
     }
 
