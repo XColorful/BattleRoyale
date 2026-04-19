@@ -16,7 +16,6 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.lobby.IGameLobbyManager;
 import xiao.battleroyale.common.game.GameMessageManager;
 import xiao.battleroyale.common.game._GameTeamManager;
-import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.common.message.MessageManager;
@@ -204,7 +203,7 @@ public class _BRGameManagement {
             case CHANGE_FROM_SPECTATOR -> changeFromSpectator(gameManager, player);
             case GAME_PLAYER_SPECTATE, NON_GAME_PLAYER_SPECTATE -> {
                 player.setGameMode(GameType.SPECTATOR);
-                teleportToRandomStandingGamePlayer(gameManager.getServerLevel(), player);
+                teleportToRandomStandingGamePlayer(gameManager, gameManager.getServerLevel(), player);
                 if (gamePlayer != null && gameManager.getGameEntry().spectatorSeeAllTeams) {
                     MessageManager.get().notifySpectateChange(gamePlayer.getGameSingleId());
                 }
@@ -253,7 +252,7 @@ public class _BRGameManagement {
         }
     }
 
-    public static void teleportToRandomStandingGamePlayer(ServerLevel serverLevel, ServerPlayer player) {
+    public static void teleportToRandomStandingGamePlayer(IGameManager gameManager, ServerLevel serverLevel, ServerPlayer player) {
         if (serverLevel == null) {
             BattleRoyale.LOGGER.debug("ServerLevel is null while teleportToRandomStandingGamePlayer(ServerPlayer {})", player.getName().getString());
             return;
@@ -266,7 +265,7 @@ public class _BRGameManagement {
                 yaw = targetPlayer.getYRot();
                 pitch = targetPlayer.getXRot();
             }
-            GameUtilsFunction.safeTeleport(player, serverLevel, standingGamePlayer.getLastPos(), yaw, pitch); // 玩家观战传送
+            gameManager.safeTeleport(player, serverLevel, standingGamePlayer.getLastPos(), yaw, pitch); // 玩家观战传送
             ChatUtils.sendComponentMessageToAllPlayers(serverLevel, Component.translatable("battleroyale.message.player_is_spectating", player.getName().getString(), standingGamePlayer.getPlayerName()).withStyle(ChatFormatting.GRAY));
         }
     }
