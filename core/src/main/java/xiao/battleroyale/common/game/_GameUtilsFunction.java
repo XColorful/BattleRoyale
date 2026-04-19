@@ -3,7 +3,6 @@ package xiao.battleroyale.common.game;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Relative;
-import net.minecraft.world.entity.RelativeMovement;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.api.game.IGameManager;
