@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.profiling.Profiler;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,7 @@ import xiao.battleroyale.api.event.game.game.*;
 import xiao.battleroyale.api.event.game.starter.*;
 import xiao.battleroyale.api.event.game.tick.GameTickEvent;
 import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
+import xiao.battleroyale.api.event.special.IRegisterable;
 import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
 import xiao.battleroyale.api.game.IGameManager;
@@ -34,6 +36,7 @@ import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.api.game.zone.IZoneManager;
+import xiao.battleroyale.command.sub.RegisterCommand;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.lobby.GameLobbyManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
@@ -67,7 +70,7 @@ import java.util.function.Supplier;
 
 import static xiao.battleroyale.api.data.TempDataTag.*;
 
-public class GameManager extends AbstractGameManager implements IGameManager, IStatsWriter, ICustomEventHandler {
+public class GameManager extends AbstractGameManager implements IGameManager, IStatsWriter, ICustomEventHandler, IRegisterable {
 
     private static class GameManagerHolder {
         private static final GameManager INSTANCE = new GameManager();
@@ -118,6 +121,21 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         TeamManager.init(mcSide);
         ZoneManager.init(mcSide);
         BattleRoyale.getEventRegister().register(_GameManagerRegister.get(), CustomEventType.REGISTER_MANAGER_EVENT);
+        RegisterCommand.addExtraProtocol(_PROTOCOL_SUGGESTS);
+    }
+    @Override public boolean isCorrectProtocol(StringUtils.ProtocolString protocol) {
+        return (protocol.namespace.equals(BattleRoyale.MOD_ID) || protocol.namespace.equals(BattleRoyale.MOD_NAME_SHORT))
+                && (protocol.name.equals("GameManager"));
+    }
+    @Override public StringUtils.ProtocolString getCorrectProtocol() {
+        return new StringUtils.ProtocolString(String.format("%s:%s", BattleRoyale.MOD_ID, "GameManager"));
+    }
+    private static final String[] _PROTOCOL_SUGGESTS = new String[]{
+            String.format("\"%s:%s\"", BattleRoyale.MOD_ID, "GameManager"),
+            String.format("\"%s:%s\"", BattleRoyale.MOD_NAME_SHORT, "GameManager")
+    };
+    @Override public String[] getProtocolSuggests() {
+        return _PROTOCOL_SUGGESTS;
     }
 
     @Override public String getManagerName() {
@@ -777,7 +795,7 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
     }
 
 
-    // --------IGameEventHandler--------
+    // --------IGameEventReceiver--------
 
     // 玩家进入服务器
     public void onPlayerLoggedIn(ServerPlayer player) {
@@ -856,5 +874,14 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
                 }
             }
         }
+    }
+
+    // --------IGameSaveTeleporter--------
+
+    @Override public void safeTeleport(@NotNull LivingEntity livingEntity, double x, double y, double z) {
+        _GameUtilsFunction.safeTeleport(this, livingEntity, x, y, z);
+    }
+    @Override public void safeTeleport(@NotNull LivingEntity livingEntity, @NotNull ServerLevel serverLevel, double x, double y, double z, float yaw, float pitch) {
+        _GameUtilsFunction.safeTeleport(this, livingEntity, serverLevel, x, y, z, yaw, pitch);
     }
 }

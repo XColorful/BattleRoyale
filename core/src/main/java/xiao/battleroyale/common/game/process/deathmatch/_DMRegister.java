@@ -35,11 +35,10 @@ public class _DMRegister implements ICustomEventHandler {
 
     private void registerDMManager(RegisterManagerEvent event) {
         StringUtils.ProtocolString protocolString = event.getProtocolString();
-        if (protocolString.namespace.equals(BattleRoyale.MOD_ID) || protocolString.namespace.equals(BattleRoyale.MOD_NAME_SHORT)) {
-            if (protocolString.name.equals("DMGameProcessManager")) {
-                boolean registered = BattleRoyale.getGameManager().setGameProcessManager(DMGameProcessManager.get());
-                event.setCanceled(registered);
-            }
+        DMGameProcessManager manager = DMGameProcessManager.get();
+        if (manager.isCorrectProtocol(protocolString)) {
+            boolean registered = BattleRoyale.getGameManager().setGameProcessManager(manager);
+            event.setCanceled(registered);
         }
     }
 }
