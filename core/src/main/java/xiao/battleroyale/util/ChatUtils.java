@@ -120,8 +120,8 @@ public class ChatUtils {
         if (!titleToAll) return;
         for (ServerPlayer player : serverLevel.getServer().getPlayerList().getPlayers()) {
             player.connection.send(new ClientboundSetTitlesAnimationPacket(fadeInTicks, stayTicks, fadeOutTicks)); // 动画时间设置包
-            player.connection.send(new ClientboundSetTitleTextPacket(title)); // 标题内容包
             player.connection.send(new ClientboundSetSubtitleTextPacket(subtitle)); // 副标题内容包
+            player.connection.send(new ClientboundSetTitleTextPacket(title)); // 标题内容包
         }
     }
 
@@ -197,8 +197,8 @@ public class ChatUtils {
     }
     public static void sendTitlesToPlayer(@NotNull ServerPlayer player, Component title, Component subtitle) {
         if (!titleToPlayer) return;
-        player.connection.send(new ClientboundSetTitleTextPacket(title)); // 先发送标题内容包
-        player.connection.send(new ClientboundSetSubtitleTextPacket(subtitle)); // 副标题内容包
+        player.connection.send(new ClientboundSetSubtitleTextPacket(subtitle)); // 先发送副标题内容包
+        player.connection.send(new ClientboundSetTitleTextPacket(title)); // 标题内容包
     }
     public static void sendActionBarToPlayer(@NotNull ServerPlayer player, Component actionBar) {
         if (!actionBarToPlayer) return;
