@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.*;
-import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.util.GameUtils;
 import xiao.battleroyale.util.WorldUtils;
@@ -107,7 +106,7 @@ public abstract class TeleportScheduler<T> implements IEventHandler {
                     }
 
                     // 传送
-                    GameUtilsFunction.safeTeleport(player, serverLevel, pos, 0, 0); // TeleportScheduler传送
+                    BattleRoyale.getGameManager().safeTeleport(player, serverLevel, pos, 0, 0); // TeleportScheduler传送
 
                     // 传送后移除玩家
                     if (pos.y != queuedHeight) {

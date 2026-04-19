@@ -150,6 +150,27 @@
 
 - `返回值`：当前选中的[人机配置](https://github.com/XColorful/BattleRoyale/wiki/Bot-config#单个配置)id
 
+#### 游戏安全传送
+> _IGameSaveTeleporter_
+
+##### 无摔传送
+> _/battleroyale api gameManager safeTeleport [player] [xyz]_
+
+- player：用实体选择器选中实体
+- 若不为生物，`返回值`为 0
+- xyz：传送坐标
+- `返回值`：1
+
+##### 跨纬度无摔传送
+> _/battleroyale api gameManager safeTeleport [player] [xyz] [rotation]_
+
+- player：用实体选择器选中实体
+- 若不为生物，`返回值`为 0
+- xyz：传送坐标
+- rotation：传送朝向（水平朝向和垂直朝向）
+- 若无法获取游戏维度，`返回值`为 -1
+- `返回值`：1
+
 # English
 
 ### Game manager
@@ -301,3 +322,24 @@ If currently within a game player death event (_IGameMangaer::onPlayerDeath_), a
 > _/battleroyale api gameManager getBotConfigId_
 
 - `return value`: currently selected [Bot config](https://github.com/XColorful/BattleRoyale/wiki/Bot-config#Single-bot-config) id
+
+#### IGameSaveTeleporter
+> _IGameSaveTeleporter_
+
+##### No-fall teleport
+> _/battleroyale api gameManager safeTeleport [player] [xyz]_
+
+- player: selects entity using an entity selector
+- If the enitty is not a living entity, the `return value` is 0.
+- xyz: teleport coordinate
+- `return value`: 1
+
+##### Cross-dimension no-fall teleport
+> _/battleroyale api gameManager safeTeleport [player] [xyz] [rotation]_
+
+- player: selects entity using an entity selector
+- If the enitty is not a living entity, the `return value` is 0.
+- xyz: teleport coordinate
+- rotation: teleport rotation (yaw and pitch)
+- If the game dimension cannot be retrieved, the `return value` is -1.
+- `return value`: 1

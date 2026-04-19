@@ -12,7 +12,6 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.zone.IZoneManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.common.game._GameStatsManager;
-import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.common.game.spawn.AbstractSimpleSpawner;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
@@ -191,6 +190,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
             // 依次传送队伍内未被淘汰玩家
             List<GamePlayer> standingPlayers = gameTeam.getStandingPlayers();
             boolean indexAdded = false;
+            IGameManager gameManager = BattleRoyale.getGameManager();
             for (int i = 0; i < standingPlayers.size(); i++) {
                 // 找新点位
                 if (!teamTogether && i > 0) {
@@ -214,7 +214,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
                         spawnPointIndex++;
                         indexAdded = true;
                     }
-                    GameUtilsFunction.safeTeleport(player, serverLevel, targetSpawnPos, 0, 0); // TeleportSpawner传送
+                    gameManager.safeTeleport(player, serverLevel, targetSpawnPos, 0, 0); // TeleportSpawner传送
                     addSpawnStats(gamePlayer, targetSpawnPos);
                     gamePlayer.setLastPos(targetSpawnPos); // 立即更新，防止下一tick找不到又躲了逻辑位置
                     teleportedPlayerId.add(gamePlayer.getGameSingleId());
@@ -283,6 +283,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
 
         Vec3 globalOffset = getGlobalOffset(gameTime, preZoneCenterId);
 
+        IGameManager gameManager = BattleRoyale.getGameManager();
         Iterator<Map.Entry<GameTeam, List<_RespawnEntry>>> teamIterator = unteleportedTeams.entrySet().iterator();
         while (teamIterator.hasNext()) {
             Map.Entry<GameTeam, List<_RespawnEntry>> entry = teamIterator.next();
@@ -298,7 +299,7 @@ public class TeleportSpawner extends AbstractSimpleSpawner<TeleportDetailEntry> 
                     if (target == null) return false;
 
                     // 执行传送
-                    GameUtilsFunction.safeTeleport(playerEntity, serverLevel, target, 0, 0);
+                    gameManager.safeTeleport(playerEntity, serverLevel, target, 0, 0);
 
                     if (target.y != queuedHeight) {
                         // 成功传送到地面，消耗一个索引
