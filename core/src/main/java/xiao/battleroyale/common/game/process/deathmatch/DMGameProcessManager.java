@@ -13,6 +13,7 @@ import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.event.ICustomEventPoster;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.event.custom.deathmatch.AddKillEvent;
+import xiao.battleroyale.api.event.special.IRegisterable;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.config.common.game.gamerule.custom.DeathMatchConfigTag;
 import xiao.battleroyale.api.game.process.deathmatch.IDeathMatchProcessManager;
@@ -20,6 +21,7 @@ import xiao.battleroyale.api.game.spawn.ISpawnManager;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.api.game.zone.IZoneManager;
 import xiao.battleroyale.api.game.zone.gamezone.ITickableZone;
+import xiao.battleroyale.command.sub.RegisterCommand;
 import xiao.battleroyale.common.game.process.battleroyale.BRGameProcessManager;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
@@ -34,7 +36,7 @@ import java.util.*;
 /**
  * DeathMatch Game Process Manager
  */
-public class DMGameProcessManager extends BRGameProcessManager implements IDeathMatchProcessManager {
+public class DMGameProcessManager extends BRGameProcessManager implements IDeathMatchProcessManager, IRegisterable {
 
     private static class DMGameProcessManagerHolder {
         private static final DMGameProcessManager INSTANCE = new DMGameProcessManager();
@@ -47,9 +49,24 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     protected DMGameProcessManager() {}
 
     public static void init(McSide mcSide) {
+        RegisterCommand.addExtraProtocol(_PROTOCOL_SUGGESTS);
+    }
+    @Override public boolean isCorrectProtocol(StringUtils.ProtocolString protocol) {
+        return (protocol.namespace.equals(BattleRoyale.MOD_ID) || protocol.namespace.equals(BattleRoyale.MOD_NAME_SHORT))
+                && (protocol.name.equals("DMGameProcessManager"));
+    }
+    @Override public StringUtils.ProtocolString getCorrectProtocol() {
+        return new StringUtils.ProtocolString(String.format("%s:%s", BattleRoyale.MOD_ID, "DMGameProcessManager"));
+    }
+    private static final String[] _PROTOCOL_SUGGESTS = new String[]{
+            String.format("\"%s:%s\"", BattleRoyale.MOD_ID, "DMGameProcessManager"),
+            String.format("\"%s:%s\"", BattleRoyale.MOD_NAME_SHORT, "DMGameProcessManager")
+    };
+    @Override public String[] getProtocolSuggests() {
+        return _PROTOCOL_SUGGESTS;
     }
 
-    protected DeathmatchEntry configEntry;
+    protected @NotNull DeathmatchEntry configEntry = new DeathmatchEntry();
     public final UUID progressBarUUID = UUID.nameUUIDFromBytes("battleroyale:deathmatch_progress".getBytes());
 
     protected final @NotNull DMData deathMatchData = new DMData();
@@ -86,12 +103,13 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         StringUtils.ProtocolString protocol = extraRuleEntry.protocol;
         boolean isDeathMatchConfig = (protocol.namespace.equals(BattleRoyale.MOD_ID) || protocol.namespace.equals(BattleRoyale.MOD_NAME_SHORT))
                 && (protocol.name.equals(DeathMatchConfigTag.PROTOCOL_NAME));
-        this.configEntry = isDeathMatchConfig ? DeathmatchEntry.fromJson(jsonTag) : new DeathmatchEntry();
-        if (this.configEntry == null) {
+        DeathmatchEntry _configEntry = isDeathMatchConfig ? DeathmatchEntry.fromJson(jsonTag) : new DeathmatchEntry();
+        if (_configEntry == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             configPrepared = false;
             return;
         }
+        this.configEntry =  _configEntry;
 
         if (this.configEntry.targetKill < 1) this.configEntry.targetKill = 1;
         if (this.configEntry.respawnTrackDelay < 20) this.configEntry.respawnTrackDelay = 20;

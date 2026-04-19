@@ -24,6 +24,7 @@ public class MinecraftEntryTag extends ConfigEntryTag {
      */
     @Deprecated(since = "0.5.0", forRemoval = false) public static final String CLEAR_INVENTORY = "clearInventory";
     public static final String CLEAR_INVENTORY_AT_START = "clearInventoryAtStart";
+    public static final String SHOW_DEATH_MESSAGES = "showDeathMessages";
     public static final String KEEP_INVENTORY = "keepInventory";
     public static final String DO_IMMEDIATE_RESPAWN = "doImmediateRespawn";
     public static final String DO_TIME_SET = "doTimeSet";
