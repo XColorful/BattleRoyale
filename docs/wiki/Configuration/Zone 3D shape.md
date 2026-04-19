@@ -8,7 +8,7 @@
 - dimension：取dimension.y作为半径
 > allowBadShape：正值校正额外使用dimension.y绝对值作为dimension.x和dimension.z绝对值，维度含有奇数个负值则反转
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "sphere",
 	"start": {
 		"center": {
@@ -66,7 +66,7 @@ return (xDist*xDist + yDist*yDist + zDist*zDist <= Math.abs(radiusSq)) != isZone
 - dimension：取dimension.y作为半边长
 - allowBadShape：正值校正额外使用dimension.y绝对值作为dimension.x和dimension.z绝对值，其余同长方体
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "cube",
 	"start": {
 		"center": {
@@ -120,7 +120,7 @@ return (xDist*xDist + yDist*yDist + zDist*zDist <= Math.abs(radiusSq)) != isZone
 - zoneShapeType："cuboid"
 - allowBadShape：正值校正同2D长方形，维度含有奇数个负值则反转
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "cube",
 	"start": {
 		"center": {
@@ -180,7 +180,7 @@ return (isWithinAbsX != invertX) && (isWithinAbsY != invertY) && (isWithinAbsZ !
 - zoneShapeType："ellipsoid"
 - allowBadShape:：同长方体
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "ellipsoid",
 	"start": {
 		"center": {
@@ -237,7 +237,7 @@ return (isWithinAbsX != invertX) && (isWithinAbsY != invertY) && (isWithinAbsZ !
 - dimension: take dimension.y as the radius
 > allowBadShape: Positive value correction additionally uses the absolute value of dimension.y as the absolute values for dimension.x and dimension.z. If the dimension contains an odd number of negative values, the shape is inverted.
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "sphere",
 	"start": {
 		"center": {
@@ -295,7 +295,7 @@ return (xDist*xDist + yDist*yDist + zDist*zDist <= Math.abs(radiusSq)) != isZone
 - dimension: take dimension.y as the half side length
 - allowBadShape: Positive correction additionally uses the absolute value of dimension.y as the absolute value of dimension.z and dimension.x. The others are same as cuboid.
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "cube",
 	"start": {
 		"center": {
@@ -349,7 +349,7 @@ return (xDist*xDist + yDist*yDist + zDist*zDist <= Math.abs(radiusSq)) != isZone
 - zoneShapeType: "cuboid"
 - allowBadShape: Positive correction same as 2D rectangle. If the dimension contains an odd number of negative values, the shape is inverted.
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "cube",
 	"start": {
 		"center": {
@@ -409,7 +409,7 @@ return (isWithinAbsX != invertX) && (isWithinAbsY != invertY) && (isWithinAbsZ !
 - zoneShapeType: "ellipsoid"
 - allowBadShape: Same as cuboid
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "ellipsoid",
 	"start": {
 		"center": {

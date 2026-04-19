@@ -8,7 +8,7 @@
 - dimension：取dimension.x作为半径
 > allowBadShape: 正值校正额外使用dimension.x绝对值作为dimension.z绝对值，dimension.x * dimension.z < 0时反转
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "circle",
 	"start": {
 		"center": {
@@ -69,7 +69,7 @@ return (xDist * xDist + zDist * zDist) <= Math.abs(dimSq) != isZoneInverted;
 - dimension：取dimension.x作为半边长
 > allowBadShape：正值校正额外使用dimension.x绝对值作为dimension.z绝对值，其余同矩形
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "square",
 	"start": {
 		"center": {
@@ -117,7 +117,7 @@ return (xDist * xDist + zDist * zDist) <= Math.abs(dimSq) != isZoneInverted;
 - dimension：取dimension.x，dimension.z作为x、z方向半边长
 > allowBadShape：dimension.x和dimension.z各自反转一半区域，先判断dimension.x
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "rectangle",
 	"start": {
 		"center": {
@@ -173,7 +173,7 @@ return (isWithinAbsX != invertX)
 - dimension：取dimension.x作为外接圆半径
 > allowBadShape：正值校正额外使用dimension.x绝对值作为dimension.z绝对值，取dimensin.x判断是否反转
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "hexagon",
 	"start": {
 		"center": {
@@ -244,7 +244,7 @@ return (rq == 0 && rr == 0 && rs == 0) != isZoneInverted;
 - segments：多边形边数，不小于3
 > allowBadShape：正值校正额外使用dimension.x绝对值作为dimension.z绝对值，取dimensin.x判断是否反转
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "polygon",
 	"start": {
 		"center": {
@@ -317,7 +317,7 @@ return true;
 - segments：多边形边数，不小于2
 > allowBadShape：在dimension进行正值校正的基础上使用dimension.x和dimension.z较大者作为外接圆半径，取dimensin.x判断是否反转
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "star",
 	"start": {
 		"center": {
@@ -386,7 +386,7 @@ return (windingNumber == 0) == isZoneInverted;
 - dimension：取dimension.x作为半长轴，dimension.z作为半短轴
 > allowBadShape：正值校正同矩形，dimension.x与dimension.z异号则反转
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "ellipse",
 	"start": {
 		"center": {
@@ -460,7 +460,7 @@ return (result <= 1.0 + EPSILON) != isZoneInverted;
 - dimension：取dimension.x作为外正方形半边长，取dimension.z作为内正方形半边长
 > allowBadShape：在dimension进行正值校正的基础上使用dimension.x和dimension.z较大者作为外正方形半边长，取dimensin.x判断是否反转
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "cross",
 	"start": {
 		"center": {
@@ -525,7 +525,7 @@ return ( // 横向矩形：X轴长（外半长），Z轴窄（内半长）
 - dimension：取dimension.x作为外圆半径，取dimension.z作为内圆半径
 > allowBadShape：在dimension进行正值校正的基础上使用dimension.x和dimension.z较大者作为外接圆半径，取dimensin.x判断是否反转
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "ring",
 	"start": {
 		"center": {
@@ -594,7 +594,7 @@ return ( // 在外圆环内
 - dimension: take dimension.x as the radius
 > allowBadShape: Positive correction additionally uses the absolute value of dimension.x as the absolute value of dimension.z, Invert when dimension.x * dimension.z < 0
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "circle",
 	"start": {
 		"center": {
@@ -655,7 +655,7 @@ return (xDist * xDist + zDist * zDist) <= Math.abs(dimSq) != isZoneInverted;
 - dimension: take dimension.x as the half side length
 > allowBadShape: Positive correction additionally uses the absolute value of dimension.x as the absolute value of dimension.z. The others are same as rectangle
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "square",
 	"start": {
 		"center": {
@@ -703,7 +703,7 @@ return (xDist * xDist + zDist * zDist) <= Math.abs(dimSq) != isZoneInverted;
 - dimension: take dimension.x, dimension.z as the half-length in the x and z directions
 > allowBadShape: Half of the zones for dimension.x and dimension.z are inverted.  Start by checking dimension.x.
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "rectangle",
 	"start": {
 		"center": {
@@ -759,7 +759,7 @@ return (isWithinAbsX != invertX)
 - dimension: take dimension.x as the radius of the circumscribed circle
 > allowBadShape: Positive correction additionally uses the absolute value of dimension.x as the absolute value of dimension.z. Use dimensin.x to decide whether to invert
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "hexagon",
 	"start": {
 		"center": {
@@ -830,7 +830,7 @@ return (rq == 0 && rr == 0 && rs == 0) != isZoneInverted;
 - segments: the number of polygon edges, no less than 3
 > allowBadShape: Positive correction additionally uses the absolute value of dimension.x as the absolute value of dimension.z. Use dimensin.x to decide whether to invert
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "polygon",
 	"start": {
 		"center": {
@@ -903,7 +903,7 @@ return true;
 - segments: the number of polygon edges, must be no less than 2
 > allowBadShape: Based on positive value correction in dimension, the larger of dimension.x and dimension.z is used as the radius of the circumscribed circle. Use dimensin.x to decide whether to invert
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "star",
 	"start": {
 		"center": {
@@ -972,7 +972,7 @@ return (windingNumber == 0) == isZoneInverted;
 - dimension: dimension.x is used as the semi-major axis, and dimension.z is used as the semi-minor axis.
 > allowBadShape: Positive value correction is the same as for rectangles; if dimension.x and dimension.z have different signs, the shape is inverted.
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "ellipse",
 	"start": {
 		"center": {
@@ -1046,7 +1046,7 @@ return (result <= 1.0 + EPSILON) != isZoneInverted;
 - dimension: take dimension.x as the outer half-width, and dimension.z as the inner half-width
 > allowBadShape: Based on positive value correction in dimension, the larger of dimension.x and dimension.z is used as the radius of the circumscribed circle. Use dimensin.x to decide whether to invert
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "cross",
 	"start": {
 		"center": {
@@ -1111,7 +1111,7 @@ return ( // 横向矩形：X轴长（外半长），Z轴窄（内半长）
 - dimension: take dimension.x as the outer radius, and dimension.z as the inner radius
 > allowBadShape: Based on positive value correction in dimension, the larger of dimension.x and dimension.z is used as the radius of the circumscribed circle. Use dimensin.x to decide whether to invert
 ```json
-{
+"zoneShape": {
 	"zoneShapeType": "ring",
 	"start": {
 		"center": {
