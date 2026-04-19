@@ -20,6 +20,7 @@ public class MinecraftEntry implements IGameruleEntry {
     public boolean tntExplosionDropDecay;
     public boolean spectatorGenerateChunks;
     public boolean clearInventory;
+    public boolean showDeathMessages;
     public boolean keepInventory;
     public boolean doImmediateRespawn;
     public boolean doTimeSet;
@@ -29,7 +30,7 @@ public class MinecraftEntry implements IGameruleEntry {
                           boolean naturalRegeneration, boolean doMobSpawning, boolean doFireTick,
                           boolean doDaylightCycle, boolean doWeatherCycle, boolean fallDamage,
                           boolean tntExplosionDropDecay, boolean spectatorGenerateChunks, boolean clearInventory,
-                          boolean keepInventory, boolean doImmediateRespawn, boolean doTimeSet, int timeSet) {
+                          boolean showDeathMessages, boolean keepInventory, boolean doImmediateRespawn, boolean doTimeSet, int timeSet) {
         this.adventureMode = adventureMode;
         this.mobGriefing = mobGriefing;
         this.autoSaturation = autoSaturation;
@@ -42,6 +43,7 @@ public class MinecraftEntry implements IGameruleEntry {
         this.tntExplosionDropDecay = tntExplosionDropDecay;
         this.spectatorGenerateChunks = spectatorGenerateChunks;
         this.clearInventory = clearInventory;
+        this.showDeathMessages = showDeathMessages;
         this.keepInventory = keepInventory;
         this.doImmediateRespawn = doImmediateRespawn;
         this.doTimeSet = doTimeSet;
@@ -52,7 +54,7 @@ public class MinecraftEntry implements IGameruleEntry {
                 naturalRegeneration, doMobSpawning, doFireTick,
                 doDaylightCycle, doWeatherCycle, fallDamage,
                 tntExplosionDropDecay, spectatorGenerateChunks, clearInventory,
-                keepInventory, doImmediateRespawn, doTimeSet, timeSet);
+                showDeathMessages, keepInventory, doImmediateRespawn, doTimeSet, timeSet);
     }
 
     @Override
@@ -75,6 +77,7 @@ public class MinecraftEntry implements IGameruleEntry {
         jsonObject.addProperty(MinecraftEntryTag.TNT_EXPLOSION_DROP_DECAY, tntExplosionDropDecay);
         jsonObject.addProperty(MinecraftEntryTag.SPECTATOR_GENERATE_CHUNKS, spectatorGenerateChunks);
         jsonObject.addProperty(MinecraftEntryTag.CLEAR_INVENTORY_AT_START, clearInventory);
+        jsonObject.addProperty(MinecraftEntryTag.SHOW_DEATH_MESSAGES, showDeathMessages);
         jsonObject.addProperty(MinecraftEntryTag.KEEP_INVENTORY, keepInventory);
         jsonObject.addProperty(MinecraftEntryTag.DO_IMMEDIATE_RESPAWN, doImmediateRespawn);
         jsonObject.addProperty(MinecraftEntryTag.DO_TIME_SET, doTimeSet);
@@ -100,6 +103,7 @@ public class MinecraftEntry implements IGameruleEntry {
         @SuppressWarnings("deprecation")
         boolean clearInventory = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.CLEAR_INVENTORY_AT_START, false)
                 || JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.CLEAR_INVENTORY, false); // 0.5.0及以前
+        boolean showDeathMessages = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.SHOW_DEATH_MESSAGES, false);
         boolean keepInventory = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.KEEP_INVENTORY, false);
         boolean doImmediateRespawn = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.DO_IMMEDIATE_RESPAWN, false);
         boolean doTimeSet = JsonUtils.getJsonBool(jsonObject, MinecraftEntryTag.DO_TIME_SET, true);
@@ -109,6 +113,6 @@ public class MinecraftEntry implements IGameruleEntry {
                 naturalRegeneration, mobSpawning, doFireTick,
                 doDaylightCycle, doWeatherCycle, fallDamage,
                 tntExplodes, spectatorGenerateChunks, clearInventory,
-                keepInventory, doImmediateRespawn, doTimeSet, timeSet);
+                showDeathMessages, keepInventory, doImmediateRespawn, doTimeSet, timeSet);
     }
 }

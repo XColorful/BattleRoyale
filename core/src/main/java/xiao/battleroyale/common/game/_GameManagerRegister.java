@@ -44,20 +44,18 @@ public class _GameManagerRegister implements ICustomEventHandler {
 
     private void registerDMManager(RegisterManagerEvent event) {
         StringUtils.ProtocolString protocolString = event.getProtocolString();
-        if (protocolString.namespace.equals(BattleRoyale.MOD_ID) || protocolString.namespace.equals(BattleRoyale.MOD_NAME_SHORT)) {
-            if (protocolString.name.equals("GameManager")) {
-                BattleRoyale.setGameManager(GameManager.get());
-                IGameManager gameManager = BattleRoyale.getGameManager();
-                boolean registered = gameManager.setGameProcessManager(BRGameProcessManager.get())
-                        && gameManager.setGameruleManager(GameruleManager.get())
-                        && gameManager.setGameLootManager(GameLootManager.get())
-                        && gameManager.setSpawnManager(SpawnManager.get())
-                        && gameManager.setGameLobbyManager(GameLobbyManager.get())
-                        && gameManager.setStatsManager(StatsManager.get())
-                        && gameManager.setTeamManager(TeamManager.get())
-                        && gameManager.setZoneManager(ZoneManager.get());
-                event.setCanceled(registered);
-            }
+        GameManager gameManager = GameManager.get();
+        if (gameManager.isCorrectProtocol(protocolString)) {
+            BattleRoyale.setGameManager(gameManager);
+            boolean registered = gameManager.setGameProcessManager(BRGameProcessManager.get())
+                    && gameManager.setGameruleManager(GameruleManager.get())
+                    && gameManager.setGameLootManager(GameLootManager.get())
+                    && gameManager.setSpawnManager(SpawnManager.get())
+                    && gameManager.setGameLobbyManager(GameLobbyManager.get())
+                    && gameManager.setStatsManager(StatsManager.get())
+                    && gameManager.setTeamManager(TeamManager.get())
+                    && gameManager.setZoneManager(ZoneManager.get());
+            event.setCanceled(registered);
         }
     }
 }

@@ -29,6 +29,7 @@ public class McRuleStorage implements IRuleStorage {
             boolean fallDamage,
             boolean tntExplosionDropDecay,
             boolean spectatorGenerateChunks,
+            boolean showDeathMessages,
             boolean keepInventory,
             boolean doImmediateRespawn,
             boolean doTimeSet,
@@ -56,6 +57,7 @@ public class McRuleStorage implements IRuleStorage {
                 mcEntry.fallDamage,
                 mcEntry.tntExplosionDropDecay,
                 mcEntry.spectatorGenerateChunks,
+                mcEntry.showDeathMessages,
                 mcEntry.keepInventory,
                 mcEntry.doImmediateRespawn,
                 mcEntry.doTimeSet,
@@ -73,6 +75,7 @@ public class McRuleStorage implements IRuleStorage {
                 gameRules.get(GameRules.FALL_DAMAGE),
                 gameRules.get(GameRules.TNT_EXPLOSION_DROP_DECAY),
                 gameRules.get(GameRules.SPECTATORS_GENERATE_CHUNKS),
+                gameRules.get(GameRules.SHOW_DEATH_MESSAGES),
                 gameRules.get(GameRules.KEEP_INVENTORY),
                 gameRules.get(GameRules.IMMEDIATE_RESPAWN),
                 mcEntry.doTimeSet,
@@ -98,6 +101,7 @@ public class McRuleStorage implements IRuleStorage {
         gameRules.set(GameRules.FALL_DAMAGE, this.currentRule.fallDamage(), mcServer);
         gameRules.set(GameRules.TNT_EXPLOSION_DROP_DECAY, this.currentRule.tntExplosionDropDecay(), mcServer);
         gameRules.set(GameRules.SPECTATORS_GENERATE_CHUNKS, this.currentRule.spectatorGenerateChunks(), mcServer);
+        gameRules.set(GameRules.SHOW_DEATH_MESSAGES, this.currentRule.showDeathMessages(), mcServer);
         gameRules.set(GameRules.KEEP_INVENTORY, this.currentRule.keepInventory(), mcServer);
         gameRules.set(GameRules.IMMEDIATE_RESPAWN, this.currentRule.doImmediateRespawn(), mcServer);
         if (this.currentRule.doTimeSet()) {
@@ -126,6 +130,7 @@ public class McRuleStorage implements IRuleStorage {
         gameRules.set(GameRules.FALL_DAMAGE, this.backupRule.fallDamage(), mcServer);
         gameRules.set(GameRules.TNT_EXPLOSION_DROP_DECAY, this.backupRule.tntExplosionDropDecay(), mcServer);
         gameRules.set(GameRules.SPECTATORS_GENERATE_CHUNKS, this.backupRule.spectatorGenerateChunks(), mcServer);
+        gameRules.set(GameRules.SHOW_DEATH_MESSAGES, this.backupRule.spectatorGenerateChunks(), mcServer);
         gameRules.set(GameRules.KEEP_INVENTORY, this.backupRule.keepInventory(), mcServer);
         gameRules.set(GameRules.IMMEDIATE_RESPAWN, this.backupRule.doImmediateRespawn(), mcServer);
         if (this.backupRule.doTimeSet()) {
@@ -168,6 +173,7 @@ public class McRuleStorage implements IRuleStorage {
         boolGamerule.put(MinecraftEntryTag.FALL_DAMAGE, currentRule.fallDamage());
         boolGamerule.put(MinecraftEntryTag.TNT_EXPLOSION_DROP_DECAY, currentRule.tntExplosionDropDecay());
         boolGamerule.put(MinecraftEntryTag.SPECTATOR_GENERATE_CHUNKS, currentRule.spectatorGenerateChunks());
+        boolGamerule.put(MinecraftEntryTag.SHOW_DEATH_MESSAGES, currentRule.showDeathMessages());
         boolGamerule.put(MinecraftEntryTag.KEEP_INVENTORY, currentRule.keepInventory());
         return boolGamerule;
     }
