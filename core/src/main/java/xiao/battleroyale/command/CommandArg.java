@@ -111,6 +111,7 @@ public class CommandArg {
     public static final String CHUNK_RADIUS = "chunkRadius";
     public static final String AUTO_RELOAD = "autoReload";
     public static final String POS = "pos";
+    public static final String ROTATION = "rotation";
     public static final String SKIP_NON_EMPTY = "skipNonEmpty";
     public static final String DROP_BEFORE_REPLACE = "dropBeforeReplace";
     public static final String FIRST_SLOT_INDEX = "firstSlotIndex";
@@ -195,6 +196,8 @@ public class CommandArg {
     public static final String GET_SPAWN_CONFIG_ID = "getSpawnConfigId";
     public static final String GET_STATS_CONFIG_ID = "getStatsConfigId";
     public static final String GET_BOT_CONFIG_ID = "getBotConfigId";
+
+    public static final String SAVE_TELEPORT = "saveTeleport";
 
     // GameruleManager
     public static final String GAMERULE_MANAGER = "gameruleManager";

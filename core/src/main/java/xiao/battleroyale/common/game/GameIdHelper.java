@@ -22,6 +22,8 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
         return GameIdHelperHolder.INSTANCE;
     }
 
+    protected GameIdHelper() {}
+
     /**
      * 获取物品掉落物或实体的GameUUID
      */
@@ -34,6 +36,9 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
                 entityGameId = itemTag.getUUID(LootNBTTag.GAME_ID_TAG);
             }
         } else { // 一般实体，位于{ForgeData:{GameId:UUID}}
+            if (entity instanceof ItemEntity itemEntity) { // 物品实体特判
+                return getGameId(itemEntity.getItem());
+            }
             CompoundTag persistentData = entity.getPersistentData();
             if (persistentData.hasUUID(LootNBTTag.GAME_ID_TAG)) {
                 entityGameId = persistentData.getUUID(LootNBTTag.GAME_ID_TAG);
@@ -72,6 +77,9 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
         itemStack.getOrCreateTag().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
     }
     @Override public void addGameId(Entity entity, UUID gameId) {
+        if (entity instanceof ItemEntity itemEntity) {
+            addGameId(itemEntity.getItem(), gameId);
+        }
         entity.getPersistentData().putUUID(LootNBTTag.GAME_ID_TAG, gameId);
     }
     /**
@@ -90,6 +98,9 @@ public class GameIdHelper implements IGameIdReadApi, IGameIdWriteApi {
         itemStack.getOrCreateTag().remove(LootNBTTag.GAME_ID_TAG);
     }
     @Override public void removeGameId(Entity entity) {
+        if (entity instanceof ItemEntity itemEntity) {
+            removeGameId(itemEntity.getItem());
+        }
         entity.getPersistentData().remove(LootNBTTag.GAME_ID_TAG);
     }
     /**
