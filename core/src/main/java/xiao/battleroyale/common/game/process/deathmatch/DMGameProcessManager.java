@@ -49,7 +49,7 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
     public static void init(McSide mcSide) {
     }
 
-    protected DeathmatchEntry configEntry;
+    protected @NotNull DeathmatchEntry configEntry = new DeathmatchEntry();
     public final UUID progressBarUUID = UUID.nameUUIDFromBytes("battleroyale:deathmatch_progress".getBytes());
 
     protected final @NotNull DMData deathMatchData = new DMData();
@@ -86,12 +86,13 @@ public class DMGameProcessManager extends BRGameProcessManager implements IDeath
         StringUtils.ProtocolString protocol = extraRuleEntry.protocol;
         boolean isDeathMatchConfig = (protocol.namespace.equals(BattleRoyale.MOD_ID) || protocol.namespace.equals(BattleRoyale.MOD_NAME_SHORT))
                 && (protocol.name.equals(DeathMatchConfigTag.PROTOCOL_NAME));
-        this.configEntry = isDeathMatchConfig ? DeathmatchEntry.fromJson(jsonTag) : new DeathmatchEntry();
-        if (this.configEntry == null) {
+        DeathmatchEntry _configEntry = isDeathMatchConfig ? DeathmatchEntry.fromJson(jsonTag) : new DeathmatchEntry();
+        if (_configEntry == null) {
             ChatUtils.sendTranslatableMessageToAllPlayers(serverLevel, "battleroyale.message.missing_gamerule_config");
             configPrepared = false;
             return;
         }
+        this.configEntry =  _configEntry;
 
         if (this.configEntry.targetKill < 1) this.configEntry.targetKill = 1;
         if (this.configEntry.respawnTrackDelay < 20) this.configEntry.respawnTrackDelay = 20;
