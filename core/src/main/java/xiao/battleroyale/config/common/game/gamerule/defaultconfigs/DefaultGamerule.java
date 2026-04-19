@@ -34,7 +34,7 @@ public class DefaultGamerule {
                 true, false, false,
                 false, false, false,
                 false, false, true,
-                false, false, true, 5000);
+                false, false, false, true, 5000);
 
         GameruleConfig gameruleConfig = new GameruleConfig(0, "Adventure battleroyale", "#FFFFFFAA", true,
                 brEntry, mcEntry, null, null);
@@ -53,7 +53,7 @@ public class DefaultGamerule {
                 true, true, true,
                 true, true, true,
                 true, false, true,
-                false, false, true, 5000);
+                false, false, false, true, 5000);
 
         GameruleConfig gameruleConfig = new GameruleConfig(1, "Survival battleroyale", "#FFFFFFAA",
                 brEntry, mcEntry, null, null);

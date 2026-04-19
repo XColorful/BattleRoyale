@@ -22,7 +22,6 @@ import xiao.battleroyale.api.game.lobby.IGameLobbyManager;
 import xiao.battleroyale.command.sub.GameCommand;
 import xiao.battleroyale.common.game.AbstractGameManager;
 import xiao.battleroyale.common.game._GameTeamManager;
-import xiao.battleroyale.common.game.GameUtilsFunction;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 import xiao.battleroyale.config.common.game.GameConfigManager;
@@ -179,10 +178,10 @@ public class GameLobbyManager extends AbstractGameManager implements IGameLobbyM
 
         ServerLevel serverLevel = gameManager.getServerLevel();
         if (serverLevel != null) {
-            GameUtilsFunction.safeTeleport(livingEntity, serverLevel, lobbyPos, 0, 0); // 大厅传送
+            gameManager.safeTeleport(livingEntity, serverLevel, lobbyPos, 0, 0); // 大厅传送
         } else {
             BattleRoyale.LOGGER.debug("GameManager.serverLevel is null, teleport to literal position");
-            GameUtilsFunction.safeTeleport(livingEntity, lobbyPos);
+            gameManager.safeTeleport(livingEntity, lobbyPos);
         }
         BattleRoyale.LOGGER.info("Teleport livingEntity {} (UUID: {}) to lobby ({}, {}, {})", livingEntity.getName().getString(), livingEntity.getUUID(), lobbyPos.x, lobbyPos.y, lobbyPos.z);
         eventPoster.postCustomEvent(new GameLobbyTeleportFinishEvent(gameManager, livingEntity));

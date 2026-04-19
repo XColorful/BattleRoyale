@@ -12,11 +12,17 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.NbtPathArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.coordinates.Coordinates;
+import net.minecraft.commands.arguments.coordinates.RotationArgument;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.storage.CommandStorage;
+import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.game.*;
@@ -108,7 +114,18 @@ public class GameManagerCommand {
                 .then(Commands.literal(GET_GAMERULE_CONFIG_ID).executes(GameManagerCommand::getGameruleConfigId))
                 .then(Commands.literal(GET_SPAWN_CONFIG_ID).executes(GameManagerCommand::getSpawnConfigId))
                 .then(Commands.literal(GET_STATS_CONFIG_ID).executes(GameManagerCommand::getStatsConfigId))
-                .then(Commands.literal(GET_BOT_CONFIG_ID).executes(GameManagerCommand::getBotConfigId));
+                .then(Commands.literal(GET_BOT_CONFIG_ID).executes(GameManagerCommand::getBotConfigId))
+                // IGameSaveTeleporter
+                .then(Commands.literal(SAVE_TELEPORT)
+                        .then(Commands.argument(PLAYER, EntityArgument.entity())
+                                .then(Commands.argument(POS, Vec3Argument.vec3())
+                                        .executes(GameManagerCommand::safeTeleport)
+                                        .then(Commands.argument(ROTATION, RotationArgument.rotation())
+                                                .executes(GameManagerCommand::safeTeleportFull)
+                                        )
+                                )
+                        )
+                );
     }
 
     // --------IGameInfoGetter--------
@@ -279,5 +296,33 @@ public class GameManagerCommand {
     private static int getBotConfigId(CommandContext<CommandSourceStack> context) {
         IGameConfigGetter gameManager = BattleRoyale.getGameManager();
         return gameManager.getBotConfigId();
+    }
+
+    // --------IGameSaveTeleport--------
+
+    private static int safeTeleport(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        if (!(entity instanceof LivingEntity livingEntity)) return 0;
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        gameManager.safeTeleport(livingEntity,
+                Vec3Argument.getVec3(context, POS)
+        );
+        return Command.SINGLE_SUCCESS;
+    }
+    private static int safeTeleportFull(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity entity = EntityArgument.getEntity(context, PLAYER);
+        if (!(entity instanceof LivingEntity livingEntity)) return 0;
+        IGameManager gameManager = BattleRoyale.getGameManager();
+        @Nullable ServerLevel serverLevel = gameManager.getServerLevel();
+        if (serverLevel == null) return -1;
+        Vec2 rotation = RotationArgument.getRotation(context, ROTATION)
+                .getRotation(context.getSource());
+        gameManager.safeTeleport(livingEntity,
+                serverLevel,
+                Vec3Argument.getVec3(context, POS),
+                rotation.x,
+                rotation.y
+        );
+        return Command.SINGLE_SUCCESS;
     }
 }
