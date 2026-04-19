@@ -21,6 +21,7 @@ import xiao.battleroyale.api.event.game.game.*;
 import xiao.battleroyale.api.event.game.starter.*;
 import xiao.battleroyale.api.event.game.tick.GameTickEvent;
 import xiao.battleroyale.api.event.game.tick.GameTickFinishEvent;
+import xiao.battleroyale.api.event.special.IRegisterable;
 import xiao.battleroyale.api.game.IGameIdReadApi;
 import xiao.battleroyale.api.game.IGameIdWriteApi;
 import xiao.battleroyale.api.game.IGameManager;
@@ -34,6 +35,7 @@ import xiao.battleroyale.api.game.stats.IStatsManager;
 import xiao.battleroyale.api.game.stats.IStatsWriter;
 import xiao.battleroyale.api.game.team.ITeamManager;
 import xiao.battleroyale.api.game.zone.IZoneManager;
+import xiao.battleroyale.command.sub.RegisterCommand;
 import xiao.battleroyale.common.game.gamerule.GameruleManager;
 import xiao.battleroyale.common.game.lobby.GameLobbyManager;
 import xiao.battleroyale.common.game.loot.GameLootManager;
@@ -67,7 +69,7 @@ import java.util.function.Supplier;
 
 import static xiao.battleroyale.api.data.TempDataTag.*;
 
-public class GameManager extends AbstractGameManager implements IGameManager, IStatsWriter, ICustomEventHandler {
+public class GameManager extends AbstractGameManager implements IGameManager, IStatsWriter, ICustomEventHandler, IRegisterable {
 
     private static class GameManagerHolder {
         private static final GameManager INSTANCE = new GameManager();
@@ -118,6 +120,21 @@ public class GameManager extends AbstractGameManager implements IGameManager, IS
         TeamManager.init(mcSide);
         ZoneManager.init(mcSide);
         BattleRoyale.getEventRegister().register(_GameManagerRegister.get(), CustomEventType.REGISTER_MANAGER_EVENT);
+        RegisterCommand.addExtraProtocol(_PROTOCOL_SUGGESTS);
+    }
+    @Override public boolean isCorrectProtocol(StringUtils.ProtocolString protocol) {
+        return (protocol.namespace.equals(BattleRoyale.MOD_ID) || protocol.namespace.equals(BattleRoyale.MOD_NAME_SHORT))
+                && (protocol.name.equals("GameManager"));
+    }
+    @Override public StringUtils.ProtocolString getCorrectProtocol() {
+        return new StringUtils.ProtocolString(String.format("%s:%s", BattleRoyale.MOD_ID, "GameManager"));
+    }
+    private static final String[] _PROTOCOL_SUGGESTS = new String[]{
+            String.format("\"%s:%s\"", BattleRoyale.MOD_ID, "GameManager"),
+            String.format("\"%s:%s\"", BattleRoyale.MOD_NAME_SHORT, "GameManager")
+    };
+    @Override public String[] getProtocolSuggests() {
+        return _PROTOCOL_SUGGESTS;
     }
 
     @Override public String getManagerName() {
