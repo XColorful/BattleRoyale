@@ -112,7 +112,7 @@ public class MurderMysteryLootSpawner {
                                 String.format("{components:{\"minecraft:custom_data\":{%s:1b},\"minecraft:enchantments\":{\"minecraft:fire_aspect\":2}}}", MURDERER_ITEM_TAG))),
                         // 金斧 (秒人斧)
                         new WeightEntry.WeightedEntry(0.5, new ItemEntry("minecraft:golden_axe",
-                                String.format("{components:{\"minecraft:custom_data\":{%s:1b},\"minecraft:enchantments\":{\"minecraft:sharpness\":12}}}", MURDERER_ITEM_TAG)))
+                                String.format("{components:{\"minecraft:custom_data\":{%s:1b},\"minecraft:enchantments\":{\"minecraft:sharpness\":18}}}", MURDERER_ITEM_TAG)))
                 )),
                 // 随机抽个道具
                 new WeightEntry(Arrays.asList(
