@@ -1,5 +1,41 @@
 ### 0.5.x
 
+#### 0.5.5
+- Additonally write/remove gameId to ItemEntity's item
+- Add suggests to register command
+- Add event hook before zone shape determination
+- Add permission level to benchmark command
+
+Fix:
+- Fix crash on stopping server if deathmatch config not loaded yet
+- Fix missing GamePlayerDeathFinishEvent (Issue #57)
+- Send subtitle packet before title packet
+
+API command:
+- Add IGameSafeTeleporter to api command
+- DeathMatch Api command return -1 if DMGameProcessManager not registered
+- DeathMatch Api command return -2 if game player does not exist
+
+Add multiple EventType:
+- LIVING_HEAL_EVENT, LIVING_USE_TOTEM_EVENT
+- ITEM_ENTITY_PICKUP_EVENT, ITEM_TOSS_EVENT, PLAYER_OPEN_CONTAINER_EVENT, PLAYER_CLOSE_CONTAINER_EVENT, CRITICAL_HIT_EVENT
+- SERVER_CHAT_EVENT
+- ITEM_TOOLTIP_EVENT
+
+Config:
+- Add MurderMystery example gamerule, spawn, zone, loot config
+- Add showDeathMessages to gamerule config
+- Add new Events to example AllFunction config
+
+For developer:
+- Decouple EffectManager from all
+
+1.21.1+
+- Fix ItemEntry not write custom_data
+
+1.21.6+
+- Complete missing item component text debug (/cbr db get pi) in 1.21.6+
+
 #### 0.5.4
 > Add 26.1.2neoforge
 - Smooth zone rendering (no more jittering)
