@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.game.gamerule.defaultconfigs;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.compat.cbraddon.CbrAddon;
+import xiao.battleroyale.compat.murdermystery.MurderMystery;
 
 public class DefaultGameruleConfigGenerator {
 
@@ -15,6 +16,9 @@ public class DefaultGameruleConfigGenerator {
         DeathMatchGamerule.generateDefaultConfigs(configDirPath);
         if (BattleRoyale.getMcRegistry().isModLoaded(CbrAddon.get().getModId())) {
             CFHCGamerule.generateDefaultConfigs(configDirPath);
+        }
+        if (BattleRoyale.getMcRegistry().isModLoaded(MurderMystery.get().getModId())) {
+            MurderMysteryGamerule.generateDefaultConfigs(configDirPath);
         }
     }
 }
