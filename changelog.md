@@ -23,6 +23,7 @@ Add multiple EventType:
 - ITEM_TOOLTIP_EVENT
 
 Config:
+- Add MurderMystery example gamerule, spawn, zone, loot config
 - Add showDeathMessages to gamerule config
 - Add new Events to example AllFunction config
 
