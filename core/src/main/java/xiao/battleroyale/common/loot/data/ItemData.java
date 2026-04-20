@@ -58,7 +58,7 @@ public class ItemData implements IItemLootData {
             // 去掉components
             this.nbt.remove(ComponentsTag.COMPONENTS);
             // 逐个移到minecraft:custom_data里
-            CompoundTag custom_data = new CompoundTag();
+            CompoundTag custom_data = components.contains(ComponentsTag.CUSTOM_DATA, 10) ? components.getCompound(ComponentsTag.CUSTOM_DATA).copy() : new CompoundTag();
             for (String key : this.nbt.getAllKeys()) {
                 custom_data.put(key, this.nbt.get(key));
             }
