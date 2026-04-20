@@ -6,10 +6,12 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -188,11 +190,16 @@ public class WorldText {
             }
             ItemStack itemStack = itemStacks.get(i);
             HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
-            BattleRoyale.LOGGER.debug("buildItemStacks Not implemented yet");
-//            CompoundTag nbt = registries != null ? (CompoundTag) itemStack.save(registries) : new CompoundTag();
-//            component.append(buildHoverableTextWithColor(" " + itemStack.getDisplayName().getString(),
-//                    buildNbtVerticalList(nbt != null ? nbt : new CompoundTag()),
-//                    displayColor));
+            RegistryOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, registries);
+
+            Tag tag = null;
+            if (!itemStack.isEmpty()) {
+                tag = ItemStack.CODEC.encodeStart(ops, itemStack).getOrThrow();
+            }
+
+            component.append(buildHoverableTextWithColor(" " + itemStack.getDisplayName().getString(),
+                            buildNbtVerticalList(tag instanceof CompoundTag ? (CompoundTag) tag : new CompoundTag()),
+                            displayColor));
         }
 
         return component;
@@ -202,10 +209,10 @@ public class WorldText {
         MutableComponent component = Component.empty();
 
         HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
-        BattleRoyale.LOGGER.debug("buildItemStack Not implemented yet");
-//        CompoundTag tag = registries != null ? (CompoundTag) itemStack.save(registries) : new CompoundTag();
-//        component.append(buildHoverableText(itemStack.getDisplayName().getString(),
-//                buildNbtVerticalList(tag != null ? tag : new CompoundTag())));
+        RegistryOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, registries);
+        Tag tag = ItemStack.CODEC.encodeStart(ops, itemStack).getOrThrow();
+        component.append(buildHoverableText(itemStack.getDisplayName().getString(),
+                buildNbtVerticalList(tag instanceof CompoundTag ? (CompoundTag) tag : new CompoundTag())));
         return component;
     }
 
