@@ -81,25 +81,25 @@ public class MurderMysteryLootSpawner {
                 new WeightEntry(Arrays.asList(
                         // 弓
                         new WeightEntry.WeightedEntry(1, new ItemEntry("minecraft:bow",
-                                String.format("{%s:1b}", SURVIVOR_ITEM_TAG))),
+                                String.format("{components:{\"minecraft:custom_data\":{%s:1b}}}", SURVIVOR_ITEM_TAG))),
                         // 弩箭
                         new WeightEntry.WeightedEntry(1, new ItemEntry("minecraft:crossbow",
-                                String.format("{%s:1b}", SURVIVOR_ITEM_TAG)))
+                                String.format("{components:{\"minecraft:custom_data\":{%s:1b}}}", SURVIVOR_ITEM_TAG)))
                 )),
                 // 随机抽种箭
                 new WeightEntry(Arrays.asList(
                         // 普通箭
                         new WeightEntry.WeightedEntry(3, new ItemEntry("minecraft:arrow",
-                                String.format("{%s:1b}", SURVIVOR_ITEM_TAG), 30)),
+                                String.format("{components:{\"minecraft:custom_data\":{%s:1b}}}", SURVIVOR_ITEM_TAG), 30)),
                         // 光灵箭
                         new WeightEntry.WeightedEntry(2.5, new ItemEntry("minecraft:spectral_arrow",
-                                String.format("{%s:1b}", SURVIVOR_ITEM_TAG), 25)),
+                                String.format("{components:{\"minecraft:custom_data\":{%s:1b}}}", SURVIVOR_ITEM_TAG), 25)),
                         // 减速箭
                         new WeightEntry.WeightedEntry(2, new ItemEntry("minecraft:tipped_arrow",
-                                String.format("{%s:1b,Potion:\"minecraft:strong_slowness\"}", SURVIVOR_ITEM_TAG), 20)),
+                                String.format("{components:{\"minecraft:custom_data\":{%s:1b},\"minecraft:potion_contents\":{potion:\"minecraft:strong_slowness\"}}}", SURVIVOR_ITEM_TAG), 20)),
                         // 伤害箭
                         new WeightEntry.WeightedEntry(1, new ItemEntry("minecraft:tipped_arrow",
-                                String.format("{%s:1b,Potion:\"minecraft:strong_harming\"}", SURVIVOR_ITEM_TAG), 10))
+                                String.format("{components:{\"minecraft:custom_data\":{%s:1b},\"minecraft:potion_contents\":{potion:\"minecraft:strong_harming\"}}}", SURVIVOR_ITEM_TAG), 10))
                 ))
         ));
     }
@@ -109,25 +109,25 @@ public class MurderMysteryLootSpawner {
                 new WeightEntry(Arrays.asList(
                         // 下界合金剑 (火剑)
                         new WeightEntry.WeightedEntry(3, new ItemEntry("minecraft:netherite_sword",
-                                String.format("{%s:1b,Enchantments:[{id:\"minecraft:fire_aspect\",lvl:2s}]}", MURDERER_ITEM_TAG))),
+                                String.format("{components:{\"minecraft:custom_data\":{%s:1b},\"minecraft:enchantments\":{levels:{\"minecraft:fire_aspect\":2}}}}", MURDERER_ITEM_TAG))),
                         // 金斧 (秒人斧)
                         new WeightEntry.WeightedEntry(0.5, new ItemEntry("minecraft:golden_axe",
-                                String.format("{%s:1b,Enchantments:[{id:\"minecraft:sharpness\",lvl:12s}]}", MURDERER_ITEM_TAG)))
+                                String.format("{components:{\"minecraft:custom_data\":{%s:1b},\"minecraft:enchantments\":{levels:{\"minecraft:sharpness\":12}}}}", MURDERER_ITEM_TAG)))
                 )),
                 // 随机抽个道具
                 new WeightEntry(Arrays.asList(
                         // 喷溅加速药
                         new WeightEntry.WeightedEntry(3, new ItemEntry("minecraft:splash_potion",
-                                String.format("{%s:1b,Potion:\"minecraft:strong_swiftness\"}", MURDERER_ITEM_TAG))),
+                                String.format("{components:{\"minecraft:custom_data\":{%s:1b},\"minecraft:potion_contents\":{potion:\"minecraft:strong_swiftness\"}}}", MURDERER_ITEM_TAG))),
                         // 滞留治疗药
                         new WeightEntry.WeightedEntry(2.5, new ItemEntry("minecraft:lingering_potion",
-                                String.format("{%s:1b,Potion:\"minecraft:healing\"}", MURDERER_ITEM_TAG))),
+                                String.format("{components:{\"minecraft:custom_data\":{%s:1b},\"minecraft:potion_contents\":{potion:\"minecraft:healing\"}}}", MURDERER_ITEM_TAG))),
                         // 滞留减速药 (泥)
                         new WeightEntry.WeightedEntry(2, new ItemEntry("minecraft:lingering_potion",
-                                String.format("{%s:1b,Potion:\"minecraft:slowness\"}", MURDERER_ITEM_TAG))),
+                                String.format("{components:{\"minecraft:custom_data\":{%s:1b},\"minecraft:potion_contents\":{potion:\"minecraft:slowness\"}}}", MURDERER_ITEM_TAG))),
                         // 滞留毒药 (燃烧瓶)
                         new WeightEntry.WeightedEntry(1, new ItemEntry("minecraft:lingering_potion",
-                                String.format("{%s:1b,Potion:\"minecraft:poison\"}", MURDERER_ITEM_TAG)))
+                                String.format("{components:{\"minecraft:custom_data\":{%s:1b},\"minecraft:potion_contents\":{potion:\"minecraft:poison\"}}}", MURDERER_ITEM_TAG)))
                 ))
         ));
     }
