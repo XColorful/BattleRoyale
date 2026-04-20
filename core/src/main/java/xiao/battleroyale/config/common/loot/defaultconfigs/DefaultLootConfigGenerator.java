@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.loot.defaultconfigs;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.compat.cbraddon.CbrAddon;
+import xiao.battleroyale.compat.murdermystery.MurderMystery;
 
 public class DefaultLootConfigGenerator {
 
@@ -18,6 +19,9 @@ public class DefaultLootConfigGenerator {
         LootSpecificBlock.generateDefaultConfigs(configDirPath);
         if (BattleRoyale.getMcRegistry().isModLoaded(CbrAddon.get().getModId())) {
             CFHCLootSpawner.generateDefaultConfigs(configDirPath);
+        }
+        if (BattleRoyale.getMcRegistry().isModLoaded(MurderMystery.get().getModId())) {
+            MurderMysteryLootSpawner.generateDefaultConfigs(configDirPath);
         }
     }
 

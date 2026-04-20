@@ -52,7 +52,7 @@ public class MiniMatch100x100Zone {
         writeJsonToFile(Paths.get(configDirPath, DEATH_MATCH_FILE_NAME).toString(), zoneConfigJson);
     }
 
-    private static void add100x100Zone(JsonArray zoneConfigJson, boolean borderDamage ) {
+    private static void add100x100Zone(JsonArray zoneConfigJson, boolean borderDamage) {
         generateBorderCircle(zoneConfigJson, 100 / 2F, GAME_TIME, 0, false, 5, borderDamage);
         zoneConfigJson.add(ElytraAddon.generateLevitationGlowingEffect2(false, true));
     }
