@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.game.zone.defaultconfigs;
 
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.compat.cbraddon.CbrAddon;
+import xiao.battleroyale.compat.murdermystery.MurderMystery;
 
 public class DefaultZoneConfigGenerator {
 
@@ -26,6 +27,9 @@ public class DefaultZoneConfigGenerator {
         UHC1000x1000Complex.generateDefaultConfigs(configDirPath);
         if (BattleRoyale.getMcRegistry().isModLoaded(CbrAddon.get().getModId())) {
             CFHC1000x1000Zone.generateDefaultConfigs(configDirPath);
+        }
+        if (BattleRoyale.getMcRegistry().isModLoaded(MurderMystery.get().getModId())) {
+            MurderMystery256x256Zone.generateDefaultConfigs(configDirPath);
         }
     }
 }
