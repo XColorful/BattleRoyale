@@ -28,16 +28,22 @@
 
 - 二维形状：圆形、方形、矩形、平顶正六边形、尖顶正多边形、星形、椭圆
 - 三维形状：球、正方体、长方体、椭圆
-- 支持负维度反转判定区域
-- 区域功能：安全区、烟花、无敌区、补充能量、生成粒子、状态效果
+- 区域功能：安全区、[刷新玩家背包](https://github.com/XColorful/BattleRoyale/wiki/Zone-simple-function#背包区)、无敌区、状态效果、生成粒子、烟花
 
 ### 定制物资刷新
 
-- 支持刷新任意模组的物品、实体
 - 支持**原版箱子刷新**，可用黑白名单过滤特定容器如熔炉
 - 可嵌套的控制刷新类型、重复刷新、条件刷新
-- 根据群系、建筑、NBT正则表达式刷新
-- 可自动清理旧游戏中刷新的物品及实体
+- 根据群系、建筑、NBT正则表达式精准刷新
+- 自动清理旧游戏中刷新的物品及实体
+- 支持读取容器内容并[自动生成](https://github.com/XColorful/BattleRoyale/wiki/Utility-command#生成物资刷新配置文件)物资刷新配置
+
+### API与数据包扩展
+
+重新定义数据包架构设计：
+- **事件驱动型数据包**：支持[配置文件](https://github.com/XColorful/BattleRoyale/wiki/Function-config#事件注册)自动注册监听、[函数注册API](https://github.com/XColorful/BattleRoyale/wiki/Function-API-command#函数注册API)**动态注册监听**[模组事件](https://github.com/XColorful/BattleRoyale/blob/HEAD/docs/api/event/EventType.md)、[自定义事件](https://github.com/XColorful/BattleRoyale/blob/HEAD/docs/api/event/CustomEventType.md)
+- 提供丰富的 [API指令](https://github.com/XColorful/BattleRoyale/wiki/API-command)，高效获取游戏信息，避免手动维护复杂状态
+- 扩展[实体选择器](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#启用实体选择器)，一键筛选游戏玩家，无需手动维护标签
 
 ### 模组联动
 
@@ -70,16 +76,22 @@ This mod is designed to create game modes with **highly customizable and extreme
 
 - 2D Shapes: Circle, Square, Rectangle, Flat-Top Hexagon, Pointy-Top Polygon, Star, Ellipse
 - 3D Shapes: Sphere, Cube, Cuboid, Ellipsoid
-- Supports inverted judgment areas for negative dimensions.
-- Zone Functions: Safe zone, fireworks, invulnerability zone, energy replenishment, particle generation, status effects.
+- Zone Functions: Safe zone, [refresh player's inventory](https://github.com/XColorful/BattleRoyale/wiki/Zone-simple-function#Inventory-zone), invulnerability zone, status effects particle generation, fireworks.
 
 ### Custom Loot Generation
 
-- Supports generating items and entities from any mod.
 - Supports **vanilla chest looting** and can filter specific containers like furnaces using whitelists and blacklists.
 - Nested generation types, repeat generation, and conditional generation.
-- Generating based on biomes, structures, and NBT regular expressions.
-- Can automatically clear items and entities generated in previous games.
+- Generating precisely based on biomes, structures, and NBT regular expressions.
+- Automatically clear items and entities generated in previous games.
+- Supports reading container contents to [automatically generate](https://github.com/XColorful/BattleRoyale/wiki/Utility-command#Generate-loot-spawner-configuration) loot configuration files.
+
+### API and Datapack addon
+
+Redefining datapack architecture design:
+- **Event-Driven Datapacks**: Supports automatic listener registration via [configuration files](https://github.com/XColorful/BattleRoyale/wiki/Function-config#Event-register) and **dynamic registration** of [Mod events](https://github.com/XColorful/BattleRoyale/blob/HEAD/docs/api/event/EventType.md) or [Custom events](https://github.com/XColorful/BattleRoyale/blob/HEAD/docs/api/event/CustomEventType.md) via the [Function Register API](https://github.com/XColorful/BattleRoyale/wiki/Function-API-command#Function-register-API).
+- Provides a rich set of [API Commands](https://github.com/XColorful/BattleRoyale/wiki/API-command#English) for efficient retrieval of game information, eliminating the need for manual state maintenance.
+- Enhanced [entity selectors](https://github.com/XColorful/BattleRoyale/wiki/Temp-data-command#Enable-entity-selector): Filter game players instantly without the need for manual tag management.
 
 ### Mod Integrations
 
