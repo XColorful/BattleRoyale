@@ -24,6 +24,12 @@ public class ItemEntry extends AbstractLootEntry implements IItemLootEntry {
     public @NotNull CompoundTag nbt;
     public int count;
 
+    public ItemEntry(String rl) {
+        this(rl, null, 1);
+    }
+    public ItemEntry(String rl, @Nullable String nbtString) {
+        this(rl, nbtString, 1);
+    }
     public ItemEntry(String rl, @Nullable String nbtString, int count) {
         this.itemString = rl;
         this.nbtString = nbtString;
