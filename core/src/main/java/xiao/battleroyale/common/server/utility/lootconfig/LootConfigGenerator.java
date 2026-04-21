@@ -1,8 +1,12 @@
 package xiao.battleroyale.common.server.utility.lootconfig;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
@@ -120,8 +124,14 @@ public class LootConfigGenerator {
             BattleRoyale.LOGGER.warn("Failed to get ResourceLocation from ItemStack {}", itemStack.toString());
         }
         gameIdWriteApi.removeGameId(itemStack); // 移除gameId避免配置文件臃肿
-        CompoundTag nbt = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        String nbtString = nbt != null ? nbt.toString() : "{}";
+        HolderLookup.Provider registries = BattleRoyale.getStaticRegistries();
+        DataComponentMap components = itemStack.getComponents();
+        String nbtString = !components.isEmpty()
+                ? "{components:"
+                  + DataComponentMap.CODEC.encodeStart(registries.createSerializationContext(NbtOps.INSTANCE), components)
+                  .getOrThrow().toString()
+                  + "}"
+                : "{}";
         return new ItemEntry(rlString, nbtString, itemStack.getCount());
     }
 
