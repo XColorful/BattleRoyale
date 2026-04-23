@@ -16,6 +16,7 @@
 - [player]：选择单个玩家
 - [id]：获取详细信息 / 指定游戏玩家ID
 - [xyz]：指定坐标
+- [msg]：字符串
 
 > 精确获取GamePlayer使用 _@p[name=]_，否则将遍历搜索GamePlayer.playerName且不保证唯一性
 
@@ -98,6 +99,13 @@
 ||[name]||
 |获取当前维度|_/battleroyale debug get levelkey_|_/cbr db get lk_|
 
+|日志|详细指令|简化指令|
+|-|-|-|
+|LOGGER.error|_/battleroyale debug log error_|_/cbr db log e_|
+|LOGGER.warn|_/battleroyale debug log warn_|_/cbr db log w_|
+|LOGGER.info|_/battleroyale debug log info_|_/cbr db log i_|
+|LOGGER.debug|_/battleroyale debug log debug_|_/cbr db log d_|
+
 ## 本地调试指令
 > 前往[本地调试指令](./local-debug-command.md)
 
@@ -117,6 +125,7 @@ Default permission level required is 4, modifiable by GameMaster.
 - [player]: Select single player
 - [id]: Get detailed information / specified game player ID
 - [xyz]: Specify coordinates
+- [msg]: String
 
 > To precisely get a GamePlayer, use _@p[name=]_, otherwise, it will iterate search GamePlayer.playerName and uniqueness is not guaranteed.
 
@@ -198,6 +207,13 @@ Default permission level required is 4, modifiable by GameMaster.
 |Get Level|_/battleroyale debug get serverlevel_|_/cbr db get sl_|
 ||[name]||
 |Get Current Level|_/battleroyale debug get levelkey_|_/cbr db get lk_|
+
+|Log|Detailed Command|Simplified Command|
+|-|-|-|
+|LOGGER.error|_/battleroyale debug log error_|_/cbr db log e_|
+|LOGGER.warn|_/battleroyale debug log warn_|_/cbr db log w_|
+|LOGGER.info|_/battleroyale debug log info_|_/cbr db log i_|
+|LOGGER.debug|_/battleroyale debug log debug_|_/cbr db log d_|
 
 ## Local debug command
 > Go to [Local debug command](./local-debug-command.md#English)
