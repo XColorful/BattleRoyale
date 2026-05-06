@@ -278,8 +278,8 @@ public class CbrgLootSpawner {
 
     private static ILootEntry commonSREntry() {
         MultiEntry m24Ammo = gunSemiAmmoBuilder("m700", "cbrg", "ammo_762", 15);
-        MultiEntry mosin_nagantAmmo = gunSemiAmmoBuilder("classicr", "kar98", "cbrg", "ammo_762", 15);
-        MultiEntry kar98kAmmo = gunSemiAmmoBuilder("hamster", "mosin9130", "cbrg", "ammo_762", 15);
+        MultiEntry mosin_nagantAmmo = gunSemiAmmoBuilder("hamster", "mosin9130", "cbrg", "ammo_762", 15);
+        MultiEntry kar98kAmmo = gunSemiAmmoBuilder("kar98", "cbrg", "ammo_762", 15);
         MultiEntry win94Ammo = gunSemiAmmoBuilder("hamster", "win1894", "cbrg", "ammo_45acp", 15);
 
         return new WeightEntry(Arrays.asList(
