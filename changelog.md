@@ -1,5 +1,15 @@
 ### 0.5.x
 
+#### 0.5.6
+- Add regex filter to entity removal during loot generation
+- Remove unnecessary network reflection overhead (slightly improves performance)
+- Add log command to debug command
+- Fix zone position in MurderMystery zone config
+- Clarify mod license to GPL-3.0-or-later
+
+1.20.1forge & 1.21.1neoforge
+- Adjust Cbrg loot config to CBRG 0.5.5+
+
 #### 0.5.5
 - Additonally write/remove gameId to ItemEntity's item
 - Add suggests to register command

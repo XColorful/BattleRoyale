@@ -23,7 +23,9 @@ public class CFHCPerformance {
     private static JsonObject generateDefaultPerformance() {
         // 默认性能配置:
         // 玩家数量: 10人, 模拟距离: 16, BFS处理Tick: 5秒
-        GeneratorEntry generatorEntry = new GeneratorEntry(true, true, false, false, false, new ArrayList<>(), new ArrayList<>(),
+        GeneratorEntry generatorEntry = new GeneratorEntry(true, true, false, false,
+                new ArrayList<>(), new ArrayList<>(),
+                false, new ArrayList<>(), new ArrayList<>(),
                 2000, false,
                 2000, 20, 3, 1500, 50000, 100, false, 100000, 10000);
 

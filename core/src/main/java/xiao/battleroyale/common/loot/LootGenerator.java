@@ -65,6 +65,12 @@ public class LootGenerator {
         blockFilter.updateFilter(whiteListRegex, blackListRegex);
         HAS_BLOCK_FILTER = blockFilter.hasFilter();
     }
+    private static boolean HAS_ENTITY_FILTER = false;
+    private static final RemoveEntityFilter entityFilter = new RemoveEntityFilter();
+    public static void setRemoveEntityFilter(@NotNull List<String> whiteListRegex, @NotNull List<String> blackListRegex) {
+        entityFilter.updateFilter(whiteListRegex, blackListRegex);
+        HAS_ENTITY_FILTER = entityFilter.hasFilter();
+    }
 
     /**
      * 根据物资刷新配置生成
@@ -368,6 +374,9 @@ public class LootGenerator {
         // 清除无GameId的实体
         if (REMOVE_INNOCENT_ENTITY) {
             for (Entity entity : innocentEntities) {
+                if (HAS_ENTITY_FILTER && !entityFilter.shouldRemove(entity)) {
+                    continue;
+                }
                 BattleRoyale.LOGGER.debug("Clear entity with no gameId jsonTag: {} (UUID: {}) at {}", entity.getName().getString(), entity.getUUID(), entity.position());
                 entity.remove(Entity.RemovalReason.DISCARDED);
             }
@@ -422,6 +431,40 @@ public class LootGenerator {
             // 如果匹配到任何一个黑名单项，则不刷新
             boolean matchesBlackList = blackListPatterns.stream()
                     .anyMatch(pattern -> pattern.matcher(blockId).matches());
+            return !matchesBlackList;
+        }
+        public boolean hasFilter() {
+            return !whiteListPatterns.isEmpty() || !blackListPatterns.isEmpty();
+        }
+        public void updateFilter(@NotNull List<String> whiteListRegex, @NotNull List<String> blackListRegex) {
+            this.whiteListPatterns = whiteListRegex.stream()
+                    .map(Pattern::compile)
+                    .collect(Collectors.toList());
+            this.blackListPatterns = blackListRegex.stream()
+                    .map(Pattern::compile)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    public static class RemoveEntityFilter {
+        private List<Pattern> whiteListPatterns = new ArrayList<>();
+        private List<Pattern> blackListPatterns = new ArrayList<>();
+        public boolean shouldRemove(Entity entity) {
+            var rl = BattleRoyale.getMcRegistry().getEntityTypeRl(entity.getType());
+            String entityId = rl != null ? rl.toString() : "";
+
+            // 如果白名单不为空，则必须匹配至少一个白名单项
+            if (!whiteListPatterns.isEmpty()) {
+                boolean matchesWhiteList = whiteListPatterns.stream()
+                        .anyMatch(pattern -> pattern.matcher(entityId).matches());
+                if (!matchesWhiteList) {
+                    return false;
+                }
+            }
+
+            // 如果匹配到任何一个黑名单项，则不移除
+            boolean matchesBlackList = blackListPatterns.stream()
+                    .anyMatch(pattern -> pattern.matcher(entityId).matches());
             return !matchesBlackList;
         }
         public boolean hasFilter() {

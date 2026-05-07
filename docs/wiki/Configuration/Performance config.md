@@ -44,17 +44,18 @@
 - lootVanillaChest：是否刷新原版箱子
 - removeLootTable：是否移除原版战利品刷新
 - clearPreviousContent：是否在刷新前清空物品
+- vanillaWhiteList：正则表达式匹配物品 _标识符_ ，如不为空，则必须匹配其中一项才执行刷新
+- vanillaBlackList：正则表达式匹配物品 _标识符_ ，任意匹配一项则不执行刷新
+> 标识符由 _命名空间_ 和 _路径_ 组成
 - removeNoGameidEntity：是否清除未添加游戏ID的掉落物/实体
-- vanillaWhiteList：正则表达式匹配物品 _注册名称_ ，如不为空，则必须匹配其中一项才执行刷新
-- vanillaBlackList：正则表达式匹配物品 _注册名称_ ，任意匹配一项则不执行刷新
-> 注册名称由 _命名空间_ 和 _路径_ 组成
+- removeEntityWhiteList：正则表达式匹配实体 _标识符_ ，如不为空，则必须匹配其中一项才清除实体
+- removeEntityBlackList：正则表达式匹配实体 _标识符_ ，任意匹配一项则不执行清除
 ```json
 "common": {
 	"lootAnyBlockEntity": false,
 	"lootVanillaChest": true,
 	"removeLootTable": false,
 	"clearPreviousContent": true,
-	"removeNoGameidEntity": false,
 	"vanillaWhiteList": [
 		"minecraft:chest" // 箱子
 		"minecraft:barrel" // 木桶
@@ -64,6 +65,15 @@
 	],
 	"vanillaBlackList": [
 		"minecraft:furnace" // 熔炉
+	],
+	"removeNoGameidEntity": false,
+	"removeEntityWhiteList": [
+	],
+	"removeEntityBlackList": [
+		"minecraft:armor_stand", // 盔甲架
+		"minecraft:marker", // 标记
+		"minecraft:(block_display|item_display|text_display)", // 展示实体（方块/物品/文本）
+		"minecraft:(item_frame|glow_item_frame)" // 物品展示框
 	]
 }
 ```
@@ -149,17 +159,18 @@
 - lootVanillaChest: Whether to loot vanilla chests.
 - removeLootTable: Whether to remove vanilla loot table.
 - clearPreviousContent: whether to clear items before loot.
+- vanillaWhiteList: A list of regular expressions for matching item _identifier_. If not empty, a block must match at least one entry to be looted.
+- vanillaBlackList: A list of regular expressions for matching item _identifier_. If a block matches any entry, it will not be looted.
+> An identifier consists of a _namespace_ and a _path_.
 - removeNoGameidEntity: Whether to clear dropped items or entities that do not have a game ID.
-- vanillaWhiteList: A list of regular expressions for matching item _registry names_. If not empty, a block must match at least one entry to be looted.
-- vanillaBlackList: A list of regular expressions for matching item _registry names_. If a block matches any entry, it will not be looted.
-> A registry name consists of a _namespace_ and a _path_.
+- removeEntityWhiteList: A list of regular expressions for matching entity _identifier_. If not empty, an entity must match at least one entry to be removed.
+- removeEntityBlackList: A list of regular expressions for matching entity _identifier_. If an entity matches any entry, it will not be removed.
 ```json
 "common": {
 	"lootAnyBlockEntity": false,
 	"lootVanillaChest": true,
 	"removeLootTable": false,
 	"clearPreviousContent": true,
-	"removeNoGameidEntity": false,
 	"vanillaWhiteList": [
 		"minecraft:chest" // Chest
 		"minecraft:barrel" // Barrel
@@ -169,6 +180,15 @@
 	],
 	"vanillaBlackList": [
 		"minecraft:furnace" // Furnace
+	],
+	"removeNoGameidEntity": false,
+	"removeEntityWhiteList": [
+	],
+	"removeEntityBlackList": [
+		"minecraft:armor_stand", // Armor stand
+		"minecraft:marker", // Marker
+		"minecraft:(block_display|item_display|text_display)", // Display entity (Block/Item/Text)
+		"minecraft:(item_frame|glow_item_frame)" // Item frame
 	]
 }
 ```
