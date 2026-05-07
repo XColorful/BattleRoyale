@@ -48,8 +48,10 @@ public class MurderMystery256x256Zone {
                 true, false, InventoryIndex.HOTBAR_START, InventoryIndex.INVENTORY_END,
                 null, itemLootId);
         StartEntry startEntry = new StartEntry()
+                .addFixedCenter(new Vec3(999.0, 999.0, 999.0)) // 在 (0,0,0) 会因为允许微小容差而判定成功
                 .addFixedDimension(Vec3.ZERO);
         EndEntry endEntry = new EndEntry()
+                .addFixedCenter(new Vec3(999.0, 999.0, 999.0))
                 .addFixedDimension(Vec3.ZERO);
         CircleEntry circleEntry = new CircleEntry(startEntry, endEntry, false);
         int preZoneDelayId = 0;

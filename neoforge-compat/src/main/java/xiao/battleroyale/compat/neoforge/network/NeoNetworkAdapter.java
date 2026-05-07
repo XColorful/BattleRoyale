@@ -1,5 +1,6 @@
 package xiao.battleroyale.compat.neoforge.network;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.NetworkRegistry;
@@ -13,7 +14,7 @@ import xiao.battleroyale.api.network.message.IMessage;
 import xiao.battleroyale.compat.neoforge.BattleRoyaleNeoforge;
 import xiao.battleroyale.network.NetworkHandler;
 
-import java.lang.reflect.Method;
+import java.util.function.Function;
 
 public class NeoNetworkAdapter implements INetworkAdapter {
 
@@ -32,7 +33,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
     }
 
     @Override
-    public <T extends IMessage<T>> void registerMessage(int id, Class<T> clazz, MessageDirection direction) {
+    public <T extends IMessage<T>> void registerMessage(int id, Class<T> clazz, Function<FriendlyByteBuf, T> decoder, MessageDirection direction) {
 
         PlayNetworkDirection neoDirection = direction == MessageDirection.SERVER_TO_CLIENT
                 ? PlayNetworkDirection.PLAY_TO_CLIENT
@@ -40,14 +41,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
 
         this.channel.<T>messageBuilder(clazz, id, neoDirection)
                 .encoder((messageInstance, buffer) -> messageInstance.encode(messageInstance, buffer))
-                .decoder((buffer) -> {
-                    try {
-                        Method decodeMethod = clazz.getDeclaredMethod("decode", net.minecraft.network.FriendlyByteBuf.class);
-                        return (T) decodeMethod.invoke(null, buffer);
-                    } catch (Exception e) {
-                        throw new RuntimeException("Failed to decode message " + clazz.getName(), e);
-                    }
-                })
+                .decoder(decoder::apply)
                 .consumerMainThread((message, context) -> {
                     message.handle(message, context::enqueueWork);
                 })

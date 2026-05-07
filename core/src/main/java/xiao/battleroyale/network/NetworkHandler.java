@@ -48,10 +48,10 @@ public class NetworkHandler {
         MessageDirection direction = MessageDirection.SERVER_TO_CLIENT;
 
         // 服务端 -> 客户端消息
-        adapter.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageZoneInfo.class, direction);
-        adapter.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageTeamInfo.class, direction);
-        adapter.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageGameInfo.class, direction);
-        adapter.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageSpectateInfo.class, direction);
+        adapter.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageZoneInfo.class, ClientMessageZoneInfo::decode, direction);
+        adapter.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageTeamInfo.class, ClientMessageTeamInfo::decode, direction);
+        adapter.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageGameInfo.class, ClientMessageGameInfo::decode, direction);
+        adapter.registerMessage(ID_COUNT.getAndIncrement(), ClientMessageSpectateInfo.class, ClientMessageSpectateInfo::decode, direction);
 
         // 客户端 -> 服务端消息
         // 暂无
