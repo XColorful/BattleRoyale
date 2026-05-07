@@ -16,6 +16,7 @@ public class CommandArg {
 
     // operation
     public static final String GET = "get";
+    public static final String LOG = "log";
     public static final String CLEAR = "clear";
 
     public static final String SINGLE_ID = "id";
@@ -26,6 +27,7 @@ public class CommandArg {
     public static final String XYZ = "xyz";
     public static final String ENTITY = "entity";
     public static final String PLAYER = "player";
+    public static final String MSG = "msg";
 
     // GamePlayer & GameTeam
     public static final String GAME_PLAYERS = "gameplayers";
@@ -109,4 +111,14 @@ public class CommandArg {
     public static final String BOOSTS_SHORT = "bos";
     public static final String BOOST = "boost";
     public static final String BOOST_SHORT = "bo";
+
+    // Log
+    public static final String LOG_ERROR = "error";
+    public static final String LOG_ERROR_SHORT = "e";
+    public static final String LOG_WARN = "warn";
+    public static final String LOG_WARN_SHORT = "w";
+    public static final String LOG_INFO = "info";
+    public static final String LOG_INFO_SHORT = "i";
+    public static final String LOG_DEBUG = "debug";
+    public static final String LOG_DEBUG_SHORT = "d";
 }

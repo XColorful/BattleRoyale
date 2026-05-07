@@ -1,5 +1,6 @@
 package xiao.battleroyale.compat.forge.network;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -13,6 +14,7 @@ import xiao.battleroyale.compat.forge.BattleRoyaleForge;
 import xiao.battleroyale.network.NetworkHandler;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 public class ForgeNetworkAdapter implements INetworkAdapter {
 
@@ -28,7 +30,7 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
     }
 
     @Override
-    public <T extends IMessage<T>> void registerMessage(int id, Class<T> clazz, MessageDirection direction) {
+    public <T extends IMessage<T>> void registerMessage(int id, Class<T> clazz, Function<FriendlyByteBuf, T> decoder, MessageDirection direction) {
         NetworkDirection forgeDirection = direction == MessageDirection.SERVER_TO_CLIENT
                 ? NetworkDirection.PLAY_TO_CLIENT
                 : NetworkDirection.PLAY_TO_SERVER;
@@ -37,19 +39,9 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
                 id,
                 clazz,
                 (messageInstance, buffer) -> messageInstance.encode(messageInstance, buffer),
-                (buffer) -> {
-                    try {
-                        return (T) clazz.getDeclaredMethod("decode", net.minecraft.network.FriendlyByteBuf.class).invoke(null, buffer);
-                    } catch (Exception e) {
-                        throw new RuntimeException("Failed to decode message " + clazz.getName(), e);
-                    }
-                },
+                decoder,
                 (message, contextSupplier) -> {
-
-                    message.handle(message, (work) -> {
-                        contextSupplier.get().enqueueWork(work);
-                    });
-
+                    message.handle(message, (work) -> contextSupplier.get().enqueueWork(work));
                     contextSupplier.get().setPacketHandled(true);
                 },
                 Optional.of(forgeDirection)
