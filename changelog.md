@@ -10,6 +10,9 @@
 1.20.1forge & 1.21.1neoforge
 - Adjust Cbrg loot config to CBRG 0.5.5+
 
+1.21.1+
+- Write full component to auto generated loot config via utility command
+
 #### 0.5.5
 - Additonally write/remove gameId to ItemEntity's item
 - Add suggests to register command
