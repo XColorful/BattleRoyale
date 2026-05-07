@@ -20,9 +20,11 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
     public boolean lootVanillaChest;
     public boolean removeLootTable;
     public boolean clearPreviousContent;
-    public boolean removeInnocentEntity;
     public final List<String> whiteListRegex;
     public final List<String> blackListRegex;
+    public boolean removeInnocentEntity;
+    public final List<String> removeWhiteListRegex;
+    public final List<String> removeBlackListRegex;
     // normal
     public int maxNormalTickLootChunk;
     public boolean allowNormalLootInGame;
@@ -37,16 +39,20 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
     public int maxCachedLootChunk;
     public int cleanCachedChunk;
 
-    public GeneratorEntry(boolean lootAnyBlockEntity, boolean lootVanillaChest, boolean removeLootTable, boolean clearPreviousContent, boolean removeInnocentEntity, @NotNull List<String> whiteListRegex, @NotNull List<String> blackListRegex,
+    public GeneratorEntry(boolean lootAnyBlockEntity, boolean lootVanillaChest, boolean removeLootTable, boolean clearPreviousContent,
+                          @NotNull List<String> whiteListRegex, @NotNull List<String> blackListRegex,
+                          boolean removeInnocentEntity, @NotNull List<String> removeWhiteListRegex, @NotNull List<String> removeBlackListRegex,
                           int maxNormalTickLootChunk, boolean allowNormalLootInGame,
                           int maxGameTickLootChunk, int maxGameLootDistance, int tolerantCenterDistance, int maxCachedCenter, int maxQueuedChunk, int bfsFrequency, boolean instantNextBfs, int maxCachedLootChunk, int cleanCachedChunk) {
         this.lootAnyBlockEntity = lootAnyBlockEntity;
         this.lootVanillaChest = lootVanillaChest;
         this.removeLootTable = removeLootTable;
         this.clearPreviousContent = clearPreviousContent;
-        this.removeInnocentEntity = removeInnocentEntity;
         this.whiteListRegex = whiteListRegex;
         this.blackListRegex = blackListRegex;
+        this.removeInnocentEntity = removeInnocentEntity;
+        this.removeWhiteListRegex = removeWhiteListRegex;
+        this.removeBlackListRegex = removeBlackListRegex;
         this.maxNormalTickLootChunk = maxNormalTickLootChunk;
         this.allowNormalLootInGame = allowNormalLootInGame;
         this.maxGameTickLootChunk = maxGameTickLootChunk;
@@ -60,7 +66,9 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         this.cleanCachedChunk = cleanCachedChunk;
     }
     @Override public @NotNull GeneratorEntry copy() {
-        return new GeneratorEntry(lootAnyBlockEntity, lootVanillaChest, removeLootTable, clearPreviousContent,  removeInnocentEntity, new ArrayList<>(whiteListRegex), new ArrayList<>(blackListRegex),
+        return new GeneratorEntry(lootAnyBlockEntity, lootVanillaChest, removeLootTable, clearPreviousContent,
+                new ArrayList<>(whiteListRegex), new ArrayList<>(blackListRegex),
+                removeInnocentEntity, new ArrayList<>(removeWhiteListRegex), new ArrayList<>(removeBlackListRegex),
                 maxNormalTickLootChunk, allowNormalLootInGame,
                 maxGameTickLootChunk, maxGameLootDistance, tolerantCenterDistance, maxCachedCenter, maxQueuedChunk, bfsFrequency, instantNextBfs, maxCachedLootChunk, cleanCachedChunk);
     }
@@ -92,9 +100,11 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         boolean lootVanillaChest = JsonUtils.getJsonBool(commonObject, GeneratorEntryTag.LOOT_VANILLA_CHEST, false);
         boolean removeLootTable = JsonUtils.getJsonBool(commonObject, GeneratorEntryTag.REMOVE_LOOT_TABLE, false);
         boolean clearPreviousContent = JsonUtils.getJsonBool(commonObject, GeneratorEntryTag.CLEAR_PREVIOUS_CONTENT, true);
-        boolean removeInnocentEntity = JsonUtils.getJsonBool(commonObject, GeneratorEntryTag.REMOVE_INNOCENT_ENTITY, false);
         List<String> vanillaWhiteList = JsonUtils.getJsonStringList(commonObject, GeneratorEntryTag.VANILLA_WHITE_LIST);
         List<String> vainllaBlackList = JsonUtils.getJsonStringList(commonObject, GeneratorEntryTag.VANILLA_BLACK_LIST);
+        boolean removeInnocentEntity = JsonUtils.getJsonBool(commonObject, GeneratorEntryTag.REMOVE_INNOCENT_ENTITY, false);
+        List<String> removeWhiteList = JsonUtils.getJsonStringList(commonObject, GeneratorEntryTag.REMOVE_ENTITY_WHITE_LIST);
+        List<String> removeBlackList = JsonUtils.getJsonStringList(commonObject, GeneratorEntryTag.REMOVE_ENTITY_BLACK_LIST);
         // normal
         int maxNormalTickLootChunk = JsonUtils.getJsonInt(normalObject, GeneratorEntryTag.MAX_NORMAL_TICK_LOOT_CHUNK, 5);
         boolean allowNormalLootInGame = JsonUtils.getJsonBool(normalObject, GeneratorEntryTag.ALLOW_NORMAL_LOOT_IN_GAME, false);
@@ -109,7 +119,9 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         int maxCachedLootChunk = JsonUtils.getJsonInt(gameObject, GeneratorEntryTag.MAX_CACHED_LOOT_CHUNK, 50000);
         int cleanCachedChunk = JsonUtils.getJsonInt(gameObject, GeneratorEntryTag.CLEAN_CACHED_CHUNK, 2000);
 
-        return new GeneratorEntry(lootAnyBlockEntity, lootVanillaChest, removeLootTable, clearPreviousContent, removeInnocentEntity, vanillaWhiteList, vainllaBlackList,
+        return new GeneratorEntry(lootAnyBlockEntity, lootVanillaChest, removeLootTable, clearPreviousContent,
+                vanillaWhiteList, vainllaBlackList,
+                removeInnocentEntity, removeWhiteList, removeBlackList,
                 maxNormalTickLootChunk, allowNormalLootInGame,
                 maxGameTickLootChunk, maxGameLootDistance, tolerantCenterDistance, maxCachedCenter, maxQueuedChunk, bfsFrequency, instantNextBfs, maxCachedLootChunk, cleanCachedChunk);
     }
@@ -120,8 +132,9 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         LootGenerator.setLootVanillaChest(lootVanillaChest);
         LootGenerator.setRemoveLootTable(removeLootTable);
         LootGenerator.setClearPreviousContent(clearPreviousContent);
-        LootGenerator.setRemoveInnocentEntity(removeInnocentEntity);
         LootGenerator.setLootBlockFilter(whiteListRegex, blackListRegex);
+        LootGenerator.setRemoveInnocentEntity(removeInnocentEntity);
+        LootGenerator.setRemoveEntityFilter(removeWhiteListRegex, removeBlackListRegex);
         BattleRoyale.getCommonLootManager().applyConfig(this);
         BattleRoyale.getCommonInventoryManager().applyConfig(this);
         BattleRoyale.getGameManager().getGameLootManager().applyConfig(this);
@@ -134,9 +147,11 @@ public class GeneratorEntry implements IPerformanceEntry, IConfigAppliable {
         jsonObject.addProperty(GeneratorEntryTag.LOOT_VANILLA_CHEST, lootVanillaChest);
         jsonObject.addProperty(GeneratorEntryTag.REMOVE_LOOT_TABLE, removeLootTable);
         jsonObject.addProperty(GeneratorEntryTag.CLEAR_PREVIOUS_CONTENT, clearPreviousContent);
-        jsonObject.addProperty(GeneratorEntryTag.REMOVE_INNOCENT_ENTITY, removeInnocentEntity);
         jsonObject.add(GeneratorEntryTag.VANILLA_WHITE_LIST, JsonUtils.writeStringListToJson(whiteListRegex));
         jsonObject.add(GeneratorEntryTag.VANILLA_BLACK_LIST, JsonUtils.writeStringListToJson(blackListRegex));
+        jsonObject.addProperty(GeneratorEntryTag.REMOVE_INNOCENT_ENTITY, removeInnocentEntity);
+        jsonObject.add(GeneratorEntryTag.REMOVE_ENTITY_WHITE_LIST, JsonUtils.writeStringListToJson(removeWhiteListRegex));
+        jsonObject.add(GeneratorEntryTag.REMOVE_ENTITY_BLACK_LIST, JsonUtils.writeStringListToJson(removeBlackListRegex));
         return jsonObject;
     }
 

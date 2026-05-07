@@ -18,6 +18,13 @@
 ||_/battleroyale localdebug get gamemessage_|_/cbr ldb get gmsg_|
 ||[id]|
 
+|日志|详细指令|简化指令|
+|-|-|-|
+|LOGGER.error|_/battleroyale localdebug log error_|_/cbr ldb log e_|
+|LOGGER.warn|_/battleroyale localdebug log warn_|_/cbr ldb log w_|
+|LOGGER.info|_/battleroyale localdebug log info_|_/cbr ldb log i_|
+|LOGGER.debug|_/battleroyale localdebug log debug_|_/cbr ldb log d_|
+
 # English
 
 ## Local debug command
@@ -37,3 +44,10 @@
 ||[min max / all]|
 ||_/battleroyale localdebug get gamemessage_|_/cbr ldb get gmsg_|
 ||[id]|
+
+|Log|Detailed Command|Simplified Command|
+|-|-|-|
+|LOGGER.error|_/battleroyale localdebug log error_|_/cbr ldb log e_|
+|LOGGER.warn|_/battleroyale localdebug log warn_|_/cbr ldb log w_|
+|LOGGER.info|_/battleroyale localdebug log info_|_/cbr ldb log i_|
+|LOGGER.debug|_/battleroyale localdebug log debug_|_/cbr ldb log d_|
