@@ -1,5 +1,6 @@
 package xiao.battleroyale.compat.forge.network;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.*;
 import xiao.battleroyale.BattleRoyale;
@@ -9,7 +10,7 @@ import xiao.battleroyale.api.network.message.IMessage;
 import xiao.battleroyale.compat.forge.BattleRoyaleForge;
 import xiao.battleroyale.network.NetworkHandler;
 
-import java.lang.reflect.Method;
+import java.util.function.Function;
 
 public class ForgeNetworkAdapter implements INetworkAdapter {
 
@@ -27,21 +28,14 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
     }
 
     @Override
-    public <T extends IMessage<T>> void registerMessage(int id, Class<T> clazz, MessageDirection direction) {
+    public <T extends IMessage<T>> void registerMessage(int id, Class<T> clazz, Function<FriendlyByteBuf, T> decoder, MessageDirection direction) {
         NetworkDirection forgeDirection = direction == MessageDirection.SERVER_TO_CLIENT
                 ? NetworkDirection.PLAY_TO_CLIENT
                 : NetworkDirection.PLAY_TO_SERVER;
 
         this.channel.<T>messageBuilder(clazz, id, forgeDirection)
                 .encoder((messageInstance, buffer) -> messageInstance.encode(messageInstance, buffer))
-                .decoder((buffer) -> {
-                    try {
-                        Method decodeMethod = clazz.getDeclaredMethod("decode", net.minecraft.network.FriendlyByteBuf.class);
-                        return (T) decodeMethod.invoke(null, buffer);
-                    } catch (Exception e) {
-                        throw new RuntimeException("Failed to decode message " + clazz.getName(), e);
-                    }
-                })
+                .decoder(decoder)
                 .consumerMainThread((message, context) -> {
                     message.handle(message, context::enqueueWork);
                 })
