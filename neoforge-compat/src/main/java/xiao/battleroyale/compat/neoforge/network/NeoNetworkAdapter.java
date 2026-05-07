@@ -15,15 +15,16 @@ import xiao.battleroyale.api.network.INetworkAdapter;
 import xiao.battleroyale.api.network.MessageDirection;
 import xiao.battleroyale.api.network.message.IMessage;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public class NeoNetworkAdapter implements INetworkAdapter {
 
     private record RegisteredPacket<T extends IMessage<T>>(
             Class<T> messageType,
             ResourceLocation id,
+            Function<FriendlyByteBuf, T> decoder,
             MessageDirection direction
     ) {}
 
@@ -37,18 +38,6 @@ public class NeoNetworkAdapter implements INetworkAdapter {
         public void write(FriendlyByteBuf buffer) {
             this.message.encode(this.message, buffer);
         }
-
-        @SuppressWarnings("unchecked")
-        public static <T extends IMessage<T>> NeoPayload<T> decode(Class<T> clazz, ResourceLocation id, FriendlyByteBuf buffer) {
-            try {
-                Method decodeMethod = clazz.getDeclaredMethod("decode", FriendlyByteBuf.class);
-                T message = (T) decodeMethod.invoke(null, buffer);
-                return new NeoPayload<>(id, message);
-            } catch (Exception e) {
-                BattleRoyale.LOGGER.error("Failed to decode message {} for ID {}", clazz.getName(), id, e);
-                throw new RuntimeException("Failed to decode message " + clazz.getName(), e);
-            }
-        }
     }
 
     private final List<RegisteredPacket<?>> registeredPackets = new ArrayList<>();
@@ -58,7 +47,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
     }
 
     @Override
-    public <T extends IMessage<T>> void registerMessage(int id, Class<T> clazz, MessageDirection direction) {
+    public <T extends IMessage<T>> void registerMessage(int id, Class<T> clazz, Function<FriendlyByteBuf, T> decoder, MessageDirection direction) {
         String path = clazz.getSimpleName().toLowerCase();
         ResourceLocation packetId = ResourceLocation.tryParse(String.format("%s:%s", modId, path));
 
@@ -67,7 +56,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
             return;
         }
 
-        registeredPackets.add(new RegisteredPacket<>(clazz, packetId, direction));
+        registeredPackets.add(new RegisteredPacket<>(clazz, packetId, decoder, direction));
     }
 
     @Override
@@ -115,13 +104,12 @@ public class NeoNetworkAdapter implements INetworkAdapter {
 
     private <T extends IMessage<T>> void registerPacketInternal(PayloadRegistrar registrar, RegisteredPacket<T> rp) {
         ResourceLocation id = rp.id;
-        Class<T> messageClass = rp.messageType;
 
         CustomPacketPayload.Type<NeoPayload<T>> payloadType = new CustomPacketPayload.Type<>(id);
 
         StreamCodec<FriendlyByteBuf, NeoPayload<T>> codec = StreamCodec.of(
                 (buf, payload) -> payload.write(buf),
-                (buf) -> NeoPayload.decode(messageClass, id, buf)
+                (buffer) -> new NeoPayload<>(id, rp.decoder.apply(buffer))
         );
 
         IPayloadHandler<NeoPayload<T>> handler = (payload, context) -> {
