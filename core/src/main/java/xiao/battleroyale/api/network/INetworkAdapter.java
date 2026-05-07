@@ -1,7 +1,10 @@
 package xiao.battleroyale.api.network;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import xiao.battleroyale.api.network.message.IMessage;
+
+import java.util.function.Function;
 
 public interface INetworkAdapter {
 
@@ -12,7 +15,7 @@ public interface INetworkAdapter {
      * @param clazz 消息的类。
      * @param direction 消息的方向（客户端->服务器 或 服务器->客户端）。
      */
-    <T extends IMessage<T>> void registerMessage(int id, Class<T> clazz, MessageDirection direction);
+    <T extends IMessage<T>> void registerMessage(int id, Class<T> clazz, Function<FriendlyByteBuf, T> decoder, MessageDirection direction);
 
     void sendToAll(IMessage<?> message);
 

@@ -12,6 +12,8 @@ public class GeneratorEntryTag extends ConfigEntryTag {
     public static final String REMOVE_INNOCENT_ENTITY = "removeNoGameidEntity";
     public static final String VANILLA_WHITE_LIST = "vanillaWhiteList";
     public static final String VANILLA_BLACK_LIST = "vanillaBlackList";
+    public static final String REMOVE_ENTITY_WHITE_LIST = "removeEntityWhiteList";
+    public static final String REMOVE_ENTITY_BLACK_LIST = "removeEntityBlackList";
 
     public static final String NORMAL = "normal";
     public static final String MAX_NORMAL_TICK_LOOT_CHUNK = "maxNormalTickLootChunk";
