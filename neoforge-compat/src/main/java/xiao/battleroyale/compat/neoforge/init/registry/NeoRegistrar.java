@@ -22,7 +22,7 @@ public class NeoRegistrar<T> implements IRegistrar<T> {
     @Override
     public <V extends T> IRegistryObject<V> register(String name, Supplier<? extends V> supplier) {
         DeferredHolder<T, V> deferredHolder = deferredRegister.register(name, supplier);
-        BattleRoyale.LOGGER.debug("Registering NeoForge item: {}", name);
+        BattleRoyale.LOGGER.debug("Registering NeoForge object: {}", name);
         return new NeoRegistryObject<>(deferredHolder, name);
     }
 
