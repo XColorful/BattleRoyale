@@ -11,14 +11,14 @@ import xiao.battleroyale.api.event.IClientTickEvent;
 
 public class ForgeClientTickEvent extends ForgeEvent implements IClientTickEvent {
 
-    protected TickEvent.ClientTickEvent clientTickEvent;
+    protected TickEvent.ClientTickEvent.Post clientTickEvent;
 
     public ForgeClientTickEvent(Event event) {
         super(event);
-        if (event instanceof TickEvent.ClientTickEvent eventIn) {
+        if (event instanceof TickEvent.ClientTickEvent.Post eventIn) {
             this.clientTickEvent = eventIn;
         } else {
-            throw new RuntimeException("Expected ClientTickEvent but received: " + event.getClass().getName());
+            throw new RuntimeException("Expected ClientTickEvent.Post but received: " + event.getClass().getName());
         }
     }
     @Override public EventType getType() {
