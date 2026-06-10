@@ -12,7 +12,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec2;
 import net.neoforged.bus.api.Event;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IBlockBreakEvent;
@@ -20,18 +20,25 @@ import xiao.battleroyale.api.minecraft.CommandLevel;
 
 public class NeoBlockBreakEvent extends NeoEvent implements IBlockBreakEvent {
 
-    protected BlockEvent.BreakEvent blockBreakEvent;
+    protected BreakBlockEvent blockBreakEvent;
 
     public NeoBlockBreakEvent(Event event) {
         super(event);
-        if (event instanceof BlockEvent.BreakEvent eventIn) {
+        if (event instanceof BreakBlockEvent eventIn) {
             this.blockBreakEvent = eventIn;
         } else {
-            throw new RuntimeException("Expected BreakEvent but received: " + event.getClass().getName());
+            throw new RuntimeException("Expected BreakBlockEvent but received: " + event.getClass().getName());
         }
     }
     @Override public EventType getType() {
         return EventType.BLOCK_BREAK_EVENT;
+    }
+
+    @Override public void setCanceled(boolean cancel) {
+        super.setCanceled(cancel);
+        if (cancel && !blockBreakEvent.getLevel().isClientSide()) {
+            blockBreakEvent.setNotifyClient(true);
+        }
     }
 
     @Override

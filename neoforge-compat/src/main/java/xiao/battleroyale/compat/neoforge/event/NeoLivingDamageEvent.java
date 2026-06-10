@@ -50,7 +50,7 @@ public class NeoLivingDamageEvent extends NeoEvent implements ILivingDamageEvent
 
     @Override
     public float getDamageAmount() {
-        return livingDamageEvent.getNewDamage();
+        return livingDamageEvent.getInflictedDamage();
     }
 
     @Override
