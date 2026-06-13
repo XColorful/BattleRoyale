@@ -30,7 +30,7 @@ public class TeamInfoRenderer implements IClientTeamInfoRenderer, IEventHandler 
         return TeamInfoRendererHolder.INSTANCE;
     }
 
-    private TeamInfoRenderer() {}
+    protected TeamInfoRenderer() {}
 
     public static void init(McSide mcSide) {
         if (!get().inProperSide(mcSide)) {
