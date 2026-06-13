@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class BoostManager implements IBoostManager {
 
-    private BoostManager() {}
+    protected BoostManager() {}
 
     private static class BoostManagerHolder {
         private static final BoostManager INSTANCE = new BoostManager();

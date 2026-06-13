@@ -78,11 +78,11 @@
 - `返回值`：是否成功传送
 
 ##### 设置大厅
-> _/battleroyale api gameLobbyManager [pos]_
+> _/battleroyale api gameLobbyManager setLobby [pos]_
 > 
-> _/battleroyale api gameLobbyManager [pos] [xyz]_
+> _/battleroyale api gameLobbyManager setLobby [pos] [xyz]_
 > 
-> _/battleroyale api gameLobbyManager [pos] [xyz] [lobbyMuteki] [lobbyHeal] [lobbyChangeGamemode] [teleportDropInventory] [teleportClearInventory]_
+> _/battleroyale api gameLobbyManager setLobby [pos] [xyz] [lobbyMuteki] [lobbyHeal] [lobbyChangeGamemode] [teleportDropInventory] [teleportClearInventory]_
 
 手动[设置大厅](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config#大逃杀规则配置)：
 - pos：大厅坐标
@@ -173,11 +173,11 @@ Test in the _/execute in_ dimension:
 - `return value`: whether the teleport was successful
 
 ##### Set lobby
-> _/battleroyale api gameLobbyManager [pos]_
+> _/battleroyale api gameLobbyManager setLobby [pos]_
 > 
-> _/battleroyale api gameLobbyManager [pos] [xyz]_
+> _/battleroyale api gameLobbyManager setLobby [pos] [xyz]_
 > 
-> _/battleroyale api gameLobbyManager [pos] [xyz] [lobbyMuteki] [lobbyHeal] [lobbyChangeGamemode] [teleportDropInventory] [teleportClearInventory]_
+> _/battleroyale api gameLobbyManager setLobby [pos] [xyz] [lobbyMuteki] [lobbyHeal] [lobbyChangeGamemode] [teleportDropInventory] [teleportClearInventory]_
 
 Manually [sets the lobby](https://github.com/XColorful/BattleRoyale/wiki/Gamerule-config#BattleRoyale-gamerule):
 - pos: lobby coordinates
