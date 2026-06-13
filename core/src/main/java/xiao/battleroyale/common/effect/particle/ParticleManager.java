@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ParticleManager implements IParticleManager {
 
-    private ParticleManager() {}
+    protected ParticleManager() {}
 
     private static class ParticleManagerHolder {
         private static final ParticleManager INSTANCE = new ParticleManager();

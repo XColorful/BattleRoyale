@@ -15,7 +15,6 @@ public class PerformanceManager extends AbstractServerManager implements IPerfor
     }
 
     protected PerformanceManager() {
-        ;
     }
 
     public static void init(McSide mcSide) {
