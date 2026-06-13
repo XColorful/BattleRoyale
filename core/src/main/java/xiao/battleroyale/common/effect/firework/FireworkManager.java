@@ -22,7 +22,7 @@ import java.util.UUID;
 
 public class FireworkManager implements IFireworkManager {
 
-    private FireworkManager() {}
+    protected FireworkManager() {}
 
     private static class FireworkManagerHolder {
         private static final FireworkManager INSTANCE = new FireworkManager();
