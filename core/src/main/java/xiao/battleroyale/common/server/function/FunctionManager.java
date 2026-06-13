@@ -19,7 +19,6 @@ public class FunctionManager extends AbstractServerManager implements IFunctionM
     }
 
     protected FunctionManager() {
-        ;
     }
 
     public static void init(McSide mcSide) {
