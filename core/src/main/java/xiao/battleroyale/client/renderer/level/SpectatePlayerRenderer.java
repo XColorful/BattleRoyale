@@ -34,7 +34,7 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
         return SpectatePlayerRendererHolder.INSTANCE;
     }
 
-    private SpectatePlayerRenderer() {}
+    protected SpectatePlayerRenderer() {}
 
     public static void init(McSide mcSide) {
         if (!get().inProperSide(mcSide)) {
