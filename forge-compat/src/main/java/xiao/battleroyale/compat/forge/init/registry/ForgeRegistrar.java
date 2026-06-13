@@ -22,7 +22,7 @@ public class ForgeRegistrar<T> implements IRegistrar<T> {
     @Override
     public <V extends T> IRegistryObject<V> register(String name, Supplier<? extends V> supplier) {
         RegistryObject<V> registryObject = deferredRegister.register(name, supplier);
-        BattleRoyale.LOGGER.debug("Registering Forge item: {}", name);
+        BattleRoyale.LOGGER.debug("Registering Forge object: {}", name);
         return new ForgeRegistryObject<>(registryObject, name);
     }
 

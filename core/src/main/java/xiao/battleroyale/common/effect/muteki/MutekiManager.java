@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class MutekiManager implements IMutekiManager {
 
-    private MutekiManager() {}
+    protected MutekiManager() {}
 
     private static class MutekiManagerHolder {
         private static final MutekiManager INSTANCE = new MutekiManager();
