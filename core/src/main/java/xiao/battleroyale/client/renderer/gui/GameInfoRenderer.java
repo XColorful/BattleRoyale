@@ -25,7 +25,7 @@ public class GameInfoRenderer implements IClientGameInfoRenderer, IEventHandler 
         return GameInfoRendererHolder.INSTANCE;
     }
 
-    private GameInfoRenderer() {}
+    protected GameInfoRenderer() {}
 
     public static void init(McSide mcSide) {
         if (!get().inProperSide(mcSide)) {
