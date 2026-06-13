@@ -33,7 +33,7 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
         return TeamMemberRendererHolder.INSTANCE;
     }
 
-    private TeamMemberRenderer() {}
+    protected TeamMemberRenderer() {}
 
     public static void init(McSide mcSide) {
         if (!get().inProperSide(mcSide)) {

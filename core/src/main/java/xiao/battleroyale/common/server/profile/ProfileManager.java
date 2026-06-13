@@ -40,7 +40,6 @@ public class ProfileManager extends AbstractServerManager implements IProfileMan
     }
 
     protected ProfileManager() {
-        ;
     }
 
     public static void init(McSide mcSide) {
