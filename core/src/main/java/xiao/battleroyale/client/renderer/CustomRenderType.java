@@ -14,6 +14,7 @@ import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.client.renderer.level.SpectatePlayerRenderer;
 import xiao.battleroyale.client.renderer.level.TeamMemberRenderer;
 import xiao.battleroyale.client.renderer.level.ZoneRenderer;
+import xiao.battleroyale.compat.iris.IrisShaders;
 
 import java.util.function.Consumer;
 
@@ -91,5 +92,9 @@ public class CustomRenderType {
         ZoneRenderer.OPAQUE_ZONE = SolidOpaqueColor;
         TeamMemberRenderer.TEAM_MARKER_RENDER_TYPE = SolidTranslucentColor;
         SpectatePlayerRenderer.SPECTATE_PLAYER_RENDER_TYPE = SolidTranslucentColor;
+
+        // --------Iris Shaders--------
+        IrisShaders.registerSolid(SOLID_OPAQUE_COLOR_PIPELINE);
+        IrisShaders.registerTranslucent(SOLID_TRANSLUCENT_COLOR_PIPELINE);
     }
 }
