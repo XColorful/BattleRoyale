@@ -1,5 +1,6 @@
 package xiao.battleroyale.client.renderer;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -8,14 +9,19 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.client.renderer.level.SpectatePlayerRenderer;
+import xiao.battleroyale.client.renderer.level.TeamMemberRenderer;
+import xiao.battleroyale.client.renderer.level.ZoneRenderer;
+
+import java.util.function.Consumer;
 
 public class CustomRenderType {
 
     private static final ResourceLocation WHITE_TEXTURE = BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:textures/white.png", BattleRoyale.MOD_ID));
-
-    public static final RenderType SolidTranslucentColor = createSolidTranslucent();
-    public static final RenderType SolidOpaqueColor = createSolidOpaque();
+    public static RenderType SolidTranslucentColor;
+    public static RenderType SolidOpaqueColor;
 
     private static RenderType createSolidTranslucent() {
         RenderStateShard.TransparencyStateShard translucent = new RenderStateShard.TransparencyStateShard(
@@ -93,5 +99,26 @@ public class CustomRenderType {
                 false,
                 state
         );
+    }
+
+    static {
+        _registerRenderPipelines();
+    }
+    @SuppressWarnings("all")
+    @Deprecated(forRemoval = true, since = "1.21.6")
+    private static void _registerRenderPipelines() {
+        onRegisterRenderPipelines(null);
+    }
+
+    @ApiStatus.AvailableSince("1.21.6")
+    public static void onRegisterRenderPipelines(Consumer<RenderPipeline> registrar) {
+//        registrar.accept(SOLID_OPAQUE_COLOR_PIPELINE);
+//        registrar.accept(SOLID_TRANSLUCENT_COLOR_PIPELINE);
+        SolidTranslucentColor = createSolidTranslucent();
+        SolidOpaqueColor = createSolidOpaque();
+        ZoneRenderer.TRANSLUCENT_ZONE = SolidTranslucentColor;
+        ZoneRenderer.OPAQUE_ZONE = SolidOpaqueColor;
+        TeamMemberRenderer.TEAM_MARKER_RENDER_TYPE = SolidTranslucentColor;
+        SpectatePlayerRenderer.SPECTATE_PLAYER_RENDER_TYPE = SolidTranslucentColor;
     }
 }
