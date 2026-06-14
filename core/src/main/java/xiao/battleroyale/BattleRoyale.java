@@ -14,6 +14,7 @@ import xiao.battleroyale.api.client.game.IClientGameDataManager;
 import xiao.battleroyale.api.client.render.IBlockModelRenderer;
 import xiao.battleroyale.api.client.render.IClientRenderer;
 import xiao.battleroyale.api.common.McSide;
+import xiao.battleroyale.api.compat.iris.IIrisPipelineRegister;
 import xiao.battleroyale.api.compat.journeymap.IJmApi;
 import xiao.battleroyale.api.config.IModConfigManager;
 import xiao.battleroyale.api.effect.IEffectManager;
@@ -61,7 +62,7 @@ public class BattleRoyale {
     private static IRegistrarFactory registrarFactory;
     private static ISelectorRegistry selectorRegistry;
     private static IMcRegistry mcRegistry;
-    public record CompatApi(IJmApi jmApi) {}
+    public record CompatApi(IJmApi jmApi, IIrisPipelineRegister iIrisPipelineRegister) {}
     private static CompatApi compatApi;
 
     public static void init(McSide mcSide,
