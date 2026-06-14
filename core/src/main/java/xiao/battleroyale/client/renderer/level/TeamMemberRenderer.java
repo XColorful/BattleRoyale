@@ -42,7 +42,7 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
         }
     }
 
-    private static final RenderType TEAM_MARKER_RENDER_TYPE = CustomRenderType.SolidTranslucentColor;
+    public static RenderType TEAM_MARKER_RENDER_TYPE = CustomRenderType.SolidTranslucentColor;
 
     private boolean enableTeamZone = true;
     public void setEnableTeamZone(boolean bool) { enableTeamZone = bool; }
