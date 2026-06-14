@@ -10,7 +10,13 @@ import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.ApiStatus;
 import xiao.battleroyale.BattleRoyale;
+import xiao.battleroyale.client.renderer.level.SpectatePlayerRenderer;
+import xiao.battleroyale.client.renderer.level.TeamMemberRenderer;
+import xiao.battleroyale.client.renderer.level.ZoneRenderer;
+
+import java.util.function.Consumer;
 
 public class CustomRenderType {
 
@@ -38,8 +44,8 @@ public class CustomRenderType {
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
             .build();
     // 后加载
-    public static final RenderType SolidTranslucentColor = createSolidTranslucent();
-    public static final RenderType SolidOpaqueColor = createSolidOpaque();
+    public static RenderType SolidTranslucentColor;
+    public static RenderType SolidOpaqueColor;
 
 
     private static RenderType createSolidTranslucent() {
@@ -72,5 +78,17 @@ public class CustomRenderType {
                 "solid_opaque_color",
                 builder
         );
+    }
+
+    @ApiStatus.AvailableSince("1.21.6")
+    public static void onRegisterRenderPipelines(Consumer<RenderPipeline> registrar) {
+        registrar.accept(SOLID_OPAQUE_COLOR_PIPELINE);
+        registrar.accept(SOLID_TRANSLUCENT_COLOR_PIPELINE);
+        SolidTranslucentColor = createSolidTranslucent();
+        SolidOpaqueColor = createSolidOpaque();
+        ZoneRenderer.TRANSLUCENT_ZONE = SolidTranslucentColor;
+        ZoneRenderer.OPAQUE_ZONE = SolidOpaqueColor;
+        TeamMemberRenderer.TEAM_MARKER_RENDER_TYPE = SolidTranslucentColor;
+        SpectatePlayerRenderer.SPECTATE_PLAYER_RENDER_TYPE = SolidTranslucentColor;
     }
 }
