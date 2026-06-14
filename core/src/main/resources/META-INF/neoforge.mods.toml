@@ -57,3 +57,9 @@ modId="armorscaling"
 type="optional"
 versionRange="${armorscaling_version_range}"
 side="SERVER"
+
+[[dependencies.${mod_id}]]
+modId="iris"
+type="optional"
+versionRange="${iris_version_range}"
+side="CLIENT"

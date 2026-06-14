@@ -16,6 +16,7 @@ import xiao.battleroyale.api.network.INetworkHook;
 import xiao.battleroyale.compat.neoforge.client.init.NeoClientSetup;
 import xiao.battleroyale.compat.neoforge.client.init.NeoModEntityRender;
 import xiao.battleroyale.compat.neoforge.client.renderer.NeoBlockModelRenderer;
+import xiao.battleroyale.compat.neoforge.compat.iris.NeoIrisShaders;
 import xiao.battleroyale.compat.neoforge.compat.journeymap.JmApi;
 import xiao.battleroyale.compat.neoforge.event.NeoEventRegister;
 import xiao.battleroyale.compat.neoforge.init.NeoCommonSetup;
@@ -48,7 +49,7 @@ public class BattleRoyaleNeoforge {
         BattleRoyaleNeoforge.networkHook = new NeoNetworkHook();
         BattleRoyaleNeoforge.eventRegister = new NeoEventRegister();
         BattleRoyaleNeoforge.blockModelRenderer = new NeoBlockModelRenderer();
-        BattleRoyaleNeoforge.compatApi = new BattleRoyale.CompatApi(JmApi.get());
+        BattleRoyaleNeoforge.compatApi = new BattleRoyale.CompatApi(JmApi.get(), NeoIrisShaders.get());
 
         Dist dist = FMLLoader.getCurrent().getDist();
         McSide mcSide = dist.isClient() ? McSide.CLIENT : McSide.DEDICATED_SERVER;
