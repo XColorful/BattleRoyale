@@ -67,7 +67,8 @@ tasks.withType(ProcessResources).configureEach {
             playerrevive_version_range: playerrevive_version_range,
             tacz_version_range      : tacz_version_range,
             cbraddon_version_range  : cbraddon_version_range,
-            armorscaling_version_range: armorscaling_version_range
+            armorscaling_version_range: armorscaling_version_range,
+            iris_version_range      : iris_version_range
     ]
     inputs.properties replaceProperties
 
@@ -83,6 +84,8 @@ dependencies {
 
     compileOnly "info.journeymap:journeymap-api-neoforge:${journeymap_neoforge_api_version}"
     runtimeOnly "${journeymap_neoforge_curse_maven}"
+
+    compileOnly "${iris_neoforge_curse_maven}"
 }
 
 tasks.named('jar', Jar).configure {

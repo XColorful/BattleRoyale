@@ -1,6 +1,7 @@
 package xiao.battleroyale.init;
 
 import xiao.battleroyale.api.init.ICompatInit;
+import xiao.battleroyale.compat.iris.IrisShaders;
 import xiao.battleroyale.compat.journeymap.JourneyMap;
 import xiao.battleroyale.compat.playerrevive.PlayerRevive;
 
@@ -18,5 +19,6 @@ public class CompatInit implements ICompatInit {
     public void onLoadComplete() {
         JourneyMap.get().checkLoaded();
         PlayerRevive.get().checkLoaded();
+        IrisShaders.get().checkLoaded();
     }
 }
