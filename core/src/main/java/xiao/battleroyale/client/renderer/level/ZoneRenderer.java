@@ -38,8 +38,8 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
         }
     }
 
-    public static final RenderType TRANSLUCENT_ZONE = CustomRenderType.SolidTranslucentColor;
-    public static final RenderType OPAQUE_ZONE = CustomRenderType.SolidOpaqueColor;
+    public static RenderType TRANSLUCENT_ZONE = CustomRenderType.SolidTranslucentColor;
+    public static RenderType OPAQUE_ZONE = CustomRenderType.SolidOpaqueColor;
 
     private int CIRCLE_SEGMENTS = 64;
     private int ELLIPSE_SEGMENTS = 64;

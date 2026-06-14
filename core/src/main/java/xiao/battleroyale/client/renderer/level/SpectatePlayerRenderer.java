@@ -43,7 +43,7 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
         }
     }
 
-    public static final RenderType SPECTATE_PLAYER_RENDER_TYPE = CustomRenderType.SolidTranslucentColor;
+    public static RenderType SPECTATE_PLAYER_RENDER_TYPE = CustomRenderType.SolidTranslucentColor;
 
     private boolean enableSpectateRender = true;
     public void setEnableSpectateRender(boolean bool) { enableSpectateRender = bool; }
