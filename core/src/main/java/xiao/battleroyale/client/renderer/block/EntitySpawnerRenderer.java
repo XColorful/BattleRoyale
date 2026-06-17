@@ -3,7 +3,7 @@ package xiao.battleroyale.client.renderer.block;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -29,13 +29,13 @@ public class EntitySpawnerRenderer extends AbstractBlockRenderer<EntitySpawnerBl
      * EntitySpawner 的 BlockBench 模型就 13 个方块，不整 {@link LootContainerRenderer} 的那套机制
      */
     @Override
-    public void render(@NotNull EntitySpawnerBlockEntity blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn,
+    public void render(@NotNull EntitySpawnerBlockEntity blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull RenderBuffers bufferIn, int combinedLightIn, int combinedOverlayIn,
                        @NotNull BlockEntityRenderState renderState, @NotNull SubmitNodeCollector collector, @NotNull CameraRenderState cameraState) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
 
         // 获取摄像机数据
-        Camera camera = mc.gameRenderer.getMainCamera();
+        Camera camera = mc.gameRenderer.mainCamera();
         Vec3 cameraPos = camera.position();
         Vector3fc cameraLook = camera.forwardVector();
 

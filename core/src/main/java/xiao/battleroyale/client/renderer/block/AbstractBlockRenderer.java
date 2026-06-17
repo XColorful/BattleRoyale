@@ -2,7 +2,7 @@ package xiao.battleroyale.client.renderer.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
@@ -38,7 +38,7 @@ public abstract class AbstractBlockRenderer<T extends AbstractLootBlockEntity, S
         );
     }
 
-    protected void renderBlockModel(@NotNull BlockEntity blockEntity, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    protected void renderBlockModel(@NotNull BlockEntity blockEntity, @NotNull PoseStack poseStack, @NotNull RenderBuffers bufferIn, int combinedLightIn, int combinedOverlayIn) {
         BlockState blockState = blockEntity.getBlockState();
         ModelManager modelManager = Minecraft.getInstance().getModelManager();
         BlockStateModel blockStateModel = modelManager.getBlockStateModelSet().get(blockState);
@@ -70,7 +70,7 @@ public abstract class AbstractBlockRenderer<T extends AbstractLootBlockEntity, S
         if (blockEntity == null) return;
 
         float partialTick = minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false);
-        @NotNull MultiBufferSource bufferIn = minecraft.renderBuffers().bufferSource();
+        @NotNull RenderBuffers bufferIn = minecraft.gameRenderer.renderBuffers();
         int combinedLightIn = renderState.lightCoords;
 
         int progress = renderState.breakProgress != null ? renderState.breakProgress.progress() : -1;
@@ -79,7 +79,7 @@ public abstract class AbstractBlockRenderer<T extends AbstractLootBlockEntity, S
         this.render(blockEntity, partialTick, poseStack, bufferIn, combinedLightIn, combinedOverlayIn, renderState, collector, cameraState);
     }
 
-    protected abstract void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn,
+    protected abstract void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull RenderBuffers bufferIn, int combinedLightIn, int combinedOverlayIn,
                                    @NotNull S renderState, @NotNull SubmitNodeCollector collector, @NotNull CameraRenderState cameraState);
 
     public static int getDestroyProgressOverlay(int progress) {

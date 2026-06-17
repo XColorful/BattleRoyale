@@ -102,7 +102,7 @@ public class NeoEntityInteractSpecificEvent extends NeoEvent implements IEntityI
         Player player = this.getEntity();
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
-                this.getBlockPos().getCenter(),
+                Vec3.atCenterOf(this.getBlockPos()),
                 player.getRotationVector(),
                 (ServerLevel) level,
                 CommandLevel.permission(4),

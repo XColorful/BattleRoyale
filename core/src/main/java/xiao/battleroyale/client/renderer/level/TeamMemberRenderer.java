@@ -1,8 +1,11 @@
 package xiao.battleroyale.client.renderer.level;
 
+import com.mojang.blaze3d.PrimitiveTopology;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -66,7 +69,7 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
     public void setTransparency(float a) { A = a; }
 
     private @Nullable Matrix4f currentZoneMatrix;
-    private @Nullable VertexConsumer consumer;
+    private @Nullable BufferBuilder consumer;
     public @Nullable Matrix4f getCurrentZoneMatrix() {
         return currentZoneMatrix;
     }
@@ -127,11 +130,11 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
             return;
         }
 
-        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
+//        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         Vec3 cameraPos = event.getCamera_getPosition();
         float partialTicks = event.getPartialTick();
 
-        VertexConsumer currentConsumer = bufferSource.getBuffer(TEAM_MARKER_RENDER_TYPE);
+        BufferBuilder currentConsumer = new BufferBuilder(new ByteBufferBuilder(4096), PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         int worldMaxBuildHeight = mc.level.dimensionType().minY() + mc.level.dimensionType().height();
 
@@ -193,6 +196,6 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
                 consumer = null;
             }
         }
-        bufferSource.endBatch();
+//        bufferSource.endBatch();
     }
 }

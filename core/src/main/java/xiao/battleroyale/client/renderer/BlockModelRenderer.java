@@ -1,7 +1,7 @@
 package xiao.battleroyale.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,7 +36,7 @@ public class BlockModelRenderer implements IBlockModelRenderer {
                                  @NotNull BlockStateModel blockStateModel,
                                  @NotNull ModelBlockRenderer modelBlockRenderer,
                                  @NotNull PoseStack poseStack,
-                                 @NotNull MultiBufferSource bufferIn,
+                                 @NotNull RenderBuffers bufferIn,
                                  int combinedLightIn,
                                  int combinedOverlayIn) {
         this.blockModelRenderer.renderBlockModel(blockState,

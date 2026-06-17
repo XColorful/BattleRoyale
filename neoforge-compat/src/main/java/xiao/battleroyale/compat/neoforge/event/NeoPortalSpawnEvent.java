@@ -9,6 +9,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.Nullable;
@@ -59,7 +60,7 @@ public class NeoPortalSpawnEvent extends NeoEvent implements IPortalSpawnEvent {
         if (serverLevel == null) return null;
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
-                this.getBlockPos().getCenter(),
+                Vec3.atCenterOf(this.getBlockPos()),
                 Vec2.ZERO,
                 serverLevel,
                 CommandLevel.permission(4),

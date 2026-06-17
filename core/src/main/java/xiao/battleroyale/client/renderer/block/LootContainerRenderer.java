@@ -8,7 +8,7 @@ import it.unimi.dsi.fastutil.longs.Long2BooleanMaps;
 import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
@@ -23,8 +23,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
@@ -110,13 +108,13 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
     protected abstract int getLootContainerSize();
 
     @Override
-    public void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn,
+    public void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull RenderBuffers bufferIn, int combinedLightIn, int combinedOverlayIn,
                        @NotNull LootRenderState renderState, @NotNull SubmitNodeCollector collector, @NotNull CameraRenderState cameraState) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
 
         // 获取摄像机数据
-        Camera camera = mc.gameRenderer.getMainCamera();
+        Camera camera = mc.gameRenderer.mainCamera();
         Vec3 cameraPos = camera.position();
         Vector3fc cameraLook = camera.forwardVector();
 
@@ -210,7 +208,7 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
         return false;
     }
 
-    protected void renderItems(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn,
+    protected void renderItems(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull RenderBuffers bufferIn, int combinedLightIn, int combinedOverlayIn,
                                @NotNull LootRenderState renderState, @NotNull SubmitNodeCollector collector, @NotNull CameraRenderState cameraState) {
         ItemStack[] items = getItems(blockEntity);
         if (items == null || items.length == 0) { // 照理不应该发生，除非hasItem有问题

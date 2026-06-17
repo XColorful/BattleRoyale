@@ -5,6 +5,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.loot.AbstractLootEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
@@ -32,7 +33,7 @@ public abstract class AbstractGenerateEvent<T extends BlockEntity> extends Abstr
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         return new CommandSourceStack(
                 source != null ? source : CommandSource.NULL,
-                target.getBlockPos().getCenter(),
+                Vec3.atCenterOf(target.getBlockPos()),
                 Vec2.ZERO,
                 lootContext.serverLevel,
                 CommandLevel.permission(4),

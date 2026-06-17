@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.loot.type;
 
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
@@ -51,7 +52,7 @@ public class ShapeEntry extends AbstractLootEntry {
                         IGameManager gameManager = BattleRoyale.getGameManager();
                         float gameTime = gameManager.getGameTime();
                         float maxGameTime = gameManager.getMaxGameTime();
-                        if (spatialZone.isWithinZone(target.getBlockPos().getCenter(), gameTime / maxGameTime)) {
+                        if (spatialZone.isWithinZone(Vec3.atCenterOf(target.getBlockPos()), gameTime / maxGameTime)) {
                             isInRange = true;
                         }
                     }

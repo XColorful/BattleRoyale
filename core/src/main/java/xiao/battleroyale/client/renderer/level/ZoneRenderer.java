@@ -1,9 +1,12 @@
 package xiao.battleroyale.client.renderer.level;
 
+import com.mojang.blaze3d.PrimitiveTopology;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -57,7 +60,7 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
     public void setEllipsoidSegments(int segments) { ELLIPSOID_SEGMENTS = segments; }
 
     private @Nullable Matrix4f currentZoneMatrix;
-    private @Nullable VertexConsumer consumer;
+    private @Nullable BufferBuilder consumer;
     public @Nullable Matrix4f getCurrentZoneMatrix() {
         return currentZoneMatrix;
     }
@@ -115,7 +118,7 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
             return;
         }
 
-        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
+//        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         Vec3 cameraPos = event.getCamera_getPosition();
 
         float partialTick = event.getPartialTick();
@@ -143,7 +146,7 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
             float a = zoneData.a;
 
             // 对光影没用，对原版云有用
-            consumer = bufferSource.getBuffer(a < 0.999F ? TRANSLUCENT_ZONE : OPAQUE_ZONE);
+            consumer = new BufferBuilder(new ByteBufferBuilder(4096), PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
             switch (zoneData.shapeType) {
                 // 2D shape
@@ -192,7 +195,7 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
             this.currentZoneMatrix = null;
             this.consumer = null;
         }
-        bufferSource.endBatch();
+//        bufferSource.endBatch();
     }
 
     /**

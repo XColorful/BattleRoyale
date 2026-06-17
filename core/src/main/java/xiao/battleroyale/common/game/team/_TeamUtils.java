@@ -1,10 +1,12 @@
 package xiao.battleroyale.common.game.team;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.Team;
+import net.minecraft.world.scores.TeamColor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -191,7 +193,8 @@ public class _TeamUtils {
         }
 
         // 队伍颜色取与GameTeam最近的（原版api限制）
-        vanillaTeam.setColor(ColorUtils.getClosestChatFormatting(gameTeam.getGameTeamColor()));
+        ChatFormatting closestFormat = ColorUtils.getClosestChatFormatting(gameTeam.getGameTeamColor());
+        vanillaTeam.setColor(Optional.ofNullable(TeamColor.byName(closestFormat.name().toLowerCase(java.util.Locale.ROOT))));
         return vanillaTeam;
     }
 

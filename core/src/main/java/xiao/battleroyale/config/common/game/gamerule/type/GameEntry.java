@@ -2,6 +2,7 @@ package xiao.battleroyale.config.common.game.gamerule.type;
 
 import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TextColor;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.config.common.game.gamerule.GameEntryTag;
@@ -23,25 +24,25 @@ public class GameEntry implements IGameruleEntry, IConfigAppliable {
     public List<String> teamColors;
     public static final List<String> DEFAULT_TEAM_COLORS = Arrays.asList(
             // 彩色（深），红蓝开头
-            ColorUtils.parseIntToStringRGB(ChatFormatting.DARK_RED.getColor()), // §4
-            ColorUtils.parseIntToStringRGB(ChatFormatting.DARK_BLUE.getColor()), // §1
-            ColorUtils.parseIntToStringRGB(ChatFormatting.GOLD.getColor()), // §6
-            ColorUtils.parseIntToStringRGB(ChatFormatting.DARK_PURPLE.getColor()), // §5
-            ColorUtils.parseIntToStringRGB(ChatFormatting.DARK_GREEN.getColor()), // §2
-            ColorUtils.parseIntToStringRGB(ChatFormatting.DARK_AQUA.getColor()), // §3
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.DARK_RED).getValue()), // §4
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.DARK_BLUE).getValue()), // §1
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.GOLD).getValue()), // §6
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.DARK_PURPLE).getValue()), // §5
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.DARK_GREEN).getValue()), // §2
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.DARK_AQUA).getValue()), // §3
             // 彩色（浅），红蓝开头
-            ColorUtils.parseIntToStringRGB(ChatFormatting.RED.getColor()), // §12
-            ColorUtils.parseIntToStringRGB(ChatFormatting.BLUE.getColor()), // §9
-            ColorUtils.parseIntToStringRGB(ChatFormatting.YELLOW.getColor()), // §14
-            ColorUtils.parseIntToStringRGB(ChatFormatting.LIGHT_PURPLE.getColor()), // §13
-            ColorUtils.parseIntToStringRGB(ChatFormatting.GREEN.getColor()), // §10
-            ColorUtils.parseIntToStringRGB(ChatFormatting.AQUA.getColor()), // §11
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.RED).getValue()), // §12
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.BLUE).getValue()), // §9
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.YELLOW).getValue()), // §14
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.LIGHT_PURPLE).getValue()), // §13
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.GREEN).getValue()), // §10
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.AQUA).getValue()), // §11
             // 黑白
-            ColorUtils.parseIntToStringRGB(ChatFormatting.BLACK.getColor()), // §0
-            ColorUtils.parseIntToStringRGB(ChatFormatting.GRAY.getColor()), // §7
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.BLACK).getValue()), // §0
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.GRAY).getValue()), // §7
             // 黑白
-            ColorUtils.parseIntToStringRGB(ChatFormatting.DARK_GRAY.getColor()), // §8
-            ColorUtils.parseIntToStringRGB(ChatFormatting.WHITE.getColor()) // §15
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.DARK_GRAY).getValue()), // §8
+            ColorUtils.parseIntToStringRGB(TextColor.fromLegacyFormat(ChatFormatting.WHITE).getValue()) // §15
     );
     public static final List<Float> DEFAULT_DOWN_DAMAGE = Arrays.asList(0.3333F, 0.4444F, 0.6667F, 1.3333F, 2F, 4F, 8F, 16F, 32F);
     public boolean buildVanillaTeam;

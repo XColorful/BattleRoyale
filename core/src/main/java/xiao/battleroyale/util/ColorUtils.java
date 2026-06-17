@@ -3,6 +3,7 @@ package xiao.battleroyale.util;
 import net.minecraft.ChatFormatting;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.scores.TeamColor;
 import org.jetbrains.annotations.NotNull;
 import xiao.battleroyale.BattleRoyale;
 
@@ -175,8 +176,9 @@ public class ColorUtils {
         ChatFormatting closest = ChatFormatting.RESET;
 
         for (ChatFormatting formatting : ChatFormatting.values()) {
-            if (formatting.isColor() && formatting.getColor() != null) {
-                int chatColor = formatting.getColor();
+            TeamColor teamColor = TeamColor.byName(formatting.name().toLowerCase(java.util.Locale.ROOT));
+            if (teamColor != null) {
+                int chatColor = teamColor.rgb();
                 int distance = getColorDistance(rgbColor, chatColor);
                 if (distance < minDistance) {
                     minDistance = distance;
