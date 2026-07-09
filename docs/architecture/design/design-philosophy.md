@@ -51,6 +51,7 @@
 - 及时坍缩：在同一开发线程下，Demo 完成后必须及时清理以抑制独特性熵增（如将配置项统一至模组框架），消灭其特殊性以回归常数状态
 
 ## 同构分形与扁平化
+> 前往[同构分形](isomorphic-fractals.md)
 
 ### 易用门面
 
@@ -284,6 +285,7 @@ When only one new feature is added, it is a negligible "new point" in terms of c
 - Timely Collapse: Within the same development thread, the Demo must be cleaned up immediately upon completion to suppress uniqueness-driven entropy (e.g., unifying config items into the mod framework), eliminating its particularity to return to a constant state.
 
 ## Isomorphic Fractals & Flattening
+> Go to the [Isomorphic Fractals](isomorphic-fractals.md#English)
 
 ### Easy-to-Use Facades
 

@@ -8,7 +8,7 @@ flowchart RL
 			subgraph IGameMainManager
 				IGameManager
 			end
-			IGameruleManager & IGameLobbyManager & IGameLootManager & IGameProcessManager & ISpawnManager & IStatsManager & ITeamManager & IZoneManager ---> IGameManager
+			IGameruleManager & IGameLobbyManager & IGameLootManager & IGameProcessManager & ISpawnManager & IStatsManager & ITeamManager & IZoneManager <--> IGameManager
 		end
 		
 		%% --------实现类--------
@@ -36,7 +36,7 @@ flowchart RL
 	end
 
 	%% --------外部调用--------
-	IGameManager ==> User@{ shape: brace-r }
+	IGameManager <==> User@{ shape: brace-r }
 ```
 
 # 游戏框架
