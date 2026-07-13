@@ -62,7 +62,7 @@
 - zoneFuncType："entity"
 - lootId：使用的实体刷新配置
 - nbt：为单个实体提供的NBT数据
-> 事件结束后会统一写入GameId并生成实体，提前生z成实体需手动获取并写入GameId以避免在刷新物资时被清除
+> 事件结束后会统一写入GameId并生成实体，提前生成实体需手动获取并写入GameId以避免在刷新物资时被清除
 > - 获取GameId：AirdropEvent.getGameManager().getGameId()
 > - 写入GameId：EntityEvent.getGameManager().getGameIdWriteApi()#addGameId
 ```json
