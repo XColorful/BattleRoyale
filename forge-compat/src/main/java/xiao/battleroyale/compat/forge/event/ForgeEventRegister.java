@@ -41,6 +41,7 @@ public class ForgeEventRegister implements IEventRegister {
             case SERVER_CHAT_EVENT -> ServerChatEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_LEVEL_STAGE_EVENT -> RenderLevelStageEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_TRANSLUCENT_EVENT -> RenderTranslucentEventManager.register(eventHandler, priority, receiveCanceled);
+            case SUBMIT_CUSTOM_GEOMETRY_EVENT -> SubmitCustomGeometryEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_GUI_EVENT -> RenderGuiEventManager.register(eventHandler, priority, receiveCanceled);
             case ITEM_TOOLTIP_EVENT -> ItemTooltipEventManager.register(eventHandler, priority, receiveCanceled);
             default -> {
@@ -82,6 +83,7 @@ public class ForgeEventRegister implements IEventRegister {
             case SERVER_CHAT_EVENT -> ServerChatEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_LEVEL_STAGE_EVENT -> RenderLevelStageEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_TRANSLUCENT_EVENT -> RenderTranslucentEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case SUBMIT_CUSTOM_GEOMETRY_EVENT -> SubmitCustomGeometryEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_GUI_EVENT -> RenderGuiEventManager.unregister(eventHandler, priority, receiveCanceled);
             case ITEM_TOOLTIP_EVENT -> ItemTooltipEventManager.unregister(eventHandler, priority, receiveCanceled);
             default -> {

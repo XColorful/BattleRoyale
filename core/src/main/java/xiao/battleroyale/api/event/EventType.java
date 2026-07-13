@@ -3,6 +3,7 @@ package xiao.battleroyale.api.event;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -45,6 +46,8 @@ public enum EventType {
     // render
     RENDER_LEVEL_STAGE_EVENT,
     RENDER_TRANSLUCENT_EVENT, // 单独拆一个事件，避免多次上锁，减少一点不必要的开销
+    @ApiStatus.AvailableSince("neoforge26.2")
+    SUBMIT_CUSTOM_GEOMETRY_EVENT,
     RENDER_GUI_EVENT,
     // display
     ITEM_TOOLTIP_EVENT;
@@ -97,6 +100,7 @@ public enum EventType {
                     SERVER_CHAT_EVENT.getName(),
 //                    RENDER_LEVEL_STAGE_EVENT.getName(),
 //                    RENDER_TRANSLUCENT_EVENT.getName(),
+//                    SUBMIT_CUSTOM_GEOMETRY_EVENT.getName(),
 //                    RENDER_GUI_EVENT.getName(),
 //                    ITEM_TOOLTIP_EVENT.getName(),
             }, builder);
