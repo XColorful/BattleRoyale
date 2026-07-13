@@ -5,8 +5,8 @@ import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.api.event.IRenderLevelStageEvent;
 import xiao.battleroyale.api.client.render.level.IClientSimpleZoneRenderer;
+import xiao.battleroyale.api.event.ISubmitCustomGeometryEvent;
 import xiao.battleroyale.api.event.client.render.SpecialZoneRenderEvent;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
@@ -51,7 +51,7 @@ public class AdditionalRender extends AbstractZoneSpecial {
     }
 
     @Override
-    public void additionalZoneRender(IRenderLevelStageEvent event, IClientSimpleZoneRenderer clientZoneRenderer, ClientSingleZoneData zoneData) {
+    public void additionalZoneRender(ISubmitCustomGeometryEvent event, IClientSimpleZoneRenderer clientZoneRenderer, ClientSingleZoneData zoneData) {
         if (BattleRoyale.getMcSide().isServerSide()) return;
         BattleRoyale.getEventPoster().postCustomEvent(new SpecialZoneRenderEvent(BattleRoyale.getClientGameDataManager(), protocol, jsonTag.deepCopy(), event, clientZoneRenderer, zoneData));
     }

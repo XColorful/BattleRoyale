@@ -8,21 +8,18 @@ import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.game.IClientGameDataManager;
 import xiao.battleroyale.api.client.render.level.IClientSimpleZoneRenderer;
-import xiao.battleroyale.api.event.CustomEventType;
-import xiao.battleroyale.api.event.ICustomEvent;
-import xiao.battleroyale.api.event.ICustomEventHandler;
-import xiao.battleroyale.api.event.IRenderLevelStageEvent;
+import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.event.EventDispatcher;
 
 public class SpecialZoneRenderEvent extends AbstractSpecialRenderEvent {
 
-    protected final IRenderLevelStageEvent event;
+    protected final ISubmitCustomGeometryEvent event;
     protected final IClientSimpleZoneRenderer clientZoneRenderer;
     protected final ClientSingleZoneData zoneData;
 
     public SpecialZoneRenderEvent(IClientGameDataManager clientGameDataManager, String protocol, @NotNull JsonObject jsonTag,
-                                  IRenderLevelStageEvent event, IClientSimpleZoneRenderer clientZoneRenderer, ClientSingleZoneData zoneData) {
+                                  ISubmitCustomGeometryEvent event, IClientSimpleZoneRenderer clientZoneRenderer, ClientSingleZoneData zoneData) {
         super(clientGameDataManager, protocol, jsonTag);
         this.event = event;
         this.clientZoneRenderer = clientZoneRenderer;
@@ -34,12 +31,12 @@ public class SpecialZoneRenderEvent extends AbstractSpecialRenderEvent {
         return CustomEventType.SPECIAL_ZONE_RENDER_EVENT;
     }
 
-    public IRenderLevelStageEvent getRenderEvent() {
+    public ISubmitCustomGeometryEvent getRenderEvent() {
         return event;
     }
 
     public Matrix4f getBaseModelView() {
-        return getRenderEvent().getModelViewMatrix();
+        return getRenderEvent().getPoseStack().last().pose();
     }
 
     public Vec3 getCameraPos() {

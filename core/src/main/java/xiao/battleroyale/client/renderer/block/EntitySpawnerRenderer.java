@@ -3,7 +3,6 @@ package xiao.battleroyale.client.renderer.block;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -29,7 +28,7 @@ public class EntitySpawnerRenderer extends AbstractBlockRenderer<EntitySpawnerBl
      * EntitySpawner 的 BlockBench 模型就 13 个方块，不整 {@link LootContainerRenderer} 的那套机制
      */
     @Override
-    public void render(@NotNull EntitySpawnerBlockEntity blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull RenderBuffers bufferIn, int combinedLightIn, int combinedOverlayIn,
+    public void render(@NotNull EntitySpawnerBlockEntity blockEntity, float partialTick, @NotNull PoseStack poseStack, int combinedLightIn, int combinedOverlayIn,
                        @NotNull BlockEntityRenderState renderState, @NotNull SubmitNodeCollector collector, @NotNull CameraRenderState cameraState) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
@@ -56,7 +55,7 @@ public class EntitySpawnerRenderer extends AbstractBlockRenderer<EntitySpawnerBl
         poseStack.pushPose();
         poseStack.translate(0.25F, 0, 0.25F);
         poseStack.scale(0.5F, 0.5F, 0.5F);
-        renderBlockModel(blockEntity, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+        renderBlockModel(blockEntity, poseStack, collector, combinedLightIn, combinedOverlayIn);
         poseStack.popPose();
     }
 

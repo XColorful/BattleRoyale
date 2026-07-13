@@ -1,11 +1,9 @@
 package xiao.battleroyale.client.renderer.level;
 
-import com.mojang.blaze3d.PrimitiveTopology;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.ByteBufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -15,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.IRenderLevelStageEvent;
-import xiao.battleroyale.api.event.RenderLevelStage;
+import xiao.battleroyale.api.event.ISubmitCustomGeometryEvent;
 import xiao.battleroyale.api.client.render.level.IClientTeamRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.*;
@@ -69,7 +67,7 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
     public void setTransparency(float a) { A = a; }
 
     private @Nullable Matrix4f currentZoneMatrix;
-    private @Nullable BufferBuilder consumer;
+    private @Nullable VertexConsumer consumer;
     public @Nullable Matrix4f getCurrentZoneMatrix() {
         return currentZoneMatrix;
     }
@@ -84,14 +82,14 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
     @Override
     public boolean registerRenderEventHandler() {
         ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
-        customEventRegister.register(get(), EventType.RENDER_TRANSLUCENT_EVENT, EventPriority.NORMAL, false);
+        customEventRegister.register(get(), EventType.SUBMIT_CUSTOM_GEOMETRY_EVENT, EventPriority.NORMAL, false);
         return true;
     }
 
     @Override
     public boolean unregisterRenderEventHandler() {
         ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
-        customEventRegister.unregister(get(), EventType.RENDER_TRANSLUCENT_EVENT, EventPriority.NORMAL, false);
+        customEventRegister.unregister(get(), EventType.SUBMIT_CUSTOM_GEOMETRY_EVENT, EventPriority.NORMAL, false);
         return true;
     }
 
@@ -101,13 +99,14 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
     }
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
-        if (eventType == EventType.RENDER_TRANSLUCENT_EVENT) {
-            onAfterTranslucentBlocks((IRenderLevelStageEvent) event);
+        if (eventType == EventType.SUBMIT_CUSTOM_GEOMETRY_EVENT) {
+            onSubmitCustomGeometry((ISubmitCustomGeometryEvent) event);
         } else {
             onReceiveWrongEvent(eventType);
         }
     }
 
+    @Deprecated(since = "neoforge26.2")
     public void onRenderLevelStage(IRenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStage.AFTER_TRANSLUCENT_BLOCKS) {
             return;
@@ -115,7 +114,7 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
         onAfterTranslucentBlocks(event);
     }
 
-    public void onAfterTranslucentBlocks(IRenderLevelStageEvent event) {
+    public void onSubmitCustomGeometry(ISubmitCustomGeometryEvent event) {
         if (!enableTeamZone) {
             return;
         }
@@ -130,11 +129,11 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
             return;
         }
 
-//        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         Vec3 cameraPos = event.getCamera_getPosition();
         float partialTicks = event.getPartialTick();
 
-        BufferBuilder currentConsumer = new BufferBuilder(new ByteBufferBuilder(4096), PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        SubmitNodeCollector collector = event.getSubmitNodeCollector();
+        PoseStack poseStack = event.getPoseStack();
 
         int worldMaxBuildHeight = mc.level.dimensionType().minY() + mc.level.dimensionType().height();
 
@@ -171,11 +170,14 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
 
                 float cylinderHeight = (float) (worldMaxBuildHeight - posY - teammateHeight);
 
+                final boolean _renderBoundingBox = renderBoundingBox;
+                final boolean _renderBeacon = renderBeacon;
+                collector.submitCustomGeometry(poseStack, TEAM_MARKER_RENDER_TYPE, (pose, currentConsumer) -> {
                 // 将坐标系的原点平移到玩家的脚底中心
-                currentZoneMatrix = ZoneRenderer.createCenterOffsetMatrix(event, posX, posY, posZ, cameraPos);
+                currentZoneMatrix = ZoneRenderer.createCenterOffsetMatrix(pose.pose(), posX, posY, posZ, cameraPos);
                 consumer = currentConsumer;
 
-                if (renderBoundingBox) {
+                if (_renderBoundingBox) {
                     // 渲染长方体
                     Matrix4f boundingBoxMatrix = new Matrix4f(currentZoneMatrix);
                     // 向上平移长方体高度的一半，使其中心与玩家身体中心对齐
@@ -183,7 +185,7 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
                     Shape3D.drawFilledCuboid(boundingBoxMatrix, consumer, r, g, b, a,
                             baseWidth / 2.0F, teammateHeight / 2.0F, baseDepth / 2.0F);
                 }
-                if (renderBeacon) {
+                if (_renderBeacon) {
                     // 渲染圆柱体
                     Matrix4f beaconMatrix = new Matrix4f(currentZoneMatrix);
                     // 向上平移到长方体的顶部
@@ -194,8 +196,8 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
 
                 currentZoneMatrix = null;
                 consumer = null;
+                });
             }
         }
-//        bufferSource.endBatch();
     }
 }

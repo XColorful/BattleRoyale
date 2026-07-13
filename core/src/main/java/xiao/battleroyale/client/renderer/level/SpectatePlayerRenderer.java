@@ -1,8 +1,8 @@
 package xiao.battleroyale.client.renderer.level;
 
-import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.IRenderLevelStageEvent;
-import xiao.battleroyale.api.event.RenderLevelStage;
+import xiao.battleroyale.api.event.ISubmitCustomGeometryEvent;
 import xiao.battleroyale.api.client.render.level.IClientSpectateRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.*;
@@ -72,7 +72,7 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
     public int getScanFrequency() { return scanFrequency; }
 
     private @Nullable Matrix4f currentZoneMatrix;
-    private @Nullable BufferBuilder consumer;
+    private @Nullable VertexConsumer consumer;
     public @Nullable Matrix4f getCurrentZoneMatrix() {
         return currentZoneMatrix;
     }
@@ -87,14 +87,14 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
     @Override
     public boolean registerRenderEventHandler() {
         ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
-        customEventRegister.register(get(), EventType.RENDER_TRANSLUCENT_EVENT, EventPriority.LOW, false);
+        customEventRegister.register(get(), EventType.SUBMIT_CUSTOM_GEOMETRY_EVENT, EventPriority.LOW, false);
         return true;
     }
 
     @Override
     public boolean unregisterRenderEventHandler() {
         ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
-        customEventRegister.unregister(get(), EventType.RENDER_TRANSLUCENT_EVENT, EventPriority.LOW, false);
+        customEventRegister.unregister(get(), EventType.SUBMIT_CUSTOM_GEOMETRY_EVENT, EventPriority.LOW, false);
         return true;
     }
 
@@ -104,8 +104,8 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
     }
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
-        if (eventType == EventType.RENDER_TRANSLUCENT_EVENT) {
-            onAfterTranslucentBlocks((IRenderLevelStageEvent) event);
+        if (eventType == EventType.SUBMIT_CUSTOM_GEOMETRY_EVENT) {
+            onSubmitCustomGeometry((ISubmitCustomGeometryEvent) event);
         } else {
             onReceiveWrongEvent(eventType);
         }
@@ -132,6 +132,7 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
         }
     }
 
+    @Deprecated(since = "neoforge26.2")
     public void onRenderLevelStage(IRenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStage.AFTER_TRANSLUCENT_BLOCKS) {
             return;
@@ -139,7 +140,7 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
         onAfterTranslucentBlocks(event);
     }
 
-    public void onAfterTranslucentBlocks(IRenderLevelStageEvent event) {
+    public void onSubmitCustomGeometry(ISubmitCustomGeometryEvent event) {
         if (!enableSpectateRender) {
             return;
         }
@@ -154,15 +155,15 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
             return;
         }
 
-//        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         Vec3 cameraPos = event.getCamera_getPosition();
         float partialTicks = event.getPartialTick();
 
-        BufferBuilder currentConsumer = new BufferBuilder(new ByteBufferBuilder(4096), PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        SubmitNodeCollector collector = event.getSubmitNodeCollector();
+        PoseStack poseStack = event.getPoseStack();
 
         int worldMaxBuildHeight = mc.level.dimensionType().minY() + mc.level.dimensionType().height();
 
-        float r, g, b, a = A;
+        float a = A;
         for (UUID uuid : cachedSpectatePlayerUUID) {
             ClientSpectateData.UUIDrgb uuidRGB = spectateData.uuidToColor.mapGet(uuid);
             if (uuidRGB == null) { // 不立即更新spectateData
@@ -174,6 +175,7 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
             }
 
             // 颜色
+            final float r, g, b;
             if (useClientColor) {
                 r = R;
                 g = G;
@@ -196,11 +198,14 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
 
             float cylinderHeight = (float) (worldMaxBuildHeight - posY - playerHeight);
 
+            final boolean _renderBoundingBox = renderBoundingBox;
+            final boolean _renderBeacon = renderBeacon;
+            collector.submitCustomGeometry(poseStack, SPECTATE_PLAYER_RENDER_TYPE, (pose, currentConsumer) -> {
             // 将坐标系的原点平移到玩家的脚底中心
-            currentZoneMatrix = ZoneRenderer.createCenterOffsetMatrix(event, posX, posY, posZ, cameraPos);
+            currentZoneMatrix = ZoneRenderer.createCenterOffsetMatrix(pose.pose(), posX, posY, posZ, cameraPos);
             consumer = currentConsumer;
 
-            if (renderBoundingBox) {
+            if (_renderBoundingBox) {
                 // 渲染长方体
                 Matrix4f boundingBoxMatrix = new Matrix4f(currentZoneMatrix);
                 // 向上平移长方体高度的一半，使其中心与玩家身体中心对齐
@@ -208,7 +213,7 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
                 Shape3D.drawFilledCuboid(boundingBoxMatrix, consumer, r, g, b, a,
                         baseWidth / 2.0F, playerHeight / 2.0F, baseDepth / 2.0F);
             }
-            if (renderBeacon) {
+            if (_renderBeacon) {
                 // 渲染圆柱体
                 Matrix4f beaconMatrix = new Matrix4f(currentZoneMatrix);
                 // 向上平移到长方体的顶部
@@ -219,7 +224,7 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
 
             currentZoneMatrix = null;
             consumer = null;
+            });
         }
-//        bufferSource.endBatch();
     }
 }

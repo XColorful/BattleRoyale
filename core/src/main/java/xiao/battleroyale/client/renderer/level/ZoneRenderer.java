@@ -1,12 +1,10 @@
 package xiao.battleroyale.client.renderer.level;
 
-import com.mojang.blaze3d.PrimitiveTopology;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.ByteBufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -14,13 +12,14 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.event.IRenderLevelStageEvent;
-import xiao.battleroyale.api.event.RenderLevelStage;
+import xiao.battleroyale.api.event.ISubmitCustomGeometryEvent;
 import xiao.battleroyale.api.client.game.sub.IClientZoneDataManager;
 import xiao.battleroyale.api.client.render.level.IClientZoneRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
 import xiao.battleroyale.client.renderer.CustomRenderType;
+import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 
 public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
 
@@ -60,7 +59,7 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
     public void setEllipsoidSegments(int segments) { ELLIPSOID_SEGMENTS = segments; }
 
     private @Nullable Matrix4f currentZoneMatrix;
-    private @Nullable BufferBuilder consumer;
+    private @Nullable VertexConsumer consumer;
     public @Nullable Matrix4f getCurrentZoneMatrix() {
         return currentZoneMatrix;
     }
@@ -75,14 +74,14 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
     @Override
     public boolean registerRenderEventHandler() {
         ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
-        customEventRegister.register(get(), EventType.RENDER_TRANSLUCENT_EVENT, EventPriority.HIGH, false);
+        customEventRegister.register(get(), EventType.SUBMIT_CUSTOM_GEOMETRY_EVENT, EventPriority.HIGH, false);
         return true;
     }
 
     @Override
     public boolean unregisterRenderEventHandler() {
         ICustomEventRegister customEventRegister = BattleRoyale.getEventRegister();
-        customEventRegister.unregister(get(), EventType.RENDER_TRANSLUCENT_EVENT, EventPriority.HIGH, false);
+        customEventRegister.unregister(get(), EventType.SUBMIT_CUSTOM_GEOMETRY_EVENT, EventPriority.HIGH, false);
         return true;
     }
 
@@ -92,13 +91,14 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
     }
     @Override
     public void handleEvent(EventType eventType, IEvent event) {
-        if (eventType == EventType.RENDER_TRANSLUCENT_EVENT) {
-            onAfterTranslucentBlocks((IRenderLevelStageEvent) event);
+        if (eventType == EventType.SUBMIT_CUSTOM_GEOMETRY_EVENT) {
+            onSubmitCustomGeometry((ISubmitCustomGeometryEvent) event);
         } else {
             onReceiveWrongEvent(eventType);
         }
     }
 
+    @Deprecated(since = "neoforge26.2")
     public void onRenderLevelStage(IRenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStage.AFTER_TRANSLUCENT_BLOCKS) {
             return;
@@ -106,7 +106,10 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
         onAfterTranslucentBlocks(event);
     }
 
-    public void onAfterTranslucentBlocks(IRenderLevelStageEvent event) {
+    /**
+     * 处理 SubmitCustomGeometryEvent，将区域渲染通过 submitCustomGeometry 提交到渲染管线。
+     */
+    public void onSubmitCustomGeometry(ISubmitCustomGeometryEvent event) {
         IClientZoneDataManager clientZoneDataManager = BattleRoyale.getClientGameDataManager();
         if (!clientZoneDataManager.hasClientZone()) {
             return;
@@ -118,8 +121,10 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
             return;
         }
 
-//        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         Vec3 cameraPos = event.getCamera_getPosition();
+
+        SubmitNodeCollector collector = event.getSubmitNodeCollector();
+        PoseStack poseStack = event.getPoseStack();
 
         float partialTick = event.getPartialTick();
         for (ClientSingleZoneData zoneData : clientZoneDataManager.getActiveZones().values()) {
@@ -134,21 +139,28 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
             double dimY = Mth.lerp(partialTick, dimensionOld.y, dimension.y);
             double dimZ = Mth.lerp(partialTick, dimensionOld.z, dimension.z);
             double rotateDegree = Mth.lerp(partialTick, zoneData.rotateDegreeOld, zoneData.rotateDegree);
+            //
+            final ZoneShapeType zoneData_shapeType = zoneData.shapeType;
+            final int zoneData_segments = zoneData.segments;
+            final float zoneData_r = zoneData.r; final float zoneData_g = zoneData.g; final float zoneData_b = zoneData.b; float zoneData_a = zoneData.a;
+            collector.submitCustomGeometry(poseStack,
+                    zoneData_a < 0.999F ? TRANSLUCENT_ZONE : OPAQUE_ZONE,
+                    (pose, currentConsumer) -> {
 
-            currentZoneMatrix = createCenterOffsetMatrix(event, centerX, centerY, centerZ, cameraPos);
+            currentZoneMatrix = createCenterOffsetMatrix(pose.pose(), centerX, centerY, centerZ, cameraPos);
 
             // 正角度为顺时针旋转区域
             currentZoneMatrix.rotate(Axis.YP.rotationDegrees((float) -rotateDegree));
 
-            float r = zoneData.r;
-            float g = zoneData.g;
-            float b = zoneData.b;
-            float a = zoneData.a;
+            float r = zoneData_r;
+            float g = zoneData_g;
+            float b = zoneData_b;
+            float a = zoneData_a;
 
             // 对光影没用，对原版云有用
-            consumer = new BufferBuilder(new ByteBufferBuilder(4096), PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            consumer = currentConsumer;
 
-            switch (zoneData.shapeType) {
+            switch (zoneData_shapeType) {
                 // 2D shape
                 case CIRCLE ->
                         Shape2D.drawFilledPolygonCylinder(currentZoneMatrix, consumer, r, g, b, a,
@@ -161,13 +173,13 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
                                 (float) dimX, (float) dimY, 6, 0);
                 case POLYGON -> // 尖顶正多边形
                         Shape2D.drawFilledPolygonCylinder(currentZoneMatrix, consumer, r, g, b, a,
-                                (float) dimX, (float) dimY, zoneData.segments, POINTING_POLYGON_ANGLE);
+                                (float) dimX, (float) dimY, zoneData_segments, POINTING_POLYGON_ANGLE);
                 case ELLIPSE ->
                         Shape2D.drawFilledEllipseCylinder(currentZoneMatrix, consumer, r, g, b, a,
                                 (float) dimX, (float) dimZ, (float) dimY, ELLIPSE_SEGMENTS);
                 case STAR -> // 尖顶星形
                         Shape2D.drawFilledStarCylinder(currentZoneMatrix, consumer, r, g, b, a,
-                                (float) dimX, (float) dimZ, (float) dimY, zoneData.segments, POINTING_POLYGON_ANGLE);
+                                (float) dimX, (float) dimZ, (float) dimY, zoneData_segments, POINTING_POLYGON_ANGLE);
                 case CROSS -> // 十字形
                         Shape2D.drawFilledCrossCylinder(currentZoneMatrix, consumer, r, g, b, a,
                                 (float) dimX, (float) dimZ, (float) dimY);
@@ -194,8 +206,8 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
 
             this.currentZoneMatrix = null;
             this.consumer = null;
+            });
         }
-//        bufferSource.endBatch();
     }
 
     /**
@@ -224,6 +236,12 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
         return createCenterOffsetMatrix(new Matrix4f(), worldCenter.x, worldCenter.y, worldCenter.z, cameraPos);
     }
     public static Matrix4f createCenterOffsetMatrix(IRenderLevelStageEvent event, double centerX, double centerY, double centerZ, Vec3 cameraPos) {
+        return createCenterOffsetMatrix(new Matrix4f(), centerX, centerY, centerZ, cameraPos);
+    }
+    public static Matrix4f createCenterOffsetMatrix(ISubmitCustomGeometryEvent event, Vec3 worldCenter, Vec3 cameraPos) {
+        return createCenterOffsetMatrix(new Matrix4f(), worldCenter.x, worldCenter.y, worldCenter.z, cameraPos);
+    }
+    public static Matrix4f createCenterOffsetMatrix(ISubmitCustomGeometryEvent event, double centerX, double centerY, double centerZ, Vec3 cameraPos) {
         return createCenterOffsetMatrix(new Matrix4f(), centerX, centerY, centerZ, cameraPos);
     }
 }
