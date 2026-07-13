@@ -41,6 +41,7 @@ public class NeoEventRegister implements IEventRegister {
             case SERVER_CHAT_EVENT -> NeoServerChatEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_LEVEL_STAGE_EVENT -> NeoRenderLevelStageEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_TRANSLUCENT_EVENT -> NeoRenderTranslucentEventManager.register(eventHandler, priority, receiveCanceled);
+            case SUBMIT_CUSTOM_GEOMETRY_EVENT -> NeoSubmitCustomGeometryEventManager.register(eventHandler, priority, receiveCanceled);
             case RENDER_GUI_EVENT -> NeoRenderGuiEventManager.register(eventHandler, priority, receiveCanceled);
             case ITEM_TOOLTIP_EVENT -> NeoItemTooltipEventManager.register(eventHandler, priority, receiveCanceled);
             default -> {
@@ -82,6 +83,7 @@ public class NeoEventRegister implements IEventRegister {
             case SERVER_CHAT_EVENT -> NeoServerChatEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_LEVEL_STAGE_EVENT -> NeoRenderLevelStageEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_TRANSLUCENT_EVENT -> NeoRenderTranslucentEventManager.unregister(eventHandler, priority, receiveCanceled);
+            case SUBMIT_CUSTOM_GEOMETRY_EVENT -> NeoSubmitCustomGeometryEventManager.unregister(eventHandler, priority, receiveCanceled);
             case RENDER_GUI_EVENT -> NeoRenderGuiEventManager.unregister(eventHandler, priority, receiveCanceled);
             case ITEM_TOOLTIP_EVENT -> NeoItemTooltipEventManager.unregister(eventHandler, priority, receiveCanceled);
             default -> {
