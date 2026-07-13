@@ -1,7 +1,7 @@
 package xiao.battleroyale.api.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.RenderBuffers;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,7 +17,7 @@ public interface IBlockModelRenderer {
      * @param blockStateModel
      * @param modelBlockRenderer
      * @param poseStack PoseStack
-     * @param bufferIn 缓冲区源
+     * @param collector 提交节点收集器
      * @param combinedLightIn 综合光照
      * @param combinedOverlayIn 综合覆盖
      */
@@ -26,7 +26,7 @@ public interface IBlockModelRenderer {
             @NotNull BlockStateModel blockStateModel,
             @NotNull ModelBlockRenderer modelBlockRenderer,
             @NotNull PoseStack poseStack,
-            @NotNull RenderBuffers bufferIn,
+            @NotNull SubmitNodeCollector collector,
             int combinedLightIn,
             int combinedOverlayIn
     );

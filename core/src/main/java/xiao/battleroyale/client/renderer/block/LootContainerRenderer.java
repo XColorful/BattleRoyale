@@ -8,7 +8,6 @@ import it.unimi.dsi.fastutil.longs.Long2BooleanMaps;
 import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
@@ -108,7 +107,7 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
     protected abstract int getLootContainerSize();
 
     @Override
-    public void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull RenderBuffers bufferIn, int combinedLightIn, int combinedOverlayIn,
+    public void render(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, int combinedLightIn, int combinedOverlayIn,
                        @NotNull LootRenderState renderState, @NotNull SubmitNodeCollector collector, @NotNull CameraRenderState cameraState) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
@@ -171,10 +170,10 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
         // ---6. 渲染执行---
         poseStack.pushPose();
         if (!empty) {
-            renderItems(blockEntity, partialTick, poseStack, bufferIn, combinedLightIn, combinedOverlayIn,
+            renderItems(blockEntity, partialTick, poseStack, combinedLightIn, combinedOverlayIn,
                     renderState, collector, cameraState);
         } else {
-            renderBlockModel(blockEntity, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+            renderBlockModel(blockEntity, poseStack, collector, combinedLightIn, combinedOverlayIn);
         }
         poseStack.popPose();
     }
@@ -208,11 +207,11 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
         return false;
     }
 
-    protected void renderItems(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull RenderBuffers bufferIn, int combinedLightIn, int combinedOverlayIn,
+    protected void renderItems(@NotNull T blockEntity, float partialTick, @NotNull PoseStack poseStack, int combinedLightIn, int combinedOverlayIn,
                                @NotNull LootRenderState renderState, @NotNull SubmitNodeCollector collector, @NotNull CameraRenderState cameraState) {
         ItemStack[] items = getItems(blockEntity);
         if (items == null || items.length == 0) { // 照理不应该发生，除非hasItem有问题
-            renderBlockModel(blockEntity, poseStack, bufferIn, combinedLightIn, combinedOverlayIn);
+            renderBlockModel(blockEntity, poseStack, collector, combinedLightIn, combinedOverlayIn);
             return;
         }
 
