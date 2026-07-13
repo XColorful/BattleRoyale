@@ -1,5 +1,44 @@
 [English](#English)
 
+```mermaid
+flowchart RL
+	subgraph Custom BattleRoyale
+		%% --------IGameManager分形--------
+		subgraph IGameSubManager
+			subgraph IGameMainManager
+				IGameManager
+			end
+			IGameruleManager & IGameLobbyManager & IGameLootManager & IGameProcessManager & ISpawnManager & IStatsManager & ITeamManager & IZoneManager <--> IGameManager
+		end
+		
+		%% --------实现类--------
+		GameManager ==> IGameManager@{ shape: fr-rect }
+		GameruleManager ==> IGameruleManager@{ shape: div-rect }
+		GameLobbyManager ==> IGameLobbyManager@{ shape: div-rect }
+		GameLootManager ==> IGameLootManager@{ shape: div-rect }
+		GameProcessManager ==> IGameProcessManager@{ shape: div-rect }
+		SpawnManager ==> ISpawnManager@{ shape: div-rect }
+		StatsManager ==> IStatsManager@{ shape: div-rect }
+		TeamManager ==> ITeamManager@{ shape: div-rect }
+		ZoneManager ==> IZoneManager@{ shape: div-rect }
+		
+		%% --------切面父类（可选）--------
+		AbstractGameManager@{ shape: lean-l, label: "_AbstractGameManager_ (Optional)" }
+		AbstractGameManager -.-> GameManager@{ shape: lean-l }
+		AbstractGameManager -.-> GameruleManager@{ shape: lean-l }
+		AbstractGameManager -.-> GameLobbyManager@{ shape: lean-l }
+		AbstractGameManager -.-> GameLootManager@{ shape: lean-l }
+		AbstractGameManager -.-> GameProcessManager@{ shape: lean-l }
+		AbstractGameManager -.-> SpawnManager@{ shape: lean-l }
+		AbstractGameManager -.-> StatsManager@{ shape: lean-l }
+		AbstractGameManager -.-> TeamManager@{ shape: lean-l }
+		AbstractGameManager -.-> ZoneManager@{ shape: lean-l }
+	end
+
+	%% --------外部调用--------
+	IGameManager <==> User@{ shape: brace-r }
+```
+
 # 游戏框架
 
 游戏框架设计为**主管理器**调度各**子管理器**，将各功能拆分至子管理器：
