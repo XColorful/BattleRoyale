@@ -4,6 +4,7 @@ import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import org.jetbrains.annotations.ApiStatus;
 import xiao.battleroyale.api.event.EventPriority;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEventHandler;
