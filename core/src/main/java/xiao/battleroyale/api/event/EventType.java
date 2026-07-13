@@ -102,6 +102,7 @@ public enum EventType {
                     SERVER_CHAT_EVENT.getName(),
 //                    RENDER_LEVEL_STAGE_EVENT.getName(),
 //                    RENDER_TRANSLUCENT_EVENT.getName(),
+//                    SUBMIT_CUSTOM_GEOMETRY_EVENT.getName(),
 //                    RENDER_GUI_EVENT.getName(),
 //                    ITEM_TOOLTIP_EVENT.getName(),
             }, builder);
