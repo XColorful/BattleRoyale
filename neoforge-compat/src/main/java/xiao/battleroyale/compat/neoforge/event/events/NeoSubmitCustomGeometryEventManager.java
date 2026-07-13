@@ -10,6 +10,7 @@ import xiao.battleroyale.api.event.IEventHandler;
 import xiao.battleroyale.compat.neoforge.event.NeoEvent;
 import xiao.battleroyale.compat.neoforge.event.NeoSubmitCustomGeometryEvent;
 
+@ApiStatus.AvailableSince("neoforge26.2")
 public class NeoSubmitCustomGeometryEventManager {
 
     public static boolean register(IEventHandler eventHandler, EventPriority priority, boolean receiveCanceled) {

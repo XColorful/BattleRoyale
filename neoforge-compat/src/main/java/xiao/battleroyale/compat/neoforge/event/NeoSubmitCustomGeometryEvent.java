@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.ISubmitCustomGeometryEvent;
 
+@ApiStatus.AvailableSince("neoforge26.2")
 public class NeoSubmitCustomGeometryEvent extends NeoEvent implements ISubmitCustomGeometryEvent {
 
     private final SubmitCustomGeometryEvent typedEvent;
