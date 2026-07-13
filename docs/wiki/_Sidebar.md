@@ -65,6 +65,7 @@
 		- [临时数据](https://github.com/XColorful/BattleRoyale/wiki/Temp-data)
 	- 模组开发教程
 		- [跨版本模组开发](https://github.com/XColorful/BattleRoyale/wiki/Cross-version-mod-development)
+		- [跨版本开发流](https://github.com/XColorful/BattleRoyale/wiki/Cross-version-development-flow)
 
 - [Home](https://github.com/XColorful/BattleRoyale/wiki#English)
 	- [Configuration Introduction](https://github.com/XColorful/BattleRoyale/wiki/Configuration-introduction#English)
@@ -129,3 +130,4 @@
 		- [Temporary data](https://github.com/XColorful/BattleRoyale/wiki/Temp-data#English)
 	- Mod development tutorial
 		- [Cross-version mod development](https://github.com/XColorful/BattleRoyale/wiki/Cross-version-mod-development#English)
+		- [Cross-version development flow](https://github.com/XColorful/BattleRoyale/wiki/Cross-version-development-flow#English)

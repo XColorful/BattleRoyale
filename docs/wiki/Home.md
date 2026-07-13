@@ -118,6 +118,7 @@
 ## 模组开发教程
 
 - [跨版本模组开发](https://github.com/XColorful/BattleRoyale/wiki/Cross-version-mod-development)
+- [跨版本开发流](https://github.com/XColorful/BattleRoyale/wiki/Cross-version-development-flow)
 
 # English
 
@@ -235,3 +236,4 @@
 ## Mod development tutorial
 
 - [Cross-version mod development](https://github.com/XColorful/BattleRoyale/wiki/Cross-version-mod-development#English)
+- [Cross-version development flow](https://github.com/XColorful/BattleRoyale/wiki/Cross-version-development-flow#English)
