@@ -1,11 +1,13 @@
 package xiao.battleroyale.client.renderer;
 
+import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.client.renderer.BindGroupLayouts;
 import net.minecraft.client.renderer.rendertype.OutputTarget;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -25,7 +27,10 @@ public class CustomRenderType {
     private static final Identifier WHITE_TEXTURE = BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:textures/white.png", BattleRoyale.MOD_ID));
 
     // 先加载
-    public static final RenderPipeline SOLID_OPAQUE_COLOR_PIPELINE = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
+    // 26.2: MATRICES_PROJECTION_SNIPPET 不再存在，手动构建: GLOBALS + MATRICES_PROJECTION + FOG
+    public static final RenderPipeline SOLID_OPAQUE_COLOR_PIPELINE = RenderPipeline.builder(RenderPipelines.GLOBALS_SNIPPET)
+            .withBindGroupLayout(BindGroupLayouts.MATRICES_PROJECTION)
+            .withBindGroupLayout(BindGroupLayouts.FOG)
             .withLocation(BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:solid_opaque", BattleRoyale.MOD_ID)))
             .withVertexShader("core/position_color")
             .withFragmentShader("core/position_color")
@@ -33,8 +38,11 @@ public class CustomRenderType {
             .withDepthStencilState(DepthStencilState.DEFAULT)
             .withCull(false)
             .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+            .withPrimitiveTopology(PrimitiveTopology.QUADS)
             .build();
-    public static final RenderPipeline SOLID_TRANSLUCENT_COLOR_PIPELINE = RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
+    public static final RenderPipeline SOLID_TRANSLUCENT_COLOR_PIPELINE = RenderPipeline.builder(RenderPipelines.GLOBALS_SNIPPET)
+            .withBindGroupLayout(BindGroupLayouts.MATRICES_PROJECTION)
+            .withBindGroupLayout(BindGroupLayouts.FOG)
             .withLocation(BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:solid_translucent", BattleRoyale.MOD_ID)))
             .withVertexShader("core/position_color")
             .withFragmentShader("core/position_color")
@@ -42,6 +50,7 @@ public class CustomRenderType {
             .withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
             .withCull(false)
             .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+            .withPrimitiveTopology(PrimitiveTopology.QUADS)
             .build();
     // 后加载
     public static RenderType SolidTranslucentColor;
@@ -54,7 +63,6 @@ public class CustomRenderType {
                 // .useOverlay() // 默认为false
                 .setOutputTarget(OutputTarget.MAIN_TARGET)
                 .setOutline(RenderSetup.OutlineProperty.NONE) // 默认值 (无描边)
-//                .bufferSize(RenderType.BIG_BUFFER_SIZE) // TRANSIENT_BUFFER_SIZE (1536) 随便来个椭球就爆了, SMALL_BUFFER_SIZE形状一多就会导致1帧内两次draw call
                 // .sortOnUpload() // 默认为false
                 .createRenderSetup();
 
@@ -64,13 +72,12 @@ public class CustomRenderType {
         );
     }
 
-    private static RenderType createSolidOpaque() {// 1. 创建 RenderSetup.builder()
+    private static RenderType createSolidOpaque() {
         RenderSetup builder = RenderSetup.builder(SOLID_OPAQUE_COLOR_PIPELINE)
                 // .useLightmap() // 默认为false
                 // .useOverlay() // 默认为false
                 .setOutputTarget(OutputTarget.MAIN_TARGET)
                 .setOutline(RenderSetup.OutlineProperty.NONE) // 默认值 (无描边)
-//                .bufferSize(RenderType.BIG_BUFFER_SIZE) // TRANSIENT_BUFFER_SIZE (1536) 随便来个椭球就爆了, SMALL_BUFFER_SIZE形状一多就会导致1帧内两次draw call
                 .sortOnUpload()
                 .createRenderSetup();
 
