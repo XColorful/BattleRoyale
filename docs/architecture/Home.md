@@ -367,8 +367,13 @@
 ### 工具
 > _./util_
 
+> 统一封装项目通用能力
+> 
+> 当存在对应工具时，必须优先使用工具提供的统一接口，而非直接调用平台或 Minecraft API，以保持一致性与兼容性
+
 - ChatUtils：封装如何向玩家发送聊天栏消息、标题等
-- ClassUtils：基本数据类，用于简化算法和优化性能
+- ClassUtils：基本数据结构，用于简化算法
+	- 已封装组合数据结构：`ArraySet`、`QueueSet`、`ArrayMap`
 - ColorUtils：处理颜色字符串、游戏内颜色等
 - CommandUtils：向指令添加元素更便捷
 - GameUtils：游戏时间、游戏玩家相关
@@ -376,7 +381,8 @@
 - ListUtils：列表操作
 - NBTUtils：NBT 序列化
 - ScoreUtils：封装记分板调用及版本差异
-- SendUtils：封装网络消息的发送，使网络处理器（`NetworkHandler`）与项目主体解耦
+- SendUtils：网络消息统一发送入口
+	- 所有消息发送均通过此处，与网络实现（`NetworkHandler`）解耦
 - ServerUtils：服务端工具
 - StringUtils：解析/转换各种格式字符串、构建字符串
 - Vec3Utils：向量随机偏移、向量加减/线性插值等
@@ -749,8 +755,13 @@ Module division based on the `xiao.battleroyale` top-level package
 ### Utility
 > _./util_
 
+> Shared wrappers for common project functionality.
+>
+> When an equivalent utility exists, it must be used instead of calling platform or Minecraft APIs directly, to preserve consistency and compatibility.
+
 - ChatUtils: Encapsulate how to send chat messages, titles, etc. to players
-- ClassUtils: Basic data classes, used to simplify algorithms and optimize performance
+- ClassUtils: Basic data structures, used to simplify algorithms
+	- Encapsulates combined data structures: `ArraySet`, `QueueSet`, `ArrayMap`
 - ColorUtils: Handle color strings, in-game colors, etc.
 - CommandUtils: Add elements to commands more conveniently
 - GameUtils: Game time, game player related
@@ -758,7 +769,8 @@ Module division based on the `xiao.battleroyale` top-level package
 - ListUtils: List operations
 - NBTUtils: NBT serialization
 - ScoreUtils: Encapsulate scoreboard operations and handle version differences
-- SendUtils: Encapsulate the sending of network messages, decoupling `NetworkHandler` from the project main body
+- SendUtils: Unified entry point for sending network messages
+	- All network messages must be sent through this utility, decoupling callers from the underlying `NetworkHandler`
 - ServerUtils: Server-side tools
 - StringUtils: Parse/convert various format strings, build strings
 - Vec3Utils: Vector random offset, vector addition/subtraction/linear interpolation, etc.
