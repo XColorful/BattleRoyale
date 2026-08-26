@@ -11,7 +11,8 @@ Use documentation and existing implementations as the primary source of design i
 
 ### Tooling
 
-Assume an IntelliJ IDEA MCP server is available.
+Assume an IntelliJ IDEA MCP server is available; pass the worktree root as `projectPath` to select the matching IDEA window.
+Use `search_symbol` with `include_external: true` to locate classes, then use `read_file` to inspect their implementations.
 Prefer PSI-based code navigation over plain text search.
 Inspect Minecraft or platform source code through IDEA MCP when API usage is unclear.
 
