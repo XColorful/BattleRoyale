@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IItemTossEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class ForgeItemTossEvent extends ForgeEvent implements IItemTossEvent {
 
@@ -47,7 +48,7 @@ public class ForgeItemTossEvent extends ForgeEvent implements IItemTossEvent {
         Player player = this.getPlayer();
         Level level = player.level();
         if (level != null && level.isClientSide()) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 player.position(),
                 player.getRotationVector(),

@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IPlayerLoggedOutEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class ForgePlayerLoggedOutEvent extends ForgeEvent implements IPlayerLoggedOutEvent {
 
@@ -42,7 +43,7 @@ public class ForgePlayerLoggedOutEvent extends ForgeEvent implements IPlayerLogg
         @NotNull LivingEntity entity = this.getEntity();
         Level level = entity.level();
         if (level != null && level.isClientSide()) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 entity.position(),
                 entity.getRotationVector(),
