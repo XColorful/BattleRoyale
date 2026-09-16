@@ -10,6 +10,7 @@ import xiao.battleroyale.api.event.game.AbstractGameStatsEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public abstract class AbstractZoneEvent extends AbstractGameStatsEvent {
 
@@ -27,7 +28,7 @@ public abstract class AbstractZoneEvent extends AbstractGameStatsEvent {
     @Override
     public @NotNull CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         Vec3 zoneCenter = gameZone.getCenterPos(gameZone.getShapeProgress(gameManager.getGameTime()));
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 zoneCenter != null ? zoneCenter : Vec3.ZERO,
                 Vec2.ZERO,

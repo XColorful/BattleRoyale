@@ -22,6 +22,7 @@ import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEntityInteractSpecificEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class ForgeEntityInteractSpecificEvent extends ForgeEvent implements IEntityInteractSpecificEvent {
 
@@ -101,7 +102,7 @@ public class ForgeEntityInteractSpecificEvent extends ForgeEvent implements IEnt
         Level level = getLevel();
         if (level != null && level.isClientSide()) return null;
         Player player = this.getEntity();
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getBlockPos().getCenter(),
                 player.getRotationVector(),

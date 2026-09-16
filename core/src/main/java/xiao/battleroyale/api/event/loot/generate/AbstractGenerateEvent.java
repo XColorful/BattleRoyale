@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.loot.AbstractLootEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.loot.LootGenerator;
+import xiao.battleroyale.util.CommandUtils;
 
 public abstract class AbstractGenerateEvent<T extends BlockEntity> extends AbstractLootEvent {
 
@@ -31,7 +32,7 @@ public abstract class AbstractGenerateEvent<T extends BlockEntity> extends Abstr
 
     @Override
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 Vec3.atCenterOf(target.getBlockPos()),
                 Vec2.ZERO,

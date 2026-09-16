@@ -17,6 +17,7 @@ import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.game.stats.record.*;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.event.EventDispatcher;
+import xiao.battleroyale.util.CommandUtils;
 import xiao.battleroyale.util.GameUtils;
 
 public abstract class GamePlayerRecordEvent<T extends AbstractGamePlayerEventRecord<T>> extends CustomEvent {
@@ -44,7 +45,7 @@ public abstract class GamePlayerRecordEvent<T extends AbstractGamePlayerEventRec
     @Override
     public CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         @Nullable LivingEntity livingEntity = this.getLivingEntity();
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getGamePlayer().getLastPos(),
                 livingEntity != null ? livingEntity.getRotationVector() : Vec2.ZERO,
