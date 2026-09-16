@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.game.AbstractGameEvent;
 import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public abstract class AbstractGameTickEvent extends AbstractGameEvent {
 
@@ -24,7 +25,7 @@ public abstract class AbstractGameTickEvent extends AbstractGameEvent {
 
     @Override
     public @NotNull CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 gameManager.getGlobalCenterOffset(),
                 Vec2.ZERO,

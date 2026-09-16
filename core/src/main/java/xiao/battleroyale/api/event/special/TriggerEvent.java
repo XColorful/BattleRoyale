@@ -16,6 +16,7 @@ import xiao.battleroyale.api.event.ICustomEvent;
 import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.event.EventDispatcher;
+import xiao.battleroyale.util.CommandUtils;
 
 public class TriggerEvent extends CustomEvent {
 
@@ -70,7 +71,7 @@ public class TriggerEvent extends CustomEvent {
     @Override
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         @Nullable Entity triggerEntity = this.getTriggerEntity();
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getTriggerPos(),
                 triggerEntity != null ? triggerEntity.getRotationVector() : Vec2.ZERO,
