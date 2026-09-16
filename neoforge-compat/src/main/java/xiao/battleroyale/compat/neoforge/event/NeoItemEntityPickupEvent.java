@@ -15,6 +15,7 @@ import xiao.battleroyale.api.event.IItemEntityPickupEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.api.minecraft.TriResult;
 import xiao.battleroyale.compat.neoforge.minecraft.TriResultHelper;
+import xiao.battleroyale.util.CommandUtils;
 
 public class NeoItemEntityPickupEvent extends NeoEvent implements IItemEntityPickupEvent {
 
@@ -70,7 +71,7 @@ public class NeoItemEntityPickupEvent extends NeoEvent implements IItemEntityPic
         Player player = this.getPlayer();
         Level level = player.level();
         if (level != null && level.isClientSide()) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 player.position(),
                 player.getRotationVector(),
