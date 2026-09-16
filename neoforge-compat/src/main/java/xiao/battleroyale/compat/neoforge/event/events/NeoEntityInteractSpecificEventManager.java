@@ -39,36 +39,36 @@ public class NeoEntityInteractSpecificEventManager {
         @Override protected void unregisterToNeo() { NeoForge.EVENT_BUS.unregister(this); }
         @Override protected NeoEvent getNeoEventType(Event event) { return new NeoEntityInteractSpecificEvent(event); }
 
-        protected void handle(PlayerInteractEvent.EntityInteractSpecific event) { super.onEvent(event); }
+        protected void handle(PlayerInteractEvent.EntityInteract event) { super.onEvent(event); }
     }
 
     public static class NeoEntityInteractSpecificProxyHighest extends NeoEntityInteractSpecificProxy {
         static final NeoEntityInteractSpecificProxyHighest INSTANCE = new NeoEntityInteractSpecificProxyHighest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGHEST, receiveCanceled = true)
-        public void onEvent(PlayerInteractEvent.EntityInteractSpecific e) { handle(e); }
+        public void onEvent(PlayerInteractEvent.EntityInteract e) { handle(e); }
     }
 
     public static class NeoEntityInteractSpecificProxyHigh extends NeoEntityInteractSpecificProxy {
         static final NeoEntityInteractSpecificProxyHigh INSTANCE = new NeoEntityInteractSpecificProxyHigh();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGH, receiveCanceled = true)
-        public void onEvent(PlayerInteractEvent.EntityInteractSpecific e) { handle(e); }
+        public void onEvent(PlayerInteractEvent.EntityInteract e) { handle(e); }
     }
 
     public static class NeoEntityInteractSpecificProxyNormal extends NeoEntityInteractSpecificProxy {
         static final NeoEntityInteractSpecificProxyNormal INSTANCE = new NeoEntityInteractSpecificProxyNormal();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.NORMAL, receiveCanceled = true)
-        public void onEvent(PlayerInteractEvent.EntityInteractSpecific e) { handle(e); }
+        public void onEvent(PlayerInteractEvent.EntityInteract e) { handle(e); }
     }
 
     public static class NeoEntityInteractSpecificProxyLow extends NeoEntityInteractSpecificProxy {
         static final NeoEntityInteractSpecificProxyLow INSTANCE = new NeoEntityInteractSpecificProxyLow();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOW, receiveCanceled = true)
-        public void onEvent(PlayerInteractEvent.EntityInteractSpecific e) { handle(e); }
+        public void onEvent(PlayerInteractEvent.EntityInteract e) { handle(e); }
     }
 
     public static class NeoEntityInteractSpecificProxyLowest extends NeoEntityInteractSpecificProxy {
         static final NeoEntityInteractSpecificProxyLowest INSTANCE = new NeoEntityInteractSpecificProxyLowest();
         @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST, receiveCanceled = true)
-        public void onEvent(PlayerInteractEvent.EntityInteractSpecific e) { handle(e); }
+        public void onEvent(PlayerInteractEvent.EntityInteract e) { handle(e); }
     }
 }
