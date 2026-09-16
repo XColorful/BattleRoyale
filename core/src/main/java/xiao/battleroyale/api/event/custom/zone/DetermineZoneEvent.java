@@ -18,6 +18,7 @@ import xiao.battleroyale.api.game.zone.gamezone.ISpatialZone;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.game.zone.ZoneManager;
 import xiao.battleroyale.event.EventDispatcher;
+import xiao.battleroyale.util.CommandUtils;
 
 public class DetermineZoneEvent extends CustomEvent {
 
@@ -73,7 +74,7 @@ public class DetermineZoneEvent extends CustomEvent {
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         Vec3 center = spatialZone.getStartCenterPos();
         @NotNull ServerLevel serverLevel = this.getServerLevel();
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 center != null ? center : Vec3.ZERO,
                 Vec2.ZERO,

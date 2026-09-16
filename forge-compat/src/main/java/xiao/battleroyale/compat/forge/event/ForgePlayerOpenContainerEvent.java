@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IPlayerOpenContainerEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class ForgePlayerOpenContainerEvent extends ForgeEvent implements IPlayerOpenContainerEvent {
 
@@ -47,7 +48,7 @@ public class ForgePlayerOpenContainerEvent extends ForgeEvent implements IPlayer
         Player player = this.getPlayer();
         Level level = player.level();
         if (level != null && level.isClientSide()) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 player.position(),
                 player.getRotationVector(),
