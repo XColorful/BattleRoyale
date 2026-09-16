@@ -14,6 +14,7 @@ import xiao.battleroyale.api.event.ICustomEvent;
 import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.event.EventDispatcher;
+import xiao.battleroyale.util.CommandUtils;
 import xiao.battleroyale.util.StringUtils;
 
 public class RegisterManagerEvent extends CustomEvent {
@@ -43,7 +44,8 @@ public class RegisterManagerEvent extends CustomEvent {
 
     @Override
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
-        return this.source != null ? this.source : new CommandSourceStack(
+        if (this.source != null) return this.source;
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 Vec3.ZERO,
                 Vec2.ZERO,

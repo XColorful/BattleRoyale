@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IServerChatEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class ForgeServerChatEvent extends ForgeEvent implements IServerChatEvent {
 
@@ -55,7 +56,7 @@ public class ForgeServerChatEvent extends ForgeEvent implements IServerChatEvent
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         ServerPlayer player = this.getPlayer();
         Level level = player.level();
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 player.position(),
                 player.getRotationVector(),
