@@ -23,6 +23,7 @@ import xiao.battleroyale.api.minecraft.HandAction;
 import xiao.battleroyale.api.minecraft.TriResult;
 import xiao.battleroyale.compat.neoforge.minecraft.HandActionHelper;
 import xiao.battleroyale.compat.neoforge.minecraft.TriResultHelper;
+import xiao.battleroyale.util.CommandUtils;
 
 public class NeoLeftClickBlockEvent extends NeoEvent implements ILeftClickBlockEvent {
 
@@ -107,7 +108,7 @@ public class NeoLeftClickBlockEvent extends NeoEvent implements ILeftClickBlockE
         Level level = getLevel();
         if (level != null && level.isClientSide()) return null;
         Player player = this.getEntity();
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 Vec3.atCenterOf(this.getBlockPos()),
                 player.getRotationVector(),

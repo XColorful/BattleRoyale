@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IBlockBreakEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class NeoBlockBreakEvent extends NeoEvent implements IBlockBreakEvent {
 
@@ -67,7 +68,7 @@ public class NeoBlockBreakEvent extends NeoEvent implements IBlockBreakEvent {
         Entity entity = this.getPlayer();
         Level level = entity.level();
         if (level != null && level.isClientSide()) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 Vec3.atCenterOf(this.getBlockPos()),
                 entity.getRotationVector(),

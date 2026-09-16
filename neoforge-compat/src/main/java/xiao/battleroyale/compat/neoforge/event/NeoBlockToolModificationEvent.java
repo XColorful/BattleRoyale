@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IBlockToolModificationEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class NeoBlockToolModificationEvent extends NeoEvent implements IBlockToolModificationEvent {
 
@@ -84,7 +85,7 @@ public class NeoBlockToolModificationEvent extends NeoEvent implements IBlockToo
         Entity entity = this.getPlayer();
         Level level = entity != null ? entity.level() : null;
         if (level != null && level.isClientSide()) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 Vec3.atCenterOf(this.getBlockPos()),
                 entity != null ? entity.getRotationVector() : Vec2.ZERO,
