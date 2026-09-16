@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEntityPlaceBlockEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class NeoEntityPlaceBlockEvent extends NeoEvent implements IEntityPlaceBlockEvent {
 
@@ -70,7 +71,7 @@ public class NeoEntityPlaceBlockEvent extends NeoEvent implements IEntityPlaceBl
         Entity entity = this.getEntity();
         Level level = entity != null ? entity.level() : null;
         if (level != null && level.isClientSide()) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 Vec3.atCenterOf(this.getBlockPos()),
                 entity != null ? entity.getRotationVector() : Vec2.ZERO,

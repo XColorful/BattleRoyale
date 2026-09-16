@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IPortalSpawnEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class NeoPortalSpawnEvent extends NeoEvent implements IPortalSpawnEvent {
 
@@ -58,7 +59,7 @@ public class NeoPortalSpawnEvent extends NeoEvent implements IPortalSpawnEvent {
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         @Nullable ServerLevel serverLevel = getServerLevel();
         if (serverLevel == null) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 Vec3.atCenterOf(this.getBlockPos()),
                 Vec2.ZERO,

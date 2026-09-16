@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IPlayerLoggedInEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class NeoPlayerLoggedInEvent extends NeoEvent implements IPlayerLoggedInEvent {
 
@@ -42,7 +43,7 @@ public class NeoPlayerLoggedInEvent extends NeoEvent implements IPlayerLoggedInE
         @NotNull LivingEntity entity = this.getEntity();
         Level level = entity.level();
         if (level != null && level.isClientSide()) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 entity.position(),
                 entity.getRotationVector(),
