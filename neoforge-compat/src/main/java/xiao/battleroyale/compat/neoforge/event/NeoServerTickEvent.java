@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IServerTickEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class NeoServerTickEvent extends NeoEvent implements IServerTickEvent {
 
@@ -38,7 +39,7 @@ public class NeoServerTickEvent extends NeoEvent implements IServerTickEvent {
     @Override
     public @NotNull CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         MinecraftServer server = this.getServer();
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 Vec3.ZERO,
                 Vec2.ZERO,
