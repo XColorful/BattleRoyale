@@ -13,6 +13,7 @@ import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.tacz.IGunFireSelectEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.compat.forge.event.ForgeEvent;
+import xiao.battleroyale.util.CommandUtils;
 
 public class TaczGunFireSelectEvent extends ForgeEvent implements IGunFireSelectEvent {
 
@@ -37,7 +38,7 @@ public class TaczGunFireSelectEvent extends ForgeEvent implements IGunFireSelect
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         if (gunFireSelectEvent.getLogicalSide() == LogicalSide.CLIENT) return null;
         LivingEntity shooter = getShooter();
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 shooter.position(),
                 Vec2.ZERO,
