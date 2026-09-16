@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.ILivingDeathEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class ForgeLivingDeathEvent extends ForgeEvent implements ILivingDeathEvent {
 
@@ -47,7 +48,7 @@ public class ForgeLivingDeathEvent extends ForgeEvent implements ILivingDeathEve
         @NotNull LivingEntity entity = this.getEntity();
         Level level = entity.level();
         if (level != null && level.isClientSide()) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 entity.position(),
                 entity.getRotationVector(),
