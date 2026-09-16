@@ -16,6 +16,7 @@ import net.minecraft.network.chat.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerFunctionManager;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.permissions.PermissionSet;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
@@ -334,7 +335,7 @@ public class CommandUtils {
                                                  Vec3 position,
                                                  Vec2 rotation,
                                                  ServerLevel level,
-                                                 int commandLevel,
+                                                 PermissionSet commandLevel,
                                                  String textName,
                                                  Component displayName,
                                                  MinecraftServer server,
@@ -386,7 +387,7 @@ public class CommandUtils {
                                                 Vec3 position,
                                                 Vec2 rotation,
                                                 ServerLevel level,
-                                                int commandLevel,
+                                                PermissionSet commandLevel,
                                                 MinecraftServer server,
                                                 Entity entity) {
             return new CommandSourceStack(
@@ -406,7 +407,7 @@ public class CommandUtils {
                                               Vec3 position,
                                               Vec2 rotation,
                                               ServerLevel level,
-                                              int commandLevel,
+                                              PermissionSet commandLevel,
                                               Component name,
                                               MinecraftServer server) {
             return new CommandSourceStack(
