@@ -104,7 +104,9 @@ public class _SurvivalLobby implements ISurvivalLobbyManager {
                         continue;
                     }
                     if (gameIdReadApi.getGameId(itemStack) != null) {
-                        serverPlayer.drop(itemStack, true, false);
+                        serverPlayer.drop(itemStack, true,
+                                false // Prediction.SERVER_ONLY
+                        );
                         inventory.setItem(i, ItemStack.EMPTY);
                     } else {
                         keepCount++;
