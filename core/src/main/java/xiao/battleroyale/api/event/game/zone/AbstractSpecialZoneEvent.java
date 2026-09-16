@@ -13,6 +13,7 @@ import xiao.battleroyale.api.game.IGameManager;
 import xiao.battleroyale.api.game.zone.gamezone.IGameZone;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.game.zone.ZoneManager;
+import xiao.battleroyale.util.CommandUtils;
 
 public abstract class AbstractSpecialZoneEvent extends AbstractGameEvent {
 
@@ -50,7 +51,7 @@ public abstract class AbstractSpecialZoneEvent extends AbstractGameEvent {
         @Nullable IGameZone gameZone = zoneTickContext.zoneManager.getGameZone(zoneTickContext.zoneId);
         int gameTime = BattleRoyale.getGameManager().getGameTime();
         @Nullable Vec3 zoneCenter = gameZone != null ? gameZone.getCenterPos(gameZone.getShapeProgress(gameTime)) : null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 zoneCenter != null ? zoneCenter : Vec3.ZERO,
                 Vec2.ZERO,
