@@ -43,7 +43,9 @@ public class InventoryGenerator {
             // 覆盖前先吐出来
             if (dropBeforeReplace
                     && !isSlotEmpty) {
-                player.drop(slot, true, false);
+                player.drop(slot, true,
+                        false // Prediction.SERVER_ONLY
+                );
             }
             inventory.setItem(i, lootItem);
         }

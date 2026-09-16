@@ -13,6 +13,7 @@ import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.compat.tacz.IGunReloadEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.compat.neoforge.event.NeoEvent;
+import xiao.battleroyale.util.CommandUtils;
 
 public class TaczGunReloadEvent extends NeoEvent implements IGunReloadEvent {
 
@@ -37,7 +38,7 @@ public class TaczGunReloadEvent extends NeoEvent implements IGunReloadEvent {
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         if (gunReloadEvent.getLogicalSide() == LogicalSide.CLIENT) return null;
         LivingEntity entity = getEntity();
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 entity.position(),
                 Vec2.ZERO,

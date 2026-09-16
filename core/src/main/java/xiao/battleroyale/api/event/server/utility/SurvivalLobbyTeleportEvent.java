@@ -15,6 +15,7 @@ import xiao.battleroyale.api.event.ICustomEventHandler;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.api.server.IServerManager;
 import xiao.battleroyale.event.EventDispatcher;
+import xiao.battleroyale.util.CommandUtils;
 
 public class SurvivalLobbyTeleportEvent extends AbstractUtilityEvent {
 
@@ -36,7 +37,7 @@ public class SurvivalLobbyTeleportEvent extends AbstractUtilityEvent {
     public @Nullable CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
         Level level = livingEntity.level();
         if (level != null && level.isClientSide()) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 livingEntity.position(),
                 livingEntity.getRotationVector(),

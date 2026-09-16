@@ -19,6 +19,7 @@ import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.common.game.team.GamePlayer;
 import xiao.battleroyale.common.game.team.GameTeam;
 import xiao.battleroyale.event.EventDispatcher;
+import xiao.battleroyale.util.CommandUtils;
 import xiao.battleroyale.util.GameUtils;
 
 public abstract class AddKillEvent extends CustomEvent {
@@ -47,7 +48,7 @@ public abstract class AddKillEvent extends CustomEvent {
 
     @Override
     public @NotNull CommandSourceStack createCommandSourceStack(@Nullable CommandSource source) {
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 Vec3.ZERO,
                 Vec2.ZERO,

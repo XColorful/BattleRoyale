@@ -115,7 +115,7 @@ public class ZoneController extends BaseEntityBlock {
 
     @Override
     public PushReaction getPistonPushReaction(BlockState state) {
-        return PushReaction.NORMAL;
+        return PushReaction.NORMAL; // PushReaction.PUSH_PULL;
     }
 
     public float parseRotation(Direction direction) {
