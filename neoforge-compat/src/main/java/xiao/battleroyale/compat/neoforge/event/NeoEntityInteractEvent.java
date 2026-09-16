@@ -19,6 +19,7 @@ import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IEntityInteractEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class NeoEntityInteractEvent extends NeoEvent implements IEntityInteractEvent {
 
@@ -83,7 +84,7 @@ public class NeoEntityInteractEvent extends NeoEvent implements IEntityInteractE
         Level level = getLevel();
         if (level != null && level.isClientSide()) return null;
         Player player = getEntity();
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getBlockPos().getCenter(),
                 player.getRotationVector(),
