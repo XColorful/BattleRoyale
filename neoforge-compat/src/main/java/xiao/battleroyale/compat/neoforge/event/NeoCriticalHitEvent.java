@@ -15,6 +15,7 @@ import xiao.battleroyale.api.event.ICriticalHitEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 import xiao.battleroyale.api.minecraft.TriResult;
 import xiao.battleroyale.compat.neoforge.minecraft.TriResultHelper;
+import xiao.battleroyale.util.CommandUtils;
 
 public class NeoCriticalHitEvent extends NeoEvent implements ICriticalHitEvent {
 
@@ -95,7 +96,7 @@ public class NeoCriticalHitEvent extends NeoEvent implements ICriticalHitEvent {
         Player player = this.getEntity();
         Level level = player.level();
         if (level != null && level.isClientSide()) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 player.position(),
                 player.getRotationVector(),
