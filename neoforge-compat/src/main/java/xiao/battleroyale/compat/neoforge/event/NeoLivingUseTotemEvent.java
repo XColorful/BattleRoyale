@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.ILivingUseTotemEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class NeoLivingUseTotemEvent extends NeoEvent implements ILivingUseTotemEvent {
 
@@ -60,7 +61,7 @@ public class NeoLivingUseTotemEvent extends NeoEvent implements ILivingUseTotemE
         @NotNull LivingEntity entity = this.getEntity();
         Level level = entity.level();
         if (level != null && level.isClientSide()) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 entity.position(),
                 entity.getRotationVector(),
