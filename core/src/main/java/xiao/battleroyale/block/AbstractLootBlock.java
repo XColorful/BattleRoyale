@@ -85,7 +85,7 @@ public abstract class AbstractLootBlock extends BaseEntityBlock {
 
     @Override
     public PushReaction getPistonPushReaction(BlockState state) {
-        return PushReaction.NORMAL;
+        return PushReaction.NORMAL; // PushReaction.PUSH_PULL;
     }
 
     @Override
