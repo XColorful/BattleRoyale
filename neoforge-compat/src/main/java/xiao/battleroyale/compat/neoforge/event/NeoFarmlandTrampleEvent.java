@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.api.event.EventType;
 import xiao.battleroyale.api.event.IFarmlandTrampleEvent;
 import xiao.battleroyale.api.minecraft.CommandLevel;
+import xiao.battleroyale.util.CommandUtils;
 
 public class NeoFarmlandTrampleEvent extends NeoEvent implements IFarmlandTrampleEvent {
 
@@ -64,7 +65,7 @@ public class NeoFarmlandTrampleEvent extends NeoEvent implements IFarmlandTrampl
         Entity entity = this.getEntity();
         Level level = entity.level();
         if (level != null && level.isClientSide()) return null;
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getBlockPos().getCenter(),
                 entity.getRotationVector(),
