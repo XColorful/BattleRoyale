@@ -22,10 +22,10 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.minecraft.CommandLevel;
 
-import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.function.Consumer;
 
