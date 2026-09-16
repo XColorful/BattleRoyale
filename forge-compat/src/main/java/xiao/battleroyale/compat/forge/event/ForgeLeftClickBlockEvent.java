@@ -23,6 +23,7 @@ import xiao.battleroyale.api.minecraft.HandAction;
 import xiao.battleroyale.api.minecraft.TriResult;
 import xiao.battleroyale.compat.forge.minecraft.HandActionHelper;
 import xiao.battleroyale.compat.forge.minecraft.TriResultHelper;
+import xiao.battleroyale.util.CommandUtils;
 
 public class ForgeLeftClickBlockEvent extends ForgeEvent implements ILeftClickBlockEvent {
 
@@ -107,7 +108,7 @@ public class ForgeLeftClickBlockEvent extends ForgeEvent implements ILeftClickBl
         Level level = getLevel();
         if (level != null && level.isClientSide()) return null;
         Player player = this.getEntity();
-        return new CommandSourceStack(
+        return CommandUtils.sourceStack(
                 source != null ? source : CommandSource.NULL,
                 this.getBlockPos().getCenter(),
                 player.getRotationVector(),
