@@ -1,14 +1,13 @@
 package xiao.battleroyale.client.renderer;
 
-import com.mojang.blaze3d.PrimitiveTopology;
-import com.mojang.blaze3d.pipeline.BlendFunction;
-import com.mojang.blaze3d.pipeline.ColorTargetState;
-import com.mojang.blaze3d.pipeline.DepthStencilState;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.renderpearl.api.pipeline.BlendFunction;
+import com.mojang.renderpearl.api.pipeline.ColorTargetState;
+import com.mojang.renderpearl.api.pipeline.CompareOp;
+import com.mojang.renderpearl.api.pipeline.DepthStencilState;
+import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import net.minecraft.client.renderer.BindGroupLayouts;
-import net.minecraft.client.renderer.rendertype.OutputTarget;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -27,9 +26,10 @@ public class CustomRenderType {
     private static final Identifier WHITE_TEXTURE = BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:textures/white.png", BattleRoyale.MOD_ID));
 
     // 先加载
-    // 26.2: MATRICES_PROJECTION_SNIPPET 不再存在，手动构建: GLOBALS + MATRICES_PROJECTION + FOG
+    // 26.3: MATRICES_PROJECTION_SNIPPET 不再存在，手动构建: GLOBALS + PROJECTION + DYNAMIC_TRANSFORMS + FOG
     public static final RenderPipeline SOLID_OPAQUE_COLOR_PIPELINE = RenderPipeline.builder(RenderPipelines.GLOBALS_SNIPPET)
-            .withBindGroupLayout(BindGroupLayouts.MATRICES_PROJECTION)
+            .withBindGroupLayout(BindGroupLayouts.PROJECTION)
+            .withBindGroupLayout(BindGroupLayouts.DYNAMIC_TRANSFORMS)
             .withBindGroupLayout(BindGroupLayouts.FOG)
             .withLocation(BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:solid_opaque", BattleRoyale.MOD_ID)))
             .withVertexShader("core/position_color")
@@ -41,7 +41,8 @@ public class CustomRenderType {
             .withPrimitiveTopology(PrimitiveTopology.QUADS)
             .build();
     public static final RenderPipeline SOLID_TRANSLUCENT_COLOR_PIPELINE = RenderPipeline.builder(RenderPipelines.GLOBALS_SNIPPET)
-            .withBindGroupLayout(BindGroupLayouts.MATRICES_PROJECTION)
+            .withBindGroupLayout(BindGroupLayouts.PROJECTION)
+            .withBindGroupLayout(BindGroupLayouts.DYNAMIC_TRANSFORMS)
             .withBindGroupLayout(BindGroupLayouts.FOG)
             .withLocation(BattleRoyale.getMcRegistry().createResourceLocation(String.format("%s:solid_translucent", BattleRoyale.MOD_ID)))
             .withVertexShader("core/position_color")
@@ -61,7 +62,6 @@ public class CustomRenderType {
         RenderSetup builder = RenderSetup.builder(SOLID_TRANSLUCENT_COLOR_PIPELINE)
                 // .useLightmap() // 默认为false
                 // .useOverlay() // 默认为false
-                .setOutputTarget(OutputTarget.MAIN_TARGET)
                 .setOutline(RenderSetup.OutlineProperty.NONE) // 默认值 (无描边)
                 // .sortOnUpload() // 默认为false
                 .createRenderSetup();
@@ -76,7 +76,6 @@ public class CustomRenderType {
         RenderSetup builder = RenderSetup.builder(SOLID_OPAQUE_COLOR_PIPELINE)
                 // .useLightmap() // 默认为false
                 // .useOverlay() // 默认为false
-                .setOutputTarget(OutputTarget.MAIN_TARGET)
                 .setOutline(RenderSetup.OutlineProperty.NONE) // 默认值 (无描边)
                 .sortOnUpload()
                 .createRenderSetup();

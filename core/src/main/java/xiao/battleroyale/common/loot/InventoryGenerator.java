@@ -1,6 +1,7 @@
 package xiao.battleroyale.common.loot;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import xiao.battleroyale.api.config.common.loot.ILootEntry;
@@ -44,7 +45,7 @@ public class InventoryGenerator {
             if (dropBeforeReplace
                     && !isSlotEmpty) {
                 player.drop(slot, true,
-                        false // Prediction.SERVER_ONLY
+                        Prediction.SERVER_ONLY
                 );
             }
             inventory.setItem(i, lootItem);

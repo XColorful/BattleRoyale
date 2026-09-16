@@ -83,11 +83,11 @@ public class McRuleStorage implements IRuleStorage {
                 gameRules.get(GameRules.KEEP_INVENTORY),
                 gameRules.get(GameRules.IMMEDIATE_RESPAWN),
                 mcEntry.doTimeSet,
-                serverLevel.clockManager().getTotalTicks(
+                serverLevel.clockManager().getInstance(
                         serverLevel.registryAccess()
                                 .lookupOrThrow(Registries.WORLD_CLOCK)
                                 .getOrThrow(WorldClocks.OVERWORLD) // 这 TM 得单独加一个配置？默认就当作只在主世界玩吧
-                )
+                ).totalTicks()
                 );
     }
 

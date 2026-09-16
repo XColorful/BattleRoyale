@@ -35,7 +35,8 @@ import xiao.battleroyale.config.common.game.zone.ZoneConfigManager;
 import xiao.battleroyale.util.ChatUtils;
 
 public class ZoneController extends BaseEntityBlock {
-    public static final MapCodec<ZoneController> CODEC = simpleCodec(ZoneController::new);
+    @Deprecated(since = "26.3")
+    public static final MapCodec<ZoneController> CODEC = null;
 
     public static final EnumProperty<Direction> THIS_FACING = BlockStateProperties.HORIZONTAL_FACING;
     protected static VoxelShape THIS_SHAPE = Block.box(0, 0, 0, 16, 6, 16);
@@ -44,7 +45,8 @@ public class ZoneController extends BaseEntityBlock {
         super(properties);
     }
 
-    @Override
+    @Deprecated(since = "26.3")
+//    @Override
     protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
@@ -107,7 +109,7 @@ public class ZoneController extends BaseEntityBlock {
 
     @Override
     public PushReaction getPistonPushReaction(BlockState state) {
-        return PushReaction.NORMAL; // PushReaction.PUSH_PULL;
+        return PushReaction.PUSH_PULL;
     }
 
     public float parseRotation(Direction direction) {

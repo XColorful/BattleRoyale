@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -106,7 +107,7 @@ public class _SurvivalLobby implements ISurvivalLobbyManager {
                     }
                     if (gameIdReadApi.getGameId(itemStack) != null) {
                         serverPlayer.drop(itemStack, true,
-                                false // Prediction.SERVER_ONLY
+                                Prediction.SERVER_ONLY
                         );
                         inventory.setItem(i, ItemStack.EMPTY);
                     } else {

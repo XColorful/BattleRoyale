@@ -29,7 +29,8 @@ import xiao.battleroyale.util.ChatUtils;
 import java.util.List;
 
 public class EntitySpawner extends AbstractLootBlock {
-    public static final MapCodec<EntitySpawner> CODEC = simpleCodec(EntitySpawner::new);
+    @Deprecated(since = "26.3")
+    public static final MapCodec<EntitySpawner> CODEC = null;
 
     private static final EnumProperty<Direction> THIS_FACING = EnumProperty.create("facing", Direction.class, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
     private static final VoxelShape THIS_SHAPE = Block.box(0, 0, 0, 16, 2, 16);
@@ -45,7 +46,8 @@ public class EntitySpawner extends AbstractLootBlock {
         return THIS_SHAPE;
     }
 
-    @Override
+    @Deprecated(since = "26.3")
+//    @Override
     protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }

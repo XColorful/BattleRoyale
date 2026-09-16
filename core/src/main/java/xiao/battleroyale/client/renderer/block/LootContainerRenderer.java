@@ -24,6 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import xiao.battleroyale.api.config.client.render.RenderConfigTag;
@@ -280,7 +281,7 @@ public abstract class LootContainerRenderer<T extends AbstractLootContainerBlock
 
             // 应用自转
             if (DO_SPINNING) {
-                poseStack.mulPose(Axis.YP.rotationDegrees(baseRotation));
+                poseStack.mulPose(new Matrix4f().rotate(Axis.YP.rotationDegrees(baseRotation)));
             }
 
             ItemStackRenderState itemStackRenderState = new ItemStackRenderState();

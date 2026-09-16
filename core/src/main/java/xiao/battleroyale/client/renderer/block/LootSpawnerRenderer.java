@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import xiao.battleroyale.block.LootSpawner;
 import xiao.battleroyale.block.entity.LootSpawnerBlockEntity;
@@ -53,6 +54,6 @@ public class LootSpawnerRenderer extends LootContainerRenderer<LootSpawnerBlockE
         // 对于 NORTH 默认就是 0 度，无需额外设置
 
         // 应用 Y 轴旋转
-        poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
+        poseStack.mulPose(new Matrix4f().rotate(Axis.YP.rotationDegrees(yRot)));
     }
 }

@@ -1,6 +1,6 @@
 package xiao.battleroyale.compat.iris;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.compat.AbstractCompatMod;
 
