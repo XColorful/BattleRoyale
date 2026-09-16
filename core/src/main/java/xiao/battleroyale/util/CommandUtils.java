@@ -269,14 +269,14 @@ public class CommandUtils {
      * @return 新的 CommandSourceStack
      */
     public static CommandSourceStack sourceStack(CommandSource source,
-                                          Vec3 position,
-                                          Vec2 rotation,
-                                          ServerLevel level,
-                                          int commandLevel,
-                                          String textName,
-                                          Component displayName,
-                                          MinecraftServer server,
-                                          @Nullable Entity entity) {
+                                                 Vec3 position,
+                                                 Vec2 rotation,
+                                                 ServerLevel level,
+                                                 int commandLevel,
+                                                 String textName,
+                                                 Component displayName,
+                                                 MinecraftServer server,
+                                                 @Nullable Entity entity) {
         if (entity != null) {
             return new CommandSourceStack( // _SourceStack.entity(
                     source,
