@@ -17,7 +17,6 @@ import xiao.battleroyale.api.client.render.level.IClientSpectateRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.client.game.data.ClientGameData.ClientSpectateData;
-import xiao.battleroyale.client.renderer.CustomRenderType;
 import xiao.battleroyale.util.ClassUtils;
 import xiao.battleroyale.util.ColorUtils;
 
@@ -43,7 +42,7 @@ public class SpectatePlayerRenderer implements IClientSpectateRenderer, IEventHa
         }
     }
 
-    public static RenderType SPECTATE_PLAYER_RENDER_TYPE = CustomRenderType.SolidTranslucentColor;
+    public static RenderType SPECTATE_PLAYER_RENDER_TYPE;
 
     private boolean enableSpectateRender = true;
     public void setEnableSpectateRender(boolean bool) { enableSpectateRender = bool; }

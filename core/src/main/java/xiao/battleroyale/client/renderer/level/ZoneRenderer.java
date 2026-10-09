@@ -18,7 +18,6 @@ import xiao.battleroyale.api.client.render.level.IClientZoneRenderer;
 import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.client.game.data.ClientSingleZoneData;
-import xiao.battleroyale.client.renderer.CustomRenderType;
 import xiao.battleroyale.config.common.game.zone.zoneshape.ZoneShapeType;
 
 public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
@@ -40,8 +39,8 @@ public class ZoneRenderer implements IClientZoneRenderer, IEventHandler {
         }
     }
 
-    public static RenderType TRANSLUCENT_ZONE = CustomRenderType.SolidTranslucentColor;
-    public static RenderType OPAQUE_ZONE = CustomRenderType.SolidOpaqueColor;
+    public static RenderType TRANSLUCENT_ZONE;
+    public static RenderType OPAQUE_ZONE;
 
     private int CIRCLE_SEGMENTS = 64;
     private int ELLIPSE_SEGMENTS = 64;

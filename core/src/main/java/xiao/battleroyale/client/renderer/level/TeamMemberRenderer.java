@@ -19,7 +19,6 @@ import xiao.battleroyale.api.common.McSide;
 import xiao.battleroyale.api.event.*;
 import xiao.battleroyale.client.game.data.ClientTeamData;
 import xiao.battleroyale.client.game.data.TeamMemberInfo;
-import xiao.battleroyale.client.renderer.CustomRenderType;
 import xiao.battleroyale.util.ColorUtils;
 
 import java.awt.*;
@@ -43,7 +42,7 @@ public class TeamMemberRenderer implements IClientTeamRenderer, IEventHandler {
         }
     }
 
-    public static RenderType TEAM_MARKER_RENDER_TYPE = CustomRenderType.SolidTranslucentColor;
+    public static RenderType TEAM_MARKER_RENDER_TYPE;
 
     private boolean enableTeamZone = true;
     public void setEnableTeamZone(boolean bool) { enableTeamZone = bool; }
