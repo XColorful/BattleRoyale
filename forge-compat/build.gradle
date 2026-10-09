@@ -72,14 +72,39 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
+// JourneyMap 6.x把API 2.0以JiJ形式打包在mod jar的META-INF/jarjar下，且未发布1.20.1版本
+// （maven上的journeymap-api-forge均为Java 21构建，本分支编译目标是Java 17）
+// 因此从已解析的mod jar中解出API jar作为compileOnly，保证编译期与运行时同源
+configurations {
+    journeymapMod {
+        canBeConsumed = false
+    }
+}
+
+def jmApiDir = layout.buildDirectory.dir('journeymap-api')
+
+def extractJourneyMapApi = tasks.register('extractJourneyMapApi', Copy) {
+    from({ zipTree(configurations.journeymapMod.singleFile) }) {
+        include 'META-INF/jarjar/journeymap-api-forge-*.jar'
+        eachFile { it.relativePath = new RelativePath(true, 'journeymap-api-forge.jar') }
+        includeEmptyDirs = false
+    }
+    into jmApiDir
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     implementation project(":core")
 
-    compileOnly fg.deobf("info.journeymap:journeymap-api:${journeymap_api_version}")
+    journeymapMod journeymap_curse_maven
+    compileOnly files(jmApiDir.map { it.file('journeymap-api-forge.jar') })
     runtimeOnly fg.deobf(journeymap_curse_maven)
     compileOnly fg.deobf(tacz_curse_maven)
+}
+
+tasks.withType(JavaCompile).configureEach {
+    dependsOn extractJourneyMapApi
 }
 
 tasks.named('jar', Jar).configure {
