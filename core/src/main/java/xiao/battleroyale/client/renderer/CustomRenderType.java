@@ -102,11 +102,14 @@ public class CustomRenderType {
     }
 
     static {
-        _registerRenderPipelines();
+        /*
+        1.20.1/1.21.1 在安装16个模组时并行加载，会稳定跟Immersive Vehicles互相等对方RenderStateShard.<clinit>死锁卡住
+         */
+//        _registerRenderPipelines();
     }
     @SuppressWarnings("all")
     @Deprecated(forRemoval = true, since = "1.21.6")
-    private static void _registerRenderPipelines() {
+    public static void _registerRenderPipelines() {
         onRegisterRenderPipelines(null);
     }
 
