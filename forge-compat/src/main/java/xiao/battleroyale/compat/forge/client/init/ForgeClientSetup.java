@@ -9,6 +9,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.client.init.IClientSetup;
 import xiao.battleroyale.client.init.ClientSetup;
+import xiao.battleroyale.client.renderer.CustomRenderType;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT, modid = BattleRoyale.MOD_ID)
 public class ForgeClientSetup {
@@ -19,6 +20,8 @@ public class ForgeClientSetup {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            CustomRenderType._registerRenderPipelines();
+
             for (IClientSetup.ScreenRegistration<?, ?> registration : CLIENT_SETUP.getScreenRegistrations()) {
                 try {
                     MenuScreens.register(
