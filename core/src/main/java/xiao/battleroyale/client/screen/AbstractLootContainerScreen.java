@@ -1,7 +1,6 @@
 package xiao.battleroyale.client.screen;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
@@ -9,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import xiao.battleroyale.inventory.AbstractLootMenu;
 
-public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> extends AbstractContainerScreen<L> {
+public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> extends NoBackgroundContainerScreen<L> {
     protected ResourceLocation TEXTURE;
     protected int textureOffX = 0;
     protected int textureOffY = 0;
