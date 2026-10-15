@@ -13,6 +13,9 @@ public abstract class NoBackgroundContainerScreen<L extends AbstractContainerMen
     protected NoBackgroundContainerScreen(L menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
     }
+    protected NoBackgroundContainerScreen(L menu, Inventory inventory, Component title, int imageWidth, int imageHeight) {
+        super(menu, inventory, title, imageWidth, imageHeight);
+    }
 
     // --------移除虚化背景--------
 
