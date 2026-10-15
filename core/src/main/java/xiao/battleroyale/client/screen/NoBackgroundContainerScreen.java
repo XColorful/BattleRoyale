@@ -26,6 +26,7 @@ public abstract class NoBackgroundContainerScreen<L extends AbstractContainerMen
     @Override
     protected void renderBlurredBackground(
 //            float partickTick
+            @NotNull GuiGraphics graphics
     ) {
     }
     @ApiStatus.AvailableSince("1.21.1")
