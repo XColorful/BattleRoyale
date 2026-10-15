@@ -73,33 +73,34 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
-// --------JourneyMap API 2.0 Jar in Jar--------
-configurations {
-    journeymapMod {
-        canBeConsumed = false
-    }
-}
-def jmApiDir = layout.buildDirectory.dir('journeymap-api')
-def extractJourneyMapApi = tasks.register('extractJourneyMapApi', Copy) {
-    from({ zipTree(configurations.journeymapMod.singleFile) }) {
-        include 'META-INF/jarjar/journeymap-api-forge-*.jar'
-        eachFile { it.relativePath = new RelativePath(true, 'journeymap-api-forge.jar') }
-        includeEmptyDirs = false
-    }
-    into jmApiDir
-}
-tasks.withType(JavaCompile).configureEach {
-    dependsOn extractJourneyMapApi
-}
-// --------JourneyMap End
+//// --------JourneyMap API 2.0 Jar in Jar--------
+//configurations {
+//    journeymapMod {
+//        canBeConsumed = false
+//    }
+//}
+//def jmApiDir = layout.buildDirectory.dir('journeymap-api')
+//def extractJourneyMapApi = tasks.register('extractJourneyMapApi', Copy) {
+//    from({ zipTree(configurations.journeymapMod.singleFile) }) {
+//        include 'META-INF/jarjar/journeymap-api-forge-*.jar'
+//        eachFile { it.relativePath = new RelativePath(true, 'journeymap-api-forge.jar') }
+//        includeEmptyDirs = false
+//    }
+//    into jmApiDir
+//}
+//tasks.withType(JavaCompile).configureEach {
+//    dependsOn extractJourneyMapApi
+//}
+//// --------JourneyMap End
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     implementation project(":core")
 
-    journeymapMod journeymap_curse_maven
-    compileOnly files(jmApiDir.map { it.file('journeymap-api-forge.jar') })
+    compileOnly fg.deobf("info.journeymap:journeymap-api-forge:${journeymap_api_version}")
+//    journeymapMod journeymap_curse_maven
+//    compileOnly files(jmApiDir.map { it.file('journeymap-api-forge.jar') })
     runtimeOnly fg.deobf(journeymap_curse_maven)
 }
 
