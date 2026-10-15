@@ -17,7 +17,7 @@ public abstract class NoBackgroundContainerScreen<L extends AbstractContainerMen
     // --------移除虚化背景--------
 
     @ApiStatus.AvailableSince("1.20.2")
-//    @Override
+    @Override
     public void renderTransparentBackground(
             @NotNull GuiGraphics graphics
     ) {
