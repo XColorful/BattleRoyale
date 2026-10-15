@@ -72,12 +72,34 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
+//// --------JourneyMap API 2.0 Jar in Jar--------
+//configurations {
+//    journeymapMod {
+//        canBeConsumed = false
+//    }
+//}
+//def jmApiDir = layout.buildDirectory.dir('journeymap-api')
+//def extractJourneyMapApi = tasks.register('extractJourneyMapApi', Copy) {
+//    from({ zipTree(configurations.journeymapMod.singleFile) }) {
+//        include 'META-INF/jarjar/journeymap-api-neoforge-*.jar'
+//        eachFile { it.relativePath = new RelativePath(true, 'journeymap-api-neoforge.jar') }
+//        includeEmptyDirs = false
+//    }
+//    into jmApiDir
+//}
+//tasks.withType(JavaCompile).configureEach {
+//    dependsOn extractJourneyMapApi
+//}
+//// --------JourneyMap End
+
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
 
     implementation project(":core")
 
     compileOnly "info.journeymap:journeymap-api:${journeymap_neoforge_api_version}"
+//    journeymapMod journeymap_neoforge_curse_maven
+//    compileOnly files(jmApiDir.map { it.file('journeymap-api-neoforge.jar') })
     runtimeOnly "${journeymap_neoforge_curse_maven}"
 }
 

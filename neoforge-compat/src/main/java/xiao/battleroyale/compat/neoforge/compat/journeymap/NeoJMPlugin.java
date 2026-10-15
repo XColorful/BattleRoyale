@@ -16,30 +16,30 @@ import static journeymap.client.api.event.ClientEvent.Type.*;
 
 @ParametersAreNonnullByDefault
 @journeymap.client.api.ClientPlugin
-public class JourneyMapPlugin implements IClientPlugin {
+public class NeoJMPlugin implements IClientPlugin {
 
     // API reference
     private IClientAPI jmAPI = null;
 
-    private static JourneyMapPlugin INSTANCE;
+    private static NeoJMPlugin INSTANCE;
 
-    public JourneyMapPlugin() {
+    public NeoJMPlugin() {
         INSTANCE = this;
     }
 
-    public static JourneyMapPlugin getInstance() {
+    public static NeoJMPlugin getInstance() {
         return INSTANCE;
     }
 
     /**
-     * Called by JourneyMap during the init phase of mod loading. The IClientAPI reference is how the mod
+     * Called by JourneyMap during the init phase of mod loading.  The IClientAPI reference is how the mod
      * will add overlays, etc. to JourneyMap.
      *
      * @param jmAPI Client API implementation
      */
     @Override
     public void initialize(IClientAPI jmAPI) {
-        BattleRoyale.LOGGER.debug("initialize JourneyMapPlugin");
+        BattleRoyale.LOGGER.debug("Initializing BattleRoyale NeoJMPlugin");
         this.jmAPI = jmAPI;
         this.jmAPI.subscribe(getModId(), EnumSet.of(DISPLAY_UPDATE, MAPPING_STARTED, MAPPING_STOPPED));
         JourneyMap.register();
@@ -74,20 +74,16 @@ public class JourneyMapPlugin implements IClientPlugin {
         try {
             switch (event.type) {
                 case DISPLAY_UPDATE, // 这个事件并不会实时更新小地图，绘制放在ClientTickEvent里
-                     MAPPING_STARTED: // 刚进游戏时触发
+                     MAPPING_STARTED -> { // 刚进游戏时触发
                     JMShapeDrawer.cachedDimension = event.dimension;
-                    break;
-                case MAPPING_STOPPED: // 退出游戏时触发
-                    onMappingStopped(event);
-                    break;
+                }
+                case MAPPING_STOPPED -> { // 退出游戏时触发
+                    jmAPI.removeAll(JMEventHandler.MOD_JM_ID);
+                }
             }
         } catch (Throwable t) {
             BattleRoyale.LOGGER.error(t.getMessage(), t);
         }
-    }
-
-    void onMappingStopped(ClientEvent event) {
-        jmAPI.removeAll(JMEventHandler.MOD_JM_ID);
     }
 
     public void removeAll(String modId) {
@@ -105,6 +101,7 @@ public class JourneyMapPlugin implements IClientPlugin {
 
         MapPolygon mapPolygon = new MapPolygon(JMPolygonOverlay.JMMapPolygon().points());
 
+//        // overlay身份为随机UUID，无法原地更新，每次重画都依赖removeAll后新建
         PolygonOverlay polygonOverlay = new PolygonOverlay(
                 JMPolygonOverlay.modId(),
                 JMPolygonOverlay.displayId(),
