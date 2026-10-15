@@ -1,21 +1,21 @@
 package xiao.battleroyale.compat.forge.compat.journeymap;
 
-import journeymap.api.v2.client.IClientAPI;
-import journeymap.api.v2.client.IClientPlugin;
-import journeymap.api.v2.client.display.PolygonOverlay;
-import journeymap.api.v2.client.event.DisplayUpdateEvent;
-import journeymap.api.v2.client.event.MappingEvent;
-import journeymap.api.v2.client.model.MapPolygon;
-import journeymap.api.v2.client.model.ShapeProperties;
-import journeymap.api.v2.common.JourneyMapPlugin;
-import journeymap.api.v2.common.event.ClientEventRegistry;
+import journeymap.client.api.IClientAPI;
+import journeymap.client.api.IClientPlugin;
+import journeymap.client.api.display.PolygonOverlay;
+import journeymap.client.api.event.ClientEvent;
+import journeymap.client.api.model.MapPolygon;
+import journeymap.client.api.model.ShapeProperties;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.compat.journeymap.*;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.EnumSet;
+
+import static journeymap.client.api.event.ClientEvent.Type.*;
 
 @ParametersAreNonnullByDefault
-@JourneyMapPlugin(apiVersion = "2.0.0")
+@journeymap.client.api.ClientPlugin
 public class ForgeJMPlugin implements IClientPlugin {
 
     // API reference
@@ -41,8 +41,7 @@ public class ForgeJMPlugin implements IClientPlugin {
     public void initialize(IClientAPI jmAPI) {
         BattleRoyale.LOGGER.debug("Initializing BattleRoyale ForgeJMPlugin");
         this.jmAPI = jmAPI;
-        ClientEventRegistry.MAPPING_EVENT.subscribe(getModId(), this::handleMappingEvent);
-        ClientEventRegistry.DISPLAY_UPDATE_EVENT.subscribe(getModId(), this::handleDisplayUpdateEvent);
+        this.jmAPI.subscribe(getModId(), EnumSet.of(DISPLAY_UPDATE, MAPPING_STARTED, MAPPING_STOPPED));
         JourneyMap.register();
         JmApi.initialized = true;
         BattleRoyale.LOGGER.info("Initialized {}", getClass().getName());
@@ -56,18 +55,26 @@ public class ForgeJMPlugin implements IClientPlugin {
         return JMEventHandler.MOD_JM_ID;
     }
 
-    private void handleDisplayUpdateEvent(DisplayUpdateEvent event) { // 这个事件并不会实时更新小地图，绘制放在ClientTickEvent里
+    /**
+     * Called by JourneyMap on the main Minecraft thread when a {@link journeymap.client.api.event.ClientEvent} occurs.
+     * Be careful to minimize the time spent in this method so you don't lag the game.
+     * <p>
+     * You must call {@link IClientAPI#subscribe(String, EnumSet)} at some point to subscribe to these events, otherwise this
+     * method will never be called.
+     * <p>
+     * If the event type is {@link journeymap.client.api.event.ClientEvent.Type#DISPLAY_UPDATE},
+     * this is a signal to {@link journeymap.client.api.IClientAPI#show(journeymap.client.api.display.Displayable)}
+     * all relevant Displayables for the {@link journeymap.client.api.event.ClientEvent#dimension} indicated.
+     * (Note: ModWaypoints with persisted==true will already be shown.)
+     *
+     * @param event the event
+     */
+    @Override
+    public void onEvent(ClientEvent event) {
         try {
-            JMShapeDrawer.cachedDimension = event.dimension;
-        } catch (Throwable t) {
-            BattleRoyale.LOGGER.error(t.getMessage(), t);
-        }
-    }
-
-    private void handleMappingEvent(MappingEvent event) {
-        try {
-            switch (event.getStage()) {
-                case MAPPING_STARTED -> { // 刚进游戏时触发
+            switch (event.type) {
+                case DISPLAY_UPDATE, // 这个事件并不会实时更新小地图，绘制放在ClientTickEvent里
+                     MAPPING_STARTED -> { // 刚进游戏时触发
                     JMShapeDrawer.cachedDimension = event.dimension;
                 }
                 case MAPPING_STOPPED -> { // 退出游戏时触发
@@ -94,9 +101,10 @@ public class ForgeJMPlugin implements IClientPlugin {
 
         MapPolygon mapPolygon = new MapPolygon(JMPolygonOverlay.JMMapPolygon().points());
 
-        // overlay身份为随机UUID，无法原地更新，每次重画都依赖removeAll后新建
+//        // overlay身份为随机UUID，无法原地更新，每次重画都依赖removeAll后新建
         PolygonOverlay polygonOverlay = new PolygonOverlay(
                 JMPolygonOverlay.modId(),
+                JMPolygonOverlay.displayId(),
                 JMPolygonOverlay.dimension(),
                 shapeProperties,
                 mapPolygon);

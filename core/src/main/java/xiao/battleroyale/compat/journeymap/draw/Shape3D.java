@@ -17,7 +17,7 @@ public class Shape3D {
     /**
      * 在JourneyMap上绘制一个填充的球体投影。
      */
-    public static void drawFilledSphere(IJmApi jmAPI, ResourceKey<Level> dimension, Color color,
+    public static void drawFilledSphere(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                         Vec3 center, float radius, int segments, float rotateDegree, double y) {
         List<Vec3> points = new ArrayList<>();
         float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
@@ -31,13 +31,13 @@ public class Shape3D {
 
         rotatePoints(points, center, rotateDegree);
 
-        drawFilledPolygon(jmAPI, dimension, color, points);
+        drawFilledPolygon(jmAPI, displayId, dimension, color, points);
     }
 
     /**
      * 在JourneyMap上绘制一个填充的长方体投影。
      */
-    public static void drawFilledCuboid(IJmApi jmAPI, ResourceKey<Level> dimension, Color color,
+    public static void drawFilledCuboid(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                         Vec3 center, float halfWidth, float halfDepth, float rotateDegree, double y) {
         List<Vec3> points = new ArrayList<>();
         points.add(new Vec3(center.x - halfWidth, y, center.z - halfDepth));
@@ -47,13 +47,13 @@ public class Shape3D {
 
         rotatePoints(points, center, rotateDegree);
 
-        drawFilledPolygon(jmAPI, dimension, color, points);
+        drawFilledPolygon(jmAPI, displayId, dimension, color, points);
     }
 
     /**
      * 在JourneyMap上绘制一个填充的椭球体投影。
      */
-    public static void drawFilledEllipsoid(IJmApi jmAPI, ResourceKey<Level> dimension, Color color,
+    public static void drawFilledEllipsoid(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                            Vec3 center, float halfA, float halfB, int segments, float rotateDegree, double y) {
         List<Vec3> points = new ArrayList<>();
         float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
@@ -67,6 +67,6 @@ public class Shape3D {
 
         rotatePoints(points, center, rotateDegree);
 
-        drawFilledPolygon(jmAPI, dimension, color, points);
+        drawFilledPolygon(jmAPI, displayId, dimension, color, points);
     }
 }
