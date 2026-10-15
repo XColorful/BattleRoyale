@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.ApiStatus;
 import xiao.battleroyale.inventory.AbstractLootMenu;
 
 public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> extends NoBackgroundContainerScreen<L> {
@@ -93,5 +94,14 @@ public abstract class AbstractLootContainerScreen<L extends AbstractLootMenu> ex
         renderBg(guiGraphics, partialTick, mouseX, mouseY);
         // 再画其他的
         super.extractContents(guiGraphics, mouseX, mouseY, partialTick);
+    }
+
+    @ApiStatus.AvailableSince("26.1.x")
+    public int getGuiLeft() {
+        return this.getLeftPos();
+    }
+    @ApiStatus.AvailableSince("26.1.x")
+    public int getGuiTop() {
+        return this.getTopPos();
     }
 }
