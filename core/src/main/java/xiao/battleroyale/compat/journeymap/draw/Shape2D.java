@@ -17,7 +17,7 @@ public class Shape2D {
     /**
      * 在JourneyMap上绘制一个带描边的矩形。
      */
-    public static void drawRectangleBox(IJmApi jmAPI, ResourceKey<Level> dimension, Color color,
+    public static void drawRectangleBox(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                         Vec3 center, float halfWidth, float halfDepth, float rotateDegree, double y, float thickness) {
         List<Vec3> points = new ArrayList<>();
         points.add(new Vec3(center.x - halfWidth, y, center.z - halfDepth));
@@ -27,13 +27,13 @@ public class Shape2D {
 
         rotatePoints(points, center, rotateDegree);
 
-        drawPolygon(jmAPI, dimension, color, points, thickness);
+        drawPolygon(jmAPI, displayId, dimension, color, points, thickness);
     }
 
     /**
      * 在JourneyMap上绘制一个带描边的多边形。
      */
-    public static void drawPolygonCylinder(IJmApi jmAPI, ResourceKey<Level> dimension, Color color,
+    public static void drawPolygonCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                            Vec3 center, float radius, int segments, float initialAngle, float rotateDegree, double y, float thickness) {
         List<Vec3> points = new ArrayList<>();
         float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
@@ -47,13 +47,13 @@ public class Shape2D {
 
         rotatePoints(points, center, rotateDegree);
 
-        drawPolygon(jmAPI, dimension, color, points, thickness);
+        drawPolygon(jmAPI, displayId, dimension, color, points, thickness);
     }
 
     /**
      * 在JourneyMap上绘制一个带描边的椭圆。
      */
-    public static void drawEllipseCylinder(IJmApi jmAPI, ResourceKey<Level> dimension, Color color,
+    public static void drawEllipseCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                            Vec3 center, float halfA, float halfB, int segments, float rotateDegree, double y, float thickness) {
         List<Vec3> points = new ArrayList<>();
         float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
@@ -67,13 +67,13 @@ public class Shape2D {
 
         rotatePoints(points, center, rotateDegree);
 
-        drawPolygon(jmAPI, dimension, color, points, thickness);
+        drawPolygon(jmAPI, displayId, dimension, color, points, thickness);
     }
 
     /**
      * 在JourneyMap上绘制一个带描边的星形。
      */
-    public static void drawStarCylinder(IJmApi jmAPI, ResourceKey<Level> dimension, Color color,
+    public static void drawStarCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                         Vec3 center, float outerRadius, float innerRadius, int segments, float initialAngle, float rotateDegree, double y, float thickness) {
         List<Vec3> points = new ArrayList<>();
         final float TWO_PI_DIV_SEGMENTS = (float) (2 * Math.PI / segments);
@@ -94,13 +94,13 @@ public class Shape2D {
 
         rotatePoints(points, center, rotateDegree);
 
-        drawPolygon(jmAPI, dimension, color, points, thickness);
+        drawPolygon(jmAPI, displayId, dimension, color, points, thickness);
     }
 
     /**
      * 在JourneyMap上绘制一个带描边的十字形。
      */
-    public static void drawCrossCylinder(IJmApi jmAPI, ResourceKey<Level> dimension, Color color,
+    public static void drawCrossCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                          Vec3 center, float outerHalfWidth, float innerHalfWidth, float rotateDegree, double y, float thickness) {
         List<Vec3> points = new ArrayList<>();
 
@@ -120,18 +120,18 @@ public class Shape2D {
         // 应用旋转逻辑
         rotatePoints(points, center, rotateDegree);
 
-        drawPolygon(jmAPI, dimension, color, points, thickness);
+        drawPolygon(jmAPI, displayId, dimension, color, points, thickness);
     }
 
     /**
      * 在JourneyMap上绘制一个带描边的圆环。
      */
-    public static void drawRingCylinder(IJmApi jmAPI, ResourceKey<Level> dimension, Color color,
+    public static void drawRingCylinder(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color,
                                         Vec3 center, float outerRadius, float innerRadius, int segments, float initialAngle, float rotateDegree, double y, float thickness) {
         // 绘制外环
-        drawPolygonCylinder(jmAPI, dimension, color, center, outerRadius, segments, initialAngle, rotateDegree, y, thickness);
+        drawPolygonCylinder(jmAPI, displayId + "_outer", dimension, color, center, outerRadius, segments, initialAngle, rotateDegree, y, thickness);
 
         // 绘制内环
-        drawPolygonCylinder(jmAPI, dimension, color, center, innerRadius, segments, initialAngle, rotateDegree, y, thickness);
+        drawPolygonCylinder(jmAPI, displayId + "_inner", dimension, color, center, innerRadius, segments, initialAngle, rotateDegree, y, thickness);
     }
 }
