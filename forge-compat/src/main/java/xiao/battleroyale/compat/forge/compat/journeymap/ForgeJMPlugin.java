@@ -2,18 +2,15 @@ package xiao.battleroyale.compat.forge.compat.journeymap;
 
 import journeymap.api.v2.client.IClientAPI;
 import journeymap.api.v2.client.IClientPlugin;
-import journeymap.api.v2.client.JourneyMapPlugin;
 import journeymap.api.v2.client.display.PolygonOverlay;
 import journeymap.api.v2.client.event.DisplayUpdateEvent;
 import journeymap.api.v2.client.event.MappingEvent;
 import journeymap.api.v2.client.model.MapPolygon;
 import journeymap.api.v2.client.model.ShapeProperties;
+import journeymap.api.v2.common.JourneyMapPlugin;
 import journeymap.api.v2.common.event.ClientEventRegistry;
 import xiao.battleroyale.BattleRoyale;
-import xiao.battleroyale.compat.journeymap.JMEventHandler;
-import xiao.battleroyale.compat.journeymap.JMPolygonOverlay;
-import xiao.battleroyale.compat.journeymap.JMShapeDrawer;
-import xiao.battleroyale.compat.journeymap.JMShapeProperties;
+import xiao.battleroyale.compat.journeymap.*;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -42,10 +39,11 @@ public class ForgeJMPlugin implements IClientPlugin {
      */
     @Override
     public void initialize(IClientAPI jmAPI) {
-        BattleRoyale.LOGGER.debug("initialize ForgeJMPlugin");
+        BattleRoyale.LOGGER.debug("Initializing BattleRoyale ForgeJMPlugin");
         this.jmAPI = jmAPI;
         ClientEventRegistry.MAPPING_EVENT.subscribe(getModId(), this::handleMappingEvent);
         ClientEventRegistry.DISPLAY_UPDATE_EVENT.subscribe(getModId(), this::handleDisplayUpdateEvent);
+        JourneyMap.register();
         JmApi.initialized = true;
         BattleRoyale.LOGGER.info("Initialized {}", getClass().getName());
     }
@@ -69,12 +67,12 @@ public class ForgeJMPlugin implements IClientPlugin {
     private void handleMappingEvent(MappingEvent event) {
         try {
             switch (event.getStage()) {
-                case MAPPING_STARTED: // 刚进游戏时触发
+                case MAPPING_STARTED -> { // 刚进游戏时触发
                     JMShapeDrawer.cachedDimension = event.dimension;
-                    break;
-                case MAPPING_STOPPED: // 退出游戏时触发
+                }
+                case MAPPING_STOPPED -> { // 退出游戏时触发
                     jmAPI.removeAll(JMEventHandler.MOD_JM_ID);
-                    break;
+                }
             }
         } catch (Throwable t) {
             BattleRoyale.LOGGER.error(t.getMessage(), t);
@@ -96,6 +94,7 @@ public class ForgeJMPlugin implements IClientPlugin {
 
         MapPolygon mapPolygon = new MapPolygon(JMPolygonOverlay.JMMapPolygon().points());
 
+        // overlay身份为随机UUID，无法原地更新，每次重画都依赖removeAll后新建
         PolygonOverlay polygonOverlay = new PolygonOverlay(
                 JMPolygonOverlay.modId(),
                 JMPolygonOverlay.dimension(),
