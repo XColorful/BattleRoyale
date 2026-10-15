@@ -1,6 +1,6 @@
 package xiao.battleroyale.client.screen;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,40 +17,40 @@ public abstract class NoBackgroundContainerScreen<L extends AbstractContainerMen
     // --------移除虚化背景--------
 
     @ApiStatus.AvailableSince("1.20.2")
-    @Override
+//    @Override
     public void renderTransparentBackground(
-            @NotNull GuiGraphics graphics
+            @NotNull GuiGraphicsExtractor graphics
     ) {
     }
     @ApiStatus.AvailableSince("1.21.1")
-    @Override
+//    @Override
     protected void renderBlurredBackground(
 //            float partickTick
-            @NotNull GuiGraphics graphics
+            @NotNull GuiGraphicsExtractor graphics
     ) {
     }
     @ApiStatus.AvailableSince("1.21.1")
-    @Override
+//    @Override
     protected void renderMenuBackground(
-            @NotNull GuiGraphics graphics
+            @NotNull GuiGraphicsExtractor graphics
     ) {
     }
     @ApiStatus.AvailableSince("26.1.x")
-//    @Override
+    @Override
     public void extractTransparentBackground(
-            @NotNull GuiGraphics graphics
+            @NotNull GuiGraphicsExtractor graphics
     ) {
     }
     @ApiStatus.AvailableSince("26.1.x")
-//    @Override
+    @Override
     protected void extractBlurredBackground(
-            @NotNull GuiGraphics graphics
+            @NotNull GuiGraphicsExtractor graphics
     ) {
     }
     @ApiStatus.AvailableSince("26.1.x")
-//    @Override
+    @Override
     protected void extractMenuBackground(
-            @NotNull GuiGraphics graphics
+            @NotNull GuiGraphicsExtractor graphics
     ) {
     }
 }
