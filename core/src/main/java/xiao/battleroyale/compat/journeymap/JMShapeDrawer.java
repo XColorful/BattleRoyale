@@ -38,7 +38,6 @@ public class JMShapeDrawer {
             if (zoneData == null || zoneData.center == null || zoneData.dimension == null) continue;
 
             Color color = new Color(zoneData.r, zoneData.g, zoneData.b, zoneData.a);
-            String displayId = "gz_" + zoneData.id; // GameZone
             float rotateDegree = (float) zoneData.rotateDegree; // 正角度为顺时针旋转区域
             double y = zoneData.center.y + zoneData.dimension.y;
 
@@ -46,41 +45,41 @@ public class JMShapeDrawer {
             switch (zoneData.shapeType) {
                 // 2D shape
                 case CIRCLE ->
-                        Shape2D.drawPolygonCylinder(jmAPI, displayId, dimension, color,
+                        Shape2D.drawPolygonCylinder(jmAPI, dimension, color,
                                 zoneData.center, (float) zoneData.dimension.x, zoneRenderer.getCircleSegments(), 0, rotateDegree, y, THICKNESS);
                 case SQUARE ->
-                        Shape2D.drawRectangleBox(jmAPI, displayId, dimension, color,
+                        Shape2D.drawRectangleBox(jmAPI, dimension, color,
                                 zoneData.center, (float) zoneData.dimension.x, (float) zoneData.dimension.x, rotateDegree, y, THICKNESS);
                 case RECTANGLE ->
-                        Shape2D.drawRectangleBox(jmAPI, displayId, dimension, color,
+                        Shape2D.drawRectangleBox(jmAPI, dimension, color,
                                 zoneData.center, (float) zoneData.dimension.x, (float) zoneData.dimension.z, rotateDegree, y, THICKNESS);
                 case HEXAGON -> // 平顶正六边形
-                        Shape2D.drawPolygonCylinder(jmAPI, displayId, dimension, color,
+                        Shape2D.drawPolygonCylinder(jmAPI, dimension, color,
                                 zoneData.center, (float) zoneData.dimension.x, 6, 0, rotateDegree, y, THICKNESS);
                 case POLYGON -> // 尖顶正多边形
-                        Shape2D.drawPolygonCylinder(jmAPI, displayId, dimension, color,
+                        Shape2D.drawPolygonCylinder(jmAPI, dimension, color,
                                 zoneData.center, (float) zoneData.dimension.x, zoneData.segments, POINTING_POLYGON_ANGLE, rotateDegree, y, THICKNESS);
                 case ELLIPSE ->
-                        Shape2D.drawEllipseCylinder(jmAPI, displayId, dimension, color,
+                        Shape2D.drawEllipseCylinder(jmAPI, dimension, color,
                                 zoneData.center, (float) zoneData.dimension.x, (float) zoneData.dimension.z, zoneRenderer.getEllipseSegments(), rotateDegree, y, THICKNESS);
                 case STAR -> // 尖顶星形
-                        Shape2D.drawStarCylinder(jmAPI, displayId, dimension, color,
+                        Shape2D.drawStarCylinder(jmAPI, dimension, color,
                                 zoneData.center, (float) zoneData.dimension.x, (float) zoneData.dimension.z, zoneData.segments, POINTING_POLYGON_ANGLE, rotateDegree, y, THICKNESS);
                 case CROSS -> // 十字形
-                        Shape2D.drawCrossCylinder(jmAPI, displayId, dimension, color,
+                        Shape2D.drawCrossCylinder(jmAPI, dimension, color,
                                 zoneData.center, (float) zoneData.dimension.x, (float) zoneData.dimension.z, rotateDegree, y, THICKNESS);
                 case RING -> // 环形
-                        Shape2D.drawRingCylinder(jmAPI, displayId, dimension, color,
+                        Shape2D.drawRingCylinder(jmAPI, dimension, color,
                                 zoneData.center, (float) zoneData.dimension.x, (float) zoneData.dimension.z, zoneRenderer.getCircleSegments(), 0, rotateDegree, y, THICKNESS);
                 // 3D shape
                 case SPHERE ->
-                        Shape3D.drawFilledSphere(jmAPI, displayId, dimension, color,
+                        Shape3D.drawFilledSphere(jmAPI, dimension, color,
                                 zoneData.center, (float) zoneData.dimension.x, zoneRenderer.getSphereSegments(), rotateDegree, y);
                 case CUBE, CUBOID ->
-                        Shape3D.drawFilledCuboid(jmAPI, displayId, dimension, color,
+                        Shape3D.drawFilledCuboid(jmAPI, dimension, color,
                                 zoneData.center, (float) zoneData.dimension.x, (float) zoneData.dimension.z, rotateDegree, y);
                 case ELLIPSOID ->
-                        Shape3D.drawFilledEllipsoid(jmAPI, displayId, dimension, color,
+                        Shape3D.drawFilledEllipsoid(jmAPI, dimension, color,
                                 zoneData.center, (float) zoneData.dimension.x, (float) zoneData.dimension.z, zoneRenderer.getEllipsoidSegments(), rotateDegree, y);
                 default -> {}
             }
@@ -91,7 +90,7 @@ public class JMShapeDrawer {
     /**
      * 在JourneyMap上绘制多边形。
      */
-    public static void drawPolygon(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color, List<Vec3> points, float strokeWidth) {
+    public static void drawPolygon(IJmApi jmAPI, ResourceKey<Level> dimension, Color color, List<Vec3> points, float strokeWidth) {
         try {
             List<BlockPos> blockPoints = points.stream().map(BlockPos::containing).collect(Collectors.toList());
 
@@ -102,14 +101,14 @@ public class JMShapeDrawer {
                     strokeWidth);
 
             JMMapPolygon JMMapPolygon = new JMMapPolygon(blockPoints);
-            JMPolygonOverlay overlay = new JMPolygonOverlay(JMEventHandler.MOD_JM_ID, displayId, dimension, JMShapeProperties, JMMapPolygon);
+            JMPolygonOverlay overlay = new JMPolygonOverlay(JMEventHandler.MOD_JM_ID, dimension, JMShapeProperties, JMMapPolygon);
             jmAPI.show(overlay);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Failed to draw polygon on JourneyMap: {}", e.getMessage(), e);
         }
     }
 
-    public static void drawFilledPolygon(IJmApi jmAPI, String displayId, ResourceKey<Level> dimension, Color color, List<Vec3> points) {
+    public static void drawFilledPolygon(IJmApi jmAPI, ResourceKey<Level> dimension, Color color, List<Vec3> points) {
         try {
             List<BlockPos> blockPoints = points.stream().map(BlockPos::containing).collect(Collectors.toList());
 
@@ -120,7 +119,7 @@ public class JMShapeDrawer {
                     0); // 默认是2
 
             JMMapPolygon JMMapPolygon = new JMMapPolygon(blockPoints);
-            JMPolygonOverlay overlay = new JMPolygonOverlay(JMEventHandler.MOD_JM_ID, displayId, dimension, JMShapeProperties, JMMapPolygon);
+            JMPolygonOverlay overlay = new JMPolygonOverlay(JMEventHandler.MOD_JM_ID, dimension, JMShapeProperties, JMMapPolygon);
             jmAPI.show(overlay);
         } catch (Exception e) {
             BattleRoyale.LOGGER.error("Failed to draw filled polygon on JourneyMap: {}", e.getMessage(), e);
