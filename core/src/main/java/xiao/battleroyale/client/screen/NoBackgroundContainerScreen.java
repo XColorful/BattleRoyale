@@ -23,13 +23,13 @@ public abstract class NoBackgroundContainerScreen<L extends AbstractContainerMen
     ) {
     }
     @ApiStatus.AvailableSince("1.21.1")
-//    @Override
+    @Override
     protected void renderBlurredBackground(
             float partickTick
     ) {
     }
     @ApiStatus.AvailableSince("1.21.1")
-//    @Override
+    @Override
     protected void renderMenuBackground(
             @NotNull GuiGraphics graphics
     ) {
