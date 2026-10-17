@@ -17,7 +17,8 @@ public class ClientMessageSpectateInfo implements IMessage<ClientMessageSpectate
     }
 
     @Override
-    public void encode(ClientMessageSpectateInfo message, FriendlyByteBuf buffer) {
+    public void encode(FriendlyByteBuf buffer) {
+        var message = this;
         buffer.writeNbt(message.spectateSyncNbt);
     }
 
@@ -27,7 +28,8 @@ public class ClientMessageSpectateInfo implements IMessage<ClientMessageSpectate
     }
 
     @Override
-    public void handle(ClientMessageSpectateInfo message, Consumer<Runnable> handler) {
+    public void handle(Consumer<Runnable> handler) {
+        var message = this;
         handler.accept(() -> {
             BattleRoyale.getClientGameDataManager().updateGameSpectateInfo(message.spectateSyncNbt);
         });
