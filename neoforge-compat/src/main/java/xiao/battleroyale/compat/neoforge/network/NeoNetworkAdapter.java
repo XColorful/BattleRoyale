@@ -40,10 +40,10 @@ public class NeoNetworkAdapter implements INetworkAdapter {
                 : PlayNetworkDirection.PLAY_TO_SERVER;
 
         this.channel.<T>messageBuilder(clazz, id, neoDirection)
-                .encoder((messageInstance, buffer) -> messageInstance.encode(messageInstance, buffer))
+                .encoder((messageInstance, buffer) -> messageInstance.encode(buffer))
                 .decoder(decoder::apply)
                 .consumerMainThread((message, context) -> {
-                    message.handle(message, context::enqueueWork);
+                    message.handle(context::enqueueWork);
                 })
                 .add();
     }
