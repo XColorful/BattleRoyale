@@ -38,10 +38,10 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
         this.channel.registerMessage(
                 id,
                 clazz,
-                (messageInstance, buffer) -> messageInstance.encode(messageInstance, buffer),
+                (messageInstance, buffer) -> messageInstance.encode(buffer),
                 decoder,
                 (message, contextSupplier) -> {
-                    message.handle(message, (work) -> contextSupplier.get().enqueueWork(work));
+                    message.handle((work) -> contextSupplier.get().enqueueWork(work));
                     contextSupplier.get().setPacketHandled(true);
                 },
                 Optional.of(forgeDirection)
