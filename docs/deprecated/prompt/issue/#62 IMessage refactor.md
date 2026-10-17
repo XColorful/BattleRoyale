@@ -82,3 +82,41 @@ NeoForge 侧待办（已核对调用点）：
 三个 worktree 目前仍处于 merge 进行中（已 `git add`，未执行 merge commit），可以直接 review 后各自提交。neoforge 侧未触碰。
 
 需要我代为提交这三个 merge commit 的话告诉我。
+
+# 
+
+```
+现在开始处理neoforge侧
+```
+
+# 
+
+先核对三个 neoforge worktree 的 core 状态与适配器调用点。
+
+BattleRoyale neoforge 侧完成。
+
+## 修改内容
+
+| worktree | 改动 | 编译 |
+|---|---|---|
+| 1.20.2 | NeoNetworkAdapter 2 处（`messageInstance`） | BUILD SUCCESSFUL |
+| 1.20.4 | NeoNetworkAdapter 2 处（`this.message` + `Runnable::run`） | BUILD SUCCESSFUL |
+| 1.21.1neoforge | NeoNetworkAdapter 2 处（调用文本同 1.20.4，但上下文不同） | BUILD SUCCESSFUL |
+
+三处的无 T 调用：
+- `encode(message, buffer)` → `encode(buffer)`
+- `handle(message, handler)` → `handle(handler)`
+
+1.20.4 的补丁无法直接应用到 1.21.1neoforge（1.20.4 是 `workHandler().execute(...)`，1.21.1 是 `context.enqueueWork(...)`，补丁上下文不匹配），因此 1.21.1neoforge 作为必要分支单独修改。
+
+## 完整 Cherry-pick 表（BattleRoyale）
+
+| 分支 | core（IMessage + 4 消息） | forge 适配器 | neoforge 适配器 |
+|---|---|---|---|
+| BattleRoyale（core1.20.1） | 首版（已提交） | 首版（已提交） | — |
+| BattleRoyale-1.20.2 | 复用 main（已合并） | 首版（已提交） | 已改 |
+| BattleRoyale-1.20.4 | 复用 main（已合并） | 复用 1.20.2（已合并） | 已改（与 1.20.2 结构不同） |
+| BattleRoyale-1.21.1forge | 复用 main（已合并） | 单独改（已提交） | — |
+| BattleRoyale-1.21.1neoforge | 复用 main（已存在） | — | 已改（与 1.20.4 上下文不同） |
+
+三个 neoforge 适配器改动均未提交。主 worktree 当前只有 `docs/deprecated/prompt/issue/#62 IMessage refactor.md` 的修改，未触碰。
