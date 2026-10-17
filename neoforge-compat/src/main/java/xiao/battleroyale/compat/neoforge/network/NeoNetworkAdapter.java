@@ -9,6 +9,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
+import net.neoforged.neoforge.network.registration.HandlerThread;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.api.network.INetworkAdapter;
@@ -95,7 +96,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
 
     @SubscribeEvent
     public void register(RegisterPayloadHandlersEvent event) {
-        final PayloadRegistrar registrar = event.registrar(modId);
+        final PayloadRegistrar registrar = event.registrar(modId).executesOn(HandlerThread.NETWORK);
 
         for (RegisteredPacket<?> rp : registeredPackets) {
             registerPacketInternal(registrar, rp);
@@ -114,9 +115,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
 
         IPayloadHandler<NeoPayload<T>> handler = (payload, context) -> {
             final T message = payload.message();
-            context.enqueueWork(() -> {
-                message.handle(Runnable::run);
-            });
+            message.handle(context::enqueueWork);
         };
 
         if (rp.direction == MessageDirection.SERVER_TO_CLIENT) {
