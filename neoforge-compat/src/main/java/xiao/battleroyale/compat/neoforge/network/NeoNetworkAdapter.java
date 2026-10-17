@@ -42,7 +42,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
         this.channel.<T>messageBuilder(clazz, id, neoDirection)
                 .encoder((messageInstance, buffer) -> messageInstance.encode(buffer))
                 .decoder(decoder::apply)
-                .consumerMainThread((message, context) -> {
+                .consumerNetworkThread((message, context) -> {
                     message.handle(context::enqueueWork);
                 })
                 .add();
