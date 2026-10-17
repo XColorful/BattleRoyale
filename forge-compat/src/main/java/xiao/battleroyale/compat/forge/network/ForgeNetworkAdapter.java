@@ -36,8 +36,9 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
         this.channel.<T>messageBuilder(clazz, id, forgeDirection)
                 .encoder((messageInstance, buffer) -> messageInstance.encode(buffer))
                 .decoder(decoder)
-                .consumerMainThread((message, context) -> {
+                .consumerNetworkThread((message, context) -> {
                     message.handle(context::enqueueWork);
+                    context.setPacketHandled(true);
                 })
                 .add();
     }
