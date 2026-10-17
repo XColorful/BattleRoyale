@@ -39,10 +39,10 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
 
         this.channel.messageBuilder(clazz, id)
                 .direction(forgeFlow)
-                .encoder((messageInstance, buffer) -> messageInstance.encode(messageInstance, buffer))
+                .encoder((messageInstance, buffer) -> messageInstance.encode(buffer))
                 .decoder(decoder)
                 .consumerMainThread((message, context) -> {
-                    message.handle(message, context::enqueueWork);
+                    message.handle(context::enqueueWork);
                 })
                 .add();
     }
