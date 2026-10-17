@@ -41,8 +41,9 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
                 .direction(forgeFlow)
                 .encoder((messageInstance, buffer) -> messageInstance.encode(buffer))
                 .decoder(decoder)
-                .consumerMainThread((message, context) -> {
+                .consumerNetworkThread((message, context) -> {
                     message.handle(context::enqueueWork);
+                    context.setPacketHandled(true);
                 })
                 .add();
     }
