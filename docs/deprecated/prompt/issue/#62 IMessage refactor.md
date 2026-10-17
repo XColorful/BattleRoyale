@@ -45,3 +45,40 @@ NeoForge 侧待办（已核对调用点）：
 - 1.21.1neoforge：2 处（调用文本与 1.20.4 相同，但文件其余部分不同）
 
 均未提交。
+
+# 
+
+```
+现在合并到1.20.2-1.21.1forge要处理Merge冲突，你之前在forge的修改会临时被清掉，现在处理1.20.2，1.20.4，1.21.1的Merge，neoforge稍后
+```
+
+# 
+
+先检查三个 worktree 的合并状态和全部冲突文件。
+
+三个 worktree 的冲突只在 ForgeNetworkAdapter。保留各分支自己的 ChannelBuilder/PacketFlow 实现，并在其上重新套用无 T 调用。
+
+冲突已解决并暂存，开始编译三个分支。
+
+三个分支的 Merge 冲突已解决并暂存，未提交。
+
+## 处理结果
+
+冲突只在 `ForgeNetworkAdapter.java`：核心改动已由 merge 自动合入，但主分支带入的是旧的 `SimpleChannel` 实现，与各分支自己的 `ChannelBuilder`/`PacketFlow` 实现冲突。
+
+解决方式：**保留各分支 HEAD 的注册结构**，只重新套用无 T 调用：
+
+| 分支 | 保留的注册结构 | 重新套用的改动 |
+|---|---|---|
+| 1.20.2 | `<T>messageBuilder(clazz, id, forgeDirection)` | `encode(buffer)`、`handle(context::enqueueWork)` |
+| 1.20.4 | 同上（与 1.20.2 逐字节相同） | 同上 |
+| 1.21.1forge | `messageBuilder(clazz, id).direction(forgeFlow)` | 同上 |
+
+验证：
+- 三个 worktree 均无剩余冲突，适配器相对各自 `HEAD` 的 diff 只有这两行。
+- merge 带入的 `IMessage.java` 和 4 个消息类与 `BattleRoyale` 主分支逐字节一致。
+- 三个分支 `:core:compileJava :forge-compat:compileJava` 均 **BUILD SUCCESSFUL**。
+
+三个 worktree 目前仍处于 merge 进行中（已 `git add`，未执行 merge commit），可以直接 review 后各自提交。neoforge 侧未触碰。
+
+需要我代为提交这三个 merge commit 的话告诉我。
