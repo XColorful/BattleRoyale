@@ -21,7 +21,8 @@ public class ClientMessageTeamInfo implements IMessage<ClientMessageTeamInfo> {
     }
 
     @Override
-    public void encode(ClientMessageTeamInfo message, FriendlyByteBuf buffer) {
+    public void encode(FriendlyByteBuf buffer) {
+        var message = this;
         buffer.writeNbt(message.teamSyncNbt);
     }
 
@@ -31,7 +32,8 @@ public class ClientMessageTeamInfo implements IMessage<ClientMessageTeamInfo> {
     }
 
     @Override
-    public void handle(ClientMessageTeamInfo message, Consumer<Runnable> handler) {
+    public void handle(Consumer<Runnable> handler) {
+        var message = this;
         handler.accept(() -> {
             BattleRoyale.getClientGameDataManager().updateTeamInfo(message.teamSyncNbt);
         });
