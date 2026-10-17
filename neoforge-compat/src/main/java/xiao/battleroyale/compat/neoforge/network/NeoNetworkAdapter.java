@@ -30,7 +30,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
 
         @Override
         public void write(FriendlyByteBuf buffer) {
-            this.message.encode(this.message, buffer);
+            this.message.encode(buffer);
         }
     }
 
@@ -100,7 +100,7 @@ public class NeoNetworkAdapter implements INetworkAdapter {
         IPayloadHandler<NeoPayload<T>> handler = (payload, context) -> {
             final T message = payload.message();
             context.workHandler().execute(() -> {
-                message.handle(message, Runnable::run);
+                message.handle(Runnable::run);
             });
         };
         registrar.common(id, decoder, handler);
