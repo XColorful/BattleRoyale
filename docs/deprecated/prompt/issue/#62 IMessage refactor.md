@@ -120,3 +120,44 @@ BattleRoyale neoforge 侧完成。
 | BattleRoyale-1.21.1neoforge | 复用 main（已存在） | — | 已改（与 1.20.4 上下文不同） |
 
 三个 neoforge 适配器改动均未提交。主 worktree 当前只有 `docs/deprecated/prompt/issue/#62 IMessage refactor.md` 的修改，未触碰。
+
+# 
+
+```
+注册到网络线程然后复用enqueueWork的这个改动似乎没有移植？检查下是否从1.20.1起就有；如果1.20.1不需要修改，剩下的forge和neoforge都按照cherry pick规则修改并列表格
+```
+
+# 
+
+先核对 CGC 当时的 #70 适配器改动内容，再对照 BattleRoyale 各分支。
+
+1.20.1 的 Forge 本身就在网络线程执行 consumer 并通过 `enqueueWork` 跳主线程，不需要改。现在把其余分支统一回该语义。
+
+确认：BattleRoyale 1.20.1 已经是目标语义，不需要改。Forge 1.20.1 的 `SimpleChannel.registerMessage` consumer 默认在 Netty 网络线程执行，适配器也已经把 `contextSupplier.get().enqueueWork(work)` 交给 core，并调用 `setPacketHandled(true)`。从 1.20.2 起各分支改成了 `consumerMainThread`，绕过了 core 的跳线程设计。
+
+## 修改内容
+
+| 分支 | 修改 |
+|---|---|
+| 1.20.2 forge | `consumerMainThread` → `consumerNetworkThread`，补 `context.setPacketHandled(true)` |
+| 1.20.4 forge | **未改**，复用 1.20.2（`git apply --check` 通过） |
+| 1.21.1forge | 同上改动；因 `PacketFlow`/`direction` 上下文不同，单独修改 |
+| 1.20.2 neoforge | `consumerMainThread` → `consumerNetworkThread`（`add()` 自动标记已处理，无需手写） |
+| 1.20.4 neoforge | **不需要改**：handler 本来就在网络线程，`context.workHandler().execute(...)` 保持不变 |
+| 1.21.1neoforge | `event.registrar(modId).executesOn(HandlerThread.NETWORK)`；去掉外层 `context.enqueueWork`，改为 `message.handle(context::enqueueWork)` |
+
+三个改动分支编译均 **BUILD SUCCESSFUL**（1.20.2 forge+neoforge、1.21.1forge、1.21.1neoforge）。
+
+## Cherry-pick 表
+
+| 分支 | 1.20.1 语义是否已有 | 是否需要改 | 复用关系 |
+|---|---|---|---|
+| BattleRoyale（core1.20.1） | 是（网络线程 + `enqueueWork`） | 否 | — |
+| BattleRoyale-1.20.2（forge） | 否 | 是 | 该组首版 |
+| BattleRoyale-1.20.4（forge） | 否 | 否 | 复用 1.20.2，补丁验证可干净应用 |
+| BattleRoyale-1.21.1forge | 否 | 是 | 单独改（注册结构不同） |
+| BattleRoyale-1.20.2（neoforge） | 否 | 是 | 该组首版 |
+| BattleRoyale-1.20.4（neoforge） | 是（`workHandler` 网络线程） | 否 | — |
+| BattleRoyale-1.21.1neoforge | 否（默认 `HandlerThread.MAIN`） | 是 | 单独改 |
+
+改动未提交。
