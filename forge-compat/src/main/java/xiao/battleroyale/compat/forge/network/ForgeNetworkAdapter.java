@@ -34,10 +34,10 @@ public class ForgeNetworkAdapter implements INetworkAdapter {
                 : NetworkDirection.PLAY_TO_SERVER;
 
         this.channel.<T>messageBuilder(clazz, id, forgeDirection)
-                .encoder((messageInstance, buffer) -> messageInstance.encode(messageInstance, buffer))
+                .encoder((messageInstance, buffer) -> messageInstance.encode(buffer))
                 .decoder(decoder)
                 .consumerMainThread((message, context) -> {
-                    message.handle(message, context::enqueueWork);
+                    message.handle(context::enqueueWork);
                 })
                 .add();
     }
