@@ -21,7 +21,8 @@ public class ClientMessageZoneInfo implements IMessage<ClientMessageZoneInfo> {
     }
 
     @Override
-    public void encode(ClientMessageZoneInfo message, FriendlyByteBuf buffer) {
+    public void encode(FriendlyByteBuf buffer) {
+        var message = this;
         buffer.writeNbt(message.zoneSyncNbt);
     }
 
@@ -31,7 +32,8 @@ public class ClientMessageZoneInfo implements IMessage<ClientMessageZoneInfo> {
     }
 
     @Override
-    public void handle(ClientMessageZoneInfo message, Consumer<Runnable> handler) {
+    public void handle(Consumer<Runnable> handler) {
+        var message = this;
         handler.accept(() -> {
             BattleRoyale.getClientGameDataManager().updateClientZone(message.zoneSyncNbt);
         });

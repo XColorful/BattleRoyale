@@ -17,7 +17,8 @@ public class ClientMessageGameInfo implements IMessage<ClientMessageGameInfo> {
     }
 
     @Override
-    public void encode(ClientMessageGameInfo message, FriendlyByteBuf buffer) {
+    public void encode(FriendlyByteBuf buffer) {
+        var message = this;
         buffer.writeNbt(message.gameSyncNbt);
     }
 
@@ -27,7 +28,8 @@ public class ClientMessageGameInfo implements IMessage<ClientMessageGameInfo> {
     }
 
     @Override
-    public void handle(ClientMessageGameInfo message, Consumer<Runnable> handler) {
+    public void handle(Consumer<Runnable> handler) {
+        var message = this;
         handler.accept(() -> {
             BattleRoyale.getClientGameDataManager().updateGameInfo(message.gameSyncNbt);
         });
