@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "battleroyale:loot_spawner",
+    "battleroyale:entity_spawner"
+  ]
+}
