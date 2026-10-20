@@ -7,7 +7,7 @@ import journeymap.api.v2.client.event.DisplayUpdateEvent;
 import journeymap.api.v2.client.event.MappingEvent;
 import journeymap.api.v2.client.model.MapPolygon;
 import journeymap.api.v2.client.model.ShapeProperties;
-import journeymap.api.v2.common.JourneyMapPlugin;
+import journeymap.api.v2.client.JourneyMapPlugin;
 import journeymap.api.v2.common.event.ClientEventRegistry;
 import xiao.battleroyale.BattleRoyale;
 import xiao.battleroyale.compat.journeymap.*;
