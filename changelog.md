@@ -1,5 +1,16 @@
 ### 0.5.x
 
+#### 0.5.7
+- Fixed JourneyMap API 2.0 compatibility
+- Fixed a deadlock when installing Immersive Vehicles #59
+- Add compatibility for Custom Gun Continued interact key and projectile pass through block
+
+1.20.2+:
+- Removed the GUI background from loot spawner
+
+For Developers:
+- Updated `IMessage`
+
 #### 0.5.6
 - Add regex filter to entity removal during loot generation
 - Remove unnecessary network reflection overhead (slightly improves performance)
